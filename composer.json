@@ -1,0 +1,25 @@
+{
+    "name": "tomk79/broccoli",
+    "description": "",
+    "keywords": ["pickles"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tomoya Koyanagi",
+            "email": "tomk79@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "repositories": [
+    ],
+    "require": {
+        "php": ">=5.3.0"
+    },
+    "require-dev": {
+    },
+    "autoload": {
+        "files": [
+        ]
+    }
+}
