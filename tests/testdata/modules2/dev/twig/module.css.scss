@@ -1,0 +1,26 @@
+.twig_template{
+    border: 1px solid #f93;
+    padding:1em;
+    >:first-child{
+        margin-top: 0;
+    }
+    &-include{
+        border: 1px solid #ff9;
+        background: #f8f8f8;
+        padding:1em;
+        margin: 0.2em 0;
+    }
+    &-loop{
+        border: 1px solid #f9f;
+        background: #f8f8ff;
+        padding:1em;
+        margin: 0.2em 0;
+    }
+    &-is_canvas{
+        background: #f00;
+        color: #fff9f9;
+        padding: 0.5em;
+        margin: 0.2em 0;
+        text-align: center;
+    }
+}

@@ -1,0 +1,36 @@
+<table class="def">
+	<tr>
+		<th>input</th>
+		<td>(hidden){&{"input":{"type":"text","name":"input","rows":1,"hidden":true}}&}</td>
+	</tr>
+	<tr>
+		<th>output - 1</th>
+		<td>{&{"echo":{"ref":"input"}}&}</td>
+	</tr>
+</table>
+<ul>
+{&{"loop":{"name":"mainLoop"}}&}
+	<li>
+		<table class="def">
+			<tr>
+				<th>input</th>
+				<td>{&{"input":{"type":"text","name":"inputInLoop","rows":3,"label":"記憶して使いまわされるテキスト(ループ内)"}}&}</td>
+			</tr>
+			<tr>
+				<th>output</th>
+				<td>{&{"echo":{"ref":"inputInLoop"}}&}</td>
+			</tr>
+			<tr>
+				<th>output (out of loop)</th>
+				<td>{&{"echo":{"ref":"input"}}&}</td>
+			</tr>
+		</table>
+	</li>
+{&"endloop"&}
+</ul>
+<table class="def">
+	<tr>
+		<th>output - 2</th>
+		<td>{&{"echo":{"ref":"input"}}&}</td>
+	</tr>
+</table>

@@ -1,0 +1,22 @@
+<p>loopフィールドの多階層処理のテスト用モジュール</p>
+<ul>
+{&{"loop":{"name":"sample_loop1","min":3,"max":10}}&}
+	<li>loop1: {&{"input":{"type":"markdown","name":"md_src1"}}&}
+	<ul>
+{&{"loop":{"name":"sample_loop2","min":3,"max":10}}&}
+		<li>loop2: {&{"input":{"type":"markdown","name":"md_src2"}}&}
+		<ul>
+{&{"loop":{"name":"sample_loop3","min":3,"max":10}}&}
+		<li>loop3:
+			<div>{&{"input":{"type":"markdown","name":"md_src3"}}&}</div>
+			<div>{&{"input":{"type":"multitext","name":"multitext_src3"}}&}</div>
+		</li>
+{&"endloop"&}
+		</ul>
+		</li>
+{&"endloop"&}
+	</ul>
+	</li>
+{&"endloop"&}
+</ul>
+<p>/loopフィールドの多階層処理のテスト用モジュール</p>

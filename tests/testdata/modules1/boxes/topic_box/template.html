@@ -1,0 +1,7 @@
+{&{"input":{"type":"text","name":"heading","hidden":true,"rows":1}}&}
+<div class="topic_box">
+{&{"if":{"is_set":"heading"}}&}
+	<p class="topic_box-heading">{&{"echo":{"ref":"heading"}}&}</p>
+{&"endif"&}
+	{&{"module":{"name":"main"}}&}
+</div><!-- /.topic_box -->

@@ -1,0 +1,7 @@
+{&{"input":{"type":"text","name":"heading","hidden":true,"rows":1}}&}
+<div class="unit form_error_box">
+{&{"if":{"is_set":"heading"}}&}
+	<p>{&{"echo":{"ref":"heading"}}&}</p>
+{&"endif"&}
+	{&{"module":{"name":"main"}}&}
+</div><!-- /.form_error_box -->
