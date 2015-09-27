@@ -44,6 +44,55 @@ describe('インスタンス初期化', function() {
 
 });
 
+describe('モジュールIDを分解する', function() {
+
+	it("モジュールIDを分解する", function(done) {
+		this.timeout(60*1000);
+
+		var broccoli = makeDefaultBroccoli();
+		var parsedId = broccoli.parseModuleId('pkg1:cat1/mod1');
+		assert.equal(parsedId.package, 'pkg1');
+		assert.equal(parsedId.category, 'cat1');
+		assert.equal(parsedId.module, 'mod1');
+
+		var parsedId = broccoli.parseModuleId('pkg-_1:cat-_=+1/mod-_=+1');
+		assert.equal(parsedId.package, 'pkg-_1');
+		assert.equal(parsedId.category, 'cat-_=+1');
+		assert.equal(parsedId.module, 'mod-_=+1');
+
+		done();
+	});
+
+	it("分解できないモジュールID", function(done) {
+		this.timeout(60*1000);
+
+		var broccoli = makeDefaultBroccoli();
+		var parsedId = broccoli.parseModuleId('pkg1:cat1//mod1');
+		assert.equal(parsedId, false);
+
+		var parsedId = broccoli.parseModuleId('pkg1;:cat1/mod1');
+		assert.equal(parsedId, false);
+
+		var parsedId = broccoli.parseModuleId('pkg1:cat1mod1');
+		assert.equal(parsedId, false);
+
+		var parsedId = broccoli.parseModuleId('pkg1cat1/mod1');
+		assert.equal(parsedId, false);
+
+		var parsedId = broccoli.parseModuleId('pkg1cat1mod1');
+		assert.equal(parsedId, false);
+
+		var parsedId = broccoli.parseModuleId('pkg1:a:cat1/mod1');
+		assert.equal(parsedId, false);
+
+		var parsedId = broccoli.parseModuleId('pkg1: cat1 / mod1');
+		assert.equal(parsedId, false);
+
+		done();
+	});
+
+});
+
 describe('パッケージ一覧の取得', function() {
 
 	it("パッケージ一覧を取得する", function(done) {
