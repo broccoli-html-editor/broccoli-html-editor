@@ -4,6 +4,7 @@
 module.exports = function(paths_module_template, options){
 	var _this = this;
 	var path = require('path');
+	var fs = require('fs');
 	options = options || {};
 	options.cd = options.cd || '.';
 
@@ -35,6 +36,47 @@ module.exports = function(paths_module_template, options){
 	}
 
 	/**
+	 * モジュールの絶対パスを取得する。
+	 * @param  {String} moduleId モジュールID
+	 * @return {String}          モジュールの絶対パス
+	 */
+	this.getModuleRealpath = function(moduleId){
+		var parsedModuleId = this.parseModuleId(moduleId);
+		if(parsedModuleId === false){
+			return false;
+		}
+		if(!this.paths_module_template[parsedModuleId.package]){
+			return false;
+		}
+		var realpath = path.resolve(this.paths_module_template[parsedModuleId.package]);
+		if( !fs.existsSync(realpath) || !fs.statSync(realpath).isDirectory() ){
+			return false;
+		}
+		var realpath = path.resolve(
+			realpath,
+			parsedModuleId.category,
+			parsedModuleId.module
+		);
+		if( !fs.existsSync(realpath) || !fs.statSync(realpath).isDirectory() ){
+			return false;
+		}
+
+		return realpath+'/';
+	}
+
+	/**
+	 * システムテンプレートかどうか判断する
+	 * @param  {String} moduleId モジュールID
+	 * @return {Boolean}         システムテンプレートであれば true, 違えば false
+	 */
+	this.isSystemMod = function( moduleId ){
+		if( !moduleId.match(new RegExp('^_sys\\/')) ){
+			return false;
+		}
+		return true;
+	}
+
+	/**
 	 * パッケージの一覧を取得する
 	 * @param  {Function} callback callback function.
 	 * @return {Object}            this
@@ -53,6 +95,19 @@ module.exports = function(paths_module_template, options){
 	this.getModuleListByPackageId = function(packageId, callback){
 		require( __dirname+'/getModuleListByPackageId.js' )(this, packageId, callback);
 		return this;
+	}
+
+	/**
+	 * class: モジュール
+	 * @param  {String} moduleId モジュールID
+	 * @param  {Object}   options Options
+	 * @param  {Function} callback callback function.
+	 * @return {Object}            this
+	 */
+	this.createModuleInstance = function(moduleId, options, callback){
+		var classModule = require( __dirname+'/classModule.js' );
+		var rtn = new classModule(this, moduleId, options, callback);
+		return rtn;
 	}
 
 }

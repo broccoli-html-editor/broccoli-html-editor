@@ -93,6 +93,36 @@ describe('モジュールIDを分解する', function() {
 
 });
 
+describe('モジュールの絶対パスを取得する', function() {
+
+	it("モジュールの絶対パスを取得する", function(done) {
+		this.timeout(60*1000);
+
+		var broccoli = makeDefaultBroccoli();
+		var realpath = broccoli.getModuleRealpath('testMod1:units/cols2');
+		assert.equal(realpath, path.resolve(__dirname, 'testdata/modules1/units/cols2')+'/');
+
+		done();
+	});
+
+	it("実在しないモジュールの絶対パスを取得する", function(done) {
+		this.timeout(60*1000);
+
+		var broccoli = makeDefaultBroccoli();
+		var realpath = broccoli.getModuleRealpath('testMod1:units/cols2/');
+		assert.strictEqual(realpath, false);
+
+		var realpath = broccoli.getModuleRealpath('testMod1:units/unExistsModule');
+		assert.strictEqual(realpath, false);
+
+		var realpath = broccoli.getModuleRealpath('pkg1:cat1/mod1');
+		assert.strictEqual(realpath, false);
+
+		done();
+	});
+
+});
+
 describe('パッケージ一覧の取得', function() {
 
 	it("パッケージ一覧を取得する", function(done) {
@@ -124,6 +154,63 @@ describe('モジュール一覧の取得', function() {
 			assert.equal(modules.categories.units.modules.cols2.realpath, path.resolve(__dirname, 'testdata/modules1/units/cols2/')+'/');
 			done();
 		});
+
+	});
+
+});
+
+describe('モジュールインスタンスを生成する', function() {
+
+	it("モジュールインスタンスを生成する", function(done) {
+		this.timeout(60*1000);
+
+		var broccoli = makeDefaultBroccoli();
+
+		function testModuleInstance(moduleId, callback){
+			return new Promise(function(rlv, rjc){
+				var mod = broccoli.createModuleInstance(moduleId, {}, function(result){
+					// console.log( result );
+					assert.strictEqual(result, true);
+
+				});
+				// console.log( mod );
+				callback(mod, rlv);
+			});
+		}
+
+		new Promise(function(rlv, rjc){ rlv(); })
+			.then(function(){
+				return testModuleInstance('testMod1:units/cols2', function(mod, rlv){
+					assert.strictEqual(typeof(mod), typeof({}));
+					assert.strictEqual(mod.isSingleRootElement, true);
+					rlv();
+				})
+			})
+			.then(function(){
+				return testModuleInstance('testMod1:dev/twig', function(mod, rlv){
+					assert.strictEqual(typeof(mod), typeof({}));
+					assert.strictEqual(mod.isSingleRootElement, true);
+					rlv();
+				})
+			})
+			.then(function(){
+				return testModuleInstance('testMod1:units/thumb_list', function(mod, rlv){
+					assert.strictEqual(typeof(mod), typeof({}));
+					assert.strictEqual(mod.isSingleRootElement, true);
+					rlv();
+				})
+			})
+			.then(function(){
+				return testModuleInstance('testMod1:dev/multitext', function(mod, rlv){
+					assert.strictEqual(typeof(mod), typeof({}));
+					assert.strictEqual(mod.isSingleRootElement, false);
+					rlv();
+				})
+			})
+			.then(function(){
+				done();
+			})
+		;
 
 	});
 
