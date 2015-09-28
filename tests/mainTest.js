@@ -161,57 +161,60 @@ describe('モジュール一覧の取得', function() {
 
 describe('モジュールインスタンスを生成する', function() {
 
-	it("モジュールインスタンスを生成する", function(done) {
-		this.timeout(60*1000);
-
+	it("testMod1:units/cols2", function(done) {
 		var broccoli = makeDefaultBroccoli();
+		var mod = broccoli.createModuleInstance('testMod1:units/cols2', {});
+		mod.init(function(result){
+			// console.log( result );
+			assert.strictEqual(result, true);
+			// console.log( mod );
+			assert.strictEqual(typeof(mod), typeof({}));
+			assert.strictEqual(mod.templateType, 'broccoli');
+			assert.strictEqual(mod.isSingleRootElement, true);
+			done();
+		});
+	});
 
-		function testModuleInstance(moduleId, callback){
-			return new Promise(function(rlv, rjc){
-				var mod = broccoli.createModuleInstance(moduleId, {}, function(result){
-					// console.log( result );
-					assert.strictEqual(result, true);
+	it("testMod1:dev/twig", function(done) {
+		var broccoli = makeDefaultBroccoli();
+		var mod = broccoli.createModuleInstance('testMod1:dev/twig', {});
+		mod.init(function(result){
+			// console.log( result );
+			assert.strictEqual(result, true);
+			// console.log( mod );
+			assert.strictEqual(typeof(mod), typeof({}));
+			assert.strictEqual(mod.templateType, 'twig');
+			assert.strictEqual(mod.isSingleRootElement, true);
+			done();
+		});
+	});
 
-				});
-				// console.log( mod );
-				callback(mod, rlv);
-			});
-		}
+	it("testMod1:units/thumb_list", function(done) {
+		var broccoli = makeDefaultBroccoli();
+		var mod = broccoli.createModuleInstance('testMod1:units/thumb_list', {});
+		mod.init(function(result){
+			// console.log( result );
+			assert.strictEqual(result, true);
+			// console.log( mod );
+			assert.strictEqual(typeof(mod), typeof({}));
+			assert.strictEqual(mod.templateType, 'broccoli');
+			assert.strictEqual(mod.isSingleRootElement, true);
+			done();
+		});
+	});
 
-		new Promise(function(rlv, rjc){ rlv(); })
-			.then(function(){
-				return testModuleInstance('testMod1:units/cols2', function(mod, rlv){
-					assert.strictEqual(typeof(mod), typeof({}));
-					assert.strictEqual(mod.isSingleRootElement, true);
-					rlv();
-				})
-			})
-			.then(function(){
-				return testModuleInstance('testMod1:dev/twig', function(mod, rlv){
-					assert.strictEqual(typeof(mod), typeof({}));
-					assert.strictEqual(mod.isSingleRootElement, true);
-					rlv();
-				})
-			})
-			.then(function(){
-				return testModuleInstance('testMod1:units/thumb_list', function(mod, rlv){
-					assert.strictEqual(typeof(mod), typeof({}));
-					assert.strictEqual(mod.isSingleRootElement, true);
-					rlv();
-				})
-			})
-			.then(function(){
-				return testModuleInstance('testMod1:dev/multitext', function(mod, rlv){
-					assert.strictEqual(typeof(mod), typeof({}));
-					assert.strictEqual(mod.isSingleRootElement, false);
-					rlv();
-				})
-			})
-			.then(function(){
-				done();
-			})
-		;
-
+	it("testMod1:dev/multitext", function(done) {
+		var broccoli = makeDefaultBroccoli();
+		var mod = broccoli.createModuleInstance('testMod1:dev/multitext', {});
+		mod.init(function(result){
+			// console.log( result );
+			assert.strictEqual(result, true);
+			// console.log( mod );
+			assert.strictEqual(typeof(mod), typeof({}));
+			assert.strictEqual(mod.templateType, 'broccoli');
+			assert.strictEqual(mod.isSingleRootElement, false);
+			done();
+		});
 	});
 
 });

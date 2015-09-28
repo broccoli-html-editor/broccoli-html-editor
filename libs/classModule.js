@@ -4,10 +4,9 @@
  * 1つのモジュールを単位として表現します。
  * コンテンツデータは含みません。よって、bind() のような機能は持ちません。
  */
-module.exports = function(broccoli, moduleId, options, callback){
+module.exports = function(broccoli, moduleId, options){
 	var _this = this;
 	options = options || {};
-	callback = callback || function(){};
 
 	var it79 = require('iterate79');
 	var path = require('path');
@@ -17,9 +16,6 @@ module.exports = function(broccoli, moduleId, options, callback){
 	var rtn = {};
 
 	var realpath = broccoli.getModuleRealpath(moduleId);
-	if( realpath === false ){
-		callback(false);return;
-	}
 
 	function isFile(path){
 		if( !fs.existsSync(path) || !fs.statSync(path).isFile() ){
@@ -43,7 +39,7 @@ module.exports = function(broccoli, moduleId, options, callback){
 		this.path = fs.realpathSync( broccoli.getModuleRealpath(moduleId) )+'/';
 	}
 	this.fields = {};
-	this.templateType = 'px2dtGuiEditor';
+	this.templateType = 'broccoli';
 
 	if(options.subModName){
 		this.subModName = options.subModName;
@@ -99,7 +95,7 @@ module.exports = function(broccoli, moduleId, options, callback){
 	// 	var field = {};
 	// 	var rtn = '';
 	//
-	// 	if( this.topThis.templateType != 'px2dtGuiEditor' ){
+	// 	if( this.topThis.templateType != 'broccoli' ){
 	// 		// テンプレートエンジン利用の場合の処理
 	// 		// console.log(this.id + '/' + this.subModName);
 	// 		var tplDataObj = {};
@@ -109,12 +105,12 @@ module.exports = function(broccoli, moduleId, options, callback){
 	// 			if( field.fieldType == 'input' ){
 	// 				// input field
 	// 				var tmpVal = '';
-	// 				if( px2dtGuiEditor.fieldDefinitions[field.type] ){
+	// 				if( broccoli.fieldDefinitions[field.type] ){
 	// 					// フィールドタイプ定義を呼び出す
-	// 					tmpVal += px2dtGuiEditor.fieldDefinitions[field.type].bind( fieldData[field.name], mode, field );
+	// 					tmpVal += broccoli.fieldDefinitions[field.type].bind( fieldData[field.name], mode, field );
 	// 				}else{
 	// 					// ↓未定義のフィールドタイプの場合のデフォルトの挙動
-	// 					tmpVal += px2dtGuiEditor.fieldBase.bind( fieldData[field.name], mode, field );
+	// 					tmpVal += broccoli.fieldBase.bind( fieldData[field.name], mode, field );
 	// 				}
 	// 				if( !field.hidden ){//← "hidden": true だったら、非表示(=出力しない)
 	// 					tplDataObj[field.name] = tmpVal;
@@ -172,12 +168,12 @@ module.exports = function(broccoli, moduleId, options, callback){
 	// 			}else if( field.input ){
 	// 				// input field
 	// 				var tmpVal = '';
-	// 				if( px2dtGuiEditor.fieldDefinitions[field.input.type] ){
+	// 				if( broccoli.fieldDefinitions[field.input.type] ){
 	// 					// フィールドタイプ定義を呼び出す
-	// 					tmpVal += px2dtGuiEditor.fieldDefinitions[field.input.type].bind( fieldData[field.input.name], mode, field.input );
+	// 					tmpVal += broccoli.fieldDefinitions[field.input.type].bind( fieldData[field.input.name], mode, field.input );
 	// 				}else{
 	// 					// ↓未定義のフィールドタイプの場合のデフォルトの挙動
-	// 					tmpVal += px2dtGuiEditor.fieldBase.bind( fieldData[field.input.name], mode, field.input );
+	// 					tmpVal += broccoli.fieldBase.bind( fieldData[field.input.name], mode, field.input );
 	// 				}
 	// 				if( !field.input.hidden ){//← "hidden": true だったら、非表示(=出力しない)
 	// 					rtn += tmpVal;
@@ -358,7 +354,7 @@ module.exports = function(broccoli, moduleId, options, callback){
 
 		var field = null;
 
-		if( _topThis.templateType != 'px2dtGuiEditor' ){
+		if( _topThis.templateType != 'broccoli' ){
 			// テンプレートエンジン
 			if( _this.subModName ){
 				_this.fields = _topThis.subModule[_this.subModName].fields;
@@ -373,7 +369,7 @@ module.exports = function(broccoli, moduleId, options, callback){
 						"src": null,
 						"subModName": tmpFieldName,
 						"topThis":_topThis
-					}, function(){} );
+					} ).init(function(){});
 				}
 			}
 
@@ -411,7 +407,7 @@ module.exports = function(broccoli, moduleId, options, callback){
 						"src": tmpSearchResult.content,
 						"subModName": field.loop.name,
 						"topThis":_topThis
-					}, function(){} );
+					}).init(function(){});
 					src = tmpSearchResult.nextSrc;
 				}else if( field == 'endloop' ){
 					// ループ構造の閉じタグ
@@ -428,7 +424,7 @@ module.exports = function(broccoli, moduleId, options, callback){
 					// 	"src": tmpSearchResult.content,
 					// 	"subModName": field.if.name,
 					// 	"topThis":_topThis
-					// }, function(){} );
+					// }).init(function(){});
 					// src = tmpSearchResult.nextSrc;
 				}else if( field == 'endif' ){
 					// 分岐構造の閉じタグ
@@ -444,35 +440,50 @@ module.exports = function(broccoli, moduleId, options, callback){
 		callback(true);
 	} // parseTpl()
 
-	// setTimeout(function(){
-		if( moduleId == '_sys/root' ){
-			parseTpl( '{&{"module":{"name":"main"}}&}', _this, _this, callback );
-		}else if( moduleId == '_sys/unknown' ){
-			parseTpl( '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;">[ERROR] 未知のモジュールテンプレートです。<!-- .error --></div>', _this, _this, callback );
-		}else if( moduleId == '_sys/html' ){
-			parseTpl( '{&{"input":{"type":"html","name":"main"}}&}', _this, _this, callback );
-		}else if( typeof(options.src) === typeof('') ){
-			parseTpl( options.src, _this, options.topThis, callback );
-		}else if( _this.topThis.templateType != 'px2dtGuiEditor' && typeof(_this.subModName) == typeof('') ){
-			parseTpl( null, _this, options.topThis, callback );
-		}else if( _this.path ){
-			var tmpTplSrc = null;
-			if( isFile( _this.path+'template.html' ) ){
-				_this.templateFilename = _this.path+'template.html';
-				_this.templateType = 'px2dtGuiEditor';
-				tmpTplSrc = fs.readFileSync( _this.templateFilename );
-			}else if( isFile( _this.path+'template.html.twig' ) ){
-				_this.templateFilename = _this.path+'template.html.twig';
-				_this.templateType = 'twig';
-				tmpTplSrc = fs.readFileSync( _this.templateFilename );
+	/**
+	 * 初期化する
+	 * @param  {Function} callback callback function.
+	 * @return {Object}            this.
+	 */
+	this.init = function(callback){
+		setTimeout(function(){
+			callback = callback || function(){};
+			if( realpath === false ){
+				callback(false); return;
 			}
-			if( !tmpTplSrc ){
-				tmpTplSrc = '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;">[ERROR] モジュールテンプレートの読み込みエラーです。<!-- .error --></div>';
+
+			if( moduleId == '_sys/root' ){
+				parseTpl( '{&{"module":{"name":"main"}}&}', _this, _this, callback );
+			}else if( moduleId == '_sys/unknown' ){
+				parseTpl( '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;">[ERROR] 未知のモジュールテンプレートです。<!-- .error --></div>', _this, _this, callback );
+			}else if( moduleId == '_sys/html' ){
+				parseTpl( '{&{"input":{"type":"html","name":"main"}}&}', _this, _this, callback );
+			}else if( typeof(options.src) === typeof('') ){
+				parseTpl( options.src, _this, options.topThis, callback );
+			}else if( _this.topThis.templateType != 'broccoli' && typeof(_this.subModName) == typeof('') ){
+				parseTpl( null, _this, options.topThis, callback );
+			}else if( _this.path ){
+				var tmpTplSrc = null;
+				if( isFile( _this.path+'template.html' ) ){
+					_this.templateFilename = _this.path+'template.html';
+					_this.templateType = 'broccoli';
+					tmpTplSrc = fs.readFileSync( _this.templateFilename );
+				}else if( isFile( _this.path+'template.html.twig' ) ){
+					_this.templateFilename = _this.path+'template.html.twig';
+					_this.templateType = 'twig';
+					tmpTplSrc = fs.readFileSync( _this.templateFilename );
+				}
+				if( !tmpTplSrc ){
+					tmpTplSrc = '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;">[ERROR] モジュールテンプレートの読み込みエラーです。<!-- .error --></div>';
+				}
+				tmpTplSrc = JSON.parse( JSON.stringify( tmpTplSrc.toString() ) );
+				parseTpl( tmpTplSrc, _this, _this, callback );
 			}
-			tmpTplSrc = JSON.parse( JSON.stringify( tmpTplSrc.toString() ) );
-			parseTpl( tmpTplSrc, _this, _this, callback );
-		}
-	// }, 0);
+
+		}, 0);
+
+		return this;
+	}
 
 	return;
 }
