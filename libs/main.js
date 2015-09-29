@@ -18,7 +18,7 @@ module.exports = function(paths_module_template, options){
 	/**
 	 * モジュールIDを分解する。
 	 * @param  {String} moduleId モジュールID
-	 * @return {Object}          分解された情報を格納するオブジェクト、分解に失敗した場合はfalseを返します
+	 * @return {Object}          分解された情報を格納するオブジェクト、分解に失敗した場合はfalseを返します。
 	 */
 	this.parseModuleId = function(moduleId){
 		var rtn = {
@@ -66,8 +66,8 @@ module.exports = function(paths_module_template, options){
 
 	/**
 	 * システムテンプレートかどうか判断する
-	 * @param  {String} moduleId モジュールID
-	 * @return {Boolean}         システムテンプレートであれば true, 違えば false
+	 * @param  {String}  moduleId モジュールID
+	 * @return {Boolean}          システムテンプレートであれば true, 違えば false
 	 */
 	this.isSystemMod = function( moduleId ){
 		if( !moduleId.match(new RegExp('^_sys\\/')) ){
@@ -99,8 +99,8 @@ module.exports = function(paths_module_template, options){
 
 	/**
 	 * class: モジュール
-	 * @param  {String} moduleId モジュールID
-	 * @param  {Object}   options Options
+	 * @param  {String}   moduleId モジュールID
+	 * @param  {Object}   options  Options
 	 * @param  {Function} callback callback function.
 	 * @return {Object}            this
 	 */
@@ -108,6 +108,22 @@ module.exports = function(paths_module_template, options){
 		var classModule = require( __dirname+'/classModule.js' );
 		var rtn = new classModule(this, moduleId, options, callback);
 		return rtn;
+	}
+
+	/**
+	 * HTMLをビルドする
+	 * @param  {Object}   data     コンテンツデータ
+	 * @param  {Object}   options  オプション
+	 *                             - options.mode = ビルドモード(finalize=製品版ビルド, canvas=編集画面用ビルド)
+	 *                             - options.realpath = HTMLの出力先
+	 *                             - options.resourceDir = リソースディレクトリのパス
+	 *                             - options.resourceDist = リソース出力先ディレクトリのパス
+	 * @param  {Function} callback callback function.
+	 * @return {Object}            this
+	 */
+	this.buildHtml = function( data, options, callback ){
+		require( __dirname+'/buildHtml.js' )(this, data, options, callback);
+		return this;
 	}
 
 }

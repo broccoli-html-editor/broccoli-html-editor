@@ -218,3 +218,26 @@ describe('モジュールインスタンスを生成する', function() {
 	});
 
 });
+
+describe('ビルドする', function() {
+
+	it("テストデータをビルドする", function(done) {
+		var broccoli = makeDefaultBroccoli();
+		var data = require(__dirname+'/testdata/htdocs/test1/test1_files/guieditor.ignore/data.json');
+		// console.log(data);
+		broccoli.buildHtml(
+			data.bowl.main ,
+			{
+				'mode': 'finalize' ,
+				'realpath': path.resolve(__dirname, './testdata/htdocs/test1/test1.html') ,
+				'resourceDir': path.resolve(__dirname, './testdata/htdocs/test1/test1_files/guieditor.ignore/resources/') ,
+				'resourceDist': path.resolve(__dirname, './testdata/htdocs/test1/test1_files/resources/')
+			} ,
+			function( html, err ){
+				console.log( html );
+				done();
+			}
+		);
+	});
+
+});
