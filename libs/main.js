@@ -15,6 +15,9 @@ module.exports = function(paths_module_template, options){
 	this.paths_module_template = paths_module_template;
 	this.options = options;
 
+	this.fieldDefinitions = {};
+	this.fieldBase = new (require(__dirname+'/fieldBase.js'))(this);
+
 	/**
 	 * モジュールIDを分解する。
 	 * @param  {String} moduleId モジュールID

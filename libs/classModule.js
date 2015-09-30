@@ -52,10 +52,10 @@ module.exports = function(broccoli, moduleId, options){
 	}
 	if( options.topThis ){
 		this.topThis = options.topThis;
-		this.nameSpace = options.topThis.nameSpace;
+		// this.nameSpace = options.topThis.nameSpace;
 	}else{
 		this.topThis = this;
-		this.nameSpace = {"vars": {}};
+		// this.nameSpace = {"vars": {}};
 	}
 
 	/* 閉じタグを探す */

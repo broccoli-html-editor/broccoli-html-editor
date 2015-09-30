@@ -17,6 +17,11 @@ module.exports = function(broccoli, data, options, callback){
 
 	var mod = broccoli.createModuleInstance( data.modId );
 
+	this.nameSpace = {"vars": {}};
+	if( options.nameSpace ){
+		this.nameSpace = options.nameSpace;
+	}
+
 
 	it79.fnc(
 		{},
@@ -168,7 +173,7 @@ module.exports = function(broccoli, data, options, callback){
 							// is_set に指定されたフィールドに値があったら、という評価ロジックを取り急ぎ実装。
 							// もうちょっとマシな条件の書き方がありそうな気がするが、あとで考える。
 							// → 2015-04-25: cond のルールを追加。
-							var tmpSearchResult = searchEndTag( src, 'if' );
+							var tmpSearchResult = mod.searchEndTag( src, 'if' );
 							var boolResult = false;
 							src = '';
 							if( field.if.cond && typeof(field.if.cond) == typeof([]) ){
