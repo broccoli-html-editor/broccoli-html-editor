@@ -5,7 +5,7 @@
    "fields": {
     "main": [
      {
-      "modId": "testMod1:units/cols3",
+      "modId": "0:unknown/unknown",
       "fields": {
        "column1": [
         {
@@ -17,7 +17,7 @@
          "anchor": ""
         },
         {
-         "modId": "testMod1:parts/minimum_module",
+         "modId": "0:parts/minimum_module",
          "fields": {
           "md_src": "## 最小構成のモジュールのサンプル"
          },
@@ -25,7 +25,7 @@
          "anchor": ""
         },
         {
-         "modId": "testMod1:parts/md",
+         "modId": "0:parts/md",
          "fields": {
           "md_src": "## (1) モジュールIDの表現形式\n\n```\n{$idx}:{$dir}/{$name}\n```"
          },
@@ -35,7 +35,7 @@
        ],
        "column2": [
         {
-         "modId": "testMod1:parts/md",
+         "modId": "0:parts/md",
          "fields": {
           "md_src": "## (2) モジュールテンプレートの定義場所\n\n`px-files/px2dtconfig.json` に定義する。\nあああああ"
          },
@@ -45,7 +45,7 @@
        ],
        "column3": [
         {
-         "modId": "testMod1:parts/md",
+         "modId": "0:parts/md",
          "fields": {
           "md_src": "## (3) Composer から呼び出す場合\n\n- require に、リポジトリを指定する。\n- ディレクトリのパスは `./vendor/vendorname/libname/~~~~` になるはず。"
          }
@@ -55,11 +55,11 @@
       "dec": "あああああああ"
      },
      {
-      "modId": "testMod1:units/thumb_list",
+      "modId": "0:units/thumb_list",
       "fields": {
        "thumb_loop": [
         {
-         "modId": "testMod1:units/thumb_list",
+         "modId": "0:units/thumb_list",
          "fields": {
           "href": "http://pickles.pxt.jp/",
           "thumb": {
@@ -78,7 +78,7 @@
          "subModName": "thumb_loop"
         },
         {
-         "modId": "testMod1:units/thumb_list",
+         "modId": "0:units/thumb_list",
          "fields": {
           "href": "http://www.pxt.jp/",
           "thumb": {
@@ -97,7 +97,7 @@
          "subModName": "thumb_loop"
         },
         {
-         "modId": "testMod1:units/thumb_list",
+         "modId": "0:units/thumb_list",
          "fields": {
           "href": "http://pickles2.pxt.jp/",
           "thumb": {
@@ -116,7 +116,7 @@
          "subModName": "thumb_loop"
         },
         {
-         "modId": "testMod1:units/thumb_list",
+         "modId": "0:units/thumb_list",
          "fields": {
           "href": "http://www.pxt.jp/",
           "thumb": {
@@ -129,7 +129,7 @@
          "subModName": "thumb_loop"
         },
         {
-         "modId": "testMod1:units/thumb_list",
+         "modId": "0:units/thumb_list",
          "fields": {
           "href": "http://www.pxt.jp/",
           "thumb": {
@@ -142,7 +142,7 @@
          "subModName": "thumb_loop"
         },
         {
-         "modId": "testMod1:units/thumb_list",
+         "modId": "0:units/thumb_list",
          "fields": {
           "href": "/",
           "thumb": {
@@ -158,11 +158,11 @@
       }
      },
      {
-      "modId": "testMod1:units/cols3",
+      "modId": "0:units/cols3",
       "fields": {
        "column1": [
         {
-         "modId": "testMod1:parts/md",
+         "modId": "0:parts/md",
          "fields": {
           "md_src": "## 長いページを作るテスト\n\n長いページを作ると、スクロールバーが出る。\n\n高さ調整のためのスクリプトの実行順序を見直すと直るのではないかな。"
          }
@@ -170,13 +170,13 @@
        ],
        "column2": [
         {
-         "modId": "testMod1:parts/html",
+         "modId": "0:parts/html",
          "fields": {
           "html_src": "<h2>自分でコーディングする領域</h2>\n<p>HTMLコードを自分で書きます。</p>\n<p>HTMLエンティティ変換もされないので、<strong>自分で書きます</strong>。</p>"
          }
         },
         {
-         "modId": "testMod1:parts/text",
+         "modId": "0:parts/text",
          "fields": {
           "text_src": "ただのテキスト。<br />\nHTMLエンティティ変換される、はず。\n\n- でも、markdownの書式は使えない、はず。\n\nあー、改行が反映されない、か。"
          }
@@ -184,19 +184,19 @@
        ],
        "column3": [
         {
-         "modId": "testMod1:parts/html",
+         "modId": "0:parts/html",
          "fields": {
           "html_src": "宿題宿題。"
          }
         },
         {
-         "modId": "testMod1:parts/text",
+         "modId": "0:parts/text",
          "fields": {
           "text_src": "宿題やったかー？\n＼(^o^)／"
          }
         },
         {
-         "modId": "testMod1:parts/md",
+         "modId": "0:parts/md",
          "fields": {
           "md_src": "会社の宿題。\n\nmodule はやっぱり、input の1つでは問題がある。不便。\n\nこいつは直しました。\nmoduleフィールドを追加。`input type:module` は廃止。"
          }
@@ -205,32 +205,32 @@
       }
      },
      {
-      "modId": "testMod1:units/unit",
+      "modId": "0:units/unit",
       "fields": {
        "main": [
         {
-         "modId": "testMod1:parts/deeploop",
+         "modId": "0:parts/deeploop",
          "fields": {
           "sample_loop1": [
            {
-            "modId": "testMod1:parts/deeploop",
+            "modId": "0:parts/deeploop",
             "fields": {
              "md_src1": "テストテキストモジュールー！",
              "sample_loop2": [
               {
-               "modId": "testMod1:parts/deeploop",
+               "modId": "0:parts/deeploop",
                "fields": {
                 "md_src2": "テスト2\nうふろぉぉぉぉ",
                 "sample_loop3": [
                  {
-                  "modId": "testMod1:parts/deeploop",
+                  "modId": "0:parts/deeploop",
                   "fields": {
                    "md_src3": "だはぁぁぁぁぁ"
                   },
                   "subModName": "sample_loop3"
                  },
                  {
-                  "modId": "testMod1:parts/deeploop",
+                  "modId": "0:parts/deeploop",
                   "fields": {
                    "md_src3": "どぉぉぉ"
                   },
@@ -241,26 +241,26 @@
                "subModName": "sample_loop2"
               },
               {
-               "modId": "testMod1:parts/deeploop",
+               "modId": "0:parts/deeploop",
                "fields": {
                 "md_src2": "テスト2いいいおおおお",
                 "sample_loop3": [
                  {
-                  "modId": "testMod1:parts/deeploop",
+                  "modId": "0:parts/deeploop",
                   "fields": {
                    "md_src3": "マークダウンコード。そのままHTMLに変換されます。"
                   },
                   "subModName": "sample_loop3"
                  },
                  {
-                  "modId": "testMod1:parts/deeploop",
+                  "modId": "0:parts/deeploop",
                   "fields": {
                    "md_src3": "テスト3ああああ"
                   },
                   "subModName": "sample_loop3"
                  },
                  {
-                  "modId": "testMod1:parts/deeploop",
+                  "modId": "0:parts/deeploop",
                   "fields": {
                    "md_src3": "ループして"
                   },
@@ -275,7 +275,7 @@
             "subModName": "sample_loop1"
            },
            {
-            "modId": "testMod1:parts/deeploop",
+            "modId": "0:parts/deeploop",
             "fields": {
              "md_src1": "テキストテキストー！",
              "sample_loop2": []
@@ -283,7 +283,7 @@
             "subModName": "sample_loop1"
            },
            {
-            "modId": "testMod1:parts/deeploop",
+            "modId": "0:parts/deeploop",
             "fields": {
              "md_src1": "",
              "sample_loop2": []
@@ -294,31 +294,31 @@
          }
         },
         {
-         "modId": "testMod1:parts/md",
+         "modId": "0:parts/md",
          "fields": {
           "md_src": "## なかなかです。\n\nまだ帰らなくてもいいでしょ。\nもっと遊びたいんだよ。\n\nいいじゃんかよーーーー！"
          }
         },
         {
-         "modId": "testMod1:parts/ul",
+         "modId": "0:parts/ul",
          "fields": {
           "sample_loop": [
            {
-            "modId": "testMod1:parts/ul",
+            "modId": "0:parts/ul",
             "fields": {
              "md_src2": "きたーーーー！"
             },
             "subModName": "sample_loop"
            },
            {
-            "modId": "testMod1:parts/ul",
+            "modId": "0:parts/ul",
             "fields": {
              "md_src2": "うぉーーーすばらしいー！！∑(ﾟДﾟ)\n\n- markdown書くけどね。"
             },
             "subModName": "sample_loop"
            },
            {
-            "modId": "testMod1:parts/ul",
+            "modId": "0:parts/ul",
             "fields": {
              "md_src2": "<span>こうしたら？</span>"
             },
@@ -331,23 +331,23 @@
       }
      },
      {
-      "modId": "testMod1:parts/md",
+      "modId": "0:parts/md",
       "fields": {
        "md_src": "## いい感じになってまいりました\n\nあけましておめでとうございます。"
       }
      },
      {
-      "modId": "testMod1:parts/md",
+      "modId": "0:parts/md",
       "fields": {
        "md_src": "## できました\n\n`px.utils.iterate()` が、オブジェクトも処理できるようになりました。"
       }
      },
      {
-      "modId": "testMod1:units/cols3",
+      "modId": "0:units/cols3",
       "fields": {
        "column1": [
         {
-         "modId": "testMod1:parts/md",
+         "modId": "0:parts/md",
          "fields": {
           "md_src": "## 長いページを作るテスト\n\n長いページを作ると、スクロールバーが出る。\n\n高さ調整のためのスクリプトの実行順序を見直すと直るのではないかな。"
          }
@@ -355,7 +355,7 @@
        ],
        "column2": [
         {
-         "modId": "testMod1:parts/md",
+         "modId": "0:parts/md",
          "fields": {
           "md_src": "複雑な画面をつくろうと思うと・・・やっぱそこそこ大変ね。\n\n配列処理を毎回キックしてるので、リフレッシュに時間がかかる。重い。"
          }
@@ -363,7 +363,7 @@
        ],
        "column3": [
         {
-         "modId": "testMod1:parts/md",
+         "modId": "0:parts/md",
          "fields": {
           "md_src": "まぁ、このあたりは、上手い人にお願いしちゃお。"
          }
@@ -372,11 +372,11 @@
       }
      },
      {
-      "modId": "testMod1:units/cols2",
+      "modId": "0:units/cols2",
       "fields": {
        "column1": [
         {
-         "modId": "testMod1:parts/md",
+         "modId": "0:parts/md",
          "fields": {
           "md_src": "## 長いページを作るテスト\n\n長いページを作ると、スクロールバーが出る。\n\n### コールバックチェーンがいまいち\n\n高さ調整のためのスクリプトの実行順序を見直すと直るのではないかな。"
          }
@@ -384,7 +384,7 @@
        ],
        "column2": [
         {
-         "modId": "testMod1:parts/md",
+         "modId": "0:parts/md",
          "fields": {
           "md_src": "## 複雑になっちゃったなぁ\n\n### なかなかさ、あれですな。\n\n集中して構えないと手を入れられない感じ。むぅ。"
          },
@@ -395,17 +395,17 @@
       }
      },
      {
-      "modId": "testMod1:parts/md",
+      "modId": "0:parts/md",
       "fields": {
        "md_src": "## 長いページを作るテスト\n\n長いページを作ると、スクロールバーが出る。\n\n高さ調整のためのスクリプトの実行順序を見直すと直るのではないかな。"
       }
      },
      {
-      "modId": "testMod1:units/cols3",
+      "modId": "0:units/cols3",
       "fields": {
        "column1": [
         {
-         "modId": "testMod1:parts/md",
+         "modId": "0:parts/md",
          "fields": {
           "md_src": "## 長いページを作るテスト\n\n長いページを作ると、スクロールバーが出る。\n\n高さ調整のためのスクリプトの実行順序を見直すと直るのではないかな。"
          }
@@ -413,7 +413,7 @@
        ],
        "column2": [
         {
-         "modId": "testMod1:parts/image",
+         "modId": "0:parts/image",
          "fields": {
           "image_src": {
            "original": {
@@ -429,13 +429,13 @@
          }
         },
         {
-         "modId": "testMod1:parts/md",
+         "modId": "0:parts/md",
          "fields": {
           "md_src": "↑これはpng"
          }
         },
         {
-         "modId": "testMod1:parts/image",
+         "modId": "0:parts/image",
          "fields": {
           "image_src": {
            "original": {
@@ -452,7 +452,7 @@
          }
         },
         {
-         "modId": "testMod1:parts/md",
+         "modId": "0:parts/md",
          "fields": {
           "md_src": "↑これはSVG"
          }
@@ -460,7 +460,7 @@
        ],
        "column3": [
         {
-         "modId": "testMod1:parts/image",
+         "modId": "0:parts/image",
          "fields": {
           "image_src": {
            "original": {
@@ -478,7 +478,7 @@
          "dec": ""
         },
         {
-         "modId": "testMod1:parts/image",
+         "modId": "0:parts/image",
          "fields": {
           "image_src": {
            "original": {
@@ -495,7 +495,7 @@
          }
         },
         {
-         "modId": "testMod1:parts/md",
+         "modId": "0:parts/md",
          "fields": {
           "md_src": "マークダウン。"
          }
@@ -504,11 +504,11 @@
       }
      },
      {
-      "modId": "testMod1:units/cols3",
+      "modId": "0:units/cols3",
       "fields": {
        "column1": [
         {
-         "modId": "testMod1:parts/text",
+         "modId": "0:parts/text",
          "fields": {
           "text_src": "## JSON のフォーマットを、人にやさしくしてみました。\n\nテキストコード。"
          }
@@ -516,7 +516,7 @@
        ],
        "column2": [
         {
-         "modId": "testMod1:parts/md",
+         "modId": "0:parts/md",
          "fields": {
           "md_src": "## JSON自体の差分を追えるようになりたい。\n\nやっぱね、マークダウンが便利っす。\n\n大抵のことはこれで事足りる。\n\nちゃんとマークアップできるし。コードもそこそこキレイにできる。"
          }
@@ -524,24 +524,24 @@
        ],
        "column3": [
         {
-         "modId": "testMod1:parts/md",
+         "modId": "0:parts/md",
          "fields": {
           "md_src": "こうすると、なるらしい。\n\n```\nvar jsonStr = JSON.stringify( {\"JSON\":\"value\"}, null, 1 );\n```"
          }
         },
         {
-         "modId": "testMod1:parts/ul",
+         "modId": "0:parts/ul",
          "fields": {
           "sample_loop": [
            {
-            "modId": "testMod1:parts/ul",
+            "modId": "0:parts/ul",
             "fields": {
              "md_src2": "増えたっていいじゃない？"
             },
             "subModName": "sample_loop"
            },
            {
-            "modId": "testMod1:parts/ul",
+            "modId": "0:parts/ul",
             "fields": {
              "md_src2": "PHP必要？\n\n- マークダウンをリスト編集する。\n- リストモジュールなのに、さらにリストをネストして編集してるんだからっ。"
             },
@@ -554,11 +554,11 @@
       }
      },
      {
-      "modId": "testMod1:units/cols3",
+      "modId": "0:units/cols3",
       "fields": {
        "column1": [
         {
-         "modId": "testMod1:parts/md",
+         "modId": "0:parts/md",
          "fields": {
           "md_src": "### ね。遊んでくればいいじゃんか"
          }
@@ -566,7 +566,7 @@
        ],
        "column2": [
         {
-         "modId": "testMod1:parts/md",
+         "modId": "0:parts/md",
          "fields": {
           "md_src": "### どうなってんだー\n\nなかなか再現しないなぁ。\n\n高さが増えるイベントが起きた直後に、スクロールバーの分座標がずれるっぽい。"
          }
@@ -574,7 +574,7 @@
        ],
        "column3": [
         {
-         "modId": "testMod1:parts/md",
+         "modId": "0:parts/md",
          "fields": {
           "md_src": "### 処理の順番間違ってるかな？\n\n復旧したっ。"
          }
@@ -583,7 +583,7 @@
       }
      },
      {
-      "modId": "testMod1:parts/html",
+      "modId": "0:parts/html",
       "fields": {
        "html_src": ""
       },
@@ -591,23 +591,23 @@
       "anchor": ""
      },
      {
-      "modId": "testMod1:dev/wysiwig_tinymce",
+      "modId": "0:dev/wysiwig_tinymce",
       "fields": {
        "tiny": "<p>やっぱこっちのエディタの方が使いやすそうに見える。</p>\n<p>さっき、一瞬、影が見えたような気が・・・(汗)(汗)</p>\n<ul>\n<li>きの、せい、かな？</li>\n</ul>"
       }
      },
      {
-      "modId": "testMod1:parts/md",
+      "modId": "0:parts/md",
       "fields": {
        "md_src": "## あれ。\n\n`app.contentsSourceData.js (138)` で出たエラーが出てこない。\n\n"
       }
      },
      {
-      "modId": "testMod1:parts/deeploop",
+      "modId": "0:parts/deeploop",
       "fields": {
        "sample_loop1": [
         {
-         "modId": "testMod1:parts/deeploop",
+         "modId": "0:parts/deeploop",
          "fields": {
           "md_src1": "まーくだうーん",
           "sample_loop2": []
@@ -615,17 +615,17 @@
          "subModName": "sample_loop1"
         },
         {
-         "modId": "testMod1:parts/deeploop",
+         "modId": "0:parts/deeploop",
          "fields": {
           "md_src1": "## md",
           "sample_loop2": [
            {
-            "modId": "testMod1:parts/deeploop",
+            "modId": "0:parts/deeploop",
             "fields": {
              "md_src2": "## md layer 2",
              "sample_loop3": [
               {
-               "modId": "testMod1:parts/deeploop",
+               "modId": "0:parts/deeploop",
                "fields": {
                 "md_src3": "## md layer 3",
                 "multitext_src3": {
@@ -650,12 +650,12 @@
       }
      },
      {
-      "modId": "testMod1:boxes/attention_box",
+      "modId": "0:boxes/attention_box",
       "fields": {
        "box_title": "警告でございます。",
        "mod": [
         {
-         "modId": "testMod1:parts/md",
+         "modId": "0:parts/md",
          "fields": {
           "md_src": "あーーーー。なかなかアレですね。\n\n- 潰れちゃったってことかな？\n- タイトル入れないと表示されないのかー。。\n\nモジュールのルートノードのボックスモデルを考慮する必要がありそう。 `padding` や `border` の分が考慮されていないので、UIが小さい・・・。\n\nやっぱ、最後にまとめて表示するのが警告っぽいですよねー。\n\nあと、重いっす。"
          }
@@ -673,33 +673,33 @@
    "fields": {
     "main": [
      {
-      "modId": "testMod1:units/unit",
+      "modId": "0:units/unit",
       "fields": {
        "main": [
         {
-         "modId": "testMod1:units/unit",
+         "modId": "0:units/unit",
          "fields": {
           "main": [
            {
-            "modId": "testMod1:units/unit",
+            "modId": "0:units/unit",
             "fields": {
              "main": [
               {
-               "modId": "testMod1:units/unit",
+               "modId": "0:units/unit",
                "fields": {
                 "main": [
                  {
-                  "modId": "testMod1:units/unit",
+                  "modId": "0:units/unit",
                   "fields": {
                    "main": [
                     {
-                     "modId": "testMod1:units/unit",
+                     "modId": "0:units/unit",
                      "fields": {
                       "main": []
                      }
                     },
                     {
-                     "modId": "testMod1:units/cols2",
+                     "modId": "0:units/cols2",
                      "fields": {
                       "column1": [],
                       "column2": [

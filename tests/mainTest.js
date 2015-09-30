@@ -222,6 +222,7 @@ describe('モジュールインスタンスを生成する', function() {
 describe('ビルドする', function() {
 
 	it("テストデータをビルドする", function(done) {
+		this.timeout(5*1000);
 		var broccoli = makeDefaultBroccoli();
 		var data = require(__dirname+'/testdata/htdocs/test1/test1_files/guieditor.ignore/data.json');
 		// console.log(data);
@@ -232,6 +233,26 @@ describe('ビルドする', function() {
 				'realpath': path.resolve(__dirname, './testdata/htdocs/test1/test1.html') ,
 				'resourceDir': path.resolve(__dirname, './testdata/htdocs/test1/test1_files/guieditor.ignore/resources/') ,
 				'resourceDist': path.resolve(__dirname, './testdata/htdocs/test1/test1_files/resources/')
+			} ,
+			function( html, err ){
+				console.log( html );
+				done();
+			}
+		);
+	});
+
+	it("未定義のモジュールを含む場合のビルド", function(done) {
+		this.timeout(5*1000);
+		var broccoli = makeDefaultBroccoli();
+		var data = require(__dirname+'/testdata/htdocs/unknown_module/unknown_files/guieditor.ignore/data.json');
+		// console.log(data);
+		broccoli.buildHtml(
+			data.bowl.main ,
+			{
+				'mode': 'finalize' ,
+				'realpath': path.resolve(__dirname, './testdata/htdocs/unknown_module/unknown.html') ,
+				'resourceDir': path.resolve(__dirname, './testdata/htdocs/unknown_module/unknown_files/guieditor.ignore/resources/') ,
+				'resourceDist': path.resolve(__dirname, './testdata/htdocs/unknown_module/unknown_files/resources/')
 			} ,
 			function( html, err ){
 				console.log( html );
