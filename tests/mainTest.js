@@ -7,6 +7,7 @@ var Broccoli = require('../libs/main.js');
 
 function makeDefaultBroccoli(){
 	return new Broccoli({
+		'PlainHTMLElements': './testdata/PlainHTMLElements/',
 		'testMod1': './testdata/modules1/',
 		'testMod2': './testdata/modules2/'
 	}, {
@@ -131,9 +132,9 @@ describe('パッケージ一覧の取得', function() {
 		var broccoli = makeDefaultBroccoli();
 		broccoli.getPackageList(function(list){
 			// console.log( list );
-			assert.equal(list.length, 2);
-			assert.equal(list[0].packageId, 'testMod1');
-			assert.equal(list[0].packageName, 'テストモジュール1');
+			assert.equal(list.length, 3);
+			assert.equal(list[1].packageId, 'testMod1');
+			assert.equal(list[1].packageName, 'テストモジュール1');
 			done();
 		});
 
@@ -231,11 +232,12 @@ describe('ビルドする', function() {
 			{
 				'mode': 'finalize' ,
 				'realpath': path.resolve(__dirname, './testdata/htdocs/test1/test1.html') ,
+				'realpathJson': path.resolve(__dirname, './testdata/htdocs/test1/test1_files/guieditor.ignore/data.json') ,
 				'resourceDir': path.resolve(__dirname, './testdata/htdocs/test1/test1_files/guieditor.ignore/resources/') ,
 				'resourceDist': path.resolve(__dirname, './testdata/htdocs/test1/test1_files/resources/')
 			} ,
 			function( html, err ){
-				console.log( html );
+				// console.log( html );
 				done();
 			}
 		);
@@ -251,11 +253,12 @@ describe('ビルドする', function() {
 			{
 				'mode': 'finalize' ,
 				'realpath': path.resolve(__dirname, './testdata/htdocs/unknown_module/unknown.html') ,
+				'realpathJson': path.resolve(__dirname, './testdata/htdocs/unknown_module/unknown_files/guieditor.ignore/data.json') ,
 				'resourceDir': path.resolve(__dirname, './testdata/htdocs/unknown_module/unknown_files/guieditor.ignore/resources/') ,
 				'resourceDist': path.resolve(__dirname, './testdata/htdocs/unknown_module/unknown_files/resources/')
 			} ,
 			function( html, err ){
-				console.log( html );
+				// console.log( html );
 				done();
 			}
 		);

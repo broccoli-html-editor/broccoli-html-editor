@@ -5,6 +5,7 @@ module.exports = function(paths_module_template, options){
 	var _this = this;
 	var path = require('path');
 	var fs = require('fs');
+	var _ = require('underscore');
 	options = options || {};
 	options.cd = options.cd || '.';
 
@@ -15,8 +16,11 @@ module.exports = function(paths_module_template, options){
 	this.paths_module_template = paths_module_template;
 	this.options = options;
 
-	this.fieldDefinitions = {};
 	this.fieldBase = new (require(__dirname+'/fieldBase.js'))(this);
+	this.fieldDefinitions = {};
+	function loadFieldDefinition(path){
+		return _.defaults( new (require(path))(_this), _this.fieldBase );
+	}
 
 	/**
 	 * モジュールIDを分解する。
@@ -119,13 +123,32 @@ module.exports = function(paths_module_template, options){
 	 * @param  {Object}   options  オプション
 	 *                             - options.mode = ビルドモード(finalize=製品版ビルド, canvas=編集画面用ビルド)
 	 *                             - options.realpath = HTMLの出力先
+	 *                             - options.realpathJson = data.jsonの保存先
 	 *                             - options.resourceDir = リソースディレクトリのパス
 	 *                             - options.resourceDist = リソース出力先ディレクトリのパス
 	 * @param  {Function} callback callback function.
 	 * @return {Object}            this
 	 */
 	this.buildHtml = function( data, options, callback ){
-		require( __dirname+'/buildHtml.js' )(this, data, options, callback);
+		this.resourceMgr = new (require(__dirname+'/resourceMgr.js'))(this);
+		this.resourceMgr.init( options.realpathJson, options.resourceDir, options.resourceDist, function(){
+
+			_this.fieldDefinitions.href = loadFieldDefinition(__dirname+'/fields/app.fields.href.js');
+			_this.fieldDefinitions.html = loadFieldDefinition(__dirname+'/fields/app.fields.html.js');
+			_this.fieldDefinitions.html_attr_text = loadFieldDefinition(__dirname+'/fields/app.fields.html_attr_text.js');
+			_this.fieldDefinitions.image = loadFieldDefinition(__dirname+'/fields/app.fields.image.js');
+			_this.fieldDefinitions.markdown = loadFieldDefinition(__dirname+'/fields/app.fields.markdown.js');
+			_this.fieldDefinitions.multitext = loadFieldDefinition(__dirname+'/fields/app.fields.multitext.js');
+			_this.fieldDefinitions.select = loadFieldDefinition(__dirname+'/fields/app.fields.select.js');
+			_this.fieldDefinitions.table = loadFieldDefinition(__dirname+'/fields/app.fields.table.js');
+			_this.fieldDefinitions.text = loadFieldDefinition(__dirname+'/fields/app.fields.text.js');
+			_this.fieldDefinitions.wysiwyg_rte = loadFieldDefinition(__dirname+'/fields/app.fields.wysiwyg_rte.js');
+			_this.fieldDefinitions.wysiwyg_tinymce = loadFieldDefinition(__dirname+'/fields/app.fields.wysiwyg_tinymce.js');
+
+			require( __dirname+'/buildHtml.js' )(_this, data, options, callback);
+		} );
+console.log(this.resourceMgr);
+
 		return this;
 	}
 
