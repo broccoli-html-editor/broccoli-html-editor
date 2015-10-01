@@ -160,12 +160,25 @@ module.exports = function(broccoli, data, options, callback){
 						}else if( field.loop ){
 							// loop field
 							var tmpSearchResult = mod.searchEndTag( src, 'loop' );
-							rtn += fieldData[field.loop.name].join('');
 							src = tmpSearchResult.nextSrc;
 
-							buildBroccoliHtml( src, rtn, function(html){
-								callback(html);
-							} );
+							it79.ary(
+								fieldData[field.loop.name],
+								function( it2, row, idx ){
+									// ネストされたモジュールの再帰処理
+									broccoli.buildHtml(row, options, function(html){
+										// rtn += '<!-- ---- LOOP ---- -->';
+										rtn += html;
+										// rtn += '<!-- ---- /LOOP ---- -->';
+										it2.next();
+									});
+								} ,
+								function(){
+									buildBroccoliHtml( src, rtn, function(html){
+										callback(html);
+									} );
+								}
+							);
 							return;
 
 						}else if( field.if ){
@@ -248,6 +261,7 @@ module.exports = function(broccoli, data, options, callback){
 
 						}
 
+						callback(rtn);
 						return;
 					}//buildBroccoliHtml()
 

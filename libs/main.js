@@ -147,7 +147,6 @@ module.exports = function(paths_module_template, options){
 
 			require( __dirname+'/buildHtml.js' )(_this, data, options, callback);
 		} );
-console.log(this.resourceMgr);
 
 		return this;
 	}
