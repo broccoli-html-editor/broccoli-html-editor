@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Broccoli TEST</title>
+	</head>
+	<body>
+		<div class="canvas">Broccoli GUI HTML Editor.</div>
+
+		<!-- socket.io -->
+		<script src="/socket.io/socket.io.js" type="text/javascript"></script>
+
+		<!-- baobab-fw -->
+		<script src="/baobab-fw/baobab-fw.js" type="text/javascript"></script>
+
+		<!-- broccoli -->
+		<script src="./broccoli.js"></script>
+		<script type="text/javascript">
+			// console.log(broccoli);
+
+/**
+ * main.js
+ */
+window.main = new (function(){
+	var _this = this;
+	var socket = this.socket = window.baobabFw
+		.createSocket(
+			this,
+			io,
+			{
+				'showSocketTest': function( data, callback, main, socket ){
+					// console.log(data);
+					alert(data.message);
+					// console.log(callback);
+					callback(data);
+					return;
+				}
+			}
+		)
+	;
+
+	/**
+	 * WebSocket疎通確認
+	 */
+	this.socketTest = function(){
+		socket.send(
+			'socketTest',
+			{'message': 'socketTest from frontend.'} ,
+			function(data){
+				console.log(data);
+				alert('callback function is called!');
+			}
+		);
+		return this;
+	}
+
+})();
+
+
+main.socketTest();
+
+		</script>
+	</body>
+</html>

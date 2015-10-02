@@ -1,6 +1,6 @@
 {
   "name": "broccoli",
-  "version": "0.0.1",
+  "version": "0.0.1-alpha.1+nb",
   "description": "",
   "main": "libs/main.js",
   "scripts": {
@@ -29,6 +29,23 @@
     "underscore": "^1.8.3"
   },
   "devDependencies": {
+    "baobab-fw": "git://github.com/tomk79/BaobabFW.git",
+    "gulp": "^3.8.10",
+    "gulp-autoprefixer": "^2.3.1",
+    "gulp-browserify": "^0.5.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-plumber": "^1.0.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^2.0.1",
+    "gulp-twig": "^0.3.0",
+    "gulp-uglify": "^1.2.0",
+    "jquery": "^2.1.4",
     "mocha": "^2.1.0"
+  },
+  "baobabConfig": {
+    "defaultPort": 8088,
+    "frontendDocumentRoot": "./tests/baobab/frontend/",
+    "backendJs": "./tests/baobab/backend/main.js",
+    "backendApis": "./tests/baobab/backend/apis/"
   }
 }
