@@ -11,17 +11,6 @@ module.exports = function(broccoli){
 			// rtn = rtn.replace(new RegExp('\r\n|\r|\n','g'), '<br />'); // ← 属性値などに使うので、改行コードは改行コードのままじゃないとマズイ。
 		}
 		if( mode == 'canvas' && !rtn.length ){
-			// rtn = $('<span>')
-			// 	.text('(ダブルクリックしてテキストを編集してください)')
-			// 	.css({
-			// 		'color':'#999',
-			// 		'background-color':'#ddd',
-			// 		'font-size':'10px',
-			// 		'padding':'0 1em'
-			// 	})
-			// 	.get(0).outerHTML
-			// ;
-			// ↑属性値などに使うので、HTMLタグを含むのはマズイ。
 			rtn = '';
 		}
 		return rtn;

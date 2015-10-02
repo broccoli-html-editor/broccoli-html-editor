@@ -18,8 +18,8 @@ module.exports = function(paths_module_template, options){
 
 	this.fieldBase = new (require(__dirname+'/fieldBase.js'))(this);
 	this.fieldDefinitions = {};
-	function loadFieldDefinition(path){
-		return _.defaults( new (require(path))(_this), _this.fieldBase );
+	function loadFieldDefinition(mod){
+		return _.defaults( new (mod)(_this), _this.fieldBase );
 	}
 
 	/**
@@ -133,17 +133,17 @@ module.exports = function(paths_module_template, options){
 		this.resourceMgr = new (require(__dirname+'/resourceMgr.js'))(this);
 		this.resourceMgr.init( options.realpath, options.realpathJson, options.resourceDir, options.resourceDist, function(){
 
-			_this.fieldDefinitions.href = loadFieldDefinition(__dirname+'/fields/app.fields.href.js');
-			_this.fieldDefinitions.html = loadFieldDefinition(__dirname+'/fields/app.fields.html.js');
-			_this.fieldDefinitions.html_attr_text = loadFieldDefinition(__dirname+'/fields/app.fields.html_attr_text.js');
-			_this.fieldDefinitions.image = loadFieldDefinition(__dirname+'/fields/app.fields.image.js');
-			_this.fieldDefinitions.markdown = loadFieldDefinition(__dirname+'/fields/app.fields.markdown.js');
-			_this.fieldDefinitions.multitext = loadFieldDefinition(__dirname+'/fields/app.fields.multitext.js');
-			_this.fieldDefinitions.select = loadFieldDefinition(__dirname+'/fields/app.fields.select.js');
-			_this.fieldDefinitions.table = loadFieldDefinition(__dirname+'/fields/app.fields.table.js');
-			_this.fieldDefinitions.text = loadFieldDefinition(__dirname+'/fields/app.fields.text.js');
-			_this.fieldDefinitions.wysiwyg_rte = loadFieldDefinition(__dirname+'/fields/app.fields.wysiwyg_rte.js');
-			_this.fieldDefinitions.wysiwyg_tinymce = loadFieldDefinition(__dirname+'/fields/app.fields.wysiwyg_tinymce.js');
+			_this.fieldDefinitions.href = loadFieldDefinition(require(__dirname+'/fields/app.fields.href.js'));
+			_this.fieldDefinitions.html = loadFieldDefinition(require(__dirname+'/fields/app.fields.html.js'));
+			_this.fieldDefinitions.html_attr_text = loadFieldDefinition(require(__dirname+'/fields/app.fields.html_attr_text.js'));
+			_this.fieldDefinitions.image = loadFieldDefinition(require(__dirname+'/fields/app.fields.image.js'));
+			_this.fieldDefinitions.markdown = loadFieldDefinition(require(__dirname+'/fields/app.fields.markdown.js'));
+			_this.fieldDefinitions.multitext = loadFieldDefinition(require(__dirname+'/fields/app.fields.multitext.js'));
+			_this.fieldDefinitions.select = loadFieldDefinition(require(__dirname+'/fields/app.fields.select.js'));
+			_this.fieldDefinitions.table = loadFieldDefinition(require(__dirname+'/fields/app.fields.table.js'));
+			_this.fieldDefinitions.text = loadFieldDefinition(require(__dirname+'/fields/app.fields.text.js'));
+			_this.fieldDefinitions.wysiwyg_rte = loadFieldDefinition(require(__dirname+'/fields/app.fields.wysiwyg_rte.js'));
+			_this.fieldDefinitions.wysiwyg_tinymce = loadFieldDefinition(require(__dirname+'/fields/app.fields.wysiwyg_tinymce.js'));
 
 			require( __dirname+'/buildHtml.js' )(_this, data, options, callback);
 		} );

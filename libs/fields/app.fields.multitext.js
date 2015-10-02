@@ -22,19 +22,7 @@ module.exports = function(broccoli){
 			}
 		}
 		if( mode == 'canvas' && !rtn.length ){
-			rtn = $('<span>')
-				.text('(ダブルクリックしてテキストを編集してください)')
-				.css({
-					'color':'#999',
-					'background-color':'#ddd',
-					'font-size':'10px',
-					'padding':'0 1em',
-					'max-width': '100%',
-					'overflow': 'hidden',
-					'white-space': 'nowrap'
-				})
-				.get(0).outerHTML
-			;
+			rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてテキストを編集してください)</span>';
 		}
 		return rtn;
 	}

@@ -2,6 +2,8 @@
 
 ## Usage
 
+### NodeJS
+
 ```js
 var Broccoli = require('broccoli');
 var broccoli = new Broccoli({
@@ -10,4 +12,11 @@ var broccoli = new Broccoli({
 	...
 });
 
+```
+
+### Browser JS
+
+```html
+<!-- broccoli -->
+<script src="client/dist/broccoli.min.js"></script>
 ```
