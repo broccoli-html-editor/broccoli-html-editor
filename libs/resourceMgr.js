@@ -2,12 +2,16 @@
  * resourceMgr.js
  */
 module.exports = function(broccoli){
+
+	var path = require('path');
 	var fs = require('fs');
 	var php = require('phpjs');
 	var DIRECTORY_SEPARATOR = '/';
 
 	var _this = this;
+	var _contentsPath;
 	var _resourcesDirPath;
+	var _resourcesPublishDirPath;
 	var _dataJsonPath;
 
 	var _resourceDb = {};
@@ -73,12 +77,13 @@ module.exports = function(broccoli){
 	/**
 	 * initialize resource Manager
 	 */
-	this.init = function( dataJsonPath, resourcesDirPath, resourcesPublishDirPath, cb ){
+	this.init = function( contentsPath, dataJsonPath, resourcesDirPath, resourcesPublishDirPath, callback ){
+		_contentsPath = contentsPath;
+		_dataJsonPath = dataJsonPath;
 		_resourcesDirPath = resourcesDirPath;
 		_resourcesPublishDirPath = resourcesPublishDirPath;
-		_dataJsonPath = dataJsonPath;
 		loadResourceList( function(){
-			cb();
+			callback();
 		} );
 		return this;
 	}
@@ -86,7 +91,7 @@ module.exports = function(broccoli){
 	/**
 	 * Loading resource list
 	 */
-	function loadResourceList( cb ){
+	function loadResourceList( callback ){
 		_resourceDb = {};
 		if( !isDirectory( _resourcesDirPath ) ){
 			mkdir( _resourcesDirPath );
@@ -102,7 +107,7 @@ module.exports = function(broccoli){
 				_resourceDb[resKey] = JSON.parse( jsonStr );
 			}
 		}
-		cb();
+		callback();
 		return;
 	}
 
@@ -272,12 +277,11 @@ module.exports = function(broccoli){
 	 */
 	this.getResourcePublicPath = function( resKey ){
 		var res = this.getResource( resKey );
-		var basename = '___dummy___';
 		var filename = resKey;
 		if( typeof(res.publicFilename) == typeof('') && res.publicFilename.length ){
 			filename = res.publicFilename;
 		}
-		var rtn = './'+basename+'/resources/'+filename+'.'+res.ext;
+		var rtn = './'+path.relative(path.dirname(_contentsPath), _resourcesPublishDirPath+'/'+filename+'.'+res.ext);
 		return rtn;
 	}
 
@@ -286,9 +290,7 @@ module.exports = function(broccoli){
 	 */
 	this.getResourceOriginalRealpath = function( resKey ){
 		var res = this.getResource( resKey );
-		var basename = '___dummy___';
 		var rtn = _resourcesDirPath+'/'+resKey+'/bin.'+_resourceDb[resKey].ext;
-		// var rtn = './'+basename+'/resources/'+resKey+'.'+res.ext;
 		return rtn;
 	}
 

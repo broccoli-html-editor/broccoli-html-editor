@@ -131,7 +131,7 @@ module.exports = function(paths_module_template, options){
 	 */
 	this.buildHtml = function( data, options, callback ){
 		this.resourceMgr = new (require(__dirname+'/resourceMgr.js'))(this);
-		this.resourceMgr.init( options.realpathJson, options.resourceDir, options.resourceDist, function(){
+		this.resourceMgr.init( options.realpath, options.realpathJson, options.resourceDir, options.resourceDist, function(){
 
 			_this.fieldDefinitions.href = loadFieldDefinition(__dirname+'/fields/app.fields.href.js');
 			_this.fieldDefinitions.html = loadFieldDefinition(__dirname+'/fields/app.fields.html.js');
