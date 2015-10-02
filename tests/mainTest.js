@@ -237,6 +237,7 @@ describe('ビルドする', function() {
 				'resourceDist': path.resolve(__dirname, './testdata/htdocs/test1/test1_files/resources/')
 			} ,
 			function( html, err ){
+				fs.writeFileSync(path.resolve(__dirname, './testdata/htdocs/test1/test1.html'), html);
 				// console.log( html );
 				done();
 			}
@@ -258,6 +259,7 @@ describe('ビルドする', function() {
 				'resourceDist': path.resolve(__dirname, './testdata/htdocs/unknown_module/unknown_files/resources/')
 			} ,
 			function( html, err ){
+				fs.writeFileSync(path.resolve(__dirname, './testdata/htdocs/unknown_module/unknown.html'), html);
 				// console.log( html );
 				done();
 			}
