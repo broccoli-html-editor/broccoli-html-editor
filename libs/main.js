@@ -16,10 +16,26 @@ module.exports = function(paths_module_template, options){
 	this.paths_module_template = paths_module_template;
 	this.options = options;
 
-	this.fieldBase = new (require(__dirname+'/fieldBase.js'))(this);
+	this.resourceMgr = new (require('./resourceMgr.js'))(this);
+	this.fieldBase = new (require('./fieldBase.js'))(this);
 	this.fieldDefinitions = {};
-	function loadFieldDefinition(mod){
-		return _.defaults( new (mod)(_this), _this.fieldBase );
+	function loadFieldDefinition(){
+		function loadFieldDefinition(mod){
+			return _.defaults( new (mod)(_this), _this.fieldBase );
+		}
+		_this.fieldDefinitions.href = loadFieldDefinition(require(__dirname+'/fields/app.fields.href.js'));
+		_this.fieldDefinitions.html = loadFieldDefinition(require(__dirname+'/fields/app.fields.html.js'));
+		_this.fieldDefinitions.html_attr_text = loadFieldDefinition(require(__dirname+'/fields/app.fields.html_attr_text.js'));
+		_this.fieldDefinitions.image = loadFieldDefinition(require(__dirname+'/fields/app.fields.image.js'));
+		_this.fieldDefinitions.markdown = loadFieldDefinition(require(__dirname+'/fields/app.fields.markdown.js'));
+		_this.fieldDefinitions.multitext = loadFieldDefinition(require(__dirname+'/fields/app.fields.multitext.js'));
+		_this.fieldDefinitions.select = loadFieldDefinition(require(__dirname+'/fields/app.fields.select.js'));
+		_this.fieldDefinitions.table = loadFieldDefinition(require(__dirname+'/fields/app.fields.table.js'));
+		_this.fieldDefinitions.text = loadFieldDefinition(require(__dirname+'/fields/app.fields.text.js'));
+		_this.fieldDefinitions.wysiwyg_rte = loadFieldDefinition(require(__dirname+'/fields/app.fields.wysiwyg_rte.js'));
+		_this.fieldDefinitions.wysiwyg_tinymce = loadFieldDefinition(require(__dirname+'/fields/app.fields.wysiwyg_tinymce.js'));
+
+		return true;
 	}
 
 	/**
@@ -89,7 +105,7 @@ module.exports = function(paths_module_template, options){
 	 * @return {Object}            this
 	 */
 	this.getPackageList = function(callback){
-		require( __dirname+'/getPackageList.js' )(this, callback);
+		require( './getPackageList.js' )(this, callback);
 		return this;
 	}
 
@@ -100,7 +116,7 @@ module.exports = function(paths_module_template, options){
 	 * @return {Object}             this
 	 */
 	this.getModuleListByPackageId = function(packageId, callback){
-		require( __dirname+'/getModuleListByPackageId.js' )(this, packageId, callback);
+		require( './getModuleListByPackageId.js' )(this, packageId, callback);
 		return this;
 	}
 
@@ -112,7 +128,7 @@ module.exports = function(paths_module_template, options){
 	 * @return {Object}            this
 	 */
 	this.createModuleInstance = function(moduleId, options, callback){
-		var classModule = require( __dirname+'/classModule.js' );
+		var classModule = require( './classModule.js' );
 		var rtn = new classModule(this, moduleId, options, callback);
 		return rtn;
 	}
@@ -130,21 +146,8 @@ module.exports = function(paths_module_template, options){
 	 * @return {Object}            this
 	 */
 	this.buildHtml = function( data, options, callback ){
-		this.resourceMgr = new (require(__dirname+'/resourceMgr.js'))(this);
 		this.resourceMgr.init( options.realpath, options.realpathJson, options.resourceDir, options.resourceDist, function(){
-
-			_this.fieldDefinitions.href = loadFieldDefinition(require(__dirname+'/fields/app.fields.href.js'));
-			_this.fieldDefinitions.html = loadFieldDefinition(require(__dirname+'/fields/app.fields.html.js'));
-			_this.fieldDefinitions.html_attr_text = loadFieldDefinition(require(__dirname+'/fields/app.fields.html_attr_text.js'));
-			_this.fieldDefinitions.image = loadFieldDefinition(require(__dirname+'/fields/app.fields.image.js'));
-			_this.fieldDefinitions.markdown = loadFieldDefinition(require(__dirname+'/fields/app.fields.markdown.js'));
-			_this.fieldDefinitions.multitext = loadFieldDefinition(require(__dirname+'/fields/app.fields.multitext.js'));
-			_this.fieldDefinitions.select = loadFieldDefinition(require(__dirname+'/fields/app.fields.select.js'));
-			_this.fieldDefinitions.table = loadFieldDefinition(require(__dirname+'/fields/app.fields.table.js'));
-			_this.fieldDefinitions.text = loadFieldDefinition(require(__dirname+'/fields/app.fields.text.js'));
-			_this.fieldDefinitions.wysiwyg_rte = loadFieldDefinition(require(__dirname+'/fields/app.fields.wysiwyg_rte.js'));
-			_this.fieldDefinitions.wysiwyg_tinymce = loadFieldDefinition(require(__dirname+'/fields/app.fields.wysiwyg_tinymce.js'));
-
+			loadFieldDefinition();
 			require( __dirname+'/buildHtml.js' )(_this, data, options, callback);
 		} );
 
