@@ -10,29 +10,42 @@ module.exports = function(broccoli, callback){
 	var php = require('phpjs');
 	var fs = require('fs');
 	var $modules = broccoli.paths_module_template;
-	var rtn = [];
+	var rtn = {};
 
-	it79.ary(
-		$modules,
-		function(it1, row, idx){
-			var realpath = row;
-			var infoJson = {};
-			try {
-				infoJson = JSON.parse(fs.readFileSync( realpath+'info.json' ));
-			} catch (e) {
-				infoJson = {};
+	it79.fnc(
+		{},
+		[
+			function(it0, data){
+				it79.ary(
+					$modules,
+					function(it1, row, idx){
+						var realpath = row;
+						var infoJson = {};
+						try {
+							infoJson = JSON.parse(fs.readFileSync( realpath+'info.json' ));
+						} catch (e) {
+							infoJson = {};
+						}
+						rtn[idx] = {
+							'packageId': idx,
+							'packageName': (infoJson.name || idx),
+							'realpath': realpath,
+							'infoJson': infoJson
+						};
+						broccoli.getModuleListByPackageId(idx, function(modList){
+							rtn[idx].categories = modList.categories;
+							it1.next();
+						});
+					} ,
+					function(){
+						it0.next();
+					}
+				);
+			} ,
+			function(it0, data){
+				callback(rtn);
 			}
-			rtn.push({
-				'packageId': idx,
-				'packageName': (infoJson.name || idx),
-				'realpath': realpath,
-				'infoJson': infoJson
-			});
-			it1.next();
-		},
-		function(){
-			callback(rtn);
-		}
+		]
 	);
 
 	return;

@@ -5,7 +5,8 @@
 		<title>Broccoli TEST</title>
 	</head>
 	<body>
-		<div class="canvas">Broccoli GUI HTML Editor.</div>
+		<div id="canvas">Broccoli GUI HTML Editor.</div>
+		<div id="palette">module palette.</div>
 
 		<!-- socket.io -->
 		<script src="/socket.io/socket.io.js" type="text/javascript"></script>
@@ -16,7 +17,7 @@
 		<!-- broccoli -->
 		<script src="./broccoli.js"></script>
 		<script type="text/javascript">
-			console.log(broccoli);
+			// console.log(broccoli);
 
 /**
  * main.js
@@ -30,7 +31,7 @@ window.main = new (function(){
 			{
 				'showSocketTest': function( data, callback, main, socket ){
 					// console.log(data);
-					alert(data.message);
+					// alert(data.message);
 					// console.log(callback);
 					callback(data);
 					return;
@@ -38,6 +39,22 @@ window.main = new (function(){
 			}
 		)
 	;
+
+	this.init = function(){
+		// this.socketTest();
+		this.socket.send(
+			'broccoli',
+			{
+				'api': 'getPackageList'
+			},
+			function(packageList){
+				console.log(packageList);
+				broccoli.drawModulePalette(packageList, document.getElementById('palette'), function(){
+					console.log('palette standby.');
+				});
+			}
+		);
+	}
 
 	/**
 	 * WebSocket疎通確認
@@ -48,16 +65,14 @@ window.main = new (function(){
 			{'message': 'socketTest from frontend.'} ,
 			function(data){
 				console.log(data);
-				alert('callback function is called!');
+				// alert('callback function is called!');
 			}
 		);
 		return this;
 	}
 
 })();
-
-
-main.socketTest();
+main.init();
 
 		</script>
 	</body>

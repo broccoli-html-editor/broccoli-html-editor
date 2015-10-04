@@ -16,9 +16,8 @@ var _tasks = [
 // broccoli.js (frontend) を処理
 gulp.task("broccoli.js", function() {
 	gulp.src(["client/src/broccoli.js"])
-		.pipe(browserify({
-		}))
 		.pipe(plumber())
+		.pipe(browserify({}))
 		.pipe(concat('broccoli.js'))
 		// .pipe(uglify())
 		.pipe(gulp.dest( './client/dist/' ))

@@ -6,6 +6,7 @@ module.exports = function(paths_module_template, options){
 	var path = require('path');
 	var fs = require('fs');
 	var _ = require('underscore');
+	paths_module_template = paths_module_template || {};
 	options = options || {};
 	options.cd = options.cd || '.';
 
@@ -151,6 +152,31 @@ module.exports = function(paths_module_template, options){
 			require( __dirname+'/buildHtml.js' )(_this, data, options, callback);
 		} );
 
+		return this;
+	}
+
+	/**
+	 * モジュールパレットを描画する
+	 * @param  {Object}   moduleList モジュール一覧。
+	 * @param  {Object}   targetElm  描画対象のHTML要素
+	 * @param  {Function} callback   callback function.
+	 * @return {Object}              this.
+	 */
+	this.drawModulePalette = function(moduleList, targetElm, callback){
+		require( './drawModulePalette.js' )(_this, moduleList, targetElm, callback);
+		return this;
+	}
+
+	/**
+	 * 描画エリア(Canvas)を描画する
+	 * @param  {Object}   data       フィールドデータ
+	 * @param  {Object}   moduleList モジュール一覧。
+	 * @param  {Object}   targetElm  描画対象のHTML要素
+	 * @param  {Function} callback   callback function.
+	 * @return {Object}              this.
+	 */
+	this.drawCanvas = function(data, moduleList, targetElm, callback){
+		require( './drawCanvas.js' )(_this, data, moduleList, targetElm, callback);
 		return this;
 	}
 
