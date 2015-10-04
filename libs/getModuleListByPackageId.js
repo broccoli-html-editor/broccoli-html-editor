@@ -2,6 +2,7 @@
  * getModuleListByPackageId.js
  */
 module.exports = function(broccoli, packageId, callback){
+	delete(require.cache[require('path').resolve(__filename)]);
 	var _this = this;
 	callback = callback || function(){};
 
@@ -10,6 +11,17 @@ module.exports = function(broccoli, packageId, callback){
 	var php = require('phpjs');
 	var fs = require('fs');
 	var rtn = {};
+
+	function isFile(path){
+		if( !fs.existsSync(path) || !fs.statSync(path).isFile() ){
+			return false;
+		}
+		return true;
+	}
+	function base64_encode( bin ){
+		var base64 = bin.toString('base64');
+		return base64;
+	}
 
 	new Promise(function(rlv){rlv();})
 		.then(function(){ return new Promise(function(rlv, rjt){
@@ -83,6 +95,15 @@ module.exports = function(broccoli, packageId, callback){
 									}
 									rtn.categories[idx].modules[row2].moduleName = rtn.categories[idx].modules[row2].moduleInfo.name||rtn.categories[idx].modules[row2].moduleId;
 									rtn.categories[idx].modules[row2].realpath = realpath;
+									var realpathThumb = path.resolve( realpath, 'thumb.png' );
+									rtn.categories[idx].modules[row2].thumb = null;
+									try{
+										if( isFile(realpathThumb) ){
+											rtn.categories[idx].modules[row2].thumb = 'data:image/png;base64,'+base64_encode( fs.readFileSync( realpathThumb ) );
+										}
+									} catch (e) {
+										rtn.categories[idx].modules[row2].thumb = null;
+									}
 								}
 								it2.next();
 							} ,
