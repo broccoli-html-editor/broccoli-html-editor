@@ -2,6 +2,8 @@
  * broccoli.js
  */
 module.exports = function(paths_module_template, options){
+	// if(!window){delete(require.cache[require('path').resolve(__filename)]);}
+
 	var _this = this;
 	var path = require('path');
 	var fs = require('fs');
@@ -151,7 +153,6 @@ module.exports = function(paths_module_template, options){
 			loadFieldDefinition();
 			require( __dirname+'/buildHtml.js' )(_this, data, options, callback);
 		} );
-
 		return this;
 	}
 
@@ -168,15 +169,15 @@ module.exports = function(paths_module_template, options){
 	}
 
 	/**
-	 * 描画エリア(Canvas)を描画する
+	 * 編集用UI(Panels)を描画する
 	 * @param  {Object}   data       フィールドデータ
 	 * @param  {Object}   moduleList モジュール一覧。
 	 * @param  {Object}   targetElm  描画対象のHTML要素
 	 * @param  {Function} callback   callback function.
 	 * @return {Object}              this.
 	 */
-	this.drawCanvas = function(data, moduleList, targetElm, callback){
-		require( './drawCanvas.js' )(_this, data, moduleList, targetElm, callback);
+	this.drawPanels = function(data, moduleList, targetElm, callback){
+		require( './drawPanels.js' )(_this, data, moduleList, targetElm, callback);
 		return this;
 	}
 

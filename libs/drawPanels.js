@@ -1,7 +1,8 @@
 /**
- * drawCanvas.js
+ * drawPanels.js
  */
 module.exports = function(broccoli, data, moduleList, targetElm, callback){
+	// delete(require.cache[require('path').resolve(__filename)]);
 	if(!window){ callback(); return false; }
 	if(!targetElm){ callback(); return false; }
 	// console.log(data);
@@ -15,5 +16,6 @@ module.exports = function(broccoli, data, moduleList, targetElm, callback){
 	var php = require('phpjs');
 	var twig = require('twig');
 
+	callback();
 	return;
 }

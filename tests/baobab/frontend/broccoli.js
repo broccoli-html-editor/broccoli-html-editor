@@ -12,6 +12,7 @@
  * コンテンツデータは含みません。よって、bind() のような機能は持ちません。
  */
 module.exports = function(broccoli, moduleId, options){
+	// delete(require.cache[require('path').resolve(__filename)]);
 	var _this = this;
 	options = options || {};
 
@@ -321,30 +322,10 @@ module.exports = function(broccoli, moduleId, options){
 
 },{"fs":10,"htmlparser":16,"iterate79":17,"path":14,"phpjs":20}],3:[function(require,module,exports){
 /**
- * drawCanvas.js
- */
-module.exports = function(broccoli, data, moduleList, targetElm, callback){
-	if(!window){ callback(); return false; }
-	if(!targetElm){ callback(); return false; }
-	// console.log(data);
-	// console.log(options);
-
-	var _this = this;
-	callback = callback || function(){};
-
-	var it79 = require('iterate79');
-	var path = require('path');
-	var php = require('phpjs');
-	var twig = require('twig');
-
-	return;
-}
-
-},{"iterate79":17,"path":14,"phpjs":20,"twig":21}],4:[function(require,module,exports){
-/**
  * drawModulePalette.js
  */
 module.exports = function(broccoli, moduleList, targetElm, callback){
+	// delete(require.cache[require('path').resolve(__filename)]);
 	if(!window){ callback(); return false; } // client side only
 	if(!targetElm){ callback(); return false; }
 	// console.log(moduleList);
@@ -485,11 +466,35 @@ module.exports = function(broccoli, moduleList, targetElm, callback){
 	return;
 }
 
-},{"iterate79":17,"jquery":18,"path":14,"phpjs":20,"twig":21}],5:[function(require,module,exports){
+},{"iterate79":17,"jquery":18,"path":14,"phpjs":20,"twig":21}],4:[function(require,module,exports){
+/**
+ * drawPanels.js
+ */
+module.exports = function(broccoli, data, moduleList, targetElm, callback){
+	// delete(require.cache[require('path').resolve(__filename)]);
+	if(!window){ callback(); return false; }
+	if(!targetElm){ callback(); return false; }
+	// console.log(data);
+	// console.log(options);
+
+	var _this = this;
+	callback = callback || function(){};
+
+	var it79 = require('iterate79');
+	var path = require('path');
+	var php = require('phpjs');
+	var twig = require('twig');
+
+	callback();
+	return;
+}
+
+},{"iterate79":17,"path":14,"phpjs":20,"twig":21}],5:[function(require,module,exports){
 /**
  * fieldBase.js
  */
 module.exports = function(broccoli){
+	// delete(require.cache[require('path').resolve(__filename)]);
 
 	/**
 	 * データをバインドする
@@ -722,6 +727,8 @@ module.exports = function(broccoli, packageId, callback){
  * getPackageList.js
  */
 module.exports = function(broccoli, callback){
+	// delete(require.cache[require('path').resolve(__filename)]);
+
 	var _this = this;
 	callback = callback || function(){};
 
@@ -777,6 +784,8 @@ module.exports = function(broccoli, callback){
  * broccoli.js
  */
 module.exports = function(paths_module_template, options){
+	// if(!window){delete(require.cache[require('path').resolve(__filename)]);}
+
 	var _this = this;
 	var path = require('path');
 	var fs = require('fs');
@@ -922,11 +931,11 @@ module.exports = function(paths_module_template, options){
 	 * @return {Object}            this
 	 */
 	this.buildHtml = function( data, options, callback ){
+		console.log(234567890);
 		this.resourceMgr.init( options.realpath, options.realpathJson, options.resourceDir, options.resourceDist, function(){
 			loadFieldDefinition();
 			require( __dirname+'/buildHtml.js' )(_this, data, options, callback);
 		} );
-
 		return this;
 	}
 
@@ -943,27 +952,28 @@ module.exports = function(paths_module_template, options){
 	}
 
 	/**
-	 * 描画エリア(Canvas)を描画する
+	 * 編集用UI(Panels)を描画する
 	 * @param  {Object}   data       フィールドデータ
 	 * @param  {Object}   moduleList モジュール一覧。
 	 * @param  {Object}   targetElm  描画対象のHTML要素
 	 * @param  {Function} callback   callback function.
 	 * @return {Object}              this.
 	 */
-	this.drawCanvas = function(data, moduleList, targetElm, callback){
-		require( './drawCanvas.js' )(_this, data, moduleList, targetElm, callback);
+	this.drawPanels = function(data, moduleList, targetElm, callback){
+		require( './drawPanels.js' )(_this, data, moduleList, targetElm, callback);
 		return this;
 	}
 
 }
 
 }).call(this,"/../../libs")
-},{"./classModule.js":2,"./drawCanvas.js":3,"./drawModulePalette.js":4,"./fieldBase.js":5,"./getModuleListByPackageId.js":6,"./getPackageList.js":7,"./resourceMgr.js":9,"fs":10,"path":14,"underscore":22}],9:[function(require,module,exports){
+},{"./classModule.js":2,"./drawModulePalette.js":3,"./drawPanels.js":4,"./fieldBase.js":5,"./getModuleListByPackageId.js":6,"./getPackageList.js":7,"./resourceMgr.js":9,"fs":10,"path":14,"underscore":22}],9:[function(require,module,exports){
 (function (Buffer){
 /**
  * resourceMgr.js
  */
 module.exports = function(broccoli){
+	// delete(require.cache[require('path').resolve(__filename)]);
 
 	var path = require('path');
 	var fs = require('fs');

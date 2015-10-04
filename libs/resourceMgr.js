@@ -2,6 +2,7 @@
  * resourceMgr.js
  */
 module.exports = function(broccoli){
+	// delete(require.cache[require('path').resolve(__filename)]);
 
 	var path = require('path');
 	var fs = require('fs');

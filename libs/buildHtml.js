@@ -2,6 +2,7 @@
  * buildHtml.js
  */
 module.exports = function(broccoli, data, options, callback){
+	// delete(require.cache[require('path').resolve(__filename)]);
 	// console.log(data);
 	// console.log(options);
 
@@ -29,7 +30,6 @@ module.exports = function(broccoli, data, options, callback){
 			function(it1, d){
 				mod.init(function(res){
 					// console.log(res);
-					// console.log(mod);
 					it1.next(d);
 				});
 			} ,

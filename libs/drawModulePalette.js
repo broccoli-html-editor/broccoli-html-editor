@@ -2,6 +2,7 @@
  * drawModulePalette.js
  */
 module.exports = function(broccoli, moduleList, targetElm, callback){
+	// delete(require.cache[require('path').resolve(__filename)]);
 	if(!window){ callback(); return false; } // client side only
 	if(!targetElm){ callback(); return false; }
 	// console.log(moduleList);

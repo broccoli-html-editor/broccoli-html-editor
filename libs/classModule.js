@@ -5,6 +5,7 @@
  * コンテンツデータは含みません。よって、bind() のような機能は持ちません。
  */
 module.exports = function(broccoli, moduleId, options){
+	// delete(require.cache[require('path').resolve(__filename)]);
 	var _this = this;
 	options = options || {};
 

@@ -5,8 +5,14 @@
 		<title>Broccoli TEST</title>
 	</head>
 	<body>
-		<div id="canvas">Broccoli GUI HTML Editor.</div>
+		<div class="canvas">
+			<iframe src="/editpage/index.html"></iframe>
+			<div id="panels"></div>
+		</div>
 		<div id="palette">module palette.</div>
+
+		<!-- jQuery -->
+		<script src="jquery-1.11.1.min.js" type="text/javascript"></script>
 
 		<!-- socket.io -->
 		<script src="/socket.io/socket.io.js" type="text/javascript"></script>
@@ -42,7 +48,7 @@ window.main = new (function(){
 
 	this.init = function(){
 		// this.socketTest();
-		this.socket.send(
+		_this.socket.send(
 			'broccoli',
 			{
 				'api': 'getPackageList'
@@ -51,6 +57,20 @@ window.main = new (function(){
 				console.log(packageList);
 				broccoli.drawModulePalette(packageList, document.getElementById('palette'), function(){
 					console.log('palette standby.');
+
+					_this.socket.send(
+						'broccoli',
+						{
+							'api': 'buildHtml'
+						},
+						function(html){
+							// console.log(html);
+							$('.contents', $('iframe').get(0).contentWindow.document).html(html);
+
+							console.log('HTML standby.');
+						}
+					);
+
 				});
 			}
 		);
