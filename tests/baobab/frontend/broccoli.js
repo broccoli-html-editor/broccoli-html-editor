@@ -1,325 +1,9 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function(window){
-	window.Broccoli = require('../../libs/main.js');
+	window.Broccoli = require('../../libs/main-client.js');
 })(window);
 
-},{"../../libs/main.js":8}],2:[function(require,module,exports){
-/**
- * classModule.js
- * モジュールを解析・構造化するオブジェクトクラスです。
- * 1つのモジュールを単位として表現します。
- * コンテンツデータは含みません。よって、bind() のような機能は持ちません。
- */
-module.exports = function(broccoli, moduleId, options){
-	// delete(require.cache[require('path').resolve(__filename)]);
-	var _this = this;
-	options = options || {};
-
-	var it79 = require('iterate79');
-	var path = require('path');
-	var php = require('phpjs');
-	var fs = require('fs');
-
-	var rtn = {};
-
-	var realpath = broccoli.getModuleRealpath(moduleId);
-	this.isSystemModule = broccoli.isSystemMod(moduleId);
-
-	function isFile(path){
-		if( !fs.existsSync(path) || !fs.statSync(path).isFile() ){
-			return false;
-		}
-		return true;
-	}
-	function isDirectory(path){
-		if( !fs.existsSync(path) || !fs.statSync(path).isDirectory() ){
-			return false;
-		}
-		return true;
-	}
-
-	// console.log('classModTpl -> '+moduleId);
-
-	this.isSingleRootElement = false;
-	this.path = null;
-	if( !this.isSystemModule && typeof(options.src) !== typeof('') ){
-		try {
-			this.path = fs.realpathSync( broccoli.getModuleRealpath(moduleId) )+'/';
-		} catch (e) {
-			moduleId = '_sys/unknown';
-			this.isSystemModule = true;
-		}
-	}
-	this.id = moduleId;
-	this.fields = {};
-	this.templateType = 'broccoli';
-
-	if(options.subModName){
-		this.subModName = options.subModName;
-	}
-	if( options.topThis ){
-		this.topThis = options.topThis;
-		// this.nameSpace = options.topThis.nameSpace;
-	}else{
-		this.topThis = this;
-		// this.nameSpace = {"vars": {}};
-	}
-
-	/* 閉じタグを探す */
-	this.searchEndTag = function( src, fieldType ){
-		var rtn = {
-			content: '',
-			nextSrc: src
-		};
-		var depth = 0;
-		while( 1 ){
-			if( !rtn.nextSrc.match(new RegExp('^((?:.|\r|\n)*?)\\{\\&((?:.|\r|\n)*?)\\&\\}((?:.|\r|\n)*)$') ) ){
-				break;
-			}
-			rtn.content += RegExp.$1;
-			var fieldSrc = RegExp.$2;
-			var field = JSON.parse( fieldSrc );
-			rtn.nextSrc = RegExp.$3;
-
-			if( field == 'end'+fieldType ){
-				if( depth ){
-					depth --;
-					rtn.content += '{&'+fieldSrc+'&}';
-					continue;
-				}
-				return rtn;
-			}else if( field[fieldType] ){
-				depth ++;
-				rtn.content += '{&'+fieldSrc+'&}';
-				continue;
-			}else{
-				rtn.content += '{&'+fieldSrc+'&}';
-				continue;
-			}
-		}
-		return rtn;
-	}
-
-	/**
-	 * テンプレートを解析する
-	 */
-	function parseTpl(src, _this, _topThis, callback){
-		callback = callback||function(){};
-		if(src !== null){
-			src = JSON.parse( JSON.stringify( src ) );
-			_this.template = src;
-		}
-		_this.info = {
-			name: null,
-			areaSizeDetection: 'shallow',
-			interface: {}
-		};
-
-		if( _this.path && isDirectory( _this.path ) ){
-			if( isFile( _this.path+'/info.json' ) ){
-				var tmpJson = {};
-				try{
-					tmpJson = JSON.parse( fs.readFileSync( _this.path+'/info.json' ) );
-				}catch(e){
-					console.log( 'module info.json parse error: ' + _this.path+'/info.json' );
-				}
-				if( tmpJson.name ){
-					_this.info.name = tmpJson.name;
-				}
-				if( tmpJson.areaSizeDetection ){
-					_this.info.areaSizeDetection = tmpJson.areaSizeDetection;
-				}
-				if( tmpJson.interface ){
-					if( tmpJson.interface.fields ){
-						_this.fields = tmpJson.interface.fields;
-						for( var tmpIdx in _this.fields ){
-							// name属性を自動補完
-							_this.fields[tmpIdx].name = tmpIdx;
-						}
-					}
-					if( tmpJson.interface.subModule ){
-						_this.subModule = tmpJson.interface.subModule;
-						for( var tmpIdx in _this.subModule ){
-							for( var tmpIdx2 in _this.subModule[tmpIdx].fields ){
-								// name属性を自動補完
-								_this.subModule[tmpIdx].fields[tmpIdx2].name = tmpIdx2;
-							}
-						}
-					}
-				}
-			}
-			_this.thumb = null;
-			if( isFile( _this.path+'/thumb.png' ) ){
-				_this.thumb = 'data:image/png;base64,'+php.base64_encode( fs.readFileSync( _this.path+'/thumb.png' ) );
-			}
-		}
-
-		if( src ){
-			_this.isSingleRootElement = (function(tplSrc){
-				// 単一のルート要素を持っているかどうか判定。
-				tplSrc = JSON.parse( JSON.stringify(tplSrc) );
-				tplSrc = tplSrc.replace( new RegExp('\\<\\!\\-\\-.*?\\-\\-\\>','g'), '' );
-				tplSrc = tplSrc.replace( new RegExp('\\{\\&.*?\\&\\}','g'), '' );
-				tplSrc = tplSrc.replace( new RegExp('\r\n|\r|\n','g'), '' );
-				tplSrc = tplSrc.replace( new RegExp('\t','g'), '' );
-				tplSrc = tplSrc.replace( new RegExp('^[\s\r\n]*'), '' );
-				tplSrc = tplSrc.replace( new RegExp('[\s\r\n]*$'), '' );
-				if( tplSrc.length && tplSrc.indexOf('<') === 0 && tplSrc.match(new RegExp('\\>$')) ){
-					var htmlparser = require('htmlparser');
-					var handler = new htmlparser.DefaultHandler(function (error, dom) {
-						if (error){
-							// console.log(error);
-						}
-					});
-					var parser = new htmlparser.Parser(handler);
-					parser.parseComplete(tplSrc);
-					// console.log(handler.dom);
-
-					if( handler.dom.length == 1 ){
-						return true;
-					}
-				}
-				return false;
-			})(src);
-		}
-
-		var field = null;
-
-		if( _topThis.templateType != 'broccoli' ){
-			// テンプレートエンジン
-			if( _this.subModName ){
-				_this.fields = _topThis.subModule[_this.subModName].fields;
-			}
-
-			for( var tmpFieldName in _this.fields ){
-				if( _this.fields[tmpFieldName].fieldType == 'loop' ){
-					if( typeof(_this.subModule) !== typeof({}) ){
-						_this.subModule = {};
-					}
-					_topThis.subModule[tmpFieldName] = broccoli.createModuleInstance( _this.id, {
-						"src": null,
-						"subModName": tmpFieldName,
-						"topThis":_topThis
-					} ).init(function(){});
-				}
-			}
-
-		}else{
-			while( 1 ){
-				if( !src.match(new RegExp('^((?:.|\r|\n)*?)\\{\\&((?:.|\r|\n)*?)\\&\\}((?:.|\r|\n)*)$') ) ){
-					break;
-				}
-				field = RegExp.$2;
-				src = RegExp.$3;
-
-				try{
-					field = JSON.parse( field );
-				}catch(e){
-					console.log( 'module template parse error: ' + _this.templateFilename );
-					field = {'input':{
-						'type':'html',
-						'name':'__error__'
-					}};
-				}
-				if( field.input ){
-					_this.fields[field.input.name] = field.input;
-					_this.fields[field.input.name].fieldType = 'input';
-				}else if( field.module ){
-					_this.fields[field.module.name] = field.module;
-					_this.fields[field.module.name].fieldType = 'module';
-				}else if( field.loop ){
-					_this.fields[field.loop.name] = field.loop;
-					_this.fields[field.loop.name].fieldType = 'loop';
-					var tmpSearchResult = _this.searchEndTag( src, 'loop' );
-					if( typeof(_this.subModule) !== typeof({}) ){
-						_this.subModule = {};
-					}
-					_topThis.subModule[field.loop.name] = broccoli.createModuleInstance( _this.id, {
-						"src": tmpSearchResult.content,
-						"subModName": field.loop.name,
-						"topThis":_topThis
-					}).init(function(){});
-					src = tmpSearchResult.nextSrc;
-				}else if( field == 'endloop' ){
-					// ループ構造の閉じタグ
-					// 本来ここは通らないはず。
-					// ここを通る場合は、対応する開始タグがない endloop がある場合。
-				}else if( field.if ){
-					// _this.fields[field.if.name] = field.if;
-					// _this.fields[field.if.name].fieldType = 'if';
-					// var tmpSearchResult = _this.searchEndTag( src, 'if' );
-					// if( typeof(_this.subModule) !== typeof({}) ){
-					// 	_this.subModule = {};
-					// }
-					// _topThis.subModule[field.if.name] = broccoli.createModuleInstance( _this.id, {
-					// 	"src": tmpSearchResult.content,
-					// 	"subModName": field.if.name,
-					// 	"topThis":_topThis
-					// }).init(function(){});
-					// src = tmpSearchResult.nextSrc;
-				}else if( field == 'endif' ){
-					// 分岐構造の閉じタグ
-					// 本来ここは通らないはず。
-					// ここを通る場合は、対応する開始タグがない endloop がある場合。
-				}else if( field.echo ){
-					// _this.fields[field.echo.name] = field.echo;
-					// _this.fields[field.echo.name].fieldType = 'echo';
-				}
-			}
-		}
-		// console.log(_this.fields);
-		callback(true);
-	} // parseTpl()
-
-	/**
-	 * 初期化する
-	 * @param  {Function} callback callback function.
-	 * @return {Object}            this.
-	 */
-	this.init = function(callback){
-		setTimeout(function(){
-			callback = callback || function(){};
-			if( realpath === false && !_this.isSystemModule ){
-				callback(false); return;
-			}
-
-			if( moduleId == '_sys/root' ){
-				parseTpl( '{&{"module":{"name":"main"}}&}', _this, _this, callback );
-			}else if( moduleId == '_sys/unknown' ){
-				parseTpl( '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;">[ERROR] 未知のモジュールテンプレートです。<!-- .error --></div>', _this, _this, callback );
-			}else if( moduleId == '_sys/html' ){
-				parseTpl( '{&{"input":{"type":"html","name":"main"}}&}', _this, _this, callback );
-			}else if( typeof(options.src) === typeof('') ){
-				parseTpl( options.src, _this, options.topThis, callback );
-			}else if( _this.topThis.templateType != 'broccoli' && typeof(_this.subModName) == typeof('') ){
-				parseTpl( null, _this, options.topThis, callback );
-			}else if( _this.path ){
-				var tmpTplSrc = null;
-				if( isFile( _this.path+'template.html' ) ){
-					_this.templateFilename = _this.path+'template.html';
-					_this.templateType = 'broccoli';
-					tmpTplSrc = fs.readFileSync( _this.templateFilename );
-				}else if( isFile( _this.path+'template.html.twig' ) ){
-					_this.templateFilename = _this.path+'template.html.twig';
-					_this.templateType = 'twig';
-					tmpTplSrc = fs.readFileSync( _this.templateFilename );
-				}
-				if( !tmpTplSrc ){
-					tmpTplSrc = '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;">[ERROR] モジュールテンプレートの読み込みエラーです。<!-- .error --></div>';
-				}
-				tmpTplSrc = JSON.parse( JSON.stringify( tmpTplSrc.toString() ) );
-				parseTpl( tmpTplSrc, _this, _this, callback );
-			}
-
-		}, 0);
-
-		return this;
-	}
-
-	return;
-}
-
-},{"fs":10,"htmlparser":16,"iterate79":17,"path":14,"phpjs":20}],3:[function(require,module,exports){
+},{"../../libs/main-client.js":16}],2:[function(require,module,exports){
 /**
  * drawModulePalette.js
  */
@@ -469,7 +153,7 @@ module.exports = function(broccoli, moduleList, targetElm, callback){
 	return;
 }
 
-},{"iterate79":17,"jquery":18,"path":14,"phpjs":20,"twig":21}],4:[function(require,module,exports){
+},{"iterate79":20,"jquery":21,"path":18,"phpjs":24,"twig":25}],3:[function(require,module,exports){
 /**
  * drawPanels.js
  */
@@ -610,7 +294,7 @@ module.exports = function(broccoli, panelsElm, contentsElm, options, callback){
 	return;
 }
 
-},{"iterate79":17,"jquery":18,"path":14,"phpjs":20,"twig":21}],5:[function(require,module,exports){
+},{"iterate79":20,"jquery":21,"path":18,"phpjs":24,"twig":25}],4:[function(require,module,exports){
 /**
  * fieldBase.js
  */
@@ -709,200 +393,1078 @@ module.exports = function(broccoli){
 
 }
 
-},{}],6:[function(require,module,exports){
-(function (__filename){
-/**
- * getModuleListByPackageId.js
- */
-module.exports = function(broccoli, packageId, callback){
-	delete(require.cache[require('path').resolve(__filename)]);
-	var _this = this;
-	callback = callback || function(){};
-
-	var it79 = require('iterate79');
-	var path = require('path');
+},{}],5:[function(require,module,exports){
+module.exports = function(broccoli){
 	var php = require('phpjs');
-	var fs = require('fs');
-	var rtn = {};
 
-	function isFile(path){
-		if( !fs.existsSync(path) || !fs.statSync(path).isFile() ){
-			return false;
+	/**
+	 * データをバインドする
+	 */
+	this.bind = function( fieldData, mode ){
+		var rtn = ''
+		if(typeof(fieldData)===typeof('')){
+			rtn = php.htmlspecialchars( fieldData ); // ←HTML特殊文字変換
+			// rtn = rtn.replace(new RegExp('\r\n|\r|\n','g'), '<br />'); // ← 属性値などに使うので、改行コードは改行コードのままじゃないとマズイ。
 		}
-		return true;
-	}
-	function base64_encode( bin ){
-		var base64 = bin.toString('base64');
-		return base64;
+		if( mode == 'canvas' && !rtn.length ){
+			rtn = '';
+		}
+		return rtn;
 	}
 
-	new Promise(function(rlv){rlv();})
-		.then(function(){ return new Promise(function(rlv, rjt){
-			// パッケージ情報を取得
-			rtn.packageId = packageId;
-			try {
-				rtn.realpath = broccoli.paths_module_template[packageId];
-			} catch (e) {
-				rtn.packageId = false;
-				rtn.realpath = false;
-				rjt();
-				return;
-			}
-			try {
-				rtn.packageInfo = require( rtn.realpath + 'info.json' );
-			} catch (e) {
-				rtn.packageInfo = false;
-			}
-			rlv();
-		}); })
-		.then(function(){ return new Promise(function(rlv, rjt){
-			// モジュールカテゴリをリスト化
-			fs.readdir( rtn.realpath, function(err, fileList){
-				// console.log(fileList);
-				rtn.categories = {};
-				it79.ary(
-					fileList,
-					function( it1, row, idx ){
-						var realpath = path.resolve(rtn.realpath, row);
-						if( fs.statSync(realpath).isDirectory() ){
-							realpath += '/';
-							rtn.categories[row] = {};
-							rtn.categories[row].categoryId = row;
-							try {
-								rtn.categories[row].categoryInfo = require( path.resolve( realpath, 'info.json' ) );
-							} catch (e) {
-								rtn.categories[row].categoryInfo = {};
-							}
-							rtn.categories[row].categoryName = rtn.categories[row].categoryInfo.name||row;
-							rtn.categories[row].realpath = realpath;
-							rtn.categories[row].modules = {};
-						}
-						it1.next();
-					} ,
-					function(){
-						rlv();
+	/**
+	 * エディタUIを生成
+	 */
+	this.mkEditor = function( mod, data ){
+		var changeTimer;
+		var blurTimer;
+		function onChange(){
+			clearTimeout(changeTimer);
+			var $this = $(this);
+			changeTimer = setTimeout(function(){
+				var pages = $this.data('pages');
+				var $html = $('<ul>');
+				for( var idx in pages ){
+					if( !pages[idx].path.match( new RegExp('^'+px.utils.escapeRegExp($this.val())) ) ){
+						continue;
 					}
-				);
-			} );
-		}); })
-		.then(function(){ return new Promise(function(rlv, rjt){
-			// 各カテゴリのモジュールをリスト化
-
-			it79.ary(
-				rtn.categories,
-				function( it1, row, idx ){
-
-					fs.readdir( rtn.categories[idx].realpath, function(err, fileList){
-						it79.ary(
-							fileList,
-							function( it2, row2, idx2 ){
-								var realpath = path.resolve(rtn.categories[idx].realpath, row2);
-								if( fs.statSync(realpath).isDirectory() ){
-									realpath += '/';
-									rtn.categories[idx].modules[row2] = {};
-									rtn.categories[idx].modules[row2].moduleId = rtn.packageId+':'+rtn.categories[idx].categoryId+'/'+row2;
-									try {
-										rtn.categories[idx].modules[row2].moduleInfo = require( path.resolve( realpath, 'info.json' ) );
-									} catch (e) {
-										rtn.categories[idx].modules[row2].moduleInfo = {};
-									}
-									rtn.categories[idx].modules[row2].moduleName = rtn.categories[idx].modules[row2].moduleInfo.name||rtn.categories[idx].modules[row2].moduleId;
-									rtn.categories[idx].modules[row2].realpath = realpath;
-									var realpathThumb = path.resolve( realpath, 'thumb.png' );
-									rtn.categories[idx].modules[row2].thumb = null;
-									try{
-										if( isFile(realpathThumb) ){
-											rtn.categories[idx].modules[row2].thumb = 'data:image/png;base64,'+base64_encode( fs.readFileSync( realpathThumb ) );
-										}
-									} catch (e) {
-										rtn.categories[idx].modules[row2].thumb = null;
-									}
-								}
-								it2.next();
-							} ,
-							function(){
-								it1.next();
-							}
-						);
-					} );
-				} ,
-				function(){
-					rlv();
+					$html
+						.append( $('<li>')
+							.append( $('<a>')
+								.css({
+									'display':'block'
+								})
+								.attr({
+									'href': 'javascript:;',
+									'data-path': pages[idx].path
+								})
+								.text( pages[idx].path +' ('+pages[idx].title+')' )
+								.click(function(){
+									$input
+										.val( $(this).attr('data-path') )
+										.focus()
+									;
+								})
+							)
+						)
+					;
 				}
-			);
+				$palatte.html('').append( $html );
+			}, 100);
+		}
+		var $input = $('<input>')
+			.attr({
+				"name":mod.name
+			})
+			.val(data)
+			.data( 'pages', px.getCurrentProject().site.getSitemap() )
+			.css({'width':'100%','height':'auto'})
+			.change( onChange )
+			.keyup( onChange )
+			.focus(function(){
+				clearTimeout( blurTimer );
+				$palatte.show('fast');
+			})
+			.blur(function(){
+				clearTimeout( blurTimer );
+				blurTimer = setTimeout( function(){
+					$palatte.hide();
+				}, 10 );
+			})
+			.change()
+		;
+		var $palatte = $('<div>')
+			.css({
+				'height':200,
+				'overflow':'auto',
+				'position':'absolute',
+				'background':'#f9f9f9',
+				'opacity':'0.9',
+				'width':'100%',
+				'z-index': 1000
+			})
+			.hide()
+		;
+		return $('<div>')
+			.append( $input )
+			.append( $('<div>')
+				.css({
+					'position':'relative'
+				})
+				.click(function(){
+					clearTimeout( blurTimer );
+				})
+				.append( $palatte )
+			)
+		;
+	}
 
-		}); })
-		.then(function(){ return new Promise(function(rlv, rjt){
-			// 返却
-			callback(rtn);
-			rlv();
-		}); })
-	;
+	/**
+	 * エディタUIで編集した内容を保存
+	 */
+	this.saveEditorContent = function( $dom, data, mod ){
+		var src = $dom.find('input').val();
+		src = JSON.parse( JSON.stringify(src) );
+		return src;
+	}
 
-	return;
 }
 
-}).call(this,"/../../libs/getModuleListByPackageId.js")
-},{"fs":10,"iterate79":17,"path":14,"phpjs":20}],7:[function(require,module,exports){
-/**
- * getPackageList.js
- */
-module.exports = function(broccoli, callback){
-	// delete(require.cache[require('path').resolve(__filename)]);
+},{"phpjs":24}],6:[function(require,module,exports){
+module.exports = function(broccoli){
 
-	var _this = this;
-	callback = callback || function(){};
+	/**
+	 * エディタUIが描画されたら呼ばれるコールバック
+	 */
+	this.onEditorUiDrawn = function( $dom, mod, data ){
+		px.textEditor.attachTextEditor(
+			$dom.find('textarea').get(0),
+			'html'
+		);
+		$dom.find('.CodeMirror').css({
+			'border': '1px solid #ccc',
+			'border-radius': '3px'
+		});
+		return;
+	}
 
-	var it79 = require('iterate79');
-	var path = require('path');
+}
+
+},{}],7:[function(require,module,exports){
+module.exports = function(broccoli){
 	var php = require('phpjs');
-	var fs = require('fs');
-	var $modules = broccoli.paths_module_template;
-	var rtn = {};
 
-	it79.fnc(
-		{},
-		[
-			function(it0, data){
-				it79.ary(
-					$modules,
-					function(it1, row, idx){
-						var realpath = row;
-						var infoJson = {};
-						try {
-							infoJson = JSON.parse(fs.readFileSync( realpath+'info.json' ));
-						} catch (e) {
-							infoJson = {};
-						}
-						rtn[idx] = {
-							'packageId': idx,
-							'packageName': (infoJson.name || idx),
-							'realpath': realpath,
-							'infoJson': infoJson
-						};
-						broccoli.getModuleListByPackageId(idx, function(modList){
-							rtn[idx].categories = modList.categories;
-							it1.next();
-						});
-					} ,
-					function(){
-						it0.next();
-					}
-				);
-			} ,
-			function(it0, data){
-				callback(rtn);
-			}
-		]
-	);
+	/**
+	 * データをバインドする
+	 */
+	this.bind = function( fieldData, mode ){
+		var rtn = ''
+		if(typeof(fieldData)===typeof('')){
+			rtn = php.htmlspecialchars( fieldData ); // ←HTML特殊文字変換
+			// rtn = rtn.replace(new RegExp('\r\n|\r|\n','g'), '<br />'); // ← 属性値などに使うので、改行コードは改行コードのままじゃないとマズイ。
+		}
+		if( mode == 'canvas' && !rtn.length ){
+			rtn = '(ダブルクリックしてテキストを編集してください)';
+		}
+		return rtn;
+	}
 
-	return;
+	/**
+	 * エディタUIが描画されたら呼ばれるコールバック
+	 */
+	this.onEditorUiDrawn = function( $dom, mod, data ){
+		px.textEditor.attachTextEditor(
+			$dom.find('textarea').get(0),
+			'text'
+		);
+		$dom.find('.CodeMirror').css({
+			'border': '1px solid #ccc',
+			'border-radius': '3px'
+		});
+		return;
+	}
+
 }
 
-},{"fs":10,"iterate79":17,"path":14,"phpjs":20}],8:[function(require,module,exports){
-(function (__dirname){
+},{"phpjs":24}],8:[function(require,module,exports){
+module.exports = function(broccoli){
+
+	var _resMgr = broccoli.resourceMgr;
+	var _imgDummy = 'data:image/png;base64,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';
+
+	/**
+	 * リソースファイルを解析する
+	 */
+	function parseResource( realpathSelected, res ){
+		var tmpResInfo = res || {};
+		var realpath = JSON.parse( JSON.stringify( realpathSelected ) );
+		tmpResInfo.ext = px.utils.getExtension( realpath ).toLowerCase();
+		switch( tmpResInfo.ext ){
+			case 'gif':                          tmpResInfo.type = 'image/gif';  break;
+			case 'png':                          tmpResInfo.type = 'image/png';  break;
+			case 'jpg': case 'jpeg': case 'jpe': tmpResInfo.type = 'image/jpeg'; break;
+			case 'svg':                          tmpResInfo.type = 'image/svg+xml'; break;
+			default:
+				tmpResInfo.type = 'image/gif'; break;
+		}
+		tmpResInfo.isPrivateMaterial = false;
+		return tmpResInfo;
+	}
+
+	/**
+	 * データをバインドする
+	 */
+	this.bind = function( fieldData, mode ){
+		var rtn = {}
+		if( typeof(fieldData) === typeof({}) ){
+			rtn = fieldData;
+		}
+		var res = _resMgr.getResource( rtn.resKey );
+		if( mode == 'finalize' ){
+			rtn.path = _resMgr.getResourcePublicPath( rtn.resKey );
+		}
+		if( mode == 'canvas' ){
+			rtn.path = 'data:'+res.type+';base64,' + res.base64;
+
+			if( !res.base64 ){
+				// ↓ ダミーの Sample Image
+				rtn.path = _imgDummy;
+			}
+		}
+		return rtn.path;
+	}
+
+	/**
+	 * プレビュー用の簡易なHTMLを生成する
+	 */
+	this.mkPreviewHtml = function( fieldData, mod ){
+		var rtn = {}
+		if( typeof(fieldData) === typeof({}) ){
+			rtn = fieldData;
+		}
+		var res = _resMgr.getResource( rtn.resKey );
+		rtn.path = 'data:'+res.type+';base64,' + res.base64;
+		if( !res.base64 ){
+			// ↓ ダミーの Sample Image
+			rtn.path = _imgDummy;
+		}
+		rtn = $('<img src="'+rtn.path+'" />');
+		rtn.css({
+			'max-width': 200,
+			'max-height': 200
+		});
+		return rtn.get(0).outerHTML;
+	}
+
+	/**
+	 * データを正規化する
+	 */
+	this.normalizeData = function( fieldData, mode ){
+		var rtn = fieldData;
+		if( typeof(fieldData) !== typeof({}) ){
+			rtn = {
+				"resKey":'',
+				"path":'about:blank'
+			};
+		}
+		return rtn;
+	}
+
+	/**
+	 * エディタUIを生成
+	 */
+	this.mkEditor = function( mod, data ){
+		var rtn = $('<div>');
+		if( typeof(data) !== typeof({}) ){ data = {}; }
+		if( typeof(data.resKey) !== typeof('') ){
+			data.resKey = '';
+		}
+		// if( typeof(data.original) !== typeof({}) ){ data.original = {}; }
+		var res = _resMgr.getResource( data.resKey );
+		var path = 'data:'+res.type+';base64,' + res.base64;
+		if( !res.base64 ){
+			// ↓ ダミーの Sample Image
+			path = _imgDummy;
+		}
+
+		var $img = $('<img>');
+		rtn.append( $img
+			.attr({
+				"src": path
+			})
+			.css({
+				'min-width':'100px',
+				'max-width':'100%',
+				'min-height':'100px',
+				'max-height':'200px'
+			})
+		);
+		rtn.append( $('<input>')
+			.attr({
+				"name":mod.name ,
+				"type":"file",
+				"webkitfile":"webkitfile"
+			})
+			.css({'width':'100%'})
+			.bind('change', function(){
+				var realpathSelected = $(this).val();
+				if( realpathSelected ){
+					var tmpResInfo = parseResource( realpathSelected );
+					var bin = px.fs.readFileSync( realpathSelected, {} );
+					var newPath = 'data:'+tmpResInfo.type+';base64,' + px.utils.base64encode( bin );
+					$img
+						.attr({
+							"src": newPath
+						})
+					;
+				}else{
+					$img
+						.attr({
+							"src": path
+						})
+					;
+				}
+			})
+		);
+		rtn.append(
+			$('<div>')
+				.append( $('<span>')
+					.text('出力ファイル名(拡張子を含まない):')
+				)
+				.append( $('<input>')
+					.attr({
+						"name":mod.name+'-publicFilename' ,
+						"type":"text",
+						"placeholder": "output file name"
+					})
+					.val( (typeof(res.publicFilename)==typeof('') ? res.publicFilename : '') )
+				)
+		);
+		return rtn;
+	}
+
+	/**
+	 * データを複製する
+	 */
+	this.duplicateData = function( data ){
+		data = JSON.parse( JSON.stringify( data ) );
+		data.resKey = _resMgr.duplicateResource( data.resKey );
+		data.path = _resMgr.getResourcePublicPath( data.resKey );
+		return data;
+	}
+
+	/**
+	 * エディタUIで編集した内容を保存
+	 */
+	this.saveEditorContent = function( $dom, data, mod ){
+		if( typeof(data) !== typeof({}) ){
+			data = {};
+		}
+		if( typeof(data.resKey) !== typeof('') ){
+			data.resKey = '';
+		}
+		if( _resMgr.getResource(data.resKey) === false ){
+			data.resKey = _resMgr.addResource();
+		}
+		var resInfo = _resMgr.getResource(data.resKey);
+
+		var realpathSelected = $dom.find('input[type=file]').val();
+		if( realpathSelected ){
+			resInfo = parseResource( realpathSelected, resInfo );
+		}
+		resInfo.publicFilename = $dom.find('input[name='+mod.name+'-publicFilename]').val();
+
+		_resMgr.updateResource( data.resKey, resInfo, realpathSelected );
+
+		// var res = _resMgr.getResource( data.resKey );
+		data.path = _resMgr.getResourcePublicPath( data.resKey );
+
+		return data;
+	}// this.saveEditorContent()
+
+}
+
+},{}],9:[function(require,module,exports){
+module.exports = function(broccoli){
+
+	/**
+	 * データをバインドする
+	 */
+	this.bind = function( fieldData, mode ){
+		var rtn = ''
+		var marked = require('marked');
+		marked.setOptions({
+			renderer: new marked.Renderer(),
+			gfm: true,
+			tables: true,
+			breaks: false,
+			pedantic: false,
+			sanitize: false,
+			smartLists: true,
+			smartypants: false
+		});
+
+		if(typeof(fieldData)===typeof('')){
+			rtn = marked(fieldData);
+		}
+		if( mode == 'canvas' && !rtn.length ){
+			rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてマークダウンを編集してください)</span>';
+		}
+		return rtn;
+	}
+
+	/**
+	 * エディタUIが描画されたら呼ばれるコールバック
+	 */
+	this.onEditorUiDrawn = function( $dom, mod, data ){
+		px.textEditor.attachTextEditor(
+			$dom.find('textarea').get(0),
+			'md'
+		);
+		$dom.find('.CodeMirror').css({
+			'border': '1px solid #ccc',
+			'border-radius': '3px'
+		});
+		return;
+	}
+
+}
+
+},{"marked":22}],10:[function(require,module,exports){
+module.exports = function(broccoli){
+
+	/**
+	 * データをバインドする
+	 */
+	this.bind = function( fieldData, mode ){
+		var rtn = ''
+		if(typeof(fieldData)===typeof({}) && typeof(fieldData.src)===typeof('')){
+			switch( fieldData.editor ){
+				case 'text':
+					rtn = px.$('<div>').text( fieldData.src ).html(); // ←HTML特殊文字変換
+					rtn = rtn.replace(new RegExp('\"','g'), '&quot;'); // ← jqueryで `.html()` しても、ダブルクオートは変換してくれないみたい。
+					rtn = rtn.replace(new RegExp('\r\n|\r|\n','g'), '<br />'); // ← 改行コードは改行タグに変換
+					break;
+				case 'markdown':
+					rtn = px.utils.markdown( fieldData.src );
+					break;
+				case 'html':
+				default:
+					rtn = fieldData.src;
+					break;
+			}
+		}
+		if( mode == 'canvas' && !rtn.length ){
+			rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてテキストを編集してください)</span>';
+		}
+		return rtn;
+	}
+
+	/**
+	 * データを正規化する
+	 */
+	this.normalizeData = function( fieldData, mode ){
+		// 編集画面用にデータを初期化。
+		var rtn = {};
+		if( typeof(fieldData) === typeof({}) ){
+			rtn = fieldData;
+		}else if( typeof(fieldData) === typeof('') ){
+			rtn.src = fieldData;
+			rtn.editor = 'markdown';
+		}
+		rtn.src = rtn.src||'';
+		rtn.editor = rtn.editor||'';
+		return rtn;
+	}
+
+	/**
+	 * エディタUIを生成
+	 */
+	this.mkEditor = function( mod, data ){
+		var rows = 12;
+		if( mod.rows ){
+			rows = mod.rows;
+		}
+		var rtn = $('<div>')
+			.append($('<textarea>')
+				.attr({
+					"name":mod.name,
+					"rows":rows
+				})
+				.css({'width':'100%','height':'auto'})
+			)
+			.append($('<ul class="horizontal">')
+				.append($('<li class="horizontal-li"><label><input type="radio" name="editor-'+mod.name+'" value="" /> HTML</label></li>'))
+				.append($('<li class="horizontal-li"><label><input type="radio" name="editor-'+mod.name+'" value="text" /> テキスト</label></li>'))
+				.append($('<li class="horizontal-li"><label><input type="radio" name="editor-'+mod.name+'" value="markdown" /> Markdown</label></li>'))
+			)
+		;
+		rtn.find('textarea').val(data.src);
+		rtn.find('input[type=radio][name=editor-'+mod.name+'][value="'+data.editor+'"]').attr({'checked':'checked'});
+
+		return rtn;
+	}
+
+	/**
+	 * エディタUIが描画されたら呼ばれるコールバック
+	 */
+	this.onEditorUiDrawn = function( $dom, mod, data ){
+		px.textEditor.attachTextEditor(
+			$dom.find('textarea').get(0),
+			'md'
+		);
+		$dom.find('.CodeMirror').css({
+			'border': '1px solid #ccc',
+			'border-radius': '3px'
+		});
+		return;
+	}
+
+	/**
+	 * エディタUIで編集した内容を保存
+	 */
+	this.saveEditorContent = function( $dom, data, mod ){
+		if(typeof(data) !== typeof({})){
+			data = {};
+		}
+		data.src = $dom.find('textarea').val();
+		data.src = JSON.parse( JSON.stringify(data.src) );
+		data.editor = $dom.find('input[type=radio][name=editor-'+mod.name+']:checked').val();
+		return data;
+	}
+
+}
+
+},{}],11:[function(require,module,exports){
+module.exports = function(broccoli){
+
+	/**
+	 * データをバインドする
+	 */
+	this.bind = function( fieldData, mode, mod ){
+		var rtn = ''
+		if( typeof(fieldData) === typeof([]) ){
+			rtn += fieldData.join('');
+		}else{
+			rtn += fieldData;
+		}
+		if( !rtn.length && mod.options ){
+			var isHit = false;
+			for( var idx in mod.options ){
+				if( rtn == mod.options[idx].value ){
+					isHit = true;
+					break;
+				}
+			}
+			if( !isHit ){
+				// 選択値が空白で、空白の選択肢がなければ、1件目のオプションを選ぶ。
+				for( var idx in mod.options ){
+					rtn = mod.options[idx].value;
+					break;
+				}
+			}
+		}
+		if( mode == 'canvas' && !rtn.length ){
+			// rtn = '(ダブルクリックして選択してください)';
+				// ↑未選択時のダミー文はなしにした。
+				// 　クラス名の modifier 部分の拡張などに使用する場合に、
+				// 　クラス名とダミー文が合体して存在しないクラス名になってしまうので。
+		}
+		return rtn;
+	}
+
+	/**
+	 * エディタUIを生成
+	 */
+	this.mkEditor = function( mod, data ){
+
+		var $select = $('<select>')
+			.attr({
+				"name":mod.name
+			})
+			.css({'max-width':'100%'})
+		;
+		if( mod.options ){
+			for( var idx in mod.options ){
+				var $option = $('<option>')
+					.attr({
+						'value':mod.options[idx].value
+					})
+					.text(mod.options[idx].label)
+				;
+				if( data==mod.options[idx].value ){
+					$option.attr({
+						'selected': 'selected'
+					});
+				}
+				$select.append( $option );
+			}
+		}
+		var rtn = $('<div>')
+			.append( $select )
+		;
+		return rtn;
+	}
+
+	/**
+	 * エディタUIが描画されたら呼ばれるコールバック
+	 */
+	this.onEditorUiDrawn = function( $dom, mod, data ){
+		return;
+	}
+
+	/**
+	 * エディタUIで編集した内容を保存
+	 */
+	this.saveEditorContent = function( $dom, data, mod ){
+		var src = $dom.find('select').val();
+		src = JSON.parse( JSON.stringify(src) );
+		return src;
+	}
+
+}
+
+},{}],12:[function(require,module,exports){
+module.exports = function(broccoli){
+
+	var _resMgr = broccoli.resourceMgr;
+	// var _pj = px.getCurrentProject();
+
+	/**
+	 * リソースファイルを解析する
+	 */
+	function parseResource( realpathSelected ){
+		var tmpResInfo = {};
+		var realpath = JSON.parse( JSON.stringify( realpathSelected ) );
+		tmpResInfo.ext = px.utils.getExtension( realpath ).toLowerCase();
+		switch( tmpResInfo.ext ){
+			case 'csv':                          tmpResInfo.type = 'text/csv';  break;
+			case 'doc':                          tmpResInfo.type = 'application/msword';  break;
+			case 'xls':                          tmpResInfo.type = 'application/vnd.ms-excel';  break;
+			case 'ppt':                          tmpResInfo.type = 'application/vnd.ms-powerpoint';  break;
+			case 'docx':                         tmpResInfo.type = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';  break;
+			case 'xlsx':                         tmpResInfo.type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';  break;
+			case 'pptx':                         tmpResInfo.type = 'application/vnd.openxmlformats-officedocument.presentationml.presentation';  break;
+			default:
+				tmpResInfo.type = 'text/csv'; break;
+		}
+
+		return tmpResInfo;
+	}
+
+	/**
+	 * データをバインドする
+	 */
+	this.bind = function( fieldData, mode ){
+		fieldData = fieldData||{};
+		var rtn = '';
+		if( fieldData.output ){
+			rtn += fieldData.output;
+		}
+
+		if( mode == 'canvas' ){
+			if( !rtn.length ){
+				rtn += '<tr><td style="text-align:center;">ダブルクリックして編集してください。</td></tr>';
+			}
+		}
+		return rtn;
+	}
+
+	/**
+	 * プレビュー用の簡易なHTMLを生成する
+	 */
+	this.mkPreviewHtml = function( fieldData, mod ){
+		// InstanceTreeViewで利用する
+		fieldData = fieldData||{};
+		var rtn = '';
+		if( fieldData.output ){
+			rtn += fieldData.output;
+		}
+		rtn = $('<table>'+rtn+'</table>');
+		return rtn.get(0).outerHTML;
+	}
+
+	/**
+	 * データを正規化する
+	 */
+	this.normalizeData = function( fieldData, mode ){
+		var rtn = fieldData;
+		if( typeof(fieldData) !== typeof({}) ){
+			rtn = {
+				"resKey":'',
+				"output":"",
+				"header_row":0,
+				"header_col":0,
+				"cell_renderer":'text',
+				"renderer":'simplify'
+			};
+		}
+		return rtn;
+	}
+
+	/**
+	 * エディタUIを生成
+	 */
+	this.mkEditor = function( mod, data ){
+		var rtn = $('<div>');
+		if( typeof(data) !== typeof({}) ){ data = {}; }
+		if( typeof(data.resKey) !== typeof('') ){
+			data.resKey = '';
+		}
+		// if( typeof(data.original) !== typeof({}) ){ data.original = {}; }
+		var res = _resMgr.getResource( data.resKey );
+
+		var $excel = $('<div>');
+		rtn.append( $excel );
+		// console.log(data);
+		if( data.resKey ){
+			$excel.html('')
+				.append( $('<button type="button">エクセルで開く</button>')
+					.attr({
+						'title': _resMgr.getResourceOriginalRealpath( data.resKey ),
+						'data-excel-realpath': _resMgr.getResourceOriginalRealpath( data.resKey )
+					})
+					.click(function(){
+						var realpath = $(this).attr('data-excel-realpath');
+						px.utils.openURL(realpath);
+					})
+				)
+			;
+		}
+
+		rtn.append( $('<input>')
+			.attr({
+				"name":mod.name ,
+				"type":"file",
+				"webkitfile":"webkitfile"
+			})
+			.css({'width':'100%'})
+			.bind('change', function(){
+				var realpathSelected = $(this).val();
+				if( realpathSelected ){
+					$excel.html('選択しました');
+				}
+			})
+		);
+		rtn.append( $('<div>')
+			.append( $('<span>').text('ヘッダー行:') )
+			.append( $('<input>')
+				.attr({
+					"name":mod.name+':header_row' ,
+					"type":"number",
+					"value":data.header_row
+				})
+			)
+		);
+		rtn.append( $('<div>')
+			.append( $('<span>').text('ヘッダー列:') )
+			.append( $('<input>')
+				.attr({
+					"name":mod.name+':header_col' ,
+					"type":"number",
+					"value":data.header_col
+				})
+			)
+		);
+		rtn.append( $('<div>')
+			.append( $('<span>').text('再現方法:') )
+			.append( $('<label>')
+				.append( $('<input>')
+					.attr({
+						"name":mod.name+':renderer' ,
+						"type":"radio",
+						"value":"simplify"
+					})
+				)
+				.append( $('<span>').text('単純化') )
+			)
+			.append( $('<label>')
+				.append( $('<input>')
+					.attr({
+						"name":mod.name+':renderer' ,
+						"type":"radio",
+						"value":"strict"
+					})
+				)
+				.append( $('<span>').text('そのまま表示') )
+			)
+		);
+		rtn.find('input[name="'+mod.name+':renderer"][value="'+data.renderer+'"]').attr({'checked':'checked'});
+
+		rtn.append( $('<div>')
+			.append( $('<span>').text('セルの表現方法:') )
+			.append( $('<label>')
+				.append( $('<input>')
+					.attr({
+						"name":mod.name+':cell_renderer' ,
+						"type":"radio",
+						"value":"html"
+					})
+				)
+				.append( $('<span>').text('HTML') )
+			)
+			.append( $('<label>')
+				.append( $('<input>')
+					.attr({
+						"name":mod.name+':cell_renderer' ,
+						"type":"radio",
+						"value":"text"
+					})
+				)
+				.append( $('<span>').text('テキスト') )
+			)
+			.append( $('<label>')
+				.append( $('<input>')
+					.attr({
+						"name":mod.name+':cell_renderer' ,
+						"type":"radio",
+						"value":"markdown"
+					})
+				)
+				.append( $('<span>').text('Markdown') )
+			)
+		);
+		rtn.find('input[name="'+mod.name+':cell_renderer"][value="'+data.cell_renderer+'"]').attr({'checked':'checked'});
+		return rtn;
+	}
+
+	/**
+	 * データを複製する
+	 */
+	this.duplicateData = function( data ){
+		data = JSON.parse( JSON.stringify( data ) );
+		data.resKey = _resMgr.duplicateResource( data.resKey );
+		return data;
+	}
+
+	/**
+	 * エディタUIで編集した内容を保存
+	 */
+	this.saveEditorContent = function( $dom, data, mod ){
+		if( typeof(data) !== typeof({}) ){
+			data = {};
+		}
+		if( typeof(data.resKey) !== typeof('') ){
+			data.resKey = '';
+		}
+		if( _resMgr.getResource(data.resKey) === false ){
+			data.resKey = _resMgr.addResource();
+		}
+
+		var realpathSelected = $dom.find('input[name='+mod.name+']').val();
+		if( px.utils.isFile(realpathSelected) ){
+			var tmpResInfo = parseResource( realpathSelected );
+			_resMgr.updateResource( data.resKey, tmpResInfo, realpathSelected );
+		}else if( data.resKey ){
+			_resMgr.resetBase64FromBin( data.resKey );
+		}
+		// var res = _resMgr.getResource( data.resKey );
+		data.header_row = $dom.find('input[name="'+mod.name+':header_row"]').val();
+		data.header_col = $dom.find('input[name="'+mod.name+':header_col"]').val();
+		data.cell_renderer = $dom.find('input[name="'+mod.name+':cell_renderer"]:checked').val();
+		data.renderer = $dom.find('input[name="'+mod.name+':renderer"]:checked').val();
+
+		var res = _resMgr.getResource( data.resKey );
+		res.isPrivateMaterial = true;
+			// リソースファイルの設置は resourceMgr が行っている。
+			// isPrivateMaterial が true の場合、公開領域への設置は行われない。
+
+		var realpath = _resMgr.getResourceOriginalRealpath( data.resKey );
+		if( !px.utils.isFile(realpath) ){
+			realpath = res.realpath;
+		}
+		if( !px.utils.isFile(realpath) ){
+			realpath = realpathSelected;
+		}
+
+		var cmd = px.cmd('php');
+		cmd += ' '+px.path.resolve( _pj.get('path') + '/' + _pj.get('entry_script') );
+		cmd += ' "/?PX=px2dthelper.convert_table_excel2html';
+		cmd += '&path=' + px.php.urlencode(realpath);
+		cmd += '&header_row=' + px.php.urlencode( data.header_row );
+		cmd += '&header_col=' + px.php.urlencode( data.header_col );
+		cmd += '&cell_renderer=' + px.php.urlencode( data.cell_renderer );
+		cmd += '&renderer=' + px.php.urlencode( data.renderer );
+		cmd += '"';
+		data.output = px.execSync( cmd );
+		data.output = JSON.parse(data.output+'');
+
+		return data;
+	}// this.saveEditorContent()
+
+}
+
+},{}],13:[function(require,module,exports){
+module.exports = function(broccoli){
+	var php = require('phpjs');
+
+	/**
+	 * データをバインドする
+	 */
+	this.bind = function( fieldData, mode ){
+		var rtn = ''
+		if(typeof(fieldData)===typeof('')){
+			rtn = php.htmlspecialchars( fieldData ); // ←HTML特殊文字変換
+			rtn = rtn.replace(new RegExp('\r\n|\r|\n','g'), '<br />'); // ← 改行コードは改行タグに変換
+		}
+		if( mode == 'canvas' && !rtn.length ){
+			rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてテキストを編集してください)</span>';
+		}
+		return rtn;
+	}
+
+	/**
+	 * エディタUIが描画されたら呼ばれるコールバック
+	 */
+	this.onEditorUiDrawn = function( $dom, mod, data ){
+		px.textEditor.attachTextEditor(
+			$dom.find('textarea').get(0),
+			'text'
+		);
+		$dom.find('.CodeMirror').css({
+			'border': '1px solid #ccc',
+			'border-radius': '3px'
+		});
+		return;
+	}
+
+}
+
+},{"phpjs":24}],14:[function(require,module,exports){
 /**
- * broccoli.js
+ * WYSIWYG Editor "wkrte" field
+ * @see https://code.google.com/p/wkrte/
+ */
+module.exports = function(broccoli){
+	var editors;
+	// var $iframe = $('<iframe>');
+	// var $textarea = px.$('<textarea>');
+
+	/**
+	 * エディタUIを生成
+	 */
+	this.mkEditor = function( mod, data ){
+		var rows = 12;
+		if( mod.rows ){
+			rows = mod.rows;
+		}
+		var rtn = $('<div>')
+			.append( $iframe
+				.attr({
+					"src": px2dtGuiEditor.path_base+'/fields/app.fields.wysiwyg_rte.form.html'
+				})
+				.css({'width':'100%'})
+				.load(function(){
+					var $this = $(this);
+					var win = $this.get(0).contentWindow;
+					var $textarea = win.$(win.document).find('textarea');
+					$textarea.val(data);
+
+					// ↓UTODO: この処理で落ちている
+					editors = $textarea.rte({
+						width: 720,
+						height: 520,
+						controls_rte: win.rte_toolbar,
+						controls_html: win.html_toolbar
+					});
+					setTimeout(function(){
+						$this
+							.css({'height':$(win.document).find('html').height()})
+						;
+					}, 500);
+				})
+			)
+		;
+		// var rtn = px.$('<div>')
+		// 	.append($textarea
+		// 		.attr({
+		// 			"name":mod.name,
+		// 			"rows":rows
+		// 		})
+		// 		.val(data)
+		// 		.css({'width':'100%','height':'auto'})
+		// );
+
+		return rtn;
+	}
+
+	/**
+	 * エディタUIが描画されたら呼ばれるコールバック
+	 */
+	this.onEditorUiDrawn = function( $dom, mod, data ){
+		// editors = $textarea.rte({
+		// 	width: 720,
+		// 	height: 520,
+		// 	controls_rte: window.top.rte_toolbar,
+		// 	controls_html: window.top.html_toolbar
+		// });
+		return;
+	}
+
+	/**
+	 * エディタUIで編集した内容を保存
+	 */
+	this.saveEditorContent = function( $dom, data, mod ){
+		// var win = $iframe.get(0).contentWindow;
+		// var src = win.tinymce.get('tinymce_editor').getContent()
+		var src = editors[0].get_content();
+		if( typeof(src) !== typeof('') ){ src = ''; }
+		src = JSON.parse( JSON.stringify(src) );
+		return src;
+	}
+
+
+}
+
+},{}],15:[function(require,module,exports){
+/**
+ * WYSIWYG Editor "TinyMCE" field
+ * @see http://www.tinymce.com/
+ */
+module.exports = function(broccoli){
+	var editors;
+	// var $iframe = $('<iframe>');
+
+	/**
+	 * エディタUIを生成
+	 */
+	this.mkEditor = function( mod, data ){
+		var rows = 12;
+		if( mod.rows ){
+			rows = mod.rows;
+		}
+		var rtn = $('<div>')
+			.append( $iframe
+				.attr({
+					"src": px2dtGuiEditor.path_base+'/fields/app.fields.wysiwyg_tinymce.form.html'
+				})
+				.css({'width':'100%'})
+				.load(function(){
+					var $this = $(this);
+					var win = $this.get(0).contentWindow;
+					$(win.document).find('textarea').val(data);
+					win.tinymce.init({
+						selector:'textarea',
+						plugins: "table",
+						tools: "inserttable"
+					});
+					setTimeout(function(){
+						$this
+							.css({'height':$(win.document).find('html').height()})
+						;
+					}, 500);
+				})
+			)
+		;
+
+		return rtn;
+	}
+
+	/**
+	 * エディタUIが描画されたら呼ばれるコールバック
+	 */
+	this.onEditorUiDrawn = function( $dom, mod, data ){
+		// window.top.tinymce = tinymce;
+		return;
+	}
+
+	/**
+	 * エディタUIで編集した内容を保存
+	 */
+	this.saveEditorContent = function( $dom, data, mod ){
+		var win = $iframe.get(0).contentWindow;
+		var src = win.tinymce.get('tinymce_editor').getContent()
+		if( typeof(src) !== typeof('') ){ src = ''; }
+		src = JSON.parse( JSON.stringify(src) );
+		return src;
+	}
+
+
+}
+
+},{}],16:[function(require,module,exports){
+/**
+ * broccoli-client.js
  */
 module.exports = function(options){
 	// if(!window){delete(require.cache[require('path').resolve(__filename)]);}
@@ -912,153 +1474,31 @@ module.exports = function(options){
 	var fs = require('fs');
 	var _ = require('underscore');
 	options = options || {};
-	options.cd = options.cd || '.';
-	options.paths_module_template = options.paths_module_template || {};
 
-	for( var i in options.paths_module_template ){
-		options.paths_module_template[i] = path.resolve( options.cd, options.paths_module_template[i] )+'/';
-	}
-
-	this.paths_module_template = options.paths_module_template;
 	this.options = options;
 
-	this.resourceMgr = new (require('./resourceMgr.js'))(this);
 	this.fieldBase = new (require('./fieldBase.js'))(this);
 	this.fieldDefinitions = {};
 	function loadFieldDefinition(){
 		function loadFieldDefinition(mod){
 			return _.defaults( new (mod)(_this), _this.fieldBase );
 		}
-		_this.fieldDefinitions.href = loadFieldDefinition(require(__dirname+'/fields/app.fields.href.js'));
-		_this.fieldDefinitions.html = loadFieldDefinition(require(__dirname+'/fields/app.fields.html.js'));
-		_this.fieldDefinitions.html_attr_text = loadFieldDefinition(require(__dirname+'/fields/app.fields.html_attr_text.js'));
-		_this.fieldDefinitions.image = loadFieldDefinition(require(__dirname+'/fields/app.fields.image.js'));
-		_this.fieldDefinitions.markdown = loadFieldDefinition(require(__dirname+'/fields/app.fields.markdown.js'));
-		_this.fieldDefinitions.multitext = loadFieldDefinition(require(__dirname+'/fields/app.fields.multitext.js'));
-		_this.fieldDefinitions.select = loadFieldDefinition(require(__dirname+'/fields/app.fields.select.js'));
-		_this.fieldDefinitions.table = loadFieldDefinition(require(__dirname+'/fields/app.fields.table.js'));
-		_this.fieldDefinitions.text = loadFieldDefinition(require(__dirname+'/fields/app.fields.text.js'));
-		_this.fieldDefinitions.wysiwyg_rte = loadFieldDefinition(require(__dirname+'/fields/app.fields.wysiwyg_rte.js'));
-		_this.fieldDefinitions.wysiwyg_tinymce = loadFieldDefinition(require(__dirname+'/fields/app.fields.wysiwyg_tinymce.js'));
+		_this.fieldDefinitions.href = loadFieldDefinition(require('./fields/app.fields.href.js'));
+		_this.fieldDefinitions.html = loadFieldDefinition(require('./fields/app.fields.html.js'));
+		_this.fieldDefinitions.html_attr_text = loadFieldDefinition(require('./fields/app.fields.html_attr_text.js'));
+		_this.fieldDefinitions.image = loadFieldDefinition(require('./fields/app.fields.image.js'));
+		_this.fieldDefinitions.markdown = loadFieldDefinition(require('./fields/app.fields.markdown.js'));
+		_this.fieldDefinitions.multitext = loadFieldDefinition(require('./fields/app.fields.multitext.js'));
+		_this.fieldDefinitions.select = loadFieldDefinition(require('./fields/app.fields.select.js'));
+		_this.fieldDefinitions.table = loadFieldDefinition(require('./fields/app.fields.table.js'));
+		_this.fieldDefinitions.text = loadFieldDefinition(require('./fields/app.fields.text.js'));
+		_this.fieldDefinitions.wysiwyg_rte = loadFieldDefinition(require('./fields/app.fields.wysiwyg_rte.js'));
+		_this.fieldDefinitions.wysiwyg_tinymce = loadFieldDefinition(require('./fields/app.fields.wysiwyg_tinymce.js'));
 
 		return true;
 	}
+	loadFieldDefinition();
 
-	/**
-	 * モジュールIDを分解する。
-	 * @param  {String} moduleId モジュールID
-	 * @return {Object}          分解された情報を格納するオブジェクト、分解に失敗した場合はfalseを返します。
-	 */
-	this.parseModuleId = function(moduleId){
-		var rtn = {
-			'package': false,
-			'category': false,
-			'module': false
-		};
-		if( !moduleId.match( new RegExp('^([0-9a-zA-Z\\_\\-]+?)\\:([^\\/\\:\\s]*)\\/([^\\/\\:\\s]*)$') ) ){
-			return false;
-		}
-		rtn.package = RegExp.$1;
-		rtn.category = RegExp.$2;
-		rtn.module = RegExp.$3;
-		return rtn;
-	}
-
-	/**
-	 * モジュールの絶対パスを取得する。
-	 * @param  {String} moduleId モジュールID
-	 * @return {String}          モジュールの絶対パス
-	 */
-	this.getModuleRealpath = function(moduleId){
-		var parsedModuleId = this.parseModuleId(moduleId);
-		if(parsedModuleId === false){
-			return false;
-		}
-		if(!this.paths_module_template[parsedModuleId.package]){
-			return false;
-		}
-		var realpath = path.resolve(this.paths_module_template[parsedModuleId.package]);
-		if( !fs.existsSync(realpath) || !fs.statSync(realpath).isDirectory() ){
-			return false;
-		}
-		var realpath = path.resolve(
-			realpath,
-			parsedModuleId.category,
-			parsedModuleId.module
-		);
-		if( !fs.existsSync(realpath) || !fs.statSync(realpath).isDirectory() ){
-			return false;
-		}
-
-		return realpath+'/';
-	}
-
-	/**
-	 * システムテンプレートかどうか判断する
-	 * @param  {String}  moduleId モジュールID
-	 * @return {Boolean}          システムテンプレートであれば true, 違えば false
-	 */
-	this.isSystemMod = function( moduleId ){
-		if( !moduleId.match(new RegExp('^_sys\\/')) ){
-			return false;
-		}
-		return true;
-	}
-
-	/**
-	 * パッケージの一覧を取得する
-	 * @param  {Function} callback callback function.
-	 * @return {Object}            this
-	 */
-	this.getPackageList = function(callback){
-		require( './getPackageList.js' )(this, callback);
-		return this;
-	}
-
-	/**
-	 * モジュール一覧を取得する
-	 * @param  {String}   packageId package ID
-	 * @param  {Function} callback  callback function.
-	 * @return {Object}             this
-	 */
-	this.getModuleListByPackageId = function(packageId, callback){
-		require( './getModuleListByPackageId.js' )(this, packageId, callback);
-		return this;
-	}
-
-	/**
-	 * class: モジュール
-	 * @param  {String}   moduleId モジュールID
-	 * @param  {Object}   options  Options
-	 * @param  {Function} callback callback function.
-	 * @return {Object}            this
-	 */
-	this.createModuleInstance = function(moduleId, options, callback){
-		var classModule = require( './classModule.js' );
-		var rtn = new classModule(this, moduleId, options, callback);
-		return rtn;
-	}
-
-	/**
-	 * HTMLをビルドする
-	 * @param  {Object}   data     コンテンツデータ
-	 * @param  {Object}   options  オプション
-	 *                             - options.mode = ビルドモード(finalize=製品版ビルド, canvas=編集画面用ビルド)
-	 *                             - options.realpath = HTMLの出力先
-	 *                             - options.realpathJson = data.jsonの保存先
-	 *                             - options.resourceDir = リソースディレクトリのパス
-	 *                             - options.resourceDist = リソース出力先ディレクトリのパス
-	 *                             - options.instancePath = インスタンスパス
-	 * @param  {Function} callback callback function.
-	 * @return {Object}            this
-	 */
-	this.buildHtml = function( data, options, callback ){
-		this.resourceMgr.init( options.realpath, options.realpathJson, options.resourceDir, options.resourceDist, function(){
-			loadFieldDefinition();
-			require( __dirname+'/buildHtml.js' )(_this, data, options, callback);
-		} );
-		return this;
-	}
 
 	/**
 	 * モジュールパレットを描画する
@@ -1090,1647 +1530,9 @@ module.exports = function(options){
 
 }
 
-}).call(this,"/../../libs")
-},{"./classModule.js":2,"./drawModulePalette.js":3,"./drawPanels.js":4,"./fieldBase.js":5,"./getModuleListByPackageId.js":6,"./getPackageList.js":7,"./resourceMgr.js":9,"fs":10,"path":14,"underscore":22}],9:[function(require,module,exports){
-(function (Buffer){
-/**
- * resourceMgr.js
- */
-module.exports = function(broccoli){
-	// delete(require.cache[require('path').resolve(__filename)]);
+},{"./drawModulePalette.js":2,"./drawPanels.js":3,"./fieldBase.js":4,"./fields/app.fields.href.js":5,"./fields/app.fields.html.js":6,"./fields/app.fields.html_attr_text.js":7,"./fields/app.fields.image.js":8,"./fields/app.fields.markdown.js":9,"./fields/app.fields.multitext.js":10,"./fields/app.fields.select.js":11,"./fields/app.fields.table.js":12,"./fields/app.fields.text.js":13,"./fields/app.fields.wysiwyg_rte.js":14,"./fields/app.fields.wysiwyg_tinymce.js":15,"fs":17,"path":18,"underscore":26}],17:[function(require,module,exports){
 
-	var path = require('path');
-	var fs = require('fs');
-	var php = require('phpjs');
-	var DIRECTORY_SEPARATOR = '/';
-
-	var _this = this;
-	var _contentsPath;
-	var _resourcesDirPath;
-	var _resourcesPublishDirPath;
-	var _dataJsonPath;
-
-	var _resourceDb = {};
-
-	function isFile(path){
-		if( !fs.existsSync(path) || !fs.statSync(path).isFile() ){
-			return false;
-		}
-		return true;
-	}
-	function isDirectory(path){
-		if( !fs.existsSync(path) || !fs.statSync(path).isDirectory() ){
-			return false;
-		}
-		return true;
-	}
-	function ls(path){
-		if( !isDirectory(path) ){ return false; }
-		return fs.readdirSync(path);
-	}
-	function rm(path){
-		if( isDirectory(path) ){ return false; }
-		if( !isFile(path) ){ return true; }
-		fs.unlinkSync(path);
-		return !isFile(path);
-	}
-	function mkdir(path){
-		if( fs.existsSync(path) ){
-			return true;
-		}
-		fs.mkdirSync(path, 0777);
-		return true;
-	}
-	function rmdir_r( $path ){
-		$path = fs.realpathSync( $path );
-
-		if( isFile( $path ) ){
-			// ファイルまたはシンボリックリンクの場合の処理
-			// ディレクトリ以外は削除できません。
-			return false;
-
-		}else if( isDirectory( $path ) ){
-			// ディレクトリの処理
-			var $filelist = this.ls($path);
-			for( var idx in $filelist ){
-				var $basename = $filelist[idx];
-				if( isFile( $path+DIRECTORY_SEPARATOR+$basename ) ){
-					if( !rm( $path+DIRECTORY_SEPARATOR+$basename ) ){
-						console.log('FAILED to delete file: '+ $path+DIRECTORY_SEPARATOR+$basename);
-					}
-				}else if( isDirectory( $path+DIRECTORY_SEPARATOR+$basename ) ){
-					if( !rmdir_r( $path+DIRECTORY_SEPARATOR+$basename ) ){
-						console.log('FAILED to delete directory: '+ $path+DIRECTORY_SEPARATOR+$basename);
-					}
-				}
-			}
-			return rmdir( $path );
-		}
-
-		return false;
-	}//rmdir_r()
-
-	/**
-	 * initialize resource Manager
-	 */
-	this.init = function( contentsPath, dataJsonPath, resourcesDirPath, resourcesPublishDirPath, callback ){
-		_contentsPath = contentsPath;
-		_dataJsonPath = dataJsonPath;
-		_resourcesDirPath = resourcesDirPath;
-		_resourcesPublishDirPath = resourcesPublishDirPath;
-		loadResourceList( function(){
-			callback();
-		} );
-		return this;
-	}
-
-	/**
-	 * Loading resource list
-	 */
-	function loadResourceList( callback ){
-		_resourceDb = {};
-		if( !isDirectory( _resourcesDirPath ) ){
-			mkdir( _resourcesDirPath );
-		}
-
-		var list = fs.readdirSync( _resourcesDirPath );
-		for( var idx in list ){
-			var resKey = list[idx];
-			if( !isDirectory( _resourcesDirPath+'/'+resKey ) ){ continue; }
-			_resourceDb[resKey] = {};
-			if( isFile( _resourcesDirPath+'/'+resKey+'/res.json' ) ){
-				var jsonStr = fs.readFileSync( _resourcesDirPath+'/'+resKey+'/res.json' );
-				_resourceDb[resKey] = JSON.parse( jsonStr );
-			}
-		}
-		callback();
-		return;
-	}
-
-	/**
-	 * save resources
-	 * @param  {Function} cb Callback function.
-	 * @return {boolean}     Always true.
-	 */
-	this.save = function( cb ){
-		cb = cb || function(){};
-
-		if( isDirectory( _resourcesPublishDirPath ) ){
-			// 公開リソースディレクトリを一旦削除
-			rmdir_r( _resourcesPublishDirPath );
-		}
-		if( !isDirectory( _resourcesPublishDirPath ) ){
-			// 公開リソースディレクトリ作成
-			mkdir( _resourcesPublishDirPath );
-		}
-
-		// 使われていないリソースを削除
-		var jsonSrc = fs.readFileSync( _dataJsonPath );
-		jsonSrc = JSON.parse( JSON.stringify(jsonSrc.toString()) );
-		for( var resKey in _resourceDb ){
-			if( !jsonSrc.match(resKey) ){// TODO: JSONファイルを文字列として検索しているが、この方法は完全ではない。
-				this.removeResource(resKey);
-			}
-		}
-
-		// リソースデータの保存と公開領域への設置
-		for( var resKey in _resourceDb ){
-			mkdir( _resourcesDirPath+'/'+resKey );
-			fs.writeFileSync(
-				_resourcesDirPath+'/'+resKey+'/res.json',
-				JSON.stringify( _resourceDb[resKey], null, 1 )
-			);
-
-			if(_resourceDb[resKey].base64){
-				var bin = new Buffer(_resourceDb[resKey].base64, 'base64');
-				fs.writeFileSync(
-					_resourcesDirPath+'/'+resKey+'/bin.'+_resourceDb[resKey].ext,
-					bin
-				);
-
-				// 公開ファイル
-				if( !_resourceDb[resKey].isPrivateMaterial ){
-					var filename = resKey;
-					if( typeof(_resourceDb[resKey].publicFilename) == typeof('') && _resourceDb[resKey].publicFilename.length ){
-						filename = _resourceDb[resKey].publicFilename;
-					}
-					fs.writeFileSync(
-						_resourcesPublishDirPath+'/'+filename+'.'+_resourceDb[resKey].ext,
-						bin
-					);
-				}
-			}
-		}
-		cb();
-		return true;
-	}
-
-	/**
-	 * add resource
-	 * リソースの登録を行い、resKeyを生成して返す。
-	 */
-	this.addResource = function(){
-		var newResKey;
-		while(1){
-			newResKey = php.md5( (new Date).getTime() );
-			if( typeof(_resourceDb[newResKey]) === typeof({}) ){
-				// 登録済みの resKey
-				continue;
-			}
-			_resourceDb[newResKey] = {};//予約
-			break;
-		}
-		return newResKey;
-	}
-
-	/**
-	 * get resource
-	 */
-	this.getResource = function( resKey ){
-		if( typeof(_resourceDb[resKey]) !== typeof({}) ){
-			// 未登録の resKey
-			return false;
-		}
-		return _resourceDb[resKey];
-	}
-
-	/**
-	 * duplicate resource
-	 * @return 複製された新しいリソースのキー
-	 */
-	this.duplicateResource = function( resKey ){
-		if( typeof(_resourceDb[resKey]) !== typeof({}) ){
-			// 未登録の resKey
-			return false;
-		}
-		var newResKey = this.addResource();
-		_resourceDb[newResKey] = JSON.parse( JSON.stringify( _resourceDb[resKey] ) );
-		fsEx.copySync( _resourcesDirPath+'/'+resKey, _resourcesDirPath+'/'+newResKey );
-		return newResKey;
-	}
-
-	/**
-	 * update resource
-	 * @param  {string} resKey  Resource Key
-	 * @param  {object} resInfo Resource Information.
-	 * <dl>
-	 * <dt>ext</dt><dd>ファイル拡張子名。</dd>
-	 * <dt>type</dt><dd>mimeタイプ。</dd>
-	 * <dt>base64</dt><dd>ファイルのBase64エンコードされた値</dd>
-	 * <dt>publicFilename</dt><dd>公開時のファイル名</dd>
-	 * <dt>isPrivateMaterial</dt><dd>非公開ファイル。</dd>
-	 * </dl>
-	 * @param  {string} realpath Resource Realpath. - ファイルが置かれていた絶対パス
-	 * @return {boolean}        always true.
-	 */
-	this.updateResource = function( resKey, resInfo, realpath ){
-		if( typeof(_resourceDb[resKey]) !== typeof({}) ){
-			// 未登録の resKey
-			return false;
-		}
-		_resourceDb[resKey] = resInfo;
-
-		if(realpath){
-			var bin = fs.readFileSync( realpath, {} );
-			_resourceDb[resKey].base64 = php.base64_encode( bin );
-		}
-
-		return true;
-	}
-
-	/**
-	 * Reset bin from base64
-	 */
-	this.resetBinFromBase64 = function( resKey ){
-		if( typeof(_resourceDb[resKey]) !== typeof({}) ){
-			// 未登録の resKey
-			return false;
-		}
-		var realpath = this.getResourceOriginalRealpath( resKey );
-
-		var bin = php.base64_decode( _resourceDb[resKey].base64 );
-		return fs.writeFileSync( realpath, bin, {} );
-	}
-
-	/**
-	 * Reset base64 from bin
-	 */
-	this.resetBase64FromBin = function( resKey ){
-		if( typeof(_resourceDb[resKey]) !== typeof({}) ){
-			// 未登録の resKey
-			return false;
-		}
-		var realpath = this.getResourceOriginalRealpath( resKey );
-
-		var bin = fs.readFileSync( realpath, {} );
-		_resourceDb[resKey].base64 = php.base64_encode( bin );
-
-		return true;
-	}
-
-	/**
-	 * get resource public path
-	 */
-	this.getResourcePublicPath = function( resKey ){
-		var res = this.getResource( resKey );
-		var filename = resKey;
-		if( typeof(res.publicFilename) == typeof('') && res.publicFilename.length ){
-			filename = res.publicFilename;
-		}
-		var rtn = './'+path.relative(path.dirname(_contentsPath), _resourcesPublishDirPath+'/'+filename+'.'+res.ext);
-		return rtn;
-	}
-
-	/**
-	 * get resource public path
-	 */
-	this.getResourceOriginalRealpath = function( resKey ){
-		var res = this.getResource( resKey );
-		var rtn = _resourcesDirPath+'/'+resKey+'/bin.'+_resourceDb[resKey].ext;
-		return rtn;
-	}
-
-	/**
-	 * remove resource
-	 */
-	this.removeResource = function( resKey ){
-		_resourceDb[resKey] = undefined;
-		delete( _resourceDb[resKey] );
-		if( isDirectory(_resourcesDirPath+'/'+resKey+'/') ){
-			rmdir_r( _resourcesDirPath+'/'+resKey+'/' );
-		}
-		return true;
-	}
-
-}
-
-}).call(this,require("buffer").Buffer)
-},{"buffer":11,"fs":10,"path":14,"phpjs":20}],10:[function(require,module,exports){
-
-},{}],11:[function(require,module,exports){
-/*!
- * The buffer module from node.js, for the browser.
- *
- * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
- * @license  MIT
- */
-
-var base64 = require('base64-js')
-var ieee754 = require('ieee754')
-
-exports.Buffer = Buffer
-exports.SlowBuffer = Buffer
-exports.INSPECT_MAX_BYTES = 50
-Buffer.poolSize = 8192
-
-/**
- * If `Buffer._useTypedArrays`:
- *   === true    Use Uint8Array implementation (fastest)
- *   === false   Use Object implementation (compatible down to IE6)
- */
-Buffer._useTypedArrays = (function () {
-  // Detect if browser supports Typed Arrays. Supported browsers are IE 10+, Firefox 4+,
-  // Chrome 7+, Safari 5.1+, Opera 11.6+, iOS 4.2+. If the browser does not support adding
-  // properties to `Uint8Array` instances, then that's the same as no `Uint8Array` support
-  // because we need to be able to add all the node Buffer API methods. This is an issue
-  // in Firefox 4-29. Now fixed: https://bugzilla.mozilla.org/show_bug.cgi?id=695438
-  try {
-    var buf = new ArrayBuffer(0)
-    var arr = new Uint8Array(buf)
-    arr.foo = function () { return 42 }
-    return 42 === arr.foo() &&
-        typeof arr.subarray === 'function' // Chrome 9-10 lack `subarray`
-  } catch (e) {
-    return false
-  }
-})()
-
-/**
- * Class: Buffer
- * =============
- *
- * The Buffer constructor returns instances of `Uint8Array` that are augmented
- * with function properties for all the node `Buffer` API functions. We use
- * `Uint8Array` so that square bracket notation works as expected -- it returns
- * a single octet.
- *
- * By augmenting the instances, we can avoid modifying the `Uint8Array`
- * prototype.
- */
-function Buffer (subject, encoding, noZero) {
-  if (!(this instanceof Buffer))
-    return new Buffer(subject, encoding, noZero)
-
-  var type = typeof subject
-
-  // Workaround: node's base64 implementation allows for non-padded strings
-  // while base64-js does not.
-  if (encoding === 'base64' && type === 'string') {
-    subject = stringtrim(subject)
-    while (subject.length % 4 !== 0) {
-      subject = subject + '='
-    }
-  }
-
-  // Find the length
-  var length
-  if (type === 'number')
-    length = coerce(subject)
-  else if (type === 'string')
-    length = Buffer.byteLength(subject, encoding)
-  else if (type === 'object')
-    length = coerce(subject.length) // assume that object is array-like
-  else
-    throw new Error('First argument needs to be a number, array or string.')
-
-  var buf
-  if (Buffer._useTypedArrays) {
-    // Preferred: Return an augmented `Uint8Array` instance for best performance
-    buf = Buffer._augment(new Uint8Array(length))
-  } else {
-    // Fallback: Return THIS instance of Buffer (created by `new`)
-    buf = this
-    buf.length = length
-    buf._isBuffer = true
-  }
-
-  var i
-  if (Buffer._useTypedArrays && typeof subject.byteLength === 'number') {
-    // Speed optimization -- use set if we're copying from a typed array
-    buf._set(subject)
-  } else if (isArrayish(subject)) {
-    // Treat array-ish objects as a byte array
-    for (i = 0; i < length; i++) {
-      if (Buffer.isBuffer(subject))
-        buf[i] = subject.readUInt8(i)
-      else
-        buf[i] = subject[i]
-    }
-  } else if (type === 'string') {
-    buf.write(subject, 0, encoding)
-  } else if (type === 'number' && !Buffer._useTypedArrays && !noZero) {
-    for (i = 0; i < length; i++) {
-      buf[i] = 0
-    }
-  }
-
-  return buf
-}
-
-// STATIC METHODS
-// ==============
-
-Buffer.isEncoding = function (encoding) {
-  switch (String(encoding).toLowerCase()) {
-    case 'hex':
-    case 'utf8':
-    case 'utf-8':
-    case 'ascii':
-    case 'binary':
-    case 'base64':
-    case 'raw':
-    case 'ucs2':
-    case 'ucs-2':
-    case 'utf16le':
-    case 'utf-16le':
-      return true
-    default:
-      return false
-  }
-}
-
-Buffer.isBuffer = function (b) {
-  return !!(b !== null && b !== undefined && b._isBuffer)
-}
-
-Buffer.byteLength = function (str, encoding) {
-  var ret
-  str = str + ''
-  switch (encoding || 'utf8') {
-    case 'hex':
-      ret = str.length / 2
-      break
-    case 'utf8':
-    case 'utf-8':
-      ret = utf8ToBytes(str).length
-      break
-    case 'ascii':
-    case 'binary':
-    case 'raw':
-      ret = str.length
-      break
-    case 'base64':
-      ret = base64ToBytes(str).length
-      break
-    case 'ucs2':
-    case 'ucs-2':
-    case 'utf16le':
-    case 'utf-16le':
-      ret = str.length * 2
-      break
-    default:
-      throw new Error('Unknown encoding')
-  }
-  return ret
-}
-
-Buffer.concat = function (list, totalLength) {
-  assert(isArray(list), 'Usage: Buffer.concat(list, [totalLength])\n' +
-      'list should be an Array.')
-
-  if (list.length === 0) {
-    return new Buffer(0)
-  } else if (list.length === 1) {
-    return list[0]
-  }
-
-  var i
-  if (typeof totalLength !== 'number') {
-    totalLength = 0
-    for (i = 0; i < list.length; i++) {
-      totalLength += list[i].length
-    }
-  }
-
-  var buf = new Buffer(totalLength)
-  var pos = 0
-  for (i = 0; i < list.length; i++) {
-    var item = list[i]
-    item.copy(buf, pos)
-    pos += item.length
-  }
-  return buf
-}
-
-// BUFFER INSTANCE METHODS
-// =======================
-
-function _hexWrite (buf, string, offset, length) {
-  offset = Number(offset) || 0
-  var remaining = buf.length - offset
-  if (!length) {
-    length = remaining
-  } else {
-    length = Number(length)
-    if (length > remaining) {
-      length = remaining
-    }
-  }
-
-  // must be an even number of digits
-  var strLen = string.length
-  assert(strLen % 2 === 0, 'Invalid hex string')
-
-  if (length > strLen / 2) {
-    length = strLen / 2
-  }
-  for (var i = 0; i < length; i++) {
-    var byte = parseInt(string.substr(i * 2, 2), 16)
-    assert(!isNaN(byte), 'Invalid hex string')
-    buf[offset + i] = byte
-  }
-  Buffer._charsWritten = i * 2
-  return i
-}
-
-function _utf8Write (buf, string, offset, length) {
-  var charsWritten = Buffer._charsWritten =
-    blitBuffer(utf8ToBytes(string), buf, offset, length)
-  return charsWritten
-}
-
-function _asciiWrite (buf, string, offset, length) {
-  var charsWritten = Buffer._charsWritten =
-    blitBuffer(asciiToBytes(string), buf, offset, length)
-  return charsWritten
-}
-
-function _binaryWrite (buf, string, offset, length) {
-  return _asciiWrite(buf, string, offset, length)
-}
-
-function _base64Write (buf, string, offset, length) {
-  var charsWritten = Buffer._charsWritten =
-    blitBuffer(base64ToBytes(string), buf, offset, length)
-  return charsWritten
-}
-
-function _utf16leWrite (buf, string, offset, length) {
-  var charsWritten = Buffer._charsWritten =
-    blitBuffer(utf16leToBytes(string), buf, offset, length)
-  return charsWritten
-}
-
-Buffer.prototype.write = function (string, offset, length, encoding) {
-  // Support both (string, offset, length, encoding)
-  // and the legacy (string, encoding, offset, length)
-  if (isFinite(offset)) {
-    if (!isFinite(length)) {
-      encoding = length
-      length = undefined
-    }
-  } else {  // legacy
-    var swap = encoding
-    encoding = offset
-    offset = length
-    length = swap
-  }
-
-  offset = Number(offset) || 0
-  var remaining = this.length - offset
-  if (!length) {
-    length = remaining
-  } else {
-    length = Number(length)
-    if (length > remaining) {
-      length = remaining
-    }
-  }
-  encoding = String(encoding || 'utf8').toLowerCase()
-
-  var ret
-  switch (encoding) {
-    case 'hex':
-      ret = _hexWrite(this, string, offset, length)
-      break
-    case 'utf8':
-    case 'utf-8':
-      ret = _utf8Write(this, string, offset, length)
-      break
-    case 'ascii':
-      ret = _asciiWrite(this, string, offset, length)
-      break
-    case 'binary':
-      ret = _binaryWrite(this, string, offset, length)
-      break
-    case 'base64':
-      ret = _base64Write(this, string, offset, length)
-      break
-    case 'ucs2':
-    case 'ucs-2':
-    case 'utf16le':
-    case 'utf-16le':
-      ret = _utf16leWrite(this, string, offset, length)
-      break
-    default:
-      throw new Error('Unknown encoding')
-  }
-  return ret
-}
-
-Buffer.prototype.toString = function (encoding, start, end) {
-  var self = this
-
-  encoding = String(encoding || 'utf8').toLowerCase()
-  start = Number(start) || 0
-  end = (end !== undefined)
-    ? Number(end)
-    : end = self.length
-
-  // Fastpath empty strings
-  if (end === start)
-    return ''
-
-  var ret
-  switch (encoding) {
-    case 'hex':
-      ret = _hexSlice(self, start, end)
-      break
-    case 'utf8':
-    case 'utf-8':
-      ret = _utf8Slice(self, start, end)
-      break
-    case 'ascii':
-      ret = _asciiSlice(self, start, end)
-      break
-    case 'binary':
-      ret = _binarySlice(self, start, end)
-      break
-    case 'base64':
-      ret = _base64Slice(self, start, end)
-      break
-    case 'ucs2':
-    case 'ucs-2':
-    case 'utf16le':
-    case 'utf-16le':
-      ret = _utf16leSlice(self, start, end)
-      break
-    default:
-      throw new Error('Unknown encoding')
-  }
-  return ret
-}
-
-Buffer.prototype.toJSON = function () {
-  return {
-    type: 'Buffer',
-    data: Array.prototype.slice.call(this._arr || this, 0)
-  }
-}
-
-// copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
-Buffer.prototype.copy = function (target, target_start, start, end) {
-  var source = this
-
-  if (!start) start = 0
-  if (!end && end !== 0) end = this.length
-  if (!target_start) target_start = 0
-
-  // Copy 0 bytes; we're done
-  if (end === start) return
-  if (target.length === 0 || source.length === 0) return
-
-  // Fatal error conditions
-  assert(end >= start, 'sourceEnd < sourceStart')
-  assert(target_start >= 0 && target_start < target.length,
-      'targetStart out of bounds')
-  assert(start >= 0 && start < source.length, 'sourceStart out of bounds')
-  assert(end >= 0 && end <= source.length, 'sourceEnd out of bounds')
-
-  // Are we oob?
-  if (end > this.length)
-    end = this.length
-  if (target.length - target_start < end - start)
-    end = target.length - target_start + start
-
-  var len = end - start
-
-  if (len < 100 || !Buffer._useTypedArrays) {
-    for (var i = 0; i < len; i++)
-      target[i + target_start] = this[i + start]
-  } else {
-    target._set(this.subarray(start, start + len), target_start)
-  }
-}
-
-function _base64Slice (buf, start, end) {
-  if (start === 0 && end === buf.length) {
-    return base64.fromByteArray(buf)
-  } else {
-    return base64.fromByteArray(buf.slice(start, end))
-  }
-}
-
-function _utf8Slice (buf, start, end) {
-  var res = ''
-  var tmp = ''
-  end = Math.min(buf.length, end)
-
-  for (var i = start; i < end; i++) {
-    if (buf[i] <= 0x7F) {
-      res += decodeUtf8Char(tmp) + String.fromCharCode(buf[i])
-      tmp = ''
-    } else {
-      tmp += '%' + buf[i].toString(16)
-    }
-  }
-
-  return res + decodeUtf8Char(tmp)
-}
-
-function _asciiSlice (buf, start, end) {
-  var ret = ''
-  end = Math.min(buf.length, end)
-
-  for (var i = start; i < end; i++)
-    ret += String.fromCharCode(buf[i])
-  return ret
-}
-
-function _binarySlice (buf, start, end) {
-  return _asciiSlice(buf, start, end)
-}
-
-function _hexSlice (buf, start, end) {
-  var len = buf.length
-
-  if (!start || start < 0) start = 0
-  if (!end || end < 0 || end > len) end = len
-
-  var out = ''
-  for (var i = start; i < end; i++) {
-    out += toHex(buf[i])
-  }
-  return out
-}
-
-function _utf16leSlice (buf, start, end) {
-  var bytes = buf.slice(start, end)
-  var res = ''
-  for (var i = 0; i < bytes.length; i += 2) {
-    res += String.fromCharCode(bytes[i] + bytes[i+1] * 256)
-  }
-  return res
-}
-
-Buffer.prototype.slice = function (start, end) {
-  var len = this.length
-  start = clamp(start, len, 0)
-  end = clamp(end, len, len)
-
-  if (Buffer._useTypedArrays) {
-    return Buffer._augment(this.subarray(start, end))
-  } else {
-    var sliceLen = end - start
-    var newBuf = new Buffer(sliceLen, undefined, true)
-    for (var i = 0; i < sliceLen; i++) {
-      newBuf[i] = this[i + start]
-    }
-    return newBuf
-  }
-}
-
-// `get` will be removed in Node 0.13+
-Buffer.prototype.get = function (offset) {
-  console.log('.get() is deprecated. Access using array indexes instead.')
-  return this.readUInt8(offset)
-}
-
-// `set` will be removed in Node 0.13+
-Buffer.prototype.set = function (v, offset) {
-  console.log('.set() is deprecated. Access using array indexes instead.')
-  return this.writeUInt8(v, offset)
-}
-
-Buffer.prototype.readUInt8 = function (offset, noAssert) {
-  if (!noAssert) {
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset < this.length, 'Trying to read beyond buffer length')
-  }
-
-  if (offset >= this.length)
-    return
-
-  return this[offset]
-}
-
-function _readUInt16 (buf, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 1 < buf.length, 'Trying to read beyond buffer length')
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  var val
-  if (littleEndian) {
-    val = buf[offset]
-    if (offset + 1 < len)
-      val |= buf[offset + 1] << 8
-  } else {
-    val = buf[offset] << 8
-    if (offset + 1 < len)
-      val |= buf[offset + 1]
-  }
-  return val
-}
-
-Buffer.prototype.readUInt16LE = function (offset, noAssert) {
-  return _readUInt16(this, offset, true, noAssert)
-}
-
-Buffer.prototype.readUInt16BE = function (offset, noAssert) {
-  return _readUInt16(this, offset, false, noAssert)
-}
-
-function _readUInt32 (buf, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 3 < buf.length, 'Trying to read beyond buffer length')
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  var val
-  if (littleEndian) {
-    if (offset + 2 < len)
-      val = buf[offset + 2] << 16
-    if (offset + 1 < len)
-      val |= buf[offset + 1] << 8
-    val |= buf[offset]
-    if (offset + 3 < len)
-      val = val + (buf[offset + 3] << 24 >>> 0)
-  } else {
-    if (offset + 1 < len)
-      val = buf[offset + 1] << 16
-    if (offset + 2 < len)
-      val |= buf[offset + 2] << 8
-    if (offset + 3 < len)
-      val |= buf[offset + 3]
-    val = val + (buf[offset] << 24 >>> 0)
-  }
-  return val
-}
-
-Buffer.prototype.readUInt32LE = function (offset, noAssert) {
-  return _readUInt32(this, offset, true, noAssert)
-}
-
-Buffer.prototype.readUInt32BE = function (offset, noAssert) {
-  return _readUInt32(this, offset, false, noAssert)
-}
-
-Buffer.prototype.readInt8 = function (offset, noAssert) {
-  if (!noAssert) {
-    assert(offset !== undefined && offset !== null,
-        'missing offset')
-    assert(offset < this.length, 'Trying to read beyond buffer length')
-  }
-
-  if (offset >= this.length)
-    return
-
-  var neg = this[offset] & 0x80
-  if (neg)
-    return (0xff - this[offset] + 1) * -1
-  else
-    return this[offset]
-}
-
-function _readInt16 (buf, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 1 < buf.length, 'Trying to read beyond buffer length')
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  var val = _readUInt16(buf, offset, littleEndian, true)
-  var neg = val & 0x8000
-  if (neg)
-    return (0xffff - val + 1) * -1
-  else
-    return val
-}
-
-Buffer.prototype.readInt16LE = function (offset, noAssert) {
-  return _readInt16(this, offset, true, noAssert)
-}
-
-Buffer.prototype.readInt16BE = function (offset, noAssert) {
-  return _readInt16(this, offset, false, noAssert)
-}
-
-function _readInt32 (buf, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 3 < buf.length, 'Trying to read beyond buffer length')
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  var val = _readUInt32(buf, offset, littleEndian, true)
-  var neg = val & 0x80000000
-  if (neg)
-    return (0xffffffff - val + 1) * -1
-  else
-    return val
-}
-
-Buffer.prototype.readInt32LE = function (offset, noAssert) {
-  return _readInt32(this, offset, true, noAssert)
-}
-
-Buffer.prototype.readInt32BE = function (offset, noAssert) {
-  return _readInt32(this, offset, false, noAssert)
-}
-
-function _readFloat (buf, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset + 3 < buf.length, 'Trying to read beyond buffer length')
-  }
-
-  return ieee754.read(buf, offset, littleEndian, 23, 4)
-}
-
-Buffer.prototype.readFloatLE = function (offset, noAssert) {
-  return _readFloat(this, offset, true, noAssert)
-}
-
-Buffer.prototype.readFloatBE = function (offset, noAssert) {
-  return _readFloat(this, offset, false, noAssert)
-}
-
-function _readDouble (buf, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset + 7 < buf.length, 'Trying to read beyond buffer length')
-  }
-
-  return ieee754.read(buf, offset, littleEndian, 52, 8)
-}
-
-Buffer.prototype.readDoubleLE = function (offset, noAssert) {
-  return _readDouble(this, offset, true, noAssert)
-}
-
-Buffer.prototype.readDoubleBE = function (offset, noAssert) {
-  return _readDouble(this, offset, false, noAssert)
-}
-
-Buffer.prototype.writeUInt8 = function (value, offset, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset < this.length, 'trying to write beyond buffer length')
-    verifuint(value, 0xff)
-  }
-
-  if (offset >= this.length) return
-
-  this[offset] = value
-}
-
-function _writeUInt16 (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 1 < buf.length, 'trying to write beyond buffer length')
-    verifuint(value, 0xffff)
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  for (var i = 0, j = Math.min(len - offset, 2); i < j; i++) {
-    buf[offset + i] =
-        (value & (0xff << (8 * (littleEndian ? i : 1 - i)))) >>>
-            (littleEndian ? i : 1 - i) * 8
-  }
-}
-
-Buffer.prototype.writeUInt16LE = function (value, offset, noAssert) {
-  _writeUInt16(this, value, offset, true, noAssert)
-}
-
-Buffer.prototype.writeUInt16BE = function (value, offset, noAssert) {
-  _writeUInt16(this, value, offset, false, noAssert)
-}
-
-function _writeUInt32 (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 3 < buf.length, 'trying to write beyond buffer length')
-    verifuint(value, 0xffffffff)
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  for (var i = 0, j = Math.min(len - offset, 4); i < j; i++) {
-    buf[offset + i] =
-        (value >>> (littleEndian ? i : 3 - i) * 8) & 0xff
-  }
-}
-
-Buffer.prototype.writeUInt32LE = function (value, offset, noAssert) {
-  _writeUInt32(this, value, offset, true, noAssert)
-}
-
-Buffer.prototype.writeUInt32BE = function (value, offset, noAssert) {
-  _writeUInt32(this, value, offset, false, noAssert)
-}
-
-Buffer.prototype.writeInt8 = function (value, offset, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset < this.length, 'Trying to write beyond buffer length')
-    verifsint(value, 0x7f, -0x80)
-  }
-
-  if (offset >= this.length)
-    return
-
-  if (value >= 0)
-    this.writeUInt8(value, offset, noAssert)
-  else
-    this.writeUInt8(0xff + value + 1, offset, noAssert)
-}
-
-function _writeInt16 (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 1 < buf.length, 'Trying to write beyond buffer length')
-    verifsint(value, 0x7fff, -0x8000)
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  if (value >= 0)
-    _writeUInt16(buf, value, offset, littleEndian, noAssert)
-  else
-    _writeUInt16(buf, 0xffff + value + 1, offset, littleEndian, noAssert)
-}
-
-Buffer.prototype.writeInt16LE = function (value, offset, noAssert) {
-  _writeInt16(this, value, offset, true, noAssert)
-}
-
-Buffer.prototype.writeInt16BE = function (value, offset, noAssert) {
-  _writeInt16(this, value, offset, false, noAssert)
-}
-
-function _writeInt32 (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 3 < buf.length, 'Trying to write beyond buffer length')
-    verifsint(value, 0x7fffffff, -0x80000000)
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  if (value >= 0)
-    _writeUInt32(buf, value, offset, littleEndian, noAssert)
-  else
-    _writeUInt32(buf, 0xffffffff + value + 1, offset, littleEndian, noAssert)
-}
-
-Buffer.prototype.writeInt32LE = function (value, offset, noAssert) {
-  _writeInt32(this, value, offset, true, noAssert)
-}
-
-Buffer.prototype.writeInt32BE = function (value, offset, noAssert) {
-  _writeInt32(this, value, offset, false, noAssert)
-}
-
-function _writeFloat (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 3 < buf.length, 'Trying to write beyond buffer length')
-    verifIEEE754(value, 3.4028234663852886e+38, -3.4028234663852886e+38)
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  ieee754.write(buf, value, offset, littleEndian, 23, 4)
-}
-
-Buffer.prototype.writeFloatLE = function (value, offset, noAssert) {
-  _writeFloat(this, value, offset, true, noAssert)
-}
-
-Buffer.prototype.writeFloatBE = function (value, offset, noAssert) {
-  _writeFloat(this, value, offset, false, noAssert)
-}
-
-function _writeDouble (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 7 < buf.length,
-        'Trying to write beyond buffer length')
-    verifIEEE754(value, 1.7976931348623157E+308, -1.7976931348623157E+308)
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  ieee754.write(buf, value, offset, littleEndian, 52, 8)
-}
-
-Buffer.prototype.writeDoubleLE = function (value, offset, noAssert) {
-  _writeDouble(this, value, offset, true, noAssert)
-}
-
-Buffer.prototype.writeDoubleBE = function (value, offset, noAssert) {
-  _writeDouble(this, value, offset, false, noAssert)
-}
-
-// fill(value, start=0, end=buffer.length)
-Buffer.prototype.fill = function (value, start, end) {
-  if (!value) value = 0
-  if (!start) start = 0
-  if (!end) end = this.length
-
-  if (typeof value === 'string') {
-    value = value.charCodeAt(0)
-  }
-
-  assert(typeof value === 'number' && !isNaN(value), 'value is not a number')
-  assert(end >= start, 'end < start')
-
-  // Fill 0 bytes; we're done
-  if (end === start) return
-  if (this.length === 0) return
-
-  assert(start >= 0 && start < this.length, 'start out of bounds')
-  assert(end >= 0 && end <= this.length, 'end out of bounds')
-
-  for (var i = start; i < end; i++) {
-    this[i] = value
-  }
-}
-
-Buffer.prototype.inspect = function () {
-  var out = []
-  var len = this.length
-  for (var i = 0; i < len; i++) {
-    out[i] = toHex(this[i])
-    if (i === exports.INSPECT_MAX_BYTES) {
-      out[i + 1] = '...'
-      break
-    }
-  }
-  return '<Buffer ' + out.join(' ') + '>'
-}
-
-/**
- * Creates a new `ArrayBuffer` with the *copied* memory of the buffer instance.
- * Added in Node 0.12. Only available in browsers that support ArrayBuffer.
- */
-Buffer.prototype.toArrayBuffer = function () {
-  if (typeof Uint8Array !== 'undefined') {
-    if (Buffer._useTypedArrays) {
-      return (new Buffer(this)).buffer
-    } else {
-      var buf = new Uint8Array(this.length)
-      for (var i = 0, len = buf.length; i < len; i += 1)
-        buf[i] = this[i]
-      return buf.buffer
-    }
-  } else {
-    throw new Error('Buffer.toArrayBuffer not supported in this browser')
-  }
-}
-
-// HELPER FUNCTIONS
-// ================
-
-function stringtrim (str) {
-  if (str.trim) return str.trim()
-  return str.replace(/^\s+|\s+$/g, '')
-}
-
-var BP = Buffer.prototype
-
-/**
- * Augment a Uint8Array *instance* (not the Uint8Array class!) with Buffer methods
- */
-Buffer._augment = function (arr) {
-  arr._isBuffer = true
-
-  // save reference to original Uint8Array get/set methods before overwriting
-  arr._get = arr.get
-  arr._set = arr.set
-
-  // deprecated, will be removed in node 0.13+
-  arr.get = BP.get
-  arr.set = BP.set
-
-  arr.write = BP.write
-  arr.toString = BP.toString
-  arr.toLocaleString = BP.toString
-  arr.toJSON = BP.toJSON
-  arr.copy = BP.copy
-  arr.slice = BP.slice
-  arr.readUInt8 = BP.readUInt8
-  arr.readUInt16LE = BP.readUInt16LE
-  arr.readUInt16BE = BP.readUInt16BE
-  arr.readUInt32LE = BP.readUInt32LE
-  arr.readUInt32BE = BP.readUInt32BE
-  arr.readInt8 = BP.readInt8
-  arr.readInt16LE = BP.readInt16LE
-  arr.readInt16BE = BP.readInt16BE
-  arr.readInt32LE = BP.readInt32LE
-  arr.readInt32BE = BP.readInt32BE
-  arr.readFloatLE = BP.readFloatLE
-  arr.readFloatBE = BP.readFloatBE
-  arr.readDoubleLE = BP.readDoubleLE
-  arr.readDoubleBE = BP.readDoubleBE
-  arr.writeUInt8 = BP.writeUInt8
-  arr.writeUInt16LE = BP.writeUInt16LE
-  arr.writeUInt16BE = BP.writeUInt16BE
-  arr.writeUInt32LE = BP.writeUInt32LE
-  arr.writeUInt32BE = BP.writeUInt32BE
-  arr.writeInt8 = BP.writeInt8
-  arr.writeInt16LE = BP.writeInt16LE
-  arr.writeInt16BE = BP.writeInt16BE
-  arr.writeInt32LE = BP.writeInt32LE
-  arr.writeInt32BE = BP.writeInt32BE
-  arr.writeFloatLE = BP.writeFloatLE
-  arr.writeFloatBE = BP.writeFloatBE
-  arr.writeDoubleLE = BP.writeDoubleLE
-  arr.writeDoubleBE = BP.writeDoubleBE
-  arr.fill = BP.fill
-  arr.inspect = BP.inspect
-  arr.toArrayBuffer = BP.toArrayBuffer
-
-  return arr
-}
-
-// slice(start, end)
-function clamp (index, len, defaultValue) {
-  if (typeof index !== 'number') return defaultValue
-  index = ~~index;  // Coerce to integer.
-  if (index >= len) return len
-  if (index >= 0) return index
-  index += len
-  if (index >= 0) return index
-  return 0
-}
-
-function coerce (length) {
-  // Coerce length to a number (possibly NaN), round up
-  // in case it's fractional (e.g. 123.456) then do a
-  // double negate to coerce a NaN to 0. Easy, right?
-  length = ~~Math.ceil(+length)
-  return length < 0 ? 0 : length
-}
-
-function isArray (subject) {
-  return (Array.isArray || function (subject) {
-    return Object.prototype.toString.call(subject) === '[object Array]'
-  })(subject)
-}
-
-function isArrayish (subject) {
-  return isArray(subject) || Buffer.isBuffer(subject) ||
-      subject && typeof subject === 'object' &&
-      typeof subject.length === 'number'
-}
-
-function toHex (n) {
-  if (n < 16) return '0' + n.toString(16)
-  return n.toString(16)
-}
-
-function utf8ToBytes (str) {
-  var byteArray = []
-  for (var i = 0; i < str.length; i++) {
-    var b = str.charCodeAt(i)
-    if (b <= 0x7F)
-      byteArray.push(str.charCodeAt(i))
-    else {
-      var start = i
-      if (b >= 0xD800 && b <= 0xDFFF) i++
-      var h = encodeURIComponent(str.slice(start, i+1)).substr(1).split('%')
-      for (var j = 0; j < h.length; j++)
-        byteArray.push(parseInt(h[j], 16))
-    }
-  }
-  return byteArray
-}
-
-function asciiToBytes (str) {
-  var byteArray = []
-  for (var i = 0; i < str.length; i++) {
-    // Node's code seems to be doing this and not & 0x7F..
-    byteArray.push(str.charCodeAt(i) & 0xFF)
-  }
-  return byteArray
-}
-
-function utf16leToBytes (str) {
-  var c, hi, lo
-  var byteArray = []
-  for (var i = 0; i < str.length; i++) {
-    c = str.charCodeAt(i)
-    hi = c >> 8
-    lo = c % 256
-    byteArray.push(lo)
-    byteArray.push(hi)
-  }
-
-  return byteArray
-}
-
-function base64ToBytes (str) {
-  return base64.toByteArray(str)
-}
-
-function blitBuffer (src, dst, offset, length) {
-  var pos
-  for (var i = 0; i < length; i++) {
-    if ((i + offset >= dst.length) || (i >= src.length))
-      break
-    dst[i + offset] = src[i]
-  }
-  return i
-}
-
-function decodeUtf8Char (str) {
-  try {
-    return decodeURIComponent(str)
-  } catch (err) {
-    return String.fromCharCode(0xFFFD) // UTF 8 invalid char
-  }
-}
-
-/*
- * We have to make sure that the value is a valid integer. This means that it
- * is non-negative. It has no fractional component and that it does not
- * exceed the maximum allowed value.
- */
-function verifuint (value, max) {
-  assert(typeof value === 'number', 'cannot write a non-number as a number')
-  assert(value >= 0, 'specified a negative value for writing an unsigned value')
-  assert(value <= max, 'value is larger than maximum value for type')
-  assert(Math.floor(value) === value, 'value has a fractional component')
-}
-
-function verifsint (value, max, min) {
-  assert(typeof value === 'number', 'cannot write a non-number as a number')
-  assert(value <= max, 'value larger than maximum allowed value')
-  assert(value >= min, 'value smaller than minimum allowed value')
-  assert(Math.floor(value) === value, 'value has a fractional component')
-}
-
-function verifIEEE754 (value, max, min) {
-  assert(typeof value === 'number', 'cannot write a non-number as a number')
-  assert(value <= max, 'value larger than maximum allowed value')
-  assert(value >= min, 'value smaller than minimum allowed value')
-}
-
-function assert (test, message) {
-  if (!test) throw new Error(message || 'Failed assertion')
-}
-
-},{"base64-js":12,"ieee754":13}],12:[function(require,module,exports){
-var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-
-;(function (exports) {
-	'use strict';
-
-  var Arr = (typeof Uint8Array !== 'undefined')
-    ? Uint8Array
-    : Array
-
-	var PLUS   = '+'.charCodeAt(0)
-	var SLASH  = '/'.charCodeAt(0)
-	var NUMBER = '0'.charCodeAt(0)
-	var LOWER  = 'a'.charCodeAt(0)
-	var UPPER  = 'A'.charCodeAt(0)
-	var PLUS_URL_SAFE = '-'.charCodeAt(0)
-	var SLASH_URL_SAFE = '_'.charCodeAt(0)
-
-	function decode (elt) {
-		var code = elt.charCodeAt(0)
-		if (code === PLUS ||
-		    code === PLUS_URL_SAFE)
-			return 62 // '+'
-		if (code === SLASH ||
-		    code === SLASH_URL_SAFE)
-			return 63 // '/'
-		if (code < NUMBER)
-			return -1 //no match
-		if (code < NUMBER + 10)
-			return code - NUMBER + 26 + 26
-		if (code < UPPER + 26)
-			return code - UPPER
-		if (code < LOWER + 26)
-			return code - LOWER + 26
-	}
-
-	function b64ToByteArray (b64) {
-		var i, j, l, tmp, placeHolders, arr
-
-		if (b64.length % 4 > 0) {
-			throw new Error('Invalid string. Length must be a multiple of 4')
-		}
-
-		// the number of equal signs (place holders)
-		// if there are two placeholders, than the two characters before it
-		// represent one byte
-		// if there is only one, then the three characters before it represent 2 bytes
-		// this is just a cheap hack to not do indexOf twice
-		var len = b64.length
-		placeHolders = '=' === b64.charAt(len - 2) ? 2 : '=' === b64.charAt(len - 1) ? 1 : 0
-
-		// base64 is 4/3 + up to two characters of the original data
-		arr = new Arr(b64.length * 3 / 4 - placeHolders)
-
-		// if there are placeholders, only get up to the last complete 4 chars
-		l = placeHolders > 0 ? b64.length - 4 : b64.length
-
-		var L = 0
-
-		function push (v) {
-			arr[L++] = v
-		}
-
-		for (i = 0, j = 0; i < l; i += 4, j += 3) {
-			tmp = (decode(b64.charAt(i)) << 18) | (decode(b64.charAt(i + 1)) << 12) | (decode(b64.charAt(i + 2)) << 6) | decode(b64.charAt(i + 3))
-			push((tmp & 0xFF0000) >> 16)
-			push((tmp & 0xFF00) >> 8)
-			push(tmp & 0xFF)
-		}
-
-		if (placeHolders === 2) {
-			tmp = (decode(b64.charAt(i)) << 2) | (decode(b64.charAt(i + 1)) >> 4)
-			push(tmp & 0xFF)
-		} else if (placeHolders === 1) {
-			tmp = (decode(b64.charAt(i)) << 10) | (decode(b64.charAt(i + 1)) << 4) | (decode(b64.charAt(i + 2)) >> 2)
-			push((tmp >> 8) & 0xFF)
-			push(tmp & 0xFF)
-		}
-
-		return arr
-	}
-
-	function uint8ToBase64 (uint8) {
-		var i,
-			extraBytes = uint8.length % 3, // if we have 1 byte left, pad 2 bytes
-			output = "",
-			temp, length
-
-		function encode (num) {
-			return lookup.charAt(num)
-		}
-
-		function tripletToBase64 (num) {
-			return encode(num >> 18 & 0x3F) + encode(num >> 12 & 0x3F) + encode(num >> 6 & 0x3F) + encode(num & 0x3F)
-		}
-
-		// go through the array every three bytes, we'll deal with trailing stuff later
-		for (i = 0, length = uint8.length - extraBytes; i < length; i += 3) {
-			temp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2])
-			output += tripletToBase64(temp)
-		}
-
-		// pad the end with zeros, but make sure to not forget the extra bytes
-		switch (extraBytes) {
-			case 1:
-				temp = uint8[uint8.length - 1]
-				output += encode(temp >> 2)
-				output += encode((temp << 4) & 0x3F)
-				output += '=='
-				break
-			case 2:
-				temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1])
-				output += encode(temp >> 10)
-				output += encode((temp >> 4) & 0x3F)
-				output += encode((temp << 2) & 0x3F)
-				output += '='
-				break
-		}
-
-		return output
-	}
-
-	exports.toByteArray = b64ToByteArray
-	exports.fromByteArray = uint8ToBase64
-}(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
-
-},{}],13:[function(require,module,exports){
-exports.read = function (buffer, offset, isLE, mLen, nBytes) {
-  var e, m
-  var eLen = nBytes * 8 - mLen - 1
-  var eMax = (1 << eLen) - 1
-  var eBias = eMax >> 1
-  var nBits = -7
-  var i = isLE ? (nBytes - 1) : 0
-  var d = isLE ? -1 : 1
-  var s = buffer[offset + i]
-
-  i += d
-
-  e = s & ((1 << (-nBits)) - 1)
-  s >>= (-nBits)
-  nBits += eLen
-  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8) {}
-
-  m = e & ((1 << (-nBits)) - 1)
-  e >>= (-nBits)
-  nBits += mLen
-  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8) {}
-
-  if (e === 0) {
-    e = 1 - eBias
-  } else if (e === eMax) {
-    return m ? NaN : ((s ? -1 : 1) * Infinity)
-  } else {
-    m = m + Math.pow(2, mLen)
-    e = e - eBias
-  }
-  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
-}
-
-exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
-  var e, m, c
-  var eLen = nBytes * 8 - mLen - 1
-  var eMax = (1 << eLen) - 1
-  var eBias = eMax >> 1
-  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
-  var i = isLE ? 0 : (nBytes - 1)
-  var d = isLE ? 1 : -1
-  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
-
-  value = Math.abs(value)
-
-  if (isNaN(value) || value === Infinity) {
-    m = isNaN(value) ? 1 : 0
-    e = eMax
-  } else {
-    e = Math.floor(Math.log(value) / Math.LN2)
-    if (value * (c = Math.pow(2, -e)) < 1) {
-      e--
-      c *= 2
-    }
-    if (e + eBias >= 1) {
-      value += rt / c
-    } else {
-      value += rt * Math.pow(2, 1 - eBias)
-    }
-    if (value * c >= 2) {
-      e++
-      c /= 2
-    }
-
-    if (e + eBias >= eMax) {
-      m = 0
-      e = eMax
-    } else if (e + eBias >= 1) {
-      m = (value * c - 1) * Math.pow(2, mLen)
-      e = e + eBias
-    } else {
-      m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)
-      e = 0
-    }
-  }
-
-  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
-
-  e = (e << mLen) | m
-  eLen += mLen
-  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
-
-  buffer[offset + i - d] |= s * 128
-}
-
-},{}],14:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -2958,7 +1760,7 @@ var substr = 'ab'.substr(-1) === 'b'
 ;
 
 }).call(this,require("oMfpAn"))
-},{"oMfpAn":15}],15:[function(require,module,exports){
+},{"oMfpAn":19}],19:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -3023,834 +1825,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],16:[function(require,module,exports){
-(function (__filename,__dirname){
-/***********************************************
-Copyright 2010, 2011, Chris Winberry <chris@winberry.net>. All rights reserved.
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to
-deal in the Software without restriction, including without limitation the
-rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-sell copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-IN THE SOFTWARE.
-***********************************************/
-/* v1.7.6 */
-
-(function () {
-
-function runningInNode () {
-	return(
-		(typeof require) == "function"
-		&&
-		(typeof exports) == "object"
-		&&
-		(typeof module) == "object"
-		&&
-		(typeof __filename) == "string"
-		&&
-		(typeof __dirname) == "string"
-		);
-}
-
-if (!runningInNode()) {
-	if (!this.Tautologistics)
-		this.Tautologistics = {};
-	else if (this.Tautologistics.NodeHtmlParser)
-		return; //NodeHtmlParser already defined!
-	this.Tautologistics.NodeHtmlParser = {};
-	exports = this.Tautologistics.NodeHtmlParser;
-}
-
-//Types of elements found in the DOM
-var ElementType = {
-	  Text: "text" //Plain text
-	, Directive: "directive" //Special tag <!...>
-	, Comment: "comment" //Special tag <!--...-->
-	, Script: "script" //Special tag <script>...</script>
-	, Style: "style" //Special tag <style>...</style>
-	, Tag: "tag" //Any tag that isn't special
-}
-
-function Parser (handler, options) {
-	this._options = options ? options : { };
-	if (this._options.includeLocation == undefined) {
-		this._options.includeLocation = false; //Do not track element position in document by default
-	}
-
-	this.validateHandler(handler);
-	this._handler = handler;
-	this.reset();
-}
-
-	//**"Static"**//
-	//Regular expressions used for cleaning up and parsing (stateless)
-	Parser._reTrim = /(^\s+|\s+$)/g; //Trim leading/trailing whitespace
-	Parser._reTrimComment = /(^\!--|--$)/g; //Remove comment tag markup from comment contents
-	Parser._reWhitespace = /\s/g; //Used to find any whitespace to split on
-	Parser._reTagName = /^\s*(\/?)\s*([^\s\/]+)/; //Used to find the tag name for an element
-
-	//Regular expressions used for parsing (stateful)
-	Parser._reAttrib = //Find attributes in a tag
-		/([^=<>\"\'\s]+)\s*=\s*"([^"]*)"|([^=<>\"\'\s]+)\s*=\s*'([^']*)'|([^=<>\"\'\s]+)\s*=\s*([^'"\s]+)|([^=<>\"\'\s\/]+)/g;
-	Parser._reTags = /[\<\>]/g; //Find tag markers
-
-	//**Public**//
-	//Methods//
-	//Parses a complete HTML and pushes it to the handler
-	Parser.prototype.parseComplete = function Parser$parseComplete (data) {
-		this.reset();
-		this.parseChunk(data);
-		this.done();
-	}
-
-	//Parses a piece of an HTML document
-	Parser.prototype.parseChunk = function Parser$parseChunk (data) {
-		if (this._done)
-			this.handleError(new Error("Attempted to parse chunk after parsing already done"));
-		this._buffer += data; //FIXME: this can be a bottleneck
-		this.parseTags();
-	}
-
-	//Tells the parser that the HTML being parsed is complete
-	Parser.prototype.done = function Parser$done () {
-		if (this._done)
-			return;
-		this._done = true;
-	
-		//Push any unparsed text into a final element in the element list
-		if (this._buffer.length) {
-			var rawData = this._buffer;
-			this._buffer = "";
-			var element = {
-				  raw: rawData
-				, data: (this._parseState == ElementType.Text) ? rawData : rawData.replace(Parser._reTrim, "")
-				, type: this._parseState
-				};
-			if (this._parseState == ElementType.Tag || this._parseState == ElementType.Script || this._parseState == ElementType.Style)
-				element.name = this.parseTagName(element.data);
-			this.parseAttribs(element);
-			this._elements.push(element);
-		}
-	
-		this.writeHandler();
-		this._handler.done();
-	}
-
-	//Resets the parser to a blank state, ready to parse a new HTML document
-	Parser.prototype.reset = function Parser$reset () {
-		this._buffer = "";
-		this._done = false;
-		this._elements = [];
-		this._elementsCurrent = 0;
-		this._current = 0;
-		this._next = 0;
-		this._location = {
-			  row: 0
-			, col: 0
-			, charOffset: 0
-			, inBuffer: 0
-		};
-		this._parseState = ElementType.Text;
-		this._prevTagSep = '';
-		this._tagStack = [];
-		this._handler.reset();
-	}
-	
-	//**Private**//
-	//Properties//
-	Parser.prototype._options = null; //Parser options for how to behave
-	Parser.prototype._handler = null; //Handler for parsed elements
-	Parser.prototype._buffer = null; //Buffer of unparsed data
-	Parser.prototype._done = false; //Flag indicating whether parsing is done
-	Parser.prototype._elements =  null; //Array of parsed elements
-	Parser.prototype._elementsCurrent = 0; //Pointer to last element in _elements that has been processed
-	Parser.prototype._current = 0; //Position in data that has already been parsed
-	Parser.prototype._next = 0; //Position in data of the next tag marker (<>)
-	Parser.prototype._location = null; //Position tracking for elements in a stream
-	Parser.prototype._parseState = ElementType.Text; //Current type of element being parsed
-	Parser.prototype._prevTagSep = ''; //Previous tag marker found
-	//Stack of element types previously encountered; keeps track of when
-	//parsing occurs inside a script/comment/style tag
-	Parser.prototype._tagStack = null;
-
-	//Methods//
-	//Takes an array of elements and parses any found attributes
-	Parser.prototype.parseTagAttribs = function Parser$parseTagAttribs (elements) {
-		var idxEnd = elements.length;
-		var idx = 0;
-	
-		while (idx < idxEnd) {
-			var element = elements[idx++];
-			if (element.type == ElementType.Tag || element.type == ElementType.Script || element.type == ElementType.style)
-				this.parseAttribs(element);
-		}
-	
-		return(elements);
-	}
-
-	//Takes an element and adds an "attribs" property for any element attributes found 
-	Parser.prototype.parseAttribs = function Parser$parseAttribs (element) {
-		//Only parse attributes for tags
-		if (element.type != ElementType.Script && element.type != ElementType.Style && element.type != ElementType.Tag)
-			return;
-	
-		var tagName = element.data.split(Parser._reWhitespace, 1)[0];
-		var attribRaw = element.data.substring(tagName.length);
-		if (attribRaw.length < 1)
-			return;
-	
-		var match;
-		Parser._reAttrib.lastIndex = 0;
-		while (match = Parser._reAttrib.exec(attribRaw)) {
-			if (element.attribs == undefined)
-				element.attribs = {};
-	
-			if (typeof match[1] == "string" && match[1].length) {
-				element.attribs[match[1]] = match[2];
-			} else if (typeof match[3] == "string" && match[3].length) {
-				element.attribs[match[3].toString()] = match[4].toString();
-			} else if (typeof match[5] == "string" && match[5].length) {
-				element.attribs[match[5]] = match[6];
-			} else if (typeof match[7] == "string" && match[7].length) {
-				element.attribs[match[7]] = match[7];
-			}
-		}
-	}
-
-	//Extracts the base tag name from the data value of an element
-	Parser.prototype.parseTagName = function Parser$parseTagName (data) {
-		if (data == null || data == "")
-			return("");
-		var match = Parser._reTagName.exec(data);
-		if (!match)
-			return("");
-		return((match[1] ? "/" : "") + match[2]);
-	}
-
-	//Parses through HTML text and returns an array of found elements
-	//I admit, this function is rather large but splitting up had an noticeable impact on speed
-	Parser.prototype.parseTags = function Parser$parseTags () {
-		var bufferEnd = this._buffer.length - 1;
-		while (Parser._reTags.test(this._buffer)) {
-			this._next = Parser._reTags.lastIndex - 1;
-			var tagSep = this._buffer.charAt(this._next); //The currently found tag marker
-			var rawData = this._buffer.substring(this._current, this._next); //The next chunk of data to parse
-	
-			//A new element to eventually be appended to the element list
-			var element = {
-				  raw: rawData
-				, data: (this._parseState == ElementType.Text) ? rawData : rawData.replace(Parser._reTrim, "")
-				, type: this._parseState
-			};
-	
-			var elementName = this.parseTagName(element.data);
-	
-			//This section inspects the current tag stack and modifies the current
-			//element if we're actually parsing a special area (script/comment/style tag)
-			if (this._tagStack.length) { //We're parsing inside a script/comment/style tag
-				if (this._tagStack[this._tagStack.length - 1] == ElementType.Script) { //We're currently in a script tag
-					if (elementName.toLowerCase() == "/script") //Actually, we're no longer in a script tag, so pop it off the stack
-						this._tagStack.pop();
-					else { //Not a closing script tag
-						if (element.raw.indexOf("!--") != 0) { //Make sure we're not in a comment
-							//All data from here to script close is now a text element
-							element.type = ElementType.Text;
-							//If the previous element is text, append the current text to it
-							if (this._elements.length && this._elements[this._elements.length - 1].type == ElementType.Text) {
-								var prevElement = this._elements[this._elements.length - 1];
-								prevElement.raw = prevElement.data = prevElement.raw + this._prevTagSep + element.raw;
-								element.raw = element.data = ""; //This causes the current element to not be added to the element list
-							}
-						}
-					}
-				}
-				else if (this._tagStack[this._tagStack.length - 1] == ElementType.Style) { //We're currently in a style tag
-					if (elementName.toLowerCase() == "/style") //Actually, we're no longer in a style tag, so pop it off the stack
-						this._tagStack.pop();
-					else {
-						if (element.raw.indexOf("!--") != 0) { //Make sure we're not in a comment
-							//All data from here to style close is now a text element
-							element.type = ElementType.Text;
-							//If the previous element is text, append the current text to it
-							if (this._elements.length && this._elements[this._elements.length - 1].type == ElementType.Text) {
-								var prevElement = this._elements[this._elements.length - 1];
-								if (element.raw != "") {
-									prevElement.raw = prevElement.data = prevElement.raw + this._prevTagSep + element.raw;
-									element.raw = element.data = ""; //This causes the current element to not be added to the element list
-								} else { //Element is empty, so just append the last tag marker found
-									prevElement.raw = prevElement.data = prevElement.raw + this._prevTagSep;
-								}
-							} else { //The previous element was not text
-								if (element.raw != "") {
-									element.raw = element.data = element.raw;
-								}
-							}
-						}
-					}
-				}
-				else if (this._tagStack[this._tagStack.length - 1] == ElementType.Comment) { //We're currently in a comment tag
-					var rawLen = element.raw.length;
-					if (element.raw.charAt(rawLen - 2) == "-" && element.raw.charAt(rawLen - 1) == "-" && tagSep == ">") {
-						//Actually, we're no longer in a style tag, so pop it off the stack
-						this._tagStack.pop();
-						//If the previous element is a comment, append the current text to it
-						if (this._elements.length && this._elements[this._elements.length - 1].type == ElementType.Comment) {
-							var prevElement = this._elements[this._elements.length - 1];
-							prevElement.raw = prevElement.data = (prevElement.raw + element.raw).replace(Parser._reTrimComment, "");
-							element.raw = element.data = ""; //This causes the current element to not be added to the element list
-							element.type = ElementType.Text;
-						}
-						else //Previous element not a comment
-							element.type = ElementType.Comment; //Change the current element's type to a comment
-					}
-					else { //Still in a comment tag
-						element.type = ElementType.Comment;
-						//If the previous element is a comment, append the current text to it
-						if (this._elements.length && this._elements[this._elements.length - 1].type == ElementType.Comment) {
-							var prevElement = this._elements[this._elements.length - 1];
-							prevElement.raw = prevElement.data = prevElement.raw + element.raw + tagSep;
-							element.raw = element.data = ""; //This causes the current element to not be added to the element list
-							element.type = ElementType.Text;
-						}
-						else
-							element.raw = element.data = element.raw + tagSep;
-					}
-				}
-			}
-	
-			//Processing of non-special tags
-			if (element.type == ElementType.Tag) {
-				element.name = elementName;
-				var elementNameCI = elementName.toLowerCase();
-				
-				if (element.raw.indexOf("!--") == 0) { //This tag is really comment
-					element.type = ElementType.Comment;
-					delete element["name"];
-					var rawLen = element.raw.length;
-					//Check if the comment is terminated in the current element
-					if (element.raw.charAt(rawLen - 1) == "-" && element.raw.charAt(rawLen - 2) == "-" && tagSep == ">")
-						element.raw = element.data = element.raw.replace(Parser._reTrimComment, "");
-					else { //It's not so push the comment onto the tag stack
-						element.raw += tagSep;
-						this._tagStack.push(ElementType.Comment);
-					}
-				}
-				else if (element.raw.indexOf("!") == 0 || element.raw.indexOf("?") == 0) {
-					element.type = ElementType.Directive;
-					//TODO: what about CDATA?
-				}
-				else if (elementNameCI == "script") {
-					element.type = ElementType.Script;
-					//Special tag, push onto the tag stack if not terminated
-					if (element.data.charAt(element.data.length - 1) != "/")
-						this._tagStack.push(ElementType.Script);
-				}
-				else if (elementNameCI == "/script")
-					element.type = ElementType.Script;
-				else if (elementNameCI == "style") {
-					element.type = ElementType.Style;
-					//Special tag, push onto the tag stack if not terminated
-					if (element.data.charAt(element.data.length - 1) != "/")
-						this._tagStack.push(ElementType.Style);
-				}
-				else if (elementNameCI == "/style")
-					element.type = ElementType.Style;
-				if (element.name && element.name.charAt(0) == "/")
-					element.data = element.name;
-			}
-	
-			//Add all tags and non-empty text elements to the element list
-			if (element.raw != "" || element.type != ElementType.Text) {
-				if (this._options.includeLocation && !element.location) {
-					element.location = this.getLocation(element.type == ElementType.Tag);
-				}
-				this.parseAttribs(element);
-				this._elements.push(element);
-				//If tag self-terminates, add an explicit, separate closing tag
-				if (
-					element.type != ElementType.Text
-					&&
-					element.type != ElementType.Comment
-					&&
-					element.type != ElementType.Directive
-					&&
-					element.data.charAt(element.data.length - 1) == "/"
-					)
-					this._elements.push({
-						  raw: "/" + element.name
-						, data: "/" + element.name
-						, name: "/" + element.name
-						, type: element.type
-					});
-			}
-			this._parseState = (tagSep == "<") ? ElementType.Tag : ElementType.Text;
-			this._current = this._next + 1;
-			this._prevTagSep = tagSep;
-		}
-
-		if (this._options.includeLocation) {
-			this.getLocation();
-			this._location.row += this._location.inBuffer;
-			this._location.inBuffer = 0;
-			this._location.charOffset = 0;
-		}
-		this._buffer = (this._current <= bufferEnd) ? this._buffer.substring(this._current) : "";
-		this._current = 0;
-	
-		this.writeHandler();
-	}
-
-	Parser.prototype.getLocation = function Parser$getLocation (startTag) {
-		var c,
-			l = this._location,
-			end = this._current - (startTag ? 1 : 0),
-			chunk = startTag && l.charOffset == 0 && this._current == 0;
-		
-		for (; l.charOffset < end; l.charOffset++) {
-			c = this._buffer.charAt(l.charOffset);
-			if (c == '\n') {
-				l.inBuffer++;
-				l.col = 0;
-			} else if (c != '\r') {
-				l.col++;
-			}
-		}
-		return {
-			  line: l.row + l.inBuffer + 1
-			, col: l.col + (chunk ? 0: 1)
-		};
-	}
-
-	//Checks the handler to make it is an object with the right "interface"
-	Parser.prototype.validateHandler = function Parser$validateHandler (handler) {
-		if ((typeof handler) != "object")
-			throw new Error("Handler is not an object");
-		if ((typeof handler.reset) != "function")
-			throw new Error("Handler method 'reset' is invalid");
-		if ((typeof handler.done) != "function")
-			throw new Error("Handler method 'done' is invalid");
-		if ((typeof handler.writeTag) != "function")
-			throw new Error("Handler method 'writeTag' is invalid");
-		if ((typeof handler.writeText) != "function")
-			throw new Error("Handler method 'writeText' is invalid");
-		if ((typeof handler.writeComment) != "function")
-			throw new Error("Handler method 'writeComment' is invalid");
-		if ((typeof handler.writeDirective) != "function")
-			throw new Error("Handler method 'writeDirective' is invalid");
-	}
-
-	//Writes parsed elements out to the handler
-	Parser.prototype.writeHandler = function Parser$writeHandler (forceFlush) {
-		forceFlush = !!forceFlush;
-		if (this._tagStack.length && !forceFlush)
-			return;
-		while (this._elements.length) {
-			var element = this._elements.shift();
-			switch (element.type) {
-				case ElementType.Comment:
-					this._handler.writeComment(element);
-					break;
-				case ElementType.Directive:
-					this._handler.writeDirective(element);
-					break;
-				case ElementType.Text:
-					this._handler.writeText(element);
-					break;
-				default:
-					this._handler.writeTag(element);
-					break;
-			}
-		}
-	}
-
-	Parser.prototype.handleError = function Parser$handleError (error) {
-		if ((typeof this._handler.error) == "function")
-			this._handler.error(error);
-		else
-			throw error;
-	}
-
-//TODO: make this a trully streamable handler
-function RssHandler (callback) {
-	RssHandler.super_.call(this, callback, { ignoreWhitespace: true, verbose: false, enforceEmptyTags: false });
-}
-inherits(RssHandler, DefaultHandler);
-
-	RssHandler.prototype.done = function RssHandler$done () {
-		var feed = { };
-		var feedRoot;
-
-		var found = DomUtils.getElementsByTagName(function (value) { return(value == "rss" || value == "feed"); }, this.dom, false);
-		if (found.length) {
-			feedRoot = found[0];
-		}
-		if (feedRoot) {
-			if (feedRoot.name == "rss") {
-				feed.type = "rss";
-				feedRoot = feedRoot.children[0]; //<channel/>
-				feed.id = "";
-				try {
-					feed.title = DomUtils.getElementsByTagName("title", feedRoot.children, false)[0].children[0].data;
-				} catch (ex) { }
-				try {
-					feed.link = DomUtils.getElementsByTagName("link", feedRoot.children, false)[0].children[0].data;
-				} catch (ex) { }
-				try {
-					feed.description = DomUtils.getElementsByTagName("description", feedRoot.children, false)[0].children[0].data;
-				} catch (ex) { }
-				try {
-					feed.updated = new Date(DomUtils.getElementsByTagName("lastBuildDate", feedRoot.children, false)[0].children[0].data);
-				} catch (ex) { }
-				try {
-					feed.author = DomUtils.getElementsByTagName("managingEditor", feedRoot.children, false)[0].children[0].data;
-				} catch (ex) { }
-				feed.items = [];
-				DomUtils.getElementsByTagName("item", feedRoot.children).forEach(function (item, index, list) {
-					var entry = {};
-					try {
-						entry.id = DomUtils.getElementsByTagName("guid", item.children, false)[0].children[0].data;
-					} catch (ex) { }
-					try {
-						entry.title = DomUtils.getElementsByTagName("title", item.children, false)[0].children[0].data;
-					} catch (ex) { }
-					try {
-						entry.link = DomUtils.getElementsByTagName("link", item.children, false)[0].children[0].data;
-					} catch (ex) { }
-					try {
-						entry.description = DomUtils.getElementsByTagName("description", item.children, false)[0].children[0].data;
-					} catch (ex) { }
-					try {
-						entry.pubDate = new Date(DomUtils.getElementsByTagName("pubDate", item.children, false)[0].children[0].data);
-					} catch (ex) { }
-					feed.items.push(entry);
-				});
-			} else {
-				feed.type = "atom";
-				try {
-					feed.id = DomUtils.getElementsByTagName("id", feedRoot.children, false)[0].children[0].data;
-				} catch (ex) { }
-				try {
-					feed.title = DomUtils.getElementsByTagName("title", feedRoot.children, false)[0].children[0].data;
-				} catch (ex) { }
-				try {
-					feed.link = DomUtils.getElementsByTagName("link", feedRoot.children, false)[0].attribs.href;
-				} catch (ex) { }
-				try {
-					feed.description = DomUtils.getElementsByTagName("subtitle", feedRoot.children, false)[0].children[0].data;
-				} catch (ex) { }
-				try {
-					feed.updated = new Date(DomUtils.getElementsByTagName("updated", feedRoot.children, false)[0].children[0].data);
-				} catch (ex) { }
-				try {
-					feed.author = DomUtils.getElementsByTagName("email", feedRoot.children, true)[0].children[0].data;
-				} catch (ex) { }
-				feed.items = [];
-				DomUtils.getElementsByTagName("entry", feedRoot.children).forEach(function (item, index, list) {
-					var entry = {};
-					try {
-						entry.id = DomUtils.getElementsByTagName("id", item.children, false)[0].children[0].data;
-					} catch (ex) { }
-					try {
-						entry.title = DomUtils.getElementsByTagName("title", item.children, false)[0].children[0].data;
-					} catch (ex) { }
-					try {
-						entry.link = DomUtils.getElementsByTagName("link", item.children, false)[0].attribs.href;
-					} catch (ex) { }
-					try {
-						entry.description = DomUtils.getElementsByTagName("summary", item.children, false)[0].children[0].data;
-					} catch (ex) { }
-					try {
-						entry.pubDate = new Date(DomUtils.getElementsByTagName("updated", item.children, false)[0].children[0].data);
-					} catch (ex) { }
-					feed.items.push(entry);
-				});
-			}
-
-			this.dom = feed;
-		}
-		RssHandler.super_.prototype.done.call(this);
-	}
-
-///////////////////////////////////////////////////
-
-function DefaultHandler (callback, options) {
-	this.reset();
-	this._options = options ? options : { };
-	if (this._options.ignoreWhitespace == undefined)
-		this._options.ignoreWhitespace = false; //Keep whitespace-only text nodes
-	if (this._options.verbose == undefined)
-		this._options.verbose = true; //Keep data property for tags and raw property for all
-	if (this._options.enforceEmptyTags == undefined)
-		this._options.enforceEmptyTags = true; //Don't allow children for HTML tags defined as empty in spec
-	if ((typeof callback) == "function")
-		this._callback = callback;
-}
-
-	//**"Static"**//
-	//HTML Tags that shouldn't contain child nodes
-	DefaultHandler._emptyTags = {
-		  area: 1
-		, base: 1
-		, basefont: 1
-		, br: 1
-		, col: 1
-		, frame: 1
-		, hr: 1
-		, img: 1
-		, input: 1
-		, isindex: 1
-		, link: 1
-		, meta: 1
-		, param: 1
-		, embed: 1
-	}
-	//Regex to detect whitespace only text nodes
-	DefaultHandler.reWhitespace = /^\s*$/;
-
-	//**Public**//
-	//Properties//
-	DefaultHandler.prototype.dom = null; //The hierarchical object containing the parsed HTML
-	//Methods//
-	//Resets the handler back to starting state
-	DefaultHandler.prototype.reset = function DefaultHandler$reset() {
-		this.dom = [];
-		this._done = false;
-		this._tagStack = [];
-		this._tagStack.last = function DefaultHandler$_tagStack$last () {
-			return(this.length ? this[this.length - 1] : null);
-		}
-	}
-	//Signals the handler that parsing is done
-	DefaultHandler.prototype.done = function DefaultHandler$done () {
-		this._done = true;
-		this.handleCallback(null);
-	}
-	DefaultHandler.prototype.writeTag = function DefaultHandler$writeTag (element) {
-		this.handleElement(element);
-	} 
-	DefaultHandler.prototype.writeText = function DefaultHandler$writeText (element) {
-		if (this._options.ignoreWhitespace)
-			if (DefaultHandler.reWhitespace.test(element.data))
-				return;
-		this.handleElement(element);
-	} 
-	DefaultHandler.prototype.writeComment = function DefaultHandler$writeComment (element) {
-		this.handleElement(element);
-	} 
-	DefaultHandler.prototype.writeDirective = function DefaultHandler$writeDirective (element) {
-		this.handleElement(element);
-	}
-	DefaultHandler.prototype.error = function DefaultHandler$error (error) {
-		this.handleCallback(error);
-	}
-
-	//**Private**//
-	//Properties//
-	DefaultHandler.prototype._options = null; //Handler options for how to behave
-	DefaultHandler.prototype._callback = null; //Callback to respond to when parsing done
-	DefaultHandler.prototype._done = false; //Flag indicating whether handler has been notified of parsing completed
-	DefaultHandler.prototype._tagStack = null; //List of parents to the currently element being processed
-	//Methods//
-	DefaultHandler.prototype.handleCallback = function DefaultHandler$handleCallback (error) {
-			if ((typeof this._callback) != "function")
-				if (error)
-					throw error;
-				else
-					return;
-			this._callback(error, this.dom);
-	}
-	
-	DefaultHandler.prototype.isEmptyTag = function(element) {
-		var name = element.name.toLowerCase();
-		if (name.charAt(0) == '/') {
-			name = name.substring(1);
-		}
-		return this._options.enforceEmptyTags && !!DefaultHandler._emptyTags[name];
-	};
-	
-	DefaultHandler.prototype.handleElement = function DefaultHandler$handleElement (element) {
-		if (this._done)
-			this.handleCallback(new Error("Writing to the handler after done() called is not allowed without a reset()"));
-		if (!this._options.verbose) {
-//			element.raw = null; //FIXME: Not clean
-			//FIXME: Serious performance problem using delete
-			delete element.raw;
-			if (element.type == "tag" || element.type == "script" || element.type == "style")
-				delete element.data;
-		}
-		if (!this._tagStack.last()) { //There are no parent elements
-			//If the element can be a container, add it to the tag stack and the top level list
-			if (element.type != ElementType.Text && element.type != ElementType.Comment && element.type != ElementType.Directive) {
-				if (element.name.charAt(0) != "/") { //Ignore closing tags that obviously don't have an opening tag
-					this.dom.push(element);
-					if (!this.isEmptyTag(element)) { //Don't add tags to the tag stack that can't have children
-						this._tagStack.push(element);
-					}
-				}
-			}
-			else //Otherwise just add to the top level list
-				this.dom.push(element);
-		}
-		else { //There are parent elements
-			//If the element can be a container, add it as a child of the element
-			//on top of the tag stack and then add it to the tag stack
-			if (element.type != ElementType.Text && element.type != ElementType.Comment && element.type != ElementType.Directive) {
-				if (element.name.charAt(0) == "/") {
-					//This is a closing tag, scan the tagStack to find the matching opening tag
-					//and pop the stack up to the opening tag's parent
-					var baseName = element.name.substring(1);
-					if (!this.isEmptyTag(element)) {
-						var pos = this._tagStack.length - 1;
-						while (pos > -1 && this._tagStack[pos--].name != baseName) { }
-						if (pos > -1 || this._tagStack[0].name == baseName)
-							while (pos < this._tagStack.length - 1)
-								this._tagStack.pop();
-					}
-				}
-				else { //This is not a closing tag
-					if (!this._tagStack.last().children)
-						this._tagStack.last().children = [];
-					this._tagStack.last().children.push(element);
-					if (!this.isEmptyTag(element)) //Don't add tags to the tag stack that can't have children
-						this._tagStack.push(element);
-				}
-			}
-			else { //This is not a container element
-				if (!this._tagStack.last().children)
-					this._tagStack.last().children = [];
-				this._tagStack.last().children.push(element);
-			}
-		}
-	}
-
-	var DomUtils = {
-		  testElement: function DomUtils$testElement (options, element) {
-			if (!element) {
-				return false;
-			}
-	
-			for (var key in options) {
-				if (key == "tag_name") {
-					if (element.type != "tag" && element.type != "script" && element.type != "style") {
-						return false;
-					}
-					if (!options["tag_name"](element.name)) {
-						return false;
-					}
-				} else if (key == "tag_type") {
-					if (!options["tag_type"](element.type)) {
-						return false;
-					}
-				} else if (key == "tag_contains") {
-					if (element.type != "text" && element.type != "comment" && element.type != "directive") {
-						return false;
-					}
-					if (!options["tag_contains"](element.data)) {
-						return false;
-					}
-				} else {
-					if (!element.attribs || !options[key](element.attribs[key])) {
-						return false;
-					}
-				}
-			}
-		
-			return true;
-		}
-	
-		, getElements: function DomUtils$getElements (options, currentElement, recurse, limit) {
-			recurse = (recurse === undefined || recurse === null) || !!recurse;
-			limit = isNaN(parseInt(limit)) ? -1 : parseInt(limit);
-
-			if (!currentElement) {
-				return([]);
-			}
-	
-			var found = [];
-			var elementList;
-
-			function getTest (checkVal) {
-				return(function (value) { return(value == checkVal); });
-			}
-			for (var key in options) {
-				if ((typeof options[key]) != "function") {
-					options[key] = getTest(options[key]);
-				}
-			}
-	
-			if (DomUtils.testElement(options, currentElement)) {
-				found.push(currentElement);
-			}
-
-			if (limit >= 0 && found.length >= limit) {
-				return(found);
-			}
-
-			if (recurse && currentElement.children) {
-				elementList = currentElement.children;
-			} else if (currentElement instanceof Array) {
-				elementList = currentElement;
-			} else {
-				return(found);
-			}
-	
-			for (var i = 0; i < elementList.length; i++) {
-				found = found.concat(DomUtils.getElements(options, elementList[i], recurse, limit));
-				if (limit >= 0 && found.length >= limit) {
-					break;
-				}
-			}
-	
-			return(found);
-		}
-		
-		, getElementById: function DomUtils$getElementById (id, currentElement, recurse) {
-			var result = DomUtils.getElements({ id: id }, currentElement, recurse, 1);
-			return(result.length ? result[0] : null);
-		}
-		
-		, getElementsByTagName: function DomUtils$getElementsByTagName (name, currentElement, recurse, limit) {
-			return(DomUtils.getElements({ tag_name: name }, currentElement, recurse, limit));
-		}
-		
-		, getElementsByTagType: function DomUtils$getElementsByTagType (type, currentElement, recurse, limit) {
-			return(DomUtils.getElements({ tag_type: type }, currentElement, recurse, limit));
-		}
-	}
-
-	function inherits (ctor, superCtor) {
-		var tempCtor = function(){};
-		tempCtor.prototype = superCtor.prototype;
-		ctor.super_ = superCtor;
-		ctor.prototype = new tempCtor();
-		ctor.prototype.constructor = ctor;
-	}
-
-exports.Parser = Parser;
-
-exports.DefaultHandler = DefaultHandler;
-
-exports.RssHandler = RssHandler;
-
-exports.ElementType = ElementType;
-
-exports.DomUtils = DomUtils;
-
-})();
-
-}).call(this,"/../../node_modules/htmlparser/lib/htmlparser.js","/../../node_modules/htmlparser/lib")
-},{}],17:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 /**
  * node-iterate79
  */
@@ -3926,7 +1901,7 @@ exports.DomUtils = DomUtils;
 
 })(exports);
 
-},{}],18:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.1.4
  * http://jquery.com/
@@ -13138,7 +11113,1296 @@ return jQuery;
 
 }));
 
-},{}],19:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
+(function (global){
+/**
+ * marked - a markdown parser
+ * Copyright (c) 2011-2014, Christopher Jeffrey. (MIT Licensed)
+ * https://github.com/chjj/marked
+ */
+
+;(function() {
+
+/**
+ * Block-Level Grammar
+ */
+
+var block = {
+  newline: /^\n+/,
+  code: /^( {4}[^\n]+\n*)+/,
+  fences: noop,
+  hr: /^( *[-*_]){3,} *(?:\n+|$)/,
+  heading: /^ *(#{1,6}) *([^\n]+?) *#* *(?:\n+|$)/,
+  nptable: noop,
+  lheading: /^([^\n]+)\n *(=|-){2,} *(?:\n+|$)/,
+  blockquote: /^( *>[^\n]+(\n(?!def)[^\n]+)*\n*)+/,
+  list: /^( *)(bull) [\s\S]+?(?:hr|def|\n{2,}(?! )(?!\1bull )\n*|\s*$)/,
+  html: /^ *(?:comment *(?:\n|\s*$)|closed *(?:\n{2,}|\s*$)|closing *(?:\n{2,}|\s*$))/,
+  def: /^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +["(]([^\n]+)[")])? *(?:\n+|$)/,
+  table: noop,
+  paragraph: /^((?:[^\n]+\n?(?!hr|heading|lheading|blockquote|tag|def))+)\n*/,
+  text: /^[^\n]+/
+};
+
+block.bullet = /(?:[*+-]|\d+\.)/;
+block.item = /^( *)(bull) [^\n]*(?:\n(?!\1bull )[^\n]*)*/;
+block.item = replace(block.item, 'gm')
+  (/bull/g, block.bullet)
+  ();
+
+block.list = replace(block.list)
+  (/bull/g, block.bullet)
+  ('hr', '\\n+(?=\\1?(?:[-*_] *){3,}(?:\\n+|$))')
+  ('def', '\\n+(?=' + block.def.source + ')')
+  ();
+
+block.blockquote = replace(block.blockquote)
+  ('def', block.def)
+  ();
+
+block._tag = '(?!(?:'
+  + 'a|em|strong|small|s|cite|q|dfn|abbr|data|time|code'
+  + '|var|samp|kbd|sub|sup|i|b|u|mark|ruby|rt|rp|bdi|bdo'
+  + '|span|br|wbr|ins|del|img)\\b)\\w+(?!:/|[^\\w\\s@]*@)\\b';
+
+block.html = replace(block.html)
+  ('comment', /<!--[\s\S]*?-->/)
+  ('closed', /<(tag)[\s\S]+?<\/\1>/)
+  ('closing', /<tag(?:"[^"]*"|'[^']*'|[^'">])*?>/)
+  (/tag/g, block._tag)
+  ();
+
+block.paragraph = replace(block.paragraph)
+  ('hr', block.hr)
+  ('heading', block.heading)
+  ('lheading', block.lheading)
+  ('blockquote', block.blockquote)
+  ('tag', '<' + block._tag)
+  ('def', block.def)
+  ();
+
+/**
+ * Normal Block Grammar
+ */
+
+block.normal = merge({}, block);
+
+/**
+ * GFM Block Grammar
+ */
+
+block.gfm = merge({}, block.normal, {
+  fences: /^ *(`{3,}|~{3,})[ \.]*(\S+)? *\n([\s\S]*?)\s*\1 *(?:\n+|$)/,
+  paragraph: /^/,
+  heading: /^ *(#{1,6}) +([^\n]+?) *#* *(?:\n+|$)/
+});
+
+block.gfm.paragraph = replace(block.paragraph)
+  ('(?!', '(?!'
+    + block.gfm.fences.source.replace('\\1', '\\2') + '|'
+    + block.list.source.replace('\\1', '\\3') + '|')
+  ();
+
+/**
+ * GFM + Tables Block Grammar
+ */
+
+block.tables = merge({}, block.gfm, {
+  nptable: /^ *(\S.*\|.*)\n *([-:]+ *\|[-| :]*)\n((?:.*\|.*(?:\n|$))*)\n*/,
+  table: /^ *\|(.+)\n *\|( *[-:]+[-| :]*)\n((?: *\|.*(?:\n|$))*)\n*/
+});
+
+/**
+ * Block Lexer
+ */
+
+function Lexer(options) {
+  this.tokens = [];
+  this.tokens.links = {};
+  this.options = options || marked.defaults;
+  this.rules = block.normal;
+
+  if (this.options.gfm) {
+    if (this.options.tables) {
+      this.rules = block.tables;
+    } else {
+      this.rules = block.gfm;
+    }
+  }
+}
+
+/**
+ * Expose Block Rules
+ */
+
+Lexer.rules = block;
+
+/**
+ * Static Lex Method
+ */
+
+Lexer.lex = function(src, options) {
+  var lexer = new Lexer(options);
+  return lexer.lex(src);
+};
+
+/**
+ * Preprocessing
+ */
+
+Lexer.prototype.lex = function(src) {
+  src = src
+    .replace(/\r\n|\r/g, '\n')
+    .replace(/\t/g, '    ')
+    .replace(/\u00a0/g, ' ')
+    .replace(/\u2424/g, '\n');
+
+  return this.token(src, true);
+};
+
+/**
+ * Lexing
+ */
+
+Lexer.prototype.token = function(src, top, bq) {
+  var src = src.replace(/^ +$/gm, '')
+    , next
+    , loose
+    , cap
+    , bull
+    , b
+    , item
+    , space
+    , i
+    , l;
+
+  while (src) {
+    // newline
+    if (cap = this.rules.newline.exec(src)) {
+      src = src.substring(cap[0].length);
+      if (cap[0].length > 1) {
+        this.tokens.push({
+          type: 'space'
+        });
+      }
+    }
+
+    // code
+    if (cap = this.rules.code.exec(src)) {
+      src = src.substring(cap[0].length);
+      cap = cap[0].replace(/^ {4}/gm, '');
+      this.tokens.push({
+        type: 'code',
+        text: !this.options.pedantic
+          ? cap.replace(/\n+$/, '')
+          : cap
+      });
+      continue;
+    }
+
+    // fences (gfm)
+    if (cap = this.rules.fences.exec(src)) {
+      src = src.substring(cap[0].length);
+      this.tokens.push({
+        type: 'code',
+        lang: cap[2],
+        text: cap[3] || ''
+      });
+      continue;
+    }
+
+    // heading
+    if (cap = this.rules.heading.exec(src)) {
+      src = src.substring(cap[0].length);
+      this.tokens.push({
+        type: 'heading',
+        depth: cap[1].length,
+        text: cap[2]
+      });
+      continue;
+    }
+
+    // table no leading pipe (gfm)
+    if (top && (cap = this.rules.nptable.exec(src))) {
+      src = src.substring(cap[0].length);
+
+      item = {
+        type: 'table',
+        header: cap[1].replace(/^ *| *\| *$/g, '').split(/ *\| */),
+        align: cap[2].replace(/^ *|\| *$/g, '').split(/ *\| */),
+        cells: cap[3].replace(/\n$/, '').split('\n')
+      };
+
+      for (i = 0; i < item.align.length; i++) {
+        if (/^ *-+: *$/.test(item.align[i])) {
+          item.align[i] = 'right';
+        } else if (/^ *:-+: *$/.test(item.align[i])) {
+          item.align[i] = 'center';
+        } else if (/^ *:-+ *$/.test(item.align[i])) {
+          item.align[i] = 'left';
+        } else {
+          item.align[i] = null;
+        }
+      }
+
+      for (i = 0; i < item.cells.length; i++) {
+        item.cells[i] = item.cells[i].split(/ *\| */);
+      }
+
+      this.tokens.push(item);
+
+      continue;
+    }
+
+    // lheading
+    if (cap = this.rules.lheading.exec(src)) {
+      src = src.substring(cap[0].length);
+      this.tokens.push({
+        type: 'heading',
+        depth: cap[2] === '=' ? 1 : 2,
+        text: cap[1]
+      });
+      continue;
+    }
+
+    // hr
+    if (cap = this.rules.hr.exec(src)) {
+      src = src.substring(cap[0].length);
+      this.tokens.push({
+        type: 'hr'
+      });
+      continue;
+    }
+
+    // blockquote
+    if (cap = this.rules.blockquote.exec(src)) {
+      src = src.substring(cap[0].length);
+
+      this.tokens.push({
+        type: 'blockquote_start'
+      });
+
+      cap = cap[0].replace(/^ *> ?/gm, '');
+
+      // Pass `top` to keep the current
+      // "toplevel" state. This is exactly
+      // how markdown.pl works.
+      this.token(cap, top, true);
+
+      this.tokens.push({
+        type: 'blockquote_end'
+      });
+
+      continue;
+    }
+
+    // list
+    if (cap = this.rules.list.exec(src)) {
+      src = src.substring(cap[0].length);
+      bull = cap[2];
+
+      this.tokens.push({
+        type: 'list_start',
+        ordered: bull.length > 1
+      });
+
+      // Get each top-level item.
+      cap = cap[0].match(this.rules.item);
+
+      next = false;
+      l = cap.length;
+      i = 0;
+
+      for (; i < l; i++) {
+        item = cap[i];
+
+        // Remove the list item's bullet
+        // so it is seen as the next token.
+        space = item.length;
+        item = item.replace(/^ *([*+-]|\d+\.) +/, '');
+
+        // Outdent whatever the
+        // list item contains. Hacky.
+        if (~item.indexOf('\n ')) {
+          space -= item.length;
+          item = !this.options.pedantic
+            ? item.replace(new RegExp('^ {1,' + space + '}', 'gm'), '')
+            : item.replace(/^ {1,4}/gm, '');
+        }
+
+        // Determine whether the next list item belongs here.
+        // Backpedal if it does not belong in this list.
+        if (this.options.smartLists && i !== l - 1) {
+          b = block.bullet.exec(cap[i + 1])[0];
+          if (bull !== b && !(bull.length > 1 && b.length > 1)) {
+            src = cap.slice(i + 1).join('\n') + src;
+            i = l - 1;
+          }
+        }
+
+        // Determine whether item is loose or not.
+        // Use: /(^|\n)(?! )[^\n]+\n\n(?!\s*$)/
+        // for discount behavior.
+        loose = next || /\n\n(?!\s*$)/.test(item);
+        if (i !== l - 1) {
+          next = item.charAt(item.length - 1) === '\n';
+          if (!loose) loose = next;
+        }
+
+        this.tokens.push({
+          type: loose
+            ? 'loose_item_start'
+            : 'list_item_start'
+        });
+
+        // Recurse.
+        this.token(item, false, bq);
+
+        this.tokens.push({
+          type: 'list_item_end'
+        });
+      }
+
+      this.tokens.push({
+        type: 'list_end'
+      });
+
+      continue;
+    }
+
+    // html
+    if (cap = this.rules.html.exec(src)) {
+      src = src.substring(cap[0].length);
+      this.tokens.push({
+        type: this.options.sanitize
+          ? 'paragraph'
+          : 'html',
+        pre: !this.options.sanitizer
+          && (cap[1] === 'pre' || cap[1] === 'script' || cap[1] === 'style'),
+        text: cap[0]
+      });
+      continue;
+    }
+
+    // def
+    if ((!bq && top) && (cap = this.rules.def.exec(src))) {
+      src = src.substring(cap[0].length);
+      this.tokens.links[cap[1].toLowerCase()] = {
+        href: cap[2],
+        title: cap[3]
+      };
+      continue;
+    }
+
+    // table (gfm)
+    if (top && (cap = this.rules.table.exec(src))) {
+      src = src.substring(cap[0].length);
+
+      item = {
+        type: 'table',
+        header: cap[1].replace(/^ *| *\| *$/g, '').split(/ *\| */),
+        align: cap[2].replace(/^ *|\| *$/g, '').split(/ *\| */),
+        cells: cap[3].replace(/(?: *\| *)?\n$/, '').split('\n')
+      };
+
+      for (i = 0; i < item.align.length; i++) {
+        if (/^ *-+: *$/.test(item.align[i])) {
+          item.align[i] = 'right';
+        } else if (/^ *:-+: *$/.test(item.align[i])) {
+          item.align[i] = 'center';
+        } else if (/^ *:-+ *$/.test(item.align[i])) {
+          item.align[i] = 'left';
+        } else {
+          item.align[i] = null;
+        }
+      }
+
+      for (i = 0; i < item.cells.length; i++) {
+        item.cells[i] = item.cells[i]
+          .replace(/^ *\| *| *\| *$/g, '')
+          .split(/ *\| */);
+      }
+
+      this.tokens.push(item);
+
+      continue;
+    }
+
+    // top-level paragraph
+    if (top && (cap = this.rules.paragraph.exec(src))) {
+      src = src.substring(cap[0].length);
+      this.tokens.push({
+        type: 'paragraph',
+        text: cap[1].charAt(cap[1].length - 1) === '\n'
+          ? cap[1].slice(0, -1)
+          : cap[1]
+      });
+      continue;
+    }
+
+    // text
+    if (cap = this.rules.text.exec(src)) {
+      // Top-level should never reach here.
+      src = src.substring(cap[0].length);
+      this.tokens.push({
+        type: 'text',
+        text: cap[0]
+      });
+      continue;
+    }
+
+    if (src) {
+      throw new
+        Error('Infinite loop on byte: ' + src.charCodeAt(0));
+    }
+  }
+
+  return this.tokens;
+};
+
+/**
+ * Inline-Level Grammar
+ */
+
+var inline = {
+  escape: /^\\([\\`*{}\[\]()#+\-.!_>])/,
+  autolink: /^<([^ >]+(@|:\/)[^ >]+)>/,
+  url: noop,
+  tag: /^<!--[\s\S]*?-->|^<\/?\w+(?:"[^"]*"|'[^']*'|[^'">])*?>/,
+  link: /^!?\[(inside)\]\(href\)/,
+  reflink: /^!?\[(inside)\]\s*\[([^\]]*)\]/,
+  nolink: /^!?\[((?:\[[^\]]*\]|[^\[\]])*)\]/,
+  strong: /^__([\s\S]+?)__(?!_)|^\*\*([\s\S]+?)\*\*(?!\*)/,
+  em: /^\b_((?:[^_]|__)+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
+  code: /^(`+)\s*([\s\S]*?[^`])\s*\1(?!`)/,
+  br: /^ {2,}\n(?!\s*$)/,
+  del: noop,
+  text: /^[\s\S]+?(?=[\\<!\[_*`]| {2,}\n|$)/
+};
+
+inline._inside = /(?:\[[^\]]*\]|[^\[\]]|\](?=[^\[]*\]))*/;
+inline._href = /\s*<?([\s\S]*?)>?(?:\s+['"]([\s\S]*?)['"])?\s*/;
+
+inline.link = replace(inline.link)
+  ('inside', inline._inside)
+  ('href', inline._href)
+  ();
+
+inline.reflink = replace(inline.reflink)
+  ('inside', inline._inside)
+  ();
+
+/**
+ * Normal Inline Grammar
+ */
+
+inline.normal = merge({}, inline);
+
+/**
+ * Pedantic Inline Grammar
+ */
+
+inline.pedantic = merge({}, inline.normal, {
+  strong: /^__(?=\S)([\s\S]*?\S)__(?!_)|^\*\*(?=\S)([\s\S]*?\S)\*\*(?!\*)/,
+  em: /^_(?=\S)([\s\S]*?\S)_(?!_)|^\*(?=\S)([\s\S]*?\S)\*(?!\*)/
+});
+
+/**
+ * GFM Inline Grammar
+ */
+
+inline.gfm = merge({}, inline.normal, {
+  escape: replace(inline.escape)('])', '~|])')(),
+  url: /^(https?:\/\/[^\s<]+[^<.,:;"')\]\s])/,
+  del: /^~~(?=\S)([\s\S]*?\S)~~/,
+  text: replace(inline.text)
+    (']|', '~]|')
+    ('|', '|https?://|')
+    ()
+});
+
+/**
+ * GFM + Line Breaks Inline Grammar
+ */
+
+inline.breaks = merge({}, inline.gfm, {
+  br: replace(inline.br)('{2,}', '*')(),
+  text: replace(inline.gfm.text)('{2,}', '*')()
+});
+
+/**
+ * Inline Lexer & Compiler
+ */
+
+function InlineLexer(links, options) {
+  this.options = options || marked.defaults;
+  this.links = links;
+  this.rules = inline.normal;
+  this.renderer = this.options.renderer || new Renderer;
+  this.renderer.options = this.options;
+
+  if (!this.links) {
+    throw new
+      Error('Tokens array requires a `links` property.');
+  }
+
+  if (this.options.gfm) {
+    if (this.options.breaks) {
+      this.rules = inline.breaks;
+    } else {
+      this.rules = inline.gfm;
+    }
+  } else if (this.options.pedantic) {
+    this.rules = inline.pedantic;
+  }
+}
+
+/**
+ * Expose Inline Rules
+ */
+
+InlineLexer.rules = inline;
+
+/**
+ * Static Lexing/Compiling Method
+ */
+
+InlineLexer.output = function(src, links, options) {
+  var inline = new InlineLexer(links, options);
+  return inline.output(src);
+};
+
+/**
+ * Lexing/Compiling
+ */
+
+InlineLexer.prototype.output = function(src) {
+  var out = ''
+    , link
+    , text
+    , href
+    , cap;
+
+  while (src) {
+    // escape
+    if (cap = this.rules.escape.exec(src)) {
+      src = src.substring(cap[0].length);
+      out += cap[1];
+      continue;
+    }
+
+    // autolink
+    if (cap = this.rules.autolink.exec(src)) {
+      src = src.substring(cap[0].length);
+      if (cap[2] === '@') {
+        text = cap[1].charAt(6) === ':'
+          ? this.mangle(cap[1].substring(7))
+          : this.mangle(cap[1]);
+        href = this.mangle('mailto:') + text;
+      } else {
+        text = escape(cap[1]);
+        href = text;
+      }
+      out += this.renderer.link(href, null, text);
+      continue;
+    }
+
+    // url (gfm)
+    if (!this.inLink && (cap = this.rules.url.exec(src))) {
+      src = src.substring(cap[0].length);
+      text = escape(cap[1]);
+      href = text;
+      out += this.renderer.link(href, null, text);
+      continue;
+    }
+
+    // tag
+    if (cap = this.rules.tag.exec(src)) {
+      if (!this.inLink && /^<a /i.test(cap[0])) {
+        this.inLink = true;
+      } else if (this.inLink && /^<\/a>/i.test(cap[0])) {
+        this.inLink = false;
+      }
+      src = src.substring(cap[0].length);
+      out += this.options.sanitize
+        ? this.options.sanitizer
+          ? this.options.sanitizer(cap[0])
+          : escape(cap[0])
+        : cap[0]
+      continue;
+    }
+
+    // link
+    if (cap = this.rules.link.exec(src)) {
+      src = src.substring(cap[0].length);
+      this.inLink = true;
+      out += this.outputLink(cap, {
+        href: cap[2],
+        title: cap[3]
+      });
+      this.inLink = false;
+      continue;
+    }
+
+    // reflink, nolink
+    if ((cap = this.rules.reflink.exec(src))
+        || (cap = this.rules.nolink.exec(src))) {
+      src = src.substring(cap[0].length);
+      link = (cap[2] || cap[1]).replace(/\s+/g, ' ');
+      link = this.links[link.toLowerCase()];
+      if (!link || !link.href) {
+        out += cap[0].charAt(0);
+        src = cap[0].substring(1) + src;
+        continue;
+      }
+      this.inLink = true;
+      out += this.outputLink(cap, link);
+      this.inLink = false;
+      continue;
+    }
+
+    // strong
+    if (cap = this.rules.strong.exec(src)) {
+      src = src.substring(cap[0].length);
+      out += this.renderer.strong(this.output(cap[2] || cap[1]));
+      continue;
+    }
+
+    // em
+    if (cap = this.rules.em.exec(src)) {
+      src = src.substring(cap[0].length);
+      out += this.renderer.em(this.output(cap[2] || cap[1]));
+      continue;
+    }
+
+    // code
+    if (cap = this.rules.code.exec(src)) {
+      src = src.substring(cap[0].length);
+      out += this.renderer.codespan(escape(cap[2], true));
+      continue;
+    }
+
+    // br
+    if (cap = this.rules.br.exec(src)) {
+      src = src.substring(cap[0].length);
+      out += this.renderer.br();
+      continue;
+    }
+
+    // del (gfm)
+    if (cap = this.rules.del.exec(src)) {
+      src = src.substring(cap[0].length);
+      out += this.renderer.del(this.output(cap[1]));
+      continue;
+    }
+
+    // text
+    if (cap = this.rules.text.exec(src)) {
+      src = src.substring(cap[0].length);
+      out += this.renderer.text(escape(this.smartypants(cap[0])));
+      continue;
+    }
+
+    if (src) {
+      throw new
+        Error('Infinite loop on byte: ' + src.charCodeAt(0));
+    }
+  }
+
+  return out;
+};
+
+/**
+ * Compile Link
+ */
+
+InlineLexer.prototype.outputLink = function(cap, link) {
+  var href = escape(link.href)
+    , title = link.title ? escape(link.title) : null;
+
+  return cap[0].charAt(0) !== '!'
+    ? this.renderer.link(href, title, this.output(cap[1]))
+    : this.renderer.image(href, title, escape(cap[1]));
+};
+
+/**
+ * Smartypants Transformations
+ */
+
+InlineLexer.prototype.smartypants = function(text) {
+  if (!this.options.smartypants) return text;
+  return text
+    // em-dashes
+    .replace(/---/g, '\u2014')
+    // en-dashes
+    .replace(/--/g, '\u2013')
+    // opening singles
+    .replace(/(^|[-\u2014/(\[{"\s])'/g, '$1\u2018')
+    // closing singles & apostrophes
+    .replace(/'/g, '\u2019')
+    // opening doubles
+    .replace(/(^|[-\u2014/(\[{\u2018\s])"/g, '$1\u201c')
+    // closing doubles
+    .replace(/"/g, '\u201d')
+    // ellipses
+    .replace(/\.{3}/g, '\u2026');
+};
+
+/**
+ * Mangle Links
+ */
+
+InlineLexer.prototype.mangle = function(text) {
+  if (!this.options.mangle) return text;
+  var out = ''
+    , l = text.length
+    , i = 0
+    , ch;
+
+  for (; i < l; i++) {
+    ch = text.charCodeAt(i);
+    if (Math.random() > 0.5) {
+      ch = 'x' + ch.toString(16);
+    }
+    out += '&#' + ch + ';';
+  }
+
+  return out;
+};
+
+/**
+ * Renderer
+ */
+
+function Renderer(options) {
+  this.options = options || {};
+}
+
+Renderer.prototype.code = function(code, lang, escaped) {
+  if (this.options.highlight) {
+    var out = this.options.highlight(code, lang);
+    if (out != null && out !== code) {
+      escaped = true;
+      code = out;
+    }
+  }
+
+  if (!lang) {
+    return '<pre><code>'
+      + (escaped ? code : escape(code, true))
+      + '\n</code></pre>';
+  }
+
+  return '<pre><code class="'
+    + this.options.langPrefix
+    + escape(lang, true)
+    + '">'
+    + (escaped ? code : escape(code, true))
+    + '\n</code></pre>\n';
+};
+
+Renderer.prototype.blockquote = function(quote) {
+  return '<blockquote>\n' + quote + '</blockquote>\n';
+};
+
+Renderer.prototype.html = function(html) {
+  return html;
+};
+
+Renderer.prototype.heading = function(text, level, raw) {
+  return '<h'
+    + level
+    + ' id="'
+    + this.options.headerPrefix
+    + raw.toLowerCase().replace(/[^\w]+/g, '-')
+    + '">'
+    + text
+    + '</h'
+    + level
+    + '>\n';
+};
+
+Renderer.prototype.hr = function() {
+  return this.options.xhtml ? '<hr/>\n' : '<hr>\n';
+};
+
+Renderer.prototype.list = function(body, ordered) {
+  var type = ordered ? 'ol' : 'ul';
+  return '<' + type + '>\n' + body + '</' + type + '>\n';
+};
+
+Renderer.prototype.listitem = function(text) {
+  return '<li>' + text + '</li>\n';
+};
+
+Renderer.prototype.paragraph = function(text) {
+  return '<p>' + text + '</p>\n';
+};
+
+Renderer.prototype.table = function(header, body) {
+  return '<table>\n'
+    + '<thead>\n'
+    + header
+    + '</thead>\n'
+    + '<tbody>\n'
+    + body
+    + '</tbody>\n'
+    + '</table>\n';
+};
+
+Renderer.prototype.tablerow = function(content) {
+  return '<tr>\n' + content + '</tr>\n';
+};
+
+Renderer.prototype.tablecell = function(content, flags) {
+  var type = flags.header ? 'th' : 'td';
+  var tag = flags.align
+    ? '<' + type + ' style="text-align:' + flags.align + '">'
+    : '<' + type + '>';
+  return tag + content + '</' + type + '>\n';
+};
+
+// span level renderer
+Renderer.prototype.strong = function(text) {
+  return '<strong>' + text + '</strong>';
+};
+
+Renderer.prototype.em = function(text) {
+  return '<em>' + text + '</em>';
+};
+
+Renderer.prototype.codespan = function(text) {
+  return '<code>' + text + '</code>';
+};
+
+Renderer.prototype.br = function() {
+  return this.options.xhtml ? '<br/>' : '<br>';
+};
+
+Renderer.prototype.del = function(text) {
+  return '<del>' + text + '</del>';
+};
+
+Renderer.prototype.link = function(href, title, text) {
+  if (this.options.sanitize) {
+    try {
+      var prot = decodeURIComponent(unescape(href))
+        .replace(/[^\w:]/g, '')
+        .toLowerCase();
+    } catch (e) {
+      return '';
+    }
+    if (prot.indexOf('javascript:') === 0 || prot.indexOf('vbscript:') === 0) {
+      return '';
+    }
+  }
+  var out = '<a href="' + href + '"';
+  if (title) {
+    out += ' title="' + title + '"';
+  }
+  out += '>' + text + '</a>';
+  return out;
+};
+
+Renderer.prototype.image = function(href, title, text) {
+  var out = '<img src="' + href + '" alt="' + text + '"';
+  if (title) {
+    out += ' title="' + title + '"';
+  }
+  out += this.options.xhtml ? '/>' : '>';
+  return out;
+};
+
+Renderer.prototype.text = function(text) {
+  return text;
+};
+
+/**
+ * Parsing & Compiling
+ */
+
+function Parser(options) {
+  this.tokens = [];
+  this.token = null;
+  this.options = options || marked.defaults;
+  this.options.renderer = this.options.renderer || new Renderer;
+  this.renderer = this.options.renderer;
+  this.renderer.options = this.options;
+}
+
+/**
+ * Static Parse Method
+ */
+
+Parser.parse = function(src, options, renderer) {
+  var parser = new Parser(options, renderer);
+  return parser.parse(src);
+};
+
+/**
+ * Parse Loop
+ */
+
+Parser.prototype.parse = function(src) {
+  this.inline = new InlineLexer(src.links, this.options, this.renderer);
+  this.tokens = src.reverse();
+
+  var out = '';
+  while (this.next()) {
+    out += this.tok();
+  }
+
+  return out;
+};
+
+/**
+ * Next Token
+ */
+
+Parser.prototype.next = function() {
+  return this.token = this.tokens.pop();
+};
+
+/**
+ * Preview Next Token
+ */
+
+Parser.prototype.peek = function() {
+  return this.tokens[this.tokens.length - 1] || 0;
+};
+
+/**
+ * Parse Text Tokens
+ */
+
+Parser.prototype.parseText = function() {
+  var body = this.token.text;
+
+  while (this.peek().type === 'text') {
+    body += '\n' + this.next().text;
+  }
+
+  return this.inline.output(body);
+};
+
+/**
+ * Parse Current Token
+ */
+
+Parser.prototype.tok = function() {
+  switch (this.token.type) {
+    case 'space': {
+      return '';
+    }
+    case 'hr': {
+      return this.renderer.hr();
+    }
+    case 'heading': {
+      return this.renderer.heading(
+        this.inline.output(this.token.text),
+        this.token.depth,
+        this.token.text);
+    }
+    case 'code': {
+      return this.renderer.code(this.token.text,
+        this.token.lang,
+        this.token.escaped);
+    }
+    case 'table': {
+      var header = ''
+        , body = ''
+        , i
+        , row
+        , cell
+        , flags
+        , j;
+
+      // header
+      cell = '';
+      for (i = 0; i < this.token.header.length; i++) {
+        flags = { header: true, align: this.token.align[i] };
+        cell += this.renderer.tablecell(
+          this.inline.output(this.token.header[i]),
+          { header: true, align: this.token.align[i] }
+        );
+      }
+      header += this.renderer.tablerow(cell);
+
+      for (i = 0; i < this.token.cells.length; i++) {
+        row = this.token.cells[i];
+
+        cell = '';
+        for (j = 0; j < row.length; j++) {
+          cell += this.renderer.tablecell(
+            this.inline.output(row[j]),
+            { header: false, align: this.token.align[j] }
+          );
+        }
+
+        body += this.renderer.tablerow(cell);
+      }
+      return this.renderer.table(header, body);
+    }
+    case 'blockquote_start': {
+      var body = '';
+
+      while (this.next().type !== 'blockquote_end') {
+        body += this.tok();
+      }
+
+      return this.renderer.blockquote(body);
+    }
+    case 'list_start': {
+      var body = ''
+        , ordered = this.token.ordered;
+
+      while (this.next().type !== 'list_end') {
+        body += this.tok();
+      }
+
+      return this.renderer.list(body, ordered);
+    }
+    case 'list_item_start': {
+      var body = '';
+
+      while (this.next().type !== 'list_item_end') {
+        body += this.token.type === 'text'
+          ? this.parseText()
+          : this.tok();
+      }
+
+      return this.renderer.listitem(body);
+    }
+    case 'loose_item_start': {
+      var body = '';
+
+      while (this.next().type !== 'list_item_end') {
+        body += this.tok();
+      }
+
+      return this.renderer.listitem(body);
+    }
+    case 'html': {
+      var html = !this.token.pre && !this.options.pedantic
+        ? this.inline.output(this.token.text)
+        : this.token.text;
+      return this.renderer.html(html);
+    }
+    case 'paragraph': {
+      return this.renderer.paragraph(this.inline.output(this.token.text));
+    }
+    case 'text': {
+      return this.renderer.paragraph(this.parseText());
+    }
+  }
+};
+
+/**
+ * Helpers
+ */
+
+function escape(html, encode) {
+  return html
+    .replace(!encode ? /&(?!#?\w+;)/g : /&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function unescape(html) {
+  return html.replace(/&([#\w]+);/g, function(_, n) {
+    n = n.toLowerCase();
+    if (n === 'colon') return ':';
+    if (n.charAt(0) === '#') {
+      return n.charAt(1) === 'x'
+        ? String.fromCharCode(parseInt(n.substring(2), 16))
+        : String.fromCharCode(+n.substring(1));
+    }
+    return '';
+  });
+}
+
+function replace(regex, opt) {
+  regex = regex.source;
+  opt = opt || '';
+  return function self(name, val) {
+    if (!name) return new RegExp(regex, opt);
+    val = val.source || val;
+    val = val.replace(/(^|[^\[])\^/g, '$1');
+    regex = regex.replace(name, val);
+    return self;
+  };
+}
+
+function noop() {}
+noop.exec = noop;
+
+function merge(obj) {
+  var i = 1
+    , target
+    , key;
+
+  for (; i < arguments.length; i++) {
+    target = arguments[i];
+    for (key in target) {
+      if (Object.prototype.hasOwnProperty.call(target, key)) {
+        obj[key] = target[key];
+      }
+    }
+  }
+
+  return obj;
+}
+
+
+/**
+ * Marked
+ */
+
+function marked(src, opt, callback) {
+  if (callback || typeof opt === 'function') {
+    if (!callback) {
+      callback = opt;
+      opt = null;
+    }
+
+    opt = merge({}, marked.defaults, opt || {});
+
+    var highlight = opt.highlight
+      , tokens
+      , pending
+      , i = 0;
+
+    try {
+      tokens = Lexer.lex(src, opt)
+    } catch (e) {
+      return callback(e);
+    }
+
+    pending = tokens.length;
+
+    var done = function(err) {
+      if (err) {
+        opt.highlight = highlight;
+        return callback(err);
+      }
+
+      var out;
+
+      try {
+        out = Parser.parse(tokens, opt);
+      } catch (e) {
+        err = e;
+      }
+
+      opt.highlight = highlight;
+
+      return err
+        ? callback(err)
+        : callback(null, out);
+    };
+
+    if (!highlight || highlight.length < 3) {
+      return done();
+    }
+
+    delete opt.highlight;
+
+    if (!pending) return done();
+
+    for (; i < tokens.length; i++) {
+      (function(token) {
+        if (token.type !== 'code') {
+          return --pending || done();
+        }
+        return highlight(token.text, token.lang, function(err, code) {
+          if (err) return done(err);
+          if (code == null || code === token.text) {
+            return --pending || done();
+          }
+          token.text = code;
+          token.escaped = true;
+          --pending || done();
+        });
+      })(tokens[i]);
+    }
+
+    return;
+  }
+  try {
+    if (opt) opt = merge({}, marked.defaults, opt);
+    return Parser.parse(Lexer.lex(src, opt), opt);
+  } catch (e) {
+    e.message += '\nPlease report this to https://github.com/chjj/marked.';
+    if ((opt || marked.defaults).silent) {
+      return '<p>An error occured:</p><pre>'
+        + escape(e.message + '', true)
+        + '</pre>';
+    }
+    throw e;
+  }
+}
+
+/**
+ * Options
+ */
+
+marked.options =
+marked.setOptions = function(opt) {
+  merge(marked.defaults, opt);
+  return marked;
+};
+
+marked.defaults = {
+  gfm: true,
+  tables: true,
+  breaks: false,
+  pedantic: false,
+  sanitize: false,
+  sanitizer: null,
+  mangle: true,
+  smartLists: false,
+  silent: false,
+  highlight: null,
+  langPrefix: 'lang-',
+  smartypants: false,
+  headerPrefix: '',
+  renderer: new Renderer,
+  xhtml: false
+};
+
+/**
+ * Expose
+ */
+
+marked.Parser = Parser;
+marked.parser = Parser.parse;
+
+marked.Renderer = Renderer;
+
+marked.Lexer = Lexer;
+marked.lexer = Lexer.lex;
+
+marked.InlineLexer = InlineLexer;
+marked.inlineLexer = InlineLexer.output;
+
+marked.parse = marked;
+
+if (typeof module !== 'undefined' && typeof exports === 'object') {
+  module.exports = marked;
+} else if (typeof define === 'function' && define.amd) {
+  define(function() { return marked; });
+} else {
+  this.marked = marked;
+}
+
+}).call(function() {
+  return this || (typeof window !== 'undefined' ? window : global);
+}());
+
+}).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],23:[function(require,module,exports){
 (function (global){
 // This file is generated by `make build`. 
 // Do NOT edit by hand. 
@@ -26396,7 +25660,7 @@ exports.strtr = function (str, from, to) {
 };
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],20:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 (function (global){
 phpjs = require('./build/npm');
 
@@ -26409,7 +25673,7 @@ phpjs.registerGlobals = function() {
 module.exports = phpjs;
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./build/npm":19}],21:[function(require,module,exports){
+},{"./build/npm":23}],25:[function(require,module,exports){
 /**
  * Twig.js 0.8.2
  *
@@ -26421,7 +25685,7 @@ var Twig=function(Twig){Twig.VERSION="0.8.2";return Twig}(Twig||{});var Twig=fun
 token.key=key;token.expression=expression_stack;delete token.match;return token},parse:function(token,context,continue_chain){var value=Twig.expression.parse.apply(this,[token.expression,context]),key=token.key;context[key]=value;return{chain:continue_chain,context:context}}},{type:Twig.logic.type.setcapture,regex:/^set\s+([a-zA-Z0-9_,\s]+)$/,next:[Twig.logic.type.endset],open:true,compile:function(token){var key=token.match[1].trim();token.key=key;delete token.match;return token},parse:function(token,context,continue_chain){var value=Twig.parse.apply(this,[token.output,context]),key=token.key;this.context[key]=value;context[key]=value;return{chain:continue_chain,context:context}}},{type:Twig.logic.type.endset,regex:/^endset$/,next:[],open:false},{type:Twig.logic.type.filter,regex:/^filter\s+(.+)$/,next:[Twig.logic.type.endfilter],open:true,compile:function(token){var expression="|"+token.match[1].trim();token.stack=Twig.expression.compile.apply(this,[{type:Twig.expression.type.expression,value:expression}]).stack;delete token.match;return token},parse:function(token,context,chain){var unfiltered=Twig.parse.apply(this,[token.output,context]),stack=[{type:Twig.expression.type.string,value:unfiltered}].concat(token.stack);var output=Twig.expression.parse.apply(this,[stack,context]);return{chain:chain,output:output}}},{type:Twig.logic.type.endfilter,regex:/^endfilter$/,next:[],open:false},{type:Twig.logic.type.block,regex:/^block\s+([a-zA-Z0-9_]+)$/,next:[Twig.logic.type.endblock],open:true,compile:function(token){token.block=token.match[1].trim();delete token.match;return token},parse:function(token,context,chain){var block_output="",output="",isImported=this.importedBlocks.indexOf(token.block)>-1,hasParent=this.blocks[token.block]&&this.blocks[token.block].indexOf(Twig.placeholders.parent)>-1;if(this.blocks[token.block]===undefined||isImported||hasParent||context.loop){block_output=Twig.expression.parse.apply(this,[{type:Twig.expression.type.string,value:Twig.parse.apply(this,[token.output,context])},context]);if(isImported){this.importedBlocks.splice(this.importedBlocks.indexOf(token.block),1)}if(hasParent){this.blocks[token.block]=Twig.Markup(this.blocks[token.block].replace(Twig.placeholders.parent,block_output))}else{this.blocks[token.block]=block_output}}if(this.child.blocks[token.block]){output=this.child.blocks[token.block]}else{output=this.blocks[token.block]}return{chain:chain,output:output}}},{type:Twig.logic.type.endblock,regex:/^endblock(?:\s+([a-zA-Z0-9_]+))?$/,next:[],open:false},{type:Twig.logic.type.extends_,regex:/^extends\s+(.+)$/,next:[],open:true,compile:function(token){var expression=token.match[1].trim();delete token.match;token.stack=Twig.expression.compile.apply(this,[{type:Twig.expression.type.expression,value:expression}]).stack;return token},parse:function(token,context,chain){var file=Twig.expression.parse.apply(this,[token.stack,context]);this.extend=file;return{chain:chain,output:""}}},{type:Twig.logic.type.use,regex:/^use\s+(.+)$/,next:[],open:true,compile:function(token){var expression=token.match[1].trim();delete token.match;token.stack=Twig.expression.compile.apply(this,[{type:Twig.expression.type.expression,value:expression}]).stack;return token},parse:function(token,context,chain){var file=Twig.expression.parse.apply(this,[token.stack,context]);this.importBlocks(file);return{chain:chain,output:""}}},{type:Twig.logic.type.include,regex:/^include\s+(ignore missing\s+)?(.+?)\s*(?:with\s+([\S\s]+?))?\s*(only)?$/,next:[],open:true,compile:function(token){var match=token.match,includeMissing=match[1]!==undefined,expression=match[2].trim(),withContext=match[3],only=match[4]!==undefined&&match[4].length;delete token.match;token.only=only;token.includeMissing=includeMissing;token.stack=Twig.expression.compile.apply(this,[{type:Twig.expression.type.expression,value:expression}]).stack;if(withContext!==undefined){token.withStack=Twig.expression.compile.apply(this,[{type:Twig.expression.type.expression,value:withContext.trim()}]).stack}return token},parse:function(token,context,chain){var innerContext={},withContext,i,template;if(!token.only){innerContext=Twig.ChildContext(context)}if(token.withStack!==undefined){withContext=Twig.expression.parse.apply(this,[token.withStack,context]);for(i in withContext){if(withContext.hasOwnProperty(i))innerContext[i]=withContext[i]}}var file=Twig.expression.parse.apply(this,[token.stack,innerContext]);if(file instanceof Twig.Template){template=file}else{template=this.importFile(file)}return{chain:chain,output:template.render(innerContext)}}},{type:Twig.logic.type.spaceless,regex:/^spaceless$/,next:[Twig.logic.type.endspaceless],open:true,parse:function(token,context,chain){var unfiltered=Twig.parse.apply(this,[token.output,context]),rBetweenTagSpaces=/>\s+</g,output=unfiltered.replace(rBetweenTagSpaces,"><").trim();return{chain:chain,output:output}}},{type:Twig.logic.type.endspaceless,regex:/^endspaceless$/,next:[],open:false},{type:Twig.logic.type.macro,regex:/^macro\s+([a-zA-Z0-9_]+)\s*\(\s*((?:[a-zA-Z0-9_]+(?:,\s*)?)*)\s*\)$/,next:[Twig.logic.type.endmacro],open:true,compile:function(token){var macroName=token.match[1],parameters=token.match[2].split(/[\s,]+/);for(var i=0;i<parameters.length;i++){for(var j=0;j<parameters.length;j++){if(parameters[i]===parameters[j]&&i!==j){throw new Twig.Error("Duplicate arguments for parameter: "+parameters[i])}}}token.macroName=macroName;token.parameters=parameters;delete token.match;return token},parse:function(token,context,chain){var template=this;this.macros[token.macroName]=function(){var macroContext={_self:template.macros};for(var i=0;i<token.parameters.length;i++){var prop=token.parameters[i];if(typeof arguments[i]!=="undefined"){macroContext[prop]=arguments[i]}else{macroContext[prop]=undefined}}return Twig.parse.apply(template,[token.output,macroContext])};return{chain:chain,output:""}}},{type:Twig.logic.type.endmacro,regex:/^endmacro$/,next:[],open:false},{type:Twig.logic.type.import_,regex:/^import\s+(.+)\s+as\s+([a-zA-Z0-9_]+)$/,next:[],open:true,compile:function(token){var expression=token.match[1].trim(),contextName=token.match[2].trim();delete token.match;token.expression=expression;token.contextName=contextName;token.stack=Twig.expression.compile.apply(this,[{type:Twig.expression.type.expression,value:expression}]).stack;return token},parse:function(token,context,chain){if(token.expression!=="_self"){var file=Twig.expression.parse.apply(this,[token.stack,context]);var template=this.importFile(file||token.expression);context[token.contextName]=template.render({},{output:"macros"})}else{context[token.contextName]=this.macros}return{chain:chain,output:""}}},{type:Twig.logic.type.from,regex:/^from\s+(.+)\s+import\s+([a-zA-Z0-9_, ]+)$/,next:[],open:true,compile:function(token){var expression=token.match[1].trim(),macroExpressions=token.match[2].trim().split(/[ ,]+/),macroNames={};for(var i=0;i<macroExpressions.length;i++){var res=macroExpressions[i];var macroMatch=res.match(/^([a-zA-Z0-9_]+)\s+(.+)\s+as\s+([a-zA-Z0-9_]+)$/);if(macroMatch){macroNames[macroMatch[1].trim()]=macroMatch[2].trim()}else if(res.match(/^([a-zA-Z0-9_]+)$/)){macroNames[res]=res}else{}}delete token.match;token.expression=expression;token.macroNames=macroNames;token.stack=Twig.expression.compile.apply(this,[{type:Twig.expression.type.expression,value:expression}]).stack;return token},parse:function(token,context,chain){var macros;if(token.expression!=="_self"){var file=Twig.expression.parse.apply(this,[token.stack,context]);var template=this.importFile(file||token.expression);macros=template.render({},{output:"macros"})}else{macros=this.macros}for(var macroName in token.macroNames){if(macros.hasOwnProperty(macroName)){context[token.macroNames[macroName]]=macros[macroName]}}return{chain:chain,output:""}}},{type:Twig.logic.type.embed,regex:/^embed\s+(ignore missing\s+)?(.+?)\s*(?:with\s+(.+?))?\s*(only)?$/,next:[Twig.logic.type.endembed],open:true,compile:function(token){var match=token.match,includeMissing=match[1]!==undefined,expression=match[2].trim(),withContext=match[3],only=match[4]!==undefined&&match[4].length;delete token.match;token.only=only;token.includeMissing=includeMissing;token.stack=Twig.expression.compile.apply(this,[{type:Twig.expression.type.expression,value:expression}]).stack;if(withContext!==undefined){token.withStack=Twig.expression.compile.apply(this,[{type:Twig.expression.type.expression,value:withContext.trim()}]).stack}return token},parse:function(token,context,chain){var innerContext={},withContext,i,template;if(!token.only){for(i in context){if(context.hasOwnProperty(i))innerContext[i]=context[i]}}if(token.withStack!==undefined){withContext=Twig.expression.parse.apply(this,[token.withStack,context]);for(i in withContext){if(withContext.hasOwnProperty(i))innerContext[i]=withContext[i]}}var file=Twig.expression.parse.apply(this,[token.stack,innerContext]);if(file instanceof Twig.Template){template=file}else{template=this.importFile(file)}this.blocks={};var output=Twig.parse.apply(this,[token.output,innerContext]);return{chain:chain,output:template.render(innerContext,{blocks:this.blocks})}}},{type:Twig.logic.type.endembed,regex:/^endembed$/,next:[],open:false}];Twig.logic.handler={};Twig.logic.extendType=function(type,value){value=value||"Twig.logic.type"+type;Twig.logic.type[type]=value};Twig.logic.extend=function(definition){if(!definition.type){throw new Twig.Error("Unable to extend logic definition. No type provided for "+definition)}if(Twig.logic.type[definition.type]){throw new Twig.Error("Unable to extend logic definitions. Type "+definition.type+" is already defined.")}else{Twig.logic.extendType(definition.type)}Twig.logic.handler[definition.type]=definition};while(Twig.logic.definitions.length>0){Twig.logic.extend(Twig.logic.definitions.shift())}Twig.logic.compile=function(raw_token){var expression=raw_token.value.trim(),token=Twig.logic.tokenize.apply(this,[expression]),token_template=Twig.logic.handler[token.type];if(token_template.compile){token=token_template.compile.apply(this,[token]);Twig.log.trace("Twig.logic.compile: ","Compiled logic token to ",token)}return token};Twig.logic.tokenize=function(expression){var token={},token_template_type=null,token_type=null,token_regex=null,regex_array=null,regex=null,match=null;expression=expression.trim();for(token_template_type in Twig.logic.handler){if(Twig.logic.handler.hasOwnProperty(token_template_type)){token_type=Twig.logic.handler[token_template_type].type;token_regex=Twig.logic.handler[token_template_type].regex;regex_array=[];if(token_regex instanceof Array){regex_array=token_regex}else{regex_array.push(token_regex)}while(regex_array.length>0){regex=regex_array.shift();match=regex.exec(expression.trim());if(match!==null){token.type=token_type;token.match=match;Twig.log.trace("Twig.logic.tokenize: ","Matched a ",token_type," regular expression of ",match);return token}}}}throw new Twig.Error("Unable to parse '"+expression.trim()+"'")};Twig.logic.parse=function(token,context,chain){var output="",token_template;context=context||{};Twig.log.debug("Twig.logic.parse: ","Parsing logic token ",token);token_template=Twig.logic.handler[token.type];if(token_template.parse){output=token_template.parse.apply(this,[token,context,chain])}return output};return Twig}(Twig||{});var Twig=function(Twig){"use strict";Twig.expression={};Twig.expression.reservedWords=["true","false","null","TRUE","FALSE","NULL","_context"];Twig.expression.type={comma:"Twig.expression.type.comma",operator:{unary:"Twig.expression.type.operator.unary",binary:"Twig.expression.type.operator.binary"},string:"Twig.expression.type.string",bool:"Twig.expression.type.bool",array:{start:"Twig.expression.type.array.start",end:"Twig.expression.type.array.end"},object:{start:"Twig.expression.type.object.start",end:"Twig.expression.type.object.end"},parameter:{start:"Twig.expression.type.parameter.start",end:"Twig.expression.type.parameter.end"},key:{period:"Twig.expression.type.key.period",brackets:"Twig.expression.type.key.brackets"},filter:"Twig.expression.type.filter",_function:"Twig.expression.type._function",variable:"Twig.expression.type.variable",number:"Twig.expression.type.number",_null:"Twig.expression.type.null",context:"Twig.expression.type.context",test:"Twig.expression.type.test"};Twig.expression.set={operations:[Twig.expression.type.filter,Twig.expression.type.operator.unary,Twig.expression.type.operator.binary,Twig.expression.type.array.end,Twig.expression.type.object.end,Twig.expression.type.parameter.end,Twig.expression.type.comma,Twig.expression.type.test],expressions:[Twig.expression.type._function,Twig.expression.type.bool,Twig.expression.type.string,Twig.expression.type.variable,Twig.expression.type.number,Twig.expression.type._null,Twig.expression.type.context,Twig.expression.type.parameter.start,Twig.expression.type.array.start,Twig.expression.type.object.start]};Twig.expression.set.operations_extended=Twig.expression.set.operations.concat([Twig.expression.type.key.period,Twig.expression.type.key.brackets]);Twig.expression.fn={compile:{push:function(token,stack,output){output.push(token)},push_both:function(token,stack,output){output.push(token);stack.push(token)}},parse:{push:function(token,stack,context){stack.push(token)},push_value:function(token,stack,context){stack.push(token.value)}}};Twig.expression.definitions=[{type:Twig.expression.type.test,regex:/^is\s+(not)?\s*([a-zA-Z_][a-zA-Z0-9_]*)/,next:Twig.expression.set.operations.concat([Twig.expression.type.parameter.start]),compile:function(token,stack,output){token.filter=token.match[2];token.modifier=token.match[1];delete token.match;delete token.value;output.push(token)},parse:function(token,stack,context){var value=stack.pop(),params=token.params&&Twig.expression.parse.apply(this,[token.params,context]),result=Twig.test(token.filter,value,params);if(token.modifier=="not"){stack.push(!result)}else{stack.push(result)}}},{type:Twig.expression.type.comma,regex:/^,/,next:Twig.expression.set.expressions.concat([Twig.expression.type.array.end,Twig.expression.type.object.end]),compile:function(token,stack,output){var i=stack.length-1,stack_token;delete token.match;delete token.value;for(;i>=0;i--){stack_token=stack.pop();if(stack_token.type===Twig.expression.type.object.start||stack_token.type===Twig.expression.type.parameter.start||stack_token.type===Twig.expression.type.array.start){stack.push(stack_token);break}output.push(stack_token)}output.push(token)}},{type:Twig.expression.type.operator.binary,regex:/(^[\+\-~%\?\:]|^[!=]==?|^[!<>]=?|^\*\*?|^\/\/?|^and\s+|^or\s+|^in\s+|^not in\s+|^\.\.)/,next:Twig.expression.set.expressions.concat([Twig.expression.type.operator.unary]),compile:function(token,stack,output){delete token.match;token.value=token.value.trim();var value=token.value,operator=Twig.expression.operator.lookup(value,token);Twig.log.trace("Twig.expression.compile: ","Operator: ",operator," from ",value);while(stack.length>0&&(stack[stack.length-1].type==Twig.expression.type.operator.unary||stack[stack.length-1].type==Twig.expression.type.operator.binary)&&(operator.associativity===Twig.expression.operator.leftToRight&&operator.precidence>=stack[stack.length-1].precidence||operator.associativity===Twig.expression.operator.rightToLeft&&operator.precidence>stack[stack.length-1].precidence)){var temp=stack.pop();output.push(temp)}if(value===":"){if(stack[stack.length-1]&&stack[stack.length-1].value==="?"){}else{var key_token=output.pop();if(key_token.type===Twig.expression.type.string||key_token.type===Twig.expression.type.variable||key_token.type===Twig.expression.type.number){token.key=key_token.value}else{throw new Twig.Error("Unexpected value before ':' of "+key_token.type+" = "+key_token.value)}output.push(token);return}}else{stack.push(operator)}},parse:function(token,stack,context){if(token.key){stack.push(token)}else{Twig.expression.operator.parse(token.value,stack)}}},{type:Twig.expression.type.operator.unary,regex:/(^not\s+)/,next:Twig.expression.set.expressions,compile:function(token,stack,output){delete token.match;token.value=token.value.trim();var value=token.value,operator=Twig.expression.operator.lookup(value,token);Twig.log.trace("Twig.expression.compile: ","Operator: ",operator," from ",value);while(stack.length>0&&(stack[stack.length-1].type==Twig.expression.type.operator.unary||stack[stack.length-1].type==Twig.expression.type.operator.binary)&&(operator.associativity===Twig.expression.operator.leftToRight&&operator.precidence>=stack[stack.length-1].precidence||operator.associativity===Twig.expression.operator.rightToLeft&&operator.precidence>stack[stack.length-1].precidence)){var temp=stack.pop();output.push(temp)}stack.push(operator)},parse:function(token,stack,context){Twig.expression.operator.parse(token.value,stack)}},{type:Twig.expression.type.string,regex:/^(["'])(?:(?=(\\?))\2[\s\S])*?\1/,next:Twig.expression.set.operations,compile:function(token,stack,output){var value=token.value;delete token.match;if(value.substring(0,1)==='"'){value=value.replace('\\"','"')}else{value=value.replace("\\'","'")}token.value=value.substring(1,value.length-1).replace(/\\n/g,"\n").replace(/\\r/g,"\r");Twig.log.trace("Twig.expression.compile: ","String value: ",token.value);output.push(token)},parse:Twig.expression.fn.parse.push_value},{type:Twig.expression.type.parameter.start,regex:/^\(/,next:Twig.expression.set.expressions.concat([Twig.expression.type.parameter.end]),compile:Twig.expression.fn.compile.push_both,parse:Twig.expression.fn.parse.push},{type:Twig.expression.type.parameter.end,regex:/^\)/,next:Twig.expression.set.operations_extended,compile:function(token,stack,output){var stack_token,end_token=token;stack_token=stack.pop();while(stack.length>0&&stack_token.type!=Twig.expression.type.parameter.start){output.push(stack_token);stack_token=stack.pop()}var param_stack=[];while(token.type!==Twig.expression.type.parameter.start){param_stack.unshift(token);token=output.pop()}param_stack.unshift(token);var is_expression=false;token=output[output.length-1];if(token===undefined||token.type!==Twig.expression.type._function&&token.type!==Twig.expression.type.filter&&token.type!==Twig.expression.type.test&&token.type!==Twig.expression.type.key.brackets&&token.type!==Twig.expression.type.key.period){end_token.expression=true;param_stack.pop();param_stack.shift();end_token.params=param_stack;output.push(end_token)}else{end_token.expression=false;token.params=param_stack}},parse:function(token,stack,context){var new_array=[],array_ended=false,value=null;if(token.expression){value=Twig.expression.parse.apply(this,[token.params,context]);stack.push(value)}else{while(stack.length>0){value=stack.pop();if(value&&value.type&&value.type==Twig.expression.type.parameter.start){array_ended=true;break}new_array.unshift(value)}if(!array_ended){throw new Twig.Error("Expected end of parameter set.")}stack.push(new_array)}}},{type:Twig.expression.type.array.start,regex:/^\[/,next:Twig.expression.set.expressions.concat([Twig.expression.type.array.end]),compile:Twig.expression.fn.compile.push_both,parse:Twig.expression.fn.parse.push},{type:Twig.expression.type.array.end,regex:/^\]/,next:Twig.expression.set.operations_extended,compile:function(token,stack,output){var i=stack.length-1,stack_token;for(;i>=0;i--){stack_token=stack.pop();if(stack_token.type===Twig.expression.type.array.start){break}output.push(stack_token)}output.push(token)},parse:function(token,stack,context){var new_array=[],array_ended=false,value=null;while(stack.length>0){value=stack.pop();if(value.type&&value.type==Twig.expression.type.array.start){array_ended=true;break}new_array.unshift(value)}if(!array_ended){throw new Twig.Error("Expected end of array.")}stack.push(new_array)}},{type:Twig.expression.type.object.start,regex:/^\{/,next:Twig.expression.set.expressions.concat([Twig.expression.type.object.end]),compile:Twig.expression.fn.compile.push_both,parse:Twig.expression.fn.parse.push},{type:Twig.expression.type.object.end,regex:/^\}/,next:Twig.expression.set.operations_extended,compile:function(token,stack,output){var i=stack.length-1,stack_token;for(;i>=0;i--){stack_token=stack.pop();if(stack_token&&stack_token.type===Twig.expression.type.object.start){break}output.push(stack_token)}output.push(token)},parse:function(end_token,stack,context){var new_object={},object_ended=false,token=null,token_key=null,has_value=false,value=null;while(stack.length>0){token=stack.pop();if(token&&token.type&&token.type===Twig.expression.type.object.start){object_ended=true;break}if(token&&token.type&&(token.type===Twig.expression.type.operator.binary||token.type===Twig.expression.type.operator.unary)&&token.key){if(!has_value){throw new Twig.Error("Missing value for key '"+token.key+"' in object definition.")}new_object[token.key]=value;if(new_object._keys===undefined)new_object._keys=[];new_object._keys.unshift(token.key);value=null;has_value=false}else{has_value=true;value=token}}if(!object_ended){throw new Twig.Error("Unexpected end of object.")}stack.push(new_object)}},{type:Twig.expression.type.filter,regex:/^\|\s?([a-zA-Z_][a-zA-Z0-9_\-]*)/,next:Twig.expression.set.operations_extended.concat([Twig.expression.type.parameter.start]),compile:function(token,stack,output){token.value=token.match[1];output.push(token)},parse:function(token,stack,context){var input=stack.pop(),params=token.params&&Twig.expression.parse.apply(this,[token.params,context]);stack.push(Twig.filter.apply(this,[token.value,input,params]))}},{type:Twig.expression.type._function,regex:/^([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/,next:Twig.expression.type.parameter.start,transform:function(match,tokens){return"("},compile:function(token,stack,output){var fn=token.match[1];token.fn=fn;delete token.match;delete token.value;output.push(token)},parse:function(token,stack,context){var params=token.params&&Twig.expression.parse.apply(this,[token.params,context]),fn=token.fn,value;if(Twig.functions[fn]){value=Twig.functions[fn].apply(this,params)}else if(typeof context[fn]=="function"){value=context[fn].apply(context,params)}else{throw new Twig.Error(fn+" function does not exist and is not defined in the context")}stack.push(value)}},{type:Twig.expression.type.variable,regex:/^[a-zA-Z_][a-zA-Z0-9_]*/,next:Twig.expression.set.operations_extended.concat([Twig.expression.type.parameter.start]),compile:Twig.expression.fn.compile.push,validate:function(match,tokens){return Twig.indexOf(Twig.expression.reservedWords,match[0])<0},parse:function(token,stack,context){var value=Twig.expression.resolve(context[token.value],context);stack.push(value)}},{type:Twig.expression.type.key.period,regex:/^\.([a-zA-Z0-9_]+)/,next:Twig.expression.set.operations_extended.concat([Twig.expression.type.parameter.start]),compile:function(token,stack,output){token.key=token.match[1];delete token.match;delete token.value;output.push(token)},parse:function(token,stack,context){var params=token.params&&Twig.expression.parse.apply(this,[token.params,context]),key=token.key,object=stack.pop(),value;if(object===null||object===undefined){if(this.options.strict_variables){throw new Twig.Error("Can't access a key "+key+" on an null or undefined object.")}else{return null}}var capitalize=function(value){return value.substr(0,1).toUpperCase()+value.substr(1)};if(typeof object==="object"&&key in object){value=object[key]}else if(object["get"+capitalize(key)]!==undefined){value=object["get"+capitalize(key)]}else if(object["is"+capitalize(key)]!==undefined){value=object["is"+capitalize(key)]}else{value=null}stack.push(Twig.expression.resolve(value,object,params))}},{type:Twig.expression.type.key.brackets,regex:/^\[([^\]]*)\]/,next:Twig.expression.set.operations_extended.concat([Twig.expression.type.parameter.start]),compile:function(token,stack,output){var match=token.match[1];delete token.value;delete token.match;token.stack=Twig.expression.compile({value:match}).stack;output.push(token)},parse:function(token,stack,context){var params=token.params&&Twig.expression.parse.apply(this,[token.params,context]),key=Twig.expression.parse.apply(this,[token.stack,context]),object=stack.pop(),value;if(object===null||object===undefined){if(this.options.strict_variables){throw new Twig.Error("Can't access a key "+key+" on an null or undefined object.")}else{return null}}if(typeof object==="object"&&key in object){value=object[key]}else{value=null}stack.push(Twig.expression.resolve(value,object,params))}},{type:Twig.expression.type._null,regex:/^(null|NULL|none|NONE)/,next:Twig.expression.set.operations,compile:function(token,stack,output){delete token.match;token.value=null;output.push(token)},parse:Twig.expression.fn.parse.push_value},{type:Twig.expression.type.context,regex:/^_context/,next:Twig.expression.set.operations_extended.concat([Twig.expression.type.parameter.start]),compile:Twig.expression.fn.compile.push,parse:function(token,stack,context){stack.push(context)}},{type:Twig.expression.type.number,regex:/^\-?\d+(\.\d+)?/,next:Twig.expression.set.operations,compile:function(token,stack,output){token.value=Number(token.value);output.push(token)},parse:Twig.expression.fn.parse.push_value},{type:Twig.expression.type.bool,regex:/^(true|TRUE|false|FALSE)/,next:Twig.expression.set.operations,compile:function(token,stack,output){token.value=token.match[0].toLowerCase()==="true";delete token.match;output.push(token)},parse:Twig.expression.fn.parse.push_value}];Twig.expression.resolve=function(value,context,params){if(typeof value=="function"){return value.apply(context,params||[])}else{return value}};Twig.expression.handler={};Twig.expression.extendType=function(type){Twig.expression.type[type]="Twig.expression.type."+type};Twig.expression.extend=function(definition){if(!definition.type){throw new Twig.Error("Unable to extend logic definition. No type provided for "+definition)}Twig.expression.handler[definition.type]=definition};while(Twig.expression.definitions.length>0){Twig.expression.extend(Twig.expression.definitions.shift())}Twig.expression.tokenize=function(expression){var tokens=[],exp_offset=0,next=null,type,regex,regex_array,token_next,match_found,invalid_matches=[],match_function;match_function=function(){var match=Array.prototype.slice.apply(arguments),string=match.pop(),offset=match.pop();Twig.log.trace("Twig.expression.tokenize","Matched a ",type," regular expression of ",match);if(next&&Twig.indexOf(next,type)<0){invalid_matches.push(type+" cannot follow a "+tokens[tokens.length-1].type+" at template:"+exp_offset+" near '"+match[0].substring(0,20)+"...'");return match[0]}if(Twig.expression.handler[type].validate&&!Twig.expression.handler[type].validate(match,tokens)){return match[0]}invalid_matches=[];tokens.push({type:type,value:match[0],match:match});match_found=true;next=token_next;exp_offset+=match[0].length;if(Twig.expression.handler[type].transform){return Twig.expression.handler[type].transform(match,tokens)}return""};Twig.log.debug("Twig.expression.tokenize","Tokenizing expression ",expression);while(expression.length>0){expression=expression.trim();for(type in Twig.expression.handler){if(Twig.expression.handler.hasOwnProperty(type)){token_next=Twig.expression.handler[type].next;regex=Twig.expression.handler[type].regex;if(regex instanceof Array){regex_array=regex}else{regex_array=[regex]}match_found=false;while(regex_array.length>0){regex=regex_array.pop();expression=expression.replace(regex,match_function)}if(match_found){break}}}if(!match_found){if(invalid_matches.length>0){throw new Twig.Error(invalid_matches.join(" OR "))}else{throw new Twig.Error("Unable to parse '"+expression+"' at template position"+exp_offset)}}}Twig.log.trace("Twig.expression.tokenize","Tokenized to ",tokens);return tokens};Twig.expression.compile=function(raw_token){var expression=raw_token.value,tokens=Twig.expression.tokenize(expression),token=null,output=[],stack=[],token_template=null;Twig.log.trace("Twig.expression.compile: ","Compiling ",expression);while(tokens.length>0){token=tokens.shift();token_template=Twig.expression.handler[token.type];Twig.log.trace("Twig.expression.compile: ","Compiling ",token);token_template.compile&&token_template.compile(token,stack,output);Twig.log.trace("Twig.expression.compile: ","Stack is",stack);Twig.log.trace("Twig.expression.compile: ","Output is",output)}while(stack.length>0){output.push(stack.pop())}Twig.log.trace("Twig.expression.compile: ","Final output is",output);raw_token.stack=output;delete raw_token.value;return raw_token};Twig.expression.parse=function(tokens,context){var that=this;if(!(tokens instanceof Array)){tokens=[tokens]}var stack=[],token_template=null;Twig.forEach(tokens,function(token){token_template=Twig.expression.handler[token.type];token_template.parse&&token_template.parse.apply(that,[token,stack,context])});return stack.pop()};return Twig}(Twig||{});var Twig=function(Twig){"use strict";Twig.expression.operator={leftToRight:"leftToRight",rightToLeft:"rightToLeft"};var containment=function(a,b){if(b.indexOf!==undefined){return a===b||a!==""&&b.indexOf(a)>-1}else{var el;for(el in b){if(b.hasOwnProperty(el)&&b[el]===a){return true}}return false}};Twig.expression.operator.lookup=function(operator,token){switch(operator){case"..":case"not in":case"in":token.precidence=20;token.associativity=Twig.expression.operator.leftToRight;break;case",":token.precidence=18;token.associativity=Twig.expression.operator.leftToRight;break;case"?":case":":token.precidence=16;token.associativity=Twig.expression.operator.rightToLeft;break;case"or":token.precidence=14;token.associativity=Twig.expression.operator.leftToRight;break;case"and":token.precidence=13;token.associativity=Twig.expression.operator.leftToRight;break;case"==":case"!=":token.precidence=9;token.associativity=Twig.expression.operator.leftToRight;break;case"<":case"<=":case">":case">=":token.precidence=8;token.associativity=Twig.expression.operator.leftToRight;break;case"~":case"+":case"-":token.precidence=6;token.associativity=Twig.expression.operator.leftToRight;break;case"//":case"**":case"*":case"/":case"%":token.precidence=5;token.associativity=Twig.expression.operator.leftToRight;break;case"not":token.precidence=3;token.associativity=Twig.expression.operator.rightToLeft;break;default:throw new Twig.Error(operator+" is an unknown operator.")}token.operator=operator;return token};Twig.expression.operator.parse=function(operator,stack){Twig.log.trace("Twig.expression.operator.parse: ","Handling ",operator);var a,b,c;switch(operator){case":":break;case"?":c=stack.pop();b=stack.pop();a=stack.pop();if(a){stack.push(b)}else{stack.push(c)}break;case"+":b=parseFloat(stack.pop());a=parseFloat(stack.pop());stack.push(a+b);break;case"-":b=parseFloat(stack.pop());a=parseFloat(stack.pop());stack.push(a-b);break;case"*":b=parseFloat(stack.pop());a=parseFloat(stack.pop());stack.push(a*b);break;case"/":b=parseFloat(stack.pop());a=parseFloat(stack.pop());stack.push(a/b);break;case"//":b=parseFloat(stack.pop());a=parseFloat(stack.pop());stack.push(parseInt(a/b));break;case"%":b=parseFloat(stack.pop());a=parseFloat(stack.pop());stack.push(a%b);break;case"~":b=stack.pop();a=stack.pop();stack.push((a!=null?a.toString():"")+(b!=null?b.toString():""));break;case"not":case"!":stack.push(!stack.pop());break;case"<":b=stack.pop();a=stack.pop();stack.push(a<b);break;case"<=":b=stack.pop();a=stack.pop();stack.push(a<=b);break;case">":b=stack.pop();a=stack.pop();stack.push(a>b);break;case">=":b=stack.pop();a=stack.pop();stack.push(a>=b);break;case"===":b=stack.pop();a=stack.pop();stack.push(a===b);break;case"==":b=stack.pop();a=stack.pop();stack.push(a==b);break;case"!==":b=stack.pop();a=stack.pop();stack.push(a!==b);break;case"!=":b=stack.pop();a=stack.pop();stack.push(a!=b);break;case"or":b=stack.pop();a=stack.pop();stack.push(a||b);break;case"and":b=stack.pop();a=stack.pop();stack.push(a&&b);break;case"**":b=stack.pop();a=stack.pop();stack.push(Math.pow(a,b));
 break;case"not in":b=stack.pop();a=stack.pop();stack.push(!containment(a,b));break;case"in":b=stack.pop();a=stack.pop();stack.push(containment(a,b));break;case"..":b=stack.pop();a=stack.pop();stack.push(Twig.functions.range(a,b));break;default:throw new Twig.Error(operator+" is an unknown operator.")}};return Twig}(Twig||{});var Twig=function(Twig){function is(type,obj){var clas=Object.prototype.toString.call(obj).slice(8,-1);return obj!==undefined&&obj!==null&&clas===type}Twig.filters={upper:function(value){if(typeof value!=="string"){return value}return value.toUpperCase()},lower:function(value){if(typeof value!=="string"){return value}return value.toLowerCase()},capitalize:function(value){if(typeof value!=="string"){return value}return value.substr(0,1).toUpperCase()+value.toLowerCase().substr(1)},title:function(value){if(typeof value!=="string"){return value}return value.toLowerCase().replace(/(^|\s)([a-z])/g,function(m,p1,p2){return p1+p2.toUpperCase()})},length:function(value){if(Twig.lib.is("Array",value)||typeof value==="string"){return value.length}else if(Twig.lib.is("Object",value)){if(value._keys===undefined){return Object.keys(value).length}else{return value._keys.length}}else{return 0}},reverse:function(value){if(is("Array",value)){return value.reverse()}else if(is("String",value)){return value.split("").reverse().join("")}else if(value instanceof Object){var keys=value._keys||Object.keys(value).reverse();value._keys=keys;return value}},sort:function(value){if(is("Array",value)){return value.sort()}else if(value instanceof Object){delete value._keys;var keys=Object.keys(value),sorted_keys=keys.sort(function(a,b){return value[a]>value[b]});value._keys=sorted_keys;return value}},keys:function(value){if(value===undefined||value===null){return}var keyset=value._keys||Object.keys(value),output=[];Twig.forEach(keyset,function(key){if(key==="_keys")return;if(value.hasOwnProperty(key)){output.push(key)}});return output},url_encode:function(value){if(value===undefined||value===null){return}return encodeURIComponent(value)},join:function(value,params){if(value===undefined||value===null){return}var join_str="",output=[],keyset=null;if(params&&params[0]){join_str=params[0]}if(value instanceof Array){output=value}else{keyset=value._keys||Object.keys(value);Twig.forEach(keyset,function(key){if(key==="_keys")return;if(value.hasOwnProperty(key)){output.push(value[key])}})}return output.join(join_str)},"default":function(value,params){if(params===undefined||params.length!==1){throw new Twig.Error("default filter expects one argument")}if(value===undefined||value===null||value===""){return params[0]}else{return value}},json_encode:function(value){if(value&&value.hasOwnProperty("_keys")){delete value._keys}if(value===undefined||value===null){return"null"}return JSON.stringify(value)},merge:function(value,params){var obj=[],arr_index=0,keyset=[];if(!(value instanceof Array)){obj={}}else{Twig.forEach(params,function(param){if(!(param instanceof Array)){obj={}}})}if(!(obj instanceof Array)){obj._keys=[]}if(value instanceof Array){Twig.forEach(value,function(val){if(obj._keys)obj._keys.push(arr_index);obj[arr_index]=val;arr_index++})}else{keyset=value._keys||Object.keys(value);Twig.forEach(keyset,function(key){obj[key]=value[key];obj._keys.push(key);var int_key=parseInt(key,10);if(!isNaN(int_key)&&int_key>=arr_index){arr_index=int_key+1}})}Twig.forEach(params,function(param){if(param instanceof Array){Twig.forEach(param,function(val){if(obj._keys)obj._keys.push(arr_index);obj[arr_index]=val;arr_index++})}else{keyset=param._keys||Object.keys(param);Twig.forEach(keyset,function(key){if(!obj[key])obj._keys.push(key);obj[key]=param[key];var int_key=parseInt(key,10);if(!isNaN(int_key)&&int_key>=arr_index){arr_index=int_key+1}})}});if(params.length===0){throw new Twig.Error("Filter merge expects at least one parameter")}return obj},date:function(value,params){if(value===undefined||value===null){return}var date=Twig.functions.date(value);return Twig.lib.formatDate(date,params[0])},date_modify:function(value,params){if(value===undefined||value===null){return}if(params===undefined||params.length!==1){throw new Twig.Error("date_modify filter expects 1 argument")}var modifyText=params[0],time;if(Twig.lib.is("Date",value)){time=Twig.lib.strtotime(modifyText,value.getTime()/1e3)}if(Twig.lib.is("String",value)){time=Twig.lib.strtotime(modifyText,Twig.lib.strtotime(value))}if(Twig.lib.is("Number",value)){time=Twig.lib.strtotime(modifyText,value)}return new Date(time*1e3)},replace:function(value,params){if(value===undefined||value===null){return}var pairs=params[0],tag;for(tag in pairs){if(pairs.hasOwnProperty(tag)&&tag!=="_keys"){value=Twig.lib.replaceAll(value,tag,pairs[tag])}}return value},format:function(value,params){if(value===undefined||value===null){return}return Twig.lib.vsprintf(value,params)},striptags:function(value){if(value===undefined||value===null){return}return Twig.lib.strip_tags(value)},escape:function(value){if(value===undefined||value===null){return}var raw_value=value.toString().replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");return Twig.Markup(raw_value)},e:function(value){return Twig.filters.escape(value)},nl2br:function(value){if(value===undefined||value===null){return}var linebreak_tag="BACKSLASH_n_replace",br="<br />"+linebreak_tag;value=Twig.filters.escape(value).replace(/\r\n/g,br).replace(/\r/g,br).replace(/\n/g,br);return Twig.lib.replaceAll(value,linebreak_tag,"\n")},number_format:function(value,params){var number=value,decimals=params&&params[0]?params[0]:undefined,dec=params&&params[1]!==undefined?params[1]:".",sep=params&&params[2]!==undefined?params[2]:",";number=(number+"").replace(/[^0-9+\-Ee.]/g,"");var n=!isFinite(+number)?0:+number,prec=!isFinite(+decimals)?0:Math.abs(decimals),s="",toFixedFix=function(n,prec){var k=Math.pow(10,prec);return""+Math.round(n*k)/k};s=(prec?toFixedFix(n,prec):""+Math.round(n)).split(".");if(s[0].length>3){s[0]=s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g,sep)}if((s[1]||"").length<prec){s[1]=s[1]||"";s[1]+=new Array(prec-s[1].length+1).join("0")}return s.join(dec)},trim:function(value,params){if(value===undefined||value===null){return}var str=Twig.filters.escape(""+value),whitespace;if(params&&params[0]){whitespace=""+params[0]}else{whitespace=" \n\r	\f            ​\u2028\u2029　"}for(var i=0;i<str.length;i++){if(whitespace.indexOf(str.charAt(i))===-1){str=str.substring(i);break}}for(i=str.length-1;i>=0;i--){if(whitespace.indexOf(str.charAt(i))===-1){str=str.substring(0,i+1);break}}return whitespace.indexOf(str.charAt(0))===-1?str:""},truncate:function(value,params){var length=30,preserve=false,separator="...";value=value+"";if(params){if(params[0]){length=params[0]}if(params[1]){preserve=params[1]}if(params[2]){separator=params[2]}}if(value.length>length){if(preserve){length=value.indexOf(" ",length);if(length===-1){return value}}value=value.substr(0,length)+separator}return value},slice:function(value,params){if(value===undefined||value===null){return}if(params===undefined||params.length<1){throw new Twig.Error("slice filter expects at least 1 argument")}var start=params[0]||0;var length=params.length>1?params[1]:value.length;var startIndex=start>=0?start:Math.max(value.length+start,0);if(Twig.lib.is("Array",value)){var output=[];for(var i=startIndex;i<startIndex+length&&i<value.length;i++){output.push(value[i])}return output}else if(Twig.lib.is("String",value)){return value.substr(startIndex,length)}else{throw new Twig.Error("slice filter expects value to be an array or string")}},abs:function(value){if(value===undefined||value===null){return}return Math.abs(value)},first:function(value){if(value instanceof Array){return value[0]}else if(value instanceof Object){if("_keys"in value){return value[value._keys[0]]}}else if(typeof value==="string"){return value.substr(0,1)}return},split:function(value,params){if(value===undefined||value===null){return}if(params===undefined||params.length<1||params.length>2){throw new Twig.Error("split filter expects 1 or 2 argument")}if(Twig.lib.is("String",value)){var delimiter=params[0],limit=params[1],split=value.split(delimiter);if(limit===undefined){return split}else if(limit<0){return value.split(delimiter,split.length+limit)}else{var limitedSplit=[];if(delimiter==""){while(split.length>0){var temp="";for(var i=0;i<limit&&split.length>0;i++){temp+=split.shift()}limitedSplit.push(temp)}}else{for(var i=0;i<limit-1&&split.length>0;i++){limitedSplit.push(split.shift())}if(split.length>0){limitedSplit.push(split.join(delimiter))}}return limitedSplit}}else{throw new Twig.Error("split filter expects value to be a string")}},last:function(value){if(Twig.lib.is("Object",value)){var keys;if(value._keys===undefined){keys=Object.keys(value)}else{keys=value._keys}return value[keys[keys.length-1]]}return value[value.length-1]},raw:function(value){return Twig.Markup(value)},batch:function(items,params){var size=params.shift(),fill=params.shift(),result,last,missing;if(!Twig.lib.is("Array",items)){throw new Twig.Error("batch filter expects items to be an array")}if(!Twig.lib.is("Number",size)){throw new Twig.Error("batch filter expects size to be a number")}size=Math.ceil(size);result=Twig.lib.chunkArray(items,size);if(fill&&items.length%size!=0){last=result.pop();missing=size-last.length;while(missing--){last.push(fill)}result.push(last)}return result},round:function(value,params){params=params||[];var precision=params.length>0?params[0]:0,method=params.length>1?params[1]:"common";value=parseFloat(value);if(precision&&!Twig.lib.is("Number",precision)){throw new Twig.Error("round filter expects precision to be a number")}if(method==="common"){return Twig.lib.round(value,precision)}if(!Twig.lib.is("Function",Math[method])){throw new Twig.Error("round filter expects method to be 'floor', 'ceil', or 'common'")}return Math[method](value*Math.pow(10,precision))/Math.pow(10,precision)}};Twig.filter=function(filter,value,params){if(!Twig.filters[filter]){throw"Unable to find filter "+filter}return Twig.filters[filter].apply(this,[value,params])};Twig.filter.extend=function(filter,definition){Twig.filters[filter]=definition};return Twig}(Twig||{});var Twig=function(Twig){function is(type,obj){var clas=Object.prototype.toString.call(obj).slice(8,-1);return obj!==undefined&&obj!==null&&clas===type}Twig.functions={range:function(low,high,step){var matrix=[];var inival,endval,plus;var walker=step||1;var chars=false;if(!isNaN(low)&&!isNaN(high)){inival=parseInt(low,10);endval=parseInt(high,10)}else if(isNaN(low)&&isNaN(high)){chars=true;inival=low.charCodeAt(0);endval=high.charCodeAt(0)}else{inival=isNaN(low)?0:low;endval=isNaN(high)?0:high}plus=inival>endval?false:true;if(plus){while(inival<=endval){matrix.push(chars?String.fromCharCode(inival):inival);inival+=walker}}else{while(inival>=endval){matrix.push(chars?String.fromCharCode(inival):inival);inival-=walker}}return matrix},cycle:function(arr,i){var pos=i%arr.length;return arr[pos]},dump:function(){var EOL="\n",indentChar="  ",indentTimes=0,out="",args=Array.prototype.slice.call(arguments),indent=function(times){var ind="";while(times>0){times--;ind+=indentChar}return ind},displayVar=function(variable){out+=indent(indentTimes);if(typeof variable==="object"){dumpVar(variable)}else if(typeof variable==="function"){out+="function()"+EOL}else if(typeof variable==="string"){out+="string("+variable.length+') "'+variable+'"'+EOL}else if(typeof variable==="number"){out+="number("+variable+")"+EOL}else if(typeof variable==="boolean"){out+="bool("+variable+")"+EOL}},dumpVar=function(variable){var i;if(variable===null){out+="NULL"+EOL}else if(variable===undefined){out+="undefined"+EOL}else if(typeof variable==="object"){out+=indent(indentTimes)+typeof variable;indentTimes++;out+="("+function(obj){var size=0,key;for(key in obj){if(obj.hasOwnProperty(key)){size++}}return size}(variable)+") {"+EOL;for(i in variable){out+=indent(indentTimes)+"["+i+"]=> "+EOL;displayVar(variable[i])}indentTimes--;out+=indent(indentTimes)+"}"+EOL}else{displayVar(variable)}};if(args.length==0)args.push(this.context);Twig.forEach(args,function(variable){dumpVar(variable)});return out},date:function(date,time){var dateObj;if(date===undefined){dateObj=new Date}else if(Twig.lib.is("Date",date)){dateObj=date}else if(Twig.lib.is("String",date)){dateObj=new Date(Twig.lib.strtotime(date)*1e3)}else if(Twig.lib.is("Number",date)){dateObj=new Date(date*1e3)}else{throw new Twig.Error("Unable to parse date "+date)}return dateObj},block:function(block){return this.blocks[block]},parent:function(){return Twig.placeholders.parent},attribute:function(object,method,params){if(object instanceof Object){if(object.hasOwnProperty(method)){if(typeof object[method]==="function"){return object[method].apply(undefined,params)}else{return object[method]}}}return object[method]||undefined},template_from_string:function(template){if(template===undefined){template=""}return new Twig.Template({options:this.options,data:template})},random:function(value){var LIMIT_INT31=2147483648;function getRandomNumber(n){var random=Math.floor(Math.random()*LIMIT_INT31);var limits=[0,n];var min=Math.min.apply(null,limits),max=Math.max.apply(null,limits);return min+Math.floor((max-min+1)*random/LIMIT_INT31)}if(Twig.lib.is("Number",value)){return getRandomNumber(value)}if(Twig.lib.is("String",value)){return value.charAt(getRandomNumber(value.length-1))}if(Twig.lib.is("Array",value)){return value[getRandomNumber(value.length-1)]}if(Twig.lib.is("Object",value)){var keys=Object.keys(value);return value[keys[getRandomNumber(keys.length-1)]]}return getRandomNumber(LIMIT_INT31-1)}};Twig._function=function(_function,value,params){if(!Twig.functions[_function]){throw"Unable to find function "+_function}return Twig.functions[_function](value,params)};Twig._function.extend=function(_function,definition){Twig.functions[_function]=definition};return Twig}(Twig||{});var Twig=function(Twig){"use strict";Twig.tests={empty:function(value){if(value===null||value===undefined)return true;if(typeof value==="number")return false;if(value.length&&value.length>0)return false;for(var key in value){if(value.hasOwnProperty(key))return false}return true},odd:function(value){return value%2===1},even:function(value){return value%2===0},divisibleby:function(value,params){return value%params[0]===0},defined:function(value){return value!==undefined},none:function(value){return value===null},"null":function(value){return this.none(value)},sameas:function(value,params){return value===params[0]},iterable:function(value){return value&&(Twig.lib.is("Array",value)||Twig.lib.is("Object",value))}};Twig.test=function(test,value,params){if(!Twig.tests[test]){throw"Test "+test+" is not defined."}return Twig.tests[test](value,params)};Twig.test.extend=function(test,definition){Twig.tests[test]=definition};return Twig}(Twig||{});var Twig=function(Twig){"use strict";Twig.exports={VERSION:Twig.VERSION};Twig.exports.twig=function twig(params){"use strict";var id=params.id,options={strict_variables:params.strict_variables||false,autoescape:params.autoescape!=null&&params.autoescape||false,allowInlineIncludes:params.allowInlineIncludes||false,rethrow:params.rethrow||false};if(id){Twig.validateId(id)}if(params.debug!==undefined){Twig.debug=params.debug}if(params.trace!==undefined){Twig.trace=params.trace}if(params.data!==undefined){return new Twig.Template({data:params.data,module:params.module,id:id,options:options})}else if(params.ref!==undefined){if(params.id!==undefined){throw new Twig.Error("Both ref and id cannot be set on a twig.js template.")}return Twig.Templates.load(params.ref)}else if(params.href!==undefined){return Twig.Templates.loadRemote(params.href,{id:id,method:"ajax",base:params.base,module:params.module,precompiled:params.precompiled,async:params.async,options:options},params.load,params.error)}else if(params.path!==undefined){return Twig.Templates.loadRemote(params.path,{id:id,method:"fs",base:params.base,module:params.module,precompiled:params.precompiled,async:params.async,options:options},params.load,params.error)}};Twig.exports.extendFilter=function(filter,definition){Twig.filter.extend(filter,definition)};Twig.exports.extendFunction=function(fn,definition){Twig._function.extend(fn,definition)};Twig.exports.extendTest=function(test,definition){Twig.test.extend(test,definition)};Twig.exports.extendTag=function(definition){Twig.logic.extend(definition)};Twig.exports.extend=function(fn){fn(Twig)};Twig.exports.compile=function(markup,options){var id=options.filename,path=options.filename,template;template=new Twig.Template({data:markup,path:path,id:id,options:options.settings["twig options"]});return function(context){return template.render(context)}};Twig.exports.renderFile=function(path,options,fn){if("function"==typeof options){fn=options;options={}}options=options||{};var params={path:path,base:options.settings["views"],load:function(template){fn(null,template.render(options))}};var view_options=options.settings["twig options"];if(view_options){for(var option in view_options)if(view_options.hasOwnProperty(option)){params[option]=view_options[option]}}Twig.exports.twig(params)};Twig.exports.__express=Twig.exports.renderFile;Twig.exports.cache=function(cache){Twig.cache=cache};return Twig}(Twig||{});var Twig=function(Twig){Twig.compiler={module:{}};Twig.compiler.compile=function(template,options){var tokens=JSON.stringify(template.tokens),id=template.id,output;if(options.module){if(Twig.compiler.module[options.module]===undefined){throw new Twig.Error("Unable to find module type "+options.module)}output=Twig.compiler.module[options.module](id,tokens,options.twig)}else{output=Twig.compiler.wrap(id,tokens)}return output};Twig.compiler.module={amd:function(id,tokens,pathToTwig){return'define(["'+pathToTwig+'"], function (Twig) {\n	var twig, templates;\ntwig = Twig.twig;\ntemplates = '+Twig.compiler.wrap(id,tokens)+"\n	return templates;\n});"},node:function(id,tokens){return'var twig = require("twig").twig;\n'+"exports.template = "+Twig.compiler.wrap(id,tokens)},cjs2:function(id,tokens,pathToTwig){return'module.declare([{ twig: "'+pathToTwig+'" }], function (require, exports, module) {\n'+'	var twig = require("twig").twig;\n'+"	exports.template = "+Twig.compiler.wrap(id,tokens)+"\n});"}};Twig.compiler.wrap=function(id,tokens){return'twig({id:"'+id.replace('"','\\"')+'", data:'+tokens+", precompiled: true});\n"};return Twig}(Twig||{});if(typeof module!=="undefined"&&module.declare){module.declare([],function(require,exports,module){for(key in Twig.exports){if(Twig.exports.hasOwnProperty(key)){exports[key]=Twig.exports[key]}}})}else if(typeof define=="function"&&define.amd){define(function(){return Twig.exports})}else if(typeof module!=="undefined"&&module.exports){module.exports=Twig.exports}else{window.twig=Twig.exports.twig;window.Twig=Twig.exports}
 //# sourceMappingURL=twig.min.js.map
-},{"fs":10,"path":14}],22:[function(require,module,exports){
+},{"fs":17,"path":18}],26:[function(require,module,exports){
 //     Underscore.js 1.8.3
 //     http://underscorejs.org
 //     (c) 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors

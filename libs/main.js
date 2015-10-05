@@ -9,7 +9,7 @@ module.exports = function(options){
 	var fs = require('fs');
 	var _ = require('underscore');
 	options = options || {};
-	options.cd = options.cd || '.';
+	options.cd = options.cd || '.'; // current directory.
 	options.paths_module_template = options.paths_module_template || {};
 
 	for( var i in options.paths_module_template ){
