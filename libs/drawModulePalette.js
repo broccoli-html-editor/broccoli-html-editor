@@ -1,10 +1,10 @@
 /**
  * drawModulePalette.js
  */
-module.exports = function(broccoli, moduleList, targetElm, callback){
+module.exports = function(broccoli, moduleList, callback){
 	// delete(require.cache[require('path').resolve(__filename)]);
 	if(!window){ callback(); return false; } // client side only
-	if(!targetElm){ callback(); return false; }
+	var targetElm = broccoli.options.elmModulePalette;
 	// console.log(moduleList);
 	// console.log(targetElm);
 

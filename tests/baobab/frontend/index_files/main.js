@@ -98,7 +98,13 @@ window.main = new (function(){
 			}
 		)
 	;
-	var broccoli = new Broccoli();
+	var broccoli = new Broccoli({
+		'elmIframeWindow': $('iframe').get(0).contentWindow,
+		'elmPanels': document.getElementById('panels'),
+		'elmModulePalette': document.getElementById('palette'),
+		'contents_area_selector': '[data-contents]',
+		'contents_area_name_by': 'data-contents'
+	});
 
 	this.init = function(){
 		// this.socketTest();
@@ -121,7 +127,7 @@ window.main = new (function(){
 				} ,
 				function( it1, data ){
 					// モジュールパレットを初期化
-					broccoli.drawModulePalette(data.packageList, document.getElementById('palette'), function(){
+					broccoli.drawModulePalette(data.packageList, function(){
 						console.log('palette standby.');
 						it1.next(data);
 					});
@@ -131,11 +137,14 @@ window.main = new (function(){
 					_this.socket.send(
 						'broccoli',
 						{
-							'api': 'buildHtml'
+							'api': 'buildHtmlAll'
 						},
-						function(html){
-							// console.log(html);
-							$('.contents', $('iframe').get(0).contentWindow.document).html(html);
+						function(htmls){
+							// console.log(htmls);
+							var $iframeWindow = $($('iframe').get(0).contentWindow.document);
+							for(var i in htmls){
+								$iframeWindow.find('[data-contents='+i+']').html(htmls[i]);
+							}
 
 							console.log('HTML standby.');
 							it1.next(data);
@@ -145,7 +154,6 @@ window.main = new (function(){
 				function( it1, data ){
 					// パネル描画
 					broccoli.drawPanels(
-						$('#panels').get(0),
 						$('.contents', $('iframe').get(0).contentWindow.document).get(0),
 						{
 							'select': function(instancePath){

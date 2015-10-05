@@ -5,10 +5,15 @@ module.exports = function(options){
 	// if(!window){delete(require.cache[require('path').resolve(__filename)]);}
 
 	var _this = this;
-	var path = require('path');
-	var fs = require('fs');
 	var _ = require('underscore');
+	var $ = require('jquery');
+
 	options = options || {};
+	options.elmIframeWindow = options.elmIframeWindow || document.createElement('div');
+	options.elmPanels = options.elmPanels || document.createElement('div');
+	options.elmModulePalette = options.elmModulePalette || document.createElement('div');
+	options.contents_area_selector = options.contents_area_selector || '.contents';
+	options.contents_area_name_by = options.contents_area_name_by || 'id';
 
 	this.options = options;
 
@@ -38,28 +43,25 @@ module.exports = function(options){
 	/**
 	 * モジュールパレットを描画する
 	 * @param  {Object}   moduleList モジュール一覧。
-	 * @param  {Object}   targetElm  描画対象のHTML要素
 	 * @param  {Function} callback   callback function.
 	 * @return {Object}              this.
 	 */
-	this.drawModulePalette = function(moduleList, targetElm, callback){
-		require( './drawModulePalette.js' )(_this, moduleList, targetElm, callback);
+	this.drawModulePalette = function(moduleList, callback){
+		require( './drawModulePalette.js' )(_this, moduleList, callback);
 		return this;
 	}
 
 	/**
 	 * 編集用UI(Panels)を描画する
-	 * @param  {[type]}   panelsElm   描画対象のHTML要素
-	 * @param  {[type]}   contentsElm canvasを展開済みのHTML要素(検索対象になります)
-	 * @param  {[type]}   options     オプション
+	 * @param  {Object}   options     オプション
 	 *                                - options.edit = {Function} モジュールインスタンスの編集画面を開く
 	 *                                - options.remove = {Function} モジュールインスタンスを削除する
 	 *                                - options.drop = {Function} モジュールインスタンスに対するドラッグ＆ドロップ操作
 	 * @param  {Function} callback    callback function.
 	 * @return {Object}               this.
 	 */
-	this.drawPanels = function(panelsElm, contentsElm, options, callback){
-		require( './drawPanels.js' )(_this, panelsElm, contentsElm, options, callback);
+	this.drawPanels = function(options, callback){
+		require( './drawPanels.js' )(_this, options, callback);
 		return this;
 	}
 

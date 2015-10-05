@@ -43,6 +43,24 @@ module.exports = function( data, callback, main, socket ){
 		);
 		return ;
 
+	}else if(data.api == 'buildHtmlAll'){
+		var json = require( path.resolve(__dirname, '../../frontend/editpage/index_files/guieditor.ignore/data.json') );
+		broccoli.buildHtmlAll(
+			json.bowl ,
+			{
+				'mode': 'canvas',
+				'realpath': path.resolve(__dirname, '../../frontend/editpage/index.html'),
+				'realpathJson': path.resolve(__dirname, '../../frontend/editpage/index_files/guieditor.ignore/data.json'),
+				'resourceDir': path.resolve(__dirname, '../../frontend/editpage/index_files/guieditor.ignore/resources/'),
+				'resourceDist': path.resolve(__dirname, '../../frontend/editpage/index_files/resources/')
+			} ,
+			function(htmls){
+				// console.log(htmls);
+				callback(htmls);
+			}
+		);
+		return ;
+
 	}
 
 	setTimeout(function(){

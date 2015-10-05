@@ -2,10 +2,11 @@
  * broccoli.js
  */
 module.exports = function(options){
-	// if(!window){delete(require.cache[require('path').resolve(__filename)]);}
+	delete(require.cache[require('path').resolve(__filename)]);
 
 	var _this = this;
 	var path = require('path');
+	var it79 = require('iterate79');
 	var fs = require('fs');
 	var _ = require('underscore');
 	options = options || {};
@@ -138,6 +139,9 @@ module.exports = function(options){
 
 	/**
 	 * HTMLをビルドする
+	 * ビルドしたHTMLは、callback() に文字列として渡されます。
+	 * realpathに指定したファイルは自動的に上書きされません。
+	 *
 	 * @param  {Object}   data     コンテンツデータ
 	 * @param  {Object}   options  オプション
 	 *                             - options.mode = ビルドモード(finalize=製品版ビルド, canvas=編集画面用ビルド)
@@ -150,38 +154,48 @@ module.exports = function(options){
 	 * @return {Object}            this
 	 */
 	this.buildHtml = function( data, options, callback ){
+		var buildHtml = require( __dirname+'/buildHtml.js' );
 		this.resourceMgr.init( options.realpath, options.realpathJson, options.resourceDir, options.resourceDist, function(){
 			loadFieldDefinition();
-			require( __dirname+'/buildHtml.js' )(_this, data, options, callback);
+			buildHtml(_this, data, options, callback);
 		} );
 		return this;
 	}
 
 	/**
-	 * モジュールパレットを描画する
-	 * @param  {Object}   moduleList モジュール一覧。
-	 * @param  {Object}   targetElm  描画対象のHTML要素
-	 * @param  {Function} callback   callback function.
-	 * @return {Object}              this.
+	 * HTMLをすべてビルドする
+	 * ビルドしたHTMLは、callback() に文字列として渡されます。
+	 * realpathに指定したファイルは自動的に上書きされません。
+	 *
+	 * @param  {Object}   dataList コンテンツデータ一覧
+	 * @param  {Object}   options  オプション
+	 *                             - options.mode = ビルドモード(finalize=製品版ビルド, canvas=編集画面用ビルド)
+	 *                             - options.realpath = HTMLの出力先
+	 *                             - options.realpathJson = data.jsonの保存先
+	 *                             - options.resourceDir = リソースディレクトリのパス
+	 *                             - options.resourceDist = リソース出力先ディレクトリのパス
+	 *                             - options.instancePath = インスタンスパス
+	 * @param  {Function} callback callback function.
+	 * @return {Object}            this
 	 */
-	this.drawModulePalette = function(moduleList, targetElm, callback){
-		require( './drawModulePalette.js' )(_this, moduleList, targetElm, callback);
-		return this;
-	}
+	this.buildHtmlAll = function( dataList, options, callback ){
+		this.resourceMgr.init( options.realpath, options.realpathJson, options.resourceDir, options.resourceDist, function(){
+			loadFieldDefinition();
 
-	/**
-	 * 編集用UI(Panels)を描画する
-	 * @param  {[type]}   panelsElm   描画対象のHTML要素
-	 * @param  {[type]}   contentsElm canvasを展開済みのHTML要素(検索対象になります)
-	 * @param  {[type]}   options     オプション
-	 *                                - options.edit = {Function} モジュールインスタンスの編集画面を開く
-	 *                                - options.remove = {Function} モジュールインスタンスを削除する
-	 *                                - options.drop = {Function} モジュールインスタンスに対するドラッグ＆ドロップ操作
-	 * @param  {Function} callback    callback function.
-	 * @return {Object}               this.
-	 */
-	this.drawPanels = function(panelsElm, contentsElm, options, callback){
-		require( './drawPanels.js' )(_this, panelsElm, contentsElm, options, callback);
+			var htmls = {};
+			it79.ary(
+				dataList,
+				function(it1, row, idx){
+					_this.buildHtml(row, options, function(html){
+						htmls[idx] = html;
+						it1.next();
+					});
+				},
+				function(){
+					callback(htmls);
+				}
+			);
+		} );
 		return this;
 	}
 

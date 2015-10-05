@@ -4,6 +4,7 @@
   "description": "",
   "main": "libs/main.js",
   "scripts": {
+    "up": "node ./node_modules/baobab-fw/lib/cmd/server.js",
     "test": "mocha --ui tdd ./tests/"
   },
   "repository": {

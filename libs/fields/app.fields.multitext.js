@@ -8,12 +8,23 @@ module.exports = function(broccoli){
 		if(typeof(fieldData)===typeof({}) && typeof(fieldData.src)===typeof('')){
 			switch( fieldData.editor ){
 				case 'text':
-					rtn = px.$('<div>').text( fieldData.src ).html(); // ←HTML特殊文字変換
+					rtn = php.htmlspecialchars( fieldData ); // ←HTML特殊文字変換
 					rtn = rtn.replace(new RegExp('\"','g'), '&quot;'); // ← jqueryで `.html()` しても、ダブルクオートは変換してくれないみたい。
 					rtn = rtn.replace(new RegExp('\r\n|\r|\n','g'), '<br />'); // ← 改行コードは改行タグに変換
 					break;
 				case 'markdown':
-					rtn = px.utils.markdown( fieldData.src );
+					var marked = require('marked');
+					marked.setOptions({
+						renderer: new marked.Renderer(),
+						gfm: true,
+						tables: true,
+						breaks: false,
+						pedantic: false,
+						sanitize: false,
+						smartLists: true,
+						smartypants: false
+					});
+					rtn = marked(fieldData.src);
 					break;
 				case 'html':
 				default:

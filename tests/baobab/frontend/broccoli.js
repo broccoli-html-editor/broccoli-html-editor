@@ -7,10 +7,10 @@
 /**
  * drawModulePalette.js
  */
-module.exports = function(broccoli, moduleList, targetElm, callback){
+module.exports = function(broccoli, moduleList, callback){
 	// delete(require.cache[require('path').resolve(__filename)]);
 	if(!window){ callback(); return false; } // client side only
-	if(!targetElm){ callback(); return false; }
+	var targetElm = broccoli.options.elmModulePalette;
 	// console.log(moduleList);
 	// console.log(targetElm);
 
@@ -157,11 +157,11 @@ module.exports = function(broccoli, moduleList, targetElm, callback){
 /**
  * drawPanels.js
  */
-module.exports = function(broccoli, panelsElm, contentsElm, options, callback){
+module.exports = function(broccoli, options, callback){
 	// delete(require.cache[require('path').resolve(__filename)]);
 	if(!window){ callback(); return false; }
-	if(!panelsElm){ callback(); return false; }
-	if(!contentsElm){ callback(); return false; }
+	// var panelsElm = broccoli.options.elmPanels;
+	// if(!contentsElm){ callback(); return false; }
 	// console.log(options);
 
 	var _this = this;
@@ -178,9 +178,59 @@ module.exports = function(broccoli, panelsElm, contentsElm, options, callback){
 	var twig = require('twig');
 	var $ = require('jquery');
 
-	var $panels = $(panelsElm);
-	var $contents = $(contentsElm);
+	var $panels = $(broccoli.options.elmPanels);
+	var $contents = $(broccoli.options.elmIframeWindow);
 	var $contentsElements = $contents.find('[data-broccoli-instance-path]');
+
+	function drawPanel(idx, domElm){
+		function calcHeight($me, idx){
+			var $nextElm = $contentsElements.eq(idx+1);
+			if( !$nextElm.length ){
+				return $me.height();
+			}
+			var rtn = ($nextElm.offset().top - $me.offset().top);
+			if( $me.height() > rtn ){
+				return $me.height();
+			}
+			return rtn;
+		}
+		var $this = $(domElm);
+		var $panel = $('<div>');
+		$panels.append($panel);
+		$panel
+			.css({
+				'width': $this.width(),
+				'height': calcHeight($this, idx),
+				'position': 'absolute',
+				'left': $this.offset().left,
+				'top': $this.offset().top
+			})
+			.addClass('broccoli--panel')
+			.attr({
+				'data-broccoli-instance-path': $this.attr('data-broccoli-instance-path'),
+				'draggable': true // <- HTML5のAPI http://www.htmq.com/dnd/
+			})
+			.bind('click', function(){
+				options.select($(this).attr('data-broccoli-instance-path'));
+			})
+			.bind('dblclick', function(){
+				options.edit($(this).attr('data-broccoli-instance-path'));
+			})
+			.bind('dragstart', function(){
+				event.dataTransfer.setData("method", 'moveTo' );
+				event.dataTransfer.setData("data-broccoli-instance-path", $(this).attr('data-broccoli-instance-path') );
+				var subModName = $(this).attr('data-broccoli-sub-mod-name');
+				if( typeof(subModName) === typeof('') && subModName.length ){
+					event.dataTransfer.setData("data-broccoli-sub-mod-name", subModName );
+				}
+			})
+			.bind('drop', function(){
+				var method = event.dataTransfer.getData("method");
+				options.drop($(this).attr('data-broccoli-instance-path'), method);
+			})
+		;
+
+	}
 
 	it79.fnc(
 		{},
@@ -190,98 +240,9 @@ module.exports = function(broccoli, panelsElm, contentsElm, options, callback){
 				it1.next(data);
 			} ,
 			function( it1, data ){
-				function calcHeight($me, idx){
-					var $nextElm = $contentsElements.eq(idx+1);
-					if( !$nextElm.length ){
-						return $me.height();
-					}
-					var rtn = ($nextElm.offset().top - $me.offset().top);
-					if( $me.height() > rtn ){
-						return $me.height();
-					}
-					return rtn;
-				}
 
 				// console.log($contentsElements.size());
-				$contentsElements.each(function(idx, domElm){
-					var $this = $(domElm);
-					var $panel = $('<div>');
-					$panels.append($panel);
-					$panel
-						.css({
-							'width': $this.width(),
-							'height': calcHeight($this, idx),
-							'position': 'absolute',
-							'left': $this.offset().left,
-							'top': $this.offset().top
-						})
-						.addClass('broccoli--panel')
-						.attr({
-							'data-broccoli-instance-path': $this.attr('data-broccoli-instance-path'),
-							'draggable': true // <- HTML5のAPI http://www.htmq.com/dnd/
-						})
-						.bind('click', function(){
-							options.select($(this).attr('data-broccoli-instance-path'));
-						})
-						.bind('dblclick', function(){
-							options.edit($(this).attr('data-broccoli-instance-path'));
-						})
-						.bind('dragstart', function(){
-							event.dataTransfer.setData("method", 'moveTo' );
-							event.dataTransfer.setData("data-broccoli-instance-path", $(this).attr('data-broccoli-instance-path') );
-							var subModName = $(this).attr('data-broccoli-sub-mod-name');
-							if( typeof(subModName) === typeof('') && subModName.length ){
-								event.dataTransfer.setData("data-broccoli-sub-mod-name", subModName );
-							}
-						})
-						.bind('drop', function(){
-							var method = event.dataTransfer.getData("method");
-							options.drop($(this).attr('data-broccoli-instance-path'), method);
-							// var modId = event.dataTransfer.getData("modId");
-							// var moveFrom = event.dataTransfer.getData("data-broccoli-instance-path");
-							// var moveTo = $(this).attr('data-broccoli-instance-path');
-							// var subModNameTo = $(this).attr('data-guieditor-sub-mod-name');
-							// var subModNameFrom = event.dataTransfer.getData('data-guieditor-sub-mod-name');
-							//
-							// // px.message( 'modId "'+modId+'" が "'+method+'" のためにドロップされました。' );
-							// if( method == 'add' ){
-							// 	if( typeof(subModNameTo) === typeof('') ){
-							// 		// loopフィールドの配列を追加するエリアの場合
-							// 		px.message('ここにモジュールを追加することはできません。');
-							// 		return;
-							// 	}
-							// 	px2dtGuiEditor.contentsSourceData.addInstance( modId, moveTo, function(){
-							// 		// px.message('インスタンスを追加しました。');
-							// 		px2dtGuiEditor.ui.onEditEnd();
-							// 	} );
-							// }else if( method == 'moveTo' ){
-							// 	function isSubMod( subModName ){
-							// 		if( typeof(subModName) === typeof('') && subModName.length ){
-							// 			return true;
-							// 		}
-							// 		return false;
-							// 	}
-							// 	function removeNum(str){
-							// 		return str.replace(new RegExp('[0-9]+$'),'');
-							// 	}
-							// 	if( (isSubMod(subModNameFrom) || isSubMod(subModNameTo)) && removeNum(moveFrom) !== removeNum(moveTo) ){
-							// 		px.message('並べ替え以外の移動操作はできません。');
-							// 		return;
-							// 	}
-							// 	if( moveFrom === moveTo ){
-							// 		// 移動元と移動先が同一の場合、キャンセルとみなす
-							// 		$(this).removeClass('cont_instanceCtrlPanel-dragentered');
-							// 		return;
-							// 	}
-							// 	px2dtGuiEditor.contentsSourceData.moveInstanceTo( moveFrom, moveTo, function(){
-							// 		// px.message('インスタンスを移動しました。');
-							// 		px2dtGuiEditor.ui.onEditEnd();
-							// 	} );
-							// }
-						})
-					;
-
-				});
+				$contentsElements.each(drawPanel);
 				it1.next(data);
 			} ,
 			function( it1, data ){
@@ -821,12 +782,23 @@ module.exports = function(broccoli){
 		if(typeof(fieldData)===typeof({}) && typeof(fieldData.src)===typeof('')){
 			switch( fieldData.editor ){
 				case 'text':
-					rtn = px.$('<div>').text( fieldData.src ).html(); // ←HTML特殊文字変換
+					rtn = php.htmlspecialchars( fieldData ); // ←HTML特殊文字変換
 					rtn = rtn.replace(new RegExp('\"','g'), '&quot;'); // ← jqueryで `.html()` しても、ダブルクオートは変換してくれないみたい。
 					rtn = rtn.replace(new RegExp('\r\n|\r|\n','g'), '<br />'); // ← 改行コードは改行タグに変換
 					break;
 				case 'markdown':
-					rtn = px.utils.markdown( fieldData.src );
+					var marked = require('marked');
+					marked.setOptions({
+						renderer: new marked.Renderer(),
+						gfm: true,
+						tables: true,
+						breaks: false,
+						pedantic: false,
+						sanitize: false,
+						smartLists: true,
+						smartypants: false
+					});
+					rtn = marked(fieldData.src);
 					break;
 				case 'html':
 				default:
@@ -915,7 +887,7 @@ module.exports = function(broccoli){
 
 }
 
-},{}],11:[function(require,module,exports){
+},{"marked":22}],11:[function(require,module,exports){
 module.exports = function(broccoli){
 
 	/**
@@ -1470,10 +1442,15 @@ module.exports = function(options){
 	// if(!window){delete(require.cache[require('path').resolve(__filename)]);}
 
 	var _this = this;
-	var path = require('path');
-	var fs = require('fs');
 	var _ = require('underscore');
+	var $ = require('jquery');
+
 	options = options || {};
+	options.elmIframeWindow = options.elmIframeWindow || document.createElement('div');
+	options.elmPanels = options.elmPanels || document.createElement('div');
+	options.elmModulePalette = options.elmModulePalette || document.createElement('div');
+	options.contents_area_selector = options.contents_area_selector || '.contents';
+	options.contents_area_name_by = options.contents_area_name_by || 'id';
 
 	this.options = options;
 
@@ -1503,34 +1480,31 @@ module.exports = function(options){
 	/**
 	 * モジュールパレットを描画する
 	 * @param  {Object}   moduleList モジュール一覧。
-	 * @param  {Object}   targetElm  描画対象のHTML要素
 	 * @param  {Function} callback   callback function.
 	 * @return {Object}              this.
 	 */
-	this.drawModulePalette = function(moduleList, targetElm, callback){
-		require( './drawModulePalette.js' )(_this, moduleList, targetElm, callback);
+	this.drawModulePalette = function(moduleList, callback){
+		require( './drawModulePalette.js' )(_this, moduleList, callback);
 		return this;
 	}
 
 	/**
 	 * 編集用UI(Panels)を描画する
-	 * @param  {[type]}   panelsElm   描画対象のHTML要素
-	 * @param  {[type]}   contentsElm canvasを展開済みのHTML要素(検索対象になります)
-	 * @param  {[type]}   options     オプション
+	 * @param  {Object}   options     オプション
 	 *                                - options.edit = {Function} モジュールインスタンスの編集画面を開く
 	 *                                - options.remove = {Function} モジュールインスタンスを削除する
 	 *                                - options.drop = {Function} モジュールインスタンスに対するドラッグ＆ドロップ操作
 	 * @param  {Function} callback    callback function.
 	 * @return {Object}               this.
 	 */
-	this.drawPanels = function(panelsElm, contentsElm, options, callback){
-		require( './drawPanels.js' )(_this, panelsElm, contentsElm, options, callback);
+	this.drawPanels = function(options, callback){
+		require( './drawPanels.js' )(_this, options, callback);
 		return this;
 	}
 
 }
 
-},{"./drawModulePalette.js":2,"./drawPanels.js":3,"./fieldBase.js":4,"./fields/app.fields.href.js":5,"./fields/app.fields.html.js":6,"./fields/app.fields.html_attr_text.js":7,"./fields/app.fields.image.js":8,"./fields/app.fields.markdown.js":9,"./fields/app.fields.multitext.js":10,"./fields/app.fields.select.js":11,"./fields/app.fields.table.js":12,"./fields/app.fields.text.js":13,"./fields/app.fields.wysiwyg_rte.js":14,"./fields/app.fields.wysiwyg_tinymce.js":15,"fs":17,"path":18,"underscore":26}],17:[function(require,module,exports){
+},{"./drawModulePalette.js":2,"./drawPanels.js":3,"./fieldBase.js":4,"./fields/app.fields.href.js":5,"./fields/app.fields.html.js":6,"./fields/app.fields.html_attr_text.js":7,"./fields/app.fields.image.js":8,"./fields/app.fields.markdown.js":9,"./fields/app.fields.multitext.js":10,"./fields/app.fields.select.js":11,"./fields/app.fields.table.js":12,"./fields/app.fields.text.js":13,"./fields/app.fields.wysiwyg_rte.js":14,"./fields/app.fields.wysiwyg_tinymce.js":15,"jquery":21,"underscore":26}],17:[function(require,module,exports){
 
 },{}],18:[function(require,module,exports){
 (function (process){
