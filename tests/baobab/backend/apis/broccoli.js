@@ -9,10 +9,11 @@ module.exports = function( data, callback, main, socket ){
 	callback = callback||function(){};
 	var Broccoli = require('./../../../../libs/main.js');
 	var broccoli = new Broccoli({
-		'PlainHTMLElements': './testdata/PlainHTMLElements/',
-		'testMod1': './testdata/modules1/',
-		'testMod2': './testdata/modules2/'
-	}, {
+		'paths_module_template': {
+			'PlainHTMLElements': './testdata/PlainHTMLElements/',
+			'testMod1': './testdata/modules1/',
+			'testMod2': './testdata/modules2/'
+		} ,
 		'cd': path.resolve(__dirname, '../../../')+'/'
 	});
 

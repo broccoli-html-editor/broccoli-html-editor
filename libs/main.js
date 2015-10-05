@@ -1,22 +1,22 @@
 /**
  * broccoli.js
  */
-module.exports = function(paths_module_template, options){
+module.exports = function(options){
 	// if(!window){delete(require.cache[require('path').resolve(__filename)]);}
 
 	var _this = this;
 	var path = require('path');
 	var fs = require('fs');
 	var _ = require('underscore');
-	paths_module_template = paths_module_template || {};
 	options = options || {};
 	options.cd = options.cd || '.';
+	options.paths_module_template = options.paths_module_template || {};
 
-	for( var i in paths_module_template ){
-		paths_module_template[i] = path.resolve( options.cd, paths_module_template[i] )+'/';
+	for( var i in options.paths_module_template ){
+		options.paths_module_template[i] = path.resolve( options.cd, options.paths_module_template[i] )+'/';
 	}
 
-	this.paths_module_template = paths_module_template;
+	this.paths_module_template = options.paths_module_template;
 	this.options = options;
 
 	this.resourceMgr = new (require('./resourceMgr.js'))(this);

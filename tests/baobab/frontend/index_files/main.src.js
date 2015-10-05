@@ -21,6 +21,7 @@ window.main = new (function(){
 			}
 		)
 	;
+	var broccoli = new Broccoli();
 
 	this.init = function(){
 		// this.socketTest();

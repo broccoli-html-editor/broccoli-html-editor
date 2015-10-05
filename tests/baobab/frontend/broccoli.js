@@ -1,7 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function(window){
-	var Broccoli = require('../../libs/main.js');
-	window.broccoli = new Broccoli();
+	window.Broccoli = require('../../libs/main.js');
 })(window);
 
 },{"../../libs/main.js":8}],2:[function(require,module,exports){
@@ -905,22 +904,22 @@ module.exports = function(broccoli, callback){
 /**
  * broccoli.js
  */
-module.exports = function(paths_module_template, options){
+module.exports = function(options){
 	// if(!window){delete(require.cache[require('path').resolve(__filename)]);}
 
 	var _this = this;
 	var path = require('path');
 	var fs = require('fs');
 	var _ = require('underscore');
-	paths_module_template = paths_module_template || {};
 	options = options || {};
 	options.cd = options.cd || '.';
+	options.paths_module_template = options.paths_module_template || {};
 
-	for( var i in paths_module_template ){
-		paths_module_template[i] = path.resolve( options.cd, paths_module_template[i] )+'/';
+	for( var i in options.paths_module_template ){
+		options.paths_module_template[i] = path.resolve( options.cd, options.paths_module_template[i] )+'/';
 	}
 
-	this.paths_module_template = paths_module_template;
+	this.paths_module_template = options.paths_module_template;
 	this.options = options;
 
 	this.resourceMgr = new (require('./resourceMgr.js'))(this);

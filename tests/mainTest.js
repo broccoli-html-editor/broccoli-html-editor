@@ -7,10 +7,11 @@ var Broccoli = require('../libs/main.js');
 
 function makeDefaultBroccoli(){
 	return new Broccoli({
-		'PlainHTMLElements': './testdata/PlainHTMLElements/',
-		'testMod1': './testdata/modules1/',
-		'testMod2': './testdata/modules2/'
-	}, {
+		'paths_module_template':{
+			'PlainHTMLElements': './testdata/PlainHTMLElements/',
+			'testMod1': './testdata/modules1/',
+			'testMod2': './testdata/modules2/'
+		},
 		'cd': __dirname
 	});
 }
@@ -33,8 +34,10 @@ describe('インスタンス初期化', function() {
 	it("オプションなしの初期化", function(done) {
 		this.timeout(60*1000);
 		var broccoli = new Broccoli({
-			'testMod1': './tests/testdata/modules1/',
-			'testMod2': './tests/testdata/modules2/'
+			'paths_module_template':{
+				'testMod1': './tests/testdata/modules1/',
+				'testMod2': './tests/testdata/modules2/'
+			}
 		});
 		assert.equal(typeof(broccoli.paths_module_template), typeof({}));
 		assert.equal(broccoli.paths_module_template.testMod1, path.resolve('.','tests/testdata/modules1/')+'/');
