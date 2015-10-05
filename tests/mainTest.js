@@ -224,7 +224,7 @@ describe('モジュールインスタンスを生成する', function() {
 
 describe('ビルドする', function() {
 
-	it("テストデータをビルドする", function(done) {
+	it("テストデータをfinalizeモードでビルドする", function(done) {
 		this.timeout(5*1000);
 		var broccoli = makeDefaultBroccoli();
 		var data = require(__dirname+'/testdata/htdocs/test1/test1_files/guieditor.ignore/data.json');
@@ -240,6 +240,28 @@ describe('ビルドする', function() {
 			} ,
 			function( html, err ){
 				fs.writeFileSync(path.resolve(__dirname, './testdata/htdocs/test1/test1.html'), html);
+				// console.log( html );
+				done();
+			}
+		);
+	});
+
+	it("テストデータをcanvasモードでビルドする", function(done) {
+		this.timeout(5*1000);
+		var broccoli = makeDefaultBroccoli();
+		var data = require(__dirname+'/testdata/htdocs/test1/test1_files/guieditor.ignore/data.json');
+		// console.log(data);
+		broccoli.buildHtml(
+			data.bowl.main ,
+			{
+				'mode': 'canvas' ,
+				'realpath': path.resolve(__dirname, './testdata/htdocs/test1/test1.html') ,
+				'realpathJson': path.resolve(__dirname, './testdata/htdocs/test1/test1_files/guieditor.ignore/data.json') ,
+				'resourceDir': path.resolve(__dirname, './testdata/htdocs/test1/test1_files/guieditor.ignore/resources/') ,
+				'resourceDist': path.resolve(__dirname, './testdata/htdocs/test1/test1_files/resources/')
+			} ,
+			function( html, err ){
+				fs.writeFileSync(path.resolve(__dirname, './testdata/htdocs/test1/test1.canvas.html'), html);
 				// console.log( html );
 				done();
 			}

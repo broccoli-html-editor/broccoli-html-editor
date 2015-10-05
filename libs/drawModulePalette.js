@@ -28,7 +28,7 @@ module.exports = function(broccoli, moduleList, targetElm, callback){
 					.text(category.categoryName)
 					.attr({'href':'javascript:;'})
 					.click(function(){
-						$(this).toggleClass('broccoli--closed');
+						$(this).toggleClass('broccoli--module-palette__closed');
 						$ulMod.toggle(100)
 					})
 				);
@@ -96,7 +96,11 @@ module.exports = function(broccoli, moduleList, targetElm, callback){
 		{},
 		[
 			function(it1, data){
-				$(targetElm).html('loading...');
+				$(targetElm)
+					.html('loading...')
+					.removeClass('broccoli').addClass('broccoli')
+					.removeClass('broccoli--module-palette').addClass('broccoli--module-palette')
+				;
 				data.$ul = $('<ul>');
 				it1.next(data);
 			} ,
@@ -111,7 +115,7 @@ module.exports = function(broccoli, moduleList, targetElm, callback){
 							.text( pkg.packageName )
 							.attr({'href':'javascript:;'})
 							.click(function(){
-								$(this).toggleClass('broccoli--closed');
+								$(this).toggleClass('broccoli--module-palette__closed');
 								$ulCat.toggle(100)
 							})
 						);

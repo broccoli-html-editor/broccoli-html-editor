@@ -26,10 +26,6 @@ module.exports = function( data, callback, main, socket ){
 
 	}else if(data.api == 'buildHtml'){
 		var json = require( path.resolve(__dirname, '../../frontend/editpage/index_files/guieditor.ignore/data.json') );
-		// console.log(json);
-		// console.log(json.bowl.main);
-		// console.log( path.resolve(__dirname, '../../frontend/editpage/index.html') );
-		// console.log(broccoli.buildHtml);
 		broccoli.buildHtml(
 			json.bowl.main ,
 			{
@@ -45,6 +41,7 @@ module.exports = function( data, callback, main, socket ){
 			}
 		);
 		return ;
+
 	}
 
 	setTimeout(function(){

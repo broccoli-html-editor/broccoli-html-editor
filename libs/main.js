@@ -145,6 +145,7 @@ module.exports = function(paths_module_template, options){
 	 *                             - options.realpathJson = data.jsonの保存先
 	 *                             - options.resourceDir = リソースディレクトリのパス
 	 *                             - options.resourceDist = リソース出力先ディレクトリのパス
+	 *                             - options.instancePath = インスタンスパス
 	 * @param  {Function} callback callback function.
 	 * @return {Object}            this
 	 */
@@ -170,14 +171,17 @@ module.exports = function(paths_module_template, options){
 
 	/**
 	 * 編集用UI(Panels)を描画する
-	 * @param  {Object}   data       フィールドデータ
-	 * @param  {Object}   moduleList モジュール一覧。
-	 * @param  {Object}   targetElm  描画対象のHTML要素
-	 * @param  {Function} callback   callback function.
-	 * @return {Object}              this.
+	 * @param  {[type]}   panelsElm   描画対象のHTML要素
+	 * @param  {[type]}   contentsElm canvasを展開済みのHTML要素(検索対象になります)
+	 * @param  {[type]}   options     オプション
+	 *                                - options.edit = {Function} モジュールインスタンスの編集画面を開く
+	 *                                - options.remove = {Function} モジュールインスタンスを削除する
+	 *                                - options.drop = {Function} モジュールインスタンスに対するドラッグ＆ドロップ操作
+	 * @param  {Function} callback    callback function.
+	 * @return {Object}               this.
 	 */
-	this.drawPanels = function(data, moduleList, targetElm, callback){
-		require( './drawPanels.js' )(_this, data, moduleList, targetElm, callback);
+	this.drawPanels = function(panelsElm, contentsElm, options, callback){
+		require( './drawPanels.js' )(_this, panelsElm, contentsElm, options, callback);
 		return this;
 	}
 

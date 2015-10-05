@@ -1,6 +1,7 @@
 var gulp = require('gulp');
 var sass = require('gulp-sass');//CSSコンパイラ
 var autoprefixer = require("gulp-autoprefixer");//CSSにベンダープレフィックスを付与してくれる
+var minifyCss = require('gulp-minify-css');//CSSファイルの圧縮ツール
 var uglify = require("gulp-uglify");//JavaScriptファイルの圧縮ツール
 var concat = require('gulp-concat');//ファイルの結合ツール
 var plumber = require("gulp-plumber");//コンパイルエラーが起きても watch を抜けないようになる
@@ -9,9 +10,29 @@ var twig = require("gulp-twig");//Twigテンプレートエンジン
 var browserify = require("gulp-browserify");//NodeJSのコードをブラウザ向けコードに変換
 var packageJson = require(__dirname+'/package.json');
 var _tasks = [
-	'broccoli.js'
+	'broccoli.js',
+	'broccoli.css',
+	'test/main.js'
 ];
 
+
+// broccoli.scss を処理
+gulp.task('broccoli.css', function(){
+	gulp.src("client/src/broccoli.css.scss")
+		.pipe(plumber())
+		.pipe(sass())
+		.pipe(autoprefixer())
+		.pipe(concat('broccoli.css'))
+		.pipe(gulp.dest( './client/dist/' ))
+		.pipe(gulp.dest( './tests/baobab/frontend/' ))
+		.pipe(concat('broccoli.min.css'))
+		.pipe(minifyCss({compatibility: 'ie8'}))
+		// .pipe(sourcemaps.write())
+		// .pipe(uglify())
+		.pipe(gulp.dest( './client/dist/' ))
+		.pipe(gulp.dest( './tests/baobab/frontend/' ))
+	;
+});
 
 // broccoli.js (frontend) を処理
 gulp.task("broccoli.js", function() {
@@ -19,7 +40,6 @@ gulp.task("broccoli.js", function() {
 		.pipe(plumber())
 		.pipe(browserify({}))
 		.pipe(concat('broccoli.js'))
-		// .pipe(uglify())
 		.pipe(gulp.dest( './client/dist/' ))
 		.pipe(gulp.dest( './tests/baobab/frontend/' ))
 		.pipe(concat('broccoli.min.js'))
@@ -29,9 +49,19 @@ gulp.task("broccoli.js", function() {
 	;
 });
 
+// test/main.js を処理
+gulp.task("test/main.js", function() {
+	gulp.src(["tests/baobab/frontend/index_files/main.src.js"])
+		.pipe(plumber())
+		.pipe(browserify({}))
+		.pipe(concat('main.js'))
+		.pipe(gulp.dest( './tests/baobab/frontend/index_files/' ))
+	;
+});
+
 // src 中のすべての拡張子を監視して処理
 gulp.task("watch", function() {
-	gulp.watch(["client/src/**/*"], _tasks);
+	gulp.watch(["client/src/**/*","libs/**/*","tests/baobab/frontend/index_files/main.src.js"], _tasks);
 
 	var port = packageJson.baobabConfig.defaultPort;
 	var svrCtrl = require('baobab-fw').createSvrCtrl();

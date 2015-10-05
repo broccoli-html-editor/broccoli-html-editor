@@ -2,12 +2,13 @@
  * buildHtml.js
  */
 module.exports = function(broccoli, data, options, callback){
-	// delete(require.cache[require('path').resolve(__filename)]);
+	delete(require.cache[require('path').resolve(__filename)]);
 	// console.log(data);
 	// console.log(options);
 
 	var _this = this;
 	options = options || {};
+	options.instancePath = options.instancePath || '';
 	callback = callback || function(){};
 
 	var it79 = require('iterate79');
@@ -140,11 +141,15 @@ module.exports = function(broccoli, data, options, callback){
 
 						}else if( field.module ){
 							// module field
+							var opt = JSON.parse( JSON.stringify(options) );
+							opt.instancePath += '/fields.'+field.module.name;
 							it79.ary(
 								fieldData[field.module.name],
 								function( it2, row, idx ){
 									// ネストされたモジュールの再帰処理
-									broccoli.buildHtml(row, options, function(html){
+									var tmpopt = JSON.parse( JSON.stringify(opt) );
+									tmpopt.instancePath += '@'+idx;
+									broccoli.buildHtml(row, tmpopt, function(html){
 										rtn += html;
 										it2.next();
 									});
@@ -162,11 +167,17 @@ module.exports = function(broccoli, data, options, callback){
 							var tmpSearchResult = mod.searchEndTag( src, 'loop' );
 							src = tmpSearchResult.nextSrc;
 
+							var opt = JSON.parse( JSON.stringify(options) );
+							opt.instancePath += '/fields.'+field.loop.name;
+
 							it79.ary(
 								fieldData[field.loop.name],
 								function( it2, row, idx ){
 									// ネストされたモジュールの再帰処理
-									broccoli.buildHtml(row, options, function(html){
+									var tmpopt = JSON.parse( JSON.stringify(opt) );
+									tmpopt.instancePath += '@'+idx;
+
+									broccoli.buildHtml(row, tmpopt, function(html){
 										// rtn += '<!-- ---- LOOP ---- -->';
 										rtn += html;
 										// rtn += '<!-- ---- /LOOP ---- -->';
@@ -271,6 +282,16 @@ module.exports = function(broccoli, data, options, callback){
 					});
 				}
 
+			} ,
+			function(it1, d){
+				if( options.mode == 'canvas' ){
+					var html = '';
+					html += '<div data-broccoli-instance-path="'+options.instancePath+'">';
+					html += d.html;
+					html += '</div>';
+					d.html = html;
+				}
+				it1.next(d);
 			} ,
 			function(it1, d){
 				// console.log('--------------');
