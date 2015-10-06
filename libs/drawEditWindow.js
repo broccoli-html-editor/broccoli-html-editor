@@ -1,12 +1,9 @@
 /**
- * drawPanels.js
+ * drawEditWindow.js
  */
-module.exports = function(broccoli, callback){
+module.exports = function(broccoli, instancePath, elmEditWindow, callback){
 	// delete(require.cache[require('path').resolve(__filename)]);
 	if(!window){ callback(); return false; }
-	// var panelsElm = broccoli.options.elmPanels;
-	// if(!contentsElm){ callback(); return false; }
-	// console.log(options);
 
 	var _this = this;
 	callback = callback || function(){};

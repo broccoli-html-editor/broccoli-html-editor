@@ -43,6 +43,26 @@ module.exports = function(options){
 	}
 
 	/**
+	 * 汎用API
+	 * @param  {[type]}   api      [description]
+	 * @param  {[type]}   options  [description]
+	 * @param  {Function} callback [description]
+	 * @return {[type]}            [description]
+	 */
+	this.gpi = function(api, options, callback){
+		var gpi = require( __dirname+'/gpi.js' );
+		gpi(
+			this,
+			api,
+			options,
+			function(rtn){
+				callback(rtn);
+			}
+		);
+		return this;
+	}
+
+	/**
 	 * モジュールIDを分解する。
 	 * @param  {String} moduleId モジュールID
 	 * @return {Object}          分解された情報を格納するオブジェクト、分解に失敗した場合はfalseを返します。
@@ -186,6 +206,7 @@ module.exports = function(options){
 			it79.ary(
 				dataList,
 				function(it1, row, idx){
+					options.instancePath = '/area.'+idx;
 					_this.buildHtml(row, options, function(html){
 						htmls[idx] = html;
 						it1.next();

@@ -14,6 +14,7 @@ module.exports = function(options){
 	options.elmModulePalette = options.elmModulePalette || document.createElement('div');
 	options.contents_area_selector = options.contents_area_selector || '.contents';
 	options.contents_area_name_by = options.contents_area_name_by || 'id';
+	options.gpiBridge = options.gpiBridge || function(){};
 
 	this.options = options;
 
@@ -39,6 +40,43 @@ module.exports = function(options){
 	}
 	loadFieldDefinition();
 
+	/**
+	 * GPIから値を得る
+	 */
+	this.gpi = function(api, options, callback){
+		this.options.gpiBridge(api, options, callback);
+		return this;
+	}
+
+	/**
+	 * インスタンスを編集する
+	 * @param  {[type]} instancePath [description]
+	 * @return {[type]}              [description]
+	 */
+	this.editInstance = function( instancePath ){
+		console.log("Edit: "+instancePath);
+		// this.drawEditWindow();
+		this.gpi(
+			'getFieldData',
+			{
+				'instancePath': instancePath
+			},
+			function(data){
+				console.log(data);
+			}
+		);
+		return this;
+	}
+
+	/**
+	 * インスタンスを選択する
+	 * @param  {[type]} instancePath [description]
+	 * @return {[type]}              [description]
+	 */
+	this.selectInstance = function( instancePath ){
+		console.log("Select: "+instancePath);
+		return this;
+	}
 
 	/**
 	 * モジュールパレットを描画する
@@ -53,15 +91,21 @@ module.exports = function(options){
 
 	/**
 	 * 編集用UI(Panels)を描画する
-	 * @param  {Object}   options     オプション
-	 *                                - options.edit = {Function} モジュールインスタンスの編集画面を開く
-	 *                                - options.remove = {Function} モジュールインスタンスを削除する
-	 *                                - options.drop = {Function} モジュールインスタンスに対するドラッグ＆ドロップ操作
 	 * @param  {Function} callback    callback function.
 	 * @return {Object}               this.
 	 */
-	this.drawPanels = function(options, callback){
-		require( './drawPanels.js' )(_this, options, callback);
+	this.drawPanels = function(callback){
+		require( './drawPanels.js' )(_this, callback);
+		return this;
+	}
+
+	/**
+	 * 編集ウィンドウを描画する
+	 * @param  {Function} callback    callback function.
+	 * @return {Object}               this.
+	 */
+	this.drawEditWindow = function(instancePath, elmEditWindow, callback){
+		require( './drawEditWindow.js' )(_this, instancePath, elmEditWindow, callback);
 		return this;
 	}
 

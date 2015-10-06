@@ -19,7 +19,17 @@ module.exports = function( data, callback, main, socket ){
 
 
 
-	if(data.api == 'getPackageList'){
+	if(data.api == 'gpiBridge'){
+		broccoli.gpi(
+			data.bridge.api,
+			data.bridge.options,
+			function(rtn){
+				callback(rtn);
+			}
+		);
+		return ;
+
+	}else if(data.api == 'getPackageList'){
 		broccoli.getPackageList(function(list){
 			callback(list);
 		});
