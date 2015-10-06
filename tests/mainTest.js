@@ -8,11 +8,14 @@ var Broccoli = require('../libs/main.js');
 function makeDefaultBroccoli(){
 	return new Broccoli({
 		'paths_module_template':{
-			'PlainHTMLElements': './testdata/PlainHTMLElements/',
-			'testMod1': './testdata/modules1/',
-			'testMod2': './testdata/modules2/'
+			'PlainHTMLElements': '../PlainHTMLElements/',
+			'testMod1': '../modules1/',
+			'testMod2': '../modules2/'
 		},
-		'cd': __dirname
+		'documentRoot': path.resolve(__dirname, 'testdata/htdocs/')+'/',
+		'pathHtml': '/test1/test1.html',
+		'pathResourceDir': '/test1/test1_files/resources/',
+		'realpathDataDir': path.resolve(__dirname, 'testdata/htdocs/test1/test1_files/guieditor.ignore/')+'/'
 	});
 }
 
@@ -22,6 +25,8 @@ describe('インスタンス初期化', function() {
 		this.timeout(60*1000);
 
 		var broccoli = makeDefaultBroccoli();
+		// console.log(broccoli.options.documentRoot);
+		// console.log(broccoli.realpathHtml);
 		// console.log(broccoli.paths_module_template);
 
 		assert.equal(typeof(broccoli.paths_module_template), typeof({}));
@@ -31,17 +36,11 @@ describe('インスタンス初期化', function() {
 		done();
 	});
 
-	it("オプションなしの初期化", function(done) {
+	it("[ERROR] オプションなしの初期化", function(done) {
 		this.timeout(60*1000);
-		var broccoli = new Broccoli({
-			'paths_module_template':{
-				'testMod1': './tests/testdata/modules1/',
-				'testMod2': './tests/testdata/modules2/'
-			}
-		});
-		assert.equal(typeof(broccoli.paths_module_template), typeof({}));
-		assert.equal(broccoli.paths_module_template.testMod1, path.resolve('.','tests/testdata/modules1/')+'/');
-		assert.equal(broccoli.paths_module_template.testMod2, path.resolve('.','tests/testdata/modules2/')+'/');
+		var broccoli = new Broccoli();
+		// console.log(broccoli);
+		assert.strictEqual(typeof(broccoli.paths_module_template), typeof(undefined));
 
 		done();
 	});
@@ -232,7 +231,7 @@ describe('ビルドする', function() {
 		var broccoli = makeDefaultBroccoli();
 		var data = require(__dirname+'/testdata/htdocs/test1/test1_files/guieditor.ignore/data.json');
 		// console.log(data);
-		broccoli.buildHtml(
+		broccoli.buildBowl(
 			data.bowl.main ,
 			{
 				'mode': 'finalize' ,
@@ -254,7 +253,7 @@ describe('ビルドする', function() {
 		var broccoli = makeDefaultBroccoli();
 		var data = require(__dirname+'/testdata/htdocs/test1/test1_files/guieditor.ignore/data.json');
 		// console.log(data);
-		broccoli.buildHtml(
+		broccoli.buildBowl(
 			data.bowl.main ,
 			{
 				'mode': 'canvas' ,
@@ -276,7 +275,7 @@ describe('ビルドする', function() {
 		var broccoli = makeDefaultBroccoli();
 		var data = require(__dirname+'/testdata/htdocs/unknown_module/unknown_files/guieditor.ignore/data.json');
 		// console.log(data);
-		broccoli.buildHtml(
+		broccoli.buildBowl(
 			data.bowl.main ,
 			{
 				'mode': 'finalize' ,

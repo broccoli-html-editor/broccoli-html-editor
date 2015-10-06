@@ -10,14 +10,26 @@ module.exports = function(options){
 	var fs = require('fs');
 	var _ = require('underscore');
 	options = options || {};
-	options.cd = options.cd || '.'; // current directory.
 	options.paths_module_template = options.paths_module_template || {};
+	options.documentRoot = options.documentRoot || '.'; // current directory.
+	options.pathHtml = options.pathHtml || null;
+	options.pathResourceDir = options.pathResourceDir || null;
+	options.realpathDataDir = options.realpathDataDir || null;
+	if( !options.pathHtml || !options.pathResourceDir || !options.realpathDataDir ){
+		// 必須項目
+		// console.log(options);
+		console.error('[ERROR] options.pathHtml, options.pathResourceDir, and options.realpathDataDir are required.');
+		return;
+	}
 
 	for( var i in options.paths_module_template ){
-		options.paths_module_template[i] = path.resolve( options.cd, options.paths_module_template[i] )+'/';
+		options.paths_module_template[i] = path.resolve( options.documentRoot, options.paths_module_template[i] )+'/';
 	}
 
 	this.paths_module_template = options.paths_module_template;
+	this.realpathHtml = path.resolve( options.documentRoot, './'+options.pathHtml );
+	this.realpathResourceDir = path.resolve( options.documentRoot, './'+options.pathResourceDir );
+	this.realpathDataDir = path.resolve( options.realpathDataDir );
 	this.options = options;
 
 	this.resourceMgr = new (require('./resourceMgr.js'))(this);
@@ -165,17 +177,13 @@ module.exports = function(options){
 	 * @param  {Object}   data     コンテンツデータ
 	 * @param  {Object}   options  オプション
 	 *                             - options.mode = ビルドモード(finalize=製品版ビルド, canvas=編集画面用ビルド)
-	 *                             - options.realpath = HTMLの出力先
-	 *                             - options.realpathJson = data.jsonの保存先
-	 *                             - options.resourceDir = リソースディレクトリのパス
-	 *                             - options.resourceDist = リソース出力先ディレクトリのパス
 	 *                             - options.instancePath = インスタンスパス
 	 * @param  {Function} callback callback function.
 	 * @return {Object}            this
 	 */
 	this.buildBowl = function( data, options, callback ){
 		var buildBowl = require( __dirname+'/buildBowl.js' );
-		this.resourceMgr.init( options.realpath, options.realpathJson, options.resourceDir, options.resourceDist, function(){
+		this.resourceMgr.init( function(){
 			loadFieldDefinition();
 			buildBowl(_this, data, options, callback);
 		} );
@@ -190,16 +198,11 @@ module.exports = function(options){
 	 * @param  {Object}   dataList コンテンツデータ一覧
 	 * @param  {Object}   options  オプション
 	 *                             - options.mode = ビルドモード(finalize=製品版ビルド, canvas=編集画面用ビルド)
-	 *                             - options.realpath = HTMLの出力先
-	 *                             - options.realpathJson = data.jsonの保存先
-	 *                             - options.resourceDir = リソースディレクトリのパス
-	 *                             - options.resourceDist = リソース出力先ディレクトリのパス
-	 *                             - options.instancePath = インスタンスパス
 	 * @param  {Function} callback callback function.
 	 * @return {Object}            this
 	 */
 	this.buildHtml = function( dataList, options, callback ){
-		this.resourceMgr.init( options.realpath, options.realpathJson, options.resourceDir, options.resourceDist, function(){
+		this.resourceMgr.init( function(){
 			loadFieldDefinition();
 
 			var htmls = {};

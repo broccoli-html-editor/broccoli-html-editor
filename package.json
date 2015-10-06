@@ -46,7 +46,7 @@
   },
   "baobabConfig": {
     "defaultPort": 8088,
-    "frontendDocumentRoot": "./tests/baobab/frontend/",
+    "frontendDocumentRoot": "./tests/testdata/htdocs/",
     "backendJs": "./tests/baobab/backend/main.js",
     "backendApis": "./tests/baobab/backend/apis/"
   }

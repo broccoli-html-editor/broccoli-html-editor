@@ -24,13 +24,13 @@ gulp.task('broccoli.css', function(){
 		.pipe(autoprefixer())
 		.pipe(concat('broccoli.css'))
 		.pipe(gulp.dest( './client/dist/' ))
-		.pipe(gulp.dest( './tests/baobab/frontend/' ))
+		.pipe(gulp.dest( './tests/testdata/htdocs/' ))
 		.pipe(concat('broccoli.min.css'))
 		.pipe(minifyCss({compatibility: 'ie8'}))
 		// .pipe(sourcemaps.write())
 		// .pipe(uglify())
 		.pipe(gulp.dest( './client/dist/' ))
-		.pipe(gulp.dest( './tests/baobab/frontend/' ))
+		.pipe(gulp.dest( './tests/testdata/htdocs/' ))
 	;
 });
 
@@ -41,27 +41,27 @@ gulp.task("broccoli.js", function() {
 		.pipe(browserify({}))
 		.pipe(concat('broccoli.js'))
 		.pipe(gulp.dest( './client/dist/' ))
-		.pipe(gulp.dest( './tests/baobab/frontend/' ))
+		.pipe(gulp.dest( './tests/testdata/htdocs/' ))
 		.pipe(concat('broccoli.min.js'))
 		.pipe(uglify())
 		.pipe(gulp.dest( './client/dist/' ))
-		.pipe(gulp.dest( './tests/baobab/frontend/' ))
+		.pipe(gulp.dest( './tests/testdata/htdocs/' ))
 	;
 });
 
 // test/main.js を処理
 gulp.task("test/main.js", function() {
-	gulp.src(["tests/baobab/frontend/index_files/main.src.js"])
+	gulp.src(["tests/testdata/htdocs/index_files/main.src.js"])
 		.pipe(plumber())
 		.pipe(browserify({}))
 		.pipe(concat('main.js'))
-		.pipe(gulp.dest( './tests/baobab/frontend/index_files/' ))
+		.pipe(gulp.dest( './tests/testdata/htdocs/index_files/' ))
 	;
 });
 
 // src 中のすべての拡張子を監視して処理
 gulp.task("watch", function() {
-	gulp.watch(["client/src/**/*","libs/**/*","tests/baobab/frontend/index_files/main.src.js"], _tasks);
+	gulp.watch(["client/src/**/*","libs/**/*","tests/testdata/htdocs/index_files/main.src.js"], _tasks);
 
 	var port = packageJson.baobabConfig.defaultPort;
 	var svrCtrl = require('baobab-fw').createSvrCtrl();

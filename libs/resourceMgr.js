@@ -10,7 +10,6 @@ module.exports = function(broccoli){
 	var DIRECTORY_SEPARATOR = '/';
 
 	var _this = this;
-	var _contentsPath;
 	var _resourcesDirPath;
 	var _resourcesPublishDirPath;
 	var _dataJsonPath;
@@ -78,11 +77,10 @@ module.exports = function(broccoli){
 	/**
 	 * initialize resource Manager
 	 */
-	this.init = function( contentsPath, dataJsonPath, resourcesDirPath, resourcesPublishDirPath, callback ){
-		_contentsPath = contentsPath;
-		_dataJsonPath = dataJsonPath;
-		_resourcesDirPath = resourcesDirPath;
-		_resourcesPublishDirPath = resourcesPublishDirPath;
+	this.init = function( callback ){
+		_dataJsonPath = path.resolve( broccoli.realpathDataDir, 'data.json' );
+		_resourcesDirPath = path.resolve(broccoli.realpathDataDir, 'resources/')+'/';
+		_resourcesPublishDirPath = broccoli.realpathResourceDir;
 		loadResourceList( function(){
 			callback();
 		} );
@@ -282,7 +280,9 @@ module.exports = function(broccoli){
 		if( typeof(res.publicFilename) == typeof('') && res.publicFilename.length ){
 			filename = res.publicFilename;
 		}
-		var rtn = './'+path.relative(path.dirname(_contentsPath), _resourcesPublishDirPath+'/'+filename+'.'+res.ext);
+		var contentsPath = broccoli.options.pathHtml;
+		var resourcesPublishDirPath = broccoli.options.pathResourceDir;
+		var rtn = './'+path.relative(path.dirname(contentsPath), resourcesPublishDirPath+'/'+filename+'.'+res.ext);
 		return rtn;
 	}
 
