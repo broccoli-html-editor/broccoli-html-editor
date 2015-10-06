@@ -173,11 +173,11 @@ module.exports = function(options){
 	 * @param  {Function} callback callback function.
 	 * @return {Object}            this
 	 */
-	this.buildHtml = function( data, options, callback ){
-		var buildHtml = require( __dirname+'/buildHtml.js' );
+	this.buildBowl = function( data, options, callback ){
+		var buildBowl = require( __dirname+'/buildBowl.js' );
 		this.resourceMgr.init( options.realpath, options.realpathJson, options.resourceDir, options.resourceDist, function(){
 			loadFieldDefinition();
-			buildHtml(_this, data, options, callback);
+			buildBowl(_this, data, options, callback);
 		} );
 		return this;
 	}
@@ -198,7 +198,7 @@ module.exports = function(options){
 	 * @param  {Function} callback callback function.
 	 * @return {Object}            this
 	 */
-	this.buildHtmlAll = function( dataList, options, callback ){
+	this.buildHtml = function( dataList, options, callback ){
 		this.resourceMgr.init( options.realpath, options.realpathJson, options.resourceDir, options.resourceDist, function(){
 			loadFieldDefinition();
 
@@ -207,7 +207,7 @@ module.exports = function(options){
 				dataList,
 				function(it1, row, idx){
 					options.instancePath = '/bowl.'+idx;
-					_this.buildHtml(row, options, function(html){
+					_this.buildBowl(row, options, function(html){
 						htmls[idx] = html;
 						it1.next();
 					});

@@ -1,5 +1,5 @@
 /**
- * buildHtml.js
+ * buildBowl.js
  */
 module.exports = function(broccoli, data, options, callback){
 	delete(require.cache[require('path').resolve(__filename)]);
@@ -149,7 +149,7 @@ module.exports = function(broccoli, data, options, callback){
 									// ネストされたモジュールの再帰処理
 									var tmpopt = JSON.parse( JSON.stringify(opt) );
 									tmpopt.instancePath += '@'+idx;
-									broccoli.buildHtml(row, tmpopt, function(html){
+									broccoli.buildBowl(row, tmpopt, function(html){
 										rtn += html;
 										it2.next();
 									});
@@ -177,7 +177,7 @@ module.exports = function(broccoli, data, options, callback){
 									var tmpopt = JSON.parse( JSON.stringify(opt) );
 									tmpopt.instancePath += '@'+idx;
 
-									broccoli.buildHtml(row, tmpopt, function(html){
+									broccoli.buildBowl(row, tmpopt, function(html){
 										// rtn += '<!-- ---- LOOP ---- -->';
 										rtn += html;
 										// rtn += '<!-- ---- /LOOP ---- -->';

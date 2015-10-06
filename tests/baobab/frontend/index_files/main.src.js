@@ -89,7 +89,7 @@ window.main = new (function(){
 					_this.socket.send(
 						'broccoli',
 						{
-							'api': 'buildHtmlAll'
+							'api': 'buildHtml'
 						},
 						function(htmls){
 							// console.log(htmls);

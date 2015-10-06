@@ -35,9 +35,9 @@ module.exports = function( data, callback, main, socket ){
 		});
 		return ;
 
-	}else if(data.api == 'buildHtml'){
+	}else if(data.api == 'buildBowl'){
 		var json = require( path.resolve(__dirname, '../../frontend/editpage/index_files/guieditor.ignore/data.json') );
-		broccoli.buildHtml(
+		broccoli.buildBowl(
 			json.bowl.main ,
 			{
 				'mode': 'canvas',
@@ -53,9 +53,9 @@ module.exports = function( data, callback, main, socket ){
 		);
 		return ;
 
-	}else if(data.api == 'buildHtmlAll'){
+	}else if(data.api == 'buildHtml'){
 		var json = require( path.resolve(__dirname, '../../frontend/editpage/index_files/guieditor.ignore/data.json') );
-		broccoli.buildHtmlAll(
+		broccoli.buildHtml(
 			json.bowl ,
 			{
 				'mode': 'canvas',
