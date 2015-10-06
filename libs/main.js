@@ -206,7 +206,7 @@ module.exports = function(options){
 			it79.ary(
 				dataList,
 				function(it1, row, idx){
-					options.instancePath = '/area.'+idx;
+					options.instancePath = '/bowl.'+idx;
 					_this.buildHtml(row, options, function(html){
 						htmls[idx] = html;
 						it1.next();

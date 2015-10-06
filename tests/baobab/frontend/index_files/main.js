@@ -100,37 +100,46 @@ window.main = new (function(){
 	;
 
 	// broccoli をインスタンス化
-	var broccoli = new Broccoli({
-		'elmIframeWindow': $('iframe').get(0).contentWindow,
-		'elmPanels': document.getElementById('panels'),
-		'elmModulePalette': document.getElementById('palette'),
-		'contents_area_selector': '[data-contents]',
-		'contents_area_name_by': 'data-contents',
-		'gpiBridge': function(api, options, callback){
-			// General Purpose Interface Bridge
-			socket.send(
-				'broccoli',
-				{
-					'api': 'gpiBridge' ,
-					'bridge': {
-						'api': api ,
-						'options': options
-					}
-				} ,
-				function(rtn){
-console.log(rtn);
-					callback(rtn);
-				}
-			);
-			return;
-		}
-	});
+	var broccoli = new Broccoli();
 
 	this.init = function(){
 		// this.socketTest();
 		it79.fnc(
 			{},
 			[
+				function( it1, data ){
+					// broccoli を初期化
+					broccoli.init(
+						{
+							'elmIframeWindow': $('iframe').get(0).contentWindow,
+							'elmPanels': document.getElementById('panels'),
+							'elmModulePalette': document.getElementById('palette'),
+							'contents_area_selector': '[data-contents]',
+							'contents_bowl_name_by': 'data-contents',
+							'gpiBridge': function(api, options, callback){
+								// General Purpose Interface Bridge
+								socket.send(
+									'broccoli',
+									{
+										'api': 'gpiBridge' ,
+										'bridge': {
+											'api': api ,
+											'options': options
+										}
+									} ,
+									function(rtn){
+										// console.log(rtn);
+										callback(rtn);
+									}
+								);
+								return;
+							}
+						} ,
+						function(){
+							it1.next(data);
+						}
+					);
+				} ,
 				function( it1, data ){
 					// パッケージ・モジュール一覧を取得
 					_this.socket.send(

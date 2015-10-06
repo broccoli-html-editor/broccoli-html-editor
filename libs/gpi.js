@@ -1,5 +1,5 @@
 /**
- * gpi.js
+ * gpi.js (General Purpose Interface)
  */
 module.exports = function(broccoli, api, options, callback){
 	delete(require.cache[require('path').resolve(__filename)]);

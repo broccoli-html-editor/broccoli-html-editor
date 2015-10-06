@@ -286,7 +286,7 @@ module.exports = function(broccoli, data, options, callback){
 			function(it1, d){
 				if( options.mode == 'canvas' ){
 					var html = '';
-					html += '<div data-broccoli-instance-path="'+options.instancePath+'">';
+					html += '<div data-broccoli-instance-path="'+php.htmlspecialchars(options.instancePath)+'">';
 					html += d.html;
 					html += '</div>';
 					d.html = html;

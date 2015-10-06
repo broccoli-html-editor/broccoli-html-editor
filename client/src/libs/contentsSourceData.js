@@ -1,0 +1,604 @@
+/**
+ * contentsSourceData.js
+ */
+module.exports = function(broccoli){
+	// delete(require.cache[require('path').resolve(__filename)]);
+
+	var _this = this;
+	this.broccoli = broccoli;
+
+	var it79 = require('iterate79');
+	var path = require('path');
+
+	var _contentsSourceData;
+	var _contentsRealPath;
+	var _contFilesDirPath;
+	var _contentsSourceDataJsonPath;
+
+	/**
+	 * 初期化
+	 */
+	this.init = function( callback ){
+		_this.history = new (require('./history.js'))(broccoli);
+		// _contentsRealPath = contentsRealPath;
+		// _contFilesDirPath = contFilesDirPath;
+		// _contentsSourceDataJsonPath = _contFilesDirPath+'/guieditor.ignore/data.json';
+		//
+		// if( !fs.existsSync( _contentsRealPath ) ){
+		// 	console.log('コンテンツファイルが存在しません。');
+		// 	window.parent.contApp.closeEditor();
+		// 	return this;
+		// }
+		// _contentsRealPath = fs.realpathSync( _contentsRealPath );
+		//
+		// if( !px.utils.isDirectory( _contFilesDirPath ) ){
+		// 	px.utils.mkdir( _contFilesDirPath );
+		// }
+		// if( !px.utils.isDirectory( _contFilesDirPath+'/guieditor.ignore/' ) ){
+		// 	px.utils.mkdir( _contFilesDirPath+'/guieditor.ignore/' );
+		// }
+		// if( !fs.existsSync( _contentsSourceDataJsonPath ) ){
+		// 	console.log('コンテンツデータファイル(JSON)が存在しません。');
+		// 	window.parent.contApp.closeEditor();
+		// 	return this;
+		// }
+		// _contentsSourceDataJsonPath = fs.realpathSync( _contentsSourceDataJsonPath );
+		//
+		// fs.readFile( _contentsSourceDataJsonPath, function(err, data){
+		//
+		// 	// コンテンツデータをロード
+		// 	_contentsSourceData = JSON.parse( data );
+		// 	if( typeof(_contentsSourceData) !== typeof({}) ){
+		// 		console.log( 'コンテンツデータファイル(JSON)が破損しています。' );
+		// 		_contentsSourceData = {};
+		// 	}
+		// 	_contentsSourceData.bowl = _contentsSourceData.bowl||{};
+		// 	_this.initBowlData('main');
+		//
+		// 	// リソースマネージャーの初期化
+		// 	_this.resourceMgr.init(
+		// 		_contFilesDirPath,
+		// 		function(){
+					// ヒストリーマネージャーの初期化
+					_this.history.init( {}, function(){
+						callback();
+					} );
+				// }
+		// 	);
+		// });
+
+		return this;
+	}// init()
+
+	/**
+	 * データを取得する
+	 */
+	this.get = function( containerInstancePath, data ){
+		data = data || _contentsSourceData;
+
+		var aryPath = this.parseInstancePath( containerInstancePath );
+		if( !aryPath.length ){
+			return data;
+		}
+
+		var cur = aryPath.shift();
+		var idx = null;
+		var tmpSplit = cur.split('@');
+		cur = tmpSplit[0];
+		if( tmpSplit.length >=2 ){
+			idx = Number(tmpSplit[1]);
+		}
+		var tmpCur = cur.split('.');
+		var container = tmpCur[0];
+		var fieldName = tmpCur[1];
+		var modTpl = px2dtGuiEditor.moduleTemplates.get( data.modId, data.subModName );
+
+		if( container == 'bowl' ){
+			return this.get( aryPath, data.bowl[fieldName] );
+		}
+
+		if( !aryPath.length ){
+			// ここが最後のインスタンスだったら
+			if( !data.fields ){
+				data.fields = {};
+			}
+			if( !data.fields[fieldName] ){
+				data.fields[fieldName] = [];
+			}
+			if( modTpl.fields[fieldName].fieldType == 'input'){
+				return data.fields[fieldName];
+			}else if( modTpl.fields[fieldName].fieldType == 'module'){
+				data.fields[fieldName] = data.fields[fieldName]||[];
+				return data.fields[fieldName][idx];
+			}else if( modTpl.fields[fieldName].fieldType == 'loop'){
+				data.fields[fieldName] = data.fields[fieldName]||[];
+				return data.fields[fieldName][idx];
+			}else if( modTpl.fields[fieldName].fieldType == 'if'){
+			}else if( modTpl.fields[fieldName].fieldType == 'echo'){
+			}
+		}else{
+			// もっと深かったら
+			if( modTpl.fields[fieldName].fieldType == 'input'){
+				return this.get( aryPath, data.fields[fieldName] );
+			}else if( modTpl.fields[fieldName].fieldType == 'module'){
+				return this.get( aryPath, data.fields[fieldName][idx] );
+			}else if( modTpl.fields[fieldName].fieldType == 'loop'){
+				return this.get( aryPath, data.fields[fieldName][idx] );
+			}else if( modTpl.fields[fieldName].fieldType == 'if'){
+			}else if( modTpl.fields[fieldName].fieldType == 'echo'){
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * 指定したインスタンスパスの子ノードの一覧を取得
+	 */
+	this.getChildren = function( containerInstancePath ){
+		var current = this.get(containerInstancePath);
+		var modTpl = px2dtGuiEditor.moduleTemplates.get( current.modId, current.subModName );
+		var targetFieldNames = {};
+		for( var fieldName in modTpl.fields ){
+			switch( modTpl.fields[fieldName].fieldType ){
+				case 'module':
+				case 'loop':
+					targetFieldNames[fieldName] = modTpl.fields[fieldName].fieldType;
+					break;
+			}
+		}
+		var rtn = [];
+		for( var fieldName in targetFieldNames ){
+			for( var idx in current.fields[fieldName] ){
+				rtn.push(containerInstancePath+'/fields.'+fieldName+'@'+idx);
+			}
+		}
+		return rtn;
+	}
+
+	/**
+	 * インスタンスを追加する
+	 */
+	this.addInstance = function( modId, containerInstancePath, cb, subModName ){
+		// console.log( '開発中: '+modId+': '+containerInstancePath );
+		cb = cb||function(){};
+
+		var newData = {};
+		if( typeof(modId) === typeof('') ){
+			newData = new (function(){
+				this.modId = modId ,
+				this.fields = {}
+				if( typeof(subModName) === typeof('') ){
+					this.subModName = subModName;
+				}
+			})(modId, subModName);
+			var modTpl = px2dtGuiEditor.moduleTemplates.get( newData.modId, subModName );
+
+			// 初期データ追加
+			var fieldList = _.keys( modTpl.fields );
+			for( var idx in fieldList ){
+				var fieldName = fieldList[idx];
+				if( modTpl.fields[fieldName].fieldType == 'input' ){
+					newData.fields[fieldName] = px2dtGuiEditor.fieldDefinitions[modTpl.fields[fieldName].type].normalizeData('');
+				}else if( modTpl.fields[fieldName].fieldType == 'module' ){
+					newData.fields[fieldName] = [];
+				}else if( modTpl.fields[fieldName].fieldType == 'loop' ){
+					newData.fields[fieldName] = [];
+				}else if( modTpl.fields[fieldName].fieldType == 'if' ){
+				}else if( modTpl.fields[fieldName].fieldType == 'echo' ){
+				}
+			}
+		}else{
+			newData = JSON.parse( JSON.stringify(modId) );
+		}
+
+		var containerInstancePath = this.parseInstancePath( containerInstancePath );
+		// console.log( containerInstancePath );
+
+		function set_r( aryPath, data, newData ){
+			// console.log( data );
+			var cur = aryPath.shift();
+			var idx = null;
+			var tmpSplit = cur.split('@');
+			cur = tmpSplit[0];
+			if( tmpSplit.length >=2 ){
+				idx = Number(tmpSplit[1]);
+				// console.log(idx);
+			}
+			var tmpCur = cur.split('.');
+			var container = tmpCur[0];
+			var fieldName = tmpCur[1];
+			var modTpl = px2dtGuiEditor.moduleTemplates.get( data.modId, data.subModName );
+
+			if( container == 'bowl' ){
+				// ルート要素だったらスキップして次へ
+				return set_r( aryPath, data.bowl[fieldName], newData );
+			}
+
+			if( !aryPath.length ){
+				// ここが最後のインスタンスだったら
+				if( !data.fields ){
+					data.fields = {};
+				}
+				if( !data.fields[fieldName] ){
+					data.fields[fieldName] = [];
+				}
+				if( modTpl.fields[fieldName].fieldType == 'input'){
+					data.fields[fieldName] = newData;
+				}else if( modTpl.fields[fieldName].fieldType == 'module'){
+					data.fields[fieldName] = data.fields[fieldName]||[];
+					data.fields[fieldName].splice( idx, 0, newData);
+				}else if( modTpl.fields[fieldName].fieldType == 'loop'){
+					data.fields[fieldName] = data.fields[fieldName]||[];
+					data.fields[fieldName].splice( idx, 0, newData);
+				}else if( modTpl.fields[fieldName].fieldType == 'if'){
+				}else if( modTpl.fields[fieldName].fieldType == 'echo'){
+				}
+				return true;
+			}else{
+				// もっと深かったら
+				if( modTpl.fields[fieldName].fieldType == 'input'){
+					return set_r( aryPath, data.fields[fieldName], newData );
+				}else if( modTpl.fields[fieldName].fieldType == 'module'){
+					return set_r( aryPath, data.fields[fieldName][idx], newData );
+				}else if( modTpl.fields[fieldName].fieldType == 'loop'){
+					return set_r( aryPath, data.fields[fieldName][idx], newData );
+				}else if( modTpl.fields[fieldName].fieldType == 'if'){
+				}else if( modTpl.fields[fieldName].fieldType == 'echo'){
+				}
+			}
+
+		} // set_r()
+
+		set_r( containerInstancePath, _contentsSourceData, newData );
+
+		cb();
+
+		return this;
+	}// addInstance()
+
+	/**
+	 * インスタンスを更新する
+	 */
+	this.updateInstance = function( newData, containerInstancePath, cb ){
+		// console.log( '開発中: '+containerInstancePath );
+		cb = cb||function(){};
+
+		var containerInstancePath = this.parseInstancePath( containerInstancePath );
+		// console.log( containerInstancePath );
+
+		function set_r( aryPath, data, newData ){
+			// console.log( data );
+			var cur = aryPath.shift();
+			var idx = null;
+			var tmpSplit = cur.split('@');
+			cur = tmpSplit[0];
+			if( tmpSplit.length >=2 ){
+				idx = Number(tmpSplit[1]);
+				// console.log(idx);
+			}
+			var tmpCur = cur.split('.');
+			var container = tmpCur[0];
+			var fieldName = tmpCur[1];
+			var modTpl = px2dtGuiEditor.moduleTemplates.get( data.modId, data.subModName );
+
+			if( container == 'bowl' ){
+				// ルート要素だったらスキップして次へ
+				return set_r( aryPath, data.bowl[fieldName], newData );
+			}
+
+			if( !aryPath.length ){
+				// ここが最後のインスタンスだったら
+				if( !data.fields ){
+					data.fields = {};
+				}
+				if( !data.fields[fieldName] ){
+					data.fields[fieldName] = [];
+				}
+				if( modTpl.fields[fieldName].fieldType == 'input'){
+					data.fields[fieldName] = newData;
+				}else if( modTpl.fields[fieldName].fieldType == 'module'){
+					data.fields[fieldName] = data.fields[fieldName]||[];
+					data.fields[fieldName][idx] = newData;
+				}else if( modTpl.fields[fieldName].fieldType == 'loop'){
+					data.fields[fieldName] = data.fields[fieldName]||[];
+					data.fields[fieldName][idx] = newData;
+				}else if( modTpl.fields[fieldName].fieldType == 'if'){
+				}else if( modTpl.fields[fieldName].fieldType == 'echo'){
+				}
+				return true;
+			}else{
+				// もっと深かったら
+				if( modTpl.fields[fieldName].fieldType == 'input'){
+					return set_r( aryPath, data.fields[fieldName], newData );
+				}else if( modTpl.fields[fieldName].fieldType == 'module'){
+					return set_r( aryPath, data.fields[fieldName][idx], newData );
+				}else if( modTpl.fields[fieldName].fieldType == 'loop'){
+					return set_r( aryPath, data.fields[fieldName][idx], newData );
+				}else if( modTpl.fields[fieldName].fieldType == 'if'){
+				}else if( modTpl.fields[fieldName].fieldType == 'echo'){
+				}
+			}
+
+		}
+
+		set_r( containerInstancePath, _contentsSourceData, newData );
+
+		cb();
+
+		return this;
+	}// updateInstance()
+
+	/**
+	 * インスタンスを移動する
+	 */
+	this.moveInstanceTo = function( fromContainerInstancePath, toContainerInstancePath, cb ){
+		cb = cb||function(){};
+
+		function parseInstancePath(path){
+			var rtn = {};
+			rtn = px.utils.parsePath( path );
+			var basenameParse = rtn.basename.split('@');
+			rtn.container = rtn.dirname+'/'+basenameParse[0];
+			rtn.num = Number(basenameParse[1]);
+			return rtn;
+		}
+
+		var fromParsed = parseInstancePath(fromContainerInstancePath);
+		var toParsed = parseInstancePath(toContainerInstancePath);
+
+		var dataFrom = this.get( fromContainerInstancePath );
+		dataFrom = JSON.parse(JSON.stringify( dataFrom ));//←オブジェクトのdeepcopy
+
+		if( fromParsed.container == toParsed.container ){
+			// 同じ箱の中での並び替え
+			if( fromParsed.num == toParsed.num ){
+				// to と from が一緒だったら何もしない。
+				cb();
+				return this;
+			}
+			if( fromParsed.num < toParsed.num-1 ){
+				// 上から2つ以上下へ
+				toContainerInstancePath = toParsed.container + '@' + ( toParsed.num-1 );
+			}
+			this.removeInstance(fromContainerInstancePath);
+			this.addInstance( dataFrom.modId, toContainerInstancePath );
+			this.updateInstance( dataFrom, toContainerInstancePath );
+			cb();
+		}else if( toParsed.path.indexOf(fromParsed.path) === 0 ){
+			console.log('自分の子階層へ移動することはできません。');
+			cb();
+		}else if( fromParsed.path.indexOf(toParsed.container) === 0 ){
+			// var tmp = fromParsed.path.replace( new RegExp('^'+px.utils.escapeRegExp(toParsed.container)), '' );
+			this.removeInstance(fromParsed.path);
+			this.addInstance( dataFrom.modId, toContainerInstancePath );
+			this.updateInstance( dataFrom, toContainerInstancePath );
+			cb();
+		}else{
+			// まったく関連しない箱への移動
+			this.addInstance( dataFrom.modId, toContainerInstancePath );
+			this.updateInstance( dataFrom, toContainerInstancePath );
+			this.removeInstance(fromContainerInstancePath);
+			cb();
+		}
+
+		return this;
+	}
+
+	/**
+	 * インスタンスを複製する
+	 * このメソッドは、インスタンスパスではなく、インスタンスの実体を受け取ります。
+	 */
+	this.duplicateInstance = function( objInstance ){
+		var newData = JSON.parse( JSON.stringify( objInstance ) );
+		var modTpl = px2dtGuiEditor.moduleTemplates.get( objInstance.modId, objInstance.subModName );
+
+		// 初期データ追加
+		var fieldList = _.keys( modTpl.fields );
+		for( var idx in fieldList ){
+			var fieldName = fieldList[idx];
+			if( modTpl.fields[fieldName].fieldType == 'input' ){
+				newData.fields[fieldName] = px2dtGuiEditor.fieldDefinitions[modTpl.fields[fieldName].type].duplicateData( objInstance.fields[fieldName] );
+			}else if( modTpl.fields[fieldName].fieldType == 'module' ){
+				for( var idx in objInstance.fields[fieldName] ){
+					newData.fields[fieldName][idx] = this.duplicateInstance( objInstance.fields[fieldName][idx] );
+				}
+			}else if( modTpl.fields[fieldName].fieldType == 'loop' ){
+				for( var idx in objInstance.fields[fieldName] ){
+					newData.fields[fieldName][idx] = this.duplicateInstance( objInstance.fields[fieldName][idx] );
+				}
+			}else if( modTpl.fields[fieldName].fieldType == 'if' ){
+			}else if( modTpl.fields[fieldName].fieldType == 'echo' ){
+			}
+		}
+
+		// setTimeout( function(){ cb(newData); }, 0 );
+		return newData;
+	}
+
+	/**
+	 * インスタンスを削除する
+	 */
+	this.removeInstance = function( containerInstancePath, cb ){
+		cb = cb||function(){};
+
+		var containerInstancePath = this.parseInstancePath( containerInstancePath );
+
+		function remove_r( aryPath, data ){
+			if( !aryPath.length ){
+				return false;
+			}
+			var cur = aryPath.shift();
+			var idx = null;
+			var tmpSplit = cur.split('@');
+			cur = tmpSplit[0];
+			if( tmpSplit.length >=2 ){
+				idx = Number(tmpSplit[1]);
+			}
+			var tmpCur = cur.split('.');
+			var container = tmpCur[0];
+			var fieldName = tmpCur[1];
+			var modTpl = px2dtGuiEditor.moduleTemplates.get( data.modId, data.subModName );
+
+			if( container == 'bowl' ){
+				// ルート要素だったらスキップして次へ
+				return remove_r( aryPath, data.bowl[fieldName] );
+			}
+
+			if( !aryPath.length ){
+				// ここが最後のインスタンスだったら
+				if( !data.fields ){
+					data.fields = {};
+				}
+				if( !data.fields[fieldName] ){
+					data.fields[fieldName] = [];
+				}
+				if( modTpl.fields[fieldName].fieldType == 'input'){
+					delete data.fields[fieldName];
+				}else if( modTpl.fields[fieldName].fieldType == 'module'){
+					data.fields[fieldName].splice(idx, 1);
+				}else if( modTpl.fields[fieldName].fieldType == 'loop'){
+					data.fields[fieldName].splice(idx, 1);
+				}else if( modTpl.fields[fieldName].fieldType == 'if'){
+				}else if( modTpl.fields[fieldName].fieldType == 'echo'){
+				}
+				return true;
+			}else{
+				// もっと深かったら
+				if( modTpl.fields[fieldName].fieldType == 'input'){
+					return remove_r( aryPath, data.fields[fieldName] );
+				}else if( modTpl.fields[fieldName].fieldType == 'module'){
+					return remove_r( aryPath, data.fields[fieldName][idx] );
+				}else if( modTpl.fields[fieldName].fieldType == 'loop'){
+					return remove_r( aryPath, data.fields[fieldName][idx] );
+				}else if( modTpl.fields[fieldName].fieldType == 'if'){
+				}else if( modTpl.fields[fieldName].fieldType == 'echo'){
+				}
+			}
+			return true;
+		}
+
+		remove_r( containerInstancePath, _contentsSourceData );
+
+		cb();
+
+		return this;
+	}// removeInstance()
+
+	/**
+	 * インスタンスのパスを解析する
+	 */
+	this.parseInstancePath = function( containerInstancePath ){
+		if( typeof(containerInstancePath) === typeof([]) ){
+			return containerInstancePath;
+		}
+
+		containerInstancePath = containerInstancePath||'';
+		if( !containerInstancePath ){ containerInstancePath = '/fields.main'; }
+		containerInstancePath = containerInstancePath.replace( new RegExp('^\\/*'), '' );
+		containerInstancePath = containerInstancePath.replace( new RegExp('\\/*$'), '' );
+		containerInstancePath = containerInstancePath.split('/');
+		// console.log(containerInstancePath);
+		return containerInstancePath;
+	}
+
+	/**
+	 * bowl別のコンテンツデータを初期化する
+	 */
+	this.initBowlData = function( bowlName ){
+		bowlName = bowlName||'main';
+		if( _contentsSourceData.bowl[bowlName] ){
+			return true;
+		}
+		_contentsSourceData.bowl[bowlName] = _contentsSourceData.bowl[bowlName]||{
+			'modId':'_sys/root',
+			'fields':{}
+		};
+		return true;
+	}
+
+	/**
+	 * bowl別のコンテンツデータを取得
+	 */
+	this.getBowlData = function( bowlName ){
+		bowlName = bowlName||'main';
+		if( !_contentsSourceData.bowl[bowlName] ){
+			return false;
+		}
+		return _contentsSourceData.bowl[bowlName];
+	}
+
+	/**
+	 * bowl別のコンテンツデータをセット
+	 */
+	this.setBowlData = function( bowlName, data ){
+		bowlName = bowlName||'main';
+		_contentsSourceData.bowl[bowlName] = data;
+		return;
+	}
+
+	/**
+	 * bowlの一覧を取得
+	 */
+	this.getBowlList = function(){
+		var rtn = [];
+		for(var bowlName in _contentsSourceData.bowl){
+			rtn.push(bowlName);
+		}
+		return rtn;
+	}
+
+	/**
+	 * history: 取り消し
+	 */
+	this.historyBack = function( cb ){
+		cb = cb || function(){};
+		var data = this.history.back();
+		if( data === false ){
+			cb(false);
+			return this;
+		}
+		_contentsSourceData = data;
+		cb(true);
+		return this;
+	}
+
+	/**
+	 * history: やりなおし
+	 */
+	this.historyGo = function( cb ){
+		cb = cb || function(){};
+		var data = this.history.go();
+		if( data === false ){
+			cb(false);
+			return this;
+		}
+		_contentsSourceData = data;
+		cb(true);
+		return this;
+	}
+
+	/**
+	 * データを保存する
+	 */
+	this.save = function(cb){
+		var _this = this;
+		cb = cb||function(){};
+		fs.writeFile(
+			_contentsSourceDataJsonPath,
+			JSON.stringify(_contentsSourceData, null, 1),
+			{encoding:'utf8'},
+			function(err){
+				// リソースマネージャーの保存処理
+				_this.resourceMgr.save(
+					function(){
+						_this.history.put( _contentsSourceData, function(){
+							cb( !err );
+						} );
+					}
+				);
+			}
+		);
+		return this;
+	}
+
+}
