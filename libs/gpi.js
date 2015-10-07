@@ -9,7 +9,7 @@ module.exports = function(broccoli, api, options, callback){
 
 	var it79 = require('iterate79');
 	var path = require('path');
-	// var fs = require('fs');
+	var fs = require('fs');
 
 	switch(api){
 		case "getPackageList":
@@ -17,6 +17,21 @@ module.exports = function(broccoli, api, options, callback){
 			broccoli.getPackageList(function(list){
 				callback(list);
 			});
+			break;
+		case "getContentsDataJson":
+			var dataJson = require( broccoli.realpathDataDir+'/data.json' );
+			callback(dataJson);
+			break;
+		case "saveContentsDataJson":
+			var jsonString = JSON.stringify( options.data );
+			console.log(jsonString);
+			fs.writeFile(
+				broccoli.realpathDataDir+'/data.json' ,
+				jsonString ,
+				function(){
+					callback(true);
+				}
+			);
 			break;
 		case "buildHtml":
 			broccoli.buildHtml(

@@ -10,62 +10,53 @@ module.exports = function(broccoli){
 	var it79 = require('iterate79');
 	var path = require('path');
 
-	var _contentsSourceData;
-	var _contentsRealPath;
-	var _contFilesDirPath;
-	var _contentsSourceDataJsonPath;
+	var _contentsSourceData; // <= data.jsonの中身
 
 	/**
 	 * 初期化
 	 */
 	this.init = function( callback ){
 		_this.history = new (require('./history.js'))(broccoli);
-		// _contentsRealPath = contentsRealPath;
-		// _contFilesDirPath = contFilesDirPath;
-		// _contentsSourceDataJsonPath = _contFilesDirPath+'/guieditor.ignore/data.json';
-		//
-		// if( !fs.existsSync( _contentsRealPath ) ){
-		// 	console.log('コンテンツファイルが存在しません。');
-		// 	window.parent.contApp.closeEditor();
-		// 	return this;
-		// }
-		// _contentsRealPath = fs.realpathSync( _contentsRealPath );
-		//
-		// if( !px.utils.isDirectory( _contFilesDirPath ) ){
-		// 	px.utils.mkdir( _contFilesDirPath );
-		// }
-		// if( !px.utils.isDirectory( _contFilesDirPath+'/guieditor.ignore/' ) ){
-		// 	px.utils.mkdir( _contFilesDirPath+'/guieditor.ignore/' );
-		// }
-		// if( !fs.existsSync( _contentsSourceDataJsonPath ) ){
-		// 	console.log('コンテンツデータファイル(JSON)が存在しません。');
-		// 	window.parent.contApp.closeEditor();
-		// 	return this;
-		// }
-		// _contentsSourceDataJsonPath = fs.realpathSync( _contentsSourceDataJsonPath );
-		//
-		// fs.readFile( _contentsSourceDataJsonPath, function(err, data){
-		//
-		// 	// コンテンツデータをロード
-		// 	_contentsSourceData = JSON.parse( data );
-		// 	if( typeof(_contentsSourceData) !== typeof({}) ){
-		// 		console.log( 'コンテンツデータファイル(JSON)が破損しています。' );
-		// 		_contentsSourceData = {};
-		// 	}
-		// 	_contentsSourceData.bowl = _contentsSourceData.bowl||{};
-		// 	_this.initBowlData('main');
-		//
-		// 	// リソースマネージャーの初期化
-		// 	_this.resourceMgr.init(
-		// 		_contFilesDirPath,
-		// 		function(){
+		it79.fnc(
+			{},
+			[
+				function(it1, data){
+					// コンテンツデータを取得
+					broccoli.gpi(
+						'getContentsDataJson',
+						{},
+						function(contentsData){
+							_contentsSourceData = contentsData;
+							// console.log(_contentsSourceData);
+							_contentsSourceData.bowl = _contentsSourceData.bowl||{};
+							_this.initBowlData('main');
+							it1.next(data);
+						}
+					);
+				} ,
+				// function(it1, data){
+				// 	// リソースマネージャーの初期化
+				// 	_this.resourceMgr.init(
+				// 		_contFilesDirPath,
+				// 		function(){
+				// 			it1.next(data);
+				// 		}
+				// 	);
+				// } ,
+				function(it1, data){
 					// ヒストリーマネージャーの初期化
-					_this.history.init( {}, function(){
-						callback();
-					} );
-				// }
-		// 	);
-		// });
+					_this.history.init(
+						_contentsSourceData,
+						function(){
+							it1.next(data);
+						}
+					);
+				} ,
+				function(it1, data){
+					callback();
+				}
+			]
+		);
 
 		return this;
 	}// init()
@@ -580,23 +571,41 @@ module.exports = function(broccoli){
 	/**
 	 * データを保存する
 	 */
-	this.save = function(cb){
+	this.save = function(callback){
 		var _this = this;
-		cb = cb||function(){};
-		fs.writeFile(
-			_contentsSourceDataJsonPath,
-			JSON.stringify(_contentsSourceData, null, 1),
-			{encoding:'utf8'},
-			function(err){
-				// リソースマネージャーの保存処理
-				_this.resourceMgr.save(
-					function(){
-						_this.history.put( _contentsSourceData, function(){
-							cb( !err );
-						} );
-					}
-				);
-			}
+		callback = callback||function(){};
+		it79.fnc(
+			{},
+			[
+				function( it1, data ){
+					broccoli.gpi(
+						'saveContentsDataJson',
+						{
+							'data': _contentsSourceData
+						},
+						function(){
+							it1.next(data);
+						}
+					);
+				} ,
+				// function( it1, data ){
+				// 	// リソースマネージャーの保存処理
+				// 	_this.resourceMgr.save(
+				// 		function(){
+				// 			it1.next(data);
+				// 		}
+				// 	);
+				// } ,
+				function( it1, data ){
+					// 履歴に追加
+					_this.history.put( _contentsSourceData, function(){
+							it1.next(data);
+					} );
+				} ,
+				function( it1, data ){
+					callback( !err );
+				}
+			]
 		);
 		return this;
 	}
