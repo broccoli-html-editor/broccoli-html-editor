@@ -1,7 +1,7 @@
 /**
  * drawModulePalette.js
  */
-module.exports = function(broccoli, moduleList, callback){
+module.exports = function(broccoli, callback){
 	// delete(require.cache[require('path').resolve(__filename)]);
 	if(!window){ callback(); return false; } // client side only
 	var targetElm = broccoli.options.elmModulePalette;
@@ -10,6 +10,7 @@ module.exports = function(broccoli, moduleList, callback){
 
 	var _this = this;
 	callback = callback || function(){};
+	var moduleList = {};
 
 	var it79 = require('iterate79');
 	var path = require('path');
@@ -95,6 +96,12 @@ module.exports = function(broccoli, moduleList, callback){
 	it79.fnc(
 		{},
 		[
+			function(it1, data){
+				broccoli.gpi('getPackageList',{},function(list){
+					moduleList = list;
+					it1.next(data);
+				});
+			} ,
 			function(it1, data){
 				$(targetElm)
 					.html('loading...')

@@ -32,12 +32,6 @@ module.exports = function( data, callback, main, socket ){
 		);
 		return ;
 
-	}else if(data.api == 'getPackageList'){
-		broccoli.getPackageList(function(list){
-			callback(list);
-		});
-		return ;
-
 	}else if(data.api == 'buildBowl'){
 		var json = require( path.resolve(__dirname, '../../../testdata/htdocs/editpage/index_files/guieditor.ignore/data.json') );
 		broccoli.buildBowl(
@@ -48,18 +42,6 @@ module.exports = function( data, callback, main, socket ){
 			function(html){
 				// console.log(html);
 				callback(html);
-			}
-		);
-		return ;
-
-	}else if(data.api == 'buildHtml'){
-		broccoli.buildHtml(
-			{
-				'mode': 'canvas'
-			} ,
-			function(htmls){
-				// console.log(htmls);
-				callback(htmls);
 			}
 		);
 		return ;

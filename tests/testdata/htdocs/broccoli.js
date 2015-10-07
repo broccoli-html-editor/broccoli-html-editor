@@ -707,7 +707,7 @@ module.exports = function(broccoli, instancePath, elmEditWindow, callback){
 /**
  * drawModulePalette.js
  */
-module.exports = function(broccoli, moduleList, callback){
+module.exports = function(broccoli, callback){
 	// delete(require.cache[require('path').resolve(__filename)]);
 	if(!window){ callback(); return false; } // client side only
 	var targetElm = broccoli.options.elmModulePalette;
@@ -716,6 +716,7 @@ module.exports = function(broccoli, moduleList, callback){
 
 	var _this = this;
 	callback = callback || function(){};
+	var moduleList = {};
 
 	var it79 = require('iterate79');
 	var path = require('path');
@@ -801,6 +802,12 @@ module.exports = function(broccoli, moduleList, callback){
 	it79.fnc(
 		{},
 		[
+			function(it1, data){
+				broccoli.gpi('getPackageList',{},function(list){
+					moduleList = list;
+					it1.next(data);
+				});
+			} ,
 			function(it1, data){
 				$(targetElm)
 					.html('loading...')
@@ -1021,6 +1028,7 @@ module.exports = function(){
 	// if(!window){delete(require.cache[require('path').resolve(__filename)]);}
 
 	var _this = this;
+	var it79 = require('iterate79');
 	var _ = require('underscore');
 	var $ = require('jquery');
 
@@ -1062,12 +1070,52 @@ module.exports = function(){
 		}
 		loadFieldDefinition();
 
-		this.contentsSourceData = new (require('./contentsSourceData.js'))(this).init(
-			function(){
-				callback();
-			}
-		);
+		it79.fnc(
+			{},
+			[
+				function(it1, data){
+					_this.contentsSourceData = new (require('./contentsSourceData.js'))(_this).init(
+						function(){
+							it1.next(data);
+						}
+					);
+				} ,
+				function(it1, data){
+					_this.drawModulePalette(function(){
+						console.log('broccoli: module palette standby.');
+						it1.next(data);
+					});
+				} ,
+				function( it1, data ){
+					// 編集画面描画
+					_this.gpi(
+						'buildHtml',
+						{},
+						function(htmls){
+							// console.log(htmls);
+							var $iframeWindow = $(_this.options.elmIframeWindow.document);
+							for(var idx in htmls){
+								$iframeWindow.find('[data-contents='+idx+']').html(htmls[idx]);
+							}
 
+							console.log('broccoli: HTML standby.');
+							it1.next(data);
+						}
+					);
+				} ,
+				function( it1, data ){
+					// パネル描画
+					_this.drawPanels( function(){
+						console.log('broccoli: draggable panels standby.');
+						it1.next(data);
+					} );
+				} ,
+				function(it1, data){
+					callback();
+					it1.next();
+				}
+			]
+		);
 		return this;
 	}
 
@@ -1116,8 +1164,8 @@ module.exports = function(){
 	 * @param  {Function} callback   callback function.
 	 * @return {Object}              this.
 	 */
-	this.drawModulePalette = function(moduleList, callback){
-		require( './drawModulePalette.js' )(_this, moduleList, callback);
+	this.drawModulePalette = function(callback){
+		require( './drawModulePalette.js' )(_this, callback);
 		return this;
 	}
 
@@ -1143,7 +1191,7 @@ module.exports = function(){
 
 }
 
-},{"./../../../libs/fieldBase.js":8,"./../../../libs/fields/app.fields.href.js":9,"./../../../libs/fields/app.fields.html.js":10,"./../../../libs/fields/app.fields.html_attr_text.js":11,"./../../../libs/fields/app.fields.image.js":12,"./../../../libs/fields/app.fields.markdown.js":13,"./../../../libs/fields/app.fields.multitext.js":14,"./../../../libs/fields/app.fields.select.js":15,"./../../../libs/fields/app.fields.table.js":16,"./../../../libs/fields/app.fields.text.js":17,"./../../../libs/fields/app.fields.wysiwyg_rte.js":18,"./../../../libs/fields/app.fields.wysiwyg_tinymce.js":19,"./contentsSourceData.js":2,"./drawEditWindow.js":3,"./drawModulePalette.js":4,"./drawPanels.js":5,"jquery":24,"underscore":29}],8:[function(require,module,exports){
+},{"./../../../libs/fieldBase.js":8,"./../../../libs/fields/app.fields.href.js":9,"./../../../libs/fields/app.fields.html.js":10,"./../../../libs/fields/app.fields.html_attr_text.js":11,"./../../../libs/fields/app.fields.image.js":12,"./../../../libs/fields/app.fields.markdown.js":13,"./../../../libs/fields/app.fields.multitext.js":14,"./../../../libs/fields/app.fields.select.js":15,"./../../../libs/fields/app.fields.table.js":16,"./../../../libs/fields/app.fields.text.js":17,"./../../../libs/fields/app.fields.wysiwyg_rte.js":18,"./../../../libs/fields/app.fields.wysiwyg_tinymce.js":19,"./contentsSourceData.js":2,"./drawEditWindow.js":3,"./drawModulePalette.js":4,"./drawPanels.js":5,"iterate79":23,"jquery":24,"underscore":29}],8:[function(require,module,exports){
 /**
  * fieldBase.js
  */

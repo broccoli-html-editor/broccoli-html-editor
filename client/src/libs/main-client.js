@@ -5,6 +5,7 @@ module.exports = function(){
 	// if(!window){delete(require.cache[require('path').resolve(__filename)]);}
 
 	var _this = this;
+	var it79 = require('iterate79');
 	var _ = require('underscore');
 	var $ = require('jquery');
 
@@ -46,12 +47,52 @@ module.exports = function(){
 		}
 		loadFieldDefinition();
 
-		this.contentsSourceData = new (require('./contentsSourceData.js'))(this).init(
-			function(){
-				callback();
-			}
-		);
+		it79.fnc(
+			{},
+			[
+				function(it1, data){
+					_this.contentsSourceData = new (require('./contentsSourceData.js'))(_this).init(
+						function(){
+							it1.next(data);
+						}
+					);
+				} ,
+				function(it1, data){
+					_this.drawModulePalette(function(){
+						console.log('broccoli: module palette standby.');
+						it1.next(data);
+					});
+				} ,
+				function( it1, data ){
+					// 編集画面描画
+					_this.gpi(
+						'buildHtml',
+						{},
+						function(htmls){
+							// console.log(htmls);
+							var $iframeWindow = $(_this.options.elmIframeWindow.document);
+							for(var idx in htmls){
+								$iframeWindow.find('[data-contents='+idx+']').html(htmls[idx]);
+							}
 
+							console.log('broccoli: HTML standby.');
+							it1.next(data);
+						}
+					);
+				} ,
+				function( it1, data ){
+					// パネル描画
+					_this.drawPanels( function(){
+						console.log('broccoli: draggable panels standby.');
+						it1.next(data);
+					} );
+				} ,
+				function(it1, data){
+					callback();
+					it1.next();
+				}
+			]
+		);
 		return this;
 	}
 
@@ -100,8 +141,8 @@ module.exports = function(){
 	 * @param  {Function} callback   callback function.
 	 * @return {Object}              this.
 	 */
-	this.drawModulePalette = function(moduleList, callback){
-		require( './drawModulePalette.js' )(_this, moduleList, callback);
+	this.drawModulePalette = function(callback){
+		require( './drawModulePalette.js' )(_this, callback);
 		return this;
 	}
 
