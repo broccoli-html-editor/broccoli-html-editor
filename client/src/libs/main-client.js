@@ -53,6 +53,7 @@ module.exports = function(){
 				function(it1, data){
 					_this.contentsSourceData = new (require('./contentsSourceData.js'))(_this).init(
 						function(){
+							// _this.contentsSourceData.get();
 							it1.next(data);
 						}
 					);

@@ -97,7 +97,7 @@ module.exports = function(broccoli, callback){
 		{},
 		[
 			function(it1, data){
-				broccoli.gpi('getPackageList',{},function(list){
+				broccoli.gpi('getModulePackageList',{},function(list){
 					moduleList = list;
 					it1.next(data);
 				});

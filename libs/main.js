@@ -157,6 +157,16 @@ module.exports = function(options){
 	}
 
 	/**
+	 * 全モジュールの一覧を取得する
+	 * @param  {Function} callback  callback function.
+	 * @return {Object}             this
+	 */
+	this.getAllModuleList = function(callback){
+		require( './getAllModuleList.js' )(this, callback);
+		return this;
+	}
+
+	/**
 	 * class: モジュール
 	 * @param  {String}   moduleId モジュールID
 	 * @param  {Object}   options  Options

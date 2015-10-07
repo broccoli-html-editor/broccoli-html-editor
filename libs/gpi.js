@@ -12,9 +12,15 @@ module.exports = function(broccoli, api, options, callback){
 	var fs = require('fs');
 
 	switch(api){
-		case "getPackageList":
+		case "getModulePackageList":
 			// モジュールパッケージ一覧を取得する
 			broccoli.getPackageList(function(list){
+				callback(list);
+			});
+			break;
+		case "getAllModuleList":
+			// 全モジュールの一覧を取得する
+			broccoli.getAllModuleList(function(list){
 				callback(list);
 			});
 			break;

@@ -224,6 +224,24 @@ describe('モジュールインスタンスを生成する', function() {
 
 });
 
+describe('全モジュールの一覧の取得', function() {
+
+	it("全モジュールの一覧を取得する", function(done) {
+		this.timeout(60*1000);
+
+		var broccoli = makeDefaultBroccoli();
+		broccoli.getAllModuleList(function(modules){
+			// console.log( modules );
+			// console.log( modules['testMod1:units/unit'] );
+			assert.strictEqual(modules['testMod1:units/unit'].isSystemModule, false);
+			assert.strictEqual(modules['testMod1:units/unit'].fields.main.name, 'main');
+			done();
+		});
+
+	});
+
+});
+
 describe('ビルドする', function() {
 
 	it("テストデータをfinalizeモードでビルドする", function(done) {

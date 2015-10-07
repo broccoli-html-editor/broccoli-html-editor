@@ -17,6 +17,7 @@ module.exports = function(broccoli){
 	var path = require('path');
 
 	var _contentsSourceData; // <= data.jsonの中身
+	var _modTpls; // <- module の一覧
 
 	/**
 	 * 初期化
@@ -26,6 +27,13 @@ module.exports = function(broccoli){
 		it79.fnc(
 			{},
 			[
+				function(it1, data){
+					// モジュール一覧を取得
+					broccoli.gpi('getAllModuleList',{},function(list){
+						_modTpls = list;
+						it1.next(data);
+					});
+				} ,
 				function(it1, data){
 					// コンテンツデータを取得
 					broccoli.gpi(
@@ -40,15 +48,6 @@ module.exports = function(broccoli){
 						}
 					);
 				} ,
-				// function(it1, data){
-				// 	// リソースマネージャーの初期化
-				// 	_this.resourceMgr.init(
-				// 		_contFilesDirPath,
-				// 		function(){
-				// 			it1.next(data);
-				// 		}
-				// 	);
-				// } ,
 				function(it1, data){
 					// ヒストリーマネージャーの初期化
 					_this.history.init(
@@ -88,7 +87,7 @@ module.exports = function(broccoli){
 		var tmpCur = cur.split('.');
 		var container = tmpCur[0];
 		var fieldName = tmpCur[1];
-		var modTpl = px2dtGuiEditor.moduleTemplates.get( data.modId, data.subModName );
+		var modTpl = _this.getModule( data.modId, data.subModName );
 
 		if( container == 'bowl' ){
 			return this.get( aryPath, data.bowl[fieldName] );
@@ -133,7 +132,7 @@ module.exports = function(broccoli){
 	 */
 	this.getChildren = function( containerInstancePath ){
 		var current = this.get(containerInstancePath);
-		var modTpl = px2dtGuiEditor.moduleTemplates.get( current.modId, current.subModName );
+		var modTpl = _this.getModule( current.modId, current.subModName );
 		var targetFieldNames = {};
 		for( var fieldName in modTpl.fields ){
 			switch( modTpl.fields[fieldName].fieldType ){
@@ -168,14 +167,14 @@ module.exports = function(broccoli){
 					this.subModName = subModName;
 				}
 			})(modId, subModName);
-			var modTpl = px2dtGuiEditor.moduleTemplates.get( newData.modId, subModName );
+			var modTpl = _this.getModule( newData.modId, subModName );
 
 			// 初期データ追加
 			var fieldList = _.keys( modTpl.fields );
 			for( var idx in fieldList ){
 				var fieldName = fieldList[idx];
 				if( modTpl.fields[fieldName].fieldType == 'input' ){
-					newData.fields[fieldName] = px2dtGuiEditor.fieldDefinitions[modTpl.fields[fieldName].type].normalizeData('');
+					newData.fields[fieldName] = broccoli.fieldDefinitions[modTpl.fields[fieldName].type].normalizeData('');
 				}else if( modTpl.fields[fieldName].fieldType == 'module' ){
 					newData.fields[fieldName] = [];
 				}else if( modTpl.fields[fieldName].fieldType == 'loop' ){
@@ -204,7 +203,7 @@ module.exports = function(broccoli){
 			var tmpCur = cur.split('.');
 			var container = tmpCur[0];
 			var fieldName = tmpCur[1];
-			var modTpl = px2dtGuiEditor.moduleTemplates.get( data.modId, data.subModName );
+			var modTpl = _this.getModule( data.modId, data.subModName );
 
 			if( container == 'bowl' ){
 				// ルート要素だったらスキップして次へ
@@ -276,7 +275,7 @@ module.exports = function(broccoli){
 			var tmpCur = cur.split('.');
 			var container = tmpCur[0];
 			var fieldName = tmpCur[1];
-			var modTpl = px2dtGuiEditor.moduleTemplates.get( data.modId, data.subModName );
+			var modTpl = _this.getModule( data.modId, data.subModName );
 
 			if( container == 'bowl' ){
 				// ルート要素だったらスキップして次へ
@@ -365,7 +364,6 @@ module.exports = function(broccoli){
 			console.log('自分の子階層へ移動することはできません。');
 			cb();
 		}else if( fromParsed.path.indexOf(toParsed.container) === 0 ){
-			// var tmp = fromParsed.path.replace( new RegExp('^'+px.utils.escapeRegExp(toParsed.container)), '' );
 			this.removeInstance(fromParsed.path);
 			this.addInstance( dataFrom.modId, toContainerInstancePath );
 			this.updateInstance( dataFrom, toContainerInstancePath );
@@ -387,14 +385,14 @@ module.exports = function(broccoli){
 	 */
 	this.duplicateInstance = function( objInstance ){
 		var newData = JSON.parse( JSON.stringify( objInstance ) );
-		var modTpl = px2dtGuiEditor.moduleTemplates.get( objInstance.modId, objInstance.subModName );
+		var modTpl = _this.getModule( objInstance.modId, objInstance.subModName );
 
 		// 初期データ追加
 		var fieldList = _.keys( modTpl.fields );
 		for( var idx in fieldList ){
 			var fieldName = fieldList[idx];
 			if( modTpl.fields[fieldName].fieldType == 'input' ){
-				newData.fields[fieldName] = px2dtGuiEditor.fieldDefinitions[modTpl.fields[fieldName].type].duplicateData( objInstance.fields[fieldName] );
+				newData.fields[fieldName] = broccoli.fieldDefinitions[modTpl.fields[fieldName].type].duplicateData( objInstance.fields[fieldName] );
 			}else if( modTpl.fields[fieldName].fieldType == 'module' ){
 				for( var idx in objInstance.fields[fieldName] ){
 					newData.fields[fieldName][idx] = this.duplicateInstance( objInstance.fields[fieldName][idx] );
@@ -434,7 +432,7 @@ module.exports = function(broccoli){
 			var tmpCur = cur.split('.');
 			var container = tmpCur[0];
 			var fieldName = tmpCur[1];
-			var modTpl = px2dtGuiEditor.moduleTemplates.get( data.modId, data.subModName );
+			var modTpl = _this.getModule( data.modId, data.subModName );
 
 			if( container == 'bowl' ){
 				// ルート要素だったらスキップして次へ
@@ -545,6 +543,27 @@ module.exports = function(broccoli){
 	}
 
 	/**
+	 * モジュールを取得
+	 */
+	this.getModule = function( modId, subModName ){
+		var rtn = _modTpls[modId];
+		if( typeof( rtn ) !== typeof({}) ){
+			return false;
+		}
+		if( typeof(subModName) === typeof('') ){
+			return rtn.subModule[subModName];
+		}
+		return rtn;
+	}
+
+	/**
+	 * すべてのモジュールを取得
+	 */
+	this.getAllModules = function(){
+		return _modTpls;
+	}
+
+	/**
 	 * history: 取り消し
 	 */
 	this.historyBack = function( cb ){
@@ -594,14 +613,6 @@ module.exports = function(broccoli){
 						}
 					);
 				} ,
-				// function( it1, data ){
-				// 	// リソースマネージャーの保存処理
-				// 	_this.resourceMgr.save(
-				// 		function(){
-				// 			it1.next(data);
-				// 		}
-				// 	);
-				// } ,
 				function( it1, data ){
 					// 履歴に追加
 					_this.history.put( _contentsSourceData, function(){
@@ -812,7 +823,7 @@ module.exports = function(broccoli, callback){
 		{},
 		[
 			function(it1, data){
-				broccoli.gpi('getPackageList',{},function(list){
+				broccoli.gpi('getModulePackageList',{},function(list){
 					moduleList = list;
 					it1.next(data);
 				});
@@ -1085,6 +1096,7 @@ module.exports = function(){
 				function(it1, data){
 					_this.contentsSourceData = new (require('./contentsSourceData.js'))(_this).init(
 						function(){
+							// _this.contentsSourceData.get();
 							it1.next(data);
 						}
 					);
