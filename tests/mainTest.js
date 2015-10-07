@@ -234,11 +234,7 @@ describe('ビルドする', function() {
 		broccoli.buildBowl(
 			data.bowl.main ,
 			{
-				'mode': 'finalize' ,
-				'realpath': path.resolve(__dirname, './testdata/htdocs/test1/test1.html') ,
-				'realpathJson': path.resolve(__dirname, './testdata/htdocs/test1/test1_files/guieditor.ignore/data.json') ,
-				'resourceDir': path.resolve(__dirname, './testdata/htdocs/test1/test1_files/guieditor.ignore/resources/') ,
-				'resourceDist': path.resolve(__dirname, './testdata/htdocs/test1/test1_files/resources/')
+				'mode': 'finalize'
 			} ,
 			function( html, err ){
 				fs.writeFileSync(path.resolve(__dirname, './testdata/htdocs/test1/test1.html'), html);
@@ -256,11 +252,7 @@ describe('ビルドする', function() {
 		broccoli.buildBowl(
 			data.bowl.main ,
 			{
-				'mode': 'canvas' ,
-				'realpath': path.resolve(__dirname, './testdata/htdocs/test1/test1.html') ,
-				'realpathJson': path.resolve(__dirname, './testdata/htdocs/test1/test1_files/guieditor.ignore/data.json') ,
-				'resourceDir': path.resolve(__dirname, './testdata/htdocs/test1/test1_files/guieditor.ignore/resources/') ,
-				'resourceDist': path.resolve(__dirname, './testdata/htdocs/test1/test1_files/resources/')
+				'mode': 'canvas'
 			} ,
 			function( html, err ){
 				fs.writeFileSync(path.resolve(__dirname, './testdata/htdocs/test1/test1.canvas.html'), html);
@@ -278,11 +270,7 @@ describe('ビルドする', function() {
 		broccoli.buildBowl(
 			data.bowl.main ,
 			{
-				'mode': 'finalize' ,
-				'realpath': path.resolve(__dirname, './testdata/htdocs/unknown_module/unknown.html') ,
-				'realpathJson': path.resolve(__dirname, './testdata/htdocs/unknown_module/unknown_files/guieditor.ignore/data.json') ,
-				'resourceDir': path.resolve(__dirname, './testdata/htdocs/unknown_module/unknown_files/guieditor.ignore/resources/') ,
-				'resourceDist': path.resolve(__dirname, './testdata/htdocs/unknown_module/unknown_files/resources/')
+				'mode': 'finalize'
 			} ,
 			function( html, err ){
 				fs.writeFileSync(path.resolve(__dirname, './testdata/htdocs/unknown_module/unknown.html'), html);

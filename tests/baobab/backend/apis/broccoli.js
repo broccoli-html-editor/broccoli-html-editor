@@ -43,11 +43,7 @@ module.exports = function( data, callback, main, socket ){
 		broccoli.buildBowl(
 			json.bowl.main ,
 			{
-				'mode': 'canvas',
-				'realpath': path.resolve(__dirname, '../../../testdata/htdocs/editpage/index.html'),
-				'realpathJson': path.resolve(__dirname, '../../../testdata/htdocs/editpage/index_files/guieditor.ignore/data.json'),
-				'resourceDir': path.resolve(__dirname, '../../../testdata/htdocs/editpage/index_files/guieditor.ignore/resources/'),
-				'resourceDist': path.resolve(__dirname, '../../../testdata/htdocs/editpage/index_files/resources/')
+				'mode': 'canvas'
 			} ,
 			function(html){
 				// console.log(html);
@@ -57,15 +53,9 @@ module.exports = function( data, callback, main, socket ){
 		return ;
 
 	}else if(data.api == 'buildHtml'){
-		var json = require( path.resolve(__dirname, '../../../testdata/htdocs/editpage/index_files/guieditor.ignore/data.json') );
 		broccoli.buildHtml(
-			json.bowl ,
 			{
-				'mode': 'canvas',
-				'realpath': path.resolve(__dirname, '../../../testdata/htdocs/editpage/index.html'),
-				'realpathJson': path.resolve(__dirname, '../../../testdata/htdocs/editpage/index_files/guieditor.ignore/data.json'),
-				'resourceDir': path.resolve(__dirname, '../../../testdata/htdocs/editpage/index_files/guieditor.ignore/resources/'),
-				'resourceDist': path.resolve(__dirname, '../../../testdata/htdocs/editpage/index_files/resources/')
+				'mode': 'canvas'
 			} ,
 			function(htmls){
 				// console.log(htmls);

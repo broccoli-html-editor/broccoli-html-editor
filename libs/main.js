@@ -195,19 +195,21 @@ module.exports = function(options){
 	 * ビルドしたHTMLは、callback() に文字列として渡されます。
 	 * realpathに指定したファイルは自動的に上書きされません。
 	 *
-	 * @param  {Object}   dataList コンテンツデータ一覧
 	 * @param  {Object}   options  オプション
 	 *                             - options.mode = ビルドモード(finalize=製品版ビルド, canvas=編集画面用ビルド)
 	 * @param  {Function} callback callback function.
 	 * @return {Object}            this
 	 */
-	this.buildHtml = function( dataList, options, callback ){
+	this.buildHtml = function( options, callback ){
+		var dataJson = require( this.realpathDataDir+'/data.json' );
+		dataJson.bowl = dataJson.bowl||{};
+
 		this.resourceMgr.init( function(){
 			loadFieldDefinition();
 
 			var htmls = {};
 			it79.ary(
-				dataList,
+				dataJson.bowl,
 				function(it1, row, idx){
 					options.instancePath = '/bowl.'+idx;
 					_this.buildBowl(row, options, function(html){
