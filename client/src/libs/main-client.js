@@ -43,7 +43,7 @@ module.exports = function(){
 		this.options.elmPanels = $canvas.find('.broccoli--panels').get(0);
 
 		this.panels = new (require( './panels.js' ))(this);
-		this.editWindow = (require( './editWindow.js' ))(this);
+		this.editWindow = new (require( './editWindow.js' ))(this);
 		this.fieldBase = new (require('./../../../libs/fieldBase.js'))(this);
 		this.fieldDefinitions = {};
 		function loadFieldDefinition(){
@@ -165,16 +165,9 @@ module.exports = function(){
 	this.editInstance = function( instancePath ){
 		this.selectInstance(instancePath);
 		console.log("Edit: "+instancePath);
-		// this.drawEditWindow();
-		this.gpi(
-			'getFieldData',
-			{
-				'instancePath': instancePath
-			},
-			function(data){
-				console.log(data);
-			}
-		);
+		this.drawEditWindow( instancePath, {}, function(){
+			console.log('editInstance standby.');
+		} );
 		return this;
 	}
 

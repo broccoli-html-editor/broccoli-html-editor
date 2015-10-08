@@ -44,6 +44,7 @@ module.exports = function(broccoli){
 							// console.log(_contentsSourceData);
 							_contentsSourceData.bowl = _contentsSourceData.bowl||{};
 							_this.initBowlData('main');
+							// console.log(_contentsSourceData);
 							it1.next(data);
 						}
 					);
@@ -58,6 +59,7 @@ module.exports = function(broccoli){
 					);
 				} ,
 				function(it1, data){
+					// console.log(_contentsSourceData);
 					callback();
 				}
 			]
@@ -486,7 +488,7 @@ module.exports = function(broccoli){
 		if( typeof(containerInstancePath) === typeof([]) ){
 			return containerInstancePath;
 		}
-
+		// console.log(containerInstancePath);
 		containerInstancePath = containerInstancePath||'';
 		if( !containerInstancePath ){ containerInstancePath = '/fields.main'; }
 		containerInstancePath = containerInstancePath.replace( new RegExp('^\\/*'), '' );
@@ -804,6 +806,9 @@ module.exports = function(broccoli){
 
 	this.init = function(instancePath, elmEditWindow, callback){
 		callback = callback || function(){};
+
+		console.log( broccoli.contentsSourceData.get(instancePath) );
+
 		callback();
 		return this;
 	}
@@ -920,7 +925,7 @@ module.exports = function(){
 		this.options.elmPanels = $canvas.find('.broccoli--panels').get(0);
 
 		this.panels = new (require( './panels.js' ))(this);
-		this.editWindow = (require( './editWindow.js' ))(this);
+		this.editWindow = new (require( './editWindow.js' ))(this);
 		this.fieldBase = new (require('./../../../libs/fieldBase.js'))(this);
 		this.fieldDefinitions = {};
 		function loadFieldDefinition(){
@@ -1042,16 +1047,9 @@ module.exports = function(){
 	this.editInstance = function( instancePath ){
 		this.selectInstance(instancePath);
 		console.log("Edit: "+instancePath);
-		// this.drawEditWindow();
-		this.gpi(
-			'getFieldData',
-			{
-				'instancePath': instancePath
-			},
-			function(data){
-				console.log(data);
-			}
-		);
+		this.drawEditWindow( instancePath, {}, function(){
+			console.log('editInstance standby.');
+		} );
 		return this;
 	}
 

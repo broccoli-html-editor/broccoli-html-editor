@@ -15,6 +15,9 @@ module.exports = function(broccoli){
 
 	this.init = function(instancePath, elmEditWindow, callback){
 		callback = callback || function(){};
+
+		console.log( broccoli.contentsSourceData.get(instancePath) );
+
 		callback();
 		return this;
 	}

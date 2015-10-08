@@ -38,6 +38,7 @@ module.exports = function(broccoli){
 							// console.log(_contentsSourceData);
 							_contentsSourceData.bowl = _contentsSourceData.bowl||{};
 							_this.initBowlData('main');
+							// console.log(_contentsSourceData);
 							it1.next(data);
 						}
 					);
@@ -52,6 +53,7 @@ module.exports = function(broccoli){
 					);
 				} ,
 				function(it1, data){
+					// console.log(_contentsSourceData);
 					callback();
 				}
 			]
@@ -480,7 +482,7 @@ module.exports = function(broccoli){
 		if( typeof(containerInstancePath) === typeof([]) ){
 			return containerInstancePath;
 		}
-
+		// console.log(containerInstancePath);
 		containerInstancePath = containerInstancePath||'';
 		if( !containerInstancePath ){ containerInstancePath = '/fields.main'; }
 		containerInstancePath = containerInstancePath.replace( new RegExp('^\\/*'), '' );

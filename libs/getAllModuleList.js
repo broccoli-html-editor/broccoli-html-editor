@@ -18,6 +18,9 @@ module.exports = function(broccoli, callback){
 		[
 			function(it0, data){
 				broccoli.getPackageList(function(list){
+					data.tmp['_sys/root'] = broccoli.createModuleInstance('_sys/root');
+					data.tmp['_sys/unknown'] = broccoli.createModuleInstance('_sys/unknown');
+					data.tmp['_sys/html'] = broccoli.createModuleInstance('_sys/html');
 					for(var pkgId in list){
 						for(var catId in list[pkgId].categories){
 							for(var modId in list[pkgId].categories[catId].modules){
