@@ -109,9 +109,8 @@ window.main = new (function(){
 		// broccoli を初期化
 		broccoli.init(
 			{
-				'elmIframeWindow': $('iframe').get(0).contentWindow,
-				'elmPanels': document.getElementById('panels'),
-				'elmModulePalette': document.getElementById('palette'),
+				'elmCanvas': $('.canvas').get(0),
+				'elmModulePalette': $('.palette').get(0),
 				'contents_area_selector': '[data-contents]',
 				'contents_bowl_name_by': 'data-contents',
 				'gpiBridge': function(api, options, callback){

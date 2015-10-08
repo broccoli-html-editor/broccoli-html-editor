@@ -9,6 +9,7 @@ module.exports = function(){
 	var _ = require('underscore');
 	var $ = require('jquery');
 	var selectedInstance = null;
+	var $canvas;
 
 	/**
 	 * broccoli-client を初期化する
@@ -18,13 +19,28 @@ module.exports = function(){
 	 */
 	this.init = function(options, callback){
 		options = options || {};
-		options.elmIframeWindow = options.elmIframeWindow || document.createElement('div');
-		options.elmPanels = options.elmPanels || document.createElement('div');
+		options.elmCanvas = options.elmCanvas || document.createElement('div');
+		options.elmPanels = document.createElement('div');
 		options.elmModulePalette = options.elmModulePalette || document.createElement('div');
 		options.contents_area_selector = options.contents_area_selector || '.contents';
 		options.contents_bowl_name_by = options.contents_bowl_name_by || 'id';
 		options.gpiBridge = options.gpiBridge || function(){};
 		this.options = options;
+
+		$canvas = $(options.elmCanvas);
+		$canvas
+			.addClass('broccoli')
+			.addClass('broccoli--canvas')
+			.append( $('<iframe>')
+				.bind('load', function(){
+					_this.onPreviewLoad( callback );
+				})
+			)
+			.append( $('<div class="broccoli--panels">')
+			)
+		;
+		this.options.elmIframeWindow = $canvas.find('iframe').get(0).contentWindow;
+		this.options.elmPanels = $canvas.find('.broccoli--panels').get(0);
 
 		this.panels = new (require( './panels.js' ))(this);
 		this.editWindow = (require( './editWindow.js' ))(this);
@@ -67,6 +83,40 @@ module.exports = function(){
 					});
 				} ,
 				function( it1, data ){
+					// 編集画面描画ロード
+					$canvas.find('iframe')
+						.attr({
+							'src': $canvas.attr('data-broccoli-preview')
+						})
+					;
+					it1.next(data);
+
+				} ,
+				function(it1, data){
+					callback();
+					it1.next();
+				}
+			]
+		);
+		return this;
+	}
+
+	/**
+	 * プレビューがロードされたら実行
+	 * @return {[type]} [description]
+	 */
+	this.onPreviewLoad = function( callback ){
+		callback = callback || function(){};
+
+		it79.fnc(
+			{},
+			[
+				function( it1, data ){
+					// 編集画面描画
+					_this.options.elmIframeWindow = $canvas.find('iframe').get(0).contentWindow;
+					it1.next(data);
+				} ,
+				function( it1, data ){
 					// 編集画面描画
 					_this.gpi(
 						'buildHtml',
@@ -98,7 +148,6 @@ module.exports = function(){
 		);
 		return this;
 	}
-
 
 	/**
 	 * GPIから値を得る

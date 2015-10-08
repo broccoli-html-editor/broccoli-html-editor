@@ -14,7 +14,7 @@ module.exports = function(broccoli){
 	var $ = require('jquery');
 
 	var $panels = $(broccoli.options.elmPanels);
-	var $contents = $(broccoli.options.elmIframeWindow.document);
+	var $contents;
 	var $contentsElements;
 
 	function drawPanel(idx, domElm){
@@ -77,6 +77,7 @@ module.exports = function(broccoli){
 			{},
 			[
 				function( it1, data ){
+					$contents = $(broccoli.options.elmIframeWindow.document);
 					$contentsElements = $contents.find('[data-broccoli-instance-path]');
 					it1.next(data);
 				} ,
