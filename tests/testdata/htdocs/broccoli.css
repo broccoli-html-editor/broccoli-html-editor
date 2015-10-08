@@ -11,7 +11,7 @@
     width: 100%;
     height: 10000px;
     border: none; }
-  .broccoli--canvas .broccoli--panel {
+  .broccoli--canvas .broccoli--panels {
     position: absolute;
     top: 0;
     left: 0;
@@ -39,6 +39,21 @@
     border: 1px dotted #ffcc33;
     background-color: rgba(255, 255, 204, 0.4);
     opacity: 1 !important; }
+
+.broccoli--edit-window {
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow: auto;
+  background-color: rgba(100, 100, 100, 0.5);
+  width: 100%;
+  height: 100%;
+  z-index: 10000; }
+  .broccoli--edit-window-inner {
+    width: 90%;
+    background-color: #fff;
+    padding: 20px;
+    margin: 100px auto; }
 
 .broccoli--module-palette ul {
   margin: 0;

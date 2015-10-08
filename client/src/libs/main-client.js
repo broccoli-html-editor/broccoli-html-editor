@@ -165,8 +165,16 @@ module.exports = function(){
 	this.editInstance = function( instancePath ){
 		this.selectInstance(instancePath);
 		console.log("Edit: "+instancePath);
-		this.drawEditWindow( instancePath, {}, function(){
-			console.log('editInstance standby.');
+		$canvas.find('.broccoli--editwindow').remove();
+		$canvas
+			.append( $('<div class="broccoli--edit-window">')
+				.append( $('<div class="broccoli--edit-window-inner">')
+				)
+			)
+		;
+		this.drawEditWindow( instancePath, $canvas.find('.broccoli--edit-window-inner').get(0), function(){
+			$canvas.find('.broccoli--edit-window').remove();
+			console.log('editInstance done.');
 		} );
 		return this;
 	}
