@@ -1,6 +1,7 @@
 @charset "utf-8";
 .broccoli{
 	// border: 1px solid #000;
+	@import "../../node_modules/bootstrap/dist/css/bootstrap";
 }
 // Canvas
 .broccoli--canvas{
@@ -54,10 +55,14 @@
 
 // edit window
 .broccoli--edit-window{
+}
+
+// lightbox
+.broccoli--lightbox{
 	position: fixed;
 	top: 0; left: 0;
 	overflow: auto;
-	background-color: rgba(100, 100, 100, 0.5);
+	background-color: rgba(0, 0, 0, 0.7);
 	width: 100%;
 	height: 100%;
 	z-index: 10000;
