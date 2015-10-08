@@ -3,7 +3,7 @@
 	window.Broccoli = require('./libs/main-client.js');
 })(window);
 
-},{"./libs/main-client.js":7}],2:[function(require,module,exports){
+},{"./libs/main-client.js":6}],2:[function(require,module,exports){
 /**
  * contentsSourceData.js
  */
@@ -629,101 +629,7 @@ module.exports = function(broccoli){
 
 }
 
-},{"./history.js":6,"iterate79":23,"path":21}],3:[function(require,module,exports){
-/**
- * drawEditWindow.js
- */
-module.exports = function(broccoli, instancePath, elmEditWindow, callback){
-	// delete(require.cache[require('path').resolve(__filename)]);
-	if(!window){ callback(); return false; }
-
-	var _this = this;
-	callback = callback || function(){};
-
-	var it79 = require('iterate79');
-	var path = require('path');
-	var php = require('phpjs');
-	var twig = require('twig');
-	var $ = require('jquery');
-
-	var $panels = $(broccoli.options.elmPanels);
-	var $contents = $(broccoli.options.elmIframeWindow.document);
-	var $contentsElements = $contents.find('[data-broccoli-instance-path]');
-
-	function drawPanel(idx, domElm){
-		function calcHeight($me, idx){
-			var $nextElm = $contentsElements.eq(idx+1);
-			if( !$nextElm.length ){
-				return $me.height();
-			}
-			var rtn = ($nextElm.offset().top - $me.offset().top);
-			if( $me.height() > rtn ){
-				return $me.height();
-			}
-			return rtn;
-		}
-		var $this = $(domElm);
-		var $panel = $('<div>');
-		$panels.append($panel);
-		$panel
-			.css({
-				'width': $this.width(),
-				'height': calcHeight($this, idx),
-				'position': 'absolute',
-				'left': $this.offset().left,
-				'top': $this.offset().top
-			})
-			.addClass('broccoli--panel')
-			.attr({
-				'data-broccoli-instance-path': $this.attr('data-broccoli-instance-path'),
-				'draggable': true // <- HTML5のAPI http://www.htmq.com/dnd/
-			})
-			.bind('click', function(){
-				broccoli.selectInstance($(this).attr('data-broccoli-instance-path'));
-			})
-			.bind('dblclick', function(){
-				broccoli.editInstance($(this).attr('data-broccoli-instance-path'));
-			})
-			.bind('dragstart', function(){
-				event.dataTransfer.setData("method", 'moveTo' );
-				event.dataTransfer.setData("data-broccoli-instance-path", $(this).attr('data-broccoli-instance-path') );
-				var subModName = $(this).attr('data-broccoli-sub-mod-name');
-				if( typeof(subModName) === typeof('') && subModName.length ){
-					event.dataTransfer.setData("data-broccoli-sub-mod-name", subModName );
-				}
-			})
-			.bind('drop', function(){
-				var method = event.dataTransfer.getData("method");
-				options.drop($(this).attr('data-broccoli-instance-path'), method);
-			})
-		;
-
-	}
-
-	it79.fnc(
-		{},
-		[
-			function( it1, data ){
-				$panels.html('').removeClass('broccoli').addClass('broccoli');
-				it1.next(data);
-			} ,
-			function( it1, data ){
-
-				// console.log($contentsElements.size());
-				$contentsElements.each(drawPanel);
-				it1.next(data);
-			} ,
-			function( it1, data ){
-				callback();
-				it1.next(data);
-			}
-		]
-	);
-
-	return;
-}
-
-},{"iterate79":23,"jquery":24,"path":21,"phpjs":27,"twig":28}],4:[function(require,module,exports){
+},{"./history.js":5,"iterate79":23,"path":21}],3:[function(require,module,exports){
 /**
  * drawModulePalette.js
  */
@@ -880,19 +786,15 @@ module.exports = function(broccoli, callback){
 	return;
 }
 
-},{"iterate79":23,"jquery":24,"path":21,"phpjs":27,"twig":28}],5:[function(require,module,exports){
+},{"iterate79":23,"jquery":24,"path":21,"phpjs":27,"twig":28}],4:[function(require,module,exports){
 /**
- * drawPanels.js
+ * editWindow.js
  */
-module.exports = function(broccoli, callback){
+module.exports = function(broccoli){
 	// delete(require.cache[require('path').resolve(__filename)]);
 	if(!window){ callback(); return false; }
-	// var panelsElm = broccoli.options.elmPanels;
-	// if(!contentsElm){ callback(); return false; }
-	// console.log(options);
 
 	var _this = this;
-	callback = callback || function(){};
 
 	var it79 = require('iterate79');
 	var path = require('path');
@@ -900,84 +802,16 @@ module.exports = function(broccoli, callback){
 	var twig = require('twig');
 	var $ = require('jquery');
 
-	var $panels = $(broccoli.options.elmPanels);
-	var $contents = $(broccoli.options.elmIframeWindow.document);
-	var $contentsElements = $contents.find('[data-broccoli-instance-path]');
-
-	function drawPanel(idx, domElm){
-		function calcHeight($me, idx){
-			var $nextElm = $contentsElements.eq(idx+1);
-			if( !$nextElm.length ){
-				return $me.height();
-			}
-			var rtn = ($nextElm.offset().top - $me.offset().top);
-			if( $me.height() > rtn ){
-				return $me.height();
-			}
-			return rtn;
-		}
-		var $this = $(domElm);
-		var $panel = $('<div>');
-		$panels.append($panel);
-		$panel
-			.css({
-				'width': $this.width(),
-				'height': calcHeight($this, idx),
-				'position': 'absolute',
-				'left': $this.offset().left,
-				'top': $this.offset().top
-			})
-			.addClass('broccoli--panel')
-			.attr({
-				'data-broccoli-instance-path': $this.attr('data-broccoli-instance-path'),
-				'draggable': true // <- HTML5のAPI http://www.htmq.com/dnd/
-			})
-			.bind('click', function(){
-				broccoli.selectInstance($(this).attr('data-broccoli-instance-path'));
-			})
-			.bind('dblclick', function(){
-				broccoli.editInstance($(this).attr('data-broccoli-instance-path'));
-			})
-			.bind('dragstart', function(){
-				event.dataTransfer.setData("method", 'moveTo' );
-				event.dataTransfer.setData("data-broccoli-instance-path", $(this).attr('data-broccoli-instance-path') );
-				var subModName = $(this).attr('data-broccoli-sub-mod-name');
-				if( typeof(subModName) === typeof('') && subModName.length ){
-					event.dataTransfer.setData("data-broccoli-sub-mod-name", subModName );
-				}
-			})
-			.bind('drop', function(){
-				var method = event.dataTransfer.getData("method");
-				options.drop($(this).attr('data-broccoli-instance-path'), method);
-			})
-		;
-
+	this.init = function(instancePath, elmEditWindow, callback){
+		callback = callback || function(){};
+		callback();
+		return this;
 	}
-
-	it79.fnc(
-		{},
-		[
-			function( it1, data ){
-				$panels.html('').removeClass('broccoli').addClass('broccoli');
-				it1.next(data);
-			} ,
-			function( it1, data ){
-
-				// console.log($contentsElements.size());
-				$contentsElements.each(drawPanel);
-				it1.next(data);
-			} ,
-			function( it1, data ){
-				callback();
-				it1.next(data);
-			}
-		]
-	);
 
 	return;
 }
 
-},{"iterate79":23,"jquery":24,"path":21,"phpjs":27,"twig":28}],6:[function(require,module,exports){
+},{"iterate79":23,"jquery":24,"path":21,"phpjs":27,"twig":28}],5:[function(require,module,exports){
 /**
  * history.js
  */
@@ -1040,7 +874,7 @@ module.exports = function(broccoli){
 
 }
 
-},{}],7:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 /**
  * broccoli-client.js
  */
@@ -1051,6 +885,7 @@ module.exports = function(){
 	var it79 = require('iterate79');
 	var _ = require('underscore');
 	var $ = require('jquery');
+	var selectedInstance = null;
 
 	/**
 	 * broccoli-client を初期化する
@@ -1068,6 +903,8 @@ module.exports = function(){
 		options.gpiBridge = options.gpiBridge || function(){};
 		this.options = options;
 
+		this.panels = new (require( './panels.js' ))(this);
+		this.editWindow = (require( './editWindow.js' ))(this);
 		this.fieldBase = new (require('./../../../libs/fieldBase.js'))(this);
 		this.fieldDefinitions = {};
 		function loadFieldDefinition(){
@@ -1096,7 +933,6 @@ module.exports = function(){
 				function(it1, data){
 					_this.contentsSourceData = new (require('./contentsSourceData.js'))(_this).init(
 						function(){
-							// _this.contentsSourceData.get();
 							it1.next(data);
 						}
 					);
@@ -1155,6 +991,7 @@ module.exports = function(){
 	 * @return {[type]}              [description]
 	 */
 	this.editInstance = function( instancePath ){
+		this.selectInstance(instancePath);
 		console.log("Edit: "+instancePath);
 		// this.drawEditWindow();
 		this.gpi(
@@ -1171,12 +1008,64 @@ module.exports = function(){
 
 	/**
 	 * インスタンスを選択する
-	 * @param  {[type]} instancePath [description]
-	 * @return {[type]}              [description]
 	 */
-	this.selectInstance = function( instancePath ){
+	this.selectInstance = function( instancePath, callback ){
 		console.log("Select: "+instancePath);
+		callback = callback || function(){};
+		this.unselectInstance();//一旦選択解除
+		this.unfocusInstance();//フォーカスも解除
+		selectedInstance = instancePath;
+		this.panels.selectInstance(instancePath, function(){
+			// _this.updateInstancePathView();
+			callback();
+		});
 		return this;
+	}
+
+	/**
+	 * モジュールインスタンスの選択状態を解除する
+	 */
+	this.unselectInstance = function(callback){
+		callback = callback || function(){};
+		selectedInstance = null;
+		this.panels.unselectInstance(function(){
+			// _this.updateInstancePathView();
+			callback();
+		});
+		return this;
+	}
+
+	/**
+	 * モジュールインスタンスにフォーカスする
+	 * フォーカス状態の囲みで表現され、画面に収まるようにスクロールする
+	 */
+	this.focusInstance = function( instancePath, callback ){
+		callback = callback || function(){};
+		this.unfocusInstance();//一旦選択解除
+		this.panels.focusInstance(instancePath, function(){
+			callback();
+		});
+		return this;
+
+	}
+
+	/**
+	 * モジュールインスタンスのフォーカス状態を解除する
+	 */
+	this.unfocusInstance = function(callback){
+		callback = callback || function(){};
+		selectedInstance = null;
+		this.panels.unfocusInstance(function(){
+			callback();
+		});
+		return this;
+	}
+
+	/**
+	 * 選択されたインスタンスのパスを取得する
+	 */
+	this.getSelectedInstance = function(){
+		return selectedInstance;
 	}
 
 	/**
@@ -1196,7 +1085,7 @@ module.exports = function(){
 	 * @return {Object}               this.
 	 */
 	this.drawPanels = function(callback){
-		require( './drawPanels.js' )(_this, callback);
+		this.panels.init(callback);
 		return this;
 	}
 
@@ -1206,13 +1095,181 @@ module.exports = function(){
 	 * @return {Object}               this.
 	 */
 	this.drawEditWindow = function(instancePath, elmEditWindow, callback){
-		require( './drawEditWindow.js' )(_this, instancePath, elmEditWindow, callback);
+		this.editWindow.init(instancePath, elmEditWindow, callback);
 		return this;
 	}
 
 }
 
-},{"./../../../libs/fieldBase.js":8,"./../../../libs/fields/app.fields.href.js":9,"./../../../libs/fields/app.fields.html.js":10,"./../../../libs/fields/app.fields.html_attr_text.js":11,"./../../../libs/fields/app.fields.image.js":12,"./../../../libs/fields/app.fields.markdown.js":13,"./../../../libs/fields/app.fields.multitext.js":14,"./../../../libs/fields/app.fields.select.js":15,"./../../../libs/fields/app.fields.table.js":16,"./../../../libs/fields/app.fields.text.js":17,"./../../../libs/fields/app.fields.wysiwyg_rte.js":18,"./../../../libs/fields/app.fields.wysiwyg_tinymce.js":19,"./contentsSourceData.js":2,"./drawEditWindow.js":3,"./drawModulePalette.js":4,"./drawPanels.js":5,"iterate79":23,"jquery":24,"underscore":29}],8:[function(require,module,exports){
+},{"./../../../libs/fieldBase.js":8,"./../../../libs/fields/app.fields.href.js":9,"./../../../libs/fields/app.fields.html.js":10,"./../../../libs/fields/app.fields.html_attr_text.js":11,"./../../../libs/fields/app.fields.image.js":12,"./../../../libs/fields/app.fields.markdown.js":13,"./../../../libs/fields/app.fields.multitext.js":14,"./../../../libs/fields/app.fields.select.js":15,"./../../../libs/fields/app.fields.table.js":16,"./../../../libs/fields/app.fields.text.js":17,"./../../../libs/fields/app.fields.wysiwyg_rte.js":18,"./../../../libs/fields/app.fields.wysiwyg_tinymce.js":19,"./contentsSourceData.js":2,"./drawModulePalette.js":3,"./editWindow.js":4,"./panels.js":7,"iterate79":23,"jquery":24,"underscore":29}],7:[function(require,module,exports){
+/**
+ * panels.js
+ */
+module.exports = function(broccoli){
+	// delete(require.cache[require('path').resolve(__filename)]);
+	if(!window){ callback(); return false; }
+
+	var _this = this;
+
+	var it79 = require('iterate79');
+	var path = require('path');
+	var php = require('phpjs');
+	var twig = require('twig');
+	var $ = require('jquery');
+
+	var $panels = $(broccoli.options.elmPanels);
+	var $contents = $(broccoli.options.elmIframeWindow.document);
+	var $contentsElements;
+
+	function drawPanel(idx, domElm){
+		function calcHeight($me, idx){
+			var $nextElm = $contentsElements.eq(idx+1);
+			if( !$nextElm.length ){
+				return $me.height();
+			}
+			var rtn = ($nextElm.offset().top - $me.offset().top);
+			if( $me.height() > rtn ){
+				return $me.height();
+			}
+			return rtn;
+		}
+		var $this = $(domElm);
+		var $panel = $('<div>');
+		$panels.append($panel);
+		$panel
+			.css({
+				'width': $this.width(),
+				'height': calcHeight($this, idx),
+				'position': 'absolute',
+				'left': $this.offset().left,
+				'top': $this.offset().top
+			})
+			.addClass('broccoli--panel')
+			.attr({
+				'data-broccoli-instance-path': $this.attr('data-broccoli-instance-path'),
+				'draggable': true // <- HTML5のAPI http://www.htmq.com/dnd/
+			})
+			.bind('click', function(){
+				broccoli.selectInstance($(this).attr('data-broccoli-instance-path'));
+			})
+			.bind('dblclick', function(){
+				broccoli.editInstance($(this).attr('data-broccoli-instance-path'));
+			})
+			.bind('dragstart', function(){
+				event.dataTransfer.setData("method", 'moveTo' );
+				event.dataTransfer.setData("data-broccoli-instance-path", $(this).attr('data-broccoli-instance-path') );
+				var subModName = $(this).attr('data-broccoli-sub-mod-name');
+				if( typeof(subModName) === typeof('') && subModName.length ){
+					event.dataTransfer.setData("data-broccoli-sub-mod-name", subModName );
+				}
+			})
+			.bind('drop', function(){
+				var method = event.dataTransfer.getData("method");
+				options.drop($(this).attr('data-broccoli-instance-path'), method);
+			})
+		;
+
+	}
+
+	/**
+	 * 初期化する
+	 * @param  {Function} callback [description]
+	 * @return {[type]}            [description]
+	 */
+	this.init = function(callback){
+		it79.fnc(
+			{},
+			[
+				function( it1, data ){
+					$contentsElements = $contents.find('[data-broccoli-instance-path]');
+					it1.next(data);
+				} ,
+				function( it1, data ){
+					$panels.html('').removeClass('broccoli').addClass('broccoli');
+					it1.next(data);
+				} ,
+				function( it1, data ){
+					// console.log($contentsElements.size());
+					$contentsElements.each(drawPanel);
+					it1.next(data);
+				} ,
+				function( it1, data ){
+					callback();
+					it1.next(data);
+				}
+			]
+		);
+	}
+
+	/**
+	 * インスタンスを選択する
+	 * @param  {[type]} instancePath [description]
+	 * @return {[type]}              [description]
+	 */
+	this.selectInstance = function( instancePath, callback ){
+		callback = callback || function(){};
+		$panels.find('[data-broccoli-instance-path]')
+			.filter(function (index) {
+				return $(this).attr("data-broccoli-instance-path") == instancePath;
+			})
+			.addClass('broccoli--panel__selected')
+		;
+		// this.updateInstancePathView();
+		callback();
+		return this;
+	}
+
+	/**
+	 * モジュールインスタンスの選択状態を解除する
+	 */
+	this.unselectInstance = function(callback){
+		callback = callback || function(){};
+		$panels.find('[data-broccoli-instance-path]')
+			.removeClass('broccoli--panel__selected')
+		;
+		// this.updateInstancePathView();
+		callback();
+		return this;
+	}
+
+	/**
+	 * モジュールインスタンスにフォーカスする
+	 * フォーカス状態の囲みで表現され、画面に収まるようにスクロールする
+	 */
+	this.focusInstance = function( instancePath, callback ){
+		callback = callback || function(){};
+		$panels.find('[data-broccoli-instance-path]')
+			.filter(function (index) {
+				return $(this).attr("data-broccoli-instance-path") == instancePath;
+			})
+			.addClass('broccoli--panel__focused')
+		;
+		var $targetElm = $('.broccoli--panel__focused');
+		var $confField = $('.cont_field');
+		var top = $confField.scrollTop() + $targetElm.offset().top - 30;
+		$confField.stop().animate({"scrollTop":top} , 'fast' );
+		callback();
+		return this;
+
+	}
+
+	/**
+	 * モジュールインスタンスのフォーカス状態を解除する
+	 */
+	this.unfocusInstance = function(callback){
+		callback = callback || function(){};
+		selectedInstance = null;
+		$panels.find('.broccoli--panel__focused')
+			.removeClass('broccoli--panel__focused')
+		;
+		callback();
+		return this;
+	}
+
+	return;
+}
+
+},{"iterate79":23,"jquery":24,"path":21,"phpjs":27,"twig":28}],8:[function(require,module,exports){
 /**
  * fieldBase.js
  */

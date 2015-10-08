@@ -46,5 +46,23 @@
 .broccoli--module-palette a.broccoli--module-palette__closed:before {
   content: "ー"; }
 
-.broccoli--panel:hover {
-  border: 1px solid #000; }
+.broccoli--panel {
+  border-width: 3px !important;
+  border-style: solid;
+  border-color: transparent;
+  text-align: center;
+  background-color: transparent;
+  z-index: 0; }
+  .broccoli--panel:hover {
+    border-style: dotted !important;
+    border-color: #6cf;
+    background-color: rgba(231, 244, 255, 0.5); }
+  .broccoli--panel__selected {
+    border-color: #f33 !important;
+    border-style: solid;
+    background-color: rgba(255, 238, 238, 0.2);
+    opacity: 1 !important; }
+  .broccoli--panel__focused {
+    border: 1px dotted #ffcc33;
+    background-color: rgba(255, 255, 204, 0.4);
+    opacity: 1 !important; }

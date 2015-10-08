@@ -24,6 +24,7 @@ window.main = new (function(){
 
 	// broccoli をインスタンス化
 	var broccoli = new Broccoli();
+	this.broccoli = broccoli;
 
 	this.init = function(callback){
 		callback = callback||function(){};

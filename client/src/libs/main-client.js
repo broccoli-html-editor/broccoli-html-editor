@@ -8,6 +8,7 @@ module.exports = function(){
 	var it79 = require('iterate79');
 	var _ = require('underscore');
 	var $ = require('jquery');
+	var selectedInstance = null;
 
 	/**
 	 * broccoli-client を初期化する
@@ -25,6 +26,8 @@ module.exports = function(){
 		options.gpiBridge = options.gpiBridge || function(){};
 		this.options = options;
 
+		this.panels = new (require( './panels.js' ))(this);
+		this.editWindow = (require( './editWindow.js' ))(this);
 		this.fieldBase = new (require('./../../../libs/fieldBase.js'))(this);
 		this.fieldDefinitions = {};
 		function loadFieldDefinition(){
@@ -53,7 +56,6 @@ module.exports = function(){
 				function(it1, data){
 					_this.contentsSourceData = new (require('./contentsSourceData.js'))(_this).init(
 						function(){
-							// _this.contentsSourceData.get();
 							it1.next(data);
 						}
 					);
@@ -112,6 +114,7 @@ module.exports = function(){
 	 * @return {[type]}              [description]
 	 */
 	this.editInstance = function( instancePath ){
+		this.selectInstance(instancePath);
 		console.log("Edit: "+instancePath);
 		// this.drawEditWindow();
 		this.gpi(
@@ -128,12 +131,64 @@ module.exports = function(){
 
 	/**
 	 * インスタンスを選択する
-	 * @param  {[type]} instancePath [description]
-	 * @return {[type]}              [description]
 	 */
-	this.selectInstance = function( instancePath ){
+	this.selectInstance = function( instancePath, callback ){
 		console.log("Select: "+instancePath);
+		callback = callback || function(){};
+		this.unselectInstance();//一旦選択解除
+		this.unfocusInstance();//フォーカスも解除
+		selectedInstance = instancePath;
+		this.panels.selectInstance(instancePath, function(){
+			// _this.updateInstancePathView();
+			callback();
+		});
 		return this;
+	}
+
+	/**
+	 * モジュールインスタンスの選択状態を解除する
+	 */
+	this.unselectInstance = function(callback){
+		callback = callback || function(){};
+		selectedInstance = null;
+		this.panels.unselectInstance(function(){
+			// _this.updateInstancePathView();
+			callback();
+		});
+		return this;
+	}
+
+	/**
+	 * モジュールインスタンスにフォーカスする
+	 * フォーカス状態の囲みで表現され、画面に収まるようにスクロールする
+	 */
+	this.focusInstance = function( instancePath, callback ){
+		callback = callback || function(){};
+		this.unfocusInstance();//一旦選択解除
+		this.panels.focusInstance(instancePath, function(){
+			callback();
+		});
+		return this;
+
+	}
+
+	/**
+	 * モジュールインスタンスのフォーカス状態を解除する
+	 */
+	this.unfocusInstance = function(callback){
+		callback = callback || function(){};
+		selectedInstance = null;
+		this.panels.unfocusInstance(function(){
+			callback();
+		});
+		return this;
+	}
+
+	/**
+	 * 選択されたインスタンスのパスを取得する
+	 */
+	this.getSelectedInstance = function(){
+		return selectedInstance;
 	}
 
 	/**
@@ -153,7 +208,7 @@ module.exports = function(){
 	 * @return {Object}               this.
 	 */
 	this.drawPanels = function(callback){
-		require( './drawPanels.js' )(_this, callback);
+		this.panels.init(callback);
 		return this;
 	}
 
@@ -163,7 +218,7 @@ module.exports = function(){
 	 * @return {Object}               this.
 	 */
 	this.drawEditWindow = function(instancePath, elmEditWindow, callback){
-		require( './drawEditWindow.js' )(_this, instancePath, elmEditWindow, callback);
+		this.editWindow.init(instancePath, elmEditWindow, callback);
 		return this;
 	}
 
