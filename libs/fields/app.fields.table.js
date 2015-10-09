@@ -28,7 +28,7 @@ module.exports = function(broccoli){
 	/**
 	 * データをバインドする
 	 */
-	this.bind = function( fieldData, mode ){
+	this.bind = function( fieldData, mode, mod, callback ){
 		fieldData = fieldData||{};
 		var rtn = '';
 		if( fieldData.output ){
@@ -40,7 +40,8 @@ module.exports = function(broccoli){
 				rtn += '<tr><td style="text-align:center;">ダブルクリックして編集してください。</td></tr>';
 			}
 		}
-		return rtn;
+		setTimeout(function(){ callback(rtn); }, 0);
+		return;
 	}
 
 	/**

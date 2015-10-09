@@ -43,50 +43,80 @@ module.exports = function(broccoli, data, options, callback){
 					// テンプレートエンジン利用の場合の処理
 					// console.log(this.id + '/' + this.subModName);
 					var tplDataObj = {};
-					for( var fieldName in mod.fields ){
-						field = mod.fields[fieldName];
+					it79.fnc(
+						{},
+						[
+							function(it2, data2){
+								it79.ary(
+									mod.fields ,
+									function(it3, field, fieldName){
 
-						if( field.fieldType == 'input' ){
-							// input field
-							var tmpVal = '';
-							if( broccoli.fieldDefinitions[field.type] ){
-								// フィールドタイプ定義を呼び出す
-								tmpVal += broccoli.fieldDefinitions[field.type].bind( fieldData[field.name], options.mode, field );
-							}else{
-								// ↓未定義のフィールドタイプの場合のデフォルトの挙動
-								tmpVal += broccoli.fieldBase.bind( fieldData[field.name], options.mode, field );
+										if( field.fieldType == 'input' ){
+											// input field
+											var fieldDef;
+											var tmpVal = '';
+											if( broccoli.fieldDefinitions[field.type] ){
+												// フィールドタイプ定義を呼び出す
+												fieldDef = broccoli.fieldDefinitions[field.type];
+											}else{
+												// ↓未定義のフィールドタイプの場合のデフォルトの挙動
+												fieldDef = broccoli.fieldBase;
+											}
+											fieldDef.bind( fieldData[field.name], options.mode, field, function(html){
+												tmpVal += html;
+												if( !field.hidden ){//← "hidden": true だったら、非表示(=出力しない)
+													tplDataObj[field.name] = tmpVal;
+												}
+												_this.nameSpace.vars[field.name] = {
+													fieldType: "input", type: field.type, val: tmpVal
+												}
+												it3.next();
+											} );
+											return;
+
+										}else if( field.fieldType == 'module' ){
+											// module field
+											tplDataObj[field.name] = fieldData[field.name].join('');
+											it3.next();
+											return;
+
+										}else if( field.fieldType == 'loop' ){
+											// loop field
+											tplDataObj[field.name] = fieldData[field.name];
+											it3.next();
+											return;
+
+										}
+										it3.next();
+										return;
+									} ,
+									function(){
+										it2.next(data2);
+									}
+								);
+								return;
+							} ,
+							function(it2, data2){
+								// 環境変数登録
+								tplDataObj._ENV = {
+									"mode": options.mode
+								};
+
+								try {
+									rtn = twig({
+										data: src
+									}).render(tplDataObj);
+								} catch (e) {
+									console.log( 'TemplateEngine Rendering ERROR.' );
+									rtn = '<div class="error">TemplateEngine Rendering ERROR.</div>'
+								}
+								d.html = rtn;
+								it1.next(d);
+								return;
 							}
-							if( !field.hidden ){//← "hidden": true だったら、非表示(=出力しない)
-								tplDataObj[field.name] = tmpVal;
-							}
-							_this.nameSpace.vars[field.name] = {
-								fieldType: "input", type: field.type, val: tmpVal
-							}
-
-						}else if( field.fieldType == 'module' ){
-							// module field
-							tplDataObj[field.name] = fieldData[field.name].join('');
-
-						}else if( field.fieldType == 'loop' ){
-							// loop field
-							tplDataObj[field.name] = fieldData[field.name];
-
-						}
-					}
-
-					// 環境変数登録
-					tplDataObj._ENV = {
-						"mode": options.mode
-					};
-
-					try {
-						rtn = twig({
-							data: src
-						}).render(tplDataObj);
-					} catch (e) {
-						console.log( 'TemplateEngine Rendering ERROR.' );
-						rtn = '<div class="error">TemplateEngine Rendering ERROR.</div>'
-					}
+						]
+					);
+					return;
 
 				}else{
 					// テンプレートエンジンを利用しない場合の処理
@@ -120,23 +150,42 @@ module.exports = function(broccoli, data, options, callback){
 						}else if( field.input ){
 							// input field
 							var tmpVal = '';
-							if( broccoli.fieldDefinitions[field.input.type] ){
-								// フィールドタイプ定義を呼び出す
-								tmpVal += broccoli.fieldDefinitions[field.input.type].bind( fieldData[field.input.name], options.mode, field.input );
-							}else{
-								// ↓未定義のフィールドタイプの場合のデフォルトの挙動
-								tmpVal += broccoli.fieldBase.bind( fieldData[field.input.name], options.mode, field.input );
-							}
-							if( !field.input.hidden ){//← "hidden": true だったら、非表示(=出力しない)
-								rtn += tmpVal;
-							}
-							_this.nameSpace.vars[field.input.name] = {
-								fieldType: "input", type: field.input.type, val: tmpVal
-							}
+							it79.fnc(
+								{},
+								[
+									function(it2, data2){
+										var fieldDef;
+										if( broccoli.fieldDefinitions[field.input.type] ){
+											// フィールドタイプ定義を呼び出す
+											fieldDef = broccoli.fieldDefinitions[field.input.type];
+										}else{
+											// ↓未定義のフィールドタイプの場合のデフォルトの挙動
+											fieldDef = broccoli.fieldBase;
+										}
+										fieldDef.bind( fieldData[field.input.name], options.mode, field.input, function(html){
+											tmpVal += html;
+											it2.next(data2);
+										} );
+									} ,
+									function(it2, data2){
+										if( !field.input.hidden ){//← "hidden": true だったら、非表示(=出力しない)
+											rtn += tmpVal;
+										}
+										_this.nameSpace.vars[field.input.name] = {
+											fieldType: "input", type: field.input.type, val: tmpVal
+										}
 
-							buildBroccoliHtml( src, rtn, function(html){
-								callback(html);
-							} );
+										it2.next(data2);
+										return;
+									} ,
+									function(it2, data2){
+										buildBroccoliHtml( src, rtn, function(html){
+											callback(html);
+										} );
+										return;
+									}
+								]
+							);
 							return;
 
 						}else if( field.module ){
@@ -280,8 +329,9 @@ module.exports = function(broccoli, data, options, callback){
 						d.html = html;
 						it1.next(d);
 					});
+					return;
 				}
-
+				return;
 			} ,
 			function(it1, d){
 				if( options.mode == 'canvas' ){

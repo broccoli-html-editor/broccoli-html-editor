@@ -25,7 +25,7 @@ module.exports = function(broccoli){
 	/**
 	 * データをバインドする
 	 */
-	this.bind = function( fieldData, mode ){
+	this.bind = function( fieldData, mode, mod, callback ){
 		var rtn = {}
 		if( typeof(fieldData) === typeof({}) ){
 			rtn = fieldData;
@@ -42,7 +42,8 @@ module.exports = function(broccoli){
 				rtn.path = _imgDummy;
 			}
 		}
-		return rtn.path;
+		setTimeout(function(){ callback(rtn.path); }, 0);
+		return;
 	}
 
 	/**

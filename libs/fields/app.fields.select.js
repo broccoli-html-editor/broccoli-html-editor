@@ -3,7 +3,7 @@ module.exports = function(broccoli){
 	/**
 	 * データをバインドする
 	 */
-	this.bind = function( fieldData, mode, mod ){
+	this.bind = function( fieldData, mode, mod, callback ){
 		var rtn = ''
 		if( typeof(fieldData) === typeof([]) ){
 			rtn += fieldData.join('');
@@ -32,7 +32,8 @@ module.exports = function(broccoli){
 				// 　クラス名の modifier 部分の拡張などに使用する場合に、
 				// 　クラス名とダミー文が合体して存在しないクラス名になってしまうので。
 		}
-		return rtn;
+		setTimeout(function(){ callback(rtn); }, 0);
+		return;
 	}
 
 	/**

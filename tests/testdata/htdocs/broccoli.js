@@ -1413,7 +1413,7 @@ module.exports = function(broccoli){
 	/**
 	 * データをバインドする
 	 */
-	this.bind = function( fieldData, mode, mod ){
+	this.bind = function( fieldData, mode, mod, callback ){
 		var rtn = '';
 		try {
 			if( typeof(fieldData) === typeof([]) ){
@@ -1427,7 +1427,8 @@ module.exports = function(broccoli){
 		if( mode == 'canvas' && !rtn.length ){
 			rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてHTMLコードを編集してください)</span>';
 		}
-		return rtn;
+		setTimeout(function(){ callback(rtn); }, 0);
+		return;
 	}
 
 	/**
@@ -1511,7 +1512,7 @@ module.exports = function(broccoli){
 	/**
 	 * データをバインドする
 	 */
-	this.bind = function( fieldData, mode ){
+	this.bind = function( fieldData, mode, callback ){
 		var rtn = ''
 		if(typeof(fieldData)===typeof('')){
 			rtn = php.htmlspecialchars( fieldData ); // ←HTML特殊文字変換
@@ -1520,7 +1521,8 @@ module.exports = function(broccoli){
 		if( mode == 'canvas' && !rtn.length ){
 			rtn = '';
 		}
-		return rtn;
+		setTimeout(function(){ callback(rtn); }, 0);
+		return;
 	}
 
 	/**
@@ -1651,7 +1653,7 @@ module.exports = function(broccoli){
 	/**
 	 * データをバインドする
 	 */
-	this.bind = function( fieldData, mode ){
+	this.bind = function( fieldData, mode, callback ){
 		var rtn = ''
 		if(typeof(fieldData)===typeof('')){
 			rtn = php.htmlspecialchars( fieldData ); // ←HTML特殊文字変換
@@ -1660,7 +1662,8 @@ module.exports = function(broccoli){
 		if( mode == 'canvas' && !rtn.length ){
 			rtn = '(ダブルクリックしてテキストを編集してください)';
 		}
-		return rtn;
+		setTimeout(function(){ callback(rtn); }, 0);
+		return;
 	}
 
 	/**
@@ -1708,7 +1711,7 @@ module.exports = function(broccoli){
 	/**
 	 * データをバインドする
 	 */
-	this.bind = function( fieldData, mode ){
+	this.bind = function( fieldData, mode, callback ){
 		var rtn = {}
 		if( typeof(fieldData) === typeof({}) ){
 			rtn = fieldData;
@@ -1725,7 +1728,8 @@ module.exports = function(broccoli){
 				rtn.path = _imgDummy;
 			}
 		}
-		return rtn.path;
+		setTimeout(function(){ callback(rtn.path); }, 0);
+		return;
 	}
 
 	/**
@@ -1886,7 +1890,7 @@ module.exports = function(broccoli){
 	/**
 	 * データをバインドする
 	 */
-	this.bind = function( fieldData, mode ){
+	this.bind = function( fieldData, mode, callback ){
 		var rtn = ''
 		var marked = require('marked');
 		marked.setOptions({
@@ -1906,7 +1910,8 @@ module.exports = function(broccoli){
 		if( mode == 'canvas' && !rtn.length ){
 			rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてマークダウンを編集してください)</span>';
 		}
-		return rtn;
+		setTimeout(function(){ callback(rtn); }, 0);
+		return;
 	}
 
 	/**
@@ -1932,7 +1937,7 @@ module.exports = function(broccoli){
 	/**
 	 * データをバインドする
 	 */
-	this.bind = function( fieldData, mode ){
+	this.bind = function( fieldData, mode, callback ){
 		var rtn = ''
 		if(typeof(fieldData)===typeof({}) && typeof(fieldData.src)===typeof('')){
 			switch( fieldData.editor ){
@@ -1964,7 +1969,8 @@ module.exports = function(broccoli){
 		if( mode == 'canvas' && !rtn.length ){
 			rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてテキストを編集してください)</span>';
 		}
-		return rtn;
+		setTimeout(function(){ callback(rtn); }, 0);
+		return;
 	}
 
 	/**
@@ -2050,7 +2056,7 @@ module.exports = function(broccoli){
 	/**
 	 * データをバインドする
 	 */
-	this.bind = function( fieldData, mode, mod ){
+	this.bind = function( fieldData, mode, mod, callback ){
 		var rtn = ''
 		if( typeof(fieldData) === typeof([]) ){
 			rtn += fieldData.join('');
@@ -2079,7 +2085,8 @@ module.exports = function(broccoli){
 				// 　クラス名の modifier 部分の拡張などに使用する場合に、
 				// 　クラス名とダミー文が合体して存在しないクラス名になってしまうので。
 		}
-		return rtn;
+		setTimeout(function(){ callback(rtn); }, 0);
+		return;
 	}
 
 	/**
@@ -2166,7 +2173,7 @@ module.exports = function(broccoli){
 	/**
 	 * データをバインドする
 	 */
-	this.bind = function( fieldData, mode ){
+	this.bind = function( fieldData, mode, callback ){
 		fieldData = fieldData||{};
 		var rtn = '';
 		if( fieldData.output ){
@@ -2178,7 +2185,8 @@ module.exports = function(broccoli){
 				rtn += '<tr><td style="text-align:center;">ダブルクリックして編集してください。</td></tr>';
 			}
 		}
-		return rtn;
+		setTimeout(function(){ callback(rtn); }, 0);
+		return;
 	}
 
 	/**
@@ -2415,7 +2423,7 @@ module.exports = function(broccoli){
 	/**
 	 * データをバインドする
 	 */
-	this.bind = function( fieldData, mode ){
+	this.bind = function( fieldData, mode, callback ){
 		var rtn = ''
 		if(typeof(fieldData)===typeof('')){
 			rtn = php.htmlspecialchars( fieldData ); // ←HTML特殊文字変換
@@ -2424,7 +2432,8 @@ module.exports = function(broccoli){
 		if( mode == 'canvas' && !rtn.length ){
 			rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてテキストを編集してください)</span>';
 		}
-		return rtn;
+		setTimeout(function(){ callback(rtn); }, 0);
+		return;
 	}
 
 	/**

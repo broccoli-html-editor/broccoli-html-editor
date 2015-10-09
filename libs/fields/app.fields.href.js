@@ -4,7 +4,7 @@ module.exports = function(broccoli){
 	/**
 	 * データをバインドする
 	 */
-	this.bind = function( fieldData, mode ){
+	this.bind = function( fieldData, mode, mod, callback ){
 		var rtn = ''
 		if(typeof(fieldData)===typeof('')){
 			rtn = php.htmlspecialchars( fieldData ); // ←HTML特殊文字変換
@@ -13,7 +13,8 @@ module.exports = function(broccoli){
 		if( mode == 'canvas' && !rtn.length ){
 			rtn = '';
 		}
-		return rtn;
+		setTimeout(function(){ callback(rtn); }, 0);
+		return;
 	}
 
 	/**
