@@ -82,29 +82,26 @@ module.exports = function(broccoli){
 		rtn.find('input[type=radio][name=editor-'+mod.name+'][value="'+data.editor+'"]').attr({'checked':'checked'});
 
 		$(elm).html(rtn);
-		setTimeout(function(){ callback(); }, 0);
-		return;
-	}
+		setTimeout(function(){
+			// px.textEditor.attachTextEditor(
+			// 	$dom.find('textarea').get(0),
+			// 	'md'
+			// );
+			// $dom.find('.CodeMirror').css({
+			// 	'border': '1px solid #ccc',
+			// 	'border-radius': '3px'
+			// });
 
-	/**
-	 * エディタUIが描画されたら呼ばれるコールバック
-	 */
-	this.onEditorUiDrawn = function( $dom, mod, data ){
-		px.textEditor.attachTextEditor(
-			$dom.find('textarea').get(0),
-			'md'
-		);
-		$dom.find('.CodeMirror').css({
-			'border': '1px solid #ccc',
-			'border-radius': '3px'
-		});
+			callback();
+		}, 0);
 		return;
 	}
 
 	/**
 	 * エディタUIで編集した内容を保存
 	 */
-	this.saveEditorContent = function( $dom, data, mod, callback ){
+	this.saveEditorContent = function( elm, data, mod, callback ){
+		var $dom = $(elm);
 		if(typeof(data) !== typeof({})){
 			data = {};
 		}

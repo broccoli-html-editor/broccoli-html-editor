@@ -220,7 +220,8 @@ module.exports = function(broccoli){
 	/**
 	 * エディタUIで編集した内容を保存
 	 */
-	this.saveEditorContent = function( $dom, data, mod, callback ){
+	this.saveEditorContent = function( elm, data, mod, callback ){
+		var $dom = $(elm);
 		if( typeof(data) !== typeof({}) ){
 			data = {};
 		}

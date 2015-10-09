@@ -150,6 +150,23 @@ module.exports = function(){
 	}
 
 	/**
+	 * field定義を取得する
+	 * @param  {[type]} fieldType [description]
+	 * @return {[type]}           [description]
+	 */
+	this.getFieldDefinition = function(fieldType){
+		var fieldDefinition = this.fieldDefinitions[fieldType];
+		if( this.fieldDefinitions[fieldType] ){
+			// 定義済みのフィールドを返す
+			fieldDefinition = this.fieldDefinitions[fieldType];
+		}else{
+			// 定義がない場合は、デフォルトのfield定義を返す
+			fieldDefinition = this.fieldBase;
+		}
+		return fieldDefinition;
+	}
+
+	/**
 	 * GPIから値を得る
 	 */
 	this.gpi = function(api, options, callback){
@@ -173,8 +190,10 @@ module.exports = function(){
 			)
 		;
 		this.drawEditWindow( instancePath, $canvas.find('.broccoli--lightbox-inner').get(0), function(){
-			$canvas.find('.broccoli--lightbox').fadeOut('fast',function(){$(this).remove();});
-			console.log('editInstance done.');
+			$canvas.find('.broccoli--lightbox').fadeOut('slow',function(){$(this).remove();});
+			_this.contentsSourceData.save(function(){
+				console.log('editInstance done.');
+			});
 		} );
 		return this;
 	}

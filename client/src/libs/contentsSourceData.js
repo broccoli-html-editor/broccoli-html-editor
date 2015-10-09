@@ -612,11 +612,12 @@ module.exports = function(broccoli){
 				function( it1, data ){
 					// 履歴に追加
 					_this.history.put( _contentsSourceData, function(){
-							it1.next(data);
+						it1.next(data);
 					} );
 				} ,
 				function( it1, data ){
-					callback( !err );
+					callback();
+					it1.next(data);
 				}
 			]
 		);

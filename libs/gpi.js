@@ -25,12 +25,13 @@ module.exports = function(broccoli, api, options, callback){
 			});
 			break;
 		case "getContentsDataJson":
-			var dataJson = require( broccoli.realpathDataDir+'/data.json' );
+			var dataJson = fs.readFileSync(broccoli.realpathDataDir+'/data.json');
+			dataJson = JSON.parse( dataJson );
 			callback(dataJson);
 			break;
 		case "saveContentsDataJson":
-			var jsonString = JSON.stringify( options.data );
-			console.log(jsonString);
+			var jsonString = JSON.stringify( options.data, null, 1 );
+			// console.log(jsonString);
 			fs.writeFile(
 				broccoli.realpathDataDir+'/data.json' ,
 				jsonString ,

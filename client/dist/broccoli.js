@@ -618,11 +618,12 @@ module.exports = function(broccoli){
 				function( it1, data ){
 					// 履歴に追加
 					_this.history.put( _contentsSourceData, function(){
-							it1.next(data);
+						it1.next(data);
 					} );
 				} ,
 				function( it1, data ){
-					callback( !err );
+					callback();
+					it1.next(data);
 				}
 			]
 		);
@@ -828,6 +829,13 @@ module.exports = function(broccoli){
 	tplField += '</div>';
 
 
+	/**
+	 * 初期化
+	 * @param  {[type]}   instancePath  [description]
+	 * @param  {[type]}   elmEditWindow [description]
+	 * @param  {Function} callback      [description]
+	 * @return {[type]}                 [description]
+	 */
 	this.init = function(instancePath, elmEditWindow, callback){
 		callback = callback || function(){};
 
@@ -846,7 +854,7 @@ module.exports = function(broccoli){
 			mod.fields,
 			function(it1, field, fieldName){
 				// console.log(fieldName);
-				var $field = $(tplField);
+				var $field = $(tplField).attr({'data-broccoli-edit-window-field-name': field.name});
 				$field.find('>h3')
 					.text((field.label||field.name)+' ')
 					.append( $('<small>')
@@ -859,7 +867,7 @@ module.exports = function(broccoli){
 				var elmFieldContent = $field.find('.broccoli--edit-window-field-content').get(0);
 				switch( field.fieldType ){
 					case 'input':
-						var fieldDefinition = broccoli.fieldDefinitions[field.type];
+						var fieldDefinition = broccoli.getFieldDefinition(field.type);
 						fieldDefinition.mkEditor(mod.fields[field.name], data.fields[field.name], elmFieldContent, function(){
 							it1.next();
 						})
@@ -882,7 +890,31 @@ module.exports = function(broccoli){
 				$editWindow.find('form')
 					.removeAttr('disabled')
 					.bind('submit', function(){
-						callback();
+						// 編集内容を保存する
+						console.log( data );
+						console.log( mod );
+
+						it79.ary(
+							mod.fields,
+							function(it2, field2, fieldName2){
+								var $dom = $editWindow.find('[data-broccoli-edit-window-field-name='+field2.name+']');
+								var fieldDefinition = broccoli.getFieldDefinition(field2.type);
+								fieldDefinition.saveEditorContent($dom.get(0), data.fields[fieldName2], mod, function(result){
+									data.fields[fieldName2] = result;
+									it2.next();
+								});
+							},
+							function(){
+								// クライアントサイドにあるメモリ上のcontentsSourceDataに反映する。
+								// この時点で、まだサーバー側には送られていない。
+								// サーバー側に送るのは、callback() の先の仕事。
+								broccoli.contentsSourceData.updateInstance(data, instancePath, function(){
+									callback();
+								});
+							}
+						);
+
+
 					})
 				;
 			}
@@ -1109,6 +1141,23 @@ module.exports = function(){
 	}
 
 	/**
+	 * field定義を取得する
+	 * @param  {[type]} fieldType [description]
+	 * @return {[type]}           [description]
+	 */
+	this.getFieldDefinition = function(fieldType){
+		var fieldDefinition = this.fieldDefinitions[fieldType];
+		if( this.fieldDefinitions[fieldType] ){
+			// 定義済みのフィールドを返す
+			fieldDefinition = this.fieldDefinitions[fieldType];
+		}else{
+			// 定義がない場合は、デフォルトのfield定義を返す
+			fieldDefinition = this.fieldBase;
+		}
+		return fieldDefinition;
+	}
+
+	/**
 	 * GPIから値を得る
 	 */
 	this.gpi = function(api, options, callback){
@@ -1132,8 +1181,10 @@ module.exports = function(){
 			)
 		;
 		this.drawEditWindow( instancePath, $canvas.find('.broccoli--lightbox-inner').get(0), function(){
-			$canvas.find('.broccoli--lightbox').fadeOut('fast',function(){$(this).remove();});
-			console.log('editInstance done.');
+			$canvas.find('.broccoli--lightbox').fadeOut('slow',function(){$(this).remove();});
+			_this.contentsSourceData.save(function(){
+				console.log('editInstance done.');
+			});
 		} );
 		return this;
 	}
@@ -1478,7 +1529,18 @@ module.exports = function(broccoli){
 		);
 
 		$(elm).html(rtn);
-		setTimeout(function(){ callback(); }, 0);
+		setTimeout(function(){
+			// px.textEditor.attachTextEditor(
+			// 	$dom.find('textarea').get(0),
+			// 	'html'
+			// );
+			// $dom.find('.CodeMirror').css({
+			// 	'border': '1px solid #ccc',
+			// 	'border-radius': '3px'
+			// });
+
+			callback();
+		}, 0);
 		return;
 	}
 
@@ -1487,9 +1549,9 @@ module.exports = function(broccoli){
 	 * mkEditor() の非同期化の仕様変更に伴い、mkEditor() 内に含められるようになりました。
 	 * 不要になるので、削除します。
 	 */
-	this.onEditorUiDrawn = function( $dom, mod, data ){
-		return;
-	}
+	// this.onEditorUiDrawn = function( $dom, mod, data ){
+	// 	return;
+	// }
 
 	/**
 	 * データを複製する
@@ -1503,8 +1565,8 @@ module.exports = function(broccoli){
 	/**
 	 * エディタUIで編集した内容を保存
 	 */
-	this.saveEditorContent = function( $dom, data, mod, callback ){
-		var src = $dom.find('textarea').val();
+	this.saveEditorContent = function( elm, data, mod, callback ){
+		var src = $(elm).find('textarea').val();
 		src = JSON.parse( JSON.stringify(src) );
 		callback(src);
 		return;
@@ -1625,7 +1687,8 @@ module.exports = function(broccoli){
 	/**
 	 * エディタUIで編集した内容を保存
 	 */
-	this.saveEditorContent = function( $dom, data, mod, callback ){
+	this.saveEditorContent = function( elm, data, mod, callback ){
+		var $dom = $(elm);
 		var src = $dom.find('input').val();
 		src = JSON.parse( JSON.stringify(src) );
 		callback(src);
@@ -1636,22 +1699,6 @@ module.exports = function(broccoli){
 
 },{"phpjs":27}],10:[function(require,module,exports){
 module.exports = function(broccoli){
-
-	/**
-	 * エディタUIが描画されたら呼ばれるコールバック
-	 */
-	this.onEditorUiDrawn = function( $dom, mod, data ){
-		px.textEditor.attachTextEditor(
-			$dom.find('textarea').get(0),
-			'html'
-		);
-		$dom.find('.CodeMirror').css({
-			'border': '1px solid #ccc',
-			'border-radius': '3px'
-		});
-		return;
-	}
-
 }
 
 },{}],11:[function(require,module,exports){
@@ -1670,22 +1717,17 @@ module.exports = function(broccoli){
 		if( mode == 'canvas' && !rtn.length ){
 			rtn = '(ダブルクリックしてテキストを編集してください)';
 		}
-		setTimeout(function(){ callback(rtn); }, 0);
-		return;
-	}
-
-	/**
-	 * エディタUIが描画されたら呼ばれるコールバック
-	 */
-	this.onEditorUiDrawn = function( $dom, mod, data ){
-		px.textEditor.attachTextEditor(
-			$dom.find('textarea').get(0),
-			'text'
-		);
-		$dom.find('.CodeMirror').css({
-			'border': '1px solid #ccc',
-			'border-radius': '3px'
-		});
+		setTimeout(function(){
+			// px.textEditor.attachTextEditor(
+			// 	$dom.find('textarea').get(0),
+			// 	'text'
+			// );
+			// $dom.find('.CodeMirror').css({
+			// 	'border': '1px solid #ccc',
+			// 	'border-radius': '3px'
+			// });
+			callback(rtn);
+		}, 0);
 		return;
 	}
 
@@ -1867,7 +1909,8 @@ module.exports = function(broccoli){
 	/**
 	 * エディタUIで編集した内容を保存
 	 */
-	this.saveEditorContent = function( $dom, data, mod, callback ){
+	this.saveEditorContent = function( elm, data, mod, callback ){
+		var $dom = $(elm);
 		if( typeof(data) !== typeof({}) ){
 			data = {};
 		}
@@ -1922,22 +1965,18 @@ module.exports = function(broccoli){
 		if( mode == 'canvas' && !rtn.length ){
 			rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてマークダウンを編集してください)</span>';
 		}
-		setTimeout(function(){ callback(rtn); }, 0);
-		return;
-	}
+		setTimeout(function(){
+			// px.textEditor.attachTextEditor(
+			// 	$dom.find('textarea').get(0),
+			// 	'md'
+			// );
+			// $dom.find('.CodeMirror').css({
+			// 	'border': '1px solid #ccc',
+			// 	'border-radius': '3px'
+			// });
 
-	/**
-	 * エディタUIが描画されたら呼ばれるコールバック
-	 */
-	this.onEditorUiDrawn = function( $dom, mod, data ){
-		px.textEditor.attachTextEditor(
-			$dom.find('textarea').get(0),
-			'md'
-		);
-		$dom.find('.CodeMirror').css({
-			'border': '1px solid #ccc',
-			'border-radius': '3px'
-		});
+			callback(rtn);
+		}, 0);
 		return;
 	}
 
@@ -2028,29 +2067,26 @@ module.exports = function(broccoli){
 		rtn.find('input[type=radio][name=editor-'+mod.name+'][value="'+data.editor+'"]').attr({'checked':'checked'});
 
 		$(elm).html(rtn);
-		setTimeout(function(){ callback(); }, 0);
-		return;
-	}
+		setTimeout(function(){
+			// px.textEditor.attachTextEditor(
+			// 	$dom.find('textarea').get(0),
+			// 	'md'
+			// );
+			// $dom.find('.CodeMirror').css({
+			// 	'border': '1px solid #ccc',
+			// 	'border-radius': '3px'
+			// });
 
-	/**
-	 * エディタUIが描画されたら呼ばれるコールバック
-	 */
-	this.onEditorUiDrawn = function( $dom, mod, data ){
-		px.textEditor.attachTextEditor(
-			$dom.find('textarea').get(0),
-			'md'
-		);
-		$dom.find('.CodeMirror').css({
-			'border': '1px solid #ccc',
-			'border-radius': '3px'
-		});
+			callback();
+		}, 0);
 		return;
 	}
 
 	/**
 	 * エディタUIで編集した内容を保存
 	 */
-	this.saveEditorContent = function( $dom, data, mod, callback ){
+	this.saveEditorContent = function( elm, data, mod, callback ){
+		var $dom = $(elm);
 		if(typeof(data) !== typeof({})){
 			data = {};
 		}
@@ -2134,21 +2170,18 @@ module.exports = function(broccoli){
 			.append( $select )
 		;
 		$(elm).html(rtn);
-		setTimeout(function(){ callback(); }, 0);
-		return;
-	}
 
-	/**
-	 * エディタUIが描画されたら呼ばれるコールバック
-	 */
-	this.onEditorUiDrawn = function( $dom, mod, data ){
+		setTimeout(function(){
+			callback();
+		}, 0);
 		return;
 	}
 
 	/**
 	 * エディタUIで編集した内容を保存
 	 */
-	this.saveEditorContent = function( $dom, data, mod, callback ){
+	this.saveEditorContent = function( elm, data, mod, callback ){
+		var $dom = $(elm);
 		var src = $dom.find('select').val();
 		src = JSON.parse( JSON.stringify(src) );
 		callback(src);
@@ -2380,7 +2413,8 @@ module.exports = function(broccoli){
 	/**
 	 * エディタUIで編集した内容を保存
 	 */
-	this.saveEditorContent = function( $dom, data, mod, callback ){
+	this.saveEditorContent = function( elm, data, mod, callback ){
+		var $dom = $(elm);
 		if( typeof(data) !== typeof({}) ){
 			data = {};
 		}
@@ -2451,22 +2485,18 @@ module.exports = function(broccoli){
 		if( mode == 'canvas' && !rtn.length ){
 			rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてテキストを編集してください)</span>';
 		}
-		setTimeout(function(){ callback(rtn); }, 0);
-		return;
-	}
+		setTimeout(function(){
+			// px.textEditor.attachTextEditor(
+			// 	$dom.find('textarea').get(0),
+			// 	'text'
+			// );
+			// $dom.find('.CodeMirror').css({
+			// 	'border': '1px solid #ccc',
+			// 	'border-radius': '3px'
+			// });
 
-	/**
-	 * エディタUIが描画されたら呼ばれるコールバック
-	 */
-	this.onEditorUiDrawn = function( $dom, mod, data ){
-		px.textEditor.attachTextEditor(
-			$dom.find('textarea').get(0),
-			'text'
-		);
-		$dom.find('.CodeMirror').css({
-			'border': '1px solid #ccc',
-			'border-radius': '3px'
-		});
+			callback(rtn);
+		}, 0);
 		return;
 	}
 
@@ -2528,27 +2558,23 @@ module.exports = function(broccoli){
 		// );
 
 		$(elm).html(rtn);
-		setTimeout(function(){ callback(); }, 0);
-		return;
-	}
-
-	/**
-	 * エディタUIが描画されたら呼ばれるコールバック
-	 */
-	this.onEditorUiDrawn = function( $dom, mod, data ){
-		// editors = $textarea.rte({
-		// 	width: 720,
-		// 	height: 520,
-		// 	controls_rte: window.top.rte_toolbar,
-		// 	controls_html: window.top.html_toolbar
-		// });
+		setTimeout(function(){
+			// editors = $textarea.rte({
+			// 	width: 720,
+			// 	height: 520,
+			// 	controls_rte: window.top.rte_toolbar,
+			// 	controls_html: window.top.html_toolbar
+			// });
+			callback();
+		}, 0);
 		return;
 	}
 
 	/**
 	 * エディタUIで編集した内容を保存
 	 */
-	this.saveEditorContent = function( $dom, data, mod, callback ){
+	this.saveEditorContent = function( elm, data, mod, callback ){
+		var $dom = $(elm);
 		// var win = $iframe.get(0).contentWindow;
 		// var src = win.tinymce.get('tinymce_editor').getContent()
 		var src = editors[0].get_content();
@@ -2603,22 +2629,18 @@ module.exports = function(broccoli){
 		;
 
 		$(elm).html(rtn);
-		setTimeout(function(){ callback(); }, 0);
-		return;
-	}
-
-	/**
-	 * エディタUIが描画されたら呼ばれるコールバック
-	 */
-	this.onEditorUiDrawn = function( $dom, mod, data ){
-		// window.top.tinymce = tinymce;
+		setTimeout(function(){
+			// window.top.tinymce = tinymce;
+			callback();
+		}, 0);
 		return;
 	}
 
 	/**
 	 * エディタUIで編集した内容を保存
 	 */
-	this.saveEditorContent = function( $dom, data, mod, callback ){
+	this.saveEditorContent = function( elm, data, mod, callback ){
+		var $dom = $(elm);
 		var win = $iframe.get(0).contentWindow;
 		var src = win.tinymce.get('tinymce_editor').getContent()
 		if( typeof(src) !== typeof('') ){ src = ''; }

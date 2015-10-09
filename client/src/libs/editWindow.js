@@ -37,6 +37,13 @@ module.exports = function(broccoli){
 	tplField += '</div>';
 
 
+	/**
+	 * 初期化
+	 * @param  {[type]}   instancePath  [description]
+	 * @param  {[type]}   elmEditWindow [description]
+	 * @param  {Function} callback      [description]
+	 * @return {[type]}                 [description]
+	 */
 	this.init = function(instancePath, elmEditWindow, callback){
 		callback = callback || function(){};
 
@@ -55,7 +62,7 @@ module.exports = function(broccoli){
 			mod.fields,
 			function(it1, field, fieldName){
 				// console.log(fieldName);
-				var $field = $(tplField);
+				var $field = $(tplField).attr({'data-broccoli-edit-window-field-name': field.name});
 				$field.find('>h3')
 					.text((field.label||field.name)+' ')
 					.append( $('<small>')
@@ -68,7 +75,7 @@ module.exports = function(broccoli){
 				var elmFieldContent = $field.find('.broccoli--edit-window-field-content').get(0);
 				switch( field.fieldType ){
 					case 'input':
-						var fieldDefinition = broccoli.fieldDefinitions[field.type];
+						var fieldDefinition = broccoli.getFieldDefinition(field.type);
 						fieldDefinition.mkEditor(mod.fields[field.name], data.fields[field.name], elmFieldContent, function(){
 							it1.next();
 						})
@@ -91,7 +98,31 @@ module.exports = function(broccoli){
 				$editWindow.find('form')
 					.removeAttr('disabled')
 					.bind('submit', function(){
-						callback();
+						// 編集内容を保存する
+						console.log( data );
+						console.log( mod );
+
+						it79.ary(
+							mod.fields,
+							function(it2, field2, fieldName2){
+								var $dom = $editWindow.find('[data-broccoli-edit-window-field-name='+field2.name+']');
+								var fieldDefinition = broccoli.getFieldDefinition(field2.type);
+								fieldDefinition.saveEditorContent($dom.get(0), data.fields[fieldName2], mod, function(result){
+									data.fields[fieldName2] = result;
+									it2.next();
+								});
+							},
+							function(){
+								// クライアントサイドにあるメモリ上のcontentsSourceDataに反映する。
+								// この時点で、まだサーバー側には送られていない。
+								// サーバー側に送るのは、callback() の先の仕事。
+								broccoli.contentsSourceData.updateInstance(data, instancePath, function(){
+									callback();
+								});
+							}
+						);
+
+
 					})
 				;
 			}

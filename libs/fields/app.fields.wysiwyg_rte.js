@@ -53,27 +53,23 @@ module.exports = function(broccoli){
 		// );
 
 		$(elm).html(rtn);
-		setTimeout(function(){ callback(); }, 0);
-		return;
-	}
-
-	/**
-	 * エディタUIが描画されたら呼ばれるコールバック
-	 */
-	this.onEditorUiDrawn = function( $dom, mod, data ){
-		// editors = $textarea.rte({
-		// 	width: 720,
-		// 	height: 520,
-		// 	controls_rte: window.top.rte_toolbar,
-		// 	controls_html: window.top.html_toolbar
-		// });
+		setTimeout(function(){
+			// editors = $textarea.rte({
+			// 	width: 720,
+			// 	height: 520,
+			// 	controls_rte: window.top.rte_toolbar,
+			// 	controls_html: window.top.html_toolbar
+			// });
+			callback();
+		}, 0);
 		return;
 	}
 
 	/**
 	 * エディタUIで編集した内容を保存
 	 */
-	this.saveEditorContent = function( $dom, data, mod, callback ){
+	this.saveEditorContent = function( elm, data, mod, callback ){
+		var $dom = $(elm);
 		// var win = $iframe.get(0).contentWindow;
 		// var src = win.tinymce.get('tinymce_editor').getContent()
 		var src = editors[0].get_content();

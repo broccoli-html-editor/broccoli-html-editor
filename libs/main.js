@@ -211,7 +211,8 @@ module.exports = function(options){
 	 * @return {Object}            this
 	 */
 	this.buildHtml = function( options, callback ){
-		var dataJson = require( this.realpathDataDir+'/data.json' );
+		var dataJson = fs.readFileSync(this.realpathDataDir+'/data.json');
+		dataJson = JSON.parse( dataJson );
 		dataJson.bowl = dataJson.bowl||{};
 
 		this.resourceMgr.init( function(){

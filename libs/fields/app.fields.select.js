@@ -67,21 +67,18 @@ module.exports = function(broccoli){
 			.append( $select )
 		;
 		$(elm).html(rtn);
-		setTimeout(function(){ callback(); }, 0);
-		return;
-	}
 
-	/**
-	 * エディタUIが描画されたら呼ばれるコールバック
-	 */
-	this.onEditorUiDrawn = function( $dom, mod, data ){
+		setTimeout(function(){
+			callback();
+		}, 0);
 		return;
 	}
 
 	/**
 	 * エディタUIで編集した内容を保存
 	 */
-	this.saveEditorContent = function( $dom, data, mod, callback ){
+	this.saveEditorContent = function( elm, data, mod, callback ){
+		var $dom = $(elm);
 		var src = $dom.find('select').val();
 		src = JSON.parse( JSON.stringify(src) );
 		callback(src);

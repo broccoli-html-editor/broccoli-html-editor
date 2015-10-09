@@ -73,7 +73,18 @@ module.exports = function(broccoli){
 		);
 
 		$(elm).html(rtn);
-		setTimeout(function(){ callback(); }, 0);
+		setTimeout(function(){
+			// px.textEditor.attachTextEditor(
+			// 	$dom.find('textarea').get(0),
+			// 	'html'
+			// );
+			// $dom.find('.CodeMirror').css({
+			// 	'border': '1px solid #ccc',
+			// 	'border-radius': '3px'
+			// });
+
+			callback();
+		}, 0);
 		return;
 	}
 
@@ -82,9 +93,9 @@ module.exports = function(broccoli){
 	 * mkEditor() の非同期化の仕様変更に伴い、mkEditor() 内に含められるようになりました。
 	 * 不要になるので、削除します。
 	 */
-	this.onEditorUiDrawn = function( $dom, mod, data ){
-		return;
-	}
+	// this.onEditorUiDrawn = function( $dom, mod, data ){
+	// 	return;
+	// }
 
 	/**
 	 * データを複製する
@@ -98,8 +109,8 @@ module.exports = function(broccoli){
 	/**
 	 * エディタUIで編集した内容を保存
 	 */
-	this.saveEditorContent = function( $dom, data, mod, callback ){
-		var src = $dom.find('textarea').val();
+	this.saveEditorContent = function( elm, data, mod, callback ){
+		var src = $(elm).find('textarea').val();
 		src = JSON.parse( JSON.stringify(src) );
 		callback(src);
 		return;

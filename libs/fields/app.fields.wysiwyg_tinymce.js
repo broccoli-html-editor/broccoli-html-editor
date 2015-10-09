@@ -39,22 +39,18 @@ module.exports = function(broccoli){
 		;
 
 		$(elm).html(rtn);
-		setTimeout(function(){ callback(); }, 0);
-		return;
-	}
-
-	/**
-	 * エディタUIが描画されたら呼ばれるコールバック
-	 */
-	this.onEditorUiDrawn = function( $dom, mod, data ){
-		// window.top.tinymce = tinymce;
+		setTimeout(function(){
+			// window.top.tinymce = tinymce;
+			callback();
+		}, 0);
 		return;
 	}
 
 	/**
 	 * エディタUIで編集した内容を保存
 	 */
-	this.saveEditorContent = function( $dom, data, mod, callback ){
+	this.saveEditorContent = function( elm, data, mod, callback ){
+		var $dom = $(elm);
 		var win = $iframe.get(0).contentWindow;
 		var src = win.tinymce.get('tinymce_editor').getContent()
 		if( typeof(src) !== typeof('') ){ src = ''; }

@@ -13,22 +13,17 @@ module.exports = function(broccoli){
 		if( mode == 'canvas' && !rtn.length ){
 			rtn = '(ダブルクリックしてテキストを編集してください)';
 		}
-		setTimeout(function(){ callback(rtn); }, 0);
-		return;
-	}
-
-	/**
-	 * エディタUIが描画されたら呼ばれるコールバック
-	 */
-	this.onEditorUiDrawn = function( $dom, mod, data ){
-		px.textEditor.attachTextEditor(
-			$dom.find('textarea').get(0),
-			'text'
-		);
-		$dom.find('.CodeMirror').css({
-			'border': '1px solid #ccc',
-			'border-radius': '3px'
-		});
+		setTimeout(function(){
+			// px.textEditor.attachTextEditor(
+			// 	$dom.find('textarea').get(0),
+			// 	'text'
+			// );
+			// $dom.find('.CodeMirror').css({
+			// 	'border': '1px solid #ccc',
+			// 	'border-radius': '3px'
+			// });
+			callback(rtn);
+		}, 0);
 		return;
 	}
 
