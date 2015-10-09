@@ -47,7 +47,7 @@ module.exports = function(broccoli){
 	/**
 	 * プレビュー用の簡易なHTMLを生成する
 	 */
-	this.mkPreviewHtml = function( fieldData, mod ){
+	this.mkPreviewHtml = function( fieldData, mod, callback ){
 		// InstanceTreeViewで利用する
 		fieldData = fieldData||{};
 		var rtn = '';
@@ -55,7 +55,9 @@ module.exports = function(broccoli){
 			rtn += fieldData.output;
 		}
 		rtn = $('<table>'+rtn+'</table>');
-		return rtn.get(0).outerHTML;
+
+		callback( rtn.get(0).outerHTML );
+		return;
 	}
 
 	/**

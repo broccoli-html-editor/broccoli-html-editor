@@ -49,7 +49,7 @@ module.exports = function(broccoli){
 	/**
 	 * プレビュー用の簡易なHTMLを生成する
 	 */
-	this.mkPreviewHtml = function( fieldData, mod ){
+	this.mkPreviewHtml = function( fieldData, mod, callback ){
 		var rtn = {}
 		if( typeof(fieldData) === typeof({}) ){
 			rtn = fieldData;
@@ -65,7 +65,9 @@ module.exports = function(broccoli){
 			'max-width': 200,
 			'max-height': 200
 		});
-		return rtn.get(0).outerHTML;
+
+		callback( rtn.get(0).outerHTML );
+		return;
 	}
 
 	/**

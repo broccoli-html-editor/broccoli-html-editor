@@ -29,7 +29,7 @@ module.exports = function(broccoli){
 	/**
 	 * プレビュー用の簡易なHTMLを生成する
 	 */
-	this.mkPreviewHtml = function( fieldData, mod ){
+	this.mkPreviewHtml = function( fieldData, mod, callback ){
 		// InstanceTreeViewで利用する
 		var rtn = this.bind(fieldData, 'finalize', mod);
 		var $rtn = $('<div>').append(rtn);
@@ -39,11 +39,14 @@ module.exports = function(broccoli){
 			;
 		});
 		$rtn.find('style').remove(); // styleタグも削除しちゃう
-		return $rtn.html();
+
+		callback( $rtn.html() );
+		return;
 	}
 
 	/**
 	 * データを正規化する
+	 * このメソッドは、同期的に振る舞います。
 	 */
 	this.normalizeData = function( fieldData, mode ){
 		// 編集画面用にデータを初期化。
