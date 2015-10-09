@@ -99,15 +99,15 @@ module.exports = function(broccoli){
 					.removeAttr('disabled')
 					.bind('submit', function(){
 						// 編集内容を保存する
-						console.log( data );
-						console.log( mod );
+						// console.log( data );
+						// console.log( mod );
 
 						it79.ary(
 							mod.fields,
 							function(it2, field2, fieldName2){
 								var $dom = $editWindow.find('[data-broccoli-edit-window-field-name='+field2.name+']');
 								var fieldDefinition = broccoli.getFieldDefinition(field2.type);
-								fieldDefinition.saveEditorContent($dom.get(0), data.fields[fieldName2], mod, function(result){
+								fieldDefinition.saveEditorContent($dom.get(0), data.fields[fieldName2], mod.fields[fieldName2], function(result){
 									data.fields[fieldName2] = result;
 									it2.next();
 								});

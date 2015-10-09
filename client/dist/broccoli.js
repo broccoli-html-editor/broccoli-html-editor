@@ -891,15 +891,15 @@ module.exports = function(broccoli){
 					.removeAttr('disabled')
 					.bind('submit', function(){
 						// 編集内容を保存する
-						console.log( data );
-						console.log( mod );
+						// console.log( data );
+						// console.log( mod );
 
 						it79.ary(
 							mod.fields,
 							function(it2, field2, fieldName2){
 								var $dom = $editWindow.find('[data-broccoli-edit-window-field-name='+field2.name+']');
 								var fieldDefinition = broccoli.getFieldDefinition(field2.type);
-								fieldDefinition.saveEditorContent($dom.get(0), data.fields[fieldName2], mod, function(result){
+								fieldDefinition.saveEditorContent($dom.get(0), data.fields[fieldName2], mod.fields[fieldName2], function(result){
 									data.fields[fieldName2] = result;
 									it2.next();
 								});
@@ -1984,6 +1984,7 @@ module.exports = function(broccoli){
 
 },{"marked":25}],14:[function(require,module,exports){
 module.exports = function(broccoli){
+	var php = require('phpjs');
 
 	/**
 	 * データをバインドする
@@ -1993,8 +1994,7 @@ module.exports = function(broccoli){
 		if(typeof(fieldData)===typeof({}) && typeof(fieldData.src)===typeof('')){
 			switch( fieldData.editor ){
 				case 'text':
-					rtn = php.htmlspecialchars( fieldData ); // ←HTML特殊文字変換
-					rtn = rtn.replace(new RegExp('\"','g'), '&quot;'); // ← jqueryで `.html()` しても、ダブルクオートは変換してくれないみたい。
+					rtn = php.htmlspecialchars( fieldData.src ); // ←HTML特殊文字変換
 					rtn = rtn.replace(new RegExp('\r\n|\r|\n','g'), '<br />'); // ← 改行コードは改行タグに変換
 					break;
 				case 'markdown':
@@ -2058,9 +2058,9 @@ module.exports = function(broccoli){
 				.css({'width':'100%','height':'auto'})
 			)
 			.append($('<ul class="horizontal">')
-				.append($('<li class="horizontal-li"><label><input type="radio" name="editor-'+mod.name+'" value="" /> HTML</label></li>'))
-				.append($('<li class="horizontal-li"><label><input type="radio" name="editor-'+mod.name+'" value="text" /> テキスト</label></li>'))
-				.append($('<li class="horizontal-li"><label><input type="radio" name="editor-'+mod.name+'" value="markdown" /> Markdown</label></li>'))
+				.append($('<li class="horizontal-li"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="" /> HTML</label></li>'))
+				.append($('<li class="horizontal-li"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="text" /> テキスト</label></li>'))
+				.append($('<li class="horizontal-li"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="markdown" /> Markdown</label></li>'))
 			)
 		;
 		rtn.find('textarea').val(data.src);
@@ -2087,6 +2087,7 @@ module.exports = function(broccoli){
 	 */
 	this.saveEditorContent = function( elm, data, mod, callback ){
 		var $dom = $(elm);
+		// console.log($dom.html());
 		if(typeof(data) !== typeof({})){
 			data = {};
 		}
@@ -2094,13 +2095,15 @@ module.exports = function(broccoli){
 		data.src = JSON.parse( JSON.stringify(data.src) );
 		data.editor = $dom.find('input[type=radio][name=editor-'+mod.name+']:checked').val();
 
-		callback(data);
+		setTimeout(function(){
+			callback(data);
+		}, 0);
 		return;
 	}
 
 }
 
-},{"marked":25}],15:[function(require,module,exports){
+},{"marked":25,"phpjs":27}],15:[function(require,module,exports){
 module.exports = function(broccoli){
 
 	/**

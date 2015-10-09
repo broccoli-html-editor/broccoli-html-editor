@@ -17,7 +17,34 @@ module.exports = function( data, callback, main, socket ){
 		'documentRoot': path.resolve(__dirname, '../../../testdata/htdocs/')+'/',
 		'pathHtml': '/editpage/index.html',
 		'pathResourceDir': '/editpage/index_files/resources/',
-		'realpathDataDir': path.resolve(__dirname, '../../../testdata/htdocs/editpage/index_files/guieditor.ignore/')+'/'
+		'realpathDataDir': path.resolve(__dirname, '../../../testdata/htdocs/editpage/index_files/guieditor.ignore/')+'/',
+		'bindTemplate': function(htmls, callback){
+			var fin = '';
+			fin += '<!DOCTYPE html>'+"\n";
+			fin += '<html>'+"\n";
+			fin += '    <head>'+"\n";
+			fin += '        <meta charset="utf-8" />'+"\n";
+			fin += '        <title>sample page</title>'+"\n";
+			fin += '        <style media="screen">'+"\n";
+			fin += '            img{max-width:100%;}'+"\n";
+			fin += '        </style>'+"\n";
+			fin += '    </head>'+"\n";
+			fin += '    <body>'+"\n";
+			fin += '        <h1>sample page</h1>'+"\n";
+			fin += '        <h2>main</h2>'+"\n";
+			fin += '        <div class="contents" data-contents="main">'+"\n";
+			fin += htmls['main']+"\n";
+			fin += '        </div><!-- /main -->'+"\n";
+			fin += '        <h2>secondly</h2>'+"\n";
+			fin += '        <div class="contents" data-contents="secondly">'+"\n";
+			fin += htmls['secondly']+"\n";
+			fin += '        </div><!-- /secondly -->'+"\n";
+			fin += '    </body>'+"\n";
+			fin += '</html>';
+
+			callback(fin);
+			return;
+		}
 	});
 
 

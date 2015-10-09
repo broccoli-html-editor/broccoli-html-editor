@@ -32,12 +32,40 @@ module.exports = function(broccoli, api, options, callback){
 		case "saveContentsDataJson":
 			var jsonString = JSON.stringify( options.data, null, 1 );
 			// console.log(jsonString);
-			fs.writeFile(
-				broccoli.realpathDataDir+'/data.json' ,
-				jsonString ,
-				function(){
-					callback(true);
-				}
+			it79.fnc(
+				{},
+				[
+					function(it1, data){
+						// contentsSourceData を保存する
+						fs.writeFile(
+							broccoli.realpathDataDir+'/data.json' ,
+							jsonString ,
+							function(){
+								it1.next(data);
+							}
+						);
+					} ,
+					function(it1, data){
+						// HTML本体を更新する
+						broccoli.buildHtml(
+							{"mode":"finalize"},
+							function(htmls){
+								broccoli.options.bindTemplate(htmls, function(fin){
+									fs.writeFile(
+										broccoli.realpathHtml ,
+										fin ,
+										function(){
+											it1.next(data);
+										}
+									);
+								});
+							}
+						);
+					} ,
+					function(it1, data){
+						callback(true);
+					}
+				]
 			);
 			break;
 		case "buildHtml":

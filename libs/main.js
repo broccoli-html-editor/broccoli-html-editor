@@ -15,6 +15,9 @@ module.exports = function(options){
 	options.pathHtml = options.pathHtml || null;
 	options.pathResourceDir = options.pathResourceDir || null;
 	options.realpathDataDir = options.realpathDataDir || null;
+	options.bindTemplate = options.bindTemplate || function(htmls, callback){
+		var fin = ''; for(var i in htmls){ fin += htmls[i]; } callback(fin);
+	};
 	if( !options.pathHtml || !options.pathResourceDir || !options.realpathDataDir ){
 		// 必須項目
 		// console.log(options);
