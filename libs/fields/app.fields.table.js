@@ -208,16 +208,17 @@ module.exports = function(broccoli){
 	/**
 	 * データを複製する
 	 */
-	this.duplicateData = function( data ){
+	this.duplicateData = function( data, callback ){
 		data = JSON.parse( JSON.stringify( data ) );
 		data.resKey = _resMgr.duplicateResource( data.resKey );
-		return data;
+		callback(data);
+		return;
 	}
 
 	/**
 	 * エディタUIで編集した内容を保存
 	 */
-	this.saveEditorContent = function( $dom, data, mod ){
+	this.saveEditorContent = function( $dom, data, mod, callback ){
 		if( typeof(data) !== typeof({}) ){
 			data = {};
 		}
@@ -266,7 +267,8 @@ module.exports = function(broccoli){
 		data.output = px.execSync( cmd );
 		data.output = JSON.parse(data.output+'');
 
-		return data;
+		callback(data);
+		return;
 	}// this.saveEditorContent()
 
 }

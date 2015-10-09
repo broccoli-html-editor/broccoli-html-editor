@@ -81,10 +81,11 @@ module.exports = function(broccoli){
 	/**
 	 * エディタUIで編集した内容を保存
 	 */
-	this.saveEditorContent = function( $dom, data, mod ){
+	this.saveEditorContent = function( $dom, data, mod, callback ){
 		var src = $dom.find('select').val();
 		src = JSON.parse( JSON.stringify(src) );
-		return src;
+		callback(src);
+		return;
 	}
 
 }

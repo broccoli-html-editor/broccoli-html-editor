@@ -76,6 +76,8 @@ module.exports = function(broccoli){
 
 	/**
 	 * エディタUIが描画されたら呼ばれるコールバック
+	 * mkEditor() の非同期化の仕様変更に伴い、mkEditor() 内に含められるようになりました。
+	 * 不要になるので、削除します。
 	 */
 	this.onEditorUiDrawn = function( $dom, mod, data ){
 		return;
@@ -84,18 +86,20 @@ module.exports = function(broccoli){
 	/**
 	 * データを複製する
 	 */
-	this.duplicateData = function( data ){
+	this.duplicateData = function( data, callback ){
 		data = JSON.parse( JSON.stringify( data ) );
-		return data;
+		callback(data);
+		return;
 	}
 
 	/**
 	 * エディタUIで編集した内容を保存
 	 */
-	this.saveEditorContent = function( $dom, data, mod ){
+	this.saveEditorContent = function( $dom, data, mod, callback ){
 		var src = $dom.find('textarea').val();
 		src = JSON.parse( JSON.stringify(src) );
-		return src;
+		callback(src);
+		return;
 	}
 
 }

@@ -104,14 +104,16 @@ module.exports = function(broccoli){
 	/**
 	 * エディタUIで編集した内容を保存
 	 */
-	this.saveEditorContent = function( $dom, data, mod ){
+	this.saveEditorContent = function( $dom, data, mod, callback ){
 		if(typeof(data) !== typeof({})){
 			data = {};
 		}
 		data.src = $dom.find('textarea').val();
 		data.src = JSON.parse( JSON.stringify(data.src) );
 		data.editor = $dom.find('input[type=radio][name=editor-'+mod.name+']:checked').val();
-		return data;
+
+		callback(data);
+		return;
 	}
 
 }

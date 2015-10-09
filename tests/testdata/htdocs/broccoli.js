@@ -1481,6 +1481,8 @@ module.exports = function(broccoli){
 
 	/**
 	 * エディタUIが描画されたら呼ばれるコールバック
+	 * mkEditor() の非同期化の仕様変更に伴い、mkEditor() 内に含められるようになりました。
+	 * 不要になるので、削除します。
 	 */
 	this.onEditorUiDrawn = function( $dom, mod, data ){
 		return;
@@ -1489,18 +1491,20 @@ module.exports = function(broccoli){
 	/**
 	 * データを複製する
 	 */
-	this.duplicateData = function( data ){
+	this.duplicateData = function( data, callback ){
 		data = JSON.parse( JSON.stringify( data ) );
-		return data;
+		callback(data);
+		return;
 	}
 
 	/**
 	 * エディタUIで編集した内容を保存
 	 */
-	this.saveEditorContent = function( $dom, data, mod ){
+	this.saveEditorContent = function( $dom, data, mod, callback ){
 		var src = $dom.find('textarea').val();
 		src = JSON.parse( JSON.stringify(src) );
-		return src;
+		callback(src);
+		return;
 	}
 
 }
@@ -1512,7 +1516,7 @@ module.exports = function(broccoli){
 	/**
 	 * データをバインドする
 	 */
-	this.bind = function( fieldData, mode, callback ){
+	this.bind = function( fieldData, mode, mod, callback ){
 		var rtn = ''
 		if(typeof(fieldData)===typeof('')){
 			rtn = php.htmlspecialchars( fieldData ); // ←HTML特殊文字変換
@@ -1618,10 +1622,11 @@ module.exports = function(broccoli){
 	/**
 	 * エディタUIで編集した内容を保存
 	 */
-	this.saveEditorContent = function( $dom, data, mod ){
+	this.saveEditorContent = function( $dom, data, mod, callback ){
 		var src = $dom.find('input').val();
 		src = JSON.parse( JSON.stringify(src) );
-		return src;
+		callback(src);
+		return;
 	}
 
 }
@@ -1653,7 +1658,7 @@ module.exports = function(broccoli){
 	/**
 	 * データをバインドする
 	 */
-	this.bind = function( fieldData, mode, callback ){
+	this.bind = function( fieldData, mode, mod, callback ){
 		var rtn = ''
 		if(typeof(fieldData)===typeof('')){
 			rtn = php.htmlspecialchars( fieldData ); // ←HTML特殊文字変換
@@ -1711,7 +1716,7 @@ module.exports = function(broccoli){
 	/**
 	 * データをバインドする
 	 */
-	this.bind = function( fieldData, mode, callback ){
+	this.bind = function( fieldData, mode, mod, callback ){
 		var rtn = {}
 		if( typeof(fieldData) === typeof({}) ){
 			rtn = fieldData;
@@ -1846,17 +1851,18 @@ module.exports = function(broccoli){
 	/**
 	 * データを複製する
 	 */
-	this.duplicateData = function( data ){
+	this.duplicateData = function( data, callback ){
 		data = JSON.parse( JSON.stringify( data ) );
 		data.resKey = _resMgr.duplicateResource( data.resKey );
 		data.path = _resMgr.getResourcePublicPath( data.resKey );
-		return data;
+		callback(data);
+		return;
 	}
 
 	/**
 	 * エディタUIで編集した内容を保存
 	 */
-	this.saveEditorContent = function( $dom, data, mod ){
+	this.saveEditorContent = function( $dom, data, mod, callback ){
 		if( typeof(data) !== typeof({}) ){
 			data = {};
 		}
@@ -1879,7 +1885,8 @@ module.exports = function(broccoli){
 		// var res = _resMgr.getResource( data.resKey );
 		data.path = _resMgr.getResourcePublicPath( data.resKey );
 
-		return data;
+		callback(data);
+		return;
 	}// this.saveEditorContent()
 
 }
@@ -1890,7 +1897,7 @@ module.exports = function(broccoli){
 	/**
 	 * データをバインドする
 	 */
-	this.bind = function( fieldData, mode, callback ){
+	this.bind = function( fieldData, mode, mod, callback ){
 		var rtn = ''
 		var marked = require('marked');
 		marked.setOptions({
@@ -1937,7 +1944,7 @@ module.exports = function(broccoli){
 	/**
 	 * データをバインドする
 	 */
-	this.bind = function( fieldData, mode, callback ){
+	this.bind = function( fieldData, mode, mod, callback ){
 		var rtn = ''
 		if(typeof(fieldData)===typeof({}) && typeof(fieldData.src)===typeof('')){
 			switch( fieldData.editor ){
@@ -2038,14 +2045,16 @@ module.exports = function(broccoli){
 	/**
 	 * エディタUIで編集した内容を保存
 	 */
-	this.saveEditorContent = function( $dom, data, mod ){
+	this.saveEditorContent = function( $dom, data, mod, callback ){
 		if(typeof(data) !== typeof({})){
 			data = {};
 		}
 		data.src = $dom.find('textarea').val();
 		data.src = JSON.parse( JSON.stringify(data.src) );
 		data.editor = $dom.find('input[type=radio][name=editor-'+mod.name+']:checked').val();
-		return data;
+
+		callback(data);
+		return;
 	}
 
 }
@@ -2134,10 +2143,11 @@ module.exports = function(broccoli){
 	/**
 	 * エディタUIで編集した内容を保存
 	 */
-	this.saveEditorContent = function( $dom, data, mod ){
+	this.saveEditorContent = function( $dom, data, mod, callback ){
 		var src = $dom.find('select').val();
 		src = JSON.parse( JSON.stringify(src) );
-		return src;
+		callback(src);
+		return;
 	}
 
 }
@@ -2173,7 +2183,7 @@ module.exports = function(broccoli){
 	/**
 	 * データをバインドする
 	 */
-	this.bind = function( fieldData, mode, callback ){
+	this.bind = function( fieldData, mode, mod, callback ){
 		fieldData = fieldData||{};
 		var rtn = '';
 		if( fieldData.output ){
@@ -2353,16 +2363,17 @@ module.exports = function(broccoli){
 	/**
 	 * データを複製する
 	 */
-	this.duplicateData = function( data ){
+	this.duplicateData = function( data, callback ){
 		data = JSON.parse( JSON.stringify( data ) );
 		data.resKey = _resMgr.duplicateResource( data.resKey );
-		return data;
+		callback(data);
+		return;
 	}
 
 	/**
 	 * エディタUIで編集した内容を保存
 	 */
-	this.saveEditorContent = function( $dom, data, mod ){
+	this.saveEditorContent = function( $dom, data, mod, callback ){
 		if( typeof(data) !== typeof({}) ){
 			data = {};
 		}
@@ -2411,7 +2422,8 @@ module.exports = function(broccoli){
 		data.output = px.execSync( cmd );
 		data.output = JSON.parse(data.output+'');
 
-		return data;
+		callback(data);
+		return;
 	}// this.saveEditorContent()
 
 }
@@ -2423,7 +2435,7 @@ module.exports = function(broccoli){
 	/**
 	 * データをバインドする
 	 */
-	this.bind = function( fieldData, mode, callback ){
+	this.bind = function( fieldData, mode, mod, callback ){
 		var rtn = ''
 		if(typeof(fieldData)===typeof('')){
 			rtn = php.htmlspecialchars( fieldData ); // ←HTML特殊文字変換
@@ -2529,13 +2541,14 @@ module.exports = function(broccoli){
 	/**
 	 * エディタUIで編集した内容を保存
 	 */
-	this.saveEditorContent = function( $dom, data, mod ){
+	this.saveEditorContent = function( $dom, data, mod, callback ){
 		// var win = $iframe.get(0).contentWindow;
 		// var src = win.tinymce.get('tinymce_editor').getContent()
 		var src = editors[0].get_content();
 		if( typeof(src) !== typeof('') ){ src = ''; }
 		src = JSON.parse( JSON.stringify(src) );
-		return src;
+		callback(src);
+		return;
 	}
 
 
@@ -2598,14 +2611,14 @@ module.exports = function(broccoli){
 	/**
 	 * エディタUIで編集した内容を保存
 	 */
-	this.saveEditorContent = function( $dom, data, mod ){
+	this.saveEditorContent = function( $dom, data, mod, callback ){
 		var win = $iframe.get(0).contentWindow;
 		var src = win.tinymce.get('tinymce_editor').getContent()
 		if( typeof(src) !== typeof('') ){ src = ''; }
 		src = JSON.parse( JSON.stringify(src) );
-		return src;
+		callback(src);
+		return;
 	}
-
 
 }
 
