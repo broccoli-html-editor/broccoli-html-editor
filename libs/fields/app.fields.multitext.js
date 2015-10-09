@@ -58,7 +58,7 @@ module.exports = function(broccoli){
 	/**
 	 * エディタUIを生成
 	 */
-	this.mkEditor = function( mod, data ){
+	this.mkEditor = function( mod, data, elm, callback ){
 		var rows = 12;
 		if( mod.rows ){
 			rows = mod.rows;
@@ -80,7 +80,9 @@ module.exports = function(broccoli){
 		rtn.find('textarea').val(data.src);
 		rtn.find('input[type=radio][name=editor-'+mod.name+'][value="'+data.editor+'"]').attr({'checked':'checked'});
 
-		return rtn;
+		$(elm).html(rtn);
+		setTimeout(function(){ callback(); }, 0);
+		return;
 	}
 
 	/**

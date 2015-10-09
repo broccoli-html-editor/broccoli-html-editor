@@ -5257,6 +5257,9 @@
     background-color: rgba(255, 255, 204, 0.4);
     opacity: 1 !important; }
 
+.broccoli--edit-window-fields {
+  margin: 0.5em 0 1em 0; }
+
 .broccoli--lightbox {
   position: fixed;
   top: 0;

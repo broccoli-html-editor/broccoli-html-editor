@@ -38,7 +38,7 @@ module.exports = function(broccoli){
 	/**
 	 * エディタUIを生成
 	 */
-	this.mkEditor = function( mod, data ){
+	this.mkEditor = function( mod, data, elm, callback ){
 
 		var $select = $('<select>')
 			.attr({
@@ -65,7 +65,9 @@ module.exports = function(broccoli){
 		var rtn = $('<div>')
 			.append( $select )
 		;
-		return rtn;
+		$(elm).html(rtn);
+		setTimeout(function(){ callback(); }, 0);
+		return;
 	}
 
 	/**

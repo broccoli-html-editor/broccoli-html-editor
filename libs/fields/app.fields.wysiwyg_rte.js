@@ -10,7 +10,7 @@ module.exports = function(broccoli){
 	/**
 	 * エディタUIを生成
 	 */
-	this.mkEditor = function( mod, data ){
+	this.mkEditor = function( mod, data, elm, callback ){
 		var rows = 12;
 		if( mod.rows ){
 			rows = mod.rows;
@@ -52,7 +52,9 @@ module.exports = function(broccoli){
 		// 		.css({'width':'100%','height':'auto'})
 		// );
 
-		return rtn;
+		$(elm).html(rtn);
+		setTimeout(function(){ callback(); }, 0);
+		return;
 	}
 
 	/**

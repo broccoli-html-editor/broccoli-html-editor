@@ -19,7 +19,7 @@ module.exports = function(broccoli){
 	/**
 	 * エディタUIを生成
 	 */
-	this.mkEditor = function( mod, data ){
+	this.mkEditor = function( mod, data, elm, callback ){
 		var changeTimer;
 		var blurTimer;
 		function onChange(){
@@ -61,7 +61,7 @@ module.exports = function(broccoli){
 				"name":mod.name
 			})
 			.val(data)
-			.data( 'pages', px.getCurrentProject().site.getSitemap() )
+			// .data( 'pages', px.getCurrentProject().site.getSitemap() )
 			.css({'width':'100%','height':'auto'})
 			.change( onChange )
 			.keyup( onChange )
@@ -89,7 +89,7 @@ module.exports = function(broccoli){
 			})
 			.hide()
 		;
-		return $('<div>')
+		var rtn = $('<div>')
 			.append( $input )
 			.append( $('<div>')
 				.css({
@@ -101,6 +101,9 @@ module.exports = function(broccoli){
 				.append( $palatte )
 			)
 		;
+		$(elm).html(rtn);
+		setTimeout(function(){ callback(); }, 0);
+		return;
 	}
 
 	/**

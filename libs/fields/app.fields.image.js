@@ -84,7 +84,7 @@ module.exports = function(broccoli){
 	/**
 	 * エディタUIを生成
 	 */
-	this.mkEditor = function( mod, data ){
+	this.mkEditor = function( mod, data, elm, callback ){
 		var rtn = $('<div>');
 		if( typeof(data) !== typeof({}) ){ data = {}; }
 		if( typeof(data.resKey) !== typeof('') ){
@@ -151,7 +151,9 @@ module.exports = function(broccoli){
 					.val( (typeof(res.publicFilename)==typeof('') ? res.publicFilename : '') )
 				)
 		);
-		return rtn;
+		$(elm).html(rtn);
+		setTimeout(function(){ callback(); }, 0);
+		return;
 	}
 
 	/**
