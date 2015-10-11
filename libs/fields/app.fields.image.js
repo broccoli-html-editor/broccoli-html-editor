@@ -39,7 +39,7 @@ module.exports = function(broccoli){
 						if( mode == 'finalize' ){
 							_resMgr.getResourcePublicPath( rtn.resKey, function(publicPath){
 								rtn.path = publicPath;
-								it1.next();
+								it1.next(data);
 							} );
 							return;
 						}else if( mode == 'canvas' ){
@@ -49,10 +49,10 @@ module.exports = function(broccoli){
 								// ↓ ダミーの Sample Image
 								rtn.path = _imgDummy;
 							}
-							it1.next();
+							it1.next(data);
 							return;
 						}
-						it1.next();
+						it1.next(data);
 						return;
 					} );
 				},

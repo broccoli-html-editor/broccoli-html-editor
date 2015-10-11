@@ -196,7 +196,8 @@ module.exports = function(broccoli){
 		callback = callback || function(){};
 		if( typeof(_resourceDb[resKey]) !== typeof({}) ){
 			// 未登録の resKey
-			return false;
+			callback(false);
+			return this;
 		}
 		callback(_resourceDb[resKey]);
 		return this;
@@ -210,7 +211,8 @@ module.exports = function(broccoli){
 		callback = callback || function(){};
 		if( typeof(_resourceDb[resKey]) !== typeof({}) ){
 			// 未登録の resKey
-			return false;
+			callback(false);
+			return this;
 		}
 		var newResKey = this.addResource();
 		_resourceDb[newResKey] = JSON.parse( JSON.stringify( _resourceDb[resKey] ) );
@@ -259,7 +261,8 @@ module.exports = function(broccoli){
 		callback = callback || function(){};
 		if( typeof(_resourceDb[resKey]) !== typeof({}) ){
 			// 未登録の resKey
-			return false;
+			callback(false);
+			return this;
 		}
 		var realpath = this.getResourceOriginalRealpath( resKey );
 

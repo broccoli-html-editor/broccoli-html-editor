@@ -1921,7 +1921,7 @@ module.exports = function(broccoli){
 						if( mode == 'finalize' ){
 							_resMgr.getResourcePublicPath( rtn.resKey, function(publicPath){
 								rtn.path = publicPath;
-								it1.next();
+								it1.next(data);
 							} );
 							return;
 						}else if( mode == 'canvas' ){
@@ -1931,10 +1931,10 @@ module.exports = function(broccoli){
 								// ↓ ダミーの Sample Image
 								rtn.path = _imgDummy;
 							}
-							it1.next();
+							it1.next(data);
 							return;
 						}
-						it1.next();
+						it1.next(data);
 						return;
 					} );
 				},
@@ -1958,19 +1958,20 @@ module.exports = function(broccoli){
 		if( typeof(fieldData) === typeof({}) ){
 			rtn = fieldData;
 		}
-		var res = _resMgr.getResource( rtn.resKey );
-		rtn.path = 'data:'+res.type+';base64,' + res.base64;
-		if( !res.base64 ){
-			// ↓ ダミーの Sample Image
-			rtn.path = _imgDummy;
-		}
-		rtn = $('<img src="'+rtn.path+'" />');
-		rtn.css({
-			'max-width': 200,
-			'max-height': 200
-		});
+		_resMgr.getResource( rtn.resKey, function(res){
+			rtn.path = 'data:'+res.type+';base64,' + res.base64;
+			if( !res.base64 ){
+				// ↓ ダミーの Sample Image
+				rtn.path = _imgDummy;
+			}
+			rtn = $('<img src="'+rtn.path+'" />');
+			rtn.css({
+				'max-width': 200,
+				'max-height': 200
+			});
 
-		callback( rtn.get(0).outerHTML );
+			callback( rtn.get(0).outerHTML );
+		} );
 		return;
 	}
 
@@ -1998,68 +1999,70 @@ module.exports = function(broccoli){
 			data.resKey = '';
 		}
 		// if( typeof(data.original) !== typeof({}) ){ data.original = {}; }
-		var res = _resMgr.getResource( data.resKey );
-		var path = 'data:'+res.type+';base64,' + res.base64;
-		if( !res.base64 ){
-			// ↓ ダミーの Sample Image
-			path = _imgDummy;
-		}
+		_resMgr.getResource( data.resKey, function(res){
+			var path = 'data:'+res.type+';base64,' + res.base64;
+			if( !res.base64 ){
+				// ↓ ダミーの Sample Image
+				path = _imgDummy;
+			}
 
-		var $img = $('<img>');
-		rtn.append( $img
-			.attr({
-				"src": path
-			})
-			.css({
-				'min-width':'100px',
-				'max-width':'100%',
-				'min-height':'100px',
-				'max-height':'200px'
-			})
-		);
-		rtn.append( $('<input>')
-			.attr({
-				"name":mod.name ,
-				"type":"file",
-				"webkitfile":"webkitfile"
-			})
-			.css({'width':'100%'})
-			.bind('change', function(){
-				var realpathSelected = $(this).val();
-				if( realpathSelected ){
-					var tmpResInfo = parseResource( realpathSelected );
-					var bin = px.fs.readFileSync( realpathSelected, {} );
-					var newPath = 'data:'+tmpResInfo.type+';base64,' + px.utils.base64encode( bin );
-					$img
+			var $img = $('<img>');
+			rtn.append( $img
+				.attr({
+					"src": path
+				})
+				.css({
+					'min-width':'100px',
+					'max-width':'100%',
+					'min-height':'100px',
+					'max-height':'200px'
+				})
+			);
+			rtn.append( $('<input>')
+				.attr({
+					"name":mod.name ,
+					"type":"file",
+					"webkitfile":"webkitfile"
+				})
+				.css({'width':'100%'})
+				.bind('change', function(){
+					var realpathSelected = $(this).val();
+					if( realpathSelected ){
+						var tmpResInfo = parseResource( realpathSelected );
+						var bin = px.fs.readFileSync( realpathSelected, {} );
+						var newPath = 'data:'+tmpResInfo.type+';base64,' + px.utils.base64encode( bin );
+						$img
+							.attr({
+								"src": newPath
+							})
+						;
+					}else{
+						$img
+							.attr({
+								"src": path
+							})
+						;
+					}
+				})
+			);
+			rtn.append(
+				$('<div>')
+					.append( $('<span>')
+						.text('出力ファイル名(拡張子を含まない):')
+					)
+					.append( $('<input>')
 						.attr({
-							"src": newPath
+							"name":mod.name+'-publicFilename' ,
+							"type":"text",
+							"placeholder": "output file name"
 						})
-					;
-				}else{
-					$img
-						.attr({
-							"src": path
-						})
-					;
-				}
-			})
-		);
-		rtn.append(
-			$('<div>')
-				.append( $('<span>')
-					.text('出力ファイル名(拡張子を含まない):')
-				)
-				.append( $('<input>')
-					.attr({
-						"name":mod.name+'-publicFilename' ,
-						"type":"text",
-						"placeholder": "output file name"
-					})
-					.val( (typeof(res.publicFilename)==typeof('') ? res.publicFilename : '') )
-				)
-		);
-		$(elm).html(rtn);
-		setTimeout(function(){ callback(); }, 0);
+						.val( (typeof(res.publicFilename)==typeof('') ? res.publicFilename : '') )
+					)
+			);
+			$(elm).html(rtn);
+
+			setTimeout(function(){ callback(); }, 0);
+		} );
 		return;
 	}
 
@@ -2068,9 +2071,27 @@ module.exports = function(broccoli){
 	 */
 	this.duplicateData = function( data, callback ){
 		data = JSON.parse( JSON.stringify( data ) );
-		data.resKey = _resMgr.duplicateResource( data.resKey );
-		data.path = _resMgr.getResourcePublicPath( data.resKey );
-		callback(data);
+		it79.fnc(
+			data,
+			[
+				function(it1, data){
+					_resMgr.duplicateResource( data.resKey, function(newResKey){
+						data.resKey = newResKey;
+						it1.next(data);
+					} );
+				} ,
+				function(it1, data){
+					_resMgr.getResourcePublicPath( data.resKey, function(publicPath){
+						data.path = publicPath;
+						it1.next(data);
+					} );
+				} ,
+				function(it1, data){
+					callback(data);
+					it1.next(data);
+				}
+			]
+		);
 		return;
 	}
 
@@ -2085,23 +2106,51 @@ module.exports = function(broccoli){
 		if( typeof(data.resKey) !== typeof('') ){
 			data.resKey = '';
 		}
-		if( _resMgr.getResource(data.resKey) === false ){
-			data.resKey = _resMgr.addResource();
-		}
-		var resInfo = _resMgr.getResource(data.resKey);
+		var resInfo, realpathSelected;
+		it79.fnc(
+			data,
+			[
+				function(it1, data){
+					_resMgr.getResource(data.resKey, function(result){
+						if( result === false ){
+							_resMgr.addResource(function(newResKey){
+								data.resKey = newResKey;
+								it1.next(data);
+							});
+							return;
+						}
+						it1.next(data);
+					});
+				} ,
+				function(it1, data){
+					_resMgr.getResource(data.resKey, function(res){
+						resInfo = res;
+						it1.next(data);
+					});
+					return;
+				} ,
+				function(it1, data){
+					realpathSelected = $dom.find('input[type=file]').val();
+					if( realpathSelected ){
+						resInfo = parseResource( realpathSelected, resInfo );
+					}
+					resInfo.publicFilename = $dom.find('input[name='+mod.name+'-publicFilename]').val();
 
-		var realpathSelected = $dom.find('input[type=file]').val();
-		if( realpathSelected ){
-			resInfo = parseResource( realpathSelected, resInfo );
-		}
-		resInfo.publicFilename = $dom.find('input[name='+mod.name+'-publicFilename]').val();
+					_resMgr.updateResource( data.resKey, resInfo, realpathSelected, function(){
+						// var res = _resMgr.getResource( data.resKey );
+						_resMgr.getResourcePublicPath( data.resKey, function(publicPath){
+							data.path = publicPath;
+							it1.next(data);
+						} );
+					} );
 
-		_resMgr.updateResource( data.resKey, resInfo, realpathSelected );
-
-		// var res = _resMgr.getResource( data.resKey );
-		data.path = _resMgr.getResourcePublicPath( data.resKey );
-
-		callback(data);
+				} ,
+				function(it1, data){
+					callback(data);
+					it1.next(data);
+				}
+			]
+		);
 		return;
 	}// this.saveEditorContent()
 
