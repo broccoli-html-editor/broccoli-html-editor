@@ -600,7 +600,7 @@ module.exports = function(broccoli){
 			[
 				function( it1, data ){
 					broccoli.gpi(
-						'saveContentsDataJson',
+						'saveContentsData',
 						{
 							'data': _contentsSourceData
 						},

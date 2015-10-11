@@ -19,6 +19,7 @@
   "homepage": "https://github.com/tomk79/broccoli#readme",
   "dependencies": {
     "es6-promise": "^3.0.2",
+    "fs-extra": "^0.24.0",
     "glob": "^5.0.14",
     "htmlparser": "^1.7.7",
     "iterate79": "0.0.1",

@@ -6,6 +6,7 @@ module.exports = function(broccoli){
 
 	var path = require('path');
 	var fs = require('fs');
+	var fsEx = require('fs-extra');
 	var php = require('phpjs');
 	var DIRECTORY_SEPARATOR = '/';
 
@@ -115,8 +116,8 @@ module.exports = function(broccoli){
 	 * @param  {Function} cb Callback function.
 	 * @return {boolean}     Always true.
 	 */
-	this.save = function( cb ){
-		cb = cb || function(){};
+	this.save = function( callback ){
+		callback = callback || function(){};
 
 		if( isDirectory( _resourcesPublishDirPath ) ){
 			// 公開リソースディレクトリを一旦削除
@@ -164,7 +165,7 @@ module.exports = function(broccoli){
 				}
 			}
 		}
-		cb();
+		callback(true);
 		return true;
 	}
 
@@ -172,7 +173,8 @@ module.exports = function(broccoli){
 	 * add resource
 	 * リソースの登録を行い、resKeyを生成して返す。
 	 */
-	this.addResource = function(){
+	this.addResource = function(callback){
+		callback = callback || function(){};
 		var newResKey;
 		while(1){
 			newResKey = php.md5( (new Date).getTime() );
@@ -183,25 +185,29 @@ module.exports = function(broccoli){
 			_resourceDb[newResKey] = {};//予約
 			break;
 		}
-		return newResKey;
+		callback( newResKey );
+		return this;
 	}
 
 	/**
 	 * get resource
 	 */
-	this.getResource = function( resKey ){
+	this.getResource = function( resKey, callback ){
+		callback = callback || function(){};
 		if( typeof(_resourceDb[resKey]) !== typeof({}) ){
 			// 未登録の resKey
 			return false;
 		}
-		return _resourceDb[resKey];
+		callback(_resourceDb[resKey]);
+		return this;
 	}
 
 	/**
 	 * duplicate resource
 	 * @return 複製された新しいリソースのキー
 	 */
-	this.duplicateResource = function( resKey ){
+	this.duplicateResource = function( resKey, callback ){
+		callback = callback || function(){};
 		if( typeof(_resourceDb[resKey]) !== typeof({}) ){
 			// 未登録の resKey
 			return false;
@@ -209,7 +215,9 @@ module.exports = function(broccoli){
 		var newResKey = this.addResource();
 		_resourceDb[newResKey] = JSON.parse( JSON.stringify( _resourceDb[resKey] ) );
 		fsEx.copySync( _resourcesDirPath+'/'+resKey, _resourcesDirPath+'/'+newResKey );
-		return newResKey;
+
+		callback( newResKey );
+		return this;
 	}
 
 	/**
@@ -226,10 +234,12 @@ module.exports = function(broccoli){
 	 * @param  {string} realpath Resource Realpath. - ファイルが置かれていた絶対パス
 	 * @return {boolean}        always true.
 	 */
-	this.updateResource = function( resKey, resInfo, realpath ){
+	this.updateResource = function( resKey, resInfo, realpath, callback ){
+		callback = callback || function(){};
 		if( typeof(_resourceDb[resKey]) !== typeof({}) ){
 			// 未登録の resKey
-			return false;
+			callback(false);
+			return this;
 		}
 		_resourceDb[resKey] = resInfo;
 
@@ -238,13 +248,15 @@ module.exports = function(broccoli){
 			_resourceDb[resKey].base64 = php.base64_encode( bin );
 		}
 
-		return true;
+		callback(true);
+		return this;
 	}
 
 	/**
 	 * Reset bin from base64
 	 */
-	this.resetBinFromBase64 = function( resKey ){
+	this.resetBinFromBase64 = function( resKey, callback ){
+		callback = callback || function(){};
 		if( typeof(_resourceDb[resKey]) !== typeof({}) ){
 			// 未登録の resKey
 			return false;
@@ -252,59 +264,74 @@ module.exports = function(broccoli){
 		var realpath = this.getResourceOriginalRealpath( resKey );
 
 		var bin = php.base64_decode( _resourceDb[resKey].base64 );
-		return fs.writeFileSync( realpath, bin, {} );
+		var result = fs.writeFileSync( realpath, bin, {} );
+
+		callback(result);
+		return this;
 	}
 
 	/**
 	 * Reset base64 from bin
 	 */
-	this.resetBase64FromBin = function( resKey ){
+	this.resetBase64FromBin = function( resKey, callback ){
+		callback = callback || function(){};
 		if( typeof(_resourceDb[resKey]) !== typeof({}) ){
 			// 未登録の resKey
-			return false;
+			callback(false);
+			return this;
 		}
 		var realpath = this.getResourceOriginalRealpath( resKey );
 
 		var bin = fs.readFileSync( realpath, {} );
 		_resourceDb[resKey].base64 = php.base64_encode( bin );
 
-		return true;
+		callback(true);
+		return this;
 	}
 
 	/**
 	 * get resource public path
 	 */
-	this.getResourcePublicPath = function( resKey ){
-		var res = this.getResource( resKey );
-		var filename = resKey;
-		if( typeof(res.publicFilename) == typeof('') && res.publicFilename.length ){
-			filename = res.publicFilename;
-		}
-		var contentsPath = broccoli.options.pathHtml;
-		var resourcesPublishDirPath = broccoli.options.pathResourceDir;
-		var rtn = './'+path.relative(path.dirname(contentsPath), resourcesPublishDirPath+'/'+filename+'.'+res.ext);
-		return rtn;
+	this.getResourcePublicPath = function( resKey, callback ){
+		callback = callback || function(){};
+		var res = this.getResource( resKey, function(res){
+			var filename = resKey;
+			if( typeof(res.publicFilename) == typeof('') && res.publicFilename.length ){
+				filename = res.publicFilename;
+			}
+			var contentsPath = broccoli.options.pathHtml;
+			var resourcesPublishDirPath = broccoli.options.pathResourceDir;
+			var rtn = './'+path.relative(path.dirname(contentsPath), resourcesPublishDirPath+'/'+filename+'.'+res.ext);
+
+			callback(rtn);
+		} );
+		return this;
 	}
 
 	/**
 	 * get resource public path
 	 */
-	this.getResourceOriginalRealpath = function( resKey ){
+	this.getResourceOriginalRealpath = function( resKey, callback ){
 		var res = this.getResource( resKey );
 		var rtn = _resourcesDirPath+'/'+resKey+'/bin.'+_resourceDb[resKey].ext;
-		return rtn;
+
+		callback(rtn);
+		return this;
 	}
 
 	/**
 	 * remove resource
 	 */
-	this.removeResource = function( resKey ){
+	this.removeResource = function( resKey, callback ){
+		callback = callback || function(){};
 		_resourceDb[resKey] = undefined;
 		delete( _resourceDb[resKey] );
 		if( isDirectory(_resourcesDirPath+'/'+resKey+'/') ){
 			rmdir_r( _resourcesDirPath+'/'+resKey+'/' );
 		}
-		return true;
+
+		callback(true);
+		return this;
 	}
 
 }

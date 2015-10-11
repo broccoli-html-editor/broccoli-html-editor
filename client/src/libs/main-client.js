@@ -65,6 +65,7 @@ module.exports = function(){
 			return true;
 		}
 		loadFieldDefinition();
+		this.resourceMgr = new (require('./resourceMgr.js'))(this);
 
 		it79.fnc(
 			{},
@@ -75,6 +76,11 @@ module.exports = function(){
 							it1.next(data);
 						}
 					);
+				} ,
+				function(it1, data){
+					_this.resourceMgr.init(function(){
+						it1.next(data);
+					});
 				} ,
 				function(it1, data){
 					_this.drawModulePalette(function(){

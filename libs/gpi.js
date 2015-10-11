@@ -29,7 +29,7 @@ module.exports = function(broccoli, api, options, callback){
 			dataJson = JSON.parse( dataJson );
 			callback(dataJson);
 			break;
-		case "saveContentsDataJson":
+		case "saveContentsData":
 			var jsonString = JSON.stringify( options.data, null, 1 );
 			// console.log(jsonString);
 			it79.fnc(
