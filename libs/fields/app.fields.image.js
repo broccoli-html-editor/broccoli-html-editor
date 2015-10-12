@@ -118,6 +118,7 @@ module.exports = function(broccoli){
 		}
 		// if( typeof(data.original) !== typeof({}) ){ data.original = {}; }
 		_resMgr.getResource( data.resKey, function(res){
+			// console.log(res);
 			var path = 'data:'+res.type+';base64,' + res.base64;
 			if( !res.base64 ){
 				// ↓ ダミーの Sample Image

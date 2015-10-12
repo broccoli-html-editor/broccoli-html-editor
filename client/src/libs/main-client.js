@@ -42,6 +42,7 @@ module.exports = function(){
 		this.options.elmIframeWindow = $canvas.find('iframe').get(0).contentWindow;
 		this.options.elmPanels = $canvas.find('.broccoli--panels').get(0);
 
+		this.resourceMgr = new (require('./resourceMgr.js'))(this);
 		this.panels = new (require( './panels.js' ))(this);
 		this.editWindow = new (require( './editWindow.js' ))(this);
 		this.fieldBase = new (require('./../../../libs/fieldBase.js'))(this);
@@ -65,7 +66,6 @@ module.exports = function(){
 			return true;
 		}
 		loadFieldDefinition();
-		this.resourceMgr = new (require('./resourceMgr.js'))(this);
 
 		it79.fnc(
 			{},

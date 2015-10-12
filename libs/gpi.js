@@ -79,6 +79,14 @@ module.exports = function(broccoli, api, options, callback){
 				}
 			);
 			break;
+		case "resourceMgr.getResourceDb":
+			broccoli.resourceMgr.getResourceDb(
+				function(resourceDb){
+					// console.log(resourceDb);
+					callback(resourceDb);
+				}
+			);
+			break;
 		default:
 			callback(true);
 			break;

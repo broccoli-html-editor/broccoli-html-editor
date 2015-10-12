@@ -58,6 +58,32 @@ module.exports = function(options){
 	}
 
 	/**
+	 * 初期化
+	 * @param  {Function} callback [description]
+	 * @return {[type]}            [description]
+	 */
+	this.init = function(callback){
+		it79.fnc({},
+			[
+				function(it1, data){
+					_this.resourceMgr.init( function(){
+						it1.next(data);
+					} );
+				} ,
+				function(it1, data){
+					loadFieldDefinition();
+					it1.next(data);
+				} ,
+				function(it1, data){
+					callback();
+					it1.next(data);
+				}
+			]
+		);
+		return this;
+	}
+
+	/**
 	 * 汎用API
 	 * @param  {[type]}   api      [description]
 	 * @param  {[type]}   options  [description]
@@ -196,10 +222,7 @@ module.exports = function(options){
 	 */
 	this.buildBowl = function( data, options, callback ){
 		var buildBowl = require( __dirname+'/buildBowl.js' );
-		this.resourceMgr.init( function(){
-			loadFieldDefinition();
-			buildBowl(_this, data, options, callback);
-		} );
+		buildBowl(_this, data, options, callback);
 		return this;
 	}
 
@@ -218,24 +241,20 @@ module.exports = function(options){
 		dataJson = JSON.parse( dataJson );
 		dataJson.bowl = dataJson.bowl||{};
 
-		this.resourceMgr.init( function(){
-			loadFieldDefinition();
-
-			var htmls = {};
-			it79.ary(
-				dataJson.bowl,
-				function(it1, row, idx){
-					options.instancePath = '/bowl.'+idx;
-					_this.buildBowl(row, options, function(html){
-						htmls[idx] = html;
-						it1.next();
-					});
-				},
-				function(){
-					callback(htmls);
-				}
-			);
-		} );
+		var htmls = {};
+		it79.ary(
+			dataJson.bowl,
+			function(it1, row, idx){
+				options.instancePath = '/bowl.'+idx;
+				_this.buildBowl(row, options, function(html){
+					htmls[idx] = html;
+					it1.next();
+				});
+			},
+			function(){
+				callback(htmls);
+			}
+		);
 		return this;
 	}
 

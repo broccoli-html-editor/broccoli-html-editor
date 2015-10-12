@@ -45,39 +45,42 @@ module.exports = function( data, callback, main, socket ){
 			callback(fin);
 			return;
 		}
+
+	});
+	broccoli.init(function(){
+
+		if(data.api == 'gpiBridge'){
+			broccoli.gpi(
+				data.bridge.api,
+				data.bridge.options,
+				function(rtn){
+					callback(rtn);
+				}
+			);
+			return ;
+
+		}else if(data.api == 'buildBowl'){
+			var json = require( path.resolve(__dirname, '../../../testdata/htdocs/editpage/index_files/guieditor.ignore/data.json') );
+			broccoli.buildBowl(
+				json.bowl.main ,
+				{
+					'mode': 'canvas'
+				} ,
+				function(html){
+					// console.log(html);
+					callback(html);
+				}
+			);
+			return ;
+
+		}
+
+		setTimeout(function(){
+			data.messageByBackend = 'Callbacked by backend API "broccoli".';
+			callback(data);
+		}, 1000);
+
 	});
 
-
-
-	if(data.api == 'gpiBridge'){
-		broccoli.gpi(
-			data.bridge.api,
-			data.bridge.options,
-			function(rtn){
-				callback(rtn);
-			}
-		);
-		return ;
-
-	}else if(data.api == 'buildBowl'){
-		var json = require( path.resolve(__dirname, '../../../testdata/htdocs/editpage/index_files/guieditor.ignore/data.json') );
-		broccoli.buildBowl(
-			json.bowl.main ,
-			{
-				'mode': 'canvas'
-			} ,
-			function(html){
-				// console.log(html);
-				callback(html);
-			}
-		);
-		return ;
-
-	}
-
-	setTimeout(function(){
-		data.messageByBackend = 'callbacked by backend API "broccoli".';
-		callback(data);
-	}, 1000);
 	return;
 }

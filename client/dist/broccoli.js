@@ -1033,6 +1033,7 @@ module.exports = function(){
 		this.options.elmIframeWindow = $canvas.find('iframe').get(0).contentWindow;
 		this.options.elmPanels = $canvas.find('.broccoli--panels').get(0);
 
+		this.resourceMgr = new (require('./resourceMgr.js'))(this);
 		this.panels = new (require( './panels.js' ))(this);
 		this.editWindow = new (require( './editWindow.js' ))(this);
 		this.fieldBase = new (require('./../../../libs/fieldBase.js'))(this);
@@ -1056,7 +1057,6 @@ module.exports = function(){
 			return true;
 		}
 		loadFieldDefinition();
-		this.resourceMgr = new (require('./resourceMgr.js'))(this);
 
 		it79.fnc(
 			{},
@@ -1466,6 +1466,7 @@ module.exports = function(broccoli){
 module.exports = function(broccoli){
 	// delete(require.cache[require('path').resolve(__filename)]);
 
+	var it79 = require('iterate79');
 	var path = require('path');
 	var php = require('phpjs');
 	var _this = this;
@@ -1486,7 +1487,22 @@ module.exports = function(broccoli){
 	 */
 	function loadResourceList( callback ){
 		_resourceDb = {};
-		callback();
+		it79.fnc({},
+			[
+				function(it1, data){
+					broccoli.gpi(
+						'resourceMgr.getResourceDb',
+						{} ,
+						function(resourceDb){
+							// console.log('Getting resourceDb.');
+							// console.log(resourceDb);
+							_resourceDb = resourceDb;
+							callback();
+						}
+					);
+				}
+			]
+		);
 		return;
 	}
 
@@ -1498,7 +1514,7 @@ module.exports = function(broccoli){
 	this.save = function( callback ){
 		callback = callback || function(){};
 		callback(true);
-		return true;
+		return this;
 	}
 
 	/**
@@ -1513,10 +1529,27 @@ module.exports = function(broccoli){
 	}
 
 	/**
+	 * get resource DB
+	 */
+	this.getResourceDb = function( callback ){
+		callback = callback || function(){};
+		callback(_resourceDb);
+		return this;
+	}
+
+	/**
 	 * get resource
 	 */
 	this.getResource = function( resKey, callback ){
 		callback = callback || function(){};
+		// console.log(resKey);
+		// console.log(_resourceDb);
+		// console.log(_resourceDb[resKey]);
+		if( typeof(_resourceDb[resKey]) !== typeof({}) ){
+			// 未登録の resKey
+			callback(false);
+			return this;
+		}
 		callback(_resourceDb[resKey]);
 		return this;
 	}
@@ -1599,7 +1632,7 @@ module.exports = function(broccoli){
 
 }
 
-},{"path":22,"phpjs":28}],9:[function(require,module,exports){
+},{"iterate79":24,"path":22,"phpjs":28}],9:[function(require,module,exports){
 /**
  * fieldBase.js
  */
@@ -2000,6 +2033,7 @@ module.exports = function(broccoli){
 		}
 		// if( typeof(data.original) !== typeof({}) ){ data.original = {}; }
 		_resMgr.getResource( data.resKey, function(res){
+			// console.log(res);
 			var path = 'data:'+res.type+';base64,' + res.base64;
 			if( !res.base64 ){
 				// ↓ ダミーの Sample Image

@@ -190,6 +190,15 @@ module.exports = function(broccoli){
 	}
 
 	/**
+	 * get resource DB
+	 */
+	this.getResourceDb = function( callback ){
+		callback = callback || function(){};
+		callback(_resourceDb);
+		return this;
+	}
+
+	/**
 	 * get resource
 	 */
 	this.getResource = function( resKey, callback ){
