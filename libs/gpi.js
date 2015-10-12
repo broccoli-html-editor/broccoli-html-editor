@@ -79,6 +79,7 @@ module.exports = function(broccoli, api, options, callback){
 				}
 			);
 			break;
+
 		case "resourceMgr.getResourceDb":
 			broccoli.resourceMgr.getResourceDb(
 				function(resourceDb){
@@ -87,6 +88,17 @@ module.exports = function(broccoli, api, options, callback){
 				}
 			);
 			break;
+
+		case "resourceMgr.getResourcePublicPath":
+			broccoli.resourceMgr.getResourcePublicPath(
+				options.resKey ,
+				function(publicPath){
+					// console.log(publicPath);
+					callback(publicPath);
+				}
+			);
+			break;
+
 		default:
 			callback(true);
 			break;

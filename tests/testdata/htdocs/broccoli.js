@@ -905,12 +905,28 @@ module.exports = function(broccoli){
 								});
 							},
 							function(){
-								// クライアントサイドにあるメモリ上のcontentsSourceDataに反映する。
-								// この時点で、まだサーバー側には送られていない。
-								// サーバー側に送るのは、callback() の先の仕事。
-								broccoli.contentsSourceData.updateInstance(data, instancePath, function(){
-									callback();
-								});
+								it79.fnc(data,
+									[
+										function(it2, data){
+											// クライアントサイドにあるメモリ上のcontentsSourceDataに反映する。
+											// この時点で、まだサーバー側には送られていない。
+											// サーバー側に送るのは、callback() の先の仕事。
+											broccoli.contentsSourceData.updateInstance(data, instancePath, function(){
+												it2.next(data);
+											});
+										} ,
+										function(it2, data){
+											// リソースマネージャーのデータを更新
+											broccoli.resourceMgr.init(function(){
+												it2.next(data);
+											});
+										} ,
+										function(it2, data){
+											callback();
+											it2.next(data);
+										}
+									]
+								);
 							}
 						);
 
@@ -1607,7 +1623,21 @@ module.exports = function(broccoli){
 	 */
 	this.getResourcePublicPath = function( resKey, callback ){
 		callback = callback || function(){};
-		callback(rtn);
+		_resourceDb = {};
+		it79.fnc({},
+			[
+				function(it1, data){
+					broccoli.gpi(
+						'resourceMgr.getResourcePublicPath',
+						{'resKey': resKey} ,
+						function(rtn){
+							// console.log('Getting resourceDb.');
+							callback(rtn);
+						}
+					);
+				}
+			]
+		);
 		return this;
 	}
 
@@ -2140,7 +2170,9 @@ module.exports = function(broccoli){
 		if( typeof(data.resKey) !== typeof('') ){
 			data.resKey = '';
 		}
-		var resInfo, realpathSelected;
+		var resInfo,
+			realpathSelected;
+
 		it79.fnc(
 			data,
 			[

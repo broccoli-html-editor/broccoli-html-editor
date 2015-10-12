@@ -306,11 +306,13 @@ module.exports = function(broccoli){
 	 */
 	this.getResourcePublicPath = function( resKey, callback ){
 		callback = callback || function(){};
-		var res = this.getResource( resKey, function(res){
-			var filename = resKey;
+		var filename = resKey;
+		this.getResource( resKey, function(res){
+			// console.log(res);
 			if( typeof(res.publicFilename) == typeof('') && res.publicFilename.length ){
 				filename = res.publicFilename;
 			}
+			// console.log(filename);
 			var contentsPath = broccoli.options.pathHtml;
 			var resourcesPublishDirPath = broccoli.options.pathResourceDir;
 			var rtn = './'+path.relative(path.dirname(contentsPath), resourcesPublishDirPath+'/'+filename+'.'+res.ext);

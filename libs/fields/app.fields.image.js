@@ -225,7 +225,9 @@ module.exports = function(broccoli){
 		if( typeof(data.resKey) !== typeof('') ){
 			data.resKey = '';
 		}
-		var resInfo, realpathSelected;
+		var resInfo,
+			realpathSelected;
+
 		it79.fnc(
 			data,
 			[

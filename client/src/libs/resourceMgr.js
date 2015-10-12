@@ -145,7 +145,21 @@ module.exports = function(broccoli){
 	 */
 	this.getResourcePublicPath = function( resKey, callback ){
 		callback = callback || function(){};
-		callback(rtn);
+		_resourceDb = {};
+		it79.fnc({},
+			[
+				function(it1, data){
+					broccoli.gpi(
+						'resourceMgr.getResourcePublicPath',
+						{'resKey': resKey} ,
+						function(rtn){
+							// console.log('Getting resourceDb.');
+							callback(rtn);
+						}
+					);
+				}
+			]
+		);
 		return this;
 	}
 

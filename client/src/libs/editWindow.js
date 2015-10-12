@@ -113,12 +113,28 @@ module.exports = function(broccoli){
 								});
 							},
 							function(){
-								// クライアントサイドにあるメモリ上のcontentsSourceDataに反映する。
-								// この時点で、まだサーバー側には送られていない。
-								// サーバー側に送るのは、callback() の先の仕事。
-								broccoli.contentsSourceData.updateInstance(data, instancePath, function(){
-									callback();
-								});
+								it79.fnc(data,
+									[
+										function(it2, data){
+											// クライアントサイドにあるメモリ上のcontentsSourceDataに反映する。
+											// この時点で、まだサーバー側には送られていない。
+											// サーバー側に送るのは、callback() の先の仕事。
+											broccoli.contentsSourceData.updateInstance(data, instancePath, function(){
+												it2.next(data);
+											});
+										} ,
+										function(it2, data){
+											// リソースマネージャーのデータを更新
+											broccoli.resourceMgr.init(function(){
+												it2.next(data);
+											});
+										} ,
+										function(it2, data){
+											callback();
+											it2.next(data);
+										}
+									]
+								);
 							}
 						);
 
