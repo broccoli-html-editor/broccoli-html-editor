@@ -547,6 +547,8 @@ module.exports = function(broccoli){
 			return false;
 		}
 		if( typeof(subModName) === typeof('') ){
+			// console.log(subModName);
+			// console.log(rtn.subModule[subModName]);
 			return rtn.subModule[subModName];
 		}
 		return rtn;

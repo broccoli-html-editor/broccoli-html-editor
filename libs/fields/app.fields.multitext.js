@@ -60,6 +60,7 @@ module.exports = function(broccoli){
 	 * エディタUIを生成
 	 */
 	this.mkEditor = function( mod, data, elm, callback ){
+		if(typeof(data) !== typeof({})){ data = {'src':''+data,'editor':'markdown'}; }
 		var rows = 12;
 		if( mod.rows ){
 			rows = mod.rows;

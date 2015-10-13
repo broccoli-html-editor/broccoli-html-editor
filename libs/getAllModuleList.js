@@ -45,6 +45,21 @@ module.exports = function(broccoli, callback){
 							data.rtn[modId].templateType = obj.templateType;
 							data.rtn[modId].template = obj.template;
 							data.rtn[modId].info = obj.info;
+							if(obj.subModule){
+								data.rtn[modId].subModule = {};
+								for(var idx in obj.subModule){
+									console.log(obj.subModule[idx]);
+									data.rtn[modId].subModule[idx] = {};
+									data.rtn[modId].subModule[idx].id = obj.subModule[idx].id;
+									data.rtn[modId].subModule[idx].subModName = obj.subModule[idx].subModName;
+									data.rtn[modId].subModule[idx].fields = obj.subModule[idx].fields;
+									data.rtn[modId].subModule[idx].isSystemModule = obj.subModule[idx].isSystemModule;
+									data.rtn[modId].subModule[idx].isSingleRootElement = obj.subModule[idx].isSingleRootElement;
+									data.rtn[modId].subModule[idx].templateType = obj.subModule[idx].templateType;
+									data.rtn[modId].subModule[idx].template = obj.subModule[idx].template;
+									data.rtn[modId].subModule[idx].info = obj.subModule[idx].info;
+								}
+							}
 							it2.next();
 						});
 					},

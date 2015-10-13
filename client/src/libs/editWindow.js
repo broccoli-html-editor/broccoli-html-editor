@@ -49,7 +49,8 @@ module.exports = function(broccoli){
 
 		var data = broccoli.contentsSourceData.get(instancePath);
 		// console.log( data );
-		var mod = broccoli.contentsSourceData.getModule(data.modId);
+		var mod = broccoli.contentsSourceData.getModule(data.modId, data.subModName);
+		// console.log( data.modId, data.subModName );
 		// console.log( mod );
 
 		var $fields = $('<div>');
@@ -62,7 +63,12 @@ module.exports = function(broccoli){
 			mod.fields,
 			function(it1, field, fieldName){
 				// console.log(fieldName);
-				var $field = $(tplField).attr({'data-broccoli-edit-window-field-name': field.name});
+				var $field = $(tplField)
+					.attr({
+						'data-broccoli-edit-window-field-name': field.name ,
+						'data-broccoli-edit-window-field-type': field.fieldType
+					})
+				;
 				$field.find('>h3')
 					.text((field.label||field.name)+' ')
 					.append( $('<small>')
@@ -106,11 +112,15 @@ module.exports = function(broccoli){
 							mod.fields,
 							function(it2, field2, fieldName2){
 								var $dom = $editWindow.find('[data-broccoli-edit-window-field-name='+field2.name+']');
+								if( $dom.attr('data-broccoli-edit-window-field-type') != 'input' ){
+									it2.next();return;
+								}
 								var fieldDefinition = broccoli.getFieldDefinition(field2.type);
 								fieldDefinition.saveEditorContent($dom.get(0), data.fields[fieldName2], mod.fields[fieldName2], function(result){
 									data.fields[fieldName2] = result;
 									it2.next();
 								});
+								return;
 							},
 							function(){
 								it79.fnc(data,
