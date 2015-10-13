@@ -100,12 +100,12 @@ module.exports = function(broccoli, api, options, callback){
 			break;
 
 		case "resourceMgr.save":
-			console.log('GPI resourceMgr.save');
+			// console.log('GPI resourceMgr.save');
 			// console.log(options);
 			broccoli.resourceMgr.save(
 				options.resourceDb ,
 				function(result){
-					console.log(result);
+					// console.log(result);
 					callback(result);
 				}
 			);

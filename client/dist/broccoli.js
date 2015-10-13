@@ -1372,6 +1372,7 @@ module.exports = function(broccoli){
 		}
 		var $this = $(domElm);
 		var $panel = $('<div>');
+		var isAppender = ($this.attr('data-broccoli-is-appender') == 'yes');
 		$panels.append($panel);
 		$panel
 			.css({
@@ -1384,13 +1385,25 @@ module.exports = function(broccoli){
 			.addClass('broccoli--panel')
 			.attr({
 				'data-broccoli-instance-path': $this.attr('data-broccoli-instance-path'),
-				'draggable': true // <- HTML5のAPI http://www.htmq.com/dnd/
+				'data-broccoli-is-appender': 'no',
+				'data-broccoli-sub-mod-name': $this.attr('data-broccoli-sub-mod-name'),
+				'draggable': (isAppender ? false : true) // <- HTML5のAPI http://www.htmq.com/dnd/
 			})
 			.bind('click', function(){
-				broccoli.selectInstance($(this).attr('data-broccoli-instance-path'));
+				var $this = $(this);
+				var instancePath = $this.attr('data-broccoli-instance-path');
+				if( $this.attr('data-broccoli-is-appender') == 'yes' ){
+					instancePath = php.dirname(instancePath);
+				}
+				broccoli.selectInstance( instancePath );
 			})
 			.bind('dblclick', function(){
-				broccoli.editInstance($(this).attr('data-broccoli-instance-path'));
+				var $this = $(this);
+				var instancePath = $this.attr('data-broccoli-instance-path');
+				if( $this.attr('data-broccoli-is-appender') == 'yes' ){
+					instancePath = php.dirname(instancePath);
+				}
+				broccoli.editInstance( instancePath );
 			})
 			.bind('dragstart', function(){
 				event.dataTransfer.setData("method", 'moveTo' );
@@ -1405,6 +1418,13 @@ module.exports = function(broccoli){
 				options.drop($(this).attr('data-broccoli-instance-path'), method);
 			})
 		;
+		if(isAppender){
+			$panel
+				.attr({
+					'data-broccoli-is-appender': 'yes'
+				})
+			;
+		}
 
 	}
 

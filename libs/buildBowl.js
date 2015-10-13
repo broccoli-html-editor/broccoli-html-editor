@@ -220,6 +220,7 @@ module.exports = function(broccoli, data, options, callback){
 										tmpopt.instancePath += '@'+(fieldData[field.module.name].length);
 										rtn += '<div';
 										rtn += ' data-broccoli-instance-path="'+php.htmlspecialchars(tmpopt.instancePath)+'"';
+										rtn += ' data-broccoli-is-appender="yes"';
 										rtn += ' style="';
 										rtn +=     'overflow:hidden;';
 										rtn +=     'padding:15px;';
@@ -275,6 +276,8 @@ module.exports = function(broccoli, data, options, callback){
 										tmpopt.instancePath += '@'+(fieldData[field.loop.name].length);
 										rtn += '<div';
 										rtn += ' data-broccoli-instance-path="'+php.htmlspecialchars(tmpopt.instancePath)+'"';
+										rtn += ' data-broccoli-sub-mod-name="'+php.htmlspecialchars(field.loop.name)+'"';
+										rtn += ' data-broccoli-is-appender="yes"';
 										rtn += ' style="';
 										rtn +=     'overflow:hidden;';
 										rtn +=     'padding:5px 15px;';
@@ -394,7 +397,12 @@ module.exports = function(broccoli, data, options, callback){
 			function(it1, d){
 				if( options.mode == 'canvas' ){
 					var html = '';
-					html += '<div data-broccoli-instance-path="'+php.htmlspecialchars(options.instancePath)+'">';
+					html += '<div';
+					html += ' data-broccoli-instance-path="'+php.htmlspecialchars(options.instancePath)+'"';
+					if(options.subModName){
+						html += ' data-broccoli-sub-mod-name="'+php.htmlspecialchars(options.subModName)+'"';
+					}
+					html += '>';
 					html += d.html;
 					html += '</div>';
 					d.html = html;
