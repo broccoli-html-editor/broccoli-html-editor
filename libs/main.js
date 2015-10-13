@@ -4,6 +4,10 @@
 module.exports = function(options){
 	delete(require.cache[require('path').resolve(__filename)]);
 
+	var _allModuleList, //キャッシュ
+		_moduleCollection = {};
+	;
+
 	var _this = this;
 	var path = require('path');
 	var it79 = require('iterate79');
@@ -65,6 +69,23 @@ module.exports = function(options){
 	this.init = function(callback){
 		it79.fnc({},
 			[
+				function(it1, data){
+					_this.getAllModuleList(function(list){
+						it79.ary(
+							list,
+							function(it2, row2, idx2){
+								var mod = _this.createModuleInstance(row2.id);
+								_moduleCollection[row2.id] = mod;
+								_moduleCollection[row2.id].init(function(){
+									it2.next();
+								});
+							} ,
+							function(){
+								it1.next(data);
+							}
+						);
+					});
+				} ,
 				function(it1, data){
 					_this.resourceMgr.init( function(){
 						it1.next(data);
@@ -181,7 +202,9 @@ module.exports = function(options){
 	 * @return {Object}             this
 	 */
 	this.getModuleListByPackageId = function(packageId, callback){
-		require( './getModuleListByPackageId.js' )(this, packageId, callback);
+		require( './getModuleListByPackageId.js' )(this, packageId, function(result){
+			callback(result);
+		});
 		return this;
 	}
 
@@ -191,7 +214,17 @@ module.exports = function(options){
 	 * @return {Object}             this
 	 */
 	this.getAllModuleList = function(callback){
-		require( './getAllModuleList.js' )(this, callback);
+		if(_allModuleList){
+			// キャッシュがあればそれを返す
+			setTimeout(function(){
+				callback(_allModuleList);
+			}, 0);
+			return;
+		}
+		require( './getAllModuleList.js' )(this, function(result){
+			_allModuleList = result;
+			callback(result);
+		});
 		return this;
 	}
 
@@ -199,12 +232,31 @@ module.exports = function(options){
 	 * class: モジュール
 	 * @param  {String}   moduleId モジュールID
 	 * @param  {Object}   options  Options
-	 * @param  {Function} callback callback function.
 	 * @return {Object}            this
 	 */
-	this.createModuleInstance = function(moduleId, options, callback){
+	this.createModuleInstance = function(moduleId, options){
+		// console.log(moduleId);
+		// console.log(options);
 		var classModule = require( './classModule.js' );
-		var rtn = new classModule(this, moduleId, options, callback);
+		var rtn = new classModule(this, moduleId, options);
+		// console.log(rtn);
+		return rtn;
+	}
+
+	/**
+	 * モジュールオブジェクトを取得する
+	 * @param  {String}   moduleId モジュールID
+	 * @param  {String}   subModName サブモジュール名
+	 * @return {Object}            this
+	 */
+	this.getModule = function(moduleId, subModName){
+		var rtn = _moduleCollection[moduleId];
+		if( typeof( rtn ) !== typeof({}) ){
+			rtn = false;
+		}
+		if( typeof(subModName) === typeof('') ){
+			return rtn.subModule[subModName];
+		}
 		return rtn;
 	}
 

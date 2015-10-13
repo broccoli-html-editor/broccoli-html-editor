@@ -1147,6 +1147,13 @@ module.exports = function(){
 					);
 				} ,
 				function( it1, data ){
+					// iframeのサイズ合わせ
+					var $iframeWindow = $(_this.options.elmIframeWindow.document);
+					var height = $iframeWindow.outerHeight();
+					$canvas.find('iframe').height( height + 120 );
+					it1.next(data);
+				} ,
+				function( it1, data ){
 					// パネル描画
 					_this.drawPanels( function(){
 						console.log('broccoli: draggable panels standby.');
@@ -1343,11 +1350,11 @@ module.exports = function(broccoli){
 		function calcHeight($me, idx){
 			var $nextElm = $contentsElements.eq(idx+1);
 			if( !$nextElm.length ){
-				return $me.height();
+				return $me.outerHeight();
 			}
 			var rtn = ($nextElm.offset().top - $me.offset().top);
-			if( $me.height() > rtn ){
-				return $me.height();
+			if( $me.outerHeight() > rtn ){
+				return $me.outerHeight();
 			}
 			return rtn;
 		}
@@ -1356,7 +1363,7 @@ module.exports = function(broccoli){
 		$panels.append($panel);
 		$panel
 			.css({
-				'width': $this.width(),
+				'width': $this.outerWidth(),
 				'height': calcHeight($this, idx),
 				'position': 'absolute',
 				'left': $this.offset().left,

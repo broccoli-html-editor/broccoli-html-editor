@@ -21,11 +21,11 @@ module.exports = function(broccoli){
 		function calcHeight($me, idx){
 			var $nextElm = $contentsElements.eq(idx+1);
 			if( !$nextElm.length ){
-				return $me.height();
+				return $me.outerHeight();
 			}
 			var rtn = ($nextElm.offset().top - $me.offset().top);
-			if( $me.height() > rtn ){
-				return $me.height();
+			if( $me.outerHeight() > rtn ){
+				return $me.outerHeight();
 			}
 			return rtn;
 		}
@@ -34,7 +34,7 @@ module.exports = function(broccoli){
 		$panels.append($panel);
 		$panel
 			.css({
-				'width': $this.width(),
+				'width': $this.outerWidth(),
 				'height': calcHeight($this, idx),
 				'position': 'absolute',
 				'left': $this.offset().left,

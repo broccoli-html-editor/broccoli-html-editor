@@ -5,7 +5,8 @@
  * コンテンツデータは含みません。よって、bind() のような機能は持ちません。
  */
 module.exports = function(broccoli, moduleId, options){
-	// delete(require.cache[require('path').resolve(__filename)]);
+	delete(require.cache[require('path').resolve(__filename)]);
+
 	var _this = this;
 	options = options || {};
 
@@ -228,6 +229,11 @@ module.exports = function(broccoli, moduleId, options){
 					if( typeof(_this.subModule) !== typeof({}) ){
 						_this.subModule = {};
 					}
+					// console.log(' <------- ');
+					// console.log(field.loop.name);
+					// console.log('on '+_topThis.moduleId);
+					// console.log(tmpSearchResult.content);
+					// console.log(' =======> ');
 					_topThis.subModule[field.loop.name] = broccoli.createModuleInstance( _this.id, {
 						"src": tmpSearchResult.content,
 						"subModName": field.loop.name,

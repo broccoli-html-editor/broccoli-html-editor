@@ -17,7 +17,10 @@ module.exports = function(broccoli, data, options, callback){
 	var twig = require('twig');
 	var fs = require('fs');
 
-	var mod = broccoli.createModuleInstance( data.modId );
+	var mod = broccoli.getModule( data.modId, options.subModName);
+	if(mod === false){
+		mod = broccoli.getModule( '_sys/unknown' );
+	}
 
 	this.nameSpace = {"vars": {}};
 	if( options.nameSpace ){
@@ -28,12 +31,12 @@ module.exports = function(broccoli, data, options, callback){
 	it79.fnc(
 		{},
 		[
-			function(it1, d){
-				mod.init(function(res){
-					// console.log(res);
-					it1.next(d);
-				});
-			} ,
+			// function(it1, d){
+			// 	mod.init(function(res){
+			// 		// console.log(res);
+			// 		it1.next(d);
+			// 	});
+			// } ,
 			function(it1, d){
 				var src = mod.template;
 				var rtn = '';
@@ -204,6 +207,29 @@ module.exports = function(broccoli, data, options, callback){
 									});
 								} ,
 								function(){
+									if( options.mode == 'canvas' ){
+										var tmpopt = JSON.parse( JSON.stringify(opt) );
+										tmpopt.instancePath += '@'+(fieldData[field.module.name].length);
+										rtn += '<div';
+										rtn += ' data-broccoli-instance-path="'+php.htmlspecialchars(tmpopt.instancePath)+'"';
+										rtn += ' style="';
+										rtn +=     'overflow:hidden;';
+										rtn +=     'padding:15px;';
+										rtn +=     'background-color:#eef;';
+										rtn +=     'border:3px solid transparent;';
+										rtn +=     'border-radius:5;';
+										rtn +=     'font-family: Meiryo, &amp;Hiragino Kaku Gothic ProN&amp;, Verdana, sans-serif;';
+										rtn +=     'font-size:9px;';
+										rtn +=     'color:#000;';
+										rtn +=     'text-align:center;';
+										rtn +=     'box-sizing:border-box;';
+										rtn +=     'clear:both;';
+										rtn +=     'white-space:nowrap;';
+										rtn += '"';
+										rtn += '>';
+										rtn += '(+) ここにモジュールをドラッグしてください。';
+										rtn += '</div>';
+									}
 									buildBroccoliHtml( src, rtn, function(html){
 										callback(html);
 									} );
@@ -218,14 +244,16 @@ module.exports = function(broccoli, data, options, callback){
 
 							var opt = JSON.parse( JSON.stringify(options) );
 							opt.instancePath += '/fields.'+field.loop.name;
-
+							// console.log(fieldData);
+							// console.log(field.loop);
 							it79.ary(
 								fieldData[field.loop.name],
 								function( it2, row, idx ){
 									// ネストされたモジュールの再帰処理
 									var tmpopt = JSON.parse( JSON.stringify(opt) );
 									tmpopt.instancePath += '@'+idx;
-
+									tmpopt.subModName = field.loop.name;
+									// console.log(tmpopt);
 									broccoli.buildBowl(row, tmpopt, function(html){
 										// rtn += '<!-- ---- LOOP ---- -->';
 										rtn += html;
@@ -234,6 +262,28 @@ module.exports = function(broccoli, data, options, callback){
 									});
 								} ,
 								function(){
+									if( options.mode == 'canvas' ){
+										var tmpopt = JSON.parse( JSON.stringify(opt) );
+										tmpopt.instancePath += '@'+(fieldData[field.loop.name].length);
+										rtn += '<div';
+										rtn += ' data-broccoli-instance-path="'+php.htmlspecialchars(tmpopt.instancePath)+'"';
+										rtn += ' style="';
+										rtn +=     'overflow:hidden;';
+										rtn +=     'padding:5px 15px;';
+										rtn +=     'background-color:#dfe;';
+										rtn +=     'border:3px solid transparent;';
+										rtn +=     'border-radius:5px;';
+										rtn +=     'font-family:Meiryo, &amp;Hiragino Kaku Gothic ProN&amp;, Verdana, sans-serif;';
+										rtn +=     'font-size:9px;';
+										rtn +=     'text-align:center;';
+										rtn +=     'box-sizing:border-box;';
+										rtn +=     'clear:both;';
+										rtn +=     'white-space:nowrap;';
+										rtn += '"';
+										rtn += '>';
+										rtn += 'ここをダブルクリックして配列要素を追加してください。';
+										rtn += '</div>';
+									}
 									buildBroccoliHtml( src, rtn, function(html){
 										callback(html);
 									} );

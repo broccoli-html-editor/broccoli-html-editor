@@ -176,6 +176,7 @@ describe('モジュール一覧の取得', function() {
 describe('モジュールインスタンスを生成する', function() {
 
 	it("testMod1:units/cols2", function(done) {
+		this.timeout(15*1000);
 		makeDefaultBroccoli( function(broccoli){
 			var mod = broccoli.createModuleInstance('testMod1:units/cols2', {});
 			mod.init(function(result){
@@ -191,6 +192,7 @@ describe('モジュールインスタンスを生成する', function() {
 	});
 
 	it("testMod1:dev/twig", function(done) {
+		this.timeout(15*1000);
 		makeDefaultBroccoli( function(broccoli){
 			var mod = broccoli.createModuleInstance('testMod1:dev/twig', {});
 			mod.init(function(result){
@@ -206,6 +208,7 @@ describe('モジュールインスタンスを生成する', function() {
 	});
 
 	it("testMod1:units/thumb_list", function(done) {
+		this.timeout(15*1000);
 		makeDefaultBroccoli( function(broccoli){
 			var mod = broccoli.createModuleInstance('testMod1:units/thumb_list', {});
 			mod.init(function(result){
@@ -221,6 +224,7 @@ describe('モジュールインスタンスを生成する', function() {
 	});
 
 	it("testMod1:dev/multitext", function(done) {
+		this.timeout(15*1000);
 		makeDefaultBroccoli( function(broccoli){
 			var mod = broccoli.createModuleInstance('testMod1:dev/multitext', {});
 			mod.init(function(result){
@@ -258,7 +262,7 @@ describe('全モジュールの一覧の取得', function() {
 describe('ビルドする', function() {
 
 	it("テストデータをfinalizeモードでビルドする", function(done) {
-		this.timeout(5*1000);
+		this.timeout(15*1000);
 		makeDefaultBroccoli( function(broccoli){
 			var data = require(__dirname+'/testdata/htdocs/test1/test1_files/guieditor.ignore/data.json');
 			// console.log(data);
@@ -277,7 +281,7 @@ describe('ビルドする', function() {
 	});
 
 	it("テストデータをcanvasモードでビルドする", function(done) {
-		this.timeout(5*1000);
+		this.timeout(15*1000);
 		makeDefaultBroccoli( function(broccoli){
 			var data = require(__dirname+'/testdata/htdocs/test1/test1_files/guieditor.ignore/data.json');
 			// console.log(data);
@@ -296,7 +300,7 @@ describe('ビルドする', function() {
 	});
 
 	it("未定義のモジュールを含む場合のビルド", function(done) {
-		this.timeout(5*1000);
+		this.timeout(15*1000);
 		makeDefaultBroccoli( function(broccoli){
 			var data = require(__dirname+'/testdata/htdocs/unknown_module/unknown_files/guieditor.ignore/data.json');
 			// console.log(data);

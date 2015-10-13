@@ -140,6 +140,13 @@ module.exports = function(){
 					);
 				} ,
 				function( it1, data ){
+					// iframeのサイズ合わせ
+					var $iframeWindow = $(_this.options.elmIframeWindow.document);
+					var height = $iframeWindow.outerHeight();
+					$canvas.find('iframe').height( height + 120 );
+					it1.next(data);
+				} ,
+				function( it1, data ){
 					// パネル描画
 					_this.drawPanels( function(){
 						console.log('broccoli: draggable panels standby.');
