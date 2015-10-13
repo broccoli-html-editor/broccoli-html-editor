@@ -235,7 +235,7 @@ module.exports = function(broccoli){
 		var realpathSelected = $dom.find('input[name='+mod.name+']').val();
 		if( px.utils.isFile(realpathSelected) ){
 			var tmpResInfo = parseResource( realpathSelected );
-			_resMgr.updateResource( data.resKey, tmpResInfo, realpathSelected );
+			_resMgr.updateResource( data.resKey, tmpResInfo, function(){} );
 		}else if( data.resKey ){
 			_resMgr.resetBase64FromBin( data.resKey );
 		}

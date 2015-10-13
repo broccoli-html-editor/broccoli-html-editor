@@ -2,11 +2,12 @@
  * resourceMgr.js
  */
 module.exports = function(broccoli){
-	// delete(require.cache[require('path').resolve(__filename)]);
+	delete(require.cache[require('path').resolve(__filename)]);
 
 	var path = require('path');
 	var fs = require('fs');
 	var fsEx = require('fs-extra');
+	var it79 = require('iterate79');
 	var php = require('phpjs');
 	var DIRECTORY_SEPARATOR = '/';
 
@@ -46,6 +47,12 @@ module.exports = function(broccoli){
 		fs.mkdirSync(path, 0777);
 		return true;
 	}
+	function rmdir( path ){
+		if( isFile(path) ){ return false; }
+		if( !isDirectory(path) ){ return true; }
+		fs.rmdirSync( path );
+		return !isDirectory(path);
+	}
 	function rmdir_r( $path ){
 		$path = fs.realpathSync( $path );
 
@@ -56,7 +63,8 @@ module.exports = function(broccoli){
 
 		}else if( isDirectory( $path ) ){
 			// ディレクトリの処理
-			var $filelist = this.ls($path);
+			var $filelist = ls($path);
+			// console.log($filelist);
 			for( var idx in $filelist ){
 				var $basename = $filelist[idx];
 				if( isFile( $path+DIRECTORY_SEPARATOR+$basename ) ){
@@ -113,11 +121,13 @@ module.exports = function(broccoli){
 
 	/**
 	 * save resources
-	 * @param  {Function} cb Callback function.
+	 * @param  {Object} newResourceDb resource Database
+	 * @param  {Function} callback Callback function.
 	 * @return {boolean}     Always true.
 	 */
-	this.save = function( callback ){
+	this.save = function( newResourceDb, callback ){
 		callback = callback || function(){};
+		_resourceDb = newResourceDb;
 
 		if( isDirectory( _resourcesPublishDirPath ) ){
 			// 公開リソースディレクトリを一旦削除
@@ -166,7 +176,7 @@ module.exports = function(broccoli){
 			}
 		}
 		callback(true);
-		return true;
+		return this;
 	}
 
 	/**
@@ -231,37 +241,31 @@ module.exports = function(broccoli){
 		return this;
 	}
 
-	/**
-	 * update resource
-	 * @param  {string} resKey  Resource Key
-	 * @param  {object} resInfo Resource Information.
-	 * <dl>
-	 * <dt>ext</dt><dd>ファイル拡張子名。</dd>
-	 * <dt>type</dt><dd>mimeタイプ。</dd>
-	 * <dt>base64</dt><dd>ファイルのBase64エンコードされた値</dd>
-	 * <dt>publicFilename</dt><dd>公開時のファイル名</dd>
-	 * <dt>isPrivateMaterial</dt><dd>非公開ファイル。</dd>
-	 * </dl>
-	 * @param  {string} realpath Resource Realpath. - ファイルが置かれていた絶対パス
-	 * @return {boolean}        always true.
-	 */
-	this.updateResource = function( resKey, resInfo, realpath, callback ){
-		callback = callback || function(){};
-		if( typeof(_resourceDb[resKey]) !== typeof({}) ){
-			// 未登録の resKey
-			callback(false);
-			return this;
-		}
-		_resourceDb[resKey] = resInfo;
-
-		if(realpath){
-			var bin = fs.readFileSync( realpath, {} );
-			_resourceDb[resKey].base64 = php.base64_encode( bin );
-		}
-
-		callback(true);
-		return this;
-	}
+	// /**
+	//  * update resource
+	//  * @param  {string} resKey  Resource Key
+	//  * @param  {object} resInfo Resource Information.
+	//  * <dl>
+	//  * <dt>ext</dt><dd>ファイル拡張子名。</dd>
+	//  * <dt>type</dt><dd>mimeタイプ。</dd>
+	//  * <dt>base64</dt><dd>ファイルのBase64エンコードされた値</dd>
+	//  * <dt>publicFilename</dt><dd>公開時のファイル名</dd>
+	//  * <dt>isPrivateMaterial</dt><dd>非公開ファイル。</dd>
+	//  * </dl>
+	//  * @return {boolean}        always true.
+	//  */
+	// this.updateResource = function( resKey, resInfo, callback ){
+	// 	callback = callback || function(){};
+	// 	if( typeof(_resourceDb[resKey]) !== typeof({}) ){
+	// 		// 未登録の resKey
+	// 		callback(false);
+	// 		return this;
+	// 	}
+	// 	_resourceDb[resKey] = resInfo;
+	//
+	// 	callback(true);
+	// 	return this;
+	// }
 
 	/**
 	 * Reset bin from base64

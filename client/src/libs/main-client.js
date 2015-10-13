@@ -197,9 +197,22 @@ module.exports = function(){
 		;
 		this.drawEditWindow( instancePath, $canvas.find('.broccoli--lightbox-inner').get(0), function(){
 			$canvas.find('.broccoli--lightbox').fadeOut('slow',function(){$(this).remove();});
-			_this.contentsSourceData.save(function(){
-				console.log('editInstance done.');
-			});
+			it79.fnc({},[
+				function(it1, data){
+					_this.contentsSourceData.save(function(){
+						it1.next(data);
+					});
+				} ,
+				function(it1, data){
+					_this.resourceMgr.save(function(){
+						it1.next(data);
+					});
+				} ,
+				function(it1, data){
+					console.log('editInstance done.');
+					it1.next(data);
+				}
+			]);
 		} );
 		return this;
 	}

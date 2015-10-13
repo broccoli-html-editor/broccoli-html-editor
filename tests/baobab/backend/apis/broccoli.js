@@ -4,9 +4,11 @@
 module.exports = function( data, callback, main, socket ){
 	delete(require.cache[require('path').resolve(__filename)]);
 	var path = require('path');
+	var it79 = require('iterate79');
 
 	data = data||{};
 	callback = callback||function(){};
+
 	var Broccoli = require('./../../../../libs/main.js');
 	var broccoli = new Broccoli({
 		'paths_module_template': {
@@ -47,40 +49,53 @@ module.exports = function( data, callback, main, socket ){
 		}
 
 	});
-	broccoli.init(function(){
 
-		if(data.api == 'gpiBridge'){
-			broccoli.gpi(
-				data.bridge.api,
-				data.bridge.options,
-				function(rtn){
-					callback(rtn);
-				}
-			);
-			return ;
+	it79.fnc(data, [
+		function(it1, data){
+			broccoli.init(function(){
+				it1.next(data);
+			});
+		} ,
+		function(it1, data){
+			if(data.api == 'gpiBridge'){
+				broccoli.gpi(
+					data.bridge.api,
+					data.bridge.options,
+					function(rtn){
+						it1.next(rtn);
+					}
+				);
+				return ;
 
-		}else if(data.api == 'buildBowl'){
-			var json = require( path.resolve(__dirname, '../../../testdata/htdocs/editpage/index_files/guieditor.ignore/data.json') );
-			broccoli.buildBowl(
-				json.bowl.main ,
-				{
-					'mode': 'canvas'
-				} ,
-				function(html){
-					// console.log(html);
-					callback(html);
-				}
-			);
-			return ;
+			}else if(data.api == 'buildBowl'){
+				var json = require( path.resolve(__dirname, '../../../testdata/htdocs/editpage/index_files/guieditor.ignore/data.json') );
+				broccoli.buildBowl(
+					json.bowl.main ,
+					{
+						'mode': 'canvas'
+					} ,
+					function(html){
+						// console.log(html);
+						it1.next(html);
+					}
+				);
+				return ;
 
-		}
+			}
 
-		setTimeout(function(){
-			data.messageByBackend = 'Callbacked by backend API "broccoli".';
+			setTimeout(function(){
+				data.messageByBackend = 'Callbacked by backend API "broccoli".';
+				it1.next(data);
+			}, 0);
+			return;
+
+		} ,
+		function(it1, data){
 			callback(data);
-		}, 1000);
+			it1.next(data);
+		}
+	]);
 
-	});
 
 	return;
 }

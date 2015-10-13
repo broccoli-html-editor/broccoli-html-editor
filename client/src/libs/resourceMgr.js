@@ -50,8 +50,20 @@ module.exports = function(broccoli){
 	 * @return {boolean}     Always true.
 	 */
 	this.save = function( callback ){
+		// console.log('resourceDb save method: called.');
 		callback = callback || function(){};
-		callback(true);
+		it79.fnc({}, [
+			function(it1, data){
+				broccoli.gpi(
+					'resourceMgr.save',
+					{'resourceDb': _resourceDb} ,
+					function(rtn){
+						// console.log('resourceDb save method: done.');
+						callback(rtn);
+					}
+				);
+			}
+		]);
 		return this;
 	}
 
@@ -113,11 +125,17 @@ module.exports = function(broccoli){
 	 * <dt>publicFilename</dt><dd>公開時のファイル名</dd>
 	 * <dt>isPrivateMaterial</dt><dd>非公開ファイル。</dd>
 	 * </dl>
-	 * @param  {string} realpath Resource Realpath. - ファイルが置かれていた絶対パス
 	 * @return {boolean}        always true.
 	 */
-	this.updateResource = function( resKey, resInfo, realpath, callback ){
+	this.updateResource = function( resKey, resInfo, callback ){
 		callback = callback || function(){};
+		if( typeof(_resourceDb[resKey]) !== typeof({}) ){
+			// 未登録の resKey
+			callback(false);
+			return this;
+		}
+		_resourceDb[resKey] = resInfo;
+
 		callback(true);
 		return this;
 	}
@@ -145,7 +163,7 @@ module.exports = function(broccoli){
 	 */
 	this.getResourcePublicPath = function( resKey, callback ){
 		callback = callback || function(){};
-		_resourceDb = {};
+		// _resourceDb = {};
 		it79.fnc({},
 			[
 				function(it1, data){

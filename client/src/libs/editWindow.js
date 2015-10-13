@@ -123,12 +123,12 @@ module.exports = function(broccoli){
 												it2.next(data);
 											});
 										} ,
-										function(it2, data){
-											// リソースマネージャーのデータを更新
-											broccoli.resourceMgr.init(function(){
-												it2.next(data);
-											});
-										} ,
+										// function(it2, data){
+										// 	// リソースマネージャーのデータを更新
+										// 	broccoli.resourceMgr.init(function(){
+										// 		it2.next(data);
+										// 	});
+										// } ,
 										function(it2, data){
 											callback();
 											it2.next(data);
