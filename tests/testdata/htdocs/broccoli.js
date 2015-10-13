@@ -1029,6 +1029,7 @@ module.exports = function(){
 	var $ = require('jquery');
 	var selectedInstance = null;
 	var $canvas;
+	var redrawTimer;
 
 	/**
 	 * broccoli-client を初期化する
@@ -1052,7 +1053,7 @@ module.exports = function(){
 			.addClass('broccoli--canvas')
 			.append( $('<iframe>')
 				.bind('load', function(){
-					_this.onPreviewLoad( callback );
+					onPreviewLoad( callback );
 				})
 			)
 			.append( $('<div class="broccoli--panels">')
@@ -1127,15 +1128,23 @@ module.exports = function(){
 	}
 
 	/**
-	 * プレビューがロードされたら実行
+	 * 画面を再描画
 	 * @return {[type]} [description]
 	 */
-	this.onPreviewLoad = function( callback ){
+	this.redraw = function(callback){
 		callback = callback || function(){};
 
 		it79.fnc(
 			{},
 			[
+				function( it1, data ){
+					// タイマー処理
+					// ウィンドウサイズの変更などの際に、無駄な再描画連打を減らすため
+					clearTimeout( redrawTimer );
+					redrawTimer = setTimeout(function(){
+						it1.next(data);
+					}, 100);
+				} ,
 				function( it1, data ){
 					// 編集画面描画
 					_this.options.elmIframeWindow = $canvas.find('iframe').get(0).contentWindow;
@@ -1149,6 +1158,9 @@ module.exports = function(){
 						function(htmls){
 							// console.log(htmls);
 							var $iframeWindow = $(_this.options.elmIframeWindow.document);
+							for(var idx in htmls){
+								$iframeWindow.find('[data-contents='+idx+']').html('...');
+							}
 							for(var idx in htmls){
 								$iframeWindow.find('[data-contents='+idx+']').html(htmls[idx]);
 							}
@@ -1171,6 +1183,31 @@ module.exports = function(){
 						console.log('broccoli: draggable panels standby.');
 						it1.next(data);
 					} );
+				} ,
+				function(it1, data){
+					callback();
+					it1.next();
+				}
+			]
+		);
+		return this;
+	}
+
+	/**
+	 * プレビューがロードされたら実行
+	 * @return {[type]} [description]
+	 */
+	function onPreviewLoad( callback ){
+		callback = callback || function(){};
+
+		it79.fnc(
+			{},
+			[
+				function( it1, data ){
+					// 編集画面描画
+					_this.redraw(function(){
+						it1.next(data);
+					});
 				} ,
 				function(it1, data){
 					callback();
@@ -1225,12 +1262,20 @@ module.exports = function(){
 			$canvas.find('.broccoli--lightbox').fadeOut('slow',function(){$(this).remove();});
 			it79.fnc({},[
 				function(it1, data){
+					// コンテンツを保存
 					_this.contentsSourceData.save(function(){
 						it1.next(data);
 					});
 				} ,
 				function(it1, data){
+					// リソースを保存
 					_this.resourceMgr.save(function(){
+						it1.next(data);
+					});
+				} ,
+				function(it1, data){
+					// 画面を再描画
+					onPreviewLoad(function(){
 						it1.next(data);
 					});
 				} ,
@@ -1443,7 +1488,11 @@ module.exports = function(broccoli){
 					it1.next(data);
 				} ,
 				function( it1, data ){
-					$panels.html('').removeClass('broccoli').addClass('broccoli');
+					$panels
+						.html('')
+						.removeClass('broccoli')
+						.addClass('broccoli')
+					;
 					it1.next(data);
 				} ,
 				function( it1, data ){

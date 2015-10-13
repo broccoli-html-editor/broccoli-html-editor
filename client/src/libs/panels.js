@@ -102,7 +102,11 @@ module.exports = function(broccoli){
 					it1.next(data);
 				} ,
 				function( it1, data ){
-					$panels.html('').removeClass('broccoli').addClass('broccoli');
+					$panels
+						.html('')
+						.removeClass('broccoli')
+						.addClass('broccoli')
+					;
 					it1.next(data);
 				} ,
 				function( it1, data ){

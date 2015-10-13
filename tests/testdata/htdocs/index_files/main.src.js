@@ -56,6 +56,9 @@ window.main = new (function(){
 				}
 			} ,
 			function(){
+				$(window).resize(function(){
+					broccoli.redraw();
+				});
 				callback();
 			}
 		);

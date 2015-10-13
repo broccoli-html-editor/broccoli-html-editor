@@ -11,7 +11,7 @@
         {
          "modId": "PlainHTMLElements:PlainHTML/Markdown",
          "fields": {
-          "main": "## Markdownフィールド\n\n- list 1\n- list 2"
+          "main": "## Markdownフィールド\n\n- list 1\n- list 2\n\n再描画されますか？\n\nおおおお！！！ｗｗｗ\n\n再描画の再テスト。"
          },
          "dec": "",
          "anchor": ""
@@ -146,11 +146,10 @@
          "fields": {
           "href": "/",
           "thumb": {
-           "resKey": "a6f17df4e428b4c65328185f9c9c8e40",
-           "path": "./test21_files/resources/a6f17df4e428b4c65328185f9c9c8e40.svg"
+           "path": "./index_files/resources/undefined.undefined"
           },
-          "alt": "logo svg",
-          "caption": "SVGファイルです"
+          "alt": "logo svg リソースだけ上手く反映されてないですね。",
+          "caption": "SVGファイルです あれ？"
          },
          "subModName": "thumb_loop"
         }
@@ -178,7 +177,7 @@
         {
          "modId": "testMod1:parts/text",
          "fields": {
-          "text_src": "ただのテキスト。<br />\nHTMLエンティティ変換される、はず。\n\n- でも、markdownの書式は使えない、はず。\n\nあー、改行が反映されない、か。"
+          "text_src": "ただのテキスト。<br />\nHTMLエンティティ変換される、はず。\n\n- でも、markdownの書式は使えない、はず。\n\nあー、改行が反映されない、か。\n\nスクロール位置は？\n\nちょうどいいじゃないですか。"
          }
         }
        ],
@@ -186,13 +185,13 @@
         {
          "modId": "testMod1:parts/html",
          "fields": {
-          "html_src": "宿題宿題。"
+          "html_src": "<p>宿題宿題。</p>\n\n<p>Yes, 宿題。</p>"
          }
         },
         {
          "modId": "testMod1:parts/text",
          "fields": {
-          "text_src": "宿題やったかー？\n＼(^o^)／"
+          "text_src": "宿題やったかー？\n＼(^o^)／\n\nやってるYo！ ＼(^o^)／"
          }
         },
         {
@@ -248,7 +247,11 @@
                  {
                   "modId": "testMod1:parts/deeploop",
                   "fields": {
-                   "md_src3": "マークダウンコード。そのままHTMLに変換されます。"
+                   "md_src3": "## なかなかいいと思います。\n\nマークダウンコード。そのままHTMLに変換されます。",
+                   "multitext_src3": {
+                    "src": "### すばらしい！\n\nどですか？",
+                    "editor": "markdown"
+                   }
                   },
                   "subModName": "sample_loop3"
                  },
@@ -285,7 +288,7 @@
            {
             "modId": "testMod1:parts/deeploop",
             "fields": {
-             "md_src1": "",
+             "md_src1": "もじれつ書いてみますよ。",
              "sample_loop2": []
             },
             "subModName": "sample_loop1"
@@ -365,7 +368,7 @@
         {
          "modId": "testMod1:parts/md",
          "fields": {
-          "md_src": "まぁ、このあたりは、上手い人にお願いしちゃお。"
+          "md_src": "したーーーのほうも再描画テスト。"
          }
         }
        ]
@@ -708,7 +711,7 @@
                         "modId": "PlainHTMLElements:PlainHTML/MultiText",
                         "fields": {
                          "main": {
-                          "src": "",
+                          "src": "## ふたつめのコンテンツエリア",
                           "editor": "markdown"
                          }
                         },
@@ -719,8 +722,8 @@
                         "modId": "PlainHTMLElements:PlainHTML/MultiText",
                         "fields": {
                          "main": {
-                          "src": "",
-                          "editor": "html"
+                          "src": "いい感じになってきたと思います。",
+                          "editor": "markdown"
                          }
                         }
                        }
