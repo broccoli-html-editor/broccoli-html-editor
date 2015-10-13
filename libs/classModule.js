@@ -102,8 +102,9 @@ module.exports = function(broccoli, moduleId, options){
 		callback = callback||function(){};
 		if(src !== null){
 			src = JSON.parse( JSON.stringify( src ) );
-			_this.template = src;
 		}
+		_this.template = src;
+
 		_this.info = {
 			name: null,
 			areaSizeDetection: 'shallow',
@@ -186,23 +187,35 @@ module.exports = function(broccoli, moduleId, options){
 				_this.fields = _topThis.subModule[_this.subModName].fields;
 			}
 
-			for( var tmpFieldName in _this.fields ){
-				if( _this.fields[tmpFieldName].fieldType == 'loop' ){
-					if( typeof(_this.subModule) !== typeof({}) ){
-						_this.subModule = {};
+			it79.ary(
+				_this.fields ,
+				function( it2, row, tmpFieldName ){
+					if( _this.fields[tmpFieldName].fieldType == 'loop' ){
+						_this.subModule = _this.subModule || {};
+
+						_topThis.subModule[tmpFieldName] = broccoli.createModuleInstance( _this.id, {
+							"src": '',
+							"subModName": tmpFieldName,
+							"topThis":_topThis
+						} );
+						_topThis.subModule[tmpFieldName].init(function(){
+							it2.next();
+						});
+						return;
 					}
-					_topThis.subModule[tmpFieldName] = broccoli.createModuleInstance( _this.id, {
-						"src": null,
-						"subModName": tmpFieldName,
-						"topThis":_topThis
-					} ).init(function(){});
+					it2.next();return;
+				} ,
+				function(){
+					callback(true);
 				}
-			}
+			);
+			return;
 
 		}else{
-			while( 1 ){
+			function parseBroccoliTemplate(src, callback){
 				if( !src.match(new RegExp('^((?:.|\r|\n)*?)\\{\\&((?:.|\r|\n)*?)\\&\\}((?:.|\r|\n)*)$') ) ){
-					break;
+					callback();
+					return;
 				}
 				field = RegExp.$2;
 				src = RegExp.$3;
@@ -216,16 +229,28 @@ module.exports = function(broccoli, moduleId, options){
 						'name':'__error__'
 					}};
 				}
+
 				if( field.input ){
 					_this.fields[field.input.name] = field.input;
 					_this.fields[field.input.name].fieldType = 'input';
+
+					parseBroccoliTemplate( src, function(){
+						callback();
+					} );
+					return;
 				}else if( field.module ){
 					_this.fields[field.module.name] = field.module;
 					_this.fields[field.module.name].fieldType = 'module';
+
+					parseBroccoliTemplate( src, function(){
+						callback();
+					} );
+					return;
 				}else if( field.loop ){
 					_this.fields[field.loop.name] = field.loop;
 					_this.fields[field.loop.name].fieldType = 'loop';
 					var tmpSearchResult = _this.searchEndTag( src, 'loop' );
+					src = tmpSearchResult.nextSrc;
 					if( typeof(_this.subModule) !== typeof({}) ){
 						_this.subModule = {};
 					}
@@ -238,12 +263,23 @@ module.exports = function(broccoli, moduleId, options){
 						"src": tmpSearchResult.content,
 						"subModName": field.loop.name,
 						"topThis":_topThis
-					}).init(function(){});
-					src = tmpSearchResult.nextSrc;
+					});
+					_topThis.subModule[field.loop.name].init(function(){
+						parseBroccoliTemplate( src, function(){
+							callback();
+						} );
+					});
+
+					return;
 				}else if( field == 'endloop' ){
 					// ループ構造の閉じタグ
 					// 本来ここは通らないはず。
 					// ここを通る場合は、対応する開始タグがない endloop がある場合。
+
+					parseBroccoliTemplate( src, function(){
+						callback();
+					} );
+					return;
 				}else if( field.if ){
 					// _this.fields[field.if.name] = field.if;
 					// _this.fields[field.if.name].fieldType = 'if';
@@ -257,18 +293,39 @@ module.exports = function(broccoli, moduleId, options){
 					// 	"topThis":_topThis
 					// }).init(function(){});
 					// src = tmpSearchResult.nextSrc;
+
+					parseBroccoliTemplate( src, function(){
+						callback();
+					} );
+					return;
 				}else if( field == 'endif' ){
 					// 分岐構造の閉じタグ
 					// 本来ここは通らないはず。
 					// ここを通る場合は、対応する開始タグがない endloop がある場合。
+
+					parseBroccoliTemplate( src, function(){
+						callback();
+					} );
+					return;
 				}else if( field.echo ){
 					// _this.fields[field.echo.name] = field.echo;
 					// _this.fields[field.echo.name].fieldType = 'echo';
+
+					parseBroccoliTemplate( src, function(){
+						callback();
+					} );
+					return;
 				}
-			}
+			}//parseBroccoliTemplate()
+
+			parseBroccoliTemplate( src, function(){
+				callback(true);
+			} );
+			return;
 		}
 		// console.log(_this.fields);
-		callback(true);
+		// callback(true);
+		return;
 	} // parseTpl()
 
 	/**

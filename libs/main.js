@@ -69,23 +69,23 @@ module.exports = function(options){
 	this.init = function(callback){
 		it79.fnc({},
 			[
-				function(it1, data){
-					_this.getAllModuleList(function(list){
-						it79.ary(
-							list,
-							function(it2, row2, idx2){
-								var mod = _this.createModuleInstance(row2.id);
-								_moduleCollection[row2.id] = mod;
-								_moduleCollection[row2.id].init(function(){
-									it2.next();
-								});
-							} ,
-							function(){
-								it1.next(data);
-							}
-						);
-					});
-				} ,
+				// function(it1, data){
+				// 	_this.getAllModuleList(function(list){
+				// 		it79.ary(
+				// 			list,
+				// 			function(it2, row2, idx2){
+				// 				var mod = _this.createModuleInstance(row2.id);
+				// 				_moduleCollection[row2.id] = mod;
+				// 				_moduleCollection[row2.id].init(function(){
+				// 					it2.next();
+				// 				});
+				// 			} ,
+				// 			function(){
+				// 				it1.next(data);
+				// 			}
+				// 		);
+				// 	});
+				// } ,
 				function(it1, data){
 					_this.resourceMgr.init( function(){
 						it1.next(data);
@@ -247,17 +247,43 @@ module.exports = function(options){
 	 * モジュールオブジェクトを取得する
 	 * @param  {String}   moduleId モジュールID
 	 * @param  {String}   subModName サブモジュール名
+	 * @param  {Function} callback  callback function.
 	 * @return {Object}            this
 	 */
-	this.getModule = function(moduleId, subModName){
+	this.getModule = function(moduleId, subModName, callback){
 		var rtn = _moduleCollection[moduleId];
-		if( typeof( rtn ) !== typeof({}) ){
-			rtn = false;
+		if( rtn === false ){
+			// 過去に生成を試みて、falseになっていた場合
+			callback(false);
+			return this;
+		}
+		if( rtn === undefined ){
+			var mod = _this.createModuleInstance(moduleId);
+			_moduleCollection[moduleId] = mod;
+			if( _moduleCollection[moduleId] === false ){
+				// falseの場合、該当するモジュールが定義されていない。
+				// 結果を記憶して、falseを返す。
+				callback(false);
+				return this;
+			}
+
+			_moduleCollection[moduleId].init(function(){
+				var rtn = _moduleCollection[moduleId];
+				if( typeof(subModName) === typeof('') ){
+					callback(rtn.subModule[subModName]);
+					return;
+				}
+				callback(rtn);
+				return;
+			});
+			return this;
 		}
 		if( typeof(subModName) === typeof('') ){
-			return rtn.subModule[subModName];
+			callback(rtn.subModule[subModName]);
+			return this;
 		}
-		return rtn;
+		callback(rtn);
+		return this;
 	}
 
 	/**

@@ -17,10 +17,7 @@ module.exports = function(broccoli, data, options, callback){
 	var twig = require('twig');
 	var fs = require('fs');
 
-	var mod = broccoli.getModule( data.modId, options.subModName);
-	if(mod === false){
-		mod = broccoli.getModule( '_sys/unknown' );
-	}
+	var mod;
 
 	this.nameSpace = {"vars": {}};
 	if( options.nameSpace ){
@@ -31,16 +28,27 @@ module.exports = function(broccoli, data, options, callback){
 	it79.fnc(
 		{},
 		[
-			// function(it1, d){
-			// 	mod.init(function(res){
-			// 		// console.log(res);
-			// 		it1.next(d);
-			// 	});
-			// } ,
+			function(it1, d){
+				broccoli.getModule( data.modId, options.subModName, function(result){
+					mod = result;
+					it1.next(d);
+				} );
+			} ,
+			function(it1, d){
+				if(mod === false){
+					broccoli.getModule( '_sys/unknown', null, function(result){
+						mod = result;
+						it1.next(d);
+					} );
+				}else{
+					it1.next(d);
+				}
+			} ,
 			function(it1, d){
 				var src = mod.template;
 				var rtn = '';
 				var fieldData = data.fields;
+				// console.log(mod.topThis.templateType);
 
 				if( mod.topThis.templateType != 'broccoli' ){
 					// テンプレートエンジン利用の場合の処理
