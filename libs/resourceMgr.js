@@ -129,14 +129,17 @@ module.exports = function(broccoli){
 		callback = callback || function(){};
 		_resourceDb = newResourceDb;
 
-		if( isDirectory( _resourcesPublishDirPath ) ){
-			// 公開リソースディレクトリを一旦削除
-			rmdir_r( _resourcesPublishDirPath );
+		function resetDirectory(dir){
+			if( isDirectory( dir ) ){ // 一旦削除
+				rmdir_r( dir );
+			}
+			if( !isDirectory( dir ) ){ // 作成
+				mkdir( dir );
+			}
+			return;
 		}
-		if( !isDirectory( _resourcesPublishDirPath ) ){
-			// 公開リソースディレクトリ作成
-			mkdir( _resourcesPublishDirPath );
-		}
+		resetDirectory(_resourcesDirPath);// 公開リソースディレクトリ 一旦削除して作成
+		resetDirectory(_resourcesPublishDirPath);// 公開リソースディレクトリ 一旦削除して作成
 
 		// 使われていないリソースを削除
 		var jsonSrc = fs.readFileSync( _dataJsonPath );
@@ -153,6 +156,10 @@ module.exports = function(broccoli){
 			fs.writeFileSync(
 				_resourcesDirPath+'/'+resKey+'/res.json',
 				JSON.stringify( _resourceDb[resKey], null, 1 )
+			);
+			fs.writeFileSync(
+				_resourcesDirPath+'/'+resKey+'/bin.'+_resourceDb[resKey].ext,
+				(new Buffer(_resourceDb[resKey].base64, 'base64')).toString()
 			);
 
 			if(_resourceDb[resKey].base64){

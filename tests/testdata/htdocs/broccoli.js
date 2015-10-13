@@ -1986,26 +1986,8 @@ module.exports = function(broccoli){
 	 */
 	function getExtension(path){
 		var ext = path.replace( new RegExp('^.*?\.([a-zA-Z0-9\_\-]+)$'), '$1' );
+		ext = ext.toLowerCase();
 		return ext;
-	}
-
-	/**
-	 * リソースファイルを解析する
-	 */
-	function parseResource( realpathSelected, res ){
-		var tmpResInfo = res || {};
-		var realpath = JSON.parse( JSON.stringify( realpathSelected ) );
-		tmpResInfo.ext = getExtension( realpath ).toLowerCase();
-		switch( tmpResInfo.ext ){
-			case 'gif':                          tmpResInfo.type = 'image/gif';  break;
-			case 'png':                          tmpResInfo.type = 'image/png';  break;
-			case 'jpg': case 'jpeg': case 'jpe': tmpResInfo.type = 'image/jpeg'; break;
-			case 'svg':                          tmpResInfo.type = 'image/svg+xml'; break;
-			default:
-				tmpResInfo.type = 'image/gif'; break;
-		}
-		tmpResInfo.isPrivateMaterial = false;
-		return tmpResInfo;
 	}
 
 	/**
@@ -2113,7 +2095,11 @@ module.exports = function(broccoli){
 			var $img = $('<img>');
 			rtn.append( $img
 				.attr({
-					"src": path
+					"src": path ,
+					"data-size": res.size ,
+					"data-extension": res.ext,
+					"data-mime-type": res.type,
+					"data-base64": res.base64
 				})
 				.css({
 					'min-width':'100px',
@@ -2143,12 +2129,18 @@ module.exports = function(broccoli){
 
 					var realpathSelected = $(this).val();
 					if( realpathSelected ){
-						readSelectedLocalFile(fileInfo, function(bin){
+						readSelectedLocalFile(fileInfo, function(dataUri){
 							$img
 								.attr({
-									"src": bin ,
+									"src": dataUri ,
 									"data-size": fileInfo.size ,
-									"data-mime-type": fileInfo.type
+									"data-extension": getExtension( fileInfo.name ),
+									"data-mime-type": fileInfo.type ,
+									"data-base64": (function(dataUri){
+										dataUri = dataUri.replace(new RegExp('^data\\:[^\\;]*\\;base64\\,'), '');
+										// console.log(dataUri);
+										return dataUri;
+									})(dataUri)
 								})
 							;
 						});
@@ -2245,8 +2237,12 @@ module.exports = function(broccoli){
 				function(it1, data){
 					realpathSelected = $dom.find('input[type=file]').val();
 					if( realpathSelected ){
-						resInfo = parseResource( realpathSelected, resInfo );
+						resInfo.ext = $dom.find('img').attr('data-extension');
+						resInfo.type = $dom.find('img').attr('data-mime-type');
+						resInfo.size = $dom.find('img').attr('data-size');
+						resInfo.base64 = $dom.find('img').attr('data-base64');
 					}
+					resInfo.isPrivateMaterial = false;
 					resInfo.publicFilename = $dom.find('input[name='+mod.name+'-publicFilename]').val();
 
 					_resMgr.updateResource( data.resKey, resInfo, function(){
