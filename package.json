@@ -1,6 +1,6 @@
 {
   "name": "broccoli-html-editor",
-  "version": "0.0.1-alpha.1",
+  "version": "0.0.1-alpha.2+nb",
   "description": "",
   "main": "libs/main.js",
   "scripts": {
