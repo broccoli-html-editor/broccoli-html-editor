@@ -735,6 +735,12 @@
                           "editor": "markdown"
                          }
                         }
+                       },
+                       {
+                        "modId": "testMod1:dev/custom1",
+                        "fields": {
+                         "main": "カスタムフィールドを追加してみました。"
+                        }
                        }
                       ]
                      }

@@ -64,6 +64,12 @@ module.exports = function(){
 			_this.fieldDefinitions.wysiwyg_rte = loadFieldDefinition(require('./../../../libs/fields/app.fields.wysiwyg_rte.js'));
 			_this.fieldDefinitions.wysiwyg_tinymce = loadFieldDefinition(require('./../../../libs/fields/app.fields.wysiwyg_tinymce.js'));
 
+			if( _this.options.customFields ){
+				for( var idx in _this.options.customFields ){
+					_this.fieldDefinitions[idx] = loadFieldDefinition( _this.options.customFields[idx] );
+				}
+			}
+
 			return true;
 		}
 		loadFieldDefinition();

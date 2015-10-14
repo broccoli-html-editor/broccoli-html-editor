@@ -20,6 +20,30 @@ module.exports = function( data, callback, main, socket ){
 		'pathHtml': '/editpage/index.html',
 		'pathResourceDir': '/editpage/index_files/resources/',
 		'realpathDataDir': path.resolve(__dirname, '../../../testdata/htdocs/editpage/index_files/guieditor.ignore/')+'/',
+		'customFields': {
+			'custom1': function(broccoli){
+				/**
+				 * データをバインドする
+				 */
+				this.bind = function( fieldData, mode, mod, callback ){
+					var php = require('phpjs');
+					var rtn = ''
+					if(typeof(fieldData)===typeof('')){
+						rtn = php.htmlspecialchars( fieldData ); // ←HTML特殊文字変換
+						rtn = rtn.replace(new RegExp('\r\n|\r|\n','g'), '<br />'); // ← 改行コードは改行タグに変換
+					}
+					if( mode == 'canvas' && !rtn.length ){
+						rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてテキストを編集してください)</span>';
+					}
+					rtn = '<div style="background-color:#993; color:#fff; padding:1em;">'+rtn+'</div>';
+					setTimeout(function(){
+						callback(rtn);
+					}, 0);
+					return;
+				}
+
+			}
+		} ,
 		'bindTemplate': function(htmls, callback){
 			var fin = '';
 			fin += '<!DOCTYPE html>'+"\n";

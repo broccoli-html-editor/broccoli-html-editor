@@ -178,7 +178,7 @@ module.exports = function(broccoli){
 			for( var idx in fieldList ){
 				var fieldName = fieldList[idx];
 				if( modTpl.fields[fieldName].fieldType == 'input' ){
-					newData.fields[fieldName] = broccoli.fieldDefinitions[modTpl.fields[fieldName].type].normalizeData('');
+					newData.fields[fieldName] = broccoli.getFieldDefinition(modTpl.fields[fieldName].type).normalizeData('');
 				}else if( modTpl.fields[fieldName].fieldType == 'module' ){
 					newData.fields[fieldName] = [];
 				}else if( modTpl.fields[fieldName].fieldType == 'loop' ){
@@ -409,7 +409,7 @@ module.exports = function(broccoli){
 		for( var idx in fieldList ){
 			var fieldName = fieldList[idx];
 			if( modTpl.fields[fieldName].fieldType == 'input' ){
-				newData.fields[fieldName] = broccoli.fieldDefinitions[modTpl.fields[fieldName].type].duplicateData( objInstance.fields[fieldName] );
+				newData.fields[fieldName] = broccoli.getFieldDefinition(modTpl.fields[fieldName].type).duplicateData( objInstance.fields[fieldName] );
 			}else if( modTpl.fields[fieldName].fieldType == 'module' ){
 				for( var idx in objInstance.fields[fieldName] ){
 					newData.fields[fieldName][idx] = this.duplicateInstance( objInstance.fields[fieldName][idx] );
@@ -1112,6 +1112,12 @@ module.exports = function(){
 			_this.fieldDefinitions.text = loadFieldDefinition(require('./../../../libs/fields/app.fields.text.js'));
 			_this.fieldDefinitions.wysiwyg_rte = loadFieldDefinition(require('./../../../libs/fields/app.fields.wysiwyg_rte.js'));
 			_this.fieldDefinitions.wysiwyg_tinymce = loadFieldDefinition(require('./../../../libs/fields/app.fields.wysiwyg_tinymce.js'));
+
+			if( _this.options.customFields ){
+				for( var idx in _this.options.customFields ){
+					_this.fieldDefinitions[idx] = loadFieldDefinition( _this.options.customFields[idx] );
+				}
+			}
 
 			return true;
 		}
@@ -2056,86 +2062,15 @@ module.exports = function(broccoli){
 	 * エディタUIを生成
 	 */
 	this.mkEditor = function( mod, data, elm, callback ){
-		var changeTimer;
-		var blurTimer;
-		function onChange(){
-			clearTimeout(changeTimer);
-			var $this = $(this);
-			changeTimer = setTimeout(function(){
-				var pages = $this.data('pages');
-				var $html = $('<ul>');
-				for( var idx in pages ){
-					if( !pages[idx].path.match( new RegExp('^'+px.utils.escapeRegExp($this.val())) ) ){
-						continue;
-					}
-					$html
-						.append( $('<li>')
-							.append( $('<a>')
-								.css({
-									'display':'block'
-								})
-								.attr({
-									'href': 'javascript:;',
-									'data-path': pages[idx].path
-								})
-								.text( pages[idx].path +' ('+pages[idx].title+')' )
-								.click(function(){
-									$input
-										.val( $(this).attr('data-path') )
-										.focus()
-									;
-								})
-							)
-						)
-					;
-				}
-				$palatte.html('').append( $html );
-			}, 100);
-		}
 		var $input = $('<input>')
 			.attr({
 				"name":mod.name
 			})
 			.val(data)
-			// .data( 'pages', px.getCurrentProject().site.getSitemap() )
 			.css({'width':'100%','height':'auto'})
-			.change( onChange )
-			.keyup( onChange )
-			.focus(function(){
-				clearTimeout( blurTimer );
-				$palatte.show('fast');
-			})
-			.blur(function(){
-				clearTimeout( blurTimer );
-				blurTimer = setTimeout( function(){
-					$palatte.hide();
-				}, 10 );
-			})
-			.change()
-		;
-		var $palatte = $('<div>')
-			.css({
-				'height':200,
-				'overflow':'auto',
-				'position':'absolute',
-				'background':'#f9f9f9',
-				'opacity':'0.9',
-				'width':'100%',
-				'z-index': 1000
-			})
-			.hide()
 		;
 		var rtn = $('<div>')
 			.append( $input )
-			.append( $('<div>')
-				.css({
-					'position':'relative'
-				})
-				.click(function(){
-					clearTimeout( blurTimer );
-				})
-				.append( $palatte )
-			)
 		;
 		$(elm).html(rtn);
 		setTimeout(function(){ callback(); }, 0);
@@ -3034,15 +2969,6 @@ module.exports = function(broccoli){
 			rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてテキストを編集してください)</span>';
 		}
 		setTimeout(function(){
-			// px.textEditor.attachTextEditor(
-			// 	$dom.find('textarea').get(0),
-			// 	'text'
-			// );
-			// $dom.find('.CodeMirror').css({
-			// 	'border': '1px solid #ccc',
-			// 	'border-radius': '3px'
-			// });
-
 			callback(rtn);
 		}, 0);
 		return;

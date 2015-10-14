@@ -21,86 +21,15 @@ module.exports = function(broccoli){
 	 * エディタUIを生成
 	 */
 	this.mkEditor = function( mod, data, elm, callback ){
-		var changeTimer;
-		var blurTimer;
-		function onChange(){
-			clearTimeout(changeTimer);
-			var $this = $(this);
-			changeTimer = setTimeout(function(){
-				var pages = $this.data('pages');
-				var $html = $('<ul>');
-				for( var idx in pages ){
-					if( !pages[idx].path.match( new RegExp('^'+px.utils.escapeRegExp($this.val())) ) ){
-						continue;
-					}
-					$html
-						.append( $('<li>')
-							.append( $('<a>')
-								.css({
-									'display':'block'
-								})
-								.attr({
-									'href': 'javascript:;',
-									'data-path': pages[idx].path
-								})
-								.text( pages[idx].path +' ('+pages[idx].title+')' )
-								.click(function(){
-									$input
-										.val( $(this).attr('data-path') )
-										.focus()
-									;
-								})
-							)
-						)
-					;
-				}
-				$palatte.html('').append( $html );
-			}, 100);
-		}
 		var $input = $('<input>')
 			.attr({
 				"name":mod.name
 			})
 			.val(data)
-			// .data( 'pages', px.getCurrentProject().site.getSitemap() )
 			.css({'width':'100%','height':'auto'})
-			.change( onChange )
-			.keyup( onChange )
-			.focus(function(){
-				clearTimeout( blurTimer );
-				$palatte.show('fast');
-			})
-			.blur(function(){
-				clearTimeout( blurTimer );
-				blurTimer = setTimeout( function(){
-					$palatte.hide();
-				}, 10 );
-			})
-			.change()
-		;
-		var $palatte = $('<div>')
-			.css({
-				'height':200,
-				'overflow':'auto',
-				'position':'absolute',
-				'background':'#f9f9f9',
-				'opacity':'0.9',
-				'width':'100%',
-				'z-index': 1000
-			})
-			.hide()
 		;
 		var rtn = $('<div>')
 			.append( $input )
-			.append( $('<div>')
-				.css({
-					'position':'relative'
-				})
-				.click(function(){
-					clearTimeout( blurTimer );
-				})
-				.append( $palatte )
-			)
 		;
 		$(elm).html(rtn);
 		setTimeout(function(){ callback(); }, 0);

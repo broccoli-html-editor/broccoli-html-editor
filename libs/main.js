@@ -58,6 +58,12 @@ module.exports = function(options){
 		_this.fieldDefinitions.wysiwyg_rte = loadFieldDefinition(require(__dirname+'/fields/app.fields.wysiwyg_rte.js'));
 		_this.fieldDefinitions.wysiwyg_tinymce = loadFieldDefinition(require(__dirname+'/fields/app.fields.wysiwyg_tinymce.js'));
 
+		if( _this.options.customFields ){
+			for( var idx in _this.options.customFields ){
+				_this.fieldDefinitions[idx] = loadFieldDefinition( _this.options.customFields[idx] );
+			}
+		}
+
 		return true;
 	}
 
@@ -122,6 +128,23 @@ module.exports = function(options){
 			}
 		);
 		return this;
+	}
+
+	/**
+	 * field定義を取得する
+	 * @param  {String} fieldType フィールドの種類(text, html, markdown, multitext, etc...)
+	 * @return {Object}           inputフィールドの定義オブジェクト
+	 */
+	this.getFieldDefinition = function(fieldType){
+		var fieldDefinition = this.fieldDefinitions[fieldType];
+		if( this.fieldDefinitions[fieldType] ){
+			// 定義済みのフィールドを返す
+			fieldDefinition = this.fieldDefinitions[fieldType];
+		}else{
+			// 定義がない場合は、デフォルトのfield定義を返す
+			fieldDefinition = this.fieldBase;
+		}
+		return fieldDefinition;
 	}
 
 	/**

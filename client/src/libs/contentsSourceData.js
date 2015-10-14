@@ -172,7 +172,7 @@ module.exports = function(broccoli){
 			for( var idx in fieldList ){
 				var fieldName = fieldList[idx];
 				if( modTpl.fields[fieldName].fieldType == 'input' ){
-					newData.fields[fieldName] = broccoli.fieldDefinitions[modTpl.fields[fieldName].type].normalizeData('');
+					newData.fields[fieldName] = broccoli.getFieldDefinition(modTpl.fields[fieldName].type).normalizeData('');
 				}else if( modTpl.fields[fieldName].fieldType == 'module' ){
 					newData.fields[fieldName] = [];
 				}else if( modTpl.fields[fieldName].fieldType == 'loop' ){
@@ -403,7 +403,7 @@ module.exports = function(broccoli){
 		for( var idx in fieldList ){
 			var fieldName = fieldList[idx];
 			if( modTpl.fields[fieldName].fieldType == 'input' ){
-				newData.fields[fieldName] = broccoli.fieldDefinitions[modTpl.fields[fieldName].type].duplicateData( objInstance.fields[fieldName] );
+				newData.fields[fieldName] = broccoli.getFieldDefinition(modTpl.fields[fieldName].type).duplicateData( objInstance.fields[fieldName] );
 			}else if( modTpl.fields[fieldName].fieldType == 'module' ){
 				for( var idx in objInstance.fields[fieldName] ){
 					newData.fields[fieldName][idx] = this.duplicateInstance( objInstance.fields[fieldName][idx] );

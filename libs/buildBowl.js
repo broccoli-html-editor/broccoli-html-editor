@@ -64,15 +64,8 @@ module.exports = function(broccoli, data, options, callback){
 
 										if( field.fieldType == 'input' ){
 											// input field
-											var fieldDef;
+											var fieldDef = broccoli.getFieldDefinition( field.type ); // フィールドタイプ定義を呼び出す
 											var tmpVal = '';
-											if( broccoli.fieldDefinitions[field.type] ){
-												// フィールドタイプ定義を呼び出す
-												fieldDef = broccoli.fieldDefinitions[field.type];
-											}else{
-												// ↓未定義のフィールドタイプの場合のデフォルトの挙動
-												fieldDef = broccoli.fieldBase;
-											}
 											fieldDef.bind( fieldData[field.name], options.mode, field, function(html){
 												tmpVal += html;
 												if( !field.hidden ){//← "hidden": true だったら、非表示(=出力しない)
