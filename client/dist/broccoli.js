@@ -834,6 +834,11 @@ module.exports = function(broccoli){
 	tplFrame += '					<button disabled="disabled" type="submit" class="btn btn-primary btn-lg">OK</button>';
 	tplFrame += '				</div>';
 	tplFrame += '			</div>';
+	tplFrame += '			<div class="btn-group" role="group" style="margin-top:20px;">';
+	tplFrame += '				<div class="btn-group">';
+	tplFrame += '					<button disabled="disabled" type="button" class="btn btn-danger btn-sm broccoli--edit-window-btn-remove">このモジュールを削除する</button>';
+	tplFrame += '				</div>';
+	tplFrame += '			</div>';
 	tplFrame += '		</div>';
 	tplFrame += '	</form>';
 	tplFrame += '</div>';
@@ -958,6 +963,16 @@ module.exports = function(broccoli){
 						);
 
 
+					})
+				;
+				$editWindow.find('button.broccoli--edit-window-btn-remove')
+					.bind('click', function(){
+						if( !confirm('このモジュールを削除します。よろしいですか？') ){
+							return;
+						}
+						broccoli.contentsSourceData.removeInstance(instancePath, function(){
+							callback();
+						});
 					})
 				;
 			}
