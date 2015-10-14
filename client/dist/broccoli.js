@@ -1926,7 +1926,7 @@ module.exports = function(broccoli){
 	var $ = require('jquery');
 
 	/**
-	 * データをバインドする
+	 * データをバインドする (Server Side)
 	 */
 	this.bind = function( fieldData, mode, mod, callback ){
 		var rtn = '';
@@ -1947,7 +1947,7 @@ module.exports = function(broccoli){
 	}
 
 	/**
-	 * プレビュー用の簡易なHTMLを生成する
+	 * プレビュー用の簡易なHTMLを生成する (Server Side/Client Side)
 	 */
 	this.mkPreviewHtml = function( fieldData, mod, callback ){
 		// InstanceTreeViewで利用する
@@ -1965,7 +1965,7 @@ module.exports = function(broccoli){
 	}
 
 	/**
-	 * データを正規化する
+	 * データを正規化する (Server Side/Client Side)
 	 * このメソッドは、同期的に振る舞います。
 	 */
 	this.normalizeData = function( fieldData, mode ){
@@ -1975,7 +1975,7 @@ module.exports = function(broccoli){
 	}
 
 	/**
-	 * エディタUIを生成
+	 * エディタUIを生成 (Client Side)
 	 */
 	this.mkEditor = function( mod, data, elm, callback ){
 		var rows = 12;
@@ -2009,16 +2009,7 @@ module.exports = function(broccoli){
 	}
 
 	/**
-	 * エディタUIが描画されたら呼ばれるコールバック
-	 * mkEditor() の非同期化の仕様変更に伴い、mkEditor() 内に含められるようになりました。
-	 * 不要になるので、削除します。
-	 */
-	// this.onEditorUiDrawn = function( $dom, mod, data ){
-	// 	return;
-	// }
-
-	/**
-	 * データを複製する
+	 * データを複製する (Client Side)
 	 */
 	this.duplicateData = function( data, callback ){
 		data = JSON.parse( JSON.stringify( data ) );
@@ -2027,7 +2018,7 @@ module.exports = function(broccoli){
 	}
 
 	/**
-	 * エディタUIで編集した内容を保存
+	 * エディタUIで編集した内容を保存 (Client Side)
 	 */
 	this.saveEditorContent = function( elm, data, mod, callback ){
 		var src = $(elm).find('textarea').val();
