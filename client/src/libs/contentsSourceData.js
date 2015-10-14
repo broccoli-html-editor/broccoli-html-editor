@@ -153,7 +153,7 @@ module.exports = function(broccoli){
 	 * インスタンスを追加する
 	 */
 	this.addInstance = function( modId, containerInstancePath, cb, subModName ){
-		console.log( '開発中: '+modId+': '+containerInstancePath );
+		// console.log( '開発中: '+modId+': '+containerInstancePath );
 		cb = cb||function(){};
 
 		var newData = {};

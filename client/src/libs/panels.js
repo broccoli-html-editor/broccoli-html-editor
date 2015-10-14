@@ -17,10 +17,24 @@ module.exports = function(broccoli){
 	var $contents;
 	var $contentsElements;
 
+	/**
+	 * 各パネルを描画する
+	 */
 	function drawPanel(idx, domElm){
-		function calcHeight($me, idx){
-			var $nextElm = $contentsElements.eq(idx+1);
-			if( !$nextElm.length ){
+		function calcHeight($me, idx){//パネルの高さを計算する
+			var $nextElm = (function(){
+				var instancePath = $(domElm).attr('data-broccoli-instance-path');
+				if( instancePath.match( /\@[0-9]*$/ ) ){
+					var instancePathNext = instancePath.replace( /([0-9]*)$/, '' );
+					instancePathNext += php.intval(RegExp.$1) + 1;
+					// console.log("from: "+ instancePath);
+					// console.log("to: "+instancePathNext);
+					$nextElm = $contentsElements.find('[data-broccoli-instance-path='+JSON.stringify(instancePathNext)+']');
+					return $nextElm;
+				}
+				return $contentsElements.eq(idx+1);
+			})();
+			if( !$nextElm.size() ){
 				return $me.outerHeight();
 			}
 			var rtn = ($nextElm.offset().top - $me.offset().top);
@@ -45,6 +59,7 @@ module.exports = function(broccoli){
 			.attr({
 				'data-broccoli-instance-path': $this.attr('data-broccoli-instance-path'),
 				'data-broccoli-is-appender': 'no',
+				'data-broccoli-mod-id': $this.attr('data-broccoli-mod-id'),
 				'data-broccoli-sub-mod-name': $this.attr('data-broccoli-sub-mod-name'),
 				'draggable': (isAppender ? false : true) // <- HTML5のAPI http://www.htmq.com/dnd/
 			})
@@ -67,6 +82,20 @@ module.exports = function(broccoli){
 			.bind('dblclick', function(){
 				var $this = $(this);
 				var instancePath = $this.attr('data-broccoli-instance-path');
+
+				if( $this.attr('data-broccoli-sub-mod-name') && $this.attr('data-broccoli-is-appender') == 'yes' ){
+					// alert('開発中: loopモジュールの繰り返し要素を増やします。');
+					var modId = $(this).attr("data-broccoli-mod-id");
+					var subModName = $(this).attr("data-broccoli-sub-mod-name");
+					broccoli.contentsSourceData.addInstance( modId, instancePath, function(){
+						broccoli.saveContents(function(){
+							broccoli.redraw();
+						});
+					}, subModName );
+					e.preventDefault();
+					return;
+				}
+
 				if( $this.attr('data-broccoli-is-appender') == 'yes' ){
 					instancePath = php.dirname(instancePath);
 				}
@@ -96,7 +125,7 @@ module.exports = function(broccoli){
 					broccoli.contentsSourceData.moveInstanceTo( moveFrom, moveTo, function(){
 						// コンテンツを保存
 						broccoli.contentsSourceData.save(function(){
-							alert('インスタンスを移動しました。');
+							// alert('インスタンスを移動しました。');
 							broccoli.redraw();
 						});
 					} );
@@ -111,7 +140,7 @@ module.exports = function(broccoli){
 				broccoli.contentsSourceData.addInstance( modId, $(this).attr('data-broccoli-instance-path'), function(){
 					// コンテンツを保存
 					broccoli.contentsSourceData.save(function(){
-						alert('インスタンスを追加しました。');
+						// alert('インスタンスを追加しました。');
 						broccoli.redraw();
 					});
 				} );

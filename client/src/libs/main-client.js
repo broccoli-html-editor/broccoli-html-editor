@@ -243,14 +243,8 @@ module.exports = function(){
 			$canvas.find('.broccoli--lightbox').fadeOut('slow',function(){$(this).remove();});
 			it79.fnc({},[
 				function(it1, data){
-					// コンテンツを保存
-					_this.contentsSourceData.save(function(){
-						it1.next(data);
-					});
-				} ,
-				function(it1, data){
-					// リソースを保存
-					_this.resourceMgr.save(function(){
+					// コンテンツデータを保存
+					_this.saveContents(function(){
 						it1.next(data);
 					});
 				} ,
@@ -266,6 +260,33 @@ module.exports = function(){
 				}
 			]);
 		} );
+		return this;
+	}
+
+	/**
+	 * コンテンツデータを保存する
+	 */
+	this.saveContents = function(callback){
+		callback = callback || function(){};
+		it79.fnc({},[
+			function(it1, data){
+				// コンテンツを保存
+				_this.contentsSourceData.save(function(){
+					it1.next(data);
+				});
+			} ,
+			function(it1, data){
+				// リソースを保存
+				_this.resourceMgr.save(function(){
+					it1.next(data);
+				});
+			} ,
+			function(it1, data){
+				// console.log('editInstance done.');
+				callback();
+				it1.next(data);
+			}
+		]);
 		return this;
 	}
 

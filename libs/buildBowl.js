@@ -220,6 +220,7 @@ module.exports = function(broccoli, data, options, callback){
 										tmpopt.instancePath += '@'+(fieldData[field.module.name].length);
 										rtn += '<div';
 										rtn += ' data-broccoli-instance-path="'+php.htmlspecialchars(tmpopt.instancePath)+'"';
+										rtn += ' data-broccoli-mod-id="'+php.htmlspecialchars(mod.id)+'"';
 										rtn += ' data-broccoli-is-appender="yes"';
 										rtn += ' style="';
 										rtn +=     'overflow:hidden;';
@@ -234,6 +235,7 @@ module.exports = function(broccoli, data, options, callback){
 										rtn +=     'box-sizing:border-box;';
 										rtn +=     'clear:both;';
 										rtn +=     'white-space:nowrap;';
+										rtn +=     'margin:10px 0;';
 										rtn += '"';
 										rtn += '>';
 										rtn += '(+) ここにモジュールをドラッグしてください。';
@@ -276,6 +278,7 @@ module.exports = function(broccoli, data, options, callback){
 										tmpopt.instancePath += '@'+(fieldData[field.loop.name].length);
 										rtn += '<div';
 										rtn += ' data-broccoli-instance-path="'+php.htmlspecialchars(tmpopt.instancePath)+'"';
+										rtn += ' data-broccoli-mod-id="'+php.htmlspecialchars(mod.id)+'"';
 										rtn += ' data-broccoli-sub-mod-name="'+php.htmlspecialchars(field.loop.name)+'"';
 										rtn += ' data-broccoli-is-appender="yes"';
 										rtn += ' style="';
@@ -290,6 +293,7 @@ module.exports = function(broccoli, data, options, callback){
 										rtn +=     'box-sizing:border-box;';
 										rtn +=     'clear:both;';
 										rtn +=     'white-space:nowrap;';
+										rtn +=     'margin:10px 0;';
 										rtn += '"';
 										rtn += '>';
 										rtn += 'ここをダブルクリックして配列要素を追加してください。';
