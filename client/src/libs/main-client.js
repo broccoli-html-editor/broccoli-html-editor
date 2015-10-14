@@ -185,6 +185,15 @@ module.exports = function(){
 			{},
 			[
 				function( it1, data ){
+					// イベント登録
+					var $iframeWindow = $($canvas.find('iframe').get(0).contentWindow.document);
+					$iframeWindow.bind('click', function(){
+						_this.unselectInstance();
+						_this.unfocusInstance();
+					});
+					it1.next(data);
+				} ,
+				function( it1, data ){
 					// 編集画面描画
 					_this.redraw(function(){
 						it1.next(data);
@@ -240,7 +249,7 @@ module.exports = function(){
 			)
 		;
 		this.drawEditWindow( instancePath, $canvas.find('.broccoli--lightbox-inner').get(0), function(){
-			$canvas.find('.broccoli--lightbox').fadeOut('slow',function(){$(this).remove();});
+			$canvas.find('.broccoli--lightbox').fadeOut('fast',function(){$(this).remove();});
 			it79.fnc({},[
 				function(it1, data){
 					// コンテンツデータを保存
@@ -260,33 +269,6 @@ module.exports = function(){
 				}
 			]);
 		} );
-		return this;
-	}
-
-	/**
-	 * コンテンツデータを保存する
-	 */
-	this.saveContents = function(callback){
-		callback = callback || function(){};
-		it79.fnc({},[
-			function(it1, data){
-				// コンテンツを保存
-				_this.contentsSourceData.save(function(){
-					it1.next(data);
-				});
-			} ,
-			function(it1, data){
-				// リソースを保存
-				_this.resourceMgr.save(function(){
-					it1.next(data);
-				});
-			} ,
-			function(it1, data){
-				// console.log('editInstance done.');
-				callback();
-				it1.next(data);
-			}
-		]);
 		return this;
 	}
 
@@ -380,6 +362,33 @@ module.exports = function(){
 	 */
 	this.drawEditWindow = function(instancePath, elmEditWindow, callback){
 		this.editWindow.init(instancePath, elmEditWindow, callback);
+		return this;
+	}
+
+	/**
+	 * コンテンツデータを保存する
+	 */
+	this.saveContents = function(callback){
+		callback = callback || function(){};
+		it79.fnc({},[
+			function(it1, data){
+				// コンテンツを保存
+				_this.contentsSourceData.save(function(){
+					it1.next(data);
+				});
+			} ,
+			function(it1, data){
+				// リソースを保存
+				_this.resourceMgr.save(function(){
+					it1.next(data);
+				});
+			} ,
+			function(it1, data){
+				// console.log('editInstance done.');
+				callback();
+				it1.next(data);
+			}
+		]);
 		return this;
 	}
 
