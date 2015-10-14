@@ -48,6 +48,14 @@ module.exports = function(broccoli){
 				'data-broccoli-sub-mod-name': $this.attr('data-broccoli-sub-mod-name'),
 				'draggable': (isAppender ? false : true) // <- HTML5のAPI http://www.htmq.com/dnd/
 			})
+			.bind('dragleave', function(e){
+				e.preventDefault();
+				$(this).removeClass('broccoli--panel__drag-entered');
+			})
+			.bind('dragover', function(e){
+				e.preventDefault();
+				$(this).addClass('broccoli--panel__drag-entered');
+			})
 			.bind('click', function(){
 				var $this = $(this);
 				var instancePath = $this.attr('data-broccoli-instance-path');
@@ -73,8 +81,41 @@ module.exports = function(broccoli){
 				}
 			})
 			.bind('drop', function(){
+				$(this).removeClass('broccoli--panel__drag-entered');
 				var method = event.dataTransfer.getData("method");
-				options.drop($(this).attr('data-broccoli-instance-path'), method);
+				// options.drop($(this).attr('data-broccoli-instance-path'), method);
+				console.log(method);
+				if( method === 'moveTo' ){
+					var moveFrom = event.dataTransfer.getData("data-broccoli-instance-path");
+					var moveTo = $(this).attr('data-broccoli-instance-path');
+					if( moveFrom === moveTo ){
+						// 移動元と移動先が同一の場合、キャンセルとみなす
+						$(this).removeClass('cont_instanceCtrlPanel-dragentered');
+						return;
+					}
+					broccoli.contentsSourceData.moveInstanceTo( moveFrom, moveTo, function(){
+						// コンテンツを保存
+						broccoli.contentsSourceData.save(function(){
+							alert('インスタンスを移動しました。');
+							broccoli.redraw();
+						});
+					} );
+					return;
+				}
+				if( method !== 'add' ){
+					alert('追加するモジュールをドラッグしてください。ここに移動することはできません。');
+					return;
+				}
+				var modId = event.dataTransfer.getData("modId");
+				// console.log(modId);
+				broccoli.contentsSourceData.addInstance( modId, $(this).attr('data-broccoli-instance-path'), function(){
+					// コンテンツを保存
+					broccoli.contentsSourceData.save(function(){
+						alert('インスタンスを追加しました。');
+						broccoli.redraw();
+					});
+				} );
+				return;
 			})
 		;
 		if(isAppender){

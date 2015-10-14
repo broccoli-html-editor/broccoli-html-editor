@@ -7,8 +7,10 @@ module.exports = function(broccoli){
 	var _this = this;
 	this.broccoli = broccoli;
 
+	var _ = require('underscore');
 	var it79 = require('iterate79');
 	var path = require('path');
+	var php = require('phpjs');
 
 	var _contentsSourceData; // <= data.jsonの中身
 	var _modTpls; // <- module の一覧
@@ -151,7 +153,7 @@ module.exports = function(broccoli){
 	 * インスタンスを追加する
 	 */
 	this.addInstance = function( modId, containerInstancePath, cb, subModName ){
-		// console.log( '開発中: '+modId+': '+containerInstancePath );
+		console.log( '開発中: '+modId+': '+containerInstancePath );
 		cb = cb||function(){};
 
 		var newData = {};
@@ -327,8 +329,21 @@ module.exports = function(broccoli){
 		cb = cb||function(){};
 
 		function parseInstancePath(path){
+			function parsePath( path ){
+				function escapeRegExp(str) {
+					if( typeof(str) !== typeof('') ){return str;}
+					return str.replace(/([.*+?^=!:${}()|[\]\/\\])/g, "\\$1");
+				}
+				var rtn = {};
+				rtn.path = path;
+				rtn.basename = php.basename( rtn.path );
+				rtn.dirname = php.dirname( rtn.path );
+				rtn.ext = rtn.basename.replace( new RegExp('^.*\\.'), '' );
+				rtn.basenameExtless = rtn.basename.replace( new RegExp('\\.'+escapeRegExp(rtn.ext)+'$'), '' );
+				return rtn;
+			}
 			var rtn = {};
-			rtn = px.utils.parsePath( path );
+			rtn = parsePath( path );
 			var basenameParse = rtn.basename.split('@');
 			rtn.container = rtn.dirname+'/'+basenameParse[0];
 			rtn.num = Number(basenameParse[1]);

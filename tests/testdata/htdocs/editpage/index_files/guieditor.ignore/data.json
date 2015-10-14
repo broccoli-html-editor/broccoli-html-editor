@@ -9,17 +9,26 @@
       "fields": {
        "column1": [
         {
-         "modId": "PlainHTMLElements:PlainHTML/Markdown",
+         "modId": "testMod1:parts/minimum_module",
          "fields": {
-          "main": "## Markdownフィールド\n\n- list 1\n- list 2\n\n再描画されますか？\n\nおおおお！！！ｗｗｗ\n\n再描画の再テスト。"
+          "md_src": "## 最小構成のモジュールのサンプル"
          },
          "dec": "",
          "anchor": ""
         },
         {
-         "modId": "testMod1:parts/minimum_module",
+         "modId": "PlainHTMLElements:PlainHTML/MultiText",
          "fields": {
-          "md_src": "## 最小構成のモジュールのサンプル"
+          "main": {
+           "src": "## まるちテキストを追加してみました。",
+           "editor": "markdown"
+          }
+         }
+        },
+        {
+         "modId": "PlainHTMLElements:PlainHTML/Markdown",
+         "fields": {
+          "main": "## Markdownフィールド\n\n- list 1\n- list 2\n\n再描画されますか？\n\nおおおお！！！ｗｗｗ\n\n再描画の再テスト。"
          },
          "dec": "",
          "anchor": ""
@@ -280,7 +289,7 @@
            {
             "modId": "testMod1:parts/deeploop",
             "fields": {
-             "md_src1": "テキストテキストー！",
+             "md_src1": "もじれつ書いてみますよ。",
              "sample_loop2": []
             },
             "subModName": "sample_loop1"
@@ -288,7 +297,7 @@
            {
             "modId": "testMod1:parts/deeploop",
             "fields": {
-             "md_src1": "もじれつ書いてみますよ。",
+             "md_src1": "テキストテキストー！",
              "sample_loop2": []
             },
             "subModName": "sample_loop1"
