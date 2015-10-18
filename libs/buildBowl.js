@@ -210,6 +210,7 @@ module.exports = function(broccoli, data, options, callback){
 								function(){
 									if( options.mode == 'canvas' ){
 										var tmpopt = JSON.parse( JSON.stringify(opt) );
+										if(typeof(fieldData[field.module.name]) != typeof([])){ fieldData[field.module.name] = []; }
 										tmpopt.instancePath += '@'+(fieldData[field.module.name].length);
 										rtn += '<div';
 										rtn += ' data-broccoli-instance-path="'+php.htmlspecialchars(tmpopt.instancePath)+'"';
@@ -268,6 +269,7 @@ module.exports = function(broccoli, data, options, callback){
 								function(){
 									if( options.mode == 'canvas' ){
 										var tmpopt = JSON.parse( JSON.stringify(opt) );
+										if(typeof(fieldData[field.loop.name]) != typeof([])){ fieldData[field.loop.name] = []; }
 										tmpopt.instancePath += '@'+(fieldData[field.loop.name].length);
 										rtn += '<div';
 										rtn += ' data-broccoli-instance-path="'+php.htmlspecialchars(tmpopt.instancePath)+'"';

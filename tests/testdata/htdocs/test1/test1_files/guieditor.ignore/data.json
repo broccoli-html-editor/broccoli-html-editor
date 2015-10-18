@@ -5,6 +5,12 @@
    "fields": {
     "main": [
      {
+      "modId": "testMod1:units/unit",
+      "fields": {
+      },
+      "dec": "あああああああ"
+     },
+     {
       "modId": "testMod1:units/cols3",
       "fields": {
        "column1": [
