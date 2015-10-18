@@ -146,7 +146,17 @@ module.exports = function(broccoli, moduleId, options){
 			}
 			_this.thumb = null;
 			if( isFile( _this.path+'/thumb.png' ) ){
-				_this.thumb = 'data:image/png;base64,'+php.base64_encode( fs.readFileSync( _this.path+'/thumb.png' ) );
+				_this.thumb = (function(){
+					var tmpBin = fs.readFileSync( _this.path+'/thumb.png' ).toString();
+					var tmpBase64;
+					try {
+						tmpBase64 = php.base64_encode( tmpBin );
+					} catch (e) {
+						console.log('ERROR: php.base64_encode() FAILED; -> '+_this.path+'/thumb.png');
+						return null;
+					}
+					return 'data:image/png;base64,'+tmpBase64;
+				})();
 			}
 		}
 
