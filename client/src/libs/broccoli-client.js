@@ -55,7 +55,7 @@
 				.append( $('<div class="broccoli--panels">')
 				)
 			;
-			this.options.elmIframeWindow = $canvas.find('iframe').get(0).contentWindow;
+			// this.options.elmIframeWindow = $canvas.find('iframe').get(0).contentWindow;
 			this.options.elmPanels = $canvas.find('.broccoli--panels').get(0);
 
 			this.postMessenger = new (require('./postMessenger.js'))(this, $canvas.find('iframe').get(0));
@@ -150,7 +150,7 @@
 					} ,
 					function( it1, data ){
 						// 編集画面描画
-						_this.options.elmIframeWindow = $canvas.find('iframe').get(0).contentWindow;
+						// _this.options.elmIframeWindow = $canvas.find('iframe').get(0).contentWindow;
 						it1.next(data);
 					} ,
 					function( it1, data ){

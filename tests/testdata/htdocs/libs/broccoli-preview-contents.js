@@ -9,6 +9,7 @@
 	var _origin;
 
 
+	// クリックイベントを登録
 	$iframeWindow.bind('click', function(){
 		callbackMessage('unselectInstance');
 		callbackMessage('unfocusInstance');
@@ -41,6 +42,25 @@
 				$iframeWindow.find('['+data.options.contents_bowl_name_by+'='+idx+']').html(data.options.htmls[idx]);
 			}
 			callbackMessage(data.callback, true);
+			return;
+
+		}else if(data.api == 'getAllInstance'){
+			var rtn = {};
+			var $instances = $iframeWindow.find('[data-broccoli-instance-path]');
+			$instances.each(function(){
+				var $this = $(this);
+				var elm = {};
+				elm.instancePath = $this.attr('data-broccoli-instance-path');
+				elm.modId = $this.attr('data-broccoli-mod-id');
+				elm.subModName = $this.attr('data-broccoli-sub-mod-name');
+				elm.isAppender = ($this.attr('data-broccoli-is-appender') == 'yes');
+				elm.outerWidth = $this.outerWidth();
+				elm.outerHeight = $this.outerHeight();
+				elm.offsetLeft = $this.offset().left;
+				elm.offsetTop = $this.offset().top;
+				rtn[elm.instancePath] = elm;
+			});
+			callbackMessage(data.callback, rtn);
 			return;
 
 		}else if(data.api == 'getHtmlContentHeight'){

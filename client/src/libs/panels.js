@@ -14,7 +14,6 @@ module.exports = function(broccoli){
 	var $ = require('jquery');
 
 	var $panels = $(broccoli.options.elmPanels);
-	var $contents;
 	var $contentsElements;
 
 	/**
@@ -23,44 +22,45 @@ module.exports = function(broccoli){
 	function drawPanel(idx, domElm){
 		function calcHeight($me, idx){//パネルの高さを計算する
 			var $nextElm = (function(){
-				var instancePath = $(domElm).attr('data-broccoli-instance-path');
+				var instancePath = domElm.instancePath;
 				if( instancePath.match( /\@[0-9]*$/ ) ){
 					var instancePathNext = instancePath.replace( /([0-9]*)$/, '' );
 					instancePathNext += php.intval(RegExp.$1) + 1;
 					// console.log("from: "+ instancePath);
 					// console.log("to: "+instancePathNext);
-					$nextElm = $contentsElements.find('[data-broccoli-instance-path='+JSON.stringify(instancePathNext)+']');
+					// $nextElm = $contentsElements.find('[data-broccoli-instance-path='+JSON.stringify(instancePathNext)+']');
+					$nextElm = $contentsElements[JSON.stringify(instancePathNext)];
 					return $nextElm;
 				}
-				return $contentsElements.eq(idx+1);
+				return null;
 			})();
-			if( !$nextElm.size() ){
-				return $me.outerHeight();
+			if( !$nextElm ){
+				return $me.outerHeight;
 			}
-			var rtn = ($nextElm.offset().top - $me.offset().top);
-			if( $me.outerHeight() > rtn ){
-				return $me.outerHeight();
+			var rtn = ($nextElm.offsetTop - $me.offsetTop);
+			if( $me.outerHeight > rtn ){
+				return $me.outerHeight;
 			}
 			return rtn;
 		}
-		var $this = $(domElm);
+		var $this = domElm;
 		var $panel = $('<div>');
-		var isAppender = ($this.attr('data-broccoli-is-appender') == 'yes');
+		var isAppender = $this.isAppender;
 		$panels.append($panel);
 		$panel
 			.css({
-				'width': $this.outerWidth(),
+				'width': $this.outerWidth,
 				'height': calcHeight($this, idx),
 				'position': 'absolute',
-				'left': $this.offset().left,
-				'top': $this.offset().top
+				'left': $this.offsetLeft,
+				'top': $this.offsetTop
 			})
 			.addClass('broccoli--panel')
 			.attr({
-				'data-broccoli-instance-path': $this.attr('data-broccoli-instance-path'),
+				'data-broccoli-instance-path': $this.instancePath,
 				'data-broccoli-is-appender': 'no',
-				'data-broccoli-mod-id': $this.attr('data-broccoli-mod-id'),
-				'data-broccoli-sub-mod-name': $this.attr('data-broccoli-sub-mod-name'),
+				'data-broccoli-mod-id': $this.modId,
+				'data-broccoli-sub-mod-name': $this.subModName,
 				'draggable': (isAppender ? false : true) // <- HTML5のAPI http://www.htmq.com/dnd/
 			})
 			.bind('dragleave', function(e){
@@ -167,9 +167,15 @@ module.exports = function(broccoli){
 			{},
 			[
 				function( it1, data ){
-					$contents = $(broccoli.options.elmIframeWindow.document);
-					$contentsElements = $contents.find('[data-broccoli-instance-path]');
-					it1.next(data);
+					broccoli.postMessenger.send(
+						'getAllInstance',
+						{},
+						function(_contentsElements){
+							console.log(_contentsElements);
+							$contentsElements = _contentsElements;
+							it1.next(data);
+						}
+					);
 				} ,
 				function( it1, data ){
 					$panels
@@ -181,7 +187,10 @@ module.exports = function(broccoli){
 				} ,
 				function( it1, data ){
 					// console.log($contentsElements.size());
-					$contentsElements.each(drawPanel);
+					for( var idx in $contentsElements ){
+						drawPanel(idx, $contentsElements[idx]);
+					}
+					// $contentsElements.each(drawPanel);
 					it1.next(data);
 				} ,
 				function( it1, data ){
