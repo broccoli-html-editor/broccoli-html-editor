@@ -1,3 +1,3 @@
 (function(window){
-	window.Broccoli = require('./libs/main-client.js');
+	window.Broccoli = require('./libs/broccoli-client.js');
 })(window);

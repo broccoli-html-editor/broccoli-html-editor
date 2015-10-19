@@ -66,7 +66,14 @@ module.exports = function( data, callback, main, socket ){
 			fin += htmls['secondly']+"\n";
 			fin += '        </div><!-- /secondly -->'+"\n";
 			fin += '    </body>'+"\n";
-			fin += '</html>';
+			fin += '</html>'+"\n";
+			fin += '<script data-broccoli-receive-message="yes">'+"\n";
+			fin += 'window.addEventListener(\'message\',function(event){'+"\n";
+			fin += 'if(event.origin!=\'http://127.0.0.1:8088\'){return;}'+"\n";
+			fin += 'var s=document.createElement(\'script\');'+"\n";
+			fin += 'document.querySelector(\'body\').appendChild(s);s.src=event.data.scriptUrl;'+"\n";
+			fin += '},false);'+"\n";
+			fin += '</script>'+"\n";
 
 			callback(fin);
 			return;

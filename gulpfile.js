@@ -11,6 +11,7 @@ var browserify = require("gulp-browserify");//NodeJSのコードをブラウザ�
 var packageJson = require(__dirname+'/package.json');
 var _tasks = [
 	'broccoli.js',
+	'broccoli-preview-contents.js',
 	'broccoli.css',
 	'test/main.js'
 ];
@@ -24,13 +25,13 @@ gulp.task('broccoli.css', function(){
 		.pipe(autoprefixer())
 		.pipe(concat('broccoli.css'))
 		.pipe(gulp.dest( './client/dist/' ))
-		.pipe(gulp.dest( './tests/testdata/htdocs/' ))
+		.pipe(gulp.dest( './tests/testdata/htdocs/libs/' ))
 		.pipe(concat('broccoli.min.css'))
 		.pipe(minifyCss({compatibility: 'ie8'}))
 		// .pipe(sourcemaps.write())
 		// .pipe(uglify())
 		.pipe(gulp.dest( './client/dist/' ))
-		.pipe(gulp.dest( './tests/testdata/htdocs/' ))
+		.pipe(gulp.dest( './tests/testdata/htdocs/libs/' ))
 	;
 });
 
@@ -41,11 +42,26 @@ gulp.task("broccoli.js", function() {
 		.pipe(browserify({}))
 		.pipe(concat('broccoli.js'))
 		.pipe(gulp.dest( './client/dist/' ))
-		.pipe(gulp.dest( './tests/testdata/htdocs/' ))
+		.pipe(gulp.dest( './tests/testdata/htdocs/libs/' ))
 		.pipe(concat('broccoli.min.js'))
 		.pipe(uglify())
 		.pipe(gulp.dest( './client/dist/' ))
-		.pipe(gulp.dest( './tests/testdata/htdocs/' ))
+		.pipe(gulp.dest( './tests/testdata/htdocs/libs/' ))
+	;
+});
+
+// broccoli.js (frontend) を処理
+gulp.task("broccoli-preview-contents.js", function() {
+	gulp.src(["client/src/broccoli-preview-contents.js"])
+		.pipe(plumber())
+		.pipe(browserify({}))
+		.pipe(concat('broccoli-preview-contents.js'))
+		.pipe(gulp.dest( './client/dist/' ))
+		.pipe(gulp.dest( './tests/testdata/htdocs/libs/' ))
+		.pipe(concat('broccoli-preview-contents.min.js'))
+		.pipe(uglify())
+		.pipe(gulp.dest( './client/dist/' ))
+		.pipe(gulp.dest( './tests/testdata/htdocs/libs/' ))
 	;
 });
 
