@@ -226,15 +226,6 @@
 							it1.next(data);
 						});
 					} ,
-					// function( it1, data ){
-					// 	// イベント登録
-					// 	var $iframeWindow = $($canvas.find('iframe').get(0).contentWindow.document);
-					// 	$iframeWindow.bind('click', function(){
-					// 		_this.unselectInstance();
-					// 		_this.unfocusInstance();
-					// 	});
-					// 	it1.next(data);
-					// } ,
 					function( it1, data ){
 						// 編集画面描画
 						_this.redraw(function(){
@@ -1746,6 +1737,7 @@ module.exports = function(broccoli){
 },{"iterate79":25,"jquery":26,"path":23,"phpjs":29,"twig":30}],8:[function(require,module,exports){
 /**
  * postMessenger.js
+ * iframeに展開されるプレビューHTMLとの通信を仲介します。
  */
 
 module.exports = function(broccoli, iframe){

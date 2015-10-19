@@ -1,5 +1,6 @@
 /**
  * postMessenger.js
+ * iframeに展開されるプレビューHTMLとの通信を仲介します。
  */
 
 module.exports = function(broccoli, iframe){

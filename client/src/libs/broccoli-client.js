@@ -220,15 +220,6 @@
 							it1.next(data);
 						});
 					} ,
-					// function( it1, data ){
-					// 	// イベント登録
-					// 	var $iframeWindow = $($canvas.find('iframe').get(0).contentWindow.document);
-					// 	$iframeWindow.bind('click', function(){
-					// 		_this.unselectInstance();
-					// 		_this.unfocusInstance();
-					// 	});
-					// 	it1.next(data);
-					// } ,
 					function( it1, data ){
 						// 編集画面描画
 						_this.redraw(function(){
