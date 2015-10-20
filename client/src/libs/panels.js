@@ -28,8 +28,7 @@ module.exports = function(broccoli){
 					instancePathNext += php.intval(RegExp.$1) + 1;
 					// console.log("from: "+ instancePath);
 					// console.log("to: "+instancePathNext);
-					// $nextElm = $contentsElements.find('[data-broccoli-instance-path='+JSON.stringify(instancePathNext)+']');
-					$nextElm = $contentsElements[JSON.stringify(instancePathNext)];
+					$nextElm = $contentsElements[instancePathNext];
 					return $nextElm;
 				}
 				return null;
