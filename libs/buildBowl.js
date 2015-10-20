@@ -107,8 +107,8 @@ module.exports = function(broccoli, data, options, callback){
 								};
 
 								try {
-									rtn = twig({
-										data: src
+									rtn = new twig.twig({
+										'data': src
 									}).render(tplDataObj);
 								} catch (e) {
 									console.log( 'TemplateEngine Rendering ERROR.' );
