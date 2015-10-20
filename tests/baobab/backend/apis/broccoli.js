@@ -70,7 +70,7 @@ module.exports = function( data, callback, main, socket ){
 			fin += '<script data-broccoli-receive-message="yes">'+"\n";
 			fin += 'window.addEventListener(\'message\',(function() {'+"\n";
 			fin += 'return function f(event) {'+"\n";
-			fin += 'if(event.origin!=\'http://127.0.0.1:8088\'){return;}'+"\n";
+			fin += 'if(event.origin!=\'http://127.0.0.1:8088\'){return;}// <- check your own server\'s origin.'+"\n";
 			fin += 'var s=document.createElement(\'script\');'+"\n";
 			fin += 'document.querySelector(\'body\').appendChild(s);s.src=event.data.scriptUrl;'+"\n";
 			fin += 'window.removeEventListener(\'message\', f, false);'+"\n";

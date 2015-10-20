@@ -141,6 +141,23 @@ broccoli.init(
 </script>
 ```
 
+編集画面上のプレビューHTMLの最後に、次のスクリプトコードを埋め込んでください。
+`'http://127.0.0.1:8088'` には、broccoli-html-editor の編集画面が置かれるサーバーの origin を設定してください。
+
+```html
+<script data-broccoli-receive-message="yes">
+window.addEventListener('message',(function() {
+return function f(event) {
+if(event.origin!='http://127.0.0.1:8088'){return;}// <- check your own server's origin.
+var s=document.createElement('script');
+document.querySelector('body').appendChild(s);s.src=event.data.scriptUrl;
+window.removeEventListener('message', f, false);
+}
+})(),false);
+</script>
+```
+
+
 ## モジュールの開発 - developing HTML module
 
 coming soon.
