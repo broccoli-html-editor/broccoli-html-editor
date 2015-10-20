@@ -34,12 +34,21 @@
 
 		if(data.api == 'updateHtml'){
 			console.log(data);
-			for(var idx in data.options.htmls){
-				$iframeWindow.find(data.options.contents_area_selector).html('...');
-			}
-			for(var idx in data.options.htmls){
-				$iframeWindow.find('['+data.options.contents_bowl_name_by+'='+idx+']').html(data.options.htmls[idx]);
-			}
+			var htmls = data.options.htmls;
+			$iframeWindow
+				.find(data.options.contents_area_selector)
+				.html('...')
+				.each(function(){
+					var $this = $(this);
+					var bowlName = $this.attr(data.options.contents_bowl_name_by);
+					if(!bowlName){ bowlName = 'main'; }
+					if(htmls[bowlName]){
+						$this.html(htmls[bowlName]);
+						htmls[bowlName] = undefined;
+						delete htmls[bowlName];
+					}
+				})
+			;
 			callbackMessage(data.callback, true);
 			return;
 
