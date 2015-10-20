@@ -1753,27 +1753,31 @@ module.exports = function(broccoli, iframe){
 
 	var __dirname = broccoli.__dirname;
 	// console.log(__dirname);
-
-	var _targetWindowOrigin = (function(url){
-		var parser = document.createElement('a');
-		parser.href=url;
-		return parser.protocol+'//'+parser.host
-	})($(iframe).attr('src'));
-	// console.log(_targetWindowOrigin);
-
 	var callbackMemory = {};
 
 	function createUUID(){
 		return "uuid-"+((new Date).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16));
+	}
+	function getTargetOrigin(iframe){
+		var url = $(iframe).attr('src');
+		// console.log(url);
+		var parser = document.createElement('a');
+		parser.href=url;
+		// console.log(parser);
+		return parser.protocol+'//'+parser.host
 	}
 
 	/**
 	 * 初期化
 	 */
 	this.init = function(callback){
-		// console.info('postMessenger.init() called');
+		console.info('postMessenger.init() called');
+
+		var targetWindowOrigin = getTargetOrigin(iframe);
+		// console.log(targetWindowOrigin);
+
 		var win = $(iframe).get(0).contentWindow;
-		win.postMessage({'scriptUrl':__dirname+'/broccoli-preview-contents.js'}, _targetWindowOrigin);
+		win.postMessage({'scriptUrl':__dirname+'/broccoli-preview-contents.js'}, targetWindowOrigin);
 		callback();
 		return this;
 	}
@@ -1797,7 +1801,8 @@ module.exports = function(broccoli, iframe){
 		console.log(callbackMemory);
 
 		var win = $(iframe).get(0).contentWindow;
-		win.postMessage(message, _targetWindowOrigin);
+		var targetWindowOrigin = getTargetOrigin(iframe);
+		win.postMessage(message, targetWindowOrigin);
 
 		// callback();//TODO: 仮実装。本当は、iframe側からコールバックされる。
 		return this;
