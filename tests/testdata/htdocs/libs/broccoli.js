@@ -188,7 +188,7 @@
 							{},
 							function(height){
 								// console.log(height);
-								$canvas.find('iframe').height( height + 120 );
+								$canvas.find('iframe').height( height + 16 );
 								it1.next(data);
 							}
 						);

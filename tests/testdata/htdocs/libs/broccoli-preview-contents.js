@@ -34,7 +34,7 @@
 		_origin = event.origin;
 
 		if(data.api == 'updateHtml'){
-			console.log(data);
+			// console.log(data);
 			var htmls = data.options.htmls;
 			$iframeWindow
 				.find(data.options.contents_area_selector)
