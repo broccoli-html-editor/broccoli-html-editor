@@ -62,10 +62,34 @@
 				elm.modId = $this.attr('data-broccoli-mod-id');
 				elm.subModName = $this.attr('data-broccoli-sub-mod-name');
 				elm.isAppender = ($this.attr('data-broccoli-is-appender') == 'yes');
-				elm.outerWidth = $this.outerWidth();
-				elm.outerHeight = $this.outerHeight();
+				elm.areaSizeDetection = $this.attr('data-broccoli-area-size-detection');
 				elm.offsetLeft = $this.offset().left;
 				elm.offsetTop = $this.offset().top;
+				elm.outerWidth = elm.offsetLeft + $this.outerWidth();
+				elm.outerHeight = elm.offsetTop + $this.outerHeight();
+				if( elm.areaSizeDetection == 'deep' ){
+					$this.find('*').each(function(){
+						var $this = $(this);
+						var oL = $this.offset().left;
+						var oT = $this.offset().top;
+						var oW = oL + $this.outerWidth();
+						var oH = oT + $this.outerHeight();
+						if( elm.offsetLeft > oL ){
+							elm.offsetLeft = oL;
+						}
+						if( elm.offsetTop > oT ){
+							elm.offsetTop = oT;
+						}
+						if( elm.outerWidth < oW ){
+							elm.outerWidth = oW;
+						}
+						if( elm.outerHeight < oH ){
+							elm.outerHeight = oH;
+						}
+					});
+				}
+				elm.outerWidth = elm.outerWidth - elm.offsetLeft;
+				elm.outerHeight = elm.outerHeight - elm.offsetTop;
 				rtn[elm.instancePath] = elm;
 			});
 			callbackMessage(data.callback, rtn);

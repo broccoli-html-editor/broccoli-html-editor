@@ -404,6 +404,7 @@ module.exports = function(broccoli, data, options, callback){
 						if( options.subModName ){
 							$1stElm.attr({ 'data-broccoli-sub-mod-name': options.subModName });
 						}
+						$1stElm.attr({ 'data-broccoli-area-size-detection': (mod.info.areaSizeDetection||'shallow') });
 						d.html = $.html();
 					}else{
 						var html = '';
@@ -412,6 +413,7 @@ module.exports = function(broccoli, data, options, callback){
 						if( options.subModName ){
 							html += ' data-broccoli-sub-mod-name="'+php.htmlspecialchars(options.subModName)+'"';
 						}
+						html += ' data-broccoli-area-size-detection="'+php.htmlspecialchars((mod.info.areaSizeDetection||'shallow'))+'"';
 						// html += ' data-broccoli-is-single-root-element="'+(mod.isSingleRootElement?'yes':'no')+'"';
 						html += '>';
 						html += d.html;
