@@ -170,7 +170,7 @@ module.exports = function(broccoli){
 						'getAllInstance',
 						{},
 						function(_contentsElements){
-							console.log(_contentsElements);
+							// console.log(_contentsElements);
 							$contentsElements = _contentsElements;
 							it1.next(data);
 						}

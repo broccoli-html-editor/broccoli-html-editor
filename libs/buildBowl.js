@@ -16,6 +16,7 @@ module.exports = function(broccoli, data, options, callback){
 	var php = require('phpjs');
 	var twig = require('twig');
 	var fs = require('fs');
+	var cheerio = require('cheerio');
 
 	var mod;
 
@@ -395,16 +396,28 @@ module.exports = function(broccoli, data, options, callback){
 			} ,
 			function(it1, d){
 				if( options.mode == 'canvas' ){
-					var html = '';
-					html += '<div';
-					html += ' data-broccoli-instance-path="'+php.htmlspecialchars(options.instancePath)+'"';
-					if(options.subModName){
-						html += ' data-broccoli-sub-mod-name="'+php.htmlspecialchars(options.subModName)+'"';
+					// console.log( d.html );
+					if( mod.isSingleRootElement ){
+						var $ = cheerio.load(d.html);
+						var $1stElm = $('*').eq(0);
+						$1stElm.attr({ 'data-broccoli-instance-path': options.instancePath });
+						if( options.subModName ){
+							$1stElm.attr({ 'data-broccoli-sub-mod-name': options.subModName });
+						}
+						d.html = $.html();
+					}else{
+						var html = '';
+						html += '<div';
+						html += ' data-broccoli-instance-path="'+php.htmlspecialchars(options.instancePath)+'"';
+						if( options.subModName ){
+							html += ' data-broccoli-sub-mod-name="'+php.htmlspecialchars(options.subModName)+'"';
+						}
+						// html += ' data-broccoli-is-single-root-element="'+(mod.isSingleRootElement?'yes':'no')+'"';
+						html += '>';
+						html += d.html;
+						html += '</div>';
+						d.html = html;
 					}
-					html += '>';
-					html += d.html;
-					html += '</div>';
-					d.html = html;
 				}
 				it1.next(d);
 			} ,

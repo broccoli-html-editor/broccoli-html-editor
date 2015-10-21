@@ -173,10 +173,12 @@ module.exports = function(broccoli, moduleId, options){
 				if( tplSrc.length && tplSrc.indexOf('<') === 0 && tplSrc.match(new RegExp('\\>$')) ){
 					var htmlparser = require('htmlparser');
 					var handler = new htmlparser.DefaultHandler(function (error, dom) {
+						// console.log('htmlparser callback');
 						if (error){
 							// console.log(error);
 						}
 					});
+					// console.log('htmlparser after');
 					var parser = new htmlparser.Parser(handler);
 					parser.parseComplete(tplSrc);
 					// console.log(handler.dom);

@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/tomk79/broccoli#readme",
   "dependencies": {
+    "cheerio": "^0.19.0",
     "es6-promise": "^3.0.2",
     "fs-extra": "^0.24.0",
     "glob": "^5.0.14",

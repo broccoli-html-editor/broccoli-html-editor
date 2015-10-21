@@ -1644,7 +1644,7 @@ module.exports = function(broccoli){
 						'getAllInstance',
 						{},
 						function(_contentsElements){
-							console.log(_contentsElements);
+							// console.log(_contentsElements);
 							$contentsElements = _contentsElements;
 							it1.next(data);
 						}
@@ -1797,7 +1797,7 @@ module.exports = function(broccoli, iframe){
 			'callback': callbackId,
 			'options': options
 		};
-		console.log(callbackMemory);
+		// console.log(callbackMemory);
 
 		var win = $(iframe).get(0).contentWindow;
 		var targetWindowOrigin = getTargetOrigin(iframe);
@@ -1812,8 +1812,8 @@ module.exports = function(broccoli, iframe){
 	 */
 	window.addEventListener('message',function(event){
 		var data=event.data;
-		console.log(event);
-		console.log(callbackMemory);
+		// console.log(event);
+		// console.log(callbackMemory);
 
 		if(data.api == 'unselectInstance'){
 			broccoli.unselectInstance();
