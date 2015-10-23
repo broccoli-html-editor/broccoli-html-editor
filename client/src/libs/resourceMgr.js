@@ -73,8 +73,19 @@ module.exports = function(broccoli){
 	 */
 	this.addResource = function(callback){
 		callback = callback || function(){};
-		var newResKey;
-		callback( newResKey );
+		it79.fnc({}, [
+			function(it1, data){
+				broccoli.gpi(
+					'resourceMgr.addResource',
+					{} ,
+					function(newResKey){
+						// console.log('New Resource Key is created on resourceDb: '+newResKey);
+						_resourceDb[newResKey] = {};//予約
+						callback(newResKey);
+					}
+				);
+			}
+		]);
 		return this;
 	}
 

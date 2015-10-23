@@ -89,6 +89,15 @@ module.exports = function(broccoli, api, options, callback){
 			);
 			break;
 
+		case "resourceMgr.addResource":
+			broccoli.resourceMgr.addResource(
+				function(newResKey){
+					// console.log(newResKey);
+					callback(newResKey);
+				}
+			);
+			break;
+
 		case "resourceMgr.getResourcePublicPath":
 			broccoli.resourceMgr.getResourcePublicPath(
 				options.resKey ,
