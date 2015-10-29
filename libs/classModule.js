@@ -355,7 +355,7 @@ module.exports = function(broccoli, moduleId, options){
 			if( moduleId == '_sys/root' ){
 				parseTpl( '{&{"module":{"name":"main"}}&}', _this, _this, callback );
 			}else if( moduleId == '_sys/unknown' ){
-				parseTpl( '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;">[ERROR] 未知のモジュールテンプレートです。<!-- .error --></div>', _this, _this, callback );
+				parseTpl( '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;">[ERROR] 未知のモジュールテンプレートです。<!-- .error --></div>'+"\n", _this, _this, callback );
 			}else if( moduleId == '_sys/html' ){
 				parseTpl( '{&{"input":{"type":"html","name":"main"}}&}', _this, _this, callback );
 			}else if( typeof(options.src) === typeof('') ){
@@ -374,7 +374,7 @@ module.exports = function(broccoli, moduleId, options){
 					tmpTplSrc = fs.readFileSync( _this.templateFilename );
 				}
 				if( !tmpTplSrc ){
-					tmpTplSrc = '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;">[ERROR] モジュールテンプレートの読み込みエラーです。<!-- .error --></div>';
+					tmpTplSrc = '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;">[ERROR] モジュールテンプレートの読み込みエラーです。<!-- .error --></div>'+"\n";
 				}
 				tmpTplSrc = JSON.parse( JSON.stringify( tmpTplSrc.toString() ) );
 				parseTpl( tmpTplSrc, _this, _this, callback );

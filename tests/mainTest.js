@@ -5,13 +5,15 @@ var phpjs = require('phpjs');
 var Promise = require("es6-promise").Promise;
 var Broccoli = require('../libs/main.js');
 
-function makeDefaultBroccoli(callback){
+function makeDefaultBroccoli(options, callback){
+	options = options||{};
+	var paths_module_template = options.paths_module_template || {
+		'PlainHTMLElements': '../PlainHTMLElements/',
+		'testMod1': '../modules1/',
+		'testMod2': '../modules2/'
+	};
 	var broccoli = new Broccoli({
-		'paths_module_template':{
-			'PlainHTMLElements': '../PlainHTMLElements/',
-			'testMod1': '../modules1/',
-			'testMod2': '../modules2/'
-		},
+		'paths_module_template': paths_module_template,
 		'documentRoot': path.resolve(__dirname, 'testdata/htdocs/')+'/',
 		'pathHtml': '/test1/test1.html',
 		'pathResourceDir': '/test1/test1_files/resources/',
@@ -28,7 +30,7 @@ describe('インスタンス初期化', function() {
 	it("インスタンス初期化", function(done) {
 		this.timeout(60*1000);
 
-		makeDefaultBroccoli( function(broccoli){
+		makeDefaultBroccoli( {}, function(broccoli){
 			// console.log(broccoli.options.documentRoot);
 			// console.log(broccoli.realpathHtml);
 			// console.log(broccoli.paths_module_template);
@@ -57,7 +59,7 @@ describe('モジュールIDを分解する', function() {
 	it("モジュールIDを分解する", function(done) {
 		this.timeout(60*1000);
 
-		makeDefaultBroccoli( function(broccoli){
+		makeDefaultBroccoli( {}, function(broccoli){
 			var parsedId = broccoli.parseModuleId('pkg1:cat1/mod1');
 			assert.equal(parsedId.package, 'pkg1');
 			assert.equal(parsedId.category, 'cat1');
@@ -75,7 +77,7 @@ describe('モジュールIDを分解する', function() {
 	it("分解できないモジュールID", function(done) {
 		this.timeout(60*1000);
 
-		makeDefaultBroccoli( function(broccoli){
+		makeDefaultBroccoli( {}, function(broccoli){
 			var parsedId = broccoli.parseModuleId('pkg1:cat1//mod1');
 			assert.equal(parsedId, false);
 
@@ -108,7 +110,7 @@ describe('モジュールの絶対パスを取得する', function() {
 	it("モジュールの絶対パスを取得する", function(done) {
 		this.timeout(60*1000);
 
-		makeDefaultBroccoli( function(broccoli){
+		makeDefaultBroccoli( {}, function(broccoli){
 			var realpath = broccoli.getModuleRealpath('testMod1:units/cols2');
 			assert.equal(realpath, path.resolve(__dirname, 'testdata/modules1/units/cols2')+'/');
 
@@ -119,7 +121,7 @@ describe('モジュールの絶対パスを取得する', function() {
 	it("実在しないモジュールの絶対パスを取得する", function(done) {
 		this.timeout(60*1000);
 
-		makeDefaultBroccoli( function(broccoli){
+		makeDefaultBroccoli( {}, function(broccoli){
 			var realpath = broccoli.getModuleRealpath('testMod1:units/cols2/');
 			assert.strictEqual(realpath, false);
 
@@ -140,7 +142,7 @@ describe('パッケージ一覧の取得', function() {
 	it("パッケージ一覧を取得する", function(done) {
 		this.timeout(60*1000);
 
-		makeDefaultBroccoli( function(broccoli){
+		makeDefaultBroccoli( {}, function(broccoli){
 			broccoli.getPackageList(function(list){
 				// console.log( list );
 				assert.equal(list['testMod1'].packageId, 'testMod1');
@@ -159,7 +161,7 @@ describe('モジュール一覧の取得', function() {
 	it("パッケージIDからモジュール一覧を取得する", function(done) {
 		this.timeout(60*1000);
 
-		makeDefaultBroccoli( function(broccoli){
+		makeDefaultBroccoli( {}, function(broccoli){
 			broccoli.getModuleListByPackageId('testMod1', function(modules){
 				// console.log( modules );
 				// console.log(modules.categories.units.modules);
@@ -177,7 +179,7 @@ describe('モジュールインスタンスを生成する', function() {
 
 	it("testMod1:units/cols2", function(done) {
 		this.timeout(15*1000);
-		makeDefaultBroccoli( function(broccoli){
+		makeDefaultBroccoli( {}, function(broccoli){
 			var mod = broccoli.createModuleInstance('testMod1:units/cols2', {});
 			mod.init(function(result){
 				// console.log( result );
@@ -193,7 +195,7 @@ describe('モジュールインスタンスを生成する', function() {
 
 	it("testMod1:dev/twig", function(done) {
 		this.timeout(15*1000);
-		makeDefaultBroccoli( function(broccoli){
+		makeDefaultBroccoli( {}, function(broccoli){
 			var mod = broccoli.createModuleInstance('testMod1:dev/twig', {});
 			mod.init(function(result){
 				// console.log( result );
@@ -209,7 +211,7 @@ describe('モジュールインスタンスを生成する', function() {
 
 	it("testMod1:units/thumb_list", function(done) {
 		this.timeout(15*1000);
-		makeDefaultBroccoli( function(broccoli){
+		makeDefaultBroccoli( {}, function(broccoli){
 			var mod = broccoli.createModuleInstance('testMod1:units/thumb_list', {});
 			mod.init(function(result){
 				// console.log( result );
@@ -225,7 +227,7 @@ describe('モジュールインスタンスを生成する', function() {
 
 	it("testMod1:dev/multitext", function(done) {
 		this.timeout(15*1000);
-		makeDefaultBroccoli( function(broccoli){
+		makeDefaultBroccoli( {}, function(broccoli){
 			var mod = broccoli.createModuleInstance('testMod1:dev/multitext', {});
 			mod.init(function(result){
 				// console.log( result );
@@ -246,7 +248,7 @@ describe('全モジュールの一覧の取得', function() {
 	it("全モジュールの一覧を取得する", function(done) {
 		this.timeout(60*1000);
 
-		makeDefaultBroccoli( function(broccoli){
+		makeDefaultBroccoli( {}, function(broccoli){
 			broccoli.getAllModuleList(function(modules){
 				// console.log( modules );
 				// console.log( modules['testMod1:units/unit'] );
@@ -263,7 +265,7 @@ describe('ビルドする', function() {
 
 	it("テストデータをfinalizeモードでビルドする", function(done) {
 		this.timeout(15*1000);
-		makeDefaultBroccoli( function(broccoli){
+		makeDefaultBroccoli( {}, function(broccoli){
 			var data = require(__dirname+'/testdata/htdocs/test1/test1_files/guieditor.ignore/data.json');
 			// console.log(data);
 			broccoli.buildBowl(
@@ -282,7 +284,7 @@ describe('ビルドする', function() {
 
 	it("テストデータをcanvasモードでビルドする", function(done) {
 		this.timeout(15*1000);
-		makeDefaultBroccoli( function(broccoli){
+		makeDefaultBroccoli( {}, function(broccoli){
 			var data = require(__dirname+'/testdata/htdocs/test1/test1_files/guieditor.ignore/data.json');
 			// console.log(data);
 			broccoli.buildBowl(
@@ -301,7 +303,7 @@ describe('ビルドする', function() {
 
 	it("未定義のモジュールを含む場合のビルド", function(done) {
 		this.timeout(15*1000);
-		makeDefaultBroccoli( function(broccoli){
+		makeDefaultBroccoli( {}, function(broccoli){
 			var data = require(__dirname+'/testdata/htdocs/unknown_module/unknown_files/guieditor.ignore/data.json');
 			// console.log(data);
 			broccoli.buildBowl(
@@ -311,6 +313,25 @@ describe('ビルドする', function() {
 				} ,
 				function( html, err ){
 					fs.writeFileSync(path.resolve(__dirname, './testdata/htdocs/unknown_module/unknown.html'), html);
+					// console.log( html );
+					done();
+				}
+			);
+		} );
+	});
+
+	it("空のdata.jsonでビルド", function(done) {
+		this.timeout(15*1000);
+		makeDefaultBroccoli( {}, function(broccoli){
+			var data = require(__dirname+'/testdata/htdocs/unknown_module/empty_data_json_files/guieditor.ignore/data.json');
+			// console.log(data);
+			broccoli.buildBowl(
+				undefined ,
+				{
+					'mode': 'finalize'
+				} ,
+				function( html, err ){
+					fs.writeFileSync(path.resolve(__dirname, './testdata/htdocs/unknown_module/empty_data_json.html'), html);
 					// console.log( html );
 					done();
 				}

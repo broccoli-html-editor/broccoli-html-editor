@@ -158,6 +158,9 @@ module.exports = function(options){
 			'category': false,
 			'module': false
 		};
+		if(typeof(moduleId) != typeof('')){
+			return false;
+		}
 		if( !moduleId.match( new RegExp('^([0-9a-zA-Z\\_\\-]+?)\\:([^\\/\\:\\s]*)\\/([^\\/\\:\\s]*)$') ) ){
 			return false;
 		}
@@ -202,6 +205,9 @@ module.exports = function(options){
 	 * @return {Boolean}          システムテンプレートであれば true, 違えば false
 	 */
 	this.isSystemMod = function( moduleId ){
+		if(typeof(moduleId) != typeof('')){
+			return false;
+		}
 		if( !moduleId.match(new RegExp('^_sys\\/')) ){
 			return false;
 		}

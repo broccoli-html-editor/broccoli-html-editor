@@ -25,6 +25,7 @@ module.exports = function(broccoli, data, options, callback){
 		this.nameSpace = options.nameSpace;
 	}
 
+	data = data || {};
 
 	it79.fnc(
 		{},
