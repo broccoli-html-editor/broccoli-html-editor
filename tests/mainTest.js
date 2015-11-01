@@ -180,11 +180,11 @@ describe('モジュール一覧の取得', function() {
 
 describe('resourceMgr を操作する', function() {
 
-	it("resMgr.resetBinFromBase64()", function(done) {
+	it("resMgr.resetBase64FromBin()", function(done) {
 		this.timeout(15*1000);
 		makeDefaultBroccoli( {}, function(broccoli){
 			var resMgr = broccoli.resourceMgr;
-			resMgr.resetBinFromBase64('06f830991ad501926013ab2f9a52621b', function(result){
+			resMgr.resetBase64FromBin('06f830991ad501926013ab2f9a52621b', function(result){
 				// console.log(result);
 				assert.equal(true, result);
 				done();
@@ -192,11 +192,11 @@ describe('resourceMgr を操作する', function() {
 		} );
 	});
 
-	it("resMgr.resetBase64FromBin()", function(done) {
+	it("resMgr.resetBinFromBase64()", function(done) {
 		this.timeout(15*1000);
 		makeDefaultBroccoli( {}, function(broccoli){
 			var resMgr = broccoli.resourceMgr;
-			resMgr.resetBase64FromBin('06f830991ad501926013ab2f9a52621b', function(result){
+			resMgr.resetBinFromBase64('06f830991ad501926013ab2f9a52621b', function(result){
 				// console.log(result);
 				assert.equal(true, result);
 				done();

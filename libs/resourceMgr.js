@@ -311,6 +311,7 @@ module.exports = function(broccoli){
 			var bin = fs.readFileSync( realpath, {} );
 			// _resourceDb[resKey].base64 = php.base64_encode( bin );
 			_resourceDb[resKey].base64 = (new Buffer(bin)).toString('base64');
+			_resourceDb[resKey].size = bin.length;
 			// console.log(_resourceDb[resKey].base64);
 
 			fs.writeFileSync(
