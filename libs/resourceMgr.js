@@ -287,10 +287,11 @@ module.exports = function(broccoli){
 			return this;
 		}
 		this.getResourceOriginalRealpath( resKey, function(realpath){
-			var bin = php.base64_decode( _resourceDb[resKey].base64 );
-			var result = fs.writeFileSync( realpath, bin, {} );
-
-			callback(result);
+			// console.log(_resourceDb[resKey].base64);
+			// var bin = php.base64_decode( _resourceDb[resKey].base64 );
+			var bin = (new Buffer(_resourceDb[resKey].base64, 'base64'));
+			fs.writeFileSync( realpath, bin, {} );
+			callback(true);
 		} );
 
 		return this;
@@ -308,7 +309,14 @@ module.exports = function(broccoli){
 		}
 		this.getResourceOriginalRealpath( resKey, function(realpath){
 			var bin = fs.readFileSync( realpath, {} );
-			_resourceDb[resKey].base64 = php.base64_encode( bin );
+			// _resourceDb[resKey].base64 = php.base64_encode( bin );
+			_resourceDb[resKey].base64 = (new Buffer(bin)).toString('base64');
+			// console.log(_resourceDb[resKey].base64);
+
+			fs.writeFileSync(
+				_resourcesDirPath+'/'+resKey+'/res.json',
+				JSON.stringify( _resourceDb[resKey], null, 1 )
+			);
 
 			callback(true);
 		} );

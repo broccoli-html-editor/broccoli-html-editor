@@ -178,6 +178,35 @@ describe('モジュール一覧の取得', function() {
 });
 
 
+describe('resourceMgr を操作する', function() {
+
+	it("resMgr.resetBinFromBase64()", function(done) {
+		this.timeout(15*1000);
+		makeDefaultBroccoli( {}, function(broccoli){
+			var resMgr = broccoli.resourceMgr;
+			resMgr.resetBinFromBase64('06f830991ad501926013ab2f9a52621b', function(result){
+				// console.log(result);
+				assert.equal(true, result);
+				done();
+			});
+		} );
+	});
+
+	it("resMgr.resetBase64FromBin()", function(done) {
+		this.timeout(15*1000);
+		makeDefaultBroccoli( {}, function(broccoli){
+			var resMgr = broccoli.resourceMgr;
+			resMgr.resetBase64FromBin('06f830991ad501926013ab2f9a52621b', function(result){
+				// console.log(result);
+				assert.equal(true, result);
+				done();
+			});
+		} );
+	});
+
+});
+
+
 describe('モジュールインスタンスを生成する', function() {
 
 	it("testMod1:units/cols2", function(done) {
