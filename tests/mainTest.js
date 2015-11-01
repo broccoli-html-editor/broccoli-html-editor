@@ -12,16 +12,19 @@ function makeDefaultBroccoli(options, callback){
 		'testMod1': '../modules1/',
 		'testMod2': '../modules2/'
 	};
-	var broccoli = new Broccoli({
-		'paths_module_template': paths_module_template,
-		'documentRoot': path.resolve(__dirname, 'testdata/htdocs/')+'/',
-		'pathHtml': '/test1/test1.html',
-		'pathResourceDir': '/test1/test1_files/resources/',
-		'realpathDataDir': path.resolve(__dirname, 'testdata/htdocs/test1/test1_files/guieditor.ignore/')+'/'
-	});
-	broccoli.init(function(){
-		callback(broccoli);
-	});
+	var broccoli = new Broccoli();
+	broccoli.init(
+		{
+			'paths_module_template': paths_module_template,
+			'documentRoot': path.resolve(__dirname, 'testdata/htdocs/')+'/',
+			'pathHtml': '/test1/test1.html',
+			'pathResourceDir': '/test1/test1_files/resources/',
+			'realpathDataDir': path.resolve(__dirname, 'testdata/htdocs/test1/test1_files/guieditor.ignore/')+'/'
+		},
+		function(){
+			callback(broccoli);
+		}
+	);
 	return;
 }
 

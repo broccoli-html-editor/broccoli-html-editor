@@ -1,7 +1,7 @@
 /**
  * broccoli.js
  */
-module.exports = function(options){
+module.exports = function(){
 	delete(require.cache[require('path').resolve(__filename)]);
 
 	var _allModuleList, //キャッシュ
@@ -13,35 +13,7 @@ module.exports = function(options){
 	var it79 = require('iterate79');
 	var fs = require('fs');
 	var _ = require('underscore');
-	options = options || {};
-	options.paths_module_template = options.paths_module_template || {};
-	options.documentRoot = options.documentRoot || '.'; // current directory.
-	options.pathHtml = options.pathHtml || null;
-	options.pathResourceDir = options.pathResourceDir || null;
-	options.realpathDataDir = options.realpathDataDir || null;
-	options.bindTemplate = options.bindTemplate || function(htmls, callback){
-		var fin = ''; for(var i in htmls){ fin += htmls[i]; } callback(fin);
-	};
-	if( !options.pathHtml || !options.pathResourceDir || !options.realpathDataDir ){
-		// 必須項目
-		// console.log(options);
-		console.error('[ERROR] options.pathHtml, options.pathResourceDir, and options.realpathDataDir are required.');
-		return;
-	}
 
-	for( var i in options.paths_module_template ){
-		options.paths_module_template[i] = path.resolve( options.documentRoot, options.paths_module_template[i] )+'/';
-	}
-
-	this.paths_module_template = options.paths_module_template;
-	this.realpathHtml = path.resolve( options.documentRoot, './'+options.pathHtml );
-	this.realpathResourceDir = path.resolve( options.documentRoot, './'+options.pathResourceDir );
-	this.realpathDataDir = path.resolve( options.realpathDataDir );
-	this.options = options;
-
-	this.resourceMgr = new (require('./resourceMgr.js'))(this);
-	this.fieldBase = new (require('./fieldBase.js'))(this);
-	this.fieldDefinitions = {};
 	function loadFieldDefinition(){
 		function loadFieldDefinition(mod){
 			return _.defaults( new (mod)(_this), _this.fieldBase );
@@ -69,29 +41,43 @@ module.exports = function(options){
 
 	/**
 	 * 初期化
-	 * @param  {Function} callback [description]
-	 * @return {[type]}            [description]
+	 * @param  {Object} options    options
+	 * @param  {Function} callback callback function.
+	 * @return {Object}            this
 	 */
-	this.init = function(callback){
+	this.init = function(options, callback){
+		options = options || {};
+		options.paths_module_template = options.paths_module_template || {};
+		options.documentRoot = options.documentRoot || '.'; // current directory.
+		options.pathHtml = options.pathHtml || null;
+		options.pathResourceDir = options.pathResourceDir || null;
+		options.realpathDataDir = options.realpathDataDir || null;
+		options.bindTemplate = options.bindTemplate || function(htmls, callback){
+			var fin = ''; for(var i in htmls){ fin += htmls[i]; } callback(fin);
+		};
+		if( !options.pathHtml || !options.pathResourceDir || !options.realpathDataDir ){
+			// 必須項目
+			// console.log(options);
+			console.error('[ERROR] options.pathHtml, options.pathResourceDir, and options.realpathDataDir are required.');
+			return;
+		}
+
+		for( var i in options.paths_module_template ){
+			options.paths_module_template[i] = path.resolve( options.documentRoot, options.paths_module_template[i] )+'/';
+		}
+
+		this.paths_module_template = options.paths_module_template;
+		this.realpathHtml = path.resolve( options.documentRoot, './'+options.pathHtml );
+		this.realpathResourceDir = path.resolve( options.documentRoot, './'+options.pathResourceDir );
+		this.realpathDataDir = path.resolve( options.realpathDataDir );
+		this.options = options;
+
+		this.resourceMgr = new (require('./resourceMgr.js'))(this);
+		this.fieldBase = new (require('./fieldBase.js'))(this);
+		this.fieldDefinitions = {};
+
 		it79.fnc({},
 			[
-				// function(it1, data){
-				// 	_this.getAllModuleList(function(list){
-				// 		it79.ary(
-				// 			list,
-				// 			function(it2, row2, idx2){
-				// 				var mod = _this.createModuleInstance(row2.id);
-				// 				_moduleCollection[row2.id] = mod;
-				// 				_moduleCollection[row2.id].init(function(){
-				// 					it2.next();
-				// 				});
-				// 			} ,
-				// 			function(){
-				// 				it1.next(data);
-				// 			}
-				// 		);
-				// 	});
-				// } ,
 				function(it1, data){
 					_this.resourceMgr.init( function(){
 						it1.next(data);
