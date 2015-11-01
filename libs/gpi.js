@@ -108,6 +108,30 @@ module.exports = function(broccoli, api, options, callback){
 			);
 			break;
 
+		case "resourceMgr.resetBinFromBase64":
+			// console.log('GPI resourceMgr.save');
+			// console.log(options);
+			broccoli.resourceMgr.resetBinFromBase64(
+				options.resKey ,
+				function(result){
+					// console.log(result);
+					callback(result);
+				}
+			);
+			break;
+
+		case "resourceMgr.resetBase64FromBin":
+			// console.log('GPI resourceMgr.save');
+			// console.log(options);
+			broccoli.resourceMgr.resetBase64FromBin(
+				options.resKey ,
+				function(result){
+					// console.log(result);
+					callback(result);
+				}
+			);
+			break;
+
 		case "resourceMgr.save":
 			// console.log('GPI resourceMgr.save');
 			// console.log(options);

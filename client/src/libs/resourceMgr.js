@@ -156,7 +156,20 @@ module.exports = function(broccoli){
 	 */
 	this.resetBinFromBase64 = function( resKey, callback ){
 		callback = callback || function(){};
-		callback(result);
+		it79.fnc({},
+			[
+				function(it1, data){
+					broccoli.gpi(
+						'resourceMgr.resetBinFromBase64',
+						{'resKey': resKey} ,
+						function(rtn){
+							// console.log(rtn);
+							callback(rtn);
+						}
+					);
+				}
+			]
+		);
 		return this;
 	}
 
@@ -165,7 +178,20 @@ module.exports = function(broccoli){
 	 */
 	this.resetBase64FromBin = function( resKey, callback ){
 		callback = callback || function(){};
-		callback(true);
+		it79.fnc({},
+			[
+				function(it1, data){
+					broccoli.gpi(
+						'resourceMgr.resetBase64FromBin',
+						{'resKey': resKey} ,
+						function(rtn){
+							// console.log(rtn);
+							callback(rtn);
+						}
+					);
+				}
+			]
+		);
 		return this;
 	}
 

@@ -87,6 +87,7 @@ module.exports = function(broccoli){
 	 * initialize resource Manager
 	 */
 	this.init = function( callback ){
+		callback = callback || function(){};
 		_dataJsonPath = path.resolve( broccoli.realpathDataDir, 'data.json' );
 		_resourcesDirPath = path.resolve(broccoli.realpathDataDir, 'resources/')+'/';
 		_resourcesPublishDirPath = broccoli.realpathResourceDir;
@@ -100,6 +101,7 @@ module.exports = function(broccoli){
 	 * Loading resource list
 	 */
 	function loadResourceList( callback ){
+		callback = callback || function(){};
 		_resourceDb = {};
 		if( !isDirectory( _resourcesDirPath ) ){
 			mkdir( _resourcesDirPath );
@@ -337,6 +339,7 @@ module.exports = function(broccoli){
 	 * get resource public path
 	 */
 	this.getResourceOriginalRealpath = function( resKey, callback ){
+		callback = callback || function(){};
 		var res = this.getResource( resKey );
 		var rtn = _resourcesDirPath+'/'+resKey+'/bin.'+_resourceDb[resKey].ext;
 
