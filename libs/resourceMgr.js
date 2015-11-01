@@ -286,12 +286,13 @@ module.exports = function(broccoli){
 			callback(false);
 			return this;
 		}
-		var realpath = this.getResourceOriginalRealpath( resKey );
+		this.getResourceOriginalRealpath( resKey, function(realpath){
+			var bin = php.base64_decode( _resourceDb[resKey].base64 );
+			var result = fs.writeFileSync( realpath, bin, {} );
 
-		var bin = php.base64_decode( _resourceDb[resKey].base64 );
-		var result = fs.writeFileSync( realpath, bin, {} );
+			callback(result);
+		} );
 
-		callback(result);
 		return this;
 	}
 
@@ -305,12 +306,13 @@ module.exports = function(broccoli){
 			callback(false);
 			return this;
 		}
-		var realpath = this.getResourceOriginalRealpath( resKey );
+		this.getResourceOriginalRealpath( resKey, function(realpath){
+			var bin = fs.readFileSync( realpath, {} );
+			_resourceDb[resKey].base64 = php.base64_encode( bin );
 
-		var bin = fs.readFileSync( realpath, {} );
-		_resourceDb[resKey].base64 = php.base64_encode( bin );
+			callback(true);
+		} );
 
-		callback(true);
 		return this;
 	}
 
