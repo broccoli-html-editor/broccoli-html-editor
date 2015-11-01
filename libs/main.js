@@ -15,24 +15,26 @@ module.exports = function(){
 	var _ = require('underscore');
 
 	function loadFieldDefinition(){
-		function loadFieldDefinition(mod){
-			return _.defaults( new (mod)(_this), _this.fieldBase );
+		function loadFieldDefinition(fieldId, mod){
+			var rtn = _.defaults( new (mod)(_this), _this.fieldBase );
+			rtn.__fieldId__ = fieldId;
+			return rtn;
 		}
-		_this.fieldDefinitions.href = loadFieldDefinition(require(__dirname+'/fields/app.fields.href.js'));
-		_this.fieldDefinitions.html = loadFieldDefinition(require(__dirname+'/fields/app.fields.html.js'));
-		_this.fieldDefinitions.html_attr_text = loadFieldDefinition(require(__dirname+'/fields/app.fields.html_attr_text.js'));
-		_this.fieldDefinitions.image = loadFieldDefinition(require(__dirname+'/fields/app.fields.image.js'));
-		_this.fieldDefinitions.markdown = loadFieldDefinition(require(__dirname+'/fields/app.fields.markdown.js'));
-		_this.fieldDefinitions.multitext = loadFieldDefinition(require(__dirname+'/fields/app.fields.multitext.js'));
-		_this.fieldDefinitions.select = loadFieldDefinition(require(__dirname+'/fields/app.fields.select.js'));
-		_this.fieldDefinitions.table = loadFieldDefinition(require(__dirname+'/fields/app.fields.table.js'));
-		_this.fieldDefinitions.text = loadFieldDefinition(require(__dirname+'/fields/app.fields.text.js'));
-		_this.fieldDefinitions.wysiwyg_rte = loadFieldDefinition(require(__dirname+'/fields/app.fields.wysiwyg_rte.js'));
-		_this.fieldDefinitions.wysiwyg_tinymce = loadFieldDefinition(require(__dirname+'/fields/app.fields.wysiwyg_tinymce.js'));
+		_this.fieldDefinitions.href = loadFieldDefinition('href', require('./fields/app.fields.href.js'));
+		_this.fieldDefinitions.html = loadFieldDefinition('html', require('./fields/app.fields.html.js'));
+		_this.fieldDefinitions.html_attr_text = loadFieldDefinition('html_attr_text', require('./fields/app.fields.html_attr_text.js'));
+		_this.fieldDefinitions.image = loadFieldDefinition('image', require('./fields/app.fields.image.js'));
+		_this.fieldDefinitions.markdown = loadFieldDefinition('markdown', require('./fields/app.fields.markdown.js'));
+		_this.fieldDefinitions.multitext = loadFieldDefinition('multitext', require('./fields/app.fields.multitext.js'));
+		_this.fieldDefinitions.select = loadFieldDefinition('select', require('./fields/app.fields.select.js'));
+		_this.fieldDefinitions.table = loadFieldDefinition('table', require('./fields/app.fields.table.js'));
+		_this.fieldDefinitions.text = loadFieldDefinition('text', require('./fields/app.fields.text.js'));
+		_this.fieldDefinitions.wysiwyg_rte = loadFieldDefinition('wysiwyg_rte', require('./fields/app.fields.wysiwyg_rte.js'));
+		_this.fieldDefinitions.wysiwyg_tinymce = loadFieldDefinition('wysiwyg_tinymce', require('./fields/app.fields.wysiwyg_tinymce.js'));
 
 		if( _this.options.customFields ){
 			for( var idx in _this.options.customFields ){
-				_this.fieldDefinitions[idx] = loadFieldDefinition( _this.options.customFields[idx] );
+				_this.fieldDefinitions[idx] = loadFieldDefinition( idx, _this.options.customFields[idx] );
 			}
 		}
 

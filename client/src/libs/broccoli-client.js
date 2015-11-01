@@ -65,24 +65,26 @@
 			this.fieldBase = new (require('./../../../libs/fieldBase.js'))(this);
 			this.fieldDefinitions = {};
 			function loadFieldDefinition(){
-				function loadFieldDefinition(mod){
-					return _.defaults( new (mod)(_this), _this.fieldBase );
+				function loadFieldDefinition(fieldId, mod){
+					var rtn = _.defaults( new (mod)(_this), _this.fieldBase );
+					rtn.__fieldId__ = fieldId;
+					return rtn;
 				}
-				_this.fieldDefinitions.href = loadFieldDefinition(require('./../../../libs/fields/app.fields.href.js'));
-				_this.fieldDefinitions.html = loadFieldDefinition(require('./../../../libs/fields/app.fields.html.js'));
-				_this.fieldDefinitions.html_attr_text = loadFieldDefinition(require('./../../../libs/fields/app.fields.html_attr_text.js'));
-				_this.fieldDefinitions.image = loadFieldDefinition(require('./../../../libs/fields/app.fields.image.js'));
-				_this.fieldDefinitions.markdown = loadFieldDefinition(require('./../../../libs/fields/app.fields.markdown.js'));
-				_this.fieldDefinitions.multitext = loadFieldDefinition(require('./../../../libs/fields/app.fields.multitext.js'));
-				_this.fieldDefinitions.select = loadFieldDefinition(require('./../../../libs/fields/app.fields.select.js'));
-				_this.fieldDefinitions.table = loadFieldDefinition(require('./../../../libs/fields/app.fields.table.js'));
-				_this.fieldDefinitions.text = loadFieldDefinition(require('./../../../libs/fields/app.fields.text.js'));
-				_this.fieldDefinitions.wysiwyg_rte = loadFieldDefinition(require('./../../../libs/fields/app.fields.wysiwyg_rte.js'));
-				_this.fieldDefinitions.wysiwyg_tinymce = loadFieldDefinition(require('./../../../libs/fields/app.fields.wysiwyg_tinymce.js'));
+				_this.fieldDefinitions.href = loadFieldDefinition('href', require('./../../../libs/fields/app.fields.href.js'));
+				_this.fieldDefinitions.html = loadFieldDefinition('html', require('./../../../libs/fields/app.fields.html.js'));
+				_this.fieldDefinitions.html_attr_text = loadFieldDefinition('html_attr_text', require('./../../../libs/fields/app.fields.html_attr_text.js'));
+				_this.fieldDefinitions.image = loadFieldDefinition('image', require('./../../../libs/fields/app.fields.image.js'));
+				_this.fieldDefinitions.markdown = loadFieldDefinition('markdown', require('./../../../libs/fields/app.fields.markdown.js'));
+				_this.fieldDefinitions.multitext = loadFieldDefinition('multitext', require('./../../../libs/fields/app.fields.multitext.js'));
+				_this.fieldDefinitions.select = loadFieldDefinition('select', require('./../../../libs/fields/app.fields.select.js'));
+				_this.fieldDefinitions.table = loadFieldDefinition('table', require('./../../../libs/fields/app.fields.table.js'));
+				_this.fieldDefinitions.text = loadFieldDefinition('text', require('./../../../libs/fields/app.fields.text.js'));
+				_this.fieldDefinitions.wysiwyg_rte = loadFieldDefinition('wysiwyg_rte', require('./../../../libs/fields/app.fields.wysiwyg_rte.js'));
+				_this.fieldDefinitions.wysiwyg_tinymce = loadFieldDefinition('wysiwyg_tinymce', require('./../../../libs/fields/app.fields.wysiwyg_tinymce.js'));
 
 				if( _this.options.customFields ){
 					for( var idx in _this.options.customFields ){
-						_this.fieldDefinitions[idx] = loadFieldDefinition( _this.options.customFields[idx] );
+						_this.fieldDefinitions[idx] = loadFieldDefinition( idx, _this.options.customFields[idx] );
 					}
 				}
 

@@ -120,6 +120,18 @@ module.exports = function(broccoli, api, options, callback){
 			);
 			break;
 
+		case "fieldGpi":
+			// console.log(api);
+			// console.log(options.__fieldId__);
+			// console.log(options.options);
+			broccoli.fieldDefinitions[options.__fieldId__].gpi(
+				options.options,
+				function(result){
+					callback(result);
+				}
+			);
+			break;
+
 		default:
 			callback(true);
 			break;

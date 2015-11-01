@@ -3,6 +3,7 @@
  */
 module.exports = function(broccoli){
 	// delete(require.cache[require('path').resolve(__filename)]);
+	this.__fieldId__ = null;
 	var $ = require('jquery');
 
 	/**
@@ -23,7 +24,7 @@ module.exports = function(broccoli){
 			rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてHTMLコードを編集してください)</span>';
 		}
 		setTimeout(function(){ callback(rtn); }, 0);
-		return;
+		return this;
 	}
 
 	/**
@@ -41,7 +42,7 @@ module.exports = function(broccoli){
 		$rtn.find('style').remove(); // styleタグも削除しちゃう
 
 		callback( $rtn.html() );
-		return;
+		return this;
 	}
 
 	/**
@@ -85,7 +86,7 @@ module.exports = function(broccoli){
 
 			callback();
 		}, 0);
-		return;
+		return this;
 	}
 
 	/**
@@ -94,7 +95,7 @@ module.exports = function(broccoli){
 	this.duplicateData = function( data, callback ){
 		data = JSON.parse( JSON.stringify( data ) );
 		callback(data);
-		return;
+		return this;
 	}
 
 	/**
@@ -104,7 +105,35 @@ module.exports = function(broccoli){
 		var src = $(elm).find('textarea').val();
 		src = JSON.parse( JSON.stringify(src) );
 		callback(src);
-		return;
+		return this;
+	}
+
+	/**
+	 * GPI (Server Side)
+	 */
+	this.gpi = function(options, callback){
+		callback = callback || function(){};
+		callback(options);
+		return this;
+	}
+
+	/**
+	 * GPIを呼び出す (Cliend Side)
+	 */
+	this.callGpi = function(options, callback){
+		callback = callback || function(){};
+		broccoli.gpi(
+			'fieldGpi',
+			{
+				'__fieldId__': this.__fieldId__,
+				'options': options
+			},
+			function(result){
+				// console.log(result);
+				callback(result);
+			}
+		);
+		return this;
 	}
 
 }
