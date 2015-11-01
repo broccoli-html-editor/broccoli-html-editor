@@ -239,19 +239,17 @@ module.exports = function(broccoli){
 			data,
 			[
 				function(it1, data){
-console.log('saving image field data.');
+					// console.log('saving image field data.');
 					_resMgr.getResource(data.resKey, function(result){
 						console.log(result);
 						if( result === false ){
 							_resMgr.addResource(function(newResKey){
 								data.resKey = newResKey;
-console.log(1234567890);
-console.log(data.resKey);
+								// console.log(data.resKey);
 								it1.next(data);
 							});
 							return;
 						}
-console.log(9876543210);
 						it1.next(data);
 					});
 				} ,
@@ -280,6 +278,7 @@ console.log(9876543210);
 							it1.next(data);
 						} );
 					} );
+					return;
 
 				} ,
 				function(it1, data){
