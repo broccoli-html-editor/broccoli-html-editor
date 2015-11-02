@@ -2026,7 +2026,9 @@ module.exports = function(broccoli){
 						{'resKey': resKey} ,
 						function(rtn){
 							// console.log(rtn);
-							callback(rtn);
+							loadResourceList(function(){
+								callback(rtn);
+							});
 						}
 					);
 				}
