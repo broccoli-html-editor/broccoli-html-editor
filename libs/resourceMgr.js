@@ -339,7 +339,7 @@ module.exports = function(broccoli){
 			// console.log(filename);
 			var contentsPath = broccoli.options.pathHtml;
 			var resourcesPublishDirPath = broccoli.options.pathResourceDir;
-			var rtn = './'+path.relative(path.dirname(contentsPath), resourcesPublishDirPath+'/'+filename+'.'+res.ext);
+			var rtn = './' + path.relative(path.dirname(contentsPath), resourcesPublishDirPath+'/'+filename+'.'+res.ext);
 
 			callback(rtn);
 		} );
@@ -351,10 +351,16 @@ module.exports = function(broccoli){
 	 */
 	this.getResourceOriginalRealpath = function( resKey, callback ){
 		callback = callback || function(){};
-		var res = this.getResource( resKey );
-		var rtn = _resourcesDirPath+'/'+resKey+'/bin.'+_resourceDb[resKey].ext;
+		var res = this.getResource( resKey, function(res){
+			if(!res){
+				callback(false);
+				return;
+			}
+			var rtn = path.resolve(_resourcesDirPath+'/'+resKey+'/bin.'+res.ext);
+			callback(rtn);
+			return;
+		} );
 
-		callback(rtn);
 		return this;
 	}
 
