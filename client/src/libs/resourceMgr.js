@@ -225,8 +225,21 @@ module.exports = function(broccoli){
 	 */
 	this.getResourceOriginalRealpath = function( resKey, callback ){
 		callback = callback || function(){};
-		var rtn;
-		callback(rtn);
+		// _resourceDb = {};
+		it79.fnc({},
+			[
+				function(it1, data){
+					broccoli.gpi(
+						'resourceMgr.getResourceOriginalRealpath',
+						{'resKey': resKey} ,
+						function(rtn){
+							// console.log('Getting resourceDb.');
+							callback(rtn);
+						}
+					);
+				}
+			]
+		);
 		return this;
 	}
 
@@ -235,7 +248,21 @@ module.exports = function(broccoli){
 	 */
 	this.removeResource = function( resKey, callback ){
 		callback = callback || function(){};
-		callback(true);
+		// _resourceDb = {};
+		it79.fnc({},
+			[
+				function(it1, data){
+					broccoli.gpi(
+						'resourceMgr.removeResource',
+						{'resKey': resKey} ,
+						function(rtn){
+							// console.log('Getting resourceDb.');
+							callback(rtn);
+						}
+					);
+				}
+			]
+		);
 		return this;
 	}
 

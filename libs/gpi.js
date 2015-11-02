@@ -108,6 +108,16 @@ module.exports = function(broccoli, api, options, callback){
 			);
 			break;
 
+		case "resourceMgr.getResourceOriginalRealpath":
+			broccoli.resourceMgr.getResourceOriginalRealpath(
+				options.resKey ,
+				function(publicPath){
+					// console.log(publicPath);
+					callback(publicPath);
+				}
+			);
+			break;
+
 		case "resourceMgr.resetBinFromBase64":
 			// console.log('GPI resourceMgr.save');
 			// console.log(options);
@@ -137,6 +147,18 @@ module.exports = function(broccoli, api, options, callback){
 			// console.log(options);
 			broccoli.resourceMgr.save(
 				options.resourceDb ,
+				function(result){
+					// console.log(result);
+					callback(result);
+				}
+			);
+			break;
+
+		case "resourceMgr.removeResource":
+			// console.log('GPI resourceMgr.save');
+			// console.log(options);
+			broccoli.resourceMgr.removeResource(
+				options.resKey ,
 				function(result){
 					// console.log(result);
 					callback(result);
