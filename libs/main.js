@@ -27,10 +27,7 @@ module.exports = function(){
 		_this.fieldDefinitions.markdown = loadFieldDefinition('markdown', require('./fields/app.fields.markdown.js'));
 		_this.fieldDefinitions.multitext = loadFieldDefinition('multitext', require('./fields/app.fields.multitext.js'));
 		_this.fieldDefinitions.select = loadFieldDefinition('select', require('./fields/app.fields.select.js'));
-		_this.fieldDefinitions.table = loadFieldDefinition('table', require('./fields/app.fields.table.js'));
 		_this.fieldDefinitions.text = loadFieldDefinition('text', require('./fields/app.fields.text.js'));
-		_this.fieldDefinitions.wysiwyg_rte = loadFieldDefinition('wysiwyg_rte', require('./fields/app.fields.wysiwyg_rte.js'));
-		_this.fieldDefinitions.wysiwyg_tinymce = loadFieldDefinition('wysiwyg_tinymce', require('./fields/app.fields.wysiwyg_tinymce.js'));
 
 		if( _this.options.customFields ){
 			for( var idx in _this.options.customFields ){

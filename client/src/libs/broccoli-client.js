@@ -77,10 +77,7 @@
 				_this.fieldDefinitions.markdown = loadFieldDefinition('markdown', require('./../../../libs/fields/app.fields.markdown.js'));
 				_this.fieldDefinitions.multitext = loadFieldDefinition('multitext', require('./../../../libs/fields/app.fields.multitext.js'));
 				_this.fieldDefinitions.select = loadFieldDefinition('select', require('./../../../libs/fields/app.fields.select.js'));
-				_this.fieldDefinitions.table = loadFieldDefinition('table', require('./../../../libs/fields/app.fields.table.js'));
 				_this.fieldDefinitions.text = loadFieldDefinition('text', require('./../../../libs/fields/app.fields.text.js'));
-				_this.fieldDefinitions.wysiwyg_rte = loadFieldDefinition('wysiwyg_rte', require('./../../../libs/fields/app.fields.wysiwyg_rte.js'));
-				_this.fieldDefinitions.wysiwyg_tinymce = loadFieldDefinition('wysiwyg_tinymce', require('./../../../libs/fields/app.fields.wysiwyg_tinymce.js'));
 
 				if( _this.options.customFields ){
 					for( var idx in _this.options.customFields ){
