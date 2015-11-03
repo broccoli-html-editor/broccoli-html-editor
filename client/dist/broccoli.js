@@ -1980,14 +1980,28 @@ module.exports = function(broccoli){
 	 */
 	this.updateResource = function( resKey, resInfo, callback ){
 		callback = callback || function(){};
-		if( typeof(_resourceDb[resKey]) !== typeof({}) ){
-			// 未登録の resKey
-			callback(false);
-			return this;
-		}
-		_resourceDb[resKey] = resInfo;
-
-		callback(true);
+		it79.fnc({},
+			[
+				function(it1, data){
+					broccoli.gpi(
+						'resourceMgr.updateResource',
+						{
+							'resKey': resKey,
+							'resInfo': resInfo
+						} ,
+						function(rtn){
+							// console.log(rtn);
+							if(_resourceDb[resKey]){
+								callback(true);
+								return;
+							}
+							callback(false);
+							return;
+						}
+					);
+				}
+			]
+		);
 		return this;
 	}
 
@@ -2603,9 +2617,11 @@ module.exports = function(broccoli){
 				function(it1, data){
 					// console.log('saving image field data.');
 					_resMgr.getResource(data.resKey, function(result){
-						console.log(result);
+						// console.log(result);
 						if( result === false ){
+							// console.log('result is false');
 							_resMgr.addResource(function(newResKey){
+								// console.log('new Resource Key is: '+newResKey);
 								data.resKey = newResKey;
 								// console.log(data.resKey);
 								it1.next(data);
@@ -2613,6 +2629,7 @@ module.exports = function(broccoli){
 							return;
 						}
 						it1.next(data);
+						return;
 					});
 				} ,
 				function(it1, data){
@@ -2633,8 +2650,7 @@ module.exports = function(broccoli){
 					resInfo.isPrivateMaterial = false;
 					resInfo.publicFilename = $dom.find('input[name='+mod.name+'-publicFilename]').val();
 
-					_resMgr.updateResource( data.resKey, resInfo, function(){
-						// var res = _resMgr.getResource( data.resKey );
+					_resMgr.updateResource( data.resKey, resInfo, function(result){
 						_resMgr.getResourcePublicPath( data.resKey, function(publicPath){
 							data.path = publicPath;
 							it1.next(data);

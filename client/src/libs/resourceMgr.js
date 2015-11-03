@@ -140,14 +140,28 @@ module.exports = function(broccoli){
 	 */
 	this.updateResource = function( resKey, resInfo, callback ){
 		callback = callback || function(){};
-		if( typeof(_resourceDb[resKey]) !== typeof({}) ){
-			// 未登録の resKey
-			callback(false);
-			return this;
-		}
-		_resourceDb[resKey] = resInfo;
-
-		callback(true);
+		it79.fnc({},
+			[
+				function(it1, data){
+					broccoli.gpi(
+						'resourceMgr.updateResource',
+						{
+							'resKey': resKey,
+							'resInfo': resInfo
+						} ,
+						function(rtn){
+							// console.log(rtn);
+							if(_resourceDb[resKey]){
+								callback(true);
+								return;
+							}
+							callback(false);
+							return;
+						}
+					);
+				}
+			]
+		);
 		return this;
 	}
 

@@ -242,39 +242,54 @@ module.exports = function(broccoli){
 			callback(false);
 			return this;
 		}
-		var newResKey = this.addResource();
-		_resourceDb[newResKey] = JSON.parse( JSON.stringify( _resourceDb[resKey] ) );
-		fsEx.copySync( _resourcesDirPath+'/'+resKey, _resourcesDirPath+'/'+newResKey );
+		this.addResource(function(newResKey){
+			_resourceDb[newResKey] = JSON.parse( JSON.stringify( _resourceDb[resKey] ) );
+			fsEx.copySync( _resourcesDirPath+'/'+resKey, _resourcesDirPath+'/'+newResKey );
 
-		callback( newResKey );
+			callback( newResKey );
+		});
 		return this;
 	}
 
-	// /**
-	//  * update resource
-	//  * @param  {string} resKey  Resource Key
-	//  * @param  {object} resInfo Resource Information.
-	//  * <dl>
-	//  * <dt>ext</dt><dd>ファイル拡張子名。</dd>
-	//  * <dt>type</dt><dd>mimeタイプ。</dd>
-	//  * <dt>base64</dt><dd>ファイルのBase64エンコードされた値</dd>
-	//  * <dt>publicFilename</dt><dd>公開時のファイル名</dd>
-	//  * <dt>isPrivateMaterial</dt><dd>非公開ファイル。</dd>
-	//  * </dl>
-	//  * @return {boolean}        always true.
-	//  */
-	// this.updateResource = function( resKey, resInfo, callback ){
-	// 	callback = callback || function(){};
-	// 	if( typeof(_resourceDb[resKey]) !== typeof({}) ){
-	// 		// 未登録の resKey
-	// 		callback(false);
-	// 		return this;
-	// 	}
-	// 	_resourceDb[resKey] = resInfo;
-	//
-	// 	callback(true);
-	// 	return this;
-	// }
+	/**
+	 * update resource
+	 *
+	 * このメソッドは、resKey が指すリソースの新しい情報を受け取り、更新します。
+	 * 保存されたファイル本体とJSONを上書き保存します。
+	 *
+	 * @param  {string} resKey  Resource Key
+	 * @param  {object} resInfo Resource Information.
+	 * <dl>
+	 * <dt>ext</dt><dd>ファイル拡張子名。</dd>
+	 * <dt>type</dt><dd>mimeタイプ。</dd>
+	 * <dt>base64</dt><dd>ファイルのBase64エンコードされた値</dd>
+	 * <dt>publicFilename</dt><dd>公開時のファイル名</dd>
+	 * <dt>isPrivateMaterial</dt><dd>非公開ファイル。</dd>
+	 * </dl>
+	 * @return {boolean}        always true.
+	 */
+	this.updateResource = function( resKey, resInfo, callback ){
+		callback = callback || function(){};
+		if( typeof(_resourceDb[resKey]) !== typeof({}) ){
+			// 未登録の resKey
+			callback(false);
+			return this;
+		}
+		_resourceDb[resKey] = resInfo;
+
+		mkdir( _resourcesDirPath+'/'+resKey );
+		fs.writeFileSync(
+			_resourcesDirPath+'/'+resKey+'/res.json',
+			JSON.stringify( _resourceDb[resKey], null, 1 )
+		);
+		fs.writeFileSync(
+			_resourcesDirPath+'/'+resKey+'/bin.'+_resourceDb[resKey].ext,
+			(new Buffer(_resourceDb[resKey].base64, 'base64')).toString()
+		);
+
+		callback(true);
+		return this;
+	}
 
 	/**
 	 * Reset bin from base64
