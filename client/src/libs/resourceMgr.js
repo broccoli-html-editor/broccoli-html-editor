@@ -59,7 +59,9 @@ module.exports = function(broccoli){
 					{'resourceDb': _resourceDb} ,
 					function(rtn){
 						// console.log('resourceDb save method: done.');
-						callback(rtn);
+						loadResourceList(function(){
+							callback(rtn);
+						});
 					}
 				);
 			}
@@ -103,15 +105,22 @@ module.exports = function(broccoli){
 	 */
 	this.getResource = function( resKey, callback ){
 		callback = callback || function(){};
-		// console.log(resKey);
-		// console.log(_resourceDb);
-		// console.log(_resourceDb[resKey]);
-		if( typeof(_resourceDb[resKey]) !== typeof({}) ){
-			// 未登録の resKey
-			callback(false);
-			return this;
-		}
-		callback(_resourceDb[resKey]);
+		it79.fnc({}, [
+			function(it1, data){
+				broccoli.gpi(
+					'resourceMgr.getResource',
+					{'resKey': resKey} ,
+					function(resInfo){
+						if(resInfo.size === undefined){
+							callback(false);
+							return ;
+						}
+						_resourceDb[resKey] = resInfo;
+						callback(resInfo);
+					}
+				);
+			}
+		]);
 		return this;
 	}
 
@@ -192,6 +201,7 @@ module.exports = function(broccoli){
 	 */
 	this.resetBase64FromBin = function( resKey, callback ){
 		callback = callback || function(){};
+		var _this = this;
 		it79.fnc({},
 			[
 				function(it1, data){
@@ -200,7 +210,12 @@ module.exports = function(broccoli){
 						{'resKey': resKey} ,
 						function(rtn){
 							// console.log(rtn);
-							callback(rtn);
+							// console.log(_resourceDb[resKey]);
+							_this.getResource(resKey, function(resInfo){
+								// console.log(resInfo);
+								_resourceDb[resKey] = resInfo;
+								callback(rtn);
+							});
 						}
 					);
 				}

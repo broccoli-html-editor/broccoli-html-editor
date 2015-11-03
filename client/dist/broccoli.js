@@ -157,8 +157,8 @@
 						}, 100);
 					} ,
 					function( it1, data ){
-						// 編集画面描画
-						// _this.options.elmIframeWindow = $canvas.find('iframe').get(0).contentWindow;
+						// 編集画面を一旦消去
+						$(_this.options.elmPanels).html('');
 						it1.next(data);
 					} ,
 					function( it1, data ){
@@ -1899,7 +1899,9 @@ module.exports = function(broccoli){
 					{'resourceDb': _resourceDb} ,
 					function(rtn){
 						// console.log('resourceDb save method: done.');
-						callback(rtn);
+						loadResourceList(function(){
+							callback(rtn);
+						});
 					}
 				);
 			}
@@ -1943,15 +1945,22 @@ module.exports = function(broccoli){
 	 */
 	this.getResource = function( resKey, callback ){
 		callback = callback || function(){};
-		// console.log(resKey);
-		// console.log(_resourceDb);
-		// console.log(_resourceDb[resKey]);
-		if( typeof(_resourceDb[resKey]) !== typeof({}) ){
-			// 未登録の resKey
-			callback(false);
-			return this;
-		}
-		callback(_resourceDb[resKey]);
+		it79.fnc({}, [
+			function(it1, data){
+				broccoli.gpi(
+					'resourceMgr.getResource',
+					{'resKey': resKey} ,
+					function(resInfo){
+						if(resInfo.size === undefined){
+							callback(false);
+							return ;
+						}
+						_resourceDb[resKey] = resInfo;
+						callback(resInfo);
+					}
+				);
+			}
+		]);
 		return this;
 	}
 
@@ -2032,6 +2041,7 @@ module.exports = function(broccoli){
 	 */
 	this.resetBase64FromBin = function( resKey, callback ){
 		callback = callback || function(){};
+		var _this = this;
 		it79.fnc({},
 			[
 				function(it1, data){
@@ -2040,7 +2050,12 @@ module.exports = function(broccoli){
 						{'resKey': resKey} ,
 						function(rtn){
 							// console.log(rtn);
-							callback(rtn);
+							// console.log(_resourceDb[resKey]);
+							_this.getResource(resKey, function(resInfo){
+								// console.log(resInfo);
+								_resourceDb[resKey] = resInfo;
+								callback(rtn);
+							});
 						}
 					);
 				}
@@ -2555,17 +2570,6 @@ module.exports = function(broccoli){
 		return;
 	}
 
-	// /**
-	//  * GPI (Server Side)
-	//  */
-	// this.gpi = function(options, callback){
-	// 	callback = callback || function(){};
-	// 	// options.serverSideMessage = 'Opened Traffic!';
-	// 	// console.log(options);
-	// 	callback(options);
-	// 	return this;
-	// }
-
 	/**
 	 * データを複製する
 	 */
@@ -2632,6 +2636,7 @@ module.exports = function(broccoli){
 				} ,
 				function(it1, data){
 					_resMgr.getResource(data.resKey, function(res){
+						// console.log(res);
 						resInfo = res;
 						it1.next(data);
 					});

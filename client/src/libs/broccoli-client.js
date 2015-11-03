@@ -151,8 +151,8 @@
 						}, 100);
 					} ,
 					function( it1, data ){
-						// 編集画面描画
-						// _this.options.elmIframeWindow = $canvas.find('iframe').get(0).contentWindow;
+						// 編集画面を一旦消去
+						$(_this.options.elmPanels).html('');
 						it1.next(data);
 					} ,
 					function( it1, data ){

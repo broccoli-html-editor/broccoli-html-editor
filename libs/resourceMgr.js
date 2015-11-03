@@ -114,7 +114,11 @@ module.exports = function(broccoli){
 			_resourceDb[resKey] = {};
 			if( isFile( _resourcesDirPath+'/'+resKey+'/res.json' ) ){
 				var jsonStr = fs.readFileSync( _resourcesDirPath+'/'+resKey+'/res.json' );
-				_resourceDb[resKey] = JSON.parse( jsonStr );
+				try {
+					_resourceDb[resKey] = JSON.parse( jsonStr );
+				} catch (e) {
+					_resourceDb[resKey] = {};
+				}
 			}
 		}
 		callback();
@@ -159,13 +163,20 @@ module.exports = function(broccoli){
 				_resourcesDirPath+'/'+resKey+'/res.json',
 				JSON.stringify( _resourceDb[resKey], null, 1 )
 			);
-			fs.writeFileSync(
-				_resourcesDirPath+'/'+resKey+'/bin.'+_resourceDb[resKey].ext,
-				(new Buffer(_resourceDb[resKey].base64, 'base64')).toString()
-			);
 
 			if(_resourceDb[resKey].base64){
-				var bin = new Buffer(_resourceDb[resKey].base64, 'base64');
+				var bin = '';
+				try {
+					bin = new Buffer(_resourceDb[resKey].base64, 'base64');
+				} catch (e) {
+					bin = '';
+				}
+
+				fs.writeFileSync(
+					_resourcesDirPath+'/'+resKey+'/bin.'+_resourceDb[resKey].ext,
+					bin
+				);
+
 				fs.writeFileSync(
 					_resourcesDirPath+'/'+resKey+'/bin.'+_resourceDb[resKey].ext,
 					bin
@@ -297,9 +308,15 @@ module.exports = function(broccoli){
 			_resourcesDirPath+'/'+resKey+'/res.json',
 			JSON.stringify( _resourceDb[resKey], null, 1 )
 		);
+		var bin = '';
+		try {
+			bin = (new Buffer(_resourceDb[resKey].base64, 'base64')).toString();
+		} catch (e) {
+			bin = '';
+		}
 		fs.writeFileSync(
 			_resourcesDirPath+'/'+resKey+'/bin.'+_resourceDb[resKey].ext,
-			(new Buffer(_resourceDb[resKey].base64, 'base64')).toString()
+			bin
 		);
 
 		callback(true);
@@ -339,10 +356,8 @@ module.exports = function(broccoli){
 		}
 		this.getResourceOriginalRealpath( resKey, function(realpath){
 			var bin = fs.readFileSync( realpath, {} );
-			// _resourceDb[resKey].base64 = php.base64_encode( bin );
 			_resourceDb[resKey].base64 = (new Buffer(bin)).toString('base64');
 			_resourceDb[resKey].size = bin.length;
-			// console.log(_resourceDb[resKey].base64);
 
 			fs.writeFileSync(
 				_resourcesDirPath+'/'+resKey+'/res.json',

@@ -203,17 +203,6 @@ module.exports = function(broccoli){
 		return;
 	}
 
-	// /**
-	//  * GPI (Server Side)
-	//  */
-	// this.gpi = function(options, callback){
-	// 	callback = callback || function(){};
-	// 	// options.serverSideMessage = 'Opened Traffic!';
-	// 	// console.log(options);
-	// 	callback(options);
-	// 	return this;
-	// }
-
 	/**
 	 * データを複製する
 	 */
@@ -280,6 +269,7 @@ module.exports = function(broccoli){
 				} ,
 				function(it1, data){
 					_resMgr.getResource(data.resKey, function(res){
+						// console.log(res);
 						resInfo = res;
 						it1.next(data);
 					});

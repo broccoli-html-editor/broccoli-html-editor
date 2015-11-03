@@ -80,6 +80,16 @@ module.exports = function(broccoli, api, options, callback){
 			);
 			break;
 
+		case "resourceMgr.getResource":
+			broccoli.resourceMgr.getResource(
+				options.resKey ,
+				function(resInfo){
+					// console.log(resInfo);
+					callback(resInfo);
+				}
+			);
+			break;
+
 		case "resourceMgr.getResourceDb":
 			broccoli.resourceMgr.getResourceDb(
 				function(resourceDb){
