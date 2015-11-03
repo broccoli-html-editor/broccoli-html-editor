@@ -164,7 +164,7 @@ module.exports = function(broccoli){
 				JSON.stringify( _resourceDb[resKey], null, 1 )
 			);
 
-			if(_resourceDb[resKey].base64){
+			if(_resourceDb[resKey].base64 !== undefined){
 				var bin = '';
 				try {
 					bin = new Buffer(_resourceDb[resKey].base64, 'base64');
@@ -214,7 +214,10 @@ module.exports = function(broccoli){
 			}
 			_resourceDb[newResKey] = { //予約
 				'ext': 'txt',
-				'size': 0
+				'size': 0,
+				'base64': '',
+				'isPrivateMaterial': false,
+				'publicFilename': ''
 			};
 			break;
 		}
