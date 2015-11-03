@@ -201,9 +201,24 @@ module.exports = function(broccoli){
 				// 登録済みの resKey
 				continue;
 			}
-			_resourceDb[newResKey] = {};//予約
+			_resourceDb[newResKey] = { //予約
+				'ext': 'txt',
+				'size': 0
+			};
 			break;
 		}
+
+		var resKey = newResKey;
+		mkdir( _resourcesDirPath+'/'+resKey );
+		fs.writeFileSync(
+			_resourcesDirPath+'/'+resKey+'/res.json',
+			JSON.stringify( _resourceDb[resKey], null, 1 )
+		);
+		fs.writeFileSync(
+			_resourcesDirPath+'/'+resKey+'/bin.'+_resourceDb[resKey].ext,
+			''
+		);
+
 		callback( newResKey );
 		return this;
 	}
@@ -366,7 +381,7 @@ module.exports = function(broccoli){
 	 */
 	this.getResourceOriginalRealpath = function( resKey, callback ){
 		callback = callback || function(){};
-		var res = this.getResource( resKey, function(res){
+		this.getResource( resKey, function(res){
 			if(!res){
 				callback(false);
 				return;
