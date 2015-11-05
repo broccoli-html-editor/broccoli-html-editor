@@ -27,6 +27,62 @@ module.exports = function(broccoli, data, options, callback){
 
 	data = data || {};
 
+	function mkAppender(fieldType, param){
+		var rtn = '';
+		switch(fieldType){
+			case 'module':
+				rtn += '<div';
+				rtn += ' data-broccoli-instance-path="'+php.htmlspecialchars(param.instancePath)+'"';
+				rtn += ' data-broccoli-mod-id="'+php.htmlspecialchars(param.modId)+'"';
+				rtn += ' data-broccoli-is-appender="yes"';
+				rtn += ' style="';
+				rtn +=     'overflow:hidden;';
+				rtn +=     'padding:15px;';
+				rtn +=     'background-color:#eef;';
+				rtn +=     'border:3px solid transparent;';
+				rtn +=     'border-radius:5;';
+				rtn +=     'font-family: &amp;YuGothic&amp;, &amp;Yu Gothic&amp;, Meiryo, &amp;Hiragino Kaku Gothic ProN&amp;, Verdana, sans-serif;';
+				rtn +=     'font-size:9px;';
+				rtn +=     'color:#000;';
+				rtn +=     'text-align:center;';
+				rtn +=     'box-sizing:border-box;';
+				rtn +=     'clear:both;';
+				rtn +=     'white-space:nowrap;';
+				rtn +=     'margin:10px 0;';
+				rtn += '"';
+				rtn += '>';
+				rtn += '(+) ここにモジュールをドラッグしてください。';
+				rtn += '</div>';
+				break;
+			case 'loop':
+				rtn += '<div';
+				rtn += ' data-broccoli-instance-path="'+php.htmlspecialchars(param.instancePath)+'"';
+				rtn += ' data-broccoli-mod-id="'+php.htmlspecialchars(param.modId)+'"';
+				rtn += ' data-broccoli-sub-mod-name="'+php.htmlspecialchars(param.subModName)+'"';
+				rtn += ' data-broccoli-is-appender="yes"';
+				rtn += ' style="';
+				rtn +=     'overflow:hidden;';
+				rtn +=     'padding:5px 15px;';
+				rtn +=     'background-color:#dfe;';
+				rtn +=     'border:3px solid transparent;';
+				rtn +=     'border-radius:5px;';
+				rtn +=     'font-family: &amp;YuGothic&amp;, &amp;Yu Gothic&amp;, Meiryo, &amp;Hiragino Kaku Gothic ProN&amp;, Verdana, sans-serif;';
+				rtn +=     'font-size:9px;';
+				rtn +=     'text-align:center;';
+				rtn +=     'box-sizing:border-box;';
+				rtn +=     'clear:both;';
+				rtn +=     'white-space:nowrap;';
+				rtn +=     'margin:10px 0;';
+				rtn += '"';
+				rtn += '>';
+				rtn += 'ここをダブルクリックして配列要素を追加してください。';
+				rtn += '</div>';
+				break;
+		}
+		return rtn;
+	}
+
+
 	it79.fnc(
 		{},
 		[
@@ -53,7 +109,7 @@ module.exports = function(broccoli, data, options, callback){
 				// console.log(mod.topThis.templateType);
 
 				if( mod.topThis.templateType != 'broccoli' ){
-					// テンプレートエンジン利用の場合の処理
+					// テンプレートエンジン(Twigなど)利用の場合の処理
 					// console.log(this.id + '/' + this.subModName);
 					var tplDataObj = {};
 					it79.fnc(
@@ -82,8 +138,36 @@ module.exports = function(broccoli, data, options, callback){
 
 										}else if( field.fieldType == 'module' ){
 											// module field
-											tplDataObj[field.name] = fieldData[field.name].join('');
-											it3.next();
+											var opt = JSON.parse( JSON.stringify(options) );
+											opt.instancePath += '/fields.'+field.name;
+
+											it79.ary(
+												fieldData[field.name],
+												function( it2, row, idx ){
+													// ネストされたモジュールの再帰処理
+													var tmpopt = JSON.parse( JSON.stringify(opt) );
+													tmpopt.instancePath += '@'+idx;
+													broccoli.buildBowl(row, tmpopt, function(html){
+														tplDataObj[field.name] += html;
+														it2.next();
+													});
+												} ,
+												function(){
+													if( options.mode == 'canvas' ){
+														var tmpopt = JSON.parse( JSON.stringify(opt) );
+														if(typeof(fieldData[field.name]) != typeof([])){ fieldData[field.name] = []; }
+														tmpopt.instancePath += '@'+(fieldData[field.name].length);
+														tplDataObj[field.name] += mkAppender(
+															'module',
+															{
+																'modId': mod.id,
+																'instancePath': tmpopt.instancePath
+															}
+														);
+													}
+													it3.next();
+												}
+											);
 											return;
 
 										}else if( field.fieldType == 'loop' ){
@@ -214,28 +298,13 @@ module.exports = function(broccoli, data, options, callback){
 										var tmpopt = JSON.parse( JSON.stringify(opt) );
 										if(typeof(fieldData[field.module.name]) != typeof([])){ fieldData[field.module.name] = []; }
 										tmpopt.instancePath += '@'+(fieldData[field.module.name].length);
-										rtn += '<div';
-										rtn += ' data-broccoli-instance-path="'+php.htmlspecialchars(tmpopt.instancePath)+'"';
-										rtn += ' data-broccoli-mod-id="'+php.htmlspecialchars(mod.id)+'"';
-										rtn += ' data-broccoli-is-appender="yes"';
-										rtn += ' style="';
-										rtn +=     'overflow:hidden;';
-										rtn +=     'padding:15px;';
-										rtn +=     'background-color:#eef;';
-										rtn +=     'border:3px solid transparent;';
-										rtn +=     'border-radius:5;';
-										rtn +=     'font-family: &amp;YuGothic&amp;, &amp;Yu Gothic&amp;, Meiryo, &amp;Hiragino Kaku Gothic ProN&amp;, Verdana, sans-serif;';
-										rtn +=     'font-size:9px;';
-										rtn +=     'color:#000;';
-										rtn +=     'text-align:center;';
-										rtn +=     'box-sizing:border-box;';
-										rtn +=     'clear:both;';
-										rtn +=     'white-space:nowrap;';
-										rtn +=     'margin:10px 0;';
-										rtn += '"';
-										rtn += '>';
-										rtn += '(+) ここにモジュールをドラッグしてください。';
-										rtn += '</div>';
+										rtn += mkAppender(
+											'module',
+											{
+												'modId': mod.id,
+												'instancePath': tmpopt.instancePath
+											}
+										);
 									}
 									buildBroccoliHtml( src, rtn, function(html){
 										callback(html);
@@ -273,28 +342,14 @@ module.exports = function(broccoli, data, options, callback){
 										var tmpopt = JSON.parse( JSON.stringify(opt) );
 										if(typeof(fieldData[field.loop.name]) != typeof([])){ fieldData[field.loop.name] = []; }
 										tmpopt.instancePath += '@'+(fieldData[field.loop.name].length);
-										rtn += '<div';
-										rtn += ' data-broccoli-instance-path="'+php.htmlspecialchars(tmpopt.instancePath)+'"';
-										rtn += ' data-broccoli-mod-id="'+php.htmlspecialchars(mod.id)+'"';
-										rtn += ' data-broccoli-sub-mod-name="'+php.htmlspecialchars(field.loop.name)+'"';
-										rtn += ' data-broccoli-is-appender="yes"';
-										rtn += ' style="';
-										rtn +=     'overflow:hidden;';
-										rtn +=     'padding:5px 15px;';
-										rtn +=     'background-color:#dfe;';
-										rtn +=     'border:3px solid transparent;';
-										rtn +=     'border-radius:5px;';
-										rtn +=     'font-family: &amp;YuGothic&amp;, &amp;Yu Gothic&amp;, Meiryo, &amp;Hiragino Kaku Gothic ProN&amp;, Verdana, sans-serif;';
-										rtn +=     'font-size:9px;';
-										rtn +=     'text-align:center;';
-										rtn +=     'box-sizing:border-box;';
-										rtn +=     'clear:both;';
-										rtn +=     'white-space:nowrap;';
-										rtn +=     'margin:10px 0;';
-										rtn += '"';
-										rtn += '>';
-										rtn += 'ここをダブルクリックして配列要素を追加してください。';
-										rtn += '</div>';
+										rtn += mkAppender(
+											'loop',
+											{
+												'modId': mod.id,
+												'subModName': field.loop.name,
+												'instancePath': tmpopt.instancePath
+											}
+										);
 									}
 									buildBroccoliHtml( src, rtn, function(html){
 										callback(html);
