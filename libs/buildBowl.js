@@ -78,6 +78,7 @@ module.exports = function(broccoli, data, options, callback){
 				rtn += '(+) ここにモジュールをドラッグしてください。';
 				rtn += '</div>';
 				break;
+
 			case 'loop':
 				rtn += '<div';
 				rtn += ' data-broccoli-instance-path="'+php.htmlspecialchars(param.instancePath)+'"';
@@ -543,6 +544,7 @@ module.exports = function(broccoli, data, options, callback){
 							$1stElm.attr({ 'data-broccoli-sub-mod-name': options.subModName });
 						}
 						$1stElm.attr({ 'data-broccoli-area-size-detection': (mod.info.areaSizeDetection||'shallow') });
+						$1stElm.attr({ 'data-broccoli-module-name': (mod.info.name||mod.id) });
 						d.html = $.html();
 					}else{
 						var html = '';
@@ -553,6 +555,7 @@ module.exports = function(broccoli, data, options, callback){
 						}
 						html += ' data-broccoli-area-size-detection="'+php.htmlspecialchars((mod.info.areaSizeDetection||'shallow'))+'"';
 						// html += ' data-broccoli-is-single-root-element="'+(mod.isSingleRootElement?'yes':'no')+'"';
+						html += ' data-broccoli-module-name="'+php.htmlspecialchars((mod.info.name||mod.id))+'"';
 						html += '>';
 						html += d.html;
 						html += '</div>';

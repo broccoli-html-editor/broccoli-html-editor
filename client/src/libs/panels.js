@@ -146,7 +146,15 @@ module.exports = function(broccoli){
 				return;
 			})
 		;
-		if(isAppender){
+		if( !isAppender ){
+			$panel
+				.append( $('<div>')
+					.addClass('broccoli--panel-module-name')
+					.text($this.modName)
+				)
+			;
+		}
+		if( isAppender ){
 			$panel
 				.attr({
 					'data-broccoli-is-appender': 'yes'

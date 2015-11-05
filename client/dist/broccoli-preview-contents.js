@@ -64,6 +64,7 @@
 				elm.subModName = $this.attr('data-broccoli-sub-mod-name');
 				elm.isAppender = ($this.attr('data-broccoli-is-appender') == 'yes');
 				elm.areaSizeDetection = $this.attr('data-broccoli-area-size-detection');
+				elm.modName = $this.attr('data-broccoli-module-name');
 				elm.offsetLeft = $this.offset().left;
 				elm.offsetTop = $this.offset().top;
 				elm.outerWidth = elm.offsetLeft + $this.outerWidth();
