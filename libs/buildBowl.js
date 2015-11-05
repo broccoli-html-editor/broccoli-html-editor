@@ -512,7 +512,7 @@ module.exports = function(broccoli, data, options, callback){
 				if( options.mode == 'canvas' ){
 					// console.log( d.html );
 					if( mod.isSingleRootElement ){
-						var $ = cheerio.load(d.html);
+						var $ = cheerio.load(d.html, {decodeEntities: false});
 						var $1stElm = $('*').eq(0);
 						$1stElm.attr({ 'data-broccoli-instance-path': options.instancePath });
 						if( options.subModName ){
@@ -535,6 +535,28 @@ module.exports = function(broccoli, data, options, callback){
 						d.html = html;
 					}
 				}
+				it1.next(d);
+			} ,
+			function(it1, d){
+				if(typeof(d.html) !== typeof('')){
+					// console.log(d.html);
+					it1.next(d);
+					return;
+				}
+
+				if( data.dec ){
+					var $ = cheerio.load(d.html, {decodeEntities: false});
+					var $1stElm = $('*').eq(0);
+					$1stElm.attr({ 'data-dec': data.dec });
+					d.html = $.html();
+				}
+				if( data.anchor ){
+					var $ = cheerio.load(d.html, {decodeEntities: false});
+					var $1stElm = $('*').eq(0);
+					$1stElm.attr({ 'id': data.anchor });
+					d.html = $.html();
+				}
+
 				it1.next(d);
 			} ,
 			function(it1, d){

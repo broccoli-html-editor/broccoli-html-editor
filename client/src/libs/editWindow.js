@@ -19,6 +19,16 @@ module.exports = function(broccoli){
 	tplFrame += '		<h2 class="broccoli--edit-window-module-name">---</h2>';
 	tplFrame += '		<div class="broccoli--edit-window-fields">';
 	tplFrame += '		</div>';
+	tplFrame += '		<div class="broccoli--edit-window-builtin-fields">';
+	tplFrame += '			<div class="form-group">';
+	tplFrame += '				<label for="broccoli--edit-window-builtin-anchor-field">アンカー</label>';
+	tplFrame += '				<input type="text" class="form-control" id="broccoli--edit-window-builtin-anchor-field" placeholder="">';
+	tplFrame += '			</div>';
+	tplFrame += '			<div class="form-group">';
+	tplFrame += '				<label for="broccoli--edit-window-builtin-dec-field">埋め込みコメント入力欄</label>';
+	tplFrame += '				<textarea class="form-control" id="broccoli--edit-window-builtin-dec-field" placeholder=""></textarea>';
+	tplFrame += '			</div>';
+	tplFrame += '		</div>';
 	tplFrame += '		<div class="broccoli--edit-window-form-buttons">';
 	tplFrame += '			<div class="btn-group btn-group-justified" role="group">';
 	tplFrame += '				<div class="btn-group">';
@@ -94,7 +104,7 @@ module.exports = function(broccoli){
 					default:
 						$(elmFieldContent)
 							.append(
-								'<p>'+php.htmlspecialchars( field.fieldType )+'</p>'
+								'<p>'+php.htmlspecialchars( (typeof(field.fieldType)===typeof('') ? field.fieldType : '') )+'</p>'
 							)
 						;
 						it1.next();
@@ -103,6 +113,13 @@ module.exports = function(broccoli){
 				return;
 			},
 			function(){
+
+				$editWindow.find('#broccoli--edit-window-builtin-anchor-field')
+					.val(data.anchor)
+				;
+				$editWindow.find('#broccoli--edit-window-builtin-dec-field')
+					.val(data.dec)
+				;
 				$editWindow.find('.broccoli--edit-window-form-buttons button')
 					.removeAttr('disabled')
 				;
@@ -130,6 +147,12 @@ module.exports = function(broccoli){
 							function(){
 								it79.fnc(data,
 									[
+										function(it2, data){
+											data.anchor = $editWindow.find('#broccoli--edit-window-builtin-anchor-field').val();
+											data.dec = $editWindow.find('#broccoli--edit-window-builtin-dec-field').val();
+
+											it2.next(data);
+										} ,
 										function(it2, data){
 											// クライアントサイドにあるメモリ上のcontentsSourceDataに反映する。
 											// この時点で、まだサーバー側には送られていない。

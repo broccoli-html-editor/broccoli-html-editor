@@ -17,15 +17,17 @@
            "path": "./index_files/resources/otosan.png"
           },
           "alt_text": ""
-         }
+         },
+         "anchor": "",
+         "dec": ""
         },
         {
          "modId": "testMod1:parts/minimum_module",
          "fields": {
           "md_src": "## 最小構成のモジュールのサンプル"
          },
-         "dec": "",
-         "anchor": ""
+         "dec": "DEC入力テスト",
+         "anchor": "minimum"
         },
         {
          "modId": "PlainHTMLElements:PlainHTML/MultiText",
@@ -72,7 +74,8 @@
         }
        ]
       },
-      "dec": "あああああああ"
+      "dec": "",
+      "anchor": ""
      },
      {
       "modId": "testMod1:units/thumb_list",
