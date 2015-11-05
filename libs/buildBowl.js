@@ -29,20 +29,44 @@ module.exports = function(broccoli, data, options, callback){
 
 	function mkAppender(fieldType, param){
 		var rtn = '';
+
 		switch(fieldType){
 			case 'module':
+				var baseSize = 16;
+				var depth = param.instancePath.split('/').length - 3;
+				if(depth<0){depth=0;}
+				var style = {};
+				// console.log(depth);
+
+				// obj['font-size'] = baseSize;
+				style['font-size'] = baseSize * ( 100 - depth*10 ) / 100;
+				style['padding'] = 15 - depth*2;
+				style['background-color'] = '#fbfbff';
+				if(depth <= 0){
+					style['background-color'] = '#eef';
+				}else if(depth <= 1){
+					style['background-color'] = '#f4f4ff';
+				}else if(depth <= 2){
+					style['background-color'] = '#f6f6ff';
+				}else if(depth <= 3){
+					style['background-color'] = '#f9f9ff';
+				}else{
+					style['background-color'] = '#fbfbff';
+				}
+
 				rtn += '<div';
 				rtn += ' data-broccoli-instance-path="'+php.htmlspecialchars(param.instancePath)+'"';
 				rtn += ' data-broccoli-mod-id="'+php.htmlspecialchars(param.modId)+'"';
 				rtn += ' data-broccoli-is-appender="yes"';
 				rtn += ' style="';
+				rtn +=     'height:auto;';
 				rtn +=     'overflow:hidden;';
-				rtn +=     'padding:15px;';
-				rtn +=     'background-color:#eef;';
+				rtn +=     'padding:'+style['padding']+'px;';
+				rtn +=     'background-color:'+style['background-color']+';';
 				rtn +=     'border:3px solid transparent;';
 				rtn +=     'border-radius:5;';
 				rtn +=     'font-family: &amp;YuGothic&amp;, &amp;Yu Gothic&amp;, Meiryo, &amp;Hiragino Kaku Gothic ProN&amp;, Verdana, sans-serif;';
-				rtn +=     'font-size:9px;';
+				rtn +=     'font-size:'+style['font-size']+'px;';
 				rtn +=     'color:#000;';
 				rtn +=     'text-align:center;';
 				rtn +=     'box-sizing:border-box;';
