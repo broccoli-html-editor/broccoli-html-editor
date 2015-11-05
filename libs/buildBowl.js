@@ -110,7 +110,7 @@ module.exports = function(broccoli, data, options, callback){
 
 				if( mod.topThis.templateType != 'broccoli' ){
 					// テンプレートエンジン(Twigなど)利用の場合の処理
-					// console.log(this.id + '/' + this.subModName);
+					// console.log(mod.id + ' - ' + mod.subModName);
 					var tplDataObj = {};
 					it79.fnc(
 						{},
@@ -124,6 +124,7 @@ module.exports = function(broccoli, data, options, callback){
 											// input field
 											var fieldDef = broccoli.getFieldDefinition( field.type ); // フィールドタイプ定義を呼び出す
 											var tmpVal = '';
+											tplDataObj[field.name] = '';
 											fieldDef.bind( fieldData[field.name], options.mode, field, function(html){
 												tmpVal += html;
 												if( !field.hidden ){//← "hidden": true だったら、非表示(=出力しない)
@@ -140,6 +141,7 @@ module.exports = function(broccoli, data, options, callback){
 											// module field
 											var opt = JSON.parse( JSON.stringify(options) );
 											opt.instancePath += '/fields.'+field.name;
+											tplDataObj[field.name] = '';
 
 											it79.ary(
 												fieldData[field.name],
@@ -172,8 +174,54 @@ module.exports = function(broccoli, data, options, callback){
 
 										}else if( field.fieldType == 'loop' ){
 											// loop field
-											tplDataObj[field.name] = fieldData[field.name];
-											it3.next();
+											var tmpSearchResult = mod.searchEndTag( src, 'loop' );
+											src = tmpSearchResult.nextSrc;
+
+											var opt = JSON.parse( JSON.stringify(options) );
+											opt.instancePath += '/fields.'+field.name;
+											tplDataObj[field.name] = [];
+											// console.log(fieldData);
+											// console.log(field.loop);
+											// console.log(fieldData[field.name]);
+											it79.ary(
+												fieldData[field.name],
+												function( it2, row, idx ){
+													// ネストされたモジュールの再帰処理
+													// console.log('----------');
+													// console.log(row);
+													var tmpopt = JSON.parse( JSON.stringify(opt) );
+													tmpopt.instancePath += '@'+idx;
+													tmpopt.subModName = field.name;
+													// console.log(tmpopt);
+													broccoli.buildBowl(row, tmpopt, function(html){
+														tplDataObj[field.name].push(html);
+														it2.next();
+													});
+												} ,
+												function(){
+													if( options.mode == 'canvas' ){
+														var tmpopt = JSON.parse( JSON.stringify(opt) );
+														if(typeof(fieldData[field.name]) != typeof([])){ fieldData[field.name] = []; }
+														tmpopt.instancePath += '@'+(fieldData[field.name].length);
+														// tplDataObj[field.name].push(mkAppender(
+														// 	'loop',
+														// 	{
+														// 		'modId': mod.id,
+														// 		'subModName': field.name,
+														// 		'instancePath': tmpopt.instancePath
+														// 	}
+														// ));
+													}
+													it3.next();
+													// buildBroccoliHtml( src, rtn, function(html){
+													// 	callback(html);
+													// } );
+												}
+											);
+
+											// loop field
+											// tplDataObj[field.name] = fieldData[field.name];
+											// it3.next();
 											return;
 
 										}
@@ -187,20 +235,25 @@ module.exports = function(broccoli, data, options, callback){
 								return;
 							} ,
 							function(it2, data2){
-								// 環境変数登録
-								tplDataObj._ENV = {
-									"mode": options.mode
-								};
 
-								try {
-									rtn = new twig.twig({
-										'data': src
-									}).render(tplDataObj);
-								} catch (e) {
-									console.log( 'TemplateEngine Rendering ERROR.' );
-									rtn = '<div class="error">TemplateEngine Rendering ERROR.</div>'
+								if(mod.subModName){
+									d.html = tplDataObj;
+								}else{
+									// 環境変数登録
+									tplDataObj._ENV = {
+										"mode": options.mode
+									};
+
+									try {
+										rtn = new twig.twig({
+											'data': src
+										}).render(tplDataObj);
+									} catch (e) {
+										console.log( 'TemplateEngine Rendering ERROR.' );
+										rtn = '<div class="error">TemplateEngine Rendering ERROR.</div>'
+									}
+									d.html = rtn;
 								}
-								d.html = rtn;
 								it1.next(d);
 								return;
 							}
@@ -209,7 +262,7 @@ module.exports = function(broccoli, data, options, callback){
 					return;
 
 				}else{
-					// テンプレートエンジンを利用しない場合の処理
+					// Broccoliエンジン利用の処理
 					function buildBroccoliHtml(src, rtn, callback){
 
 						if( !src.match( new RegExp('^((?:.|\r|\n)*?)\\{\\&((?:.|\r|\n)*?)\\&\\}((?:.|\r|\n)*)$') ) ){
@@ -451,6 +504,11 @@ module.exports = function(broccoli, data, options, callback){
 				return;
 			} ,
 			function(it1, d){
+				if(typeof(d.html) !== typeof('')){
+					// console.log(d.html);
+					it1.next(d);
+					return;
+				}
 				if( options.mode == 'canvas' ){
 					// console.log( d.html );
 					if( mod.isSingleRootElement ){

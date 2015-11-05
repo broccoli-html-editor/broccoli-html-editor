@@ -49,12 +49,17 @@ module.exports = function(broccoli, moduleId, options){
 	this.fields = {};
 	this.templateType = 'broccoli';
 
-	if(options.subModName){
-		this.subModName = options.subModName;
-	}
 	if( options.topThis ){
 		this.topThis = options.topThis;
+		this.templateType = this.topThis.templateType;
 		// this.nameSpace = options.topThis.nameSpace;
+		if( options.subModName ){
+			this.subModName = options.subModName;
+			if( this.topThis.subModule[this.subModName] ){
+				// console.log(this.topThis.subModule[this.subModName]);
+				this.fields = this.topThis.subModule[this.subModName].fields;
+			}
+		}
 	}else{
 		this.topThis = this;
 		// this.nameSpace = {"vars": {}};
@@ -194,7 +199,7 @@ module.exports = function(broccoli, moduleId, options){
 		var field = null;
 
 		if( _topThis.templateType != 'broccoli' ){
-			// テンプレートエンジン
+			// テンプレートエンジン(Twigなど)利用の場合の処理
 			if( _this.subModName ){
 				_this.fields = _topThis.subModule[_this.subModName].fields;
 			}
@@ -224,6 +229,7 @@ module.exports = function(broccoli, moduleId, options){
 			return;
 
 		}else{
+			// Broccoliエンジン利用の処理
 			function parseBroccoliTemplate(src, callback){
 				if( !src.match(new RegExp('^((?:.|\r|\n)*?)\\{\\&((?:.|\r|\n)*?)\\&\\}((?:.|\r|\n)*)$') ) ){
 					callback();
