@@ -211,7 +211,9 @@
                  }
                 ]
                },
-               "subModName": "sample_loop2"
+               "subModName": "sample_loop2",
+               "anchor": "",
+               "dec": ""
               },
               {
                "modId": "testMod1:parts/deeploop",
@@ -650,7 +652,9 @@
       "dec": ""
      }
     ]
-   }
+   },
+   "anchor": "",
+   "dec": ""
   },
   "secondly": {
    "modId": "_sys/root",

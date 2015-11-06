@@ -65,7 +65,7 @@ module.exports = function(broccoli){
 	}// init()
 
 	/**
-	 * データを取得する
+	 * データを取得する (同期)
 	 */
 	this.get = function( containerInstancePath, data ){
 		data = data || _contentsSourceData;
@@ -126,9 +126,10 @@ module.exports = function(broccoli){
 	}
 
 	/**
-	 * 指定したインスタンスパスの子ノードの一覧を取得
+	 * 指定したインスタンスパスの子ノードの一覧を取得 (非同期)
 	 */
-	this.getChildren = function( containerInstancePath ){
+	this.getChildren = function( containerInstancePath, callback ){
+		callback = callback|| function(){};
 		var current = this.get(containerInstancePath);
 		var modTpl = _this.getModule( current.modId, current.subModName );
 		var targetFieldNames = {};
@@ -146,11 +147,12 @@ module.exports = function(broccoli){
 				rtn.push(containerInstancePath+'/fields.'+fieldName+'@'+idx);
 			}
 		}
-		return rtn;
+		callback(rtn);
+		return this;
 	}
 
 	/**
-	 * インスタンスを追加する
+	 * インスタンスを追加する (非同期)
 	 */
 	this.addInstance = function( modId, containerInstancePath, cb, subModName ){
 		// console.log( '開発中: '+modId+': '+containerInstancePath );
@@ -276,7 +278,12 @@ module.exports = function(broccoli){
 			var modTpl = _this.getModule( data.modId, data.subModName );
 
 			if( container == 'bowl' ){
-				// ルート要素だったらスキップして次へ
+				// ルート要素だったら
+				if(!aryPath.length){
+					// 対象がルート要素だったら
+					return;
+				}
+				// スキップして次へ
 				return set_r( aryPath, data.bowl[fieldName], newData );
 			}
 
@@ -299,7 +306,7 @@ module.exports = function(broccoli){
 				}else if( modTpl.fields[fieldName].fieldType == 'if'){
 				}else if( modTpl.fields[fieldName].fieldType == 'echo'){
 				}
-				return true;
+				return;
 			}else{
 				// もっと深かったら
 				if( modTpl.fields[fieldName].fieldType == 'input'){
@@ -311,8 +318,10 @@ module.exports = function(broccoli){
 				}else if( modTpl.fields[fieldName].fieldType == 'if'){
 				}else if( modTpl.fields[fieldName].fieldType == 'echo'){
 				}
+				return;
 			}
 
+			return;
 		}
 
 		set_r( containerInstancePath, _contentsSourceData, newData );
@@ -391,10 +400,12 @@ module.exports = function(broccoli){
 	}
 
 	/**
-	 * インスタンスを複製する
+	 * インスタンスを複製する(非同期)
+	 *
 	 * このメソッドは、インスタンスパスではなく、インスタンスの実体を受け取ります。
 	 */
-	this.duplicateInstance = function( objInstance ){
+	this.duplicateInstance = function( objInstance, callback ){
+		callback = callback || function(){};
 		var newData = JSON.parse( JSON.stringify( objInstance ) );
 		var modTpl = _this.getModule( objInstance.modId, objInstance.subModName );
 
@@ -418,11 +429,12 @@ module.exports = function(broccoli){
 		}
 
 		// setTimeout( function(){ cb(newData); }, 0 );
-		return newData;
+		callback(newData);
+		return this;
 	}
 
 	/**
-	 * インスタンスを削除する
+	 * インスタンスを削除する(非同期)
 	 */
 	this.removeInstance = function( containerInstancePath, cb ){
 		cb = cb||function(){};
@@ -491,7 +503,7 @@ module.exports = function(broccoli){
 	}// removeInstance()
 
 	/**
-	 * インスタンスのパスを解析する
+	 * インスタンスのパスを解析する(同期)
 	 */
 	this.parseInstancePath = function( containerInstancePath ){
 		if( typeof(containerInstancePath) === typeof([]) ){
@@ -577,7 +589,7 @@ module.exports = function(broccoli){
 	}
 
 	/**
-	 * history: 取り消し
+	 * history: 取り消し (非同期)
 	 */
 	this.historyBack = function( cb ){
 		cb = cb || function(){};
@@ -592,7 +604,7 @@ module.exports = function(broccoli){
 	}
 
 	/**
-	 * history: やりなおし
+	 * history: やりなおし (非同期)
 	 */
 	this.historyGo = function( cb ){
 		cb = cb || function(){};
@@ -607,7 +619,7 @@ module.exports = function(broccoli){
 	}
 
 	/**
-	 * データを保存する
+	 * データを保存する(非同期)
 	 */
 	this.save = function(callback){
 		var _this = this;

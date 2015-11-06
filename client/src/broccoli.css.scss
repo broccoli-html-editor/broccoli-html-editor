@@ -24,6 +24,68 @@
 		height: 0;
 		border: none;
 	}
+
+}
+
+// Instance Path View
+.broccoli--instance-path-view{
+	position: fixed;
+	bottom: 0; left:0;
+	width: 100%;
+	padding: 3px 10px;
+	border-top: 1px solid #000;
+	background: #f7f7f7;
+	font-size: 11px;
+	z-index: 10;
+
+	>ul{
+		display: block;
+		padding: 0;
+		margin: 0;
+
+		>li{
+			margin: 0; padding: 0;
+			list-style-type: none;
+			display: inline;
+			position: relative;
+
+			&:before{
+				content: ' > ';
+			}
+
+			ul.broccoli--instance-path-view-children{
+				display: none;
+				background: #fff;
+				border: 1px solid #000;
+				padding: 0;
+
+				li{
+					display: block;
+					list-style-type: none;
+					margin: 0;
+
+					a{
+						display:block;
+						font-size:120%;
+						white-space: nowrap;
+						padding: 3px 10px;
+
+						&:hover{
+							background-color: #f2f2f2;
+						}
+					}
+				}
+			}
+
+			&:last-child:hover ul.broccoli--instance-path-view-children{
+				display: inline-block;
+				position: absolute;
+				left: 100%;
+				bottom: 0;
+			}
+
+		}
+	}
 }
 
 // Panels

@@ -112,7 +112,7 @@ module.exports = function(broccoli){
 				$(this).removeClass('broccoli--panel__drag-entered');
 				var method = event.dataTransfer.getData("method");
 				// options.drop($(this).attr('data-broccoli-instance-path'), method);
-				console.log(method);
+				// console.log(method);
 				if( method === 'moveTo' ){
 					var moveFrom = event.dataTransfer.getData("data-broccoli-instance-path");
 					var moveTo = $(this).attr('data-broccoli-instance-path');
@@ -251,10 +251,6 @@ module.exports = function(broccoli){
 			})
 			.addClass('broccoli--panel__focused')
 		;
-		var $targetElm = $('.broccoli--panel__focused');
-		var $confField = $('.cont_field');
-		var top = $confField.scrollTop() + $targetElm.offset().top - 30;
-		$confField.stop().animate({"scrollTop":top} , 'fast' );
 		callback();
 		return this;
 
@@ -271,6 +267,14 @@ module.exports = function(broccoli){
 		;
 		callback();
 		return this;
+	}
+
+	/**
+	 * 指定したInstancePathのパネルの要素を得る
+	 */
+	this.getPanelElement = function(instancePath){
+		var $rtn = $panels.find('[data-broccoli-instance-path="'+php.htmlspecialchars(instancePath)+'"]');
+		return $rtn.get(0);
 	}
 
 	return;
