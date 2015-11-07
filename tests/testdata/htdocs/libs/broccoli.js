@@ -558,6 +558,9 @@ module.exports = function(broccoli){
 	this.get = function( containerInstancePath, data ){
 		data = data || _contentsSourceData;
 
+		if( containerInstancePath === undefined || !containerInstancePath.length ){
+			return data;
+		}
 		var aryPath = this.parseInstancePath( containerInstancePath );
 		if( !aryPath.length ){
 			return data;
@@ -1749,8 +1752,156 @@ module.exports = function(broccoli){
 	 */
 	this.update = function(callback){
 		callback = callback||function(){};
+		if(!$instanceTreeView){
+			callback();
+			return this;
+		}
+		$instanceTreeView.html('...');
+		var $ul = $('<ul>')
+			// .css({
+			// 	"border":"1px solid #666"
+			// })
+		;
 
-		callback();
+		var data = broccoli.contentsSourceData.get();
+		// console.log(data);
+
+		function buildInstance(data, parentInstancePath, subModName, callback){
+			callback = callback||function(){};
+			// console.log(data);
+			var mod = broccoli.contentsSourceData.getModule(data.modId, subModName);
+			// console.log(mod);
+			var $ul = $('<ul>')
+				.css({
+					"border":"1px solid #eee"
+				})
+			;
+
+			it79.ary(
+				mod.fields,
+				function(it1, row, idx){
+					var $li = $('<li>')
+						.text(idx)
+					;
+
+					if(row.fieldType == 'input'){
+						$ul.append($li);
+						it1.next();
+						return;
+					}else if(row.fieldType == 'module'){
+
+						it79.ary(
+							data.fields[idx] ,
+							function(it2, row2, idx2){
+								var instancePath = parentInstancePath+'/fields.'+idx+'@'+idx2;
+								buildInstance(
+									row2,
+									instancePath,
+									null,
+									function($fieldsUl){
+										$li.append($fieldsUl);
+										it2.next();
+									}
+								);
+								return;
+							} ,
+							function(){
+								$ul.append($li);
+								it1.next();
+							}
+						);
+						return;
+					}else if(row.fieldType == 'loop'){
+						it79.ary(
+							data.fields[idx] ,
+							function(it2, row2, idx2){
+								var instancePath = parentInstancePath+'/fields.'+idx+'@'+idx2;
+								buildInstance(
+									row2,
+									instancePath,
+									row.name,
+									function($fieldsUl){
+										$li.append($fieldsUl);
+										it2.next();
+									}
+								);
+								return;
+							} ,
+							function(){
+								$ul.append($li);
+								it1.next();
+							}
+						);
+						return;
+					}
+					it1.next();
+					return;
+				} ,
+				function(){
+					var $rtn = $('<ul>')
+						.css({
+							"border":"1px solid #666"
+						})
+						.attr({
+							'data-broccoli-instance-path': parentInstancePath
+						})
+						.bind('mouseover',function(e){
+							var instancePath = $(this).attr('data-broccoli-instance-path');
+							broccoli.focusInstance(instancePath);
+							e.stopPropagation();
+						})
+						.bind('click',function(e){
+							var instancePath = $(this).attr('data-broccoli-instance-path');
+							broccoli.selectInstance(instancePath);
+							e.stopPropagation();
+						})
+					;
+					$rtn.text( mod.info.name||mod.id );
+					$rtn.append($ul);
+					callback($rtn);
+				}
+			);
+
+			return;
+		}
+
+		it79.ary(
+			data.bowl,
+			function(it1, row, idx){
+				// console.log(idx);
+				var $bowl = $('<li>')
+					.text('bowl.'+idx)
+					.attr({
+						'data-broccoli-instance-path':'/bowl.'+idx
+					})
+					.bind('mouseover',function(e){
+						var instancePath = $(this).attr('data-broccoli-instance-path');
+						broccoli.focusInstance(instancePath);
+						e.stopPropagation();
+					})
+					.bind('click',function(e){
+						var instancePath = $(this).attr('data-broccoli-instance-path');
+						broccoli.selectInstance(instancePath);
+						e.stopPropagation();
+					})
+				;
+				buildInstance(
+					row,
+					'/bowl.'+idx,
+					null,
+					function($elm){
+						$bowl.append($elm);
+						$ul.append($bowl);
+						it1.next();
+					}
+				);
+			},
+			function(){
+				$instanceTreeView.html('').append($ul);
+				callback();
+			}
+		);
+
 		return this;
 	}
 

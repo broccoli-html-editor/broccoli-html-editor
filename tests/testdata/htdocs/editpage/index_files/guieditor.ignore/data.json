@@ -168,7 +168,9 @@
          "modId": "testMod1:parts/md",
          "fields": {
           "md_src": "会社の宿題。\n\nmodule はやっぱり、input の1つでは問題がある。不便。\n\nこいつは直しました。\nmoduleフィールドを追加。`input type:module` は廃止。"
-         }
+         },
+         "anchor": "",
+         "dec": ""
         }
        ]
       }
@@ -747,7 +749,9 @@
       }
      }
     ]
-   }
+   },
+   "anchor": "",
+   "dec": ""
   }
  }
 }

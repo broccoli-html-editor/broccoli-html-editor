@@ -5421,3 +5421,10 @@
 
 .broccoli--module-palette a.broccoli--module-palette__closed:before {
   content: "ー"; }
+
+.broccoli--instance-tree-view ul {
+  margin: 0;
+  padding: 0 0 0 5px; }
+
+.broccoli--instance-tree-view li {
+  list-style: none; }
