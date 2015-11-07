@@ -5323,6 +5323,37 @@
     .broccoli--panel__drag-entered[data-broccoli-sub-mod-name] {
       border-color: #3c3;
       background-color: rgba(232, 255, 231, 0.5); }
+    .broccoli--panel__drag-entered .broccoli--panel-drop-to-insert-here {
+      display: block; }
+  .broccoli--panel-drop-to-insert-here {
+    display: none;
+    border: none;
+    background-color: #f93;
+    position: absolute;
+    left: 5%;
+    top: -8px;
+    width: 90%;
+    margin: 0 auto;
+    height: 1px; }
+    .broccoli--panel-drop-to-insert-here:before,
+    .broccoli--panel-drop-to-insert-here:after {
+      content: ' ';
+      width: 0;
+      height: 0;
+      display: inline-block;
+      border-width: 7px 0 7px 13px;
+      border-style: solid;
+      border-color: #f93;
+      border-top-color: transparent;
+      border-bottom-color: transparent;
+      position: absolute;
+      left: -5%;
+      top: -7px; }
+    .broccoli--panel-drop-to-insert-here:after {
+      border-left-width: 0;
+      border-right-width: 13px;
+      right: -5%;
+      left: auto; }
 
 .broccoli--edit-window-fields {
   margin: 0.5em 0 1em 0; }

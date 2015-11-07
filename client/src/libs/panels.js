@@ -145,6 +145,9 @@ module.exports = function(broccoli){
 				} );
 				return;
 			})
+			.append( $('<div>')
+				.addClass('broccoli--panel-drop-to-insert-here')
+			)
 		;
 		if( !isAppender ){
 			$panel
@@ -275,6 +278,16 @@ module.exports = function(broccoli){
 	this.getPanelElement = function(instancePath){
 		var $rtn = $panels.find('[data-broccoli-instance-path="'+php.htmlspecialchars(instancePath)+'"]');
 		return $rtn.get(0);
+	}
+
+	/**
+	 * パネルを消去する
+	 */
+	this.clearPanels = function(callback){
+		callback = callback || function(){};
+		$panels.html('');
+		callback();
+		return this;
 	}
 
 	return;

@@ -36,12 +36,14 @@
            "src": "## まるちテキストを追加してみました。",
            "editor": "markdown"
           }
-         }
+         },
+         "anchor": "",
+         "dec": ""
         },
         {
          "modId": "PlainHTMLElements:PlainHTML/Markdown",
          "fields": {
-          "main": "## Markdownフィールド\n\n- list 1\n- list 2\n\n再描画されます。"
+          "main": "## Markdownフィールド\n\n- list 1\n- list 2\n\n再描画されます。\n\n再描画されました。"
          },
          "dec": "",
          "anchor": ""
@@ -137,8 +139,10 @@
         {
          "modId": "testMod1:parts/html",
          "fields": {
-          "html_src": "<h2>自分でコーディングする領域</h2>\n<p>HTMLコードを自分で書きます。</p>\n<p>HTMLエンティティ変換もされないので、<strong>自分で書きます</strong>。</p>"
-         }
+          "html_src": "<h2>自分でコーディングする領域</h2>\n<p>HTMLコードを自分で書きます。</p>\n<p>HTMLエンティティ変換もされないので、<strong>自分で書きます</strong>。</p>\n<div style=\"background:#ddd; height:1200px;\">\n</div>"
+         },
+         "anchor": "",
+         "dec": ""
         },
         {
          "modId": "testMod1:parts/text",
@@ -311,7 +315,9 @@
          }
         }
        ]
-      }
+      },
+      "anchor": "",
+      "dec": ""
      },
      {
       "modId": "testMod1:parts/md",
@@ -323,7 +329,9 @@
       "modId": "testMod1:parts/md",
       "fields": {
        "md_src": "## できました\n\n`px.utils.iterate()` が、オブジェクトも処理できるようになりました。"
-      }
+      },
+      "anchor": "",
+      "dec": ""
      },
      {
       "modId": "testMod1:units/cols3",
@@ -618,7 +626,8 @@
                 }
                },
                "subModName": "sample_loop3",
-               "dec": ""
+               "dec": "",
+               "anchor": ""
               }
              ]
             },
@@ -718,7 +727,9 @@
                         }
                        }
                       ]
-                     }
+                     },
+                     "anchor": "",
+                     "dec": ""
                     }
                    ]
                   }

@@ -165,9 +165,10 @@
 						}, 100);
 					} ,
 					function( it1, data ){
-						// 編集画面を一旦消去
-						$(_this.options.elmPanels).html('');
-						it1.next(data);
+						// 編集パネルを一旦消去
+						_this.panels.clearPanels(function(){
+							it1.next(data);
+						});
 					} ,
 					function( it1, data ){
 						// 編集画面描画
@@ -192,6 +193,12 @@
 						);
 					} ,
 					function( it1, data ){
+						// ちょっと間を置く
+						setTimeout(function(){
+							it1.next(data);
+						},100);
+					} ,
+					function( it1, data ){
 						// iframeのサイズ合わせ
 						_this.postMessenger.send(
 							'getHtmlContentHeight',
@@ -202,6 +209,12 @@
 								it1.next(data);
 							}
 						);
+					} ,
+					function( it1, data ){
+						// ちょっと間を置く
+						setTimeout(function(){
+							it1.next(data);
+						},100);
 					} ,
 					function( it1, data ){
 						// パネル描画
@@ -300,6 +313,12 @@
 			this.drawEditWindow( instancePath, $canvas.find('.broccoli--lightbox-inner').get(0), function(){
 				$canvas.find('.broccoli--lightbox').fadeOut('fast',function(){$(this).remove();});
 				it79.fnc({},[
+					function(it1, data){
+						// 編集パネルを一旦消去
+						_this.panels.clearPanels(function(){
+							it1.next(data);
+						});
+					} ,
 					function(it1, data){
 						// コンテンツデータを保存
 						_this.saveContents(function(){
@@ -1830,6 +1849,9 @@ module.exports = function(broccoli){
 				} );
 				return;
 			})
+			.append( $('<div>')
+				.addClass('broccoli--panel-drop-to-insert-here')
+			)
 		;
 		if( !isAppender ){
 			$panel
@@ -1960,6 +1982,16 @@ module.exports = function(broccoli){
 	this.getPanelElement = function(instancePath){
 		var $rtn = $panels.find('[data-broccoli-instance-path="'+php.htmlspecialchars(instancePath)+'"]');
 		return $rtn.get(0);
+	}
+
+	/**
+	 * パネルを消去する
+	 */
+	this.clearPanels = function(callback){
+		callback = callback || function(){};
+		$panels.html('');
+		callback();
+		return this;
 	}
 
 	return;
