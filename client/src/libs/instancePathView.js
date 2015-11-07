@@ -1,5 +1,5 @@
 /**
- * panels.js
+ * instancePathView.js
  */
 module.exports = function(broccoli){
 	// delete(require.cache[require('path').resolve(__filename)]);
@@ -128,7 +128,12 @@ module.exports = function(broccoli){
 	 * @return {Object}            this
 	 */
 	this.init = function(domElm, callback){
-		$instancePathView = $(domElm);
+		$instancePathView = $(domElm)
+			.addClass('broccoli')
+			.addClass('broccoli--instance-path-view')
+		;
+		// console.log(domElm);
+		// console.log($instancePathView);
 
 		it79.fnc(
 			{},
@@ -136,6 +141,11 @@ module.exports = function(broccoli){
 				function( it1, data ){
 					$instancePathView.html('initialize...');
 					it1.next(data);
+				} ,
+				function( it1, data ){
+					_this.update(function(){
+						it1.next(data);
+					});
 				} ,
 				function( it1, data ){
 					callback();

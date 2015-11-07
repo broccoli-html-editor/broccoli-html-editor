@@ -29,14 +29,14 @@
 
 // Instance Path View
 .broccoli--instance-path-view{
-	position: fixed;
-	bottom: 0; left:0;
+	// position: fixed;
+	// bottom: 0; left:0;
+	// z-index: 10;
 	width: 100%;
 	padding: 3px 10px;
 	border-top: 1px solid #000;
 	background: #f7f7f7;
 	font-size: 11px;
-	z-index: 10;
 
 	>ul{
 		display: block;

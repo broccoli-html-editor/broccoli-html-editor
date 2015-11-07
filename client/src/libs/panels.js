@@ -13,7 +13,7 @@ module.exports = function(broccoli){
 	var twig = require('twig');
 	var $ = require('jquery');
 
-	var $panels = $(broccoli.options.elmPanels);
+	var $panels;
 	var $contentsElements;
 
 	/**
@@ -169,10 +169,12 @@ module.exports = function(broccoli){
 
 	/**
 	 * 初期化する
+	 * @param  {Object} domElm     DOM Element of instance path view container.
 	 * @param  {Function} callback [description]
 	 * @return {[type]}            [description]
 	 */
-	this.init = function(callback){
+	this.init = function(domElm, callback){
+		$panels = $(domElm);
 		it79.fnc(
 			{},
 			[
@@ -285,7 +287,9 @@ module.exports = function(broccoli){
 	 */
 	this.clearPanels = function(callback){
 		callback = callback || function(){};
-		$panels.html('');
+		if($panels){
+			$panels.html('');
+		}
 		callback();
 		return this;
 	}

@@ -37,7 +37,8 @@
 			options = options || {};
 			options.elmCanvas = options.elmCanvas || document.createElement('div');
 			options.elmPanels = document.createElement('div');
-			options.elmInstancePathView = document.createElement('div');
+			options.elmInstancePathView = options.elmInstancePathView || document.createElement('div');
+			options.elmInstanceTreeView = options.elmInstanceTreeView || document.createElement('div');
 			options.elmModulePalette = options.elmModulePalette || document.createElement('div');
 			options.contents_area_selector = options.contents_area_selector || '.contents';
 			options.contents_bowl_name_by = options.contents_bowl_name_by || 'id';
@@ -55,17 +56,18 @@
 				)
 				.append( $('<div class="broccoli--panels">')
 				)
-				.append( $('<div class="broccoli--instance-path-view">')
-				)
+				// .append( $('<div class="broccoli--instance-path-view">')
+				// )
 			;
 			// this.options.elmIframeWindow = $canvas.find('iframe').get(0).contentWindow;
 			this.options.elmPanels = $canvas.find('.broccoli--panels').get(0);
-			this.options.elmInstancePathView = $canvas.find('.broccoli--instance-path-view').get(0);
+			// this.options.elmInstancePathView = $canvas.find('.broccoli--instance-path-view').get(0);
 
 			this.postMessenger = new (require('./postMessenger.js'))(this, $canvas.find('iframe').get(0));
 			this.resourceMgr = new (require('./resourceMgr.js'))(this);
 			this.panels = new (require( './panels.js' ))(this);
 			this.instancePathView = new (require( './instancePathView.js' ))(this);
+			this.instanceTreeView = new (require( './instanceTreeView.js' ))(this);
 			this.editWindow = new (require( './editWindow.js' ))(this);
 			this.fieldBase = new (require('./../../../libs/fieldBase.js'))(this);
 			this.fieldDefinitions = {};
@@ -112,6 +114,12 @@
 					function(it1, data){
 						_this.drawModulePalette(function(){
 							console.log('broccoli: module palette standby.');
+							it1.next(data);
+						});
+					} ,
+					function(it1, data){
+						_this.instanceTreeView.init(_this.options.elmInstanceTreeView, function(){
+							console.log('broccoli: instanceTreeView standby.');
 							it1.next(data);
 						});
 					} ,
@@ -214,6 +222,12 @@
 						// パネル描画
 						_this.drawPanels( function(){
 							console.log('broccoli: draggable panels standby.');
+							it1.next(data);
+						} );
+					} ,
+					function( it1, data ){
+						// インスタンスツリービュー描画
+						_this.instanceTreeView.update( function(){
 							it1.next(data);
 						} );
 					} ,
@@ -421,7 +435,7 @@
 		 * @return {Object}               this.
 		 */
 		this.drawPanels = function(callback){
-			this.panels.init(callback);
+			this.panels.init(this.options.elmPanels, callback);
 			return this;
 		}
 

@@ -13382,6 +13382,8 @@ window.main = new (function(){
 			{
 				'elmCanvas': $('.canvas').get(0),
 				'elmModulePalette': $('.palette').get(0),
+				'elmInstancePathView': $('.instancePathView').get(0),
+				'elmInstanceTreeView': $('.instanceTreeView').get(0),
 				'contents_area_selector': '[data-contents]',
 				'contents_bowl_name_by': 'data-contents',
 				'customFields': {

@@ -1,18 +1,33 @@
 @charset "utf-8";
 
+.instanceTreeView{
+	display:block;
+	position:relative;
+	float: left;
+	width: 10%;
+	height: 600px;
+	overflow: auto;
+}
 .canvas{
-    display:block;
-    position:relative;
-    float: left;
-    width: 75%;
-    height: 600px;
-    overflow: auto;
+	display:block;
+	position:relative;
+	float: left;
+	width: 70%;
+	height: 600px;
+	overflow: auto;
 }
 .palette{
-    display:block;
-    position:relative;
-    float: right;
-    width: 23%;
-    height: 600px;
-    overflow: auto;
+	display:block;
+	position:relative;
+	float: right;
+	width: 20%;
+	height: 600px;
+	overflow: auto;
+}
+.instancePathView{
+	display:block;
+	float: none;
+	clear:both;
+	width: auto;
+	height: auto;
 }
