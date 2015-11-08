@@ -16,6 +16,9 @@ module.exports = function(broccoli){
 	var $panels;
 	var $contentsElements;
 
+	var selectedInstance;
+	var focusedInstance;
+
 	/**
 	 * 各パネルを描画する
 	 */
@@ -62,15 +65,39 @@ module.exports = function(broccoli){
 				'data-broccoli-sub-mod-name': $this.subModName,
 				'draggable': (isAppender ? false : true) // <- HTML5のAPI http://www.htmq.com/dnd/
 			})
-			.bind('dragleave', function(e){
-				e.preventDefault();
-				$(this).removeClass('broccoli--panel__drag-entered');
-			})
-			.bind('dragover', function(e){
-				e.preventDefault();
-				$(this).addClass('broccoli--panel__drag-entered');
-			})
-			.bind('click', function(){
+			.append( $('<div>')
+				.addClass('broccoli--panel-drop-to-insert-here')
+			)
+		;
+		_this.setPanelEventHandlers($panel);
+		if( !isAppender ){
+			$panel
+				.append( $('<div>')
+					.addClass('broccoli--panel-module-name')
+					.text($this.modName)
+				)
+			;
+		}
+		if( isAppender ){
+			$panel
+				.attr({
+					'data-broccoli-is-appender': 'yes'
+				})
+			;
+		}
+
+	}
+
+	/**
+	 * パネルにイベントハンドラをセットする
+	 *
+	 * @param  {[type]} $panel [description]
+	 * @return {[type]}        [description]
+	 */
+	this.setPanelEventHandlers = function($panel){
+		$panel
+			.bind('click', function(e){
+				e.stopPropagation();
 				var $this = $(this);
 				var instancePath = $this.attr('data-broccoli-instance-path');
 				if( $this.attr('data-broccoli-is-appender') == 'yes' ){
@@ -78,7 +105,8 @@ module.exports = function(broccoli){
 				}
 				broccoli.selectInstance( instancePath );
 			})
-			.bind('dblclick', function(){
+			.bind('dblclick', function(e){
+				e.stopPropagation();
 				var $this = $(this);
 				var instancePath = $this.attr('data-broccoli-instance-path');
 
@@ -100,7 +128,29 @@ module.exports = function(broccoli){
 				}
 				broccoli.editInstance( instancePath );
 			})
-			.bind('dragstart', function(){
+
+			.bind('dragleave', function(e){
+				e.stopPropagation();
+				e.preventDefault();
+				$(this).removeClass('broccoli--panel__drag-entered');
+			})
+			.bind('dragover', function(e){
+				e.stopPropagation();
+				e.preventDefault();
+				$(this).addClass('broccoli--panel__drag-entered');
+				var instancePath = $(this).attr('data-broccoli-instance-path');
+				if( $(this).attr('data-broccoli-is-instance-tree-view') == 'yes' ){
+					if(focusedInstance != instancePath){
+						// if( $this.attr('data-broccoli-is-appender') == 'yes' ){
+						// 	instancePath = php.dirname(instancePath);
+						// }
+						dragOvered = instancePath;
+						broccoli.focusInstance( instancePath );
+					}
+				}
+			})
+			.bind('dragstart', function(e){
+				e.stopPropagation();
 				event.dataTransfer.setData("method", 'moveTo' );
 				event.dataTransfer.setData("data-broccoli-instance-path", $(this).attr('data-broccoli-instance-path') );
 				var subModName = $(this).attr('data-broccoli-sub-mod-name');
@@ -108,7 +158,8 @@ module.exports = function(broccoli){
 					event.dataTransfer.setData("data-broccoli-sub-mod-name", subModName );
 				}
 			})
-			.bind('drop', function(){
+			.bind('drop', function(e){
+				e.stopPropagation();
 				$(this).removeClass('broccoli--panel__drag-entered');
 				var method = event.dataTransfer.getData("method");
 				// options.drop($(this).attr('data-broccoli-instance-path'), method);
@@ -145,26 +196,8 @@ module.exports = function(broccoli){
 				} );
 				return;
 			})
-			.append( $('<div>')
-				.addClass('broccoli--panel-drop-to-insert-here')
-			)
 		;
-		if( !isAppender ){
-			$panel
-				.append( $('<div>')
-					.addClass('broccoli--panel-module-name')
-					.text($this.modName)
-				)
-			;
-		}
-		if( isAppender ){
-			$panel
-				.attr({
-					'data-broccoli-is-appender': 'yes'
-				})
-			;
-		}
-
+		return $panel;
 	}
 
 	/**
@@ -250,6 +283,7 @@ module.exports = function(broccoli){
 	 */
 	this.focusInstance = function( instancePath, callback ){
 		callback = callback || function(){};
+		focusedInstance = instancePath;
 		$panels.find('[data-broccoli-instance-path]')
 			.filter(function (index) {
 				return $(this).attr("data-broccoli-instance-path") == instancePath;
@@ -267,6 +301,8 @@ module.exports = function(broccoli){
 	this.unfocusInstance = function(callback){
 		callback = callback || function(){};
 		selectedInstance = null;
+		focusedInstance = null;
+
 		$panels.find('.broccoli--panel__focused')
 			.removeClass('broccoli--panel__focused')
 		;

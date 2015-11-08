@@ -41,6 +41,7 @@ module.exports = function(broccoli){
 			var mod = broccoli.contentsSourceData.getModule(data.modId, subModName);
 			// console.log(mod);
 			var $ul = $('<ul>')
+				.addClass('broccoli--instance-tree-view-fields')
 				.css({
 					"border":"1px solid #eee"
 				})
@@ -107,26 +108,41 @@ module.exports = function(broccoli){
 					return;
 				} ,
 				function(){
-					var $rtn = $('<ul>')
+					var $rtn = $('<div>')
+						.text( mod.info.name||mod.id )
 						.css({
-							"border":"1px solid #666"
+							// "border":"1px solid #666"
 						})
 						.attr({
-							'data-broccoli-instance-path': parentInstancePath
+							'data-broccoli-instance-path': parentInstancePath,
+							'data-broccoli-is-instance-tree-view': 'yes',
+							'draggable': true
 						})
-						.bind('mouseover',function(e){
-							var instancePath = $(this).attr('data-broccoli-instance-path');
-							broccoli.focusInstance(instancePath);
+						// .bind('dragover', function(e){
+						// 	e.stopPropagation();
+						// 	var instancePath = $this.attr('data-broccoli-instance-path');
+						// 	// if( $this.attr('data-broccoli-is-appender') == 'yes' ){
+						// 	// 	instancePath = php.dirname(instancePath);
+						// 	// }
+						// 	broccoli.focusInstance( instancePath );
+						// })
+						.bind('mouseover', function(e){
 							e.stopPropagation();
+							var $this = $(this);
+							var instancePath = $this.attr('data-broccoli-instance-path');
+							// if( $this.attr('data-broccoli-is-appender') == 'yes' ){
+							// 	instancePath = php.dirname(instancePath);
+							// }
+							broccoli.focusInstance( instancePath );
 						})
-						.bind('click',function(e){
-							var instancePath = $(this).attr('data-broccoli-instance-path');
-							broccoli.selectInstance(instancePath);
-							e.stopPropagation();
-						})
+						.append( $('<div>')
+							.addClass('broccoli--panel-drop-to-insert-here')
+						)
+						.append( $('<ul>')
+						)
 					;
-					$rtn.text( mod.info.name||mod.id );
-					$rtn.append($ul);
+					broccoli.panels.setPanelEventHandlers($rtn);
+					$rtn.find('>ul').append($ul);
 					callback($rtn);
 				}
 			);
@@ -146,6 +162,10 @@ module.exports = function(broccoli){
 					.bind('mouseover',function(e){
 						var instancePath = $(this).attr('data-broccoli-instance-path');
 						broccoli.focusInstance(instancePath);
+						e.stopPropagation();
+					})
+					.bind('mouseout',function(e){
+						broccoli.unfocusInstance();
 						e.stopPropagation();
 					})
 					.bind('click',function(e){

@@ -2,6 +2,13 @@
 .broccoli{
 	// border: 1px solid #000;
 	@import "../../node_modules/bootstrap/dist/css/bootstrap";
+
+	/* http://www.softel.co.jp/blogs/tech/archives/2909 */
+	user-select: none; // CSS3
+	-moz-user-select: none; // Firefox
+	-webkit-user-select: none; // Safari、Chromeなど
+	-ms-user-select: none; // IE10かららしい
+	cursor: default;
 }
 // Canvas
 .broccoli--canvas{
@@ -88,6 +95,33 @@
 	}
 }
 
+// Instance Tree View
+.broccoli--instance-tree-view{
+	ul{
+		margin:0; padding:0 0 0 5px;
+		display: table;
+		width: 100%;
+	}
+	li{
+		list-style:none;
+		display: table;
+		width: 100%;
+	}
+	&-fields{
+		border:1px dotted #ddd;
+	}
+	[data-broccoli-instance-path]{
+		display: table;
+		width: 100%;
+		border:2px solid #666;
+		background-color:#fff;
+		padding: 1px 1px 1px 5px;
+		margin: 0;
+		position: relative;
+		left:0; top:0;
+	}
+}
+
 // Panels
 .broccoli--panel{
 	border-width:3px !important;
@@ -123,62 +157,62 @@
 			background-color: rgba(232,255,231, 0.5);
 		}
 	}
-	&__selected{
-		border-color: #f33 !important;
-		border-style: solid;
-		background-color: rgba(255,238,238, 0.2);
-		opacity: 1 !important;
+}
+.broccoli--panel-drop-to-insert-here{
+	display:none;
+	border:none;
+	background-color:#f93;
+	position: absolute;
+	left:5%; top:-8px;
+	width:90%;
+	margin:0 auto;
+	height:1px;
+	&:before,
+	&:after{
+		content:' ';
+		width:0;
+		height:0;
+		display: inline-block;
+		border-width:7px 0 7px 13px;
+		border-style:solid;
+		border-color:#f93;
+		border-top-color:transparent;
+		border-bottom-color:transparent;
+		position:absolute;
+		left:-5%; top:-7px;
 	}
-	&__focused{
-		border: 1px dotted #ffcc33;
-		background-color: rgba(255,255,204, 0.4);
-		opacity: 1 !important;
-	}
-	&__drag-entered{
-		border-style: dashed !important;
-		border-color: #6cf;
-		background-color: rgba(231,244,255, 0.5);
-
-		&[data-broccoli-sub-mod-name]{
-			border-color: #3c3;
-			background-color: rgba(232,255,231, 0.5);
-		}
-		.broccoli--panel-drop-to-insert-here{
-			display:block;
-		}
-	}
-
-	&-drop-to-insert-here{
-		display:none;
-		border:none;
-		background-color:#f93;
-		position: absolute;
-		left:5%; top:-8px;
-		width:90%;
-		margin:0 auto;
-		height:1px;
-		&:before,
-		&:after{
-			content:' ';
-			width:0;
-			height:0;
-			display: inline-block;
-			border-width:7px 0 7px 13px;
-			border-style:solid;
-			border-color:#f93;
-			border-top-color:transparent;
-			border-bottom-color:transparent;
-			position:absolute;
-			left:-5%; top:-7px;
-		}
-		&:after{
-			border-left-width:0;
-			border-right-width:13px;
-			right:-5%;
-			left:auto;
-		}
+	&:after{
+		border-left-width:0;
+		border-right-width:13px;
+		right:-5%;
+		left:auto;
 	}
 }
+.broccoli--panel__selected{
+	border-color: #f33 !important;
+	border-style: solid;
+	background-color: rgba(255,238,238, 0.2);
+	opacity: 1 !important;
+}
+.broccoli--panel__focused{
+	border: 1px dotted #ffcc33;
+	background-color: rgba(255,255,204, 0.4);
+	opacity: 1 !important;
+}
+.broccoli--panel__drag-entered{
+	border-style: dashed !important;
+	border-color: #6cf !important;
+	background-color: rgba(231,244,255, 0.5) !important;
+
+	&[data-broccoli-sub-mod-name]{
+		border-color: #3c3 !important;
+		background-color: rgba(232,255,231, 0.5) !important;
+	}
+	>.broccoli--panel-drop-to-insert-here{
+		display:block !important;
+	}
+}
+
 
 // edit window
 .broccoli--edit-window{
@@ -268,13 +302,5 @@
 	}
 	a.broccoli--module-palette__closed:before{
 		content: "ー";
-	}
-}
-.broccoli--instance-tree-view{
-	ul{
-		margin:0; padding:0 0 0 5px;
-	}
-	li{
-		list-style:none;
 	}
 }

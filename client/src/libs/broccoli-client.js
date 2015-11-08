@@ -390,8 +390,10 @@
 			this.panels.focusInstance(instancePath, function(){
 
 				var $targetElm = $(_this.panels.getPanelElement(instancePath));
-				var top = $canvas.scrollTop() + $targetElm.offset().top - 30;
-				$canvas.stop().animate({"scrollTop":top} , 'fast' );
+				if($targetElm.size()){
+					var top = $canvas.scrollTop() + $targetElm.offset().top - 30;
+					$canvas.stop().animate({"scrollTop":top} , 'fast' );
+				}
 
 				callback();
 			});
