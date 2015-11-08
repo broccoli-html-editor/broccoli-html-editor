@@ -1823,9 +1823,6 @@ module.exports = function(broccoli){
 										e.stopPropagation();
 										var $this = $(this);
 										var instancePath = $this.attr('data-broccoli-instance-path');
-										// if( $this.attr('data-broccoli-is-appender') == 'yes' ){
-										// 	instancePath = php.dirname(instancePath);
-										// }
 										broccoli.focusInstance( instancePath );
 									})
 									.append( $('<div>')
@@ -1856,6 +1853,30 @@ module.exports = function(broccoli){
 								return;
 							} ,
 							function(){
+								var instancePath = parentInstancePath+'/fields.'+idx+'@'+(data.fields[idx].length);
+
+								var $appender = $('<div>')
+									.text('ここをダブルクリックして配列要素を追加してください。')
+									.attr({
+										'data-broccoli-instance-path':instancePath,
+										'data-broccoli-mod-id': mod.id,
+										'data-broccoli-sub-mod-name': row.name,
+										'data-broccoli-is-appender':'yes',
+										'data-broccoli-is-instance-tree-view': 'yes',
+										'draggable': false
+									})
+									.bind('mouseover', function(e){
+										e.stopPropagation();
+										var $this = $(this);
+										var instancePath = $this.attr('data-broccoli-instance-path');
+										broccoli.focusInstance( instancePath );
+									})
+									.append( $('<div>')
+										.addClass('broccoli--panel-drop-to-insert-here')
+									)
+								;
+								broccoli.panels.setPanelEventHandlers( $appender );
+								$li.append( $appender );
 								$ul.append($li);
 								it1.next();
 							}
