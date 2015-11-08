@@ -76,7 +76,32 @@ module.exports = function(broccoli){
 								return;
 							} ,
 							function(){
-								$ul.append($li);
+								var instancePath = parentInstancePath+'/fields.'+idx+'@'+(data.fields[idx].length);
+
+								var $appender = $('<div>')
+									.text('(+) ここにモジュールをドラッグしてください。')
+									.attr({
+										'data-broccoli-instance-path':instancePath,
+										'data-broccoli-is-appender':'yes',
+										'data-broccoli-is-instance-tree-view': 'yes',
+										'draggable': false
+									})
+									.bind('mouseover', function(e){
+										e.stopPropagation();
+										var $this = $(this);
+										var instancePath = $this.attr('data-broccoli-instance-path');
+										// if( $this.attr('data-broccoli-is-appender') == 'yes' ){
+										// 	instancePath = php.dirname(instancePath);
+										// }
+										broccoli.focusInstance( instancePath );
+									})
+									.append( $('<div>')
+										.addClass('broccoli--panel-drop-to-insert-here')
+									)
+								;
+								broccoli.panels.setPanelEventHandlers( $appender );
+								$li.append( $appender );
+								$ul.append( $li );
 								it1.next();
 							}
 						);
