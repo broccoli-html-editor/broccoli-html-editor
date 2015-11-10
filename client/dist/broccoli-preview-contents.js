@@ -102,10 +102,26 @@
 			callbackMessage(data.callback, height);
 			return;
 
+		}else if(data.api == 'getBowlList'){
+			// console.log(data);
+			var bowls = [];
+			$iframeWindow
+				.find(data.options.contents_area_selector)
+				.html('...')
+				.each(function(){
+					var $this = $(this);
+					var bowlName = $this.attr(data.options.contents_bowl_name_by);
+					bowls.push(bowlName);
+				})
+			;
+			callbackMessage(data.callback, bowls);
+			return;
+
 		}else{
 			callbackMessage(data.callback, false);
 			return;
 		}
+		return;
 	});
 
 })();

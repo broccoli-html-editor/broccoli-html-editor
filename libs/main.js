@@ -325,6 +325,7 @@ module.exports = function(){
 	 *
 	 * @param  {Object}   options  オプション
 	 *                             - options.mode = ビルドモード(finalize=製品版ビルド, canvas=編集画面用ビルド)
+	 *                             - options.bowlList = ボウル名の一覧。data.jsonに含まれていないbowlがある場合、空白の領域としてあわせてビルドされる。
 	 * @param  {Function} callback callback function.
 	 * @return {Object}            this
 	 */
@@ -332,6 +333,17 @@ module.exports = function(){
 		var dataJson = fs.readFileSync(this.realpathDataDir+'/data.json');
 		dataJson = JSON.parse( dataJson );
 		dataJson.bowl = dataJson.bowl||{};
+		options.bowlList = options.bowlList||[];
+		if( options.bowlList.length ){
+			for( var idx in options.bowlList ){
+				dataJson.bowl[options.bowlList[idx]] = dataJson.bowl[options.bowlList[idx]]||{
+					"modId": "_sys/root",
+					"fields": {
+						"main": []
+					}
+				};
+			}
+		}
 
 		var htmls = {};
 		it79.ary(

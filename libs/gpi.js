@@ -71,7 +71,8 @@ module.exports = function(broccoli, api, options, callback){
 		case "buildHtml":
 			broccoli.buildHtml(
 				{
-					'mode': 'canvas'
+					'mode': 'canvas',
+					'bowlList': options.bowlList
 				} ,
 				function(htmls){
 					// console.log(htmls);

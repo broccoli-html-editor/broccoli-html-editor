@@ -76,7 +76,7 @@ module.exports = function(broccoli){
 								return;
 							} ,
 							function(){
-								var instancePath = parentInstancePath+'/fields.'+idx+'@'+(data.fields[idx].length);
+								var instancePath = parentInstancePath+'/fields.'+idx+'@'+(data.fields[idx]?data.fields[idx].length:0);
 
 								var $appender = $('<div>')
 									.text('(+) ここにモジュールをドラッグしてください。')
@@ -120,7 +120,7 @@ module.exports = function(broccoli){
 								return;
 							} ,
 							function(){
-								var instancePath = parentInstancePath+'/fields.'+idx+'@'+(data.fields[idx].length);
+								var instancePath = parentInstancePath+'/fields.'+idx+'@'+(data.fields[idx]?data.fields[idx].length:0);
 
 								var $appender = $('<div>')
 									.text('ここをダブルクリックして配列要素を追加してください。')

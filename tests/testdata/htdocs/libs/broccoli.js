@@ -155,6 +155,38 @@
 		}
 
 		/**
+		 * プレビューがロードされたら実行
+		 * @return {[type]} [description]
+		 */
+		function onPreviewLoad( callback ){
+			callback = callback || function(){};
+			if(_this.postMessenger===undefined){return;}// broccoli.init() の実行前
+
+			it79.fnc(
+				{},
+				[
+					function( it1, data ){
+						// postMessageの送受信を行う準備
+						_this.postMessenger.init(function(){
+							it1.next(data);
+						});
+					} ,
+					function( it1, data ){
+						// 編集画面描画
+						_this.redraw(function(){
+							it1.next(data);
+						});
+					} ,
+					function(it1, data){
+						callback();
+						it1.next();
+					}
+				]
+			);
+			return this;
+		}
+
+		/**
 		 * 画面を再描画
 		 * @return {[type]} [description]
 		 */
@@ -180,21 +212,34 @@
 					} ,
 					function( it1, data ){
 						// 編集画面描画
-						_this.gpi(
-							'buildHtml',
-							{},
-							function(htmls){
-								// console.log(htmls);
-								_this.postMessenger.send(
-									'updateHtml',
-									{
-										'contents_area_selector': _this.options.contents_area_selector ,
-										'contents_bowl_name_by': _this.options.contents_bowl_name_by ,
-										'htmls': htmls
-									},
-									function(){
-										console.log('broccoli: HTML standby.');
-										it1.next(data);
+						_this.postMessenger.send(
+							'getBowlList',
+							{
+								'contents_area_selector': _this.options.contents_area_selector ,
+								'contents_bowl_name_by': _this.options.contents_bowl_name_by
+							},
+							function(bowlList){
+								// console.log(bowlList);
+								for( var idx in bowlList ){
+									_this.contentsSourceData.initBowlData(bowlList[idx]);
+								}
+								_this.gpi(
+									'buildHtml',
+									{'bowlList': bowlList},
+									function(htmls){
+										console.log(htmls);
+										_this.postMessenger.send(
+											'updateHtml',
+											{
+												'contents_area_selector': _this.options.contents_area_selector ,
+												'contents_bowl_name_by': _this.options.contents_bowl_name_by ,
+												'htmls': htmls
+											},
+											function(){
+												console.log('broccoli: HTML standby.');
+												it1.next(data);
+											}
+										);
 									}
 								);
 							}
@@ -242,38 +287,6 @@
 						_this.instancePathView.update( function(){
 							it1.next(data);
 						} );
-					} ,
-					function(it1, data){
-						callback();
-						it1.next();
-					}
-				]
-			);
-			return this;
-		}
-
-		/**
-		 * プレビューがロードされたら実行
-		 * @return {[type]} [description]
-		 */
-		function onPreviewLoad( callback ){
-			callback = callback || function(){};
-			if(_this.postMessenger===undefined){return;}// broccoli.init() の実行前
-
-			it79.fnc(
-				{},
-				[
-					function( it1, data ){
-						// postMessageの送受信を行う準備
-						_this.postMessenger.init(function(){
-							it1.next(data);
-						});
-					} ,
-					function( it1, data ){
-						// 編集画面描画
-						_this.redraw(function(){
-							it1.next(data);
-						});
 					} ,
 					function(it1, data){
 						callback();
@@ -1809,7 +1822,7 @@ module.exports = function(broccoli){
 								return;
 							} ,
 							function(){
-								var instancePath = parentInstancePath+'/fields.'+idx+'@'+(data.fields[idx].length);
+								var instancePath = parentInstancePath+'/fields.'+idx+'@'+(data.fields[idx]?data.fields[idx].length:0);
 
 								var $appender = $('<div>')
 									.text('(+) ここにモジュールをドラッグしてください。')
@@ -1853,7 +1866,7 @@ module.exports = function(broccoli){
 								return;
 							} ,
 							function(){
-								var instancePath = parentInstancePath+'/fields.'+idx+'@'+(data.fields[idx].length);
+								var instancePath = parentInstancePath+'/fields.'+idx+'@'+(data.fields[idx]?data.fields[idx].length:0);
 
 								var $appender = $('<div>')
 									.text('ここをダブルクリックして配列要素を追加してください。')
