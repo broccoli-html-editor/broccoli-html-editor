@@ -465,6 +465,17 @@
 		}
 
 		/**
+		 * [function description]
+		 * @param  {String}   message  メッセージ
+		 * @param  {Function} callback コールバック関数
+		 * @return {Object}            this.
+		 */
+		this.message = function(message, callback){
+			console.info(message);
+			return this;
+		}
+
+		/**
 		 * コンテンツデータを保存する
 		 */
 		this.saveContents = function(callback){

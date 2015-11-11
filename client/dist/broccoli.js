@@ -471,6 +471,17 @@
 		}
 
 		/**
+		 * [function description]
+		 * @param  {String}   message  メッセージ
+		 * @param  {Function} callback コールバック関数
+		 * @return {Object}            this.
+		 */
+		this.message = function(message, callback){
+			console.info(message);
+			return this;
+		}
+
+		/**
 		 * コンテンツデータを保存する
 		 */
 		this.saveContents = function(callback){
@@ -887,7 +898,7 @@ module.exports = function(broccoli){
 			this.updateInstance( dataFrom, toContainerInstancePath );
 			cb();
 		}else if( toParsed.path.indexOf(fromParsed.path) === 0 ){
-			console.log('自分の子階層へ移動することはできません。');
+			broccoli.message('自分の子階層へ移動することはできません。');
 			cb();
 		}else if( fromParsed.path.indexOf(toParsed.container) === 0 ){
 			this.removeInstance(fromParsed.path);
@@ -2178,6 +2189,7 @@ module.exports = function(broccoli){
 				if( typeof(subModName) === typeof('') && subModName.length ){
 					event.dataTransfer.setData("data-broccoli-sub-mod-name", subModName );
 				}
+				event.dataTransfer.setData("data-broccoli-is-appender", $(this).attr('data-broccoli-is-appender') );
 			})
 			.bind('drop', function(e){
 				e.stopPropagation();
@@ -2185,36 +2197,78 @@ module.exports = function(broccoli){
 				var method = event.dataTransfer.getData("method");
 				// options.drop($(this).attr('data-broccoli-instance-path'), method);
 				// console.log(method);
-				if( method === 'moveTo' ){
-					var moveFrom = event.dataTransfer.getData("data-broccoli-instance-path");
-					var moveTo = $(this).attr('data-broccoli-instance-path');
-					if( moveFrom === moveTo ){
-						// 移動元と移動先が同一の場合、キャンセルとみなす
-						$(this).removeClass('cont_instanceCtrlPanel-dragentered');
+				var subModNameFrom = event.dataTransfer.getData("data-broccoli-sub-mod-name");
+				var subModName = $(this).attr('data-broccoli-sub-mod-name');
+				var isAppenderFrom = (event.dataTransfer.getData("data-broccoli-is-appender") == 'yes');
+				var isAppender = ($(this).attr('data-broccoli-is-appender') == 'yes');
+				if( subModNameFrom.length ){
+					if( method === 'moveTo' ){
+						// これはloop要素(=subModNameがある場合)を並べ替えるための moveTo です。
+						// その他のインスタンスをここに移動したり、作成することはできません。
+						var moveFrom = event.dataTransfer.getData("data-broccoli-instance-path");
+						var moveTo = $(this).attr('data-broccoli-instance-path');
+						if( moveFrom === moveTo ){
+							// 移動元と移動先が同一の場合、キャンセルとみなす
+							$(this).removeClass('broccoli--panel__drag-entered');
+							return;
+						}
+
+						function removeNum(str){
+							return str.replace(new RegExp('[0-9]+$'),'');
+						}
+						if( removeNum(moveFrom) !== removeNum(moveTo) ){
+							broccoli.message('並べ替え以外の移動操作はできません。');
+							$(this).removeClass('broccoli--panel__drag-entered');
+							return;
+						}
+
+						broccoli.contentsSourceData.moveInstanceTo( moveFrom, moveTo, function(){
+							// コンテンツを保存
+							broccoli.contentsSourceData.save(function(){
+								// alert('インスタンスを移動しました。');
+								broccoli.redraw();
+							});
+						} );
 						return;
 					}
-					broccoli.contentsSourceData.moveInstanceTo( moveFrom, moveTo, function(){
+					broccoli.message('ダブルクリックしてください。ドロップできません。');
+				}else{
+					if( method === 'moveTo' ){
+						var moveFrom = event.dataTransfer.getData("data-broccoli-instance-path");
+						var moveTo = $(this).attr('data-broccoli-instance-path');
+						if( moveFrom === moveTo ){
+							// 移動元と移動先が同一の場合、キャンセルとみなす
+							$(this).removeClass('broccoli--panel__drag-entered');
+							return;
+						}
+						if(subModName){
+							broccoli.message('loopフィールドへの移動はできません。');
+							$(this).removeClass('broccoli--panel__drag-entered');
+							return;
+						}
+						broccoli.contentsSourceData.moveInstanceTo( moveFrom, moveTo, function(){
+							// コンテンツを保存
+							broccoli.contentsSourceData.save(function(){
+								// alert('インスタンスを移動しました。');
+								broccoli.redraw();
+							});
+						} );
+						return;
+					}
+					if( method !== 'add' ){
+						broccoli.message('追加するモジュールをドラッグしてください。ここに移動することはできません。');
+						return;
+					}
+					var modId = event.dataTransfer.getData("modId");
+					// console.log(modId);
+					broccoli.contentsSourceData.addInstance( modId, $(this).attr('data-broccoli-instance-path'), function(){
 						// コンテンツを保存
 						broccoli.contentsSourceData.save(function(){
-							// alert('インスタンスを移動しました。');
+							// alert('インスタンスを追加しました。');
 							broccoli.redraw();
 						});
 					} );
-					return;
 				}
-				if( method !== 'add' ){
-					alert('追加するモジュールをドラッグしてください。ここに移動することはできません。');
-					return;
-				}
-				var modId = event.dataTransfer.getData("modId");
-				// console.log(modId);
-				broccoli.contentsSourceData.addInstance( modId, $(this).attr('data-broccoli-instance-path'), function(){
-					// コンテンツを保存
-					broccoli.contentsSourceData.save(function(){
-						// alert('インスタンスを追加しました。');
-						broccoli.redraw();
-					});
-				} );
 				return;
 			})
 		;

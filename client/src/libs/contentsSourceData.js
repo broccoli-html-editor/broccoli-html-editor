@@ -384,7 +384,7 @@ module.exports = function(broccoli){
 			this.updateInstance( dataFrom, toContainerInstancePath );
 			cb();
 		}else if( toParsed.path.indexOf(fromParsed.path) === 0 ){
-			console.log('自分の子階層へ移動することはできません。');
+			broccoli.message('自分の子階層へ移動することはできません。');
 			cb();
 		}else if( fromParsed.path.indexOf(toParsed.container) === 0 ){
 			this.removeInstance(fromParsed.path);
