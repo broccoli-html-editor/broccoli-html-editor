@@ -9,6 +9,7 @@ module.exports = function(broccoli){
 	var fsEx = require('fs-extra');
 	var it79 = require('iterate79');
 	var php = require('phpjs');
+	var mkdirp = require('mkdirp');
 	var DIRECTORY_SEPARATOR = '/';
 
 	var _this = this;
@@ -44,7 +45,7 @@ module.exports = function(broccoli){
 		if( fs.existsSync(path) ){
 			return true;
 		}
-		fs.mkdirSync(path, 0777);
+		mkdirp(path);
 		return true;
 	}
 	function rmdir( path ){
@@ -103,23 +104,29 @@ module.exports = function(broccoli){
 	function loadResourceList( callback ){
 		callback = callback || function(){};
 		_resourceDb = {};
-		if( !isDirectory( _resourcesDirPath ) ){
-			mkdir( _resourcesDirPath );
-		}
+		try {
+			if( !isDirectory( _resourcesDirPath ) ){
+				// リソースディレクトリが存在しない場合、
+				// この段階ではムリに作成しない。
+				callback();
+				return;
+			}
 
-		var list = fs.readdirSync( _resourcesDirPath );
-		for( var idx in list ){
-			var resKey = list[idx];
-			if( !isDirectory( _resourcesDirPath+'/'+resKey ) ){ continue; }
-			_resourceDb[resKey] = {};
-			if( isFile( _resourcesDirPath+'/'+resKey+'/res.json' ) ){
-				var jsonStr = fs.readFileSync( _resourcesDirPath+'/'+resKey+'/res.json' );
-				try {
-					_resourceDb[resKey] = JSON.parse( jsonStr );
-				} catch (e) {
-					_resourceDb[resKey] = {};
+			var list = fs.readdirSync( _resourcesDirPath );
+			for( var idx in list ){
+				var resKey = list[idx];
+				if( !isDirectory( _resourcesDirPath+'/'+resKey ) ){ continue; }
+				_resourceDb[resKey] = {};
+				if( isFile( _resourcesDirPath+'/'+resKey+'/res.json' ) ){
+					var jsonStr = fs.readFileSync( _resourcesDirPath+'/'+resKey+'/res.json' );
+					try {
+						_resourceDb[resKey] = JSON.parse( jsonStr );
+					} catch (e) {
+						_resourceDb[resKey] = {};
+					}
 				}
 			}
+		} catch (e) {
 		}
 		callback();
 		return;
@@ -223,6 +230,9 @@ module.exports = function(broccoli){
 		}
 
 		var resKey = newResKey;
+		if( !isDirectory( _resourcesDirPath ) ){ // 作成
+			mkdir( _resourcesDirPath );
+		}
 		mkdir( _resourcesDirPath+'/'+resKey );
 		fs.writeFileSync(
 			_resourcesDirPath+'/'+resKey+'/res.json',
