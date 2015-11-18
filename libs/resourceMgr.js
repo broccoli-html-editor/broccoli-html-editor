@@ -45,7 +45,7 @@ module.exports = function(broccoli){
 		if( fs.existsSync(path) ){
 			return true;
 		}
-		mkdirp(path);
+		fsEx.mkdirpSync(path);
 		return true;
 	}
 	function rmdir( path ){
