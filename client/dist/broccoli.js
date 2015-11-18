@@ -1409,6 +1409,11 @@ module.exports = function(broccoli){
 		it79.ary(
 			mod.fields,
 			function(it1, field, fieldName){
+				if( typeof(field) != typeof({}) ){
+					// オブジェクトではない field → Skip
+					it1.next();
+					return;
+				}
 				// console.log(fieldName);
 				var $field = $(tplField)
 					.attr({
@@ -1433,10 +1438,12 @@ module.exports = function(broccoli){
 							it1.next();
 						})
 						break;
+					case 'module':
+					case 'loop':
 					default:
 						$(elmFieldContent)
 							.append(
-								'<p>'+php.htmlspecialchars( (typeof(field.fieldType)===typeof('') ? field.fieldType : '') )+'</p>'
+								'<p>'+php.htmlspecialchars( (typeof(field.fieldType)===typeof('') ? field.fieldType : 'unknown') )+'</p>'
 							)
 						;
 						it1.next();

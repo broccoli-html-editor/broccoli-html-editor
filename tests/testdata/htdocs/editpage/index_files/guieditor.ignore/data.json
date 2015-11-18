@@ -5,6 +5,15 @@
    "fields": {
     "main": [
      {
+      "modId": "testMod1:boxes/aside_box",
+      "fields": {
+       "heading": "",
+       "main": []
+      },
+      "anchor": "",
+      "dec": ""
+     },
+     {
       "modId": "testMod1:units/cols3",
       "fields": {
        "column1": [
