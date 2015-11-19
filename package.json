@@ -1,7 +1,7 @@
 {
   "name": "broccoli-html-editor",
   "version": "0.0.1-alpha.2+nb",
-  "description": "",
+  "description": "GUI HTML Editor Library.",
   "main": "libs/main.js",
   "scripts": {
     "up": "node ./node_modules/baobab-fw/lib/cmd/server.js",
