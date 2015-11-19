@@ -248,7 +248,14 @@ module.exports = function(broccoli, moduleId, options){
 					}};
 				}
 
-				if( field.input ){
+				if( typeof(field) == typeof('') ){
+					// end系：無視
+					parseBroccoliTemplate( src, function(){
+						callback();
+					} );
+					return;
+
+				}else if( field.input ){
 					_this.fields[field.input.name] = field.input;
 					_this.fields[field.input.name].fieldType = 'input';
 
@@ -289,46 +296,8 @@ module.exports = function(broccoli, moduleId, options){
 					});
 
 					return;
-				}else if( field == 'endloop' ){
-					// ループ構造の閉じタグ
-					// 本来ここは通らないはず。
-					// ここを通る場合は、対応する開始タグがない endloop がある場合。
 
-					parseBroccoliTemplate( src, function(){
-						callback();
-					} );
-					return;
-				}else if( field.if ){
-					// _this.fields[field.if.name] = field.if;
-					// _this.fields[field.if.name].fieldType = 'if';
-					// var tmpSearchResult = _this.searchEndTag( src, 'if' );
-					// if( typeof(_this.subModule) !== typeof({}) ){
-					// 	_this.subModule = {};
-					// }
-					// _topThis.subModule[field.if.name] = broccoli.createModuleInstance( _this.id, {
-					// 	"src": tmpSearchResult.content,
-					// 	"subModName": field.if.name,
-					// 	"topThis":_topThis
-					// }).init(function(){});
-					// src = tmpSearchResult.nextSrc;
-
-					parseBroccoliTemplate( src, function(){
-						callback();
-					} );
-					return;
-				}else if( field == 'endif' ){
-					// 分岐構造の閉じタグ
-					// 本来ここは通らないはず。
-					// ここを通る場合は、対応する開始タグがない endloop がある場合。
-
-					parseBroccoliTemplate( src, function(){
-						callback();
-					} );
-					return;
-				}else if( field.echo ){
-					// _this.fields[field.echo.name] = field.echo;
-					// _this.fields[field.echo.name].fieldType = 'echo';
-
+				}else{
 					parseBroccoliTemplate( src, function(){
 						callback();
 					} );
