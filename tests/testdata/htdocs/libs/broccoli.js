@@ -1925,6 +1925,7 @@ module.exports = function(broccoli){
 						})
 						.attr({
 							'data-broccoli-instance-path': parentInstancePath,
+							'data-broccoli-sub-mod-name': subModName,
 							'data-broccoli-is-instance-tree-view': 'yes',
 							'draggable': true
 						})

@@ -109,16 +109,61 @@
 	}
 	&-fields{
 		border:1px dotted #ddd;
+		background-color: #f5f5f5;
 	}
 	[data-broccoli-instance-path]{
 		display: table;
 		width: 100%;
 		border:2px solid #666;
-		background-color:#fff;
+		border-bottom-width: 0px;
+		background-color:#f9f9f9;
 		padding: 1px 1px 1px 5px;
 		margin: 0;
 		position: relative;
 		left:0; top:0;
+
+		&:first-child{
+			border-radius: 5px 5px 0 0;
+			border-bottom-width: 0px;
+		}
+		&:last-child{
+			border-bottom-width: 2px;
+			border-radius: 0 0 5px 5px;
+		}
+		&:first-child:last-child{
+			border-radius: 5px;
+			border-width: 2px;
+		}
+
+		&[data-broccoli-is-appender]{
+			// moduleフィールド の appender
+			padding:9px;
+			background-color: #eef;
+			border-color: #8585d2;
+			font-family: "YuGothic", "Yu Gothic", Meiryo, "Hiragino Kaku Gothic ProN", Verdana, sans-serif;
+			font-size: 11px;
+			color:#000;
+			text-align:center;
+			box-sizing:border-box;
+			clear:both;
+			white-space:nowrap;
+
+			&[data-broccoli-sub-mod-name]{
+				// loopフィールド の appender
+				padding:5px 15px;
+				background-color:#dfe;
+				border-color:#6dcd9d;
+				font-family: "YuGothic", "Yu Gothic", Meiryo, "Hiragino Kaku Gothic ProN", Verdana, sans-serif;
+				font-size:9px;
+				text-align:center;
+				box-sizing:border-box;
+				clear:both;
+				white-space:nowrap;
+
+			}
+		}
+
+
 	}
 }
 
