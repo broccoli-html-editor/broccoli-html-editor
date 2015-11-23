@@ -1850,7 +1850,7 @@ module.exports = function(broccoli){
 										'data-broccoli-is-instance-tree-view': 'yes',
 										'draggable': false
 									})
-									.bind('mouseover', function(e){
+									.bind('click', function(e){
 										e.stopPropagation();
 										var $this = $(this);
 										var instancePath = $this.attr('data-broccoli-instance-path');
@@ -1896,7 +1896,7 @@ module.exports = function(broccoli){
 										'data-broccoli-is-instance-tree-view': 'yes',
 										'draggable': false
 									})
-									.bind('mouseover', function(e){
+									.bind('click', function(e){
 										e.stopPropagation();
 										var $this = $(this);
 										var instancePath = $this.attr('data-broccoli-instance-path');
@@ -1937,7 +1937,7 @@ module.exports = function(broccoli){
 						// 	// }
 						// 	broccoli.focusInstance( instancePath );
 						// })
-						.bind('mouseover', function(e){
+						.bind('click', function(e){
 							e.stopPropagation();
 							var $this = $(this);
 							var instancePath = $this.attr('data-broccoli-instance-path');
@@ -1970,7 +1970,7 @@ module.exports = function(broccoli){
 					.attr({
 						'data-broccoli-instance-path':'/bowl.'+idx
 					})
-					.bind('mouseover',function(e){
+					.bind('click',function(e){
 						var instancePath = $(this).attr('data-broccoli-instance-path');
 						broccoli.focusInstance(instancePath);
 						e.stopPropagation();
