@@ -32,6 +32,10 @@ module.exports = function(broccoli, moduleId, options){
 		}
 		return true;
 	}
+	function base64_encode( bin ){
+		var base64 = bin.toString('base64');
+		return base64;
+	}
 
 	// console.log('classModTpl -> '+moduleId);
 
@@ -155,9 +159,9 @@ module.exports = function(broccoli, moduleId, options){
 					var tmpBin = fs.readFileSync( _this.path+'/thumb.png' ).toString();
 					var tmpBase64;
 					try {
-						tmpBase64 = php.base64_encode( tmpBin );
+						tmpBase64 = base64_encode( tmpBin );
 					} catch (e) {
-						console.log('ERROR: php.base64_encode() FAILED; -> '+_this.path+'/thumb.png');
+						console.log('ERROR: base64_encode() FAILED; -> '+_this.path+'/thumb.png');
 						return null;
 					}
 					return 'data:image/png;base64,'+tmpBase64;
