@@ -1,0 +1,22 @@
+<p>loopフィールドの中にmoduleフィールド</p>
+<ul>
+{&{"loop":{"name":"sample_loop1"}}&}
+	<li>loop1
+	<ul>
+{&{"loop":{"name":"sample_loop2"}}&}
+		<li>loop2
+		<ul>
+{&{"loop":{"name":"sample_loop3"}}&}
+		<li>loop3:
+			<div>{&{"input":{"type":"multitext","name":"multitext_src3"}}&}</div>
+			<div>{&{"module":{"name":"main"}}&}</div>
+		</li>
+{&"endloop"&}
+		</ul>
+		</li>
+{&"endloop"&}
+	</ul>
+	</li>
+{&"endloop"&}
+</ul>
+<p>/loopフィールドの中にmoduleフィールド</p>

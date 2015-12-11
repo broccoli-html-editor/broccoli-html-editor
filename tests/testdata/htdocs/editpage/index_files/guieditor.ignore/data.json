@@ -5,6 +5,52 @@
    "fields": {
     "main": [
      {
+      "modId": "testMod1:dev/mod_in_loop",
+      "fields": {
+       "sample_loop1": [
+        {
+         "modId": "testMod1:dev/mod_in_loop",
+         "fields": {
+          "sample_loop2": [
+           {
+            "modId": "testMod1:dev/mod_in_loop",
+            "fields": {
+             "sample_loop3": [
+              {
+               "modId": "testMod1:dev/mod_in_loop",
+               "fields": {
+                "multitext_src3": {
+                 "src": "## multitext field.\n\nmultitext.",
+                 "editor": "markdown"
+                },
+                "main": [
+                 {
+                  "modId": "PlainHTMLElements:PlainHTML/MultiText",
+                  "fields": {
+                   "main": {
+                    "src": "",
+                    "editor": "markdown"
+                   }
+                  }
+                 }
+                ]
+               },
+               "subModName": "sample_loop3",
+               "anchor": "",
+               "dec": ""
+              }
+             ]
+            },
+            "subModName": "sample_loop2"
+           }
+          ]
+         },
+         "subModName": "sample_loop1"
+        }
+       ]
+      }
+     },
+     {
       "modId": "testMod1:boxes/aside_box",
       "fields": {
        "heading": "",
