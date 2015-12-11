@@ -366,6 +366,9 @@ module.exports = function(broccoli, data, options, callback){
 									// ネストされたモジュールの再帰処理
 									var tmpopt = JSON.parse( JSON.stringify(opt) );
 									tmpopt.instancePath += '@'+idx;
+									tmpopt.subModName = undefined;
+									delete(tmpopt.subModName);
+									// console.log(tmpopt);
 									broccoli.buildBowl(row, tmpopt, function(html){
 										rtn += html;
 										it2.next();
