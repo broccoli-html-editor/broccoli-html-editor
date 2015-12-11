@@ -1,15 +1,18 @@
 module.exports = function(broccoli){
 	var php = require('phpjs');
+	var utils79 = require('utils79');
 
 	/**
 	 * データをバインドする
 	 */
 	this.bind = function( fieldData, mode, mod, callback ){
-		var rtn = ''
+		var rtn = '';
 		if(typeof(fieldData)===typeof({}) && typeof(fieldData.src)===typeof('')){
+			rtn = utils79.toStr(fieldData.src);
+
 			switch( fieldData.editor ){
 				case 'text':
-					rtn = php.htmlspecialchars( fieldData.src ); // ←HTML特殊文字変換
+					rtn = php.htmlspecialchars( rtn ); // ←HTML特殊文字変換
 					rtn = rtn.replace(new RegExp('\r\n|\r|\n','g'), '<br />'); // ← 改行コードは改行タグに変換
 					break;
 				case 'markdown':
@@ -24,11 +27,10 @@ module.exports = function(broccoli){
 						smartLists: true,
 						smartypants: false
 					});
-					rtn = marked(fieldData.src);
+					rtn = marked(rtn);
 					break;
 				case 'html':
 				default:
-					rtn = fieldData.src;
 					break;
 			}
 		}

@@ -1,10 +1,11 @@
 module.exports = function(broccoli){
+	var utils79 = require('utils79');
 
 	/**
 	 * データをバインドする
 	 */
 	this.bind = function( fieldData, mode, mod, callback ){
-		var rtn = ''
+		var rtn = '';
 		var marked = require('marked');
 		marked.setOptions({
 			renderer: new marked.Renderer(),
@@ -18,7 +19,8 @@ module.exports = function(broccoli){
 		});
 
 		if(typeof(fieldData)===typeof('')){
-			rtn = marked(fieldData);
+			rtn = utils79.toStr(fieldData);
+			rtn = marked(rtn);
 		}
 		if( mode == 'canvas' && !rtn.length ){
 			rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてマークダウンを編集してください)</span>';

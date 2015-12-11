@@ -1,15 +1,13 @@
 module.exports = function(broccoli){
+	var utils79 = require('utils79');
 
 	/**
 	 * データをバインドする
 	 */
 	this.bind = function( fieldData, mode, mod, callback ){
-		var rtn = ''
-		if( typeof(fieldData) === typeof([]) ){
-			rtn += fieldData.join('');
-		}else{
-			rtn += fieldData;
-		}
+		var rtn = '';
+		rtn = utils79.toStr(fieldData);
+
 		if( !rtn.length && mod.options ){
 			var isHit = false;
 			for( var idx in mod.options ){

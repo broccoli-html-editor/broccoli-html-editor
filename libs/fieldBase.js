@@ -5,6 +5,7 @@ module.exports = function(broccoli){
 	// delete(require.cache[require('path').resolve(__filename)]);
 	this.__fieldId__ = null;
 	var $ = require('jquery');
+	var utils79 = require('utils79');
 
 	/**
 	 * データをバインドする (Server Side)
@@ -12,13 +13,9 @@ module.exports = function(broccoli){
 	this.bind = function( fieldData, mode, mod, callback ){
 		var rtn = '';
 		try {
-			if( typeof(fieldData) === typeof([]) ){
-				rtn += fieldData.join('');
-			}else{
-				rtn += fieldData;
-			}
+			rtn = utils79.toStr(fieldData);
 		} catch (e) {
-			rtn += '[error]'
+			rtn = '[error]'
 		}
 		if( mode == 'canvas' && !rtn.length ){
 			rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてHTMLコードを編集してください)</span>';
