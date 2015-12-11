@@ -48,7 +48,9 @@
          "subModName": "sample_loop1"
         }
        ]
-      }
+      },
+      "anchor": "",
+      "dec": ""
      },
      {
       "modId": "testMod1:boxes/aside_box",

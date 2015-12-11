@@ -8,6 +8,7 @@ module.exports = function(broccoli){
 	var fs = require('fs');
 	var fsEx = require('fs-extra');
 	var it79 = require('iterate79');
+	var utils79 = require('utils79');
 	var php = require('phpjs');
 	var mkdirp = require('mkdirp');
 	var DIRECTORY_SEPARATOR = '/';
@@ -397,7 +398,12 @@ module.exports = function(broccoli){
 			// console.log(filename);
 			var contentsPath = broccoli.options.pathHtml;
 			var resourcesPublishDirPath = broccoli.options.pathResourceDir;
-			var rtn = './' + path.relative(path.dirname(contentsPath), resourcesPublishDirPath+'/'+filename+'.'+res.ext);
+
+			filename = utils79.toStr(filename);
+			if(!filename.length){filename = 'noname';}
+			var ext = utils79.toStr(res.ext);
+			if(!ext.length){ext = 'unknown';}
+			var rtn = './' + path.relative(path.dirname(contentsPath), resourcesPublishDirPath+'/'+filename+'.'+ext);
 
 			callback(rtn);
 		} );
