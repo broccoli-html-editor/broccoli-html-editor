@@ -29,7 +29,7 @@ module.exports = function(broccoli){
 		historyDataArray.splice(0, historyIdx, JSON.stringify(data));
 		historyIdx = 0;
 
-		// console.log(historyDataArray);
+		console.log('history.put()', historyDataArray);
 		setTimeout( callback, 0 );
 		return this;
 	}
@@ -37,25 +37,44 @@ module.exports = function(broccoli){
 	/**
 	 * 1つ前のデータを得る
 	 */
-	this.back = function(){
+	this.back = function( callback ){
+		console.log('history.back()', historyDataArray);
+		callback = callback||function(){};
 		historyIdx ++;
 		if( historyIdx >= historyDataArray.length || historyIdx < 0 ){
 			historyIdx --;
-			return false;
+			callback(false);
+			return this;
 		}
-		return JSON.parse( historyDataArray[historyIdx] );
+		callback(JSON.parse( historyDataArray[historyIdx] ));
+		return this;
 	}
 
 	/**
 	 * 1つ次のデータを得る
 	 */
-	this.go = function(){
+	this.go = function( callback ){
+		console.log('history.go()', historyDataArray);
+		callback = callback||function(){};
 		historyIdx --;
 		if( historyIdx >= historyDataArray.length || historyIdx < 0 ){
 			historyIdx ++;
-			return false;
+			callback(false);
+			return this;
 		}
-		return JSON.parse( historyDataArray[historyIdx] );
+		callback(JSON.parse( historyDataArray[historyIdx] ));
+		return this;
+	}
+
+	/**
+	 * history情報を取得する
+	 */
+	this.getHistory = function(){
+		var rtn = {
+			'array': historyDataArray ,
+			'index': historyIdx
+		};
+		return rtn;
 	}
 
 }

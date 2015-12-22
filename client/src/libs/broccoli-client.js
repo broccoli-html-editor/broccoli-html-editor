@@ -438,6 +438,36 @@
 		}
 
 		/**
+		 * history: 取り消し (非同期)
+		 */
+		this.historyBack = function( cb ){
+			cb = cb||function(){};
+			this.contentsSourceData.historyBack(function(result){
+				if(result === false){cb();return;}
+				_this.saveContents(function(){
+					// 画面を再描画
+					_this.redraw(cb);
+				});
+			});
+			return this;
+		}
+
+		/**
+		 * history: やりなおし (非同期)
+		 */
+		this.historyGo = function( cb ){
+			cb = cb||function(){};
+			this.contentsSourceData.historyGo(function(result){
+				if(result === false){cb();return;}
+				_this.saveContents(function(){
+					// 画面を再描画
+					_this.redraw(cb);
+				});
+			});
+			return this;
+		}
+
+		/**
 		 * モジュールパレットを描画する
 		 * @param  {Object}   moduleList モジュール一覧。
 		 * @param  {Function} callback   callback function.
@@ -507,4 +537,5 @@
 		}
 
 	}
+
 })(module);

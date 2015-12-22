@@ -11,6 +11,13 @@
 		<div class="canvas" data-broccoli-preview="http://127.0.0.1:8088/editpage/index.html"></div>
 		<div class="palette">...</div>
 		<div class="instancePathView">...</div>
+		<div>
+			<ul>
+				<li><a href="javascript:console.log(window.main.broccoli);">broccoli</a></li>
+				<li><a href="javascript:window.main.broccoli.historyBack(function(){alert('history Back done.');});">history Back</a></li>
+				<li><a href="javascript:window.main.broccoli.historyGo(function(){alert('history Go done.');});">history Go</a></li>
+			</ul>
+		</div>
 
 		<!-- jQuery -->
 		<script src="./index_files/jquery-1.11.1.min.js" type="text/javascript"></script>

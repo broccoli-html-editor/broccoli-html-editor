@@ -444,6 +444,36 @@
 		}
 
 		/**
+		 * history: 取り消し (非同期)
+		 */
+		this.historyBack = function( cb ){
+			cb = cb||function(){};
+			this.contentsSourceData.historyBack(function(result){
+				if(result === false){cb();return;}
+				_this.saveContents(function(){
+					// 画面を再描画
+					_this.redraw(cb);
+				});
+			});
+			return this;
+		}
+
+		/**
+		 * history: やりなおし (非同期)
+		 */
+		this.historyGo = function( cb ){
+			cb = cb||function(){};
+			this.contentsSourceData.historyGo(function(result){
+				if(result === false){cb();return;}
+				_this.saveContents(function(){
+					// 画面を再描画
+					_this.redraw(cb);
+				});
+			});
+			return this;
+		}
+
+		/**
 		 * モジュールパレットを描画する
 		 * @param  {Object}   moduleList モジュール一覧。
 		 * @param  {Function} callback   callback function.
@@ -513,6 +543,7 @@
 		}
 
 	}
+
 })(module);
 
 },{"./../../../libs/fieldBase.js":12,"./../../../libs/fields/app.fields.href.js":13,"./../../../libs/fields/app.fields.html.js":14,"./../../../libs/fields/app.fields.html_attr_text.js":15,"./../../../libs/fields/app.fields.image.js":16,"./../../../libs/fields/app.fields.markdown.js":17,"./../../../libs/fields/app.fields.multitext.js":18,"./../../../libs/fields/app.fields.select.js":19,"./../../../libs/fields/app.fields.text.js":20,"./contentsSourceData.js":3,"./drawModulePalette.js":4,"./editWindow.js":5,"./instancePathView.js":7,"./instanceTreeView.js":8,"./panels.js":9,"./postMessenger.js":10,"./resourceMgr.js":11,"iterate79":27,"jquery":28,"underscore":33}],3:[function(require,module,exports){
@@ -1114,13 +1145,15 @@ module.exports = function(broccoli){
 	 */
 	this.historyBack = function( cb ){
 		cb = cb || function(){};
-		var data = this.history.back();
-		if( data === false ){
-			cb(false);
-			return this;
-		}
-		_contentsSourceData = data;
-		cb(true);
+		this.history.back(function(data){
+			if( data === false ){
+				cb(false);
+				return;
+			}
+			_contentsSourceData = data;
+			cb(true);
+			return;
+		});
 		return this;
 	}
 
@@ -1129,13 +1162,15 @@ module.exports = function(broccoli){
 	 */
 	this.historyGo = function( cb ){
 		cb = cb || function(){};
-		var data = this.history.go();
-		if( data === false ){
-			cb(false);
-			return this;
-		}
-		_contentsSourceData = data;
-		cb(true);
+		this.history.go(function(data){
+			if( data === false ){
+				cb(false);
+				return;
+			}
+			_contentsSourceData = data;
+			cb(true);
+			return;
+		});
 		return this;
 	}
 
@@ -1161,9 +1196,16 @@ module.exports = function(broccoli){
 				} ,
 				function( it1, data ){
 					// 履歴に追加
-					_this.history.put( _contentsSourceData, function(){
+					var historyInfo = _this.history.getHistory();
+					if(historyInfo.index === 0){
+						_this.history.put( _contentsSourceData, function(){
+							it1.next(data);
+						} );
+						return;
+					}else{
 						it1.next(data);
-					} );
+						return;
+					}
 				} ,
 				function( it1, data ){
 					callback();
@@ -1572,7 +1614,7 @@ module.exports = function(broccoli){
 		historyDataArray.splice(0, historyIdx, JSON.stringify(data));
 		historyIdx = 0;
 
-		// console.log(historyDataArray);
+		console.log('history.put()', historyDataArray);
 		setTimeout( callback, 0 );
 		return this;
 	}
@@ -1580,25 +1622,44 @@ module.exports = function(broccoli){
 	/**
 	 * 1つ前のデータを得る
 	 */
-	this.back = function(){
+	this.back = function( callback ){
+		console.log('history.back()', historyDataArray);
+		callback = callback||function(){};
 		historyIdx ++;
 		if( historyIdx >= historyDataArray.length || historyIdx < 0 ){
 			historyIdx --;
-			return false;
+			callback(false);
+			return this;
 		}
-		return JSON.parse( historyDataArray[historyIdx] );
+		callback(JSON.parse( historyDataArray[historyIdx] ));
+		return this;
 	}
 
 	/**
 	 * 1つ次のデータを得る
 	 */
-	this.go = function(){
+	this.go = function( callback ){
+		console.log('history.go()', historyDataArray);
+		callback = callback||function(){};
 		historyIdx --;
 		if( historyIdx >= historyDataArray.length || historyIdx < 0 ){
 			historyIdx ++;
-			return false;
+			callback(false);
+			return this;
 		}
-		return JSON.parse( historyDataArray[historyIdx] );
+		callback(JSON.parse( historyDataArray[historyIdx] ));
+		return this;
+	}
+
+	/**
+	 * history情報を取得する
+	 */
+	this.getHistory = function(){
+		var rtn = {
+			'array': historyDataArray ,
+			'index': historyIdx
+		};
+		return rtn;
 	}
 
 }

@@ -596,13 +596,15 @@ module.exports = function(broccoli){
 	 */
 	this.historyBack = function( cb ){
 		cb = cb || function(){};
-		var data = this.history.back();
-		if( data === false ){
-			cb(false);
-			return this;
-		}
-		_contentsSourceData = data;
-		cb(true);
+		this.history.back(function(data){
+			if( data === false ){
+				cb(false);
+				return;
+			}
+			_contentsSourceData = data;
+			cb(true);
+			return;
+		});
 		return this;
 	}
 
@@ -611,13 +613,15 @@ module.exports = function(broccoli){
 	 */
 	this.historyGo = function( cb ){
 		cb = cb || function(){};
-		var data = this.history.go();
-		if( data === false ){
-			cb(false);
-			return this;
-		}
-		_contentsSourceData = data;
-		cb(true);
+		this.history.go(function(data){
+			if( data === false ){
+				cb(false);
+				return;
+			}
+			_contentsSourceData = data;
+			cb(true);
+			return;
+		});
 		return this;
 	}
 
@@ -643,9 +647,16 @@ module.exports = function(broccoli){
 				} ,
 				function( it1, data ){
 					// 履歴に追加
-					_this.history.put( _contentsSourceData, function(){
+					var historyInfo = _this.history.getHistory();
+					if(historyInfo.index === 0){
+						_this.history.put( _contentsSourceData, function(){
+							it1.next(data);
+						} );
+						return;
+					}else{
 						it1.next(data);
-					} );
+						return;
+					}
 				} ,
 				function( it1, data ){
 					callback();
