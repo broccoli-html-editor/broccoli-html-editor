@@ -82,6 +82,7 @@ window.main = new (function(){
 				}
 			} ,
 			function(){
+				console.log('broccoli standby.');
 				$(window).resize(function(){
 					broccoli.redraw();
 				});

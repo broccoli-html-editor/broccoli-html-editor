@@ -104,20 +104,6 @@ module.exports = function( data, callback, main, socket ){
 				);
 				return ;
 
-			}else if(data.api == 'buildBowl'){
-				var json = require( path.resolve(__dirname, '../../../testdata/htdocs/editpage/index_files/guieditor.ignore/data.json') );
-				broccoli.buildBowl(
-					json.bowl.main ,
-					{
-						'mode': 'canvas'
-					} ,
-					function(html){
-						// console.log(html);
-						it1.next(html);
-					}
-				);
-				return ;
-
 			}
 
 			setTimeout(function(){

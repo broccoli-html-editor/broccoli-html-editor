@@ -56,14 +56,17 @@
 				.addClass('broccoli')
 				.addClass('broccoli--canvas')
 				.append( $('<iframe>')
-					.bind('load', function(){
-						onPreviewLoad( callback );
-					})
 				)
 				.append( $('<div class="broccoli--panels">')
 				)
 				// .append( $('<div class="broccoli--instance-path-view">')
 				// )
+			;
+			$canvas.find('iframe')
+				.bind('load', function(){
+					console.log('broccoli: preview loaded');
+					onPreviewLoad( callback );
+				})
 			;
 			// this.options.elmIframeWindow = $canvas.find('iframe').get(0).contentWindow;
 			this.options.elmPanels = $canvas.find('.broccoli--panels').get(0);
@@ -146,7 +149,8 @@
 
 					} ,
 					function(it1, data){
-						callback();
+						console.log('broccoli: init done.');
+						// callback(); // <- onPreviewLoad() がコールするので、ここでは呼ばない。
 						it1.next();
 					}
 				]
@@ -227,7 +231,7 @@
 									'buildHtml',
 									{'bowlList': bowlList},
 									function(htmls){
-										console.log(htmls);
+										// console.log(htmls);
 										_this.postMessenger.send(
 											'updateHtml',
 											{
