@@ -66,6 +66,7 @@
 			this.options.elmPanels = $canvas.find('.broccoli--panels').get(0);
 			// this.options.elmInstancePathView = $canvas.find('.broccoli--instance-path-view').get(0);
 
+			this.clipboard = new (require('./clipboard.js'))(this);
 			this.postMessenger = new (require('./postMessenger.js'))(this, $canvas.find('iframe').get(0));
 			this.resourceMgr = new (require('./resourceMgr.js'))(this);
 			this.panels = new (require( './panels.js' ))(this);
@@ -438,6 +439,62 @@
 		}
 
 		/**
+		 * 選択したインスタンスをクリップボードへコピーする
+		 */
+		this.copy = function(callback){
+			callback = callback||function(){};
+
+			var data = _this.contentsSourceData.get( _this.getSelectedInstance() );
+			data = JSON.stringify( data, null, 1 );
+			_this.clipboard.set( data );
+			_this.message('インスタンスをコピーしました。');
+
+			callback(true);
+			return;
+		}
+
+		/**
+		 * クリップボードの内容を選択したインスタンスの次に挿入する
+		 */
+		this.paste = function(callback){
+			callback = callback||function(){};
+			var selectedInstance = _this.getSelectedInstance();
+			if( typeof(selectedInstance) !== typeof('') ){
+				_this.message('インスタンスを選択した状態でペーストしてください。');
+				callback(false);
+				return;
+			}
+			// console.log(selectedInstance);
+
+			var data = _this.clipboard.get();
+			try {
+				data = JSON.parse( data );
+			} catch (e) {
+				_this.message('クリップボードのデータをデコードできませんでした。');
+				callback(false);
+				return;
+			}
+			// console.log(data);
+			_this.contentsSourceData.duplicateInstance(data, function(data){
+				// console.log(data);
+
+				_this.contentsSourceData.addInstance( data, selectedInstance, function(){
+					_this.message('インスタンスをペーストしました。');
+					_this.saveContents(function(result){
+						// 画面を再描画
+						_this.redraw(function(){
+							_this.selectInstance(selectedInstance, function(){
+								callback(true);
+							});
+						});
+					});
+				} );
+
+			});
+			return;
+		}
+
+		/**
 		 * history: 取り消し (非同期)
 		 */
 		this.historyBack = function( cb ){
@@ -529,7 +586,7 @@
 				} ,
 				function(it1, data){
 					// console.log('editInstance done.');
-					callback();
+					callback(true);
 					it1.next(data);
 				}
 			]);

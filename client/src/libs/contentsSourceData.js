@@ -409,30 +409,65 @@ module.exports = function(broccoli){
 	 */
 	this.duplicateInstance = function( objInstance, callback ){
 		callback = callback || function(){};
+		var _this = this;
 		var newData = JSON.parse( JSON.stringify( objInstance ) );
 		var modTpl = _this.getModule( objInstance.modId, objInstance.subModName );
 
 		// 初期データ追加
 		var fieldList = _.keys( modTpl.fields );
-		for( var idx in fieldList ){
-			var fieldName = fieldList[idx];
-			if( modTpl.fields[fieldName].fieldType == 'input' ){
-				newData.fields[fieldName] = broccoli.getFieldDefinition(modTpl.fields[fieldName].type).duplicateData( objInstance.fields[fieldName] );
-			}else if( modTpl.fields[fieldName].fieldType == 'module' ){
-				for( var idx in objInstance.fields[fieldName] ){
-					newData.fields[fieldName][idx] = this.duplicateInstance( objInstance.fields[fieldName][idx] );
+		it79.ary(
+			modTpl.fields,
+			function(it1, field, fieldName){
+				if( modTpl.fields[fieldName].fieldType == 'input' ){
+					broccoli.getFieldDefinition(modTpl.fields[fieldName].type).duplicateData( objInstance.fields[fieldName], function( result ){
+						newData.fields[fieldName] = result;
+						it1.next();
+						return;
+					} );
+					return;
+				}else if( modTpl.fields[fieldName].fieldType == 'module' ){
+					it79.ary(
+						objInstance.fields[fieldName],
+						function(it2, row2, idx2){
+							_this.duplicateInstance( objInstance.fields[fieldName][idx2], function( result ){
+								newData.fields[fieldName][idx2] = result;
+								it2.next();
+							} );
+						},
+						function(){
+							it1.next();
+						}
+					);
+					return;
+				}else if( modTpl.fields[fieldName].fieldType == 'loop' ){
+					it79.ary(
+						objInstance.fields[fieldName],
+						function(it2, row2, idx2){
+							_this.duplicateInstance( objInstance.fields[fieldName][idx2], function( result ){
+								newData.fields[fieldName][idx2] = result;
+								it2.next();
+							} );
+						},
+						function(){
+							it1.next();
+						}
+					);
+					return;
+				}else if( modTpl.fields[fieldName].fieldType == 'if' ){
+					it1.next();
+					return;
+				}else if( modTpl.fields[fieldName].fieldType == 'echo' ){
+					it1.next();
+					return;
 				}
-			}else if( modTpl.fields[fieldName].fieldType == 'loop' ){
-				for( var idx in objInstance.fields[fieldName] ){
-					newData.fields[fieldName][idx] = this.duplicateInstance( objInstance.fields[fieldName][idx] );
-				}
-			}else if( modTpl.fields[fieldName].fieldType == 'if' ){
-			}else if( modTpl.fields[fieldName].fieldType == 'echo' ){
+				it1.next();
+				return;
+			},
+			function(){
+				// setTimeout( function(){ cb(newData); }, 0 );
+				callback(newData);
 			}
-		}
-
-		// setTimeout( function(){ cb(newData); }, 0 );
-		callback(newData);
+		);
 		return this;
 	}
 
