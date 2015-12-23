@@ -460,7 +460,7 @@
 		}
 
 		/**
-		 * クリップボードの内容を選択したインスタンスの次に挿入する
+		 * クリップボードの内容を選択したインスタンスの位置に挿入する
 		 */
 		this.paste = function(callback){
 			callback = callback||function(){};
@@ -496,6 +496,34 @@
 					});
 				} );
 
+			});
+			return;
+		}
+
+		/**
+		 * 選択したインスタンスを削除する
+		 */
+		this.remove = function(callback){
+			callback = callback||function(){};
+
+			var selectedInstance = _this.getSelectedInstance();
+			if( typeof(selectedInstance) !== typeof('') ){
+				_this.message('インスタンスを選択した状態で削除してください。');
+				callback(false);
+				return;
+			}
+			// console.log(selectedInstance);
+
+			_this.contentsSourceData.removeInstance(selectedInstance, function(){
+				_this.message('インスタンスを削除しました。');
+				_this.saveContents(function(result){
+					// 画面を再描画
+					_this.redraw(function(){
+						_this.unselectInstance(function(){
+							callback(true);
+						});
+					});
+				});
 			});
 			return;
 		}

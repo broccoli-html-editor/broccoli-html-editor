@@ -23,19 +23,7 @@
                  "src": "## multitext field.\n\nmultitext.",
                  "editor": "markdown"
                 },
-                "main": [
-                 {
-                  "modId": "PlainHTMLElements:PlainHTML/MultiText",
-                  "fields": {
-                   "main": {
-                    "src": "## history 3",
-                    "editor": "markdown"
-                   }
-                  },
-                  "anchor": "",
-                  "dec": ""
-                 }
-                ]
+                "main": []
                },
                "subModName": "sample_loop3",
                "anchor": "",
@@ -50,15 +38,6 @@
          "subModName": "sample_loop1"
         }
        ]
-      },
-      "anchor": "",
-      "dec": ""
-     },
-     {
-      "modId": "testMod1:boxes/aside_box",
-      "fields": {
-       "heading": "",
-       "main": []
       },
       "anchor": "",
       "dec": ""
