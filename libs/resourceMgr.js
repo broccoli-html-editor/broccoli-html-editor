@@ -47,6 +47,8 @@ module.exports = function(broccoli){
 			return true;
 		}
 		fsEx.mkdirpSync(path);
+			// ↑Windows で path を作る過程で、途中にディレクトリ名として "C:" が含まれるようなパスを渡してしまうと、
+			// 　「Uncaught RangeError: Maximum call stack size exceeded」が起きて落ちる。
 		return true;
 	}
 	function rmdir( path ){
