@@ -295,6 +295,25 @@ describe('全モジュールの一覧の取得', function() {
 
 describe('ビルドする', function() {
 
+	it("editpageをfinalizeモードでビルドする", function(done) {
+		this.timeout(15*1000);
+		makeDefaultBroccoli( {}, function(broccoli){
+			var data = require(__dirname+'/testdata/htdocs/editpage/index_files/guieditor.ignore/data.json');
+			// console.log(data);
+			broccoli.buildBowl(
+				data.bowl.main ,
+				{
+					'mode': 'finalize'
+				} ,
+				function( html, err ){
+					fs.writeFileSync(path.resolve(__dirname, './testdata/htdocs/test2/index.html'), html);
+					// console.log( html );
+					done();
+				}
+			);
+		} );
+	});
+
 	it("テストデータをfinalizeモードでビルドする", function(done) {
 		this.timeout(15*1000);
 		makeDefaultBroccoli( {}, function(broccoli){
