@@ -1,7 +1,7 @@
 @charset "UTF-8";
 .broccoli {
   /*!
- * Bootstrap v3.3.5 (http://getbootstrap.com)
+ * Bootstrap v3.3.6 (http://getbootstrap.com)
  * Copyright 2011-2015 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */
@@ -220,9 +220,9 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale; }
   .broccoli .glyphicon-asterisk:before {
-    content: "\2a"; }
+    content: "\002a"; }
   .broccoli .glyphicon-plus:before {
-    content: "\2b"; }
+    content: "\002b"; }
   .broccoli .glyphicon-euro:before,
   .broccoli .glyphicon-eur:before {
     content: "\20ac"; }
@@ -1881,6 +1881,9 @@
     color: #999; }
   .broccoli .form-control::-webkit-input-placeholder {
     color: #999; }
+  .broccoli .form-control::-ms-expand {
+    background-color: transparent;
+    border: 0; }
   .broccoli .form-control[disabled],
   .broccoli .form-control[readonly],
   .broccoli fieldset[disabled] .form-control {
@@ -2206,7 +2209,7 @@
     right: 15px; }
   @media (min-width: 768px) {
     .broccoli .form-horizontal .form-group-lg .control-label {
-      padding-top: 14.333333px;
+      padding-top: 11px;
       font-size: 18px; } }
   @media (min-width: 768px) {
     .broccoli .form-horizontal .form-group-sm .control-label {
@@ -2296,9 +2299,6 @@
   .broccoli .btn-default.active,
   .broccoli .open > .dropdown-toggle.btn-default {
     background-image: none; }
-  .broccoli .btn-default.disabled,
-  .broccoli .btn-default[disabled],
-  .broccoli fieldset[disabled] .btn-default,
   .broccoli .btn-default.disabled:hover,
   .broccoli .btn-default[disabled]:hover,
   .broccoli fieldset[disabled] .btn-default:hover,
@@ -2307,13 +2307,7 @@
   .broccoli fieldset[disabled] .btn-default:focus,
   .broccoli .btn-default.disabled.focus,
   .broccoli .btn-default[disabled].focus,
-  .broccoli fieldset[disabled] .btn-default.focus,
-  .broccoli .btn-default.disabled:active,
-  .broccoli .btn-default[disabled]:active,
-  .broccoli fieldset[disabled] .btn-default:active,
-  .broccoli .btn-default.disabled.active,
-  .broccoli .btn-default[disabled].active,
-  .broccoli fieldset[disabled] .btn-default.active {
+  .broccoli fieldset[disabled] .btn-default.focus {
     background-color: #fff;
     border-color: #ccc; }
   .broccoli .btn-default .badge {
@@ -2354,9 +2348,6 @@
   .broccoli .btn-primary.active,
   .broccoli .open > .dropdown-toggle.btn-primary {
     background-image: none; }
-  .broccoli .btn-primary.disabled,
-  .broccoli .btn-primary[disabled],
-  .broccoli fieldset[disabled] .btn-primary,
   .broccoli .btn-primary.disabled:hover,
   .broccoli .btn-primary[disabled]:hover,
   .broccoli fieldset[disabled] .btn-primary:hover,
@@ -2365,13 +2356,7 @@
   .broccoli fieldset[disabled] .btn-primary:focus,
   .broccoli .btn-primary.disabled.focus,
   .broccoli .btn-primary[disabled].focus,
-  .broccoli fieldset[disabled] .btn-primary.focus,
-  .broccoli .btn-primary.disabled:active,
-  .broccoli .btn-primary[disabled]:active,
-  .broccoli fieldset[disabled] .btn-primary:active,
-  .broccoli .btn-primary.disabled.active,
-  .broccoli .btn-primary[disabled].active,
-  .broccoli fieldset[disabled] .btn-primary.active {
+  .broccoli fieldset[disabled] .btn-primary.focus {
     background-color: #337ab7;
     border-color: #2e6da4; }
   .broccoli .btn-primary .badge {
@@ -2412,9 +2397,6 @@
   .broccoli .btn-success.active,
   .broccoli .open > .dropdown-toggle.btn-success {
     background-image: none; }
-  .broccoli .btn-success.disabled,
-  .broccoli .btn-success[disabled],
-  .broccoli fieldset[disabled] .btn-success,
   .broccoli .btn-success.disabled:hover,
   .broccoli .btn-success[disabled]:hover,
   .broccoli fieldset[disabled] .btn-success:hover,
@@ -2423,13 +2405,7 @@
   .broccoli fieldset[disabled] .btn-success:focus,
   .broccoli .btn-success.disabled.focus,
   .broccoli .btn-success[disabled].focus,
-  .broccoli fieldset[disabled] .btn-success.focus,
-  .broccoli .btn-success.disabled:active,
-  .broccoli .btn-success[disabled]:active,
-  .broccoli fieldset[disabled] .btn-success:active,
-  .broccoli .btn-success.disabled.active,
-  .broccoli .btn-success[disabled].active,
-  .broccoli fieldset[disabled] .btn-success.active {
+  .broccoli fieldset[disabled] .btn-success.focus {
     background-color: #5cb85c;
     border-color: #4cae4c; }
   .broccoli .btn-success .badge {
@@ -2470,9 +2446,6 @@
   .broccoli .btn-info.active,
   .broccoli .open > .dropdown-toggle.btn-info {
     background-image: none; }
-  .broccoli .btn-info.disabled,
-  .broccoli .btn-info[disabled],
-  .broccoli fieldset[disabled] .btn-info,
   .broccoli .btn-info.disabled:hover,
   .broccoli .btn-info[disabled]:hover,
   .broccoli fieldset[disabled] .btn-info:hover,
@@ -2481,13 +2454,7 @@
   .broccoli fieldset[disabled] .btn-info:focus,
   .broccoli .btn-info.disabled.focus,
   .broccoli .btn-info[disabled].focus,
-  .broccoli fieldset[disabled] .btn-info.focus,
-  .broccoli .btn-info.disabled:active,
-  .broccoli .btn-info[disabled]:active,
-  .broccoli fieldset[disabled] .btn-info:active,
-  .broccoli .btn-info.disabled.active,
-  .broccoli .btn-info[disabled].active,
-  .broccoli fieldset[disabled] .btn-info.active {
+  .broccoli fieldset[disabled] .btn-info.focus {
     background-color: #5bc0de;
     border-color: #46b8da; }
   .broccoli .btn-info .badge {
@@ -2528,9 +2495,6 @@
   .broccoli .btn-warning.active,
   .broccoli .open > .dropdown-toggle.btn-warning {
     background-image: none; }
-  .broccoli .btn-warning.disabled,
-  .broccoli .btn-warning[disabled],
-  .broccoli fieldset[disabled] .btn-warning,
   .broccoli .btn-warning.disabled:hover,
   .broccoli .btn-warning[disabled]:hover,
   .broccoli fieldset[disabled] .btn-warning:hover,
@@ -2539,13 +2503,7 @@
   .broccoli fieldset[disabled] .btn-warning:focus,
   .broccoli .btn-warning.disabled.focus,
   .broccoli .btn-warning[disabled].focus,
-  .broccoli fieldset[disabled] .btn-warning.focus,
-  .broccoli .btn-warning.disabled:active,
-  .broccoli .btn-warning[disabled]:active,
-  .broccoli fieldset[disabled] .btn-warning:active,
-  .broccoli .btn-warning.disabled.active,
-  .broccoli .btn-warning[disabled].active,
-  .broccoli fieldset[disabled] .btn-warning.active {
+  .broccoli fieldset[disabled] .btn-warning.focus {
     background-color: #f0ad4e;
     border-color: #eea236; }
   .broccoli .btn-warning .badge {
@@ -2586,9 +2544,6 @@
   .broccoli .btn-danger.active,
   .broccoli .open > .dropdown-toggle.btn-danger {
     background-image: none; }
-  .broccoli .btn-danger.disabled,
-  .broccoli .btn-danger[disabled],
-  .broccoli fieldset[disabled] .btn-danger,
   .broccoli .btn-danger.disabled:hover,
   .broccoli .btn-danger[disabled]:hover,
   .broccoli fieldset[disabled] .btn-danger:hover,
@@ -2597,13 +2552,7 @@
   .broccoli fieldset[disabled] .btn-danger:focus,
   .broccoli .btn-danger.disabled.focus,
   .broccoli .btn-danger[disabled].focus,
-  .broccoli fieldset[disabled] .btn-danger.focus,
-  .broccoli .btn-danger.disabled:active,
-  .broccoli .btn-danger[disabled]:active,
-  .broccoli fieldset[disabled] .btn-danger:active,
-  .broccoli .btn-danger.disabled.active,
-  .broccoli .btn-danger[disabled].active,
-  .broccoli fieldset[disabled] .btn-danger.active {
+  .broccoli fieldset[disabled] .btn-danger.focus {
     background-color: #d9534f;
     border-color: #d43f3a; }
   .broccoli .btn-danger .badge {
@@ -2898,12 +2847,14 @@
   .broccoli .btn-group-vertical > .btn:not(:first-child):not(:last-child) {
     border-radius: 0; }
   .broccoli .btn-group-vertical > .btn:first-child:not(:last-child) {
+    border-top-left-radius: 4px;
     border-top-right-radius: 4px;
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0; }
   .broccoli .btn-group-vertical > .btn:last-child:not(:first-child) {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
+    border-bottom-right-radius: 4px;
     border-bottom-left-radius: 4px; }
   .broccoli .btn-group-vertical > .btn-group:not(:first-child):not(:last-child) > .btn {
     border-radius: 0; }
@@ -2949,6 +2900,8 @@
     float: left;
     width: 100%;
     margin-bottom: 0; }
+  .broccoli .input-group .form-control:focus {
+    z-index: 3; }
   .broccoli .input-group-lg > .form-control,
   .broccoli .input-group-lg > .input-group-addon,
   .broccoli .input-group-lg > .input-group-btn > .btn {
@@ -3649,7 +3602,7 @@
   .broccoli .pagination > li > span:hover,
   .broccoli .pagination > li > a:focus,
   .broccoli .pagination > li > span:focus {
-    z-index: 3;
+    z-index: 2;
     color: #23527c;
     background-color: #eee;
     border-color: #ddd; }
@@ -3659,7 +3612,7 @@
   .broccoli .pagination > .active > span:hover,
   .broccoli .pagination > .active > a:focus,
   .broccoli .pagination > .active > span:focus {
-    z-index: 2;
+    z-index: 3;
     color: #fff;
     cursor: default;
     background-color: #337ab7;
@@ -3836,6 +3789,8 @@
     border-top-color: #d5d5d5; }
   .broccoli .container .jumbotron,
   .broccoli .container-fluid .jumbotron {
+    padding-right: 15px;
+    padding-left: 15px;
     border-radius: 6px; }
   .broccoli .jumbotron .container {
     max-width: 100%; }
@@ -4543,11 +4498,9 @@
     -webkit-transition: -webkit-transform .3s ease-out;
     transition: transform .3s ease-out;
     -webkit-transform: translate(0, -25%);
-    -ms-transform: translate(0, -25%);
     transform: translate(0, -25%); }
   .broccoli .modal.in .modal-dialog {
     -webkit-transform: translate(0, 0);
-    -ms-transform: translate(0, 0);
     transform: translate(0, 0); }
   .broccoli .modal-open .modal {
     overflow-x: hidden;
@@ -4580,7 +4533,6 @@
     filter: alpha(opacity=50);
     opacity: .5; }
   .broccoli .modal-header {
-    min-height: 16.42857143px;
     padding: 15px;
     border-bottom: 1px solid #e5e5e5; }
   .broccoli .modal-header .close {
@@ -4899,6 +4851,7 @@
     color: #fff;
     text-align: center;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+    background-color: transparent;
     filter: alpha(opacity=50);
     opacity: .5; }
   .broccoli .carousel-control.left {
@@ -4995,14 +4948,14 @@
     .broccoli .carousel-control .icon-next {
       width: 30px;
       height: 30px;
-      margin-top: -15px;
+      margin-top: -10px;
       font-size: 30px; }
     .broccoli .carousel-control .glyphicon-chevron-left,
     .broccoli .carousel-control .icon-prev {
-      margin-left: -15px; }
+      margin-left: -10px; }
     .broccoli .carousel-control .glyphicon-chevron-right,
     .broccoli .carousel-control .icon-next {
-      margin-right: -15px; }
+      margin-right: -10px; }
     .broccoli .carousel-caption {
       right: 20%;
       left: 20%;
@@ -5037,6 +4990,8 @@
   .broccoli .pager:after,
   .broccoli .panel-body:before,
   .broccoli .panel-body:after,
+  .broccoli .modal-header:before,
+  .broccoli .modal-header:after,
   .broccoli .modal-footer:before,
   .broccoli .modal-footer:after {
     display: table;
@@ -5055,6 +5010,7 @@
   .broccoli .navbar-collapse:after,
   .broccoli .pager:after,
   .broccoli .panel-body:after,
+  .broccoli .modal-header:after,
   .broccoli .modal-footer:after {
     clear: both; }
   .broccoli .center-block {
