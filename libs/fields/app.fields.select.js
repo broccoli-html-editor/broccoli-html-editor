@@ -30,7 +30,9 @@ module.exports = function(broccoli){
 				// 　クラス名の modifier 部分の拡張などに使用する場合に、
 				// 　クラス名とダミー文が合体して存在しないクラス名になってしまうので。
 		}
-		setTimeout(function(){ callback(rtn); }, 0);
+		// setTimeout(function(){
+			callback(rtn);
+		// }, 0);
 		return;
 	}
 
@@ -66,9 +68,9 @@ module.exports = function(broccoli){
 		;
 		$(elm).html(rtn);
 
-		setTimeout(function(){
+		// setTimeout(function(){
 			callback();
-		}, 0);
+		// }, 0);
 		return;
 	}
 

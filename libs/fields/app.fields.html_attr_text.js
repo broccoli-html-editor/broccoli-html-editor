@@ -15,17 +15,9 @@ module.exports = function(broccoli){
 		if( mode == 'canvas' && !rtn.length ){
 			rtn = '(ダブルクリックしてテキストを編集してください)';
 		}
-		setTimeout(function(){
-			// px.textEditor.attachTextEditor(
-			// 	$dom.find('textarea').get(0),
-			// 	'text'
-			// );
-			// $dom.find('.CodeMirror').css({
-			// 	'border': '1px solid #ccc',
-			// 	'border-radius': '3px'
-			// });
+		// setTimeout(function(){
 			callback(rtn);
-		}, 0);
+		// }, 0);
 		return;
 	}
 

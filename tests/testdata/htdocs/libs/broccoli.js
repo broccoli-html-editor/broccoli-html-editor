@@ -3055,7 +3055,9 @@ module.exports = function(broccoli){
 		if( mode == 'canvas' && !rtn.length ){
 			rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてHTMLコードを編集してください)</span>';
 		}
-		setTimeout(function(){ callback(rtn); }, 0);
+		// setTimeout(function(){
+			callback(rtn);
+		// }, 0);
 		return this;
 	}
 
@@ -3106,18 +3108,9 @@ module.exports = function(broccoli){
 		);
 
 		$(elm).html(rtn);
-		setTimeout(function(){
-			// px.textEditor.attachTextEditor(
-			// 	$dom.find('textarea').get(0),
-			// 	'html'
-			// );
-			// $dom.find('.CodeMirror').css({
-			// 	'border': '1px solid #ccc',
-			// 	'border-radius': '3px'
-			// });
-
+		// setTimeout(function(){
 			callback();
-		}, 0);
+		// }, 0);
 		return this;
 	}
 
@@ -3189,7 +3182,9 @@ module.exports = function(broccoli){
 		if( mode == 'canvas' && !rtn.length ){
 			rtn = '';
 		}
-		setTimeout(function(){ callback(rtn); }, 0);
+		// setTimeout(function(){
+			callback(rtn);
+		// }, 0);
 		return;
 	}
 
@@ -3208,7 +3203,9 @@ module.exports = function(broccoli){
 			.append( $input )
 		;
 		$(elm).html(rtn);
-		setTimeout(function(){ callback(); }, 0);
+		// setTimeout(function(){
+			callback();
+		// }, 0);
 		return;
 	}
 
@@ -3247,17 +3244,9 @@ module.exports = function(broccoli){
 		if( mode == 'canvas' && !rtn.length ){
 			rtn = '(ダブルクリックしてテキストを編集してください)';
 		}
-		setTimeout(function(){
-			// px.textEditor.attachTextEditor(
-			// 	$dom.find('textarea').get(0),
-			// 	'text'
-			// );
-			// $dom.find('.CodeMirror').css({
-			// 	'border': '1px solid #ccc',
-			// 	'border-radius': '3px'
-			// });
+		// setTimeout(function(){
 			callback(rtn);
-		}, 0);
+		// }, 0);
 		return;
 	}
 
@@ -3465,7 +3454,9 @@ module.exports = function(broccoli){
 			);
 			$(elm).html(rtn);
 
-			setTimeout(function(){ callback(); }, 0);
+			// setTimeout(function(){
+				callback();
+			// }, 0);
 		} );
 		return;
 	}
@@ -3601,18 +3592,9 @@ module.exports = function(broccoli){
 		if( mode == 'canvas' && !rtn.length ){
 			rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてマークダウンを編集してください)</span>';
 		}
-		setTimeout(function(){
-			// px.textEditor.attachTextEditor(
-			// 	$dom.find('textarea').get(0),
-			// 	'md'
-			// );
-			// $dom.find('.CodeMirror').css({
-			// 	'border': '1px solid #ccc',
-			// 	'border-radius': '3px'
-			// });
-
+		// setTimeout(function(){
 			callback(rtn);
-		}, 0);
+		// }, 0);
 		return;
 	}
 
@@ -3658,7 +3640,9 @@ module.exports = function(broccoli){
 		if( mode == 'canvas' && !rtn.length ){
 			rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてテキストを編集してください)</span>';
 		}
-		setTimeout(function(){ callback(rtn); }, 0);
+		// setTimeout(function(){
+			callback(rtn);
+		// }, 0);
 		return;
 	}
 
@@ -3706,18 +3690,10 @@ module.exports = function(broccoli){
 		rtn.find('input[type=radio][name=editor-'+mod.name+'][value="'+data.editor+'"]').attr({'checked':'checked'});
 
 		$(elm).html(rtn);
-		setTimeout(function(){
-			// px.textEditor.attachTextEditor(
-			// 	$dom.find('textarea').get(0),
-			// 	'md'
-			// );
-			// $dom.find('.CodeMirror').css({
-			// 	'border': '1px solid #ccc',
-			// 	'border-radius': '3px'
-			// });
 
+		// setTimeout(function(){
 			callback();
-		}, 0);
+		// }, 0);
 		return;
 	}
 
@@ -3734,9 +3710,9 @@ module.exports = function(broccoli){
 		data.src = JSON.parse( JSON.stringify(data.src) );
 		data.editor = $dom.find('input[type=radio][name=editor-'+mod.name+']:checked').val();
 
-		setTimeout(function(){
+		// setTimeout(function(){
 			callback(data);
-		}, 0);
+		// }, 0);
 		return;
 	}
 
@@ -3775,7 +3751,9 @@ module.exports = function(broccoli){
 				// 　クラス名の modifier 部分の拡張などに使用する場合に、
 				// 　クラス名とダミー文が合体して存在しないクラス名になってしまうので。
 		}
-		setTimeout(function(){ callback(rtn); }, 0);
+		// setTimeout(function(){
+			callback(rtn);
+		// }, 0);
 		return;
 	}
 
@@ -3811,9 +3789,9 @@ module.exports = function(broccoli){
 		;
 		$(elm).html(rtn);
 
-		setTimeout(function(){
+		// setTimeout(function(){
 			callback();
-		}, 0);
+		// }, 0);
 		return;
 	}
 
@@ -3848,9 +3826,9 @@ module.exports = function(broccoli){
 		if( mode == 'canvas' && !rtn.length ){
 			rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてテキストを編集してください)</span>';
 		}
-		setTimeout(function(){
+		// setTimeout(function(){
 			callback(rtn);
-		}, 0);
+		// }, 0);
 		return;
 	}
 

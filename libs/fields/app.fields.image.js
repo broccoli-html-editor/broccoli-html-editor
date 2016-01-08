@@ -199,7 +199,9 @@ module.exports = function(broccoli){
 			);
 			$(elm).html(rtn);
 
-			setTimeout(function(){ callback(); }, 0);
+			// setTimeout(function(){
+				callback();
+			// }, 0);
 		} );
 		return;
 	}

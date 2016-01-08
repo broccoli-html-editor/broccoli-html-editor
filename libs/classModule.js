@@ -325,7 +325,7 @@ module.exports = function(broccoli, moduleId, options){
 	 * @return {Object}            this.
 	 */
 	this.init = function(callback){
-		setTimeout(function(){
+		// setTimeout(function(){
 			callback = callback || function(){};
 			if( realpath === false && !_this.isSystemModule ){
 				callback(false); return;
@@ -359,7 +359,7 @@ module.exports = function(broccoli, moduleId, options){
 				parseTpl( tmpTplSrc, _this, _this, callback );
 			}
 
-		}, 0);
+		// }, 0);
 
 		return this;
 	}

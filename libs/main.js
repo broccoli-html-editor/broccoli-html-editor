@@ -230,9 +230,9 @@ module.exports = function(){
 	this.getAllModuleList = function(callback){
 		if(_allModuleList){
 			// キャッシュがあればそれを返す
-			setTimeout(function(){
+			// setTimeout(function(){
 				callback(_allModuleList);
-			}, 0);
+			// }, 0);
 			return;
 		}
 		require( './getAllModuleList.js' )(this, function(result){

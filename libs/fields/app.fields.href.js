@@ -15,7 +15,9 @@ module.exports = function(broccoli){
 		if( mode == 'canvas' && !rtn.length ){
 			rtn = '';
 		}
-		setTimeout(function(){ callback(rtn); }, 0);
+		// setTimeout(function(){
+			callback(rtn);
+		// }, 0);
 		return;
 	}
 
@@ -34,7 +36,9 @@ module.exports = function(broccoli){
 			.append( $input )
 		;
 		$(elm).html(rtn);
-		setTimeout(function(){ callback(); }, 0);
+		// setTimeout(function(){
+			callback();
+		// }, 0);
 		return;
 	}
 

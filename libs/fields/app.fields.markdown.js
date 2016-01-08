@@ -25,18 +25,9 @@ module.exports = function(broccoli){
 		if( mode == 'canvas' && !rtn.length ){
 			rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてマークダウンを編集してください)</span>';
 		}
-		setTimeout(function(){
-			// px.textEditor.attachTextEditor(
-			// 	$dom.find('textarea').get(0),
-			// 	'md'
-			// );
-			// $dom.find('.CodeMirror').css({
-			// 	'border': '1px solid #ccc',
-			// 	'border-radius': '3px'
-			// });
-
+		// setTimeout(function(){
 			callback(rtn);
-		}, 0);
+		// }, 0);
 		return;
 	}
 
