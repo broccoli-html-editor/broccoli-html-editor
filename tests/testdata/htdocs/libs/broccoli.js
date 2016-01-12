@@ -1615,6 +1615,14 @@ module.exports = function(broccoli){
 		var data = broccoli.contentsSourceData.get(instancePath);
 		// console.log( data );
 		var mod = broccoli.contentsSourceData.getModule(data.modId, data.subModName);
+		if( mod === false ){
+			mod = {
+				'id': '_sys/unknown',
+				'info': {
+					'name': 'Unknown Module'
+				}
+			}
+		}
 		// console.log( data.modId, data.subModName );
 		// console.log( mod );
 
@@ -2040,6 +2048,14 @@ module.exports = function(broccoli){
 			callback = callback||function(){};
 			// console.log(data);
 			var mod = broccoli.contentsSourceData.getModule(data.modId, subModName);
+			if( mod === false ){
+				mod = {
+					'id': '_sys/unknown',
+					'info': {
+						'name': 'Unknown Module'
+					}
+				}
+			}
 			// console.log(mod);
 			var $ul = $('<ul>')
 				.addClass('broccoli--instance-tree-view-fields')

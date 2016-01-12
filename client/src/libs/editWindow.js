@@ -65,6 +65,14 @@ module.exports = function(broccoli){
 		var data = broccoli.contentsSourceData.get(instancePath);
 		// console.log( data );
 		var mod = broccoli.contentsSourceData.getModule(data.modId, data.subModName);
+		if( mod === false ){
+			mod = {
+				'id': '_sys/unknown',
+				'info': {
+					'name': 'Unknown Module'
+				}
+			}
+		}
 		// console.log( data.modId, data.subModName );
 		// console.log( mod );
 
