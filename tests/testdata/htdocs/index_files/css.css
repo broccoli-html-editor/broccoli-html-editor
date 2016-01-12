@@ -15,6 +15,7 @@
 	width: 50%;
 	height: 600px;
 	overflow: auto;
+	z-index: 90;
 }
 .palette{
 	display:block;
@@ -23,6 +24,7 @@
 	width: 20%;
 	height: 600px;
 	overflow: auto;
+	z-index: 100;
 }
 .instancePathView{
 	display:block;
