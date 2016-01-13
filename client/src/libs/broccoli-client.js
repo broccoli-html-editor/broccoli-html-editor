@@ -372,12 +372,15 @@
 		this.selectInstance = function( instancePath, callback ){
 			console.log("Select: "+instancePath);
 			callback = callback || function(){};
-			this.unselectInstance();//一旦選択解除
-			this.unfocusInstance();//フォーカスも解除
+			var broccoli = this;
+			broccoli.unselectInstance();//一旦選択解除
+			broccoli.unfocusInstance();//フォーカスも解除
 			selectedInstance = instancePath;
-			this.panels.selectInstance(instancePath, function(){
-				_this.instancePathView.update(function(){
-					callback();
+			broccoli.panels.selectInstance(instancePath, function(){
+				broccoli.instanceTreeView.selectInstance(instancePath, function(){
+					broccoli.instancePathView.update(function(){
+						callback();
+					});
 				});
 			});
 			return this;
@@ -389,9 +392,12 @@
 		this.unselectInstance = function(callback){
 			callback = callback || function(){};
 			selectedInstance = null;
-			this.panels.unselectInstance(function(){
-				_this.instancePathView.update(function(){
-					callback();
+			var broccoli = this;
+			broccoli.panels.unselectInstance(function(){
+				broccoli.instanceTreeView.unselectInstance(function(){
+					broccoli.instancePathView.update(function(){
+						callback();
+					});
 				});
 			});
 			return this;

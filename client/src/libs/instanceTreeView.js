@@ -251,6 +251,35 @@ module.exports = function(broccoli){
 
 
 	/**
+	 * インスタンスを選択する
+	 */
+	this.selectInstance = function( instancePath, callback ){
+		callback = callback || function(){};
+		$instanceTreeView.find('[data-broccoli-instance-path]')
+			.filter(function (index) {
+				return $(this).attr("data-broccoli-instance-path") == instancePath;
+			})
+			.addClass('broccoli--panel__selected')
+		;
+		callback();
+		return this;
+	}
+
+	/**
+	 * モジュールインスタンスの選択状態を解除する
+	 */
+	this.unselectInstance = function(callback){
+		callback = callback || function(){};
+		$instanceTreeView.find('[data-broccoli-instance-path]')
+			.removeClass('broccoli--panel__selected')
+		;
+		// this.updateInstancePathView();
+		callback();
+		return this;
+	}
+
+
+	/**
 	 * 初期化する
 	 * @param  {Object} domElm     DOM Element of instance path view container.
 	 * @param  {Function} callback callback function.

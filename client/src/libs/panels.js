@@ -291,8 +291,6 @@ module.exports = function(broccoli){
 
 	/**
 	 * インスタンスを選択する
-	 * @param  {[type]} instancePath [description]
-	 * @return {[type]}              [description]
 	 */
 	this.selectInstance = function( instancePath, callback ){
 		callback = callback || function(){};

@@ -378,12 +378,15 @@
 		this.selectInstance = function( instancePath, callback ){
 			console.log("Select: "+instancePath);
 			callback = callback || function(){};
-			this.unselectInstance();//一旦選択解除
-			this.unfocusInstance();//フォーカスも解除
+			var broccoli = this;
+			broccoli.unselectInstance();//一旦選択解除
+			broccoli.unfocusInstance();//フォーカスも解除
 			selectedInstance = instancePath;
-			this.panels.selectInstance(instancePath, function(){
-				_this.instancePathView.update(function(){
-					callback();
+			broccoli.panels.selectInstance(instancePath, function(){
+				broccoli.instanceTreeView.selectInstance(instancePath, function(){
+					broccoli.instancePathView.update(function(){
+						callback();
+					});
 				});
 			});
 			return this;
@@ -395,9 +398,12 @@
 		this.unselectInstance = function(callback){
 			callback = callback || function(){};
 			selectedInstance = null;
-			this.panels.unselectInstance(function(){
-				_this.instancePathView.update(function(){
-					callback();
+			var broccoli = this;
+			broccoli.panels.unselectInstance(function(){
+				broccoli.instanceTreeView.unselectInstance(function(){
+					broccoli.instancePathView.update(function(){
+						callback();
+					});
 				});
 			});
 			return this;
@@ -2260,6 +2266,35 @@ module.exports = function(broccoli){
 
 
 	/**
+	 * インスタンスを選択する
+	 */
+	this.selectInstance = function( instancePath, callback ){
+		callback = callback || function(){};
+		$instanceTreeView.find('[data-broccoli-instance-path]')
+			.filter(function (index) {
+				return $(this).attr("data-broccoli-instance-path") == instancePath;
+			})
+			.addClass('broccoli--panel__selected')
+		;
+		callback();
+		return this;
+	}
+
+	/**
+	 * モジュールインスタンスの選択状態を解除する
+	 */
+	this.unselectInstance = function(callback){
+		callback = callback || function(){};
+		$instanceTreeView.find('[data-broccoli-instance-path]')
+			.removeClass('broccoli--panel__selected')
+		;
+		// this.updateInstancePathView();
+		callback();
+		return this;
+	}
+
+
+	/**
 	 * 初期化する
 	 * @param  {Object} domElm     DOM Element of instance path view container.
 	 * @param  {Function} callback callback function.
@@ -2584,8 +2619,6 @@ module.exports = function(broccoli){
 
 	/**
 	 * インスタンスを選択する
-	 * @param  {[type]} instancePath [description]
-	 * @return {[type]}              [description]
 	 */
 	this.selectInstance = function( instancePath, callback ){
 		callback = callback || function(){};
