@@ -5247,11 +5247,22 @@
 .broccoli--instance-tree-view li {
   list-style: none;
   display: table;
-  width: 100%; }
+  width: 100%;
+  font-size: small; }
 
 .broccoli--instance-tree-view-fields {
   border: 1px dotted #ddd;
   background-color: #f5f5f5; }
+
+.broccoli--instance-tree-view-bowlname {
+  font-weight: bold; }
+
+.broccoli--instance-tree-view-modulename {
+  font-weight: bold; }
+
+.broccoli--instance-tree-view-fieldname {
+  font-weight: normal;
+  font-size: 85%; }
 
 .broccoli--instance-tree-view [data-broccoli-instance-path] {
   display: table;
@@ -5264,7 +5275,19 @@
   position: relative;
   left: 0;
   top: 0; }
-  .broccoli--instance-tree-view [data-broccoli-instance-path]:first-child {
+  .broccoli--instance-tree-view [data-broccoli-instance-path].broccoli--panel__hovered {
+    border-style: dotted !important;
+    border-color: #6cf;
+    background-color: rgba(231, 244, 255, 0.5); }
+    .broccoli--instance-tree-view [data-broccoli-instance-path].broccoli--panel__hovered[data-broccoli-sub-mod-name] {
+      border-color: #3c3;
+      background-color: rgba(232, 255, 231, 0.5); }
+    .broccoli--instance-tree-view [data-broccoli-instance-path].broccoli--panel__hovered > .broccoli--instance-tree-view-fields {
+      background-color: #f9f9f9 !important; }
+  .broccoli--instance-tree-view [data-broccoli-instance-path].broccoli--panel__selected {
+    background-color: #fff2f2;
+    border-color: #f33; }
+  .broccoli--instance-tree-view [data-broccoli-instance-path]:nth-child(2) {
     border-radius: 5px 5px 0 0;
     border-bottom-width: 0px; }
   .broccoli--instance-tree-view [data-broccoli-instance-path]:last-child {

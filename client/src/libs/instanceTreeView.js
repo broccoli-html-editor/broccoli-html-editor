@@ -59,7 +59,11 @@ module.exports = function(broccoli){
 				mod.fields,
 				function(it1, row, idx){
 					var $li = $('<li>')
-						.text(idx)
+						.append(
+							$('<span>')
+								.text(idx) // ← field name
+								.addClass('broccoli--instance-tree-view-fieldname')
+						)
 					;
 
 					if(row.fieldType == 'input'){
@@ -163,7 +167,11 @@ module.exports = function(broccoli){
 				} ,
 				function(){
 					var $rtn = $('<div>')
-						.text( mod.info.name||mod.id )
+						.append(
+							$('<span>')
+								.text(mod.info.name||mod.id) // ← module name
+								.addClass('broccoli--instance-tree-view-modulename')
+						)
 						.css({
 							// "border":"1px solid #666"
 						})
@@ -190,14 +198,20 @@ module.exports = function(broccoli){
 							// }
 							broccoli.focusInstance( instancePath );
 						})
+						.bind('mouseover', function(e){
+							e.stopPropagation();
+							$(this).addClass('broccoli--panel__hovered')
+						})
+						.bind('mouseout',function(e){
+							$(this).removeClass('broccoli--panel__hovered')
+						})
 						.append( $('<div>')
 							.addClass('broccoli--panel-drop-to-insert-here')
 						)
-						.append( $('<ul>')
-						)
+						.append( $ul )
 					;
 					broccoli.panels.setPanelEventHandlers($rtn);
-					$rtn.find('>ul').append($ul);
+					// $rtn.find('>ul').append($ul);
 					callback($rtn);
 				}
 			);
@@ -210,7 +224,11 @@ module.exports = function(broccoli){
 			function(it1, row, idx){
 				// console.log(idx);
 				var $bowl = $('<li>')
-					.text('bowl.'+idx)
+					.append(
+						$('<span>')
+							.text('bowl.'+idx) // ← bowl name
+							.addClass('broccoli--instance-tree-view-bowlname')
+					)
 					.attr({
 						'data-broccoli-instance-path':'/bowl.'+idx
 					})
