@@ -421,8 +421,15 @@
 
 				var $targetElm = $(_this.panels.getPanelElement(instancePath));
 				if($targetElm.size()){
-					var top = $canvas.scrollTop() + $targetElm.offset().top - 30;
-					$canvas.stop().animate({"scrollTop":top} , 'fast' );
+					var minTop = $canvas.scrollTop() + $targetElm.offset().top - 30;
+					var topLine = $canvas.scrollTop();
+					var targetTop = topLine + $targetElm.offset().top;
+					var targetHeight = $targetElm.height();
+					var to = targetTop + (targetHeight/2) - ($canvas.height()/2);
+					if( to > minTop ){
+						to = minTop;
+					}
+					$canvas.stop().animate({"scrollTop":to} , 'fast' );
 				}
 
 				callback();
