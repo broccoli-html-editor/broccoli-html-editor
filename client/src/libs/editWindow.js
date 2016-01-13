@@ -200,7 +200,9 @@ module.exports = function(broccoli){
 							return;
 						}
 						broccoli.contentsSourceData.removeInstance(instancePath, function(){
-							callback();
+							broccoli.unselectInstance(function(){
+								callback();
+							});
 						});
 					})
 				;

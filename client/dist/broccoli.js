@@ -294,6 +294,17 @@
 						} );
 					} ,
 					function(it1, data){
+						// 選択状態の復元
+						if( selectedInstance ){
+							_this.selectInstance(selectedInstance, function(){
+								it1.next(data);
+							});
+							return;
+						}
+						it1.next(data);
+						return;
+					} ,
+					function(it1, data){
 						callback();
 						it1.next();
 					}
@@ -1763,7 +1774,9 @@ module.exports = function(broccoli){
 							return;
 						}
 						broccoli.contentsSourceData.removeInstance(instancePath, function(){
-							callback();
+							broccoli.unselectInstance(function(){
+								callback();
+							});
 						});
 					})
 				;
