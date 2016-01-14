@@ -301,6 +301,30 @@ module.exports = function(){
 	}
 
 	/**
+	 * マークダウン処理
+	 */
+	this.markdown = function(md, options, callback){
+		callback = callback||function(){};
+		var marked = require('marked');
+		marked.setOptions({
+			renderer: new marked.Renderer(),
+			gfm: true,
+			tables: true,
+			breaks: false,
+			pedantic: false,
+			sanitize: false,
+			smartLists: true,
+			smartypants: false
+		});
+
+		if(typeof(md)===typeof('')){
+			md = marked(md);
+		}
+		callback(md);
+		return this;
+	}
+
+	/**
 	 * HTMLをビルドする
 	 * ビルドしたHTMLは、callback() に文字列として渡されます。
 	 * realpathに指定したファイルは自動的に上書きされません。

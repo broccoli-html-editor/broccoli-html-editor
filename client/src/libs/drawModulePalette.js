@@ -75,22 +75,37 @@ module.exports = function(broccoli, callback){
 							thumb = d.thumb;
 						}
 						if(thumb){
-							rtn += '<img src="'+php.htmlspecialchars( thumb )+'" alt="'+php.htmlspecialchars( label )+'" style="width:40px; margin-right:5px;" />';
+							rtn += '<img src="'+php.htmlspecialchars( thumb )+'" alt="'+php.htmlspecialchars( label )+'" style="width:35px; margin-right:5px;" />';
 						}
 						rtn += php.htmlspecialchars( label );
 						return rtn;
 					})(mod))
 					.attr({
-						'title': (function(d){
-							return (mod.moduleName ? mod.moduleName+' ('+d.moduleId+')' : d.moduleId);
-						})(mod),
+						// 'title': (function(d){
+						// 	return (d.moduleName ? d.moduleName+' ('+d.moduleId+')' : d.moduleId);
+						// })(mod),
 						'data-id': mod.moduleId,
+						'data-name': mod.moduleName,
+						'data-readme': mod.readme,
 						'draggable': true //←HTML5のAPI http://www.htmq.com/dnd/
 					})
 					.on('dragstart', function(e){
 						// px.message( $(this).data('id') );
 						event.dataTransfer.setData('method', 'add' );
 						event.dataTransfer.setData('modId', $(this).attr('data-id') );
+						updateModuleInfoPreview(null, {}, function(){});
+					})
+					.on('mouseover', function(e){
+						var html = '';
+						html += '<article>';
+						html += '<h1>'+$(this).attr('data-name')+'</h1>';
+						html += '<p>'+$(this).attr('data-id')+'</p>';
+						html += '<div>'+$(this).attr('data-readme')+'</div>';
+						html += '</article>';
+						updateModuleInfoPreview(html, {}, function(){});
+					})
+					.on('mouseout', function(e){
+						updateModuleInfoPreview(null, {}, function(){});
 					})
 					// .tooltip({'placement':'left'})
 				);
@@ -104,6 +119,27 @@ module.exports = function(broccoli, callback){
 		);
 		return;
 	}
+
+	/**
+	 * モジュール情報プレビューを更新する
+	 */
+	function updateModuleInfoPreview($html, options, callback){
+		callback = callback||function(){};
+		var $body = $('body');
+		$body.find('.broccoli--module-info-preview').remove();
+		if( $html === null ){
+			callback();
+			return this;
+		}
+		$body
+			.append( $('<div class="broccoli broccoli--module-info-preview">')
+				.append( $html )
+			)
+		;
+		callback();
+		return this;
+	}
+
 
 	it79.fnc(
 		{},

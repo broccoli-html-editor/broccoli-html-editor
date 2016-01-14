@@ -53,8 +53,6 @@
 				)
 				.append( $('<div class="broccoli--panels">')
 				)
-				// .append( $('<div class="broccoli--instance-path-view">')
-				// )
 			;
 			$canvas.find('iframe')
 				.bind('load', function(){
@@ -340,15 +338,15 @@
 		this.editInstance = function( instancePath ){
 			this.selectInstance(instancePath);
 			console.log("Edit: "+instancePath);
-			$canvas.find('.broccoli--lightbox').remove();
-			$canvas
-				.append( $('<div class="broccoli--lightbox">')
+			$('body').find('.broccoli--lightbox').remove();
+			$('body')
+				.append( $('<div class="broccoli broccoli--lightbox">')
 					.append( $('<div class="broccoli--lightbox-inner">')
 					)
 				)
 			;
-			this.drawEditWindow( instancePath, $canvas.find('.broccoli--lightbox-inner').get(0), function(){
-				$canvas.find('.broccoli--lightbox').fadeOut('fast',function(){$(this).remove();});
+			this.drawEditWindow( instancePath, $('body').find('.broccoli--lightbox-inner').get(0), function(){
+				$('body').find('.broccoli--lightbox').fadeOut('fast',function(){$(this).remove();});
 				it79.fnc({},[
 					function(it1, data){
 						// 編集パネルを一旦消去

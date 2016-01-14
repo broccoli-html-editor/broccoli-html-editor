@@ -140,6 +140,29 @@ module.exports = function(broccoli, packageId, callback){
 									} catch (e) {
 										rtn.categories[idx].modules[row2].thumb = null;
 									}
+
+									var realpathReadmeMd = path.resolve( realpath, 'README.md' );
+									var readme = '';
+									try{
+										readme = '';
+										if( isFile(realpathThumb) ){
+											readme = fs.readFileSync( realpathReadmeMd ).toString();
+										}
+									} catch (e) {
+										readme = '';
+									}
+									var marked = require('marked');
+									marked.setOptions({
+										renderer: new marked.Renderer(),
+										gfm: true,
+										tables: true,
+										breaks: false,
+										pedantic: false,
+										sanitize: false,
+										smartLists: true,
+										smartypants: false
+									});
+									rtn.categories[idx].modules[row2].readme = marked(readme);
 								}
 								it2.next();
 							} ,

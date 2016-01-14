@@ -5420,6 +5420,18 @@
     padding: 20px;
     margin: 100px auto; }
 
+.broccoli--module-info-preview {
+  position: fixed;
+  top: 10%;
+  left: 25%;
+  bottom: 10%;
+  width: 50%;
+  z-index: 10000;
+  overflow: auto;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border: 5px solid #999; }
+
 .broccoli--module-palette ul {
   margin: 0;
   padding: 0;
@@ -5458,7 +5470,7 @@
   height: 50px;
   border: 1px solid #999;
   text-align: left;
-  padding: 0;
+  padding: 3px;
   margin: 0;
   background-color: #eee;
   font-size: 11px;
@@ -5467,6 +5479,8 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis; }
+  .broccoli--module-palette button:hover {
+    background-color: #ddd; }
 
 .broccoli--module-palette a:before {
   content: "▼"; }

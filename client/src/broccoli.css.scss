@@ -319,6 +319,19 @@
 	}
 }
 
+// status view
+.broccoli--module-info-preview{
+	position: fixed;
+	top: 10%; left: 25%;
+	bottom: 10%;
+	width: 50%;
+	z-index: 10000;
+	overflow: auto;
+	background-color: rgba(100%, 100%, 100%, 0.9);
+	padding: 20px;
+	border: 5px solid #999;
+}
+
 // Module Palette
 .broccoli--module-palette{
 
@@ -376,7 +389,7 @@
 		height: 50px;
 		border: 1px solid #999;
 		text-align:left;
-		padding: 0;
+		padding: 3px;
 		margin: 0;
 		background-color: #eee;
 		font-size: 11px;
@@ -385,6 +398,9 @@
 		overflow: hidden;
 		white-space: nowrap;
 		text-overflow: ellipsis;
+		&:hover{
+			background-color: #ddd;
+		}
 	}
 	a:before{
 		content: "▼";
