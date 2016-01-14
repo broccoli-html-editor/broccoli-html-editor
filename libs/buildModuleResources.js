@@ -67,7 +67,7 @@ module.exports = function(broccoli){
 		return this;
 	}
 	/**
-	 * CSSリソースをビルドする
+	 * CSSリソースをビルドする (TODO: 未実装)
 	 */
 	function buildCssResources( $path, $bin, callback ){
 		callback = callback || function(){};
@@ -122,14 +122,16 @@ module.exports = function(broccoli){
 		callback = callback || function(){};
 		var $rtn = '';
 
-		// var $conf = $this->main->get_px2dtconfig();
-		// var $array_files = [];
-		// foreach( $conf->paths_module_template as $row ){
-		// 	$array_files = array_merge( $array_files, glob($row."**/**/module.js") );
-		// }
-		// foreach( $array_files as $path ){
-		// 	$rtn += $this->px->fs()->read_file( $path );
-		// }
+		var $array_files = [];
+		var module_templates = broccoli.options.paths_module_template;
+		for( var idx in module_templates ){
+			$array_files = $array_files.concat( glob.sync(module_templates[idx]+"**/**/module.js") );
+		}
+
+		for( var idx in $array_files ){
+			var $path = $array_files[idx];
+			 $rtn += fs.readFileSync( $path ).toString();
+		}
 		// $rtn = trim($rtn);
 
 		callback($rtn);

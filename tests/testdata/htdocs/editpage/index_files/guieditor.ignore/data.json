@@ -774,6 +774,10 @@
       }
      },
      {
+      "modId": "testMod1:dev/module_js",
+      "fields": {}
+     },
+     {
       "modId": "testMod1:boxes/attention_box",
       "fields": {
        "box_title": "警告でございます。",
