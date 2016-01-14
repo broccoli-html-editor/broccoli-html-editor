@@ -11,6 +11,7 @@ module.exports = function(broccoli){
 	var twig = require('twig');
 	var glob = require('glob');
 	var fs = require('fs');
+	var sass = require('node-sass');
 
 	/**
 	 * ドキュメントモジュール定義のスタイルを統合
@@ -19,39 +20,47 @@ module.exports = function(broccoli){
 		callback = callback || function(){};
 		var $rtn = '';
 
-		// var $conf = $this->main->get_px2dtconfig();
-		// var $array_files = [];
-		// foreach( $conf->paths_module_template as $key=>$row ){
-		// 	$array_files[$key] = [];
-		// 	$array_files[$key] = array_merge( $array_files[$key], glob($row."**/**/module.css") );
-		// 	$array_files[$key] = array_merge( $array_files[$key], glob($row."**/**/module.css.scss") );
-		// }
-		//
-		// foreach( $array_files as $packageId=>$array_files_row ){
-		// 	foreach( $array_files_row as $path ){
-		// 		preg_match( '/\/([a-zA-Z0-9\.\-\_]+?)\/([a-zA-Z0-9\.\-\_]+?)\/[a-zA-Z0-9\.\-\_]+?$/i', $path, $matched );
-		// 		$rtn += '/**'."\n";
-		// 		$rtn += ' * module: '.$packageId.':'.$matched[1].'/'.$matched[2]."\n";
-		// 		$rtn += ' */'."\n";
-		// 		$tmp_bin = $this->px->fs()->read_file( $path );
-		// 		if( $this->px->fs()->get_extension( $path ) == 'scss' ){
-		// 			$tmp_current_dir = realpath('./');
-		// 			chdir( dirname( $path ) );
-		// 			$scss = new \scssc();
-		// 			$tmp_bin = $scss->compile( $tmp_bin );
-		// 			chdir( $tmp_current_dir );
-		// 		}
-		//
-		// 		buildCssResources( $path, $tmp_bin function($tmp_bin){
-		//
-		// 		} );
-		//
-		// 		$rtn += $tmp_bin;
-		// 		$rtn += "\n"."\n";
-		//
-		// 		unset($tmp_bin);
-		// 	}
-		// }
+		var $array_files = {};
+		var module_templates = broccoli.options.paths_module_template;
+		for( var idx in module_templates ){
+			$array_files[idx] = [];
+			$array_files[idx] = $array_files[idx].concat( glob.sync(module_templates[idx]+"**/**/module.css") );
+			$array_files[idx] = $array_files[idx].concat( glob.sync(module_templates[idx]+"**/**/module.css.scss") );
+		}
+		// console.log($array_files);
+
+		for( var $packageId in $array_files ){
+			var $array_files_row = $array_files[$packageId];
+
+			for( var idx in $array_files_row ){
+				var $path = $array_files_row[idx];
+				$matched = $path.match( new RegExp('\\/([a-zA-Z0-9\\.\\-\\_]+?)\\/([a-zA-Z0-9\\.\\-\\_]+?)\\/[a-zA-Z0-9\\.\\-\\_]+?$','i') );
+
+				// console.log($path);
+				// console.log($matched);
+
+				$rtn += '/**'+"\n";
+				$rtn += ' * module: '+$packageId+':'+$matched[1]+'/'+$matched[2]+"\n";
+				$rtn += ' */'+"\n";
+
+				var $tmp_bin = fs.readFileSync( $path ).toString();
+				if( $path.match( new RegExp('\\.scss$', 'i') ) ){
+					// console.log($tmp_bin);
+
+					$tmp_bin = sass.renderSync({
+						'file': $path,
+						'data': $tmp_bin
+					});
+					$tmp_bin = $tmp_bin.css.toString();
+				}
+
+				// $tmp_bin = buildCssResources( $path, $tmp_bin );
+
+				$rtn += $tmp_bin;
+				$rtn += "\n"+"\n";
+			}
+		}
+		// console.log($rtn);
 		// $rtn = trim($rtn);
 
 		callback($rtn);
@@ -103,8 +112,7 @@ module.exports = function(broccoli){
 		// 	$bin = $matched[3];
 		// }
 
-		callback($rtn);
-		return this;
+		return $rtn;
 	}
 
 	/**

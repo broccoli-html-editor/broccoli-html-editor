@@ -1,0 +1,73 @@
+.cols {
+  margin-left: -20px;
+  overflow: hidden;
+}
+.cols .cols-col {
+  float: left;
+  margin: 0 0 0 0;
+}
+.cols .cols-col.cols-3of4 {
+  width: 75%;
+}
+.cols .cols-col.cols-1of2 {
+  width: 50%;
+}
+.cols .cols-col.cols-2of3 {
+  width: 66.666%;
+}
+.cols .cols-col.cols-1of3 {
+  width: 33.333%;
+}
+.cols .cols-col.cols-1of4 {
+  width: 25%;
+}
+.cols .cols-col.cols-1of5 {
+  width: 20%;
+}
+.cols .cols-col.cols-2of5 {
+  width: 40%;
+}
+.cols .cols-col.cols-3of5 {
+  width: 60%;
+}
+.cols .cols-col.cols-4of5 {
+  width: 80%;
+}
+.cols .cols-pad {
+  margin-left: 20px;
+}
+.cols .cols-last {
+  float: right;
+  *margin-right: -10px;
+}
+
+@media all and (max-width: 520px) {
+  .cols .cols-col.cols-3of4 {
+    width: auto;
+    float: none;
+  }
+}
+@media all and (max-width: 520px) {
+  .cols .cols-col.cols-1of2 {
+    width: auto;
+    float: none;
+  }
+}
+@media all and (max-width: 520px) {
+  .cols .cols-col.cols-2of3 {
+    width: auto;
+    float: none;
+  }
+}
+@media all and (max-width: 520px) {
+  .cols .cols-col.cols-1of3 {
+    width: auto;
+    float: none;
+  }
+}
+@media all and (max-width: 520px) {
+  .cols .cols-col.cols-1of4 {
+    width: auto;
+    float: none;
+  }
+}
