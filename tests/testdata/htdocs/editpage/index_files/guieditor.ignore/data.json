@@ -778,6 +778,34 @@
       "fields": {}
      },
      {
+      "modId": "testMod1:dev/singleRootElement",
+      "fields": {
+       "thumb_loop": [
+        {
+         "modId": "testMod1:dev/singleRootElement",
+         "fields": {
+          "hidden_element": ""
+         },
+         "subModName": "thumb_loop"
+        },
+        {
+         "modId": "testMod1:dev/singleRootElement",
+         "fields": {
+          "hidden_element": ""
+         },
+         "subModName": "thumb_loop"
+        },
+        {
+         "modId": "testMod1:dev/singleRootElement",
+         "fields": {
+          "hidden_element": ""
+         },
+         "subModName": "thumb_loop"
+        }
+       ]
+      }
+     },
+     {
       "modId": "testMod1:boxes/attention_box",
       "fields": {
        "box_title": "警告でございます。",

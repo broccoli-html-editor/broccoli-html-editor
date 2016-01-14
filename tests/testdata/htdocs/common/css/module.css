@@ -29,6 +29,14 @@
 
 
 /**
+ * module: testMod1:dev/singleRootElement
+ */
+.single-root-element--element {
+  float: left;
+  width: 24%; }
+
+
+/**
  * module: testMod1:dev/twig
  */
 .twig_template {

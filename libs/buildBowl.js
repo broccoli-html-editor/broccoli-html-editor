@@ -539,7 +539,40 @@ module.exports = function(broccoli, data, options, callback){
 				}
 				if( options.mode == 'canvas' ){
 					// console.log( d.html );
-					if( mod.isSingleRootElement ){
+
+					var isSingleRootElement = (function(tplSrc){
+						tplSrc = tplSrc.replace( new RegExp('\\<\\!\\-\\-.*?\\-\\-\\>','g'), '' );
+						tplSrc = tplSrc.replace( new RegExp('\\{\\&.*?\\&\\}','g'), '' );
+						tplSrc = tplSrc.replace( new RegExp('\r\n|\r|\n','g'), '' );
+						tplSrc = tplSrc.replace( new RegExp('\t','g'), '' );
+						tplSrc = tplSrc.replace( new RegExp('^[\s\r\n]*'), '' );
+						tplSrc = tplSrc.replace( new RegExp('[\s\r\n]*$'), '' );
+
+						if( tplSrc.length && tplSrc.indexOf('<') === 0 && tplSrc.match(new RegExp('\\>$')) ){
+							var htmlparser = require('htmlparser');
+							var handler = new htmlparser.DefaultHandler(function (error, dom) {
+								// console.log('htmlparser callback');
+								if (error){
+									// console.log(error);
+								}
+							});
+							// console.log('htmlparser after');
+							var parser = new htmlparser.Parser(handler);
+							parser.parseComplete(tplSrc);
+							// console.log(tplSrc);
+							// console.log(handler.dom);
+
+							if( handler.dom.length == 1 ){
+								// console.log('------------------------------------------------------');
+								// console.log(tplSrc);
+								return true;
+							}
+						}
+						return false;
+
+					})(d.html);
+
+					if( isSingleRootElement ){
 						var $ = cheerio.load(d.html, {decodeEntities: false});
 						var $1stElm = $('*').eq(0);
 						$1stElm.attr({ 'data-broccoli-instance-path': options.instancePath });
@@ -557,7 +590,7 @@ module.exports = function(broccoli, data, options, callback){
 							html += ' data-broccoli-sub-mod-name="'+php.htmlspecialchars(options.subModName)+'"';
 						}
 						html += ' data-broccoli-area-size-detection="'+php.htmlspecialchars((mod.info.areaSizeDetection||'shallow'))+'"';
-						// html += ' data-broccoli-is-single-root-element="'+(mod.isSingleRootElement?'yes':'no')+'"';
+						// html += ' data-broccoli-is-single-root-element="'+(isSingleRootElement?'yes':'no')+'"';
 						html += ' data-broccoli-module-name="'+php.htmlspecialchars((mod.info.name||mod.id))+'"';
 						html += '>';
 						html += d.html;
