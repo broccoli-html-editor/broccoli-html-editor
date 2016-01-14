@@ -22,6 +22,36 @@ module.exports = function(broccoli, packageId, callback){
 		var base64 = bin.toString('base64');
 		return base64;
 	}
+	function sortModuleDirectoryNames(dirNames, sortBy){
+		if( typeof(sortBy) != typeof([]) ){ return dirNames; }
+		dirNames.sort();
+		function deleteArrayElm(ary, val){
+			for( var i in ary ){
+				if( ary[i] === val ){
+					ary.splice( i , 1 );
+					return true;
+				}
+			}
+			return false;
+		}
+		function arrayFind(ary, val){
+			for( var i in ary ){
+				if( ary[i] === val ){return true;}
+			}
+			return false;
+		}
+
+		var rtn = [];
+		for( var i in sortBy ){
+			if( !arrayFind(dirNames, sortBy[i]) ){continue;}
+			rtn.push(sortBy[i]);
+			deleteArrayElm(dirNames, sortBy[i]);
+		}
+		for( var i in dirNames ){
+			rtn.push(dirNames[i]);
+		}
+		return rtn;
+	}
 
 	new Promise(function(rlv){rlv();})
 		.then(function(){ return new Promise(function(rlv, rjt){
@@ -38,7 +68,7 @@ module.exports = function(broccoli, packageId, callback){
 			try {
 				rtn.packageInfo = require( rtn.realpath + 'info.json' );
 			} catch (e) {
-				rtn.packageInfo = false;
+				rtn.packageInfo = {};
 			}
 			rlv();
 		}); })
@@ -46,7 +76,9 @@ module.exports = function(broccoli, packageId, callback){
 			// モジュールカテゴリをリスト化
 			fs.readdir( rtn.realpath, function(err, fileList){
 				// console.log(fileList);
+				// console.log(rtn.packageInfo.sort);
 				rtn.categories = {};
+				fileList = sortModuleDirectoryNames(fileList, rtn.packageInfo.sort);
 				it79.ary(
 					fileList,
 					function( it1, row, idx ){
@@ -78,8 +110,12 @@ module.exports = function(broccoli, packageId, callback){
 			it79.ary(
 				rtn.categories,
 				function( it1, row, idx ){
+					// console.log(row);
 
 					fs.readdir( rtn.categories[idx].realpath, function(err, fileList){
+						// console.log(fileList);
+						// console.log(row.categoryInfo.sort);
+						fileList = sortModuleDirectoryNames(fileList, row.categoryInfo.sort);
 						it79.ary(
 							fileList,
 							function( it2, row2, idx2 ){

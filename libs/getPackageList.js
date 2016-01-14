@@ -2,7 +2,7 @@
  * getPackageList.js
  */
 module.exports = function(broccoli, callback){
-	// delete(require.cache[require('path').resolve(__filename)]);
+	delete(require.cache[require('path').resolve(__filename)]);
 
 	var _this = this;
 	callback = callback || function(){};
