@@ -96,16 +96,25 @@ module.exports = function(broccoli, callback){
 						updateModuleInfoPreview(null, {}, function(){});
 					})
 					.on('mouseover', function(e){
-						var html = '';
-						html += '<article>';
-						html += '<h1>'+$(this).attr('data-name')+'</h1>';
-						html += '<p>'+$(this).attr('data-id')+'</p>';
-						html += '<div>'+$(this).attr('data-readme')+'</div>';
-						html += '</article>';
+						var html = generateModuleInfoHtml(this);
 						updateModuleInfoPreview(html, {}, function(){});
 					})
 					.on('mouseout', function(e){
 						updateModuleInfoPreview(null, {}, function(){});
+					})
+					.on('dblclick', function(e){
+						var html = generateModuleInfoHtml(this);
+						broccoli.lightbox(function(elm){
+							$(elm)
+								.append(html)
+								.append( $('<button class="btn btn-primary btn-block">')
+									.text('close')
+									.bind('click', function(){
+										broccoli.closeLightbox();
+									})
+								)
+							;
+						});
 					})
 					// .tooltip({'placement':'left'})
 				);
@@ -118,6 +127,26 @@ module.exports = function(broccoli, callback){
 			}
 		);
 		return;
+	}
+
+	/**
+	 * モジュール情報のHTMLを生成する
+	 */
+	function generateModuleInfoHtml(elm){
+		var html = '';
+		html += '<article>';
+		html += '<h1>'+$(elm).attr('data-name')+'</h1>';
+		html += '<p>'+$(elm).attr('data-id')+'</p>';
+		html += '<hr />';
+		var readme = $(elm).attr('data-readme');
+		var $readme = $('<div>'+readme+'</div>')
+		$readme.find('a').each(function(){
+			$(this).attr({'target':'_blank'})
+		});
+		html += '<div>'+ (readme ? $readme.html() : '<p style="text-align:center; margin: 100px;">-- no readme --</p>' ) +'</div>';
+		html += '<hr />';
+		html += '</article>';
+		return html;
 	}
 
 	/**
