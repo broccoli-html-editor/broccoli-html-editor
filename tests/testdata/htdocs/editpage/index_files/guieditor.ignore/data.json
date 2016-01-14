@@ -432,6 +432,73 @@
       }
      },
      {
+      "modId": "testMod1:dev/float_loop",
+      "fields": {
+       "loop": [
+        {
+         "modId": "testMod1:dev/float_loop",
+         "fields": {
+          "body": {
+           "src": "選択できなければ、編集できません。",
+           "editor": "markdown"
+          }
+         },
+         "subModName": "loop",
+         "anchor": "",
+         "dec": ""
+        },
+        {
+         "modId": "testMod1:dev/float_loop",
+         "fields": {
+          "body": {
+           "src": "ドラッグ＆ドロップで移動させる操作もできるべきです。",
+           "editor": "markdown"
+          }
+         },
+         "subModName": "loop",
+         "anchor": "",
+         "dec": ""
+        },
+        {
+         "modId": "testMod1:dev/float_loop",
+         "fields": {
+          "body": {
+           "src": "領域が重なって表示されるなどの問題があるならば、修正が必要です。",
+           "editor": "markdown"
+          }
+         },
+         "subModName": "loop",
+         "anchor": "",
+         "dec": ""
+        },
+        {
+         "modId": "testMod1:dev/float_loop",
+         "fields": {
+          "body": {
+           "src": "floatされた要素をloopするテストです。",
+           "editor": "markdown"
+          }
+         },
+         "subModName": "loop",
+         "anchor": "",
+         "dec": ""
+        },
+        {
+         "modId": "testMod1:dev/float_loop",
+         "fields": {
+          "body": {
+           "src": "それぞれの要素を編集できるでしょうか？",
+           "editor": "markdown"
+          }
+         },
+         "subModName": "loop",
+         "anchor": "",
+         "dec": ""
+        }
+       ]
+      }
+     },
+     {
       "modId": "testMod1:units/cols3",
       "fields": {
        "column1": [

@@ -56,6 +56,7 @@ module.exports = function( data, callback, main, socket ){
 						fin += '    <head>'+"\n";
 						fin += '        <meta charset="utf-8" />'+"\n";
 						fin += '        <title>sample page</title>'+"\n";
+						fin += '        <link rel="stylesheet" href="/common/css/common.css" />'+"\n";
 						fin += '        <style media="screen">'+"\n";
 						fin += '            img{max-width:100%;}'+"\n";
 						fin += '        </style>'+"\n";
