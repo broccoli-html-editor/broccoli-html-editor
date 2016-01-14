@@ -362,4 +362,24 @@ module.exports = function(){
 		return this;
 	}
 
+	/**
+	 * モジュールのCSSをビルドする
+	 */
+	this.buildModuleCss = function( callback ){
+		var bMR = require( __dirname+'/buildModuleResources.js' );
+		var builder = new bMR( _this );
+		builder.buildCss(callback);
+		return this;
+	}
+
+	/**
+	 * モジュールのJavaScriptをビルドする
+	 */
+	this.buildModuleJs = function( callback ){
+		var bMR = require( __dirname+'/buildModuleResources.js' );
+		var builder = new bMR( _this );
+		builder.buildJs(callback);
+		return this;
+	}
+
 }

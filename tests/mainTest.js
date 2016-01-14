@@ -295,6 +295,32 @@ describe('全モジュールの一覧の取得', function() {
 
 describe('ビルドする', function() {
 
+	it("モジュールのCSSをビルドする", function(done) {
+		this.timeout(15*1000);
+		makeDefaultBroccoli( {}, function(broccoli){
+			broccoli.buildModuleCss(
+				function( src, err ){
+					fs.writeFileSync(path.resolve(__dirname, './testdata/htdocs/common/css/module.css'), src);
+					// console.log( src );
+					done();
+				}
+			);
+		} );
+	});
+
+	it("モジュールのJavaScriptをビルドする", function(done) {
+		this.timeout(15*1000);
+		makeDefaultBroccoli( {}, function(broccoli){
+			broccoli.buildModuleJs(
+				function( src, err ){
+					fs.writeFileSync(path.resolve(__dirname, './testdata/htdocs/common/js/module.js'), src);
+					// console.log( src );
+					done();
+				}
+			);
+		} );
+	});
+
 	it("editpageをfinalizeモードでビルドする", function(done) {
 		this.timeout(15*1000);
 		makeDefaultBroccoli( {}, function(broccoli){
