@@ -18,6 +18,12 @@ module.exports = function(broccoli, packageId, callback){
 		}
 		return true;
 	}
+	function isDir(path){
+		if( !fs.existsSync(path) || !fs.statSync(path).isDirectory() ){
+			return false;
+		}
+		return true;
+	}
 	function base64_encode( bin ){
 		var base64 = bin.toString('base64');
 		return base64;
@@ -141,7 +147,7 @@ module.exports = function(broccoli, packageId, callback){
 										rtn.categories[idx].modules[row2].thumb = null;
 									}
 
-									var realpathReadmeMd = path.resolve( realpath, 'README.md' );
+									var realpathReadmeMd = path.resolve( realpath, 'README.md' );//←[暫定] TODO: ある程度のファイル名の揺れは吸収する
 									var readme = '';
 									try{
 										readme = '';
@@ -163,6 +169,29 @@ module.exports = function(broccoli, packageId, callback){
 										smartypants: false
 									});
 									rtn.categories[idx].modules[row2].readme = marked(readme);
+
+									var realpathPics = path.resolve( realpath, 'pics/' );
+									rtn.categories[idx].modules[row2].pics = [];
+									if( isDir(realpathPics) ){
+										var piclist = fs.readdirSync(realpathPics);
+										piclist.sort(function(a,b){
+											if( a < b ) return -1;
+											if( a > b ) return 1;
+											return 0;
+										});
+										for( var picIdx in piclist ){
+											var imgPath = '';
+											try{
+												if( isFile(realpathPics+'/'+piclist[picIdx]) ){
+													imgPath = fs.readFileSync( realpathPics+'/'+piclist[picIdx] ).toString('base64');
+												}
+											} catch (e) {
+												imgPath = '';
+											}
+											// console.log( imgPath );
+											rtn.categories[idx].modules[row2].pics.push( 'data:image/png;base64,'+imgPath );
+										}
+									}
 								}
 								it2.next();
 							} ,

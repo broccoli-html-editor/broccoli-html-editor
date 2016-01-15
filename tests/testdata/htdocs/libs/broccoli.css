@@ -5177,6 +5177,11 @@
   @media print {
     .broccoli .hidden-print {
       display: none !important; } }
+  .broccoli__user-selectable {
+    user-select: auto;
+    -moz-user-select: auto;
+    -webkit-user-select: auto;
+    -ms-user-select: auto; }
 
 .broccoli--canvas {
   display: block;
@@ -5431,6 +5436,33 @@
   background-color: rgba(255, 255, 255, 0.9);
   padding: 20px;
   border: 5px solid #999; }
+
+.broccoli--module-info-content-thumb {
+  width: 200px;
+  max-width: 20%;
+  float: right;
+  margin: 0 0 15px 15px; }
+  .broccoli--module-info-content-thumb img {
+    width: 100%; }
+
+.broccoli--module-info-content-pics {
+  clear: both;
+  text-align: center;
+  border-top: 1px solid #bbb;
+  padding: 2em 0;
+  margin: 10px 0; }
+  .broccoli--module-info-content-pics ul {
+    margin: 1em 0;
+    padding: 0; }
+    .broccoli--module-info-content-pics ul li {
+      list-style-type: none;
+      margin: 1em 0;
+      padding: 0; }
+      .broccoli--module-info-content-pics ul li img {
+        width: auto;
+        max-width: 100%;
+        border: 2px solid #999;
+        box-sizing: border-box; }
 
 .broccoli--module-palette ul {
   margin: 0;

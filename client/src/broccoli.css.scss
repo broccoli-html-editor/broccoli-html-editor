@@ -9,6 +9,14 @@
 	-webkit-user-select: none; // Safari、Chromeなど
 	-ms-user-select: none; // IE10かららしい
 	cursor: default;
+
+	// 選択可能領域
+	&__user-selectable{
+		user-select: auto; // CSS3
+		-moz-user-select: auto; // Firefox
+		-webkit-user-select: auto; // Safari、Chromeなど
+		-ms-user-select: auto; // IE10かららしい
+	}
 }
 // Canvas
 .broccoli--canvas{
@@ -330,6 +338,40 @@
 	background-color: rgba(100%, 100%, 100%, 0.9);
 	padding: 20px;
 	border: 5px solid #999;
+}
+.broccoli--module-info-content{
+	&-thumb{
+		width:200px;
+		max-width:20%;
+		float:right;
+		margin: 0 0 15px 15px;
+		img{
+			width:100%;
+		}
+	}
+	&-pics{
+		clear: both;
+		text-align: center;
+		border-top: 1px solid #bbb;
+		padding: 2em 0;
+		margin: 10px 0;
+		ul{
+			margin: 1em 0;
+			padding: 0;
+			li{
+				list-style-type: none;
+				margin: 1em 0;
+				padding: 0;
+				img{
+					width:auto;
+					max-width:100%;
+					border:2px solid #999;
+					box-sizing: border-box;
+				}
+
+			}
+		}
+	}
 }
 
 // Module Palette

@@ -87,6 +87,7 @@ module.exports = function(broccoli, callback){
 						'data-id': mod.moduleId,
 						'data-name': mod.moduleName,
 						'data-readme': mod.readme,
+						'data-pics': JSON.stringify(mod.pics),
 						'draggable': true //←HTML5のAPI http://www.htmq.com/dnd/
 					})
 					.on('dragstart', function(e){
@@ -133,17 +134,36 @@ module.exports = function(broccoli, callback){
 	 * モジュール情報のHTMLを生成する
 	 */
 	function generateModuleInfoHtml(elm){
+		var $elm = $(elm);
 		var html = '';
-		html += '<article>';
-		html += '<h1>'+$(elm).attr('data-name')+'</h1>';
-		html += '<p>'+$(elm).attr('data-id')+'</p>';
+		var $img = $elm.find('img').eq(0);
+		html += '<article class="broccoli--module-info-content">';
+		if( $img.size() ){
+			html += '<div class="broccoli--module-info-content-thumb"><img src="'+$img.attr('src')+'" /></div>';
+		}
+		html += '<h1 class="broccoli__user-selectable">'+$elm.attr('data-name')+'</h1>';
+		html += '<p class="broccoli__user-selectable">'+$elm.attr('data-id')+'</p>';
 		html += '<hr />';
-		var readme = $(elm).attr('data-readme');
+		var readme = $elm.attr('data-readme');
 		var $readme = $('<div>'+readme+'</div>')
 		$readme.find('a').each(function(){
 			$(this).attr({'target':'_blank'})
 		});
-		html += '<div>'+ (readme ? $readme.html() : '<p style="text-align:center; margin: 100px;">-- no readme --</p>' ) +'</div>';
+		html += '<div class="broccoli__user-selectable">'+ (readme ? $readme.html() : '<p style="text-align:center; margin: 100px;">-- no readme --</p>' ) +'</div>';
+
+		var pics = JSON.parse( $elm.attr('data-pics') );
+		if( pics.length ){
+			// html += '<hr />';
+			html += '<div class="broccoli--module-info-content-pics">';
+			html += '<p>参考イメージ</p>';
+			html += '<ul>';
+			for( var idx in pics ){
+				console.log(pics[idx]);
+				html += '<li><img src="'+ pics[idx] +'" /></li>';
+			}
+			html += '</ul>';
+			html += '</div>';
+		}
 		html += '<hr />';
 		html += '</article>';
 		return html;
