@@ -532,6 +532,14 @@ module.exports = function(broccoli, data, options, callback){
 				return;
 			} ,
 			function(it1, d){
+				// finalize.js の処理をかける (broccoli-html-editorで追加された機能)
+				mod.finalize( d.html, function(html){
+					d.html = html;
+					it1.next(d);
+				} );
+				return;
+			} ,
+			function(it1, d){
 				if(typeof(d.html) !== typeof('')){
 					// console.log(d.html);
 					it1.next(d);

@@ -5432,7 +5432,7 @@
   bottom: 10%;
   width: 50%;
   z-index: 10000;
-  overflow: auto;
+  overflow: hidden;
   background-color: rgba(255, 255, 255, 0.9);
   padding: 20px;
   border: 5px solid #999; }

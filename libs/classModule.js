@@ -52,6 +52,7 @@ module.exports = function(broccoli, moduleId, options){
 	this.id = moduleId;
 	this.fields = {};
 	this.templateType = 'broccoli';
+	this.finalize = function(html, callback){callback(html);return;}
 
 	if( options.topThis ){
 		this.topThis = options.topThis;
@@ -343,6 +344,9 @@ module.exports = function(broccoli, moduleId, options){
 				parseTpl( null, _this, options.topThis, callback );
 			}else if( _this.path ){
 				var tmpTplSrc = null;
+				if( isFile( _this.path+'finalize.js' ) ){
+					_this.finalize = require(_this.path+'finalize.js');
+				}
 				if( isFile( _this.path+'template.html' ) ){
 					_this.templateFilename = _this.path+'template.html';
 					_this.templateType = 'broccoli';
