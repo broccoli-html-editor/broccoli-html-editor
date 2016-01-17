@@ -905,7 +905,12 @@ module.exports = function(broccoli){
 			for( var idx in fieldList ){
 				var fieldName = fieldList[idx];
 				if( modTpl.fields[fieldName].fieldType == 'input' ){
-					newData.fields[fieldName] = broccoli.getFieldDefinition(modTpl.fields[fieldName].type).normalizeData('');
+					newData.fields[fieldName] = '';
+					if( modTpl.fields[fieldName].default !== undefined ){
+						// デフォルト値の設定がある場合、セット
+						newData.fields[fieldName] = modTpl.fields[fieldName].default;
+					}
+					newData.fields[fieldName] = broccoli.getFieldDefinition(modTpl.fields[fieldName].type).normalizeData( newData.fields[fieldName] );
 				}else if( modTpl.fields[fieldName].fieldType == 'module' ){
 					newData.fields[fieldName] = [];
 				}else if( modTpl.fields[fieldName].fieldType == 'loop' ){
