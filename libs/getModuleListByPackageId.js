@@ -147,28 +147,31 @@ module.exports = function(broccoli, packageId, callback){
 										rtn.categories[idx].modules[row2].thumb = null;
 									}
 
-									var realpathReadmeMd = path.resolve( realpath, 'README.md' );//←[暫定] TODO: ある程度のファイル名の揺れは吸収する
+									var realpathReadme = path.resolve( realpath, 'README' );
 									var readme = '';
 									try{
 										readme = '';
-										if( isFile(realpathThumb) ){
-											readme = fs.readFileSync( realpathReadmeMd ).toString();
+										if( isFile(realpathReadme+'.html') ){
+											readme = fs.readFileSync( realpathReadme+'.html' ).toString();
+										}else if( isFile(realpathReadme+'.md') ){
+											readme = fs.readFileSync( realpathReadme+'.md' ).toString();
+											var marked = require('marked');
+											marked.setOptions({
+												renderer: new marked.Renderer(),
+												gfm: true,
+												tables: true,
+												breaks: false,
+												pedantic: false,
+												sanitize: false,
+												smartLists: true,
+												smartypants: false
+											});
+											readme = marked(readme);
 										}
 									} catch (e) {
 										readme = '';
 									}
-									var marked = require('marked');
-									marked.setOptions({
-										renderer: new marked.Renderer(),
-										gfm: true,
-										tables: true,
-										breaks: false,
-										pedantic: false,
-										sanitize: false,
-										smartLists: true,
-										smartypants: false
-									});
-									rtn.categories[idx].modules[row2].readme = marked(readme);
+									rtn.categories[idx].modules[row2].readme = readme;
 
 									var realpathPics = path.resolve( realpath, 'pics/' );
 									rtn.categories[idx].modules[row2].pics = [];
