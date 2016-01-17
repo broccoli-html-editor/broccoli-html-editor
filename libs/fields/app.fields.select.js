@@ -64,6 +64,9 @@ module.exports = function(broccoli){
 			}
 		}
 		var rtn = $('<div>')
+			.append($('<div>')
+				.text( (mod.description ? mod.description : '') )
+			)
 			.append( $select )
 		;
 		$(elm).html(rtn);

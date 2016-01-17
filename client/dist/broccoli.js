@@ -3312,6 +3312,9 @@ module.exports = function(broccoli){
 			rows = mod.rows;
 		}
 		var rtn = $('<div>')
+			.append($('<div>')
+				.html( (mod.description ? mod.description : '') ) // TODO: mdで書けたい
+			)
 			.append($('<textarea>')
 				.attr({
 					"name":mod.name,
@@ -3319,7 +3322,8 @@ module.exports = function(broccoli){
 				})
 				.val(data)
 				.css({'width':'100%','height':'auto'})
-		);
+			)
+		;
 
 		$(elm).html(rtn);
 		// setTimeout(function(){
@@ -3414,6 +3418,9 @@ module.exports = function(broccoli){
 			.css({'width':'100%','height':'auto'})
 		;
 		var rtn = $('<div>')
+			.append($('<div>')
+				.text( (mod.description ? mod.description : '') )
+			)
 			.append( $input )
 		;
 		$(elm).html(rtn);
@@ -3654,6 +3661,9 @@ module.exports = function(broccoli){
 			);
 			rtn.append(
 				$('<div>')
+					.append($('<div>')
+						.text( (mod.description ? mod.description : '') )
+					)
 					.append( $('<span>')
 						.text('出力ファイル名(拡張子を含まない):')
 					)
@@ -3887,6 +3897,9 @@ module.exports = function(broccoli){
 			rows = mod.rows;
 		}
 		var rtn = $('<div>')
+			.append($('<div>')
+				.html( (mod.description ? mod.description : '') )
+			)
 			.append($('<textarea>')
 				.attr({
 					"name":mod.name,
@@ -3999,6 +4012,9 @@ module.exports = function(broccoli){
 			}
 		}
 		var rtn = $('<div>')
+			.append($('<div>')
+				.text( (mod.description ? mod.description : '') )
+			)
 			.append( $select )
 		;
 		$(elm).html(rtn);

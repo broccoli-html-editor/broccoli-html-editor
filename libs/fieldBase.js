@@ -63,6 +63,9 @@ module.exports = function(broccoli){
 			rows = mod.rows;
 		}
 		var rtn = $('<div>')
+			.append($('<div>')
+				.html( (mod.description ? mod.description : '') ) // TODO: mdで書けたい
+			)
 			.append($('<textarea>')
 				.attr({
 					"name":mod.name,
@@ -70,7 +73,8 @@ module.exports = function(broccoli){
 				})
 				.val(data)
 				.css({'width':'100%','height':'auto'})
-		);
+			)
+		;
 
 		$(elm).html(rtn);
 		// setTimeout(function(){
