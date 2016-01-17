@@ -461,7 +461,10 @@
 		this.copy = function(callback){
 			callback = callback||function(){};
 
-			var data = _this.contentsSourceData.get( _this.getSelectedInstance() );
+			var data = {};
+			data.data = [];
+			data.data[0] = _this.contentsSourceData.get( _this.getSelectedInstance() );
+			data.resources = {}; // TODO: 未実装
 			data = JSON.stringify( data, null, 1 );
 			_this.clipboard.set( data );
 			_this.message('インスタンスをコピーしました。');
@@ -492,7 +495,7 @@
 				return;
 			}
 			// console.log(data);
-			_this.contentsSourceData.duplicateInstance(data, function(data){
+			_this.contentsSourceData.duplicateInstance(data.data[0], function(data){
 				// console.log(data);
 
 				_this.contentsSourceData.addInstance( data, selectedInstance, function(){
