@@ -326,7 +326,7 @@ module.exports = function(broccoli){
 		);
 		var bin = '';
 		try {
-			bin = (new Buffer(_resourceDb[resKey].base64, 'base64')).toString();
+			bin = (new Buffer(_resourceDb[resKey].base64, 'base64'));
 		} catch (e) {
 			bin = '';
 		}
