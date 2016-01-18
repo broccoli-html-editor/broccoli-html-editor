@@ -47,6 +47,8 @@ module.exports = function(broccoli){
 	var tplField = '';
 	tplField += '<div class="broccoli--edit-window-field">';
 	tplField += '	<h3>---</h3>';
+	tplField += '	<div class="broccoli--edit-window-field-description">';
+	tplField += '	</div>';
 	tplField += '	<div class="broccoli--edit-window-field-content">';
 	tplField += '	</div>';
 	tplField += '</div>';
@@ -91,6 +93,7 @@ module.exports = function(broccoli){
 					return;
 				}
 				// console.log(fieldName);
+				// console.log(field);
 				var $field = $(tplField)
 					.attr({
 						'data-broccoli-edit-window-field-name': field.name ,
@@ -103,6 +106,15 @@ module.exports = function(broccoli){
 						.text((field.fieldType=='input' ? field.type : field.fieldType))
 					)
 				;
+				if( field.description ){
+					$field.find('>.broccoli--edit-window-field-description')
+						.html( field.description )
+					;
+				}else{
+					$field.find('>.broccoli--edit-window-field-description')
+						.remove()
+					;
+				}
 				$fields.append($field);
 
 				// console.log( broccoli.fieldDefinitions );

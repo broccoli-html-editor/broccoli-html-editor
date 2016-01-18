@@ -5,6 +5,35 @@
    "fields": {
     "main": [
      {
+      "modId": "testMod1:dev/twig",
+      "fields": {
+       "heading": {
+        "src": "",
+        "editor": "markdown"
+       },
+       "body": {
+        "src": "",
+        "editor": "markdown"
+       },
+       "select": "",
+       "include_main": [],
+       "loop": []
+      },
+      "anchor": "",
+      "dec": ""
+     },
+     {
+      "modId": "testMod1:dev/multitext",
+      "fields": {
+       "main": {
+        "src": "## デフォルトの値\n\nここを編集してください。",
+        "editor": "markdown"
+       }
+      },
+      "anchor": "",
+      "dec": ""
+     },
+     {
       "modId": "testMod1:dev/mod_in_loop",
       "fields": {
        "sample_loop1": [
@@ -520,7 +549,9 @@
          "dec": ""
         }
        ]
-      }
+      },
+      "anchor": "",
+      "dec": ""
      },
      {
       "modId": "testMod1:units/cols3",
@@ -685,43 +716,6 @@
       "dec": ""
      },
      {
-      "modId": "testMod1:units/cols3",
-      "fields": {
-       "column1": [
-        {
-         "modId": "testMod1:parts/md",
-         "fields": {
-          "md_src": "### ね。遊んでくればいいじゃんか"
-         }
-        }
-       ],
-       "column2": [
-        {
-         "modId": "testMod1:parts/md",
-         "fields": {
-          "md_src": "### どうなってんだー\n\nなかなか再現しないなぁ。\n\n高さが増えるイベントが起きた直後に、スクロールバーの分座標がずれるっぽい。"
-         }
-        }
-       ],
-       "column3": [
-        {
-         "modId": "testMod1:parts/md",
-         "fields": {
-          "md_src": "### 処理の順番間違ってるかな？\n\n復旧したっ。"
-         }
-        }
-       ]
-      }
-     },
-     {
-      "modId": "testMod1:parts/html",
-      "fields": {
-       "html_src": ""
-      },
-      "dec": "編集者コメント欄です。",
-      "anchor": ""
-     },
-     {
       "modId": "testMod1:dev/wysiwig_tinymce",
       "fields": {
        "tiny": "<p>やっぱこっちのエディタの方が使いやすそうに見える。</p>\n<p>さっき、一瞬、影が見えたような気が・・・(汗)(汗)</p>\n<ul>\n<li>きの、せい、かな？</li>\n</ul>"
@@ -773,11 +767,15 @@
          "dec": ""
         }
        ]
-      }
+      },
+      "anchor": "",
+      "dec": ""
      },
      {
       "modId": "testMod1:dev/module_js",
-      "fields": {}
+      "fields": {},
+      "anchor": "",
+      "dec": ""
      },
      {
       "modId": "testMod1:dev/singleRootElement",
@@ -786,26 +784,34 @@
         {
          "modId": "testMod1:dev/singleRootElement",
          "fields": {
-          "hidden_element": ""
+          "hidden_element": "markdown"
          },
-         "subModName": "thumb_loop"
+         "subModName": "thumb_loop",
+         "anchor": "",
+         "dec": ""
         },
         {
          "modId": "testMod1:dev/singleRootElement",
          "fields": {
-          "hidden_element": ""
+          "hidden_element": "markdown"
          },
-         "subModName": "thumb_loop"
+         "subModName": "thumb_loop",
+         "anchor": "",
+         "dec": ""
         },
         {
          "modId": "testMod1:dev/singleRootElement",
          "fields": {
-          "hidden_element": ""
+          "hidden_element": "md"
          },
-         "subModName": "thumb_loop"
+         "subModName": "thumb_loop",
+         "anchor": "",
+         "dec": ""
         }
        ]
-      }
+      },
+      "anchor": "",
+      "dec": ""
      },
      {
       "modId": "testMod1:boxes/attention_box",
@@ -863,8 +869,7 @@
                     {
                      "modId": "testMod1:units/cols2",
                      "fields": {
-                      "column1": [],
-                      "column2": [
+                      "column1": [
                        {
                         "modId": "PlainHTMLElements:PlainHTML/MultiText",
                         "fields": {
@@ -875,7 +880,9 @@
                         },
                         "dec": "",
                         "anchor": ""
-                       },
+                       }
+                      ],
+                      "column2": [
                        {
                         "modId": "PlainHTMLElements:PlainHTML/MultiText",
                         "fields": {
@@ -883,7 +890,9 @@
                           "src": "いい感じになってきたと思います。",
                           "editor": "markdown"
                          }
-                        }
+                        },
+                        "anchor": "",
+                        "dec": ""
                        },
                        {
                         "modId": "testMod1:dev/custom1",

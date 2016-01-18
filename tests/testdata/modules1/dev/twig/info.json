@@ -22,7 +22,8 @@
 					{"value":"1つ目の選択肢を選択しました。", "label":"選択肢1"},
 					{"value":"2つ目の選択肢を選択しました。", "label":"選択肢2"}
 				],
-				"label":"Select"
+				"label":"Select",
+				"description":"説明欄は、Twigモジュールにもつけられます。"
 			},
 			"include_main":{
 				"fieldType": "module"

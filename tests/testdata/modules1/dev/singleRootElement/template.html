@@ -2,11 +2,12 @@
 {&{"loop":{"name":"thumb_loop"}}&}
 
 {&
-{"input":{"name":"hidden_element","hidden":true}}
+{"input":{"name":"hidden_element","type":"markdown","hidden":true}}
 &}
 
 <div class="single-root-element--element">
 <p>isSingleRootElement が false になってはいけないパターン</p>
+{&{"echo":{"ref":"hidden_element"}}&}
 </div>
 {&"endloop"&}
 </div>

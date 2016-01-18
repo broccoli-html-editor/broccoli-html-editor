@@ -185,9 +185,6 @@ module.exports = function(broccoli){
 			);
 			rtn.append(
 				$('<div>')
-					.append($('<div>')
-						.text( (mod.description ? mod.description : '') )
-					)
 					.append( $('<span>')
 						.text('出力ファイル名(拡張子を含まない):')
 					)

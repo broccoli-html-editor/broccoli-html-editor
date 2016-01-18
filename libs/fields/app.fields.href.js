@@ -33,9 +33,6 @@ module.exports = function(broccoli){
 			.css({'width':'100%','height':'auto'})
 		;
 		var rtn = $('<div>')
-			.append($('<div>')
-				.text( (mod.description ? mod.description : '') )
-			)
 			.append( $input )
 		;
 		$(elm).html(rtn);

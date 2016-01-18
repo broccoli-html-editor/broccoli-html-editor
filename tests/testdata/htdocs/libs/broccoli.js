@@ -1741,6 +1741,8 @@ module.exports = function(broccoli){
 	var tplField = '';
 	tplField += '<div class="broccoli--edit-window-field">';
 	tplField += '	<h3>---</h3>';
+	tplField += '	<div class="broccoli--edit-window-field-description">';
+	tplField += '	</div>';
 	tplField += '	<div class="broccoli--edit-window-field-content">';
 	tplField += '	</div>';
 	tplField += '</div>';
@@ -1785,6 +1787,7 @@ module.exports = function(broccoli){
 					return;
 				}
 				// console.log(fieldName);
+				// console.log(field);
 				var $field = $(tplField)
 					.attr({
 						'data-broccoli-edit-window-field-name': field.name ,
@@ -1797,6 +1800,15 @@ module.exports = function(broccoli){
 						.text((field.fieldType=='input' ? field.type : field.fieldType))
 					)
 				;
+				if( field.description ){
+					$field.find('>.broccoli--edit-window-field-description')
+						.html( field.description )
+					;
+				}else{
+					$field.find('>.broccoli--edit-window-field-description')
+						.remove()
+					;
+				}
 				$fields.append($field);
 
 				// console.log( broccoli.fieldDefinitions );
@@ -3317,9 +3329,6 @@ module.exports = function(broccoli){
 			rows = mod.rows;
 		}
 		var rtn = $('<div>')
-			.append($('<div>')
-				.html( (mod.description ? mod.description : '') ) // TODO: mdで書けたい
-			)
 			.append($('<textarea>')
 				.attr({
 					"name":mod.name,
@@ -3423,9 +3432,6 @@ module.exports = function(broccoli){
 			.css({'width':'100%','height':'auto'})
 		;
 		var rtn = $('<div>')
-			.append($('<div>')
-				.text( (mod.description ? mod.description : '') )
-			)
 			.append( $input )
 		;
 		$(elm).html(rtn);
@@ -3666,9 +3672,6 @@ module.exports = function(broccoli){
 			);
 			rtn.append(
 				$('<div>')
-					.append($('<div>')
-						.text( (mod.description ? mod.description : '') )
-					)
 					.append( $('<span>')
 						.text('出力ファイル名(拡張子を含まない):')
 					)
@@ -3902,9 +3905,6 @@ module.exports = function(broccoli){
 			rows = mod.rows;
 		}
 		var rtn = $('<div>')
-			.append($('<div>')
-				.html( (mod.description ? mod.description : '') )
-			)
 			.append($('<textarea>')
 				.attr({
 					"name":mod.name,
@@ -4017,9 +4017,6 @@ module.exports = function(broccoli){
 			}
 		}
 		var rtn = $('<div>')
-			.append($('<div>')
-				.text( (mod.description ? mod.description : '') )
-			)
 			.append( $select )
 		;
 		$(elm).html(rtn);

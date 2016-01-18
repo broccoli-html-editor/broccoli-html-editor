@@ -36,6 +36,22 @@ module.exports = function(broccoli, moduleId, options){
 		var base64 = bin.toString('base64');
 		return base64;
 	}
+	function markdownSync(str){
+		if( typeof(str) !== typeof('') ){return str;}
+		var marked = require('marked');
+		marked.setOptions({
+			renderer: new marked.Renderer(),
+			gfm: true,
+			tables: true,
+			breaks: false,
+			pedantic: false,
+			sanitize: false,
+			smartLists: true,
+			smartypants: false
+		});
+		str = marked(str);
+		return str;
+	}
 
 	// console.log('classModTpl -> '+moduleId);
 
@@ -212,6 +228,10 @@ module.exports = function(broccoli, moduleId, options){
 			it79.ary(
 				_this.fields ,
 				function( it2, row, tmpFieldName ){
+					if( row.description ){
+						row.description = markdownSync( row.description );
+					}
+
 					if( _this.fields[tmpFieldName].fieldType == 'loop' ){
 						_this.subModule = _this.subModule || {};
 
@@ -264,6 +284,10 @@ module.exports = function(broccoli, moduleId, options){
 					_this.fields[field.input.name] = field.input;
 					_this.fields[field.input.name].fieldType = 'input';
 
+					if( _this.fields[field.input.name].description ){
+						_this.fields[field.input.name].description = markdownSync( _this.fields[field.input.name].description );
+					}
+
 					parseBroccoliTemplate( src, function(){
 						callback();
 					} );
@@ -272,6 +296,10 @@ module.exports = function(broccoli, moduleId, options){
 					_this.fields[field.module.name] = field.module;
 					_this.fields[field.module.name].fieldType = 'module';
 
+					if( _this.fields[field.module.name].description ){
+						_this.fields[field.module.name].description = markdownSync( _this.fields[field.module.name].description );
+					}
+
 					parseBroccoliTemplate( src, function(){
 						callback();
 					} );
@@ -279,6 +307,11 @@ module.exports = function(broccoli, moduleId, options){
 				}else if( field.loop ){
 					_this.fields[field.loop.name] = field.loop;
 					_this.fields[field.loop.name].fieldType = 'loop';
+
+					if( _this.fields[field.loop.name].description ){
+						_this.fields[field.loop.name].description = markdownSync( _this.fields[field.loop.name].description );
+					}
+
 					var tmpSearchResult = _this.searchEndTag( src, 'loop' );
 					src = tmpSearchResult.nextSrc;
 					if( typeof(_this.subModule) !== typeof({}) ){

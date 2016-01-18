@@ -4498,11 +4498,9 @@
     -webkit-transition: -webkit-transform .3s ease-out;
     transition: transform .3s ease-out;
     -webkit-transform: translate(0, -25%);
-    -ms-transform: translate(0, -25%);
     transform: translate(0, -25%); }
   .broccoli .modal.in .modal-dialog {
     -webkit-transform: translate(0, 0);
-    -ms-transform: translate(0, 0);
     transform: translate(0, 0); }
   .broccoli .modal-open .modal {
     overflow-x: hidden;
