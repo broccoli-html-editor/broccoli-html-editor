@@ -53,13 +53,17 @@ broccoli.init(
 
 			callback(fin);
 			return;
+		},
+		'log': function(msg){
+			// エラー発生時にコールされます。
+			// msg を受け取り、適切なファイルへ出力するように実装してください。
+			fs.writeFileSync('/path/to/error.log', {}, msg);
 		}
 	},
 	function(){
 		console.log('standby!');
 	}
 );
-
 ```
 
 クライアントサイドに設定した GPI(General Purpose Interface) Bridge から送られてきたリクエストは、`broccoli.gpi` に渡してください。

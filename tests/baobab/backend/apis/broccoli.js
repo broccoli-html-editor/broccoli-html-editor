@@ -88,8 +88,10 @@ module.exports = function( data, callback, main, socket ){
 
 						callback(fin);
 						return;
+					},
+					'log': function(msg){
+						console.error('[ERROR HANDLED]'+msg);
 					}
-
 				},
 				function(){
 					it1.next(data);

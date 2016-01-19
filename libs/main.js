@@ -54,6 +54,9 @@ module.exports = function(){
 		options.bindTemplate = options.bindTemplate || function(htmls, callback){
 			var fin = ''; for(var i in htmls){ fin += htmls[i]; } callback(fin);
 		};
+		options.log = options.log || function(msg){
+			console.error(msg);
+		};
 		if( !options.pathHtml || !options.pathResourceDir || !options.realpathDataDir ){
 			// 必須項目
 			// console.log(options);
@@ -404,6 +407,14 @@ module.exports = function(){
 		var builder = new bMR( _this );
 		builder.buildJs(callback);
 		return this;
+	}
+
+	/**
+	 * ログファイルにメッセージを出力する
+	 */
+	this.log = function(msg){
+		this.options.log(msg);
+		return;
 	}
 
 }

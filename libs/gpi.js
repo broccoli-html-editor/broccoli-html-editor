@@ -25,8 +25,13 @@ module.exports = function(broccoli, api, options, callback){
 			});
 			break;
 		case "getContentsDataJson":
-			var dataJson = fs.readFileSync(broccoli.realpathDataDir+'/data.json');
-			dataJson = JSON.parse( dataJson );
+			var dataJson = {};
+			try {
+				dataJson = fs.readFileSync(broccoli.realpathDataDir+'/data.json');
+				dataJson = JSON.parse( dataJson );
+			} catch (e) {
+				broccoli.log('[ERROR] FAILED to load data.json - '+broccoli.realpathDataDir+'/data.json');
+			}
 			callback(dataJson);
 			break;
 		case "saveContentsData":
