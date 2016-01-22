@@ -471,7 +471,9 @@ module.exports = function(broccoli){
 			},
 			function(){
 				// setTimeout( function(){ cb(newData); }, 0 );
-				callback(newData);
+				broccoli.resourceMgr.init(function(){
+					callback(newData);
+				});
 			}
 		);
 		return this;
