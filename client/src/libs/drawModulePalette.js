@@ -158,7 +158,7 @@ module.exports = function(broccoli, callback){
 			html += '<p>参考イメージ</p>';
 			html += '<ul>';
 			for( var idx in pics ){
-				console.log(pics[idx]);
+				// console.log(pics[idx]);
 				html += '<li><img src="'+ pics[idx] +'" /></li>';
 			}
 			html += '</ul>';

@@ -287,7 +287,7 @@
 					} ,
 					function(it1, data){
 						// 選択状態の復元
-						if( selectedInstance ){
+						if( typeof(selectedInstance) == typeof('') ){
 							_this.selectInstance(selectedInstance, function(){
 								it1.next(data);
 							});
@@ -383,6 +383,7 @@
 			broccoli.panels.selectInstance(instancePath, function(){
 				broccoli.instanceTreeView.selectInstance(instancePath, function(){
 					broccoli.instancePathView.update(function(){
+						console.log("Selected: "+broccoli.getSelectedInstance());
 						callback();
 					});
 				});
@@ -460,14 +461,22 @@
 		 */
 		this.copy = function(callback){
 			callback = callback||function(){};
+			var instancePath = this.getSelectedInstance();
+			// console.log(instancePath);
+			if( typeof(instancePath) !== typeof('') ){
+				_this.message('インスタンスを選択した状態でコピーしてください。');
+				callback(false);
+				return;
+			}
 
 			var data = {};
 			data.data = [];
-			data.data[0] = _this.contentsSourceData.get( _this.getSelectedInstance() );
+			data.data[0] = this.contentsSourceData.get( instancePath );
 			data.resources = {}; // TODO: 未実装
+			// console.log(data);
 			data = JSON.stringify( data, null, 1 );
-			_this.clipboard.set( data );
-			_this.message('インスタンスをコピーしました。');
+			this.clipboard.set( data );
+			this.message('インスタンスをコピーしました。');
 
 			callback(true);
 			return;
@@ -478,15 +487,16 @@
 		 */
 		this.paste = function(callback){
 			callback = callback||function(){};
-			var selectedInstance = _this.getSelectedInstance();
+			var selectedInstance = this.getSelectedInstance();
 			if( typeof(selectedInstance) !== typeof('') ){
+				console.log(selectedInstance);
 				_this.message('インスタンスを選択した状態でペーストしてください。');
 				callback(false);
 				return;
 			}
 			// console.log(selectedInstance);
 
-			var data = _this.clipboard.get();
+			var data = this.clipboard.get();
 			try {
 				data = JSON.parse( data );
 			} catch (e) {
@@ -494,11 +504,11 @@
 				callback(false);
 				return;
 			}
-			// console.log(data);
-			_this.contentsSourceData.duplicateInstance(data.data[0], function(data){
-				// console.log(data);
+			console.log(data.data[0]);
+			_this.contentsSourceData.duplicateInstance(data.data[0], function(newData){
+				console.log(newData);
 
-				_this.contentsSourceData.addInstance( data, selectedInstance, function(){
+				_this.contentsSourceData.addInstance( newData, selectedInstance, function(){
 					_this.message('インスタンスをペーストしました。');
 					_this.saveContents(function(result){
 						// 画面を再描画

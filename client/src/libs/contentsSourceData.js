@@ -70,6 +70,7 @@ module.exports = function(broccoli){
 	this.get = function( containerInstancePath, data ){
 		data = data || _contentsSourceData;
 
+		// console.log( containerInstancePath );
 		if( containerInstancePath === undefined || !containerInstancePath.length ){
 			return data;
 		}

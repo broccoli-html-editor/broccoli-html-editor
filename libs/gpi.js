@@ -96,6 +96,16 @@ module.exports = function(broccoli, api, options, callback){
 			);
 			break;
 
+		case "resourceMgr.duplicateResource":
+			broccoli.resourceMgr.duplicateResource(
+				options.resKey ,
+				function(newResKey){
+					// console.log(newResKey);
+					callback(newResKey);
+				}
+			);
+			break;
+
 		case "resourceMgr.getResourceDb":
 			broccoli.resourceMgr.getResourceDb(
 				function(resourceDb){

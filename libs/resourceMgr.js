@@ -279,6 +279,7 @@ module.exports = function(broccoli){
 	 */
 	this.duplicateResource = function( resKey, callback ){
 		callback = callback || function(){};
+		// console.log( resKey );
 		if( typeof(_resourceDb[resKey]) !== typeof({}) ){
 			// 未登録の resKey
 			callback(false);
@@ -286,9 +287,21 @@ module.exports = function(broccoli){
 		}
 		this.addResource(function(newResKey){
 			_resourceDb[newResKey] = JSON.parse( JSON.stringify( _resourceDb[resKey] ) );
-			fsEx.copySync( _resourcesDirPath+'/'+resKey, _resourcesDirPath+'/'+newResKey );
-
-			callback( newResKey );
+			// console.log( _resourcesDirPath+resKey+'/' + ' => ' + _resourcesDirPath+newResKey+'/' );
+			fs.mkdir( _resourcesDirPath+newResKey+'/', {}, function(err){
+				fsEx.copy(
+					_resourcesDirPath+resKey+'/' ,
+					_resourcesDirPath+newResKey+'/' ,
+					function(err){
+						if(err){
+							// console.log( '++ ERROR ++' );
+							console.error(err);
+						}
+						// console.log( newResKey );
+						callback( newResKey );
+					}
+				);
+			} );
 		});
 		return this;
 	}

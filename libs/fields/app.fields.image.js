@@ -216,6 +216,7 @@ module.exports = function(broccoli){
 			[
 				function(it1, data){
 					_resMgr.duplicateResource( data.resKey, function(newResKey){
+						// console.log(newResKey);
 						data.resKey = newResKey;
 						it1.next(data);
 					} );

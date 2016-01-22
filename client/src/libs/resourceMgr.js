@@ -126,11 +126,20 @@ module.exports = function(broccoli){
 
 	/**
 	 * duplicate resource
-	 * @return 複製された新しいリソースのキー
 	 */
 	this.duplicateResource = function( resKey, callback ){
 		callback = callback || function(){};
-		callback( newResKey );
+		it79.fnc({}, [
+			function(it1, data){
+				broccoli.gpi(
+					'resourceMgr.duplicateResource',
+					{'resKey': resKey} ,
+					function(newResKey){
+						callback( newResKey );
+					}
+				);
+			}
+		]);
 		return this;
 	}
 

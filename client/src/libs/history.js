@@ -29,7 +29,7 @@ module.exports = function(broccoli){
 		historyDataArray.splice(0, historyIdx, JSON.stringify(data));
 		historyIdx = 0;
 
-		console.log('history.put()', historyDataArray);
+		// console.log('history.put()', historyDataArray);
 		setTimeout( callback, 0 );
 		return this;
 	}
@@ -38,7 +38,7 @@ module.exports = function(broccoli){
 	 * 1つ前のデータを得る
 	 */
 	this.back = function( callback ){
-		console.log('history.back()', historyDataArray);
+		// console.log('history.back()', historyDataArray);
 		callback = callback||function(){};
 		historyIdx ++;
 		if( historyIdx >= historyDataArray.length || historyIdx < 0 ){
@@ -54,7 +54,7 @@ module.exports = function(broccoli){
 	 * 1つ次のデータを得る
 	 */
 	this.go = function( callback ){
-		console.log('history.go()', historyDataArray);
+		// console.log('history.go()', historyDataArray);
 		callback = callback||function(){};
 		historyIdx --;
 		if( historyIdx >= historyDataArray.length || historyIdx < 0 ){
