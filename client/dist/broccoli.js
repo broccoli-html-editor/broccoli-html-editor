@@ -2616,7 +2616,7 @@ module.exports = function(broccoli){
 				if( $this.attr('data-broccoli-is-appender') == 'yes' ){
 					instancePath = php.dirname(instancePath);
 				}
-				_this.selectInstance( instancePath );
+				broccoli.selectInstance( instancePath );
 			})
 		;
 		_this.setPanelEventHandlers($panel);
