@@ -303,7 +303,7 @@
 				]
 			);
 			return this;
-		}
+		} // redraw()
 
 		/**
 		 * field定義を取得する
@@ -320,7 +320,7 @@
 				fieldDefinition = this.fieldBase;
 			}
 			return fieldDefinition;
-		}
+		} // getFieldDefinition()
 
 		/**
 		 * GPIから値を得る
@@ -328,7 +328,7 @@
 		this.gpi = function(api, options, callback){
 			this.options.gpiBridge(api, options, callback);
 			return this;
-		}
+		} // gpi()
 
 		/**
 		 * インスタンスを編集する
@@ -368,7 +368,7 @@
 				} );
 			} );
 			return this;
-		}
+		} // editInstance()
 
 		/**
 		 * インスタンスを選択する
@@ -377,14 +377,20 @@
 			console.log("Select: "+instancePath);
 			callback = callback || function(){};
 			var broccoli = this;
-			broccoli.unselectInstance();//一旦選択解除
-			broccoli.unfocusInstance();//フォーカスも解除
-			selectedInstance = instancePath;
-			broccoli.panels.selectInstance(instancePath, function(){
-				broccoli.instanceTreeView.selectInstance(instancePath, function(){
-					broccoli.instancePathView.update(function(){
-						console.log("Selected: "+broccoli.getSelectedInstance());
-						callback();
+
+			//一旦選択解除
+			broccoli.unselectInstance(function(){
+				//フォーカスも解除
+				broccoli.unfocusInstance(function(){
+					selectedInstance = instancePath;
+
+					broccoli.panels.selectInstance(instancePath, function(){
+						broccoli.instanceTreeView.selectInstance(instancePath, function(){
+							broccoli.instancePathView.update(function(){
+								// console.log("Selected: "+broccoli.getSelectedInstance());
+								callback();
+							});
+						});
 					});
 				});
 			});
@@ -414,24 +420,29 @@
 		 */
 		this.focusInstance = function( instancePath, callback ){
 			callback = callback || function(){};
-			var _this = this;
-			this.unfocusInstance();//一旦選択解除
-			this.panels.focusInstance(instancePath, function(){
+			var broccoli = this;
 
-				var $targetElm = $(_this.panels.getPanelElement(instancePath));
-				if($targetElm.size()){
-					var minTop = $canvas.scrollTop() + $targetElm.offset().top - 30;
-					var topLine = $canvas.scrollTop();
-					var targetTop = topLine + $targetElm.offset().top;
-					var targetHeight = $targetElm.height();
-					var to = targetTop + (targetHeight/2) - ($canvas.height()/2);
-					if( to > minTop ){
-						to = minTop;
+			//一旦フォーカス解除
+			broccoli.unfocusInstance(function(){
+
+				//フォーカス
+				broccoli.panels.focusInstance(instancePath, function(){
+
+					var $targetElm = $(broccoli.panels.getPanelElement(instancePath));
+					if($targetElm.size()){
+						var minTop = $canvas.scrollTop() + $targetElm.offset().top - 30;
+						var topLine = $canvas.scrollTop();
+						var targetTop = topLine + $targetElm.offset().top;
+						var targetHeight = $targetElm.height();
+						var to = targetTop + (targetHeight/2) - ($canvas.height()/2);
+						if( to > minTop ){
+							to = minTop;
+						}
+						$canvas.stop().animate({"scrollTop":to} , 'fast' );
 					}
-					$canvas.stop().animate({"scrollTop":to} , 'fast' );
-				}
 
-				callback();
+					callback();
+				});
 			});
 			return this;
 
@@ -442,7 +453,6 @@
 		 */
 		this.unfocusInstance = function(callback){
 			callback = callback || function(){};
-			selectedInstance = null;
 			this.panels.unfocusInstance(function(){
 				callback();
 			});

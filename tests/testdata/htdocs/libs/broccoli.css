@@ -5225,7 +5225,8 @@
         display: none;
         background: #fff;
         border: 1px solid #000;
-        padding: 0; }
+        padding: 0;
+        z-index: 1000; }
         .broccoli--instance-path-view > ul > li ul.broccoli--instance-path-view-children li {
           display: block;
           list-style-type: none;

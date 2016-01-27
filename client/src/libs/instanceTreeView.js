@@ -243,7 +243,7 @@ module.exports = function(broccoli){
 					})
 					.bind('click',function(e){
 						var instancePath = $(this).attr('data-broccoli-instance-path');
-						broccoli.selectInstance(instancePath);
+						broccoli.focusInstance(instancePath);
 						e.stopPropagation();
 					})
 				;
