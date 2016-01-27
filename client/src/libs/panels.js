@@ -68,6 +68,15 @@ module.exports = function(broccoli){
 			.append( $('<div>')
 				.addClass('broccoli--panel-drop-to-insert-here')
 			)
+			.bind('click', function(e){
+				e.stopPropagation();
+				var $this = $(this);
+				var instancePath = $this.attr('data-broccoli-instance-path');
+				if( $this.attr('data-broccoli-is-appender') == 'yes' ){
+					instancePath = php.dirname(instancePath);
+				}
+				_this.selectInstance( instancePath );
+			})
 		;
 		_this.setPanelEventHandlers($panel);
 		if( !isAppender ){
@@ -96,15 +105,6 @@ module.exports = function(broccoli){
 	 */
 	this.setPanelEventHandlers = function($panel){
 		$panel
-			.bind('click', function(e){
-				e.stopPropagation();
-				var $this = $(this);
-				var instancePath = $this.attr('data-broccoli-instance-path');
-				if( $this.attr('data-broccoli-is-appender') == 'yes' ){
-					instancePath = php.dirname(instancePath);
-				}
-				broccoli.selectInstance( instancePath );
-			})
 			.bind('dblclick', function(e){
 				e.stopPropagation();
 				var $this = $(this);

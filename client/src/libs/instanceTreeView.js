@@ -102,7 +102,13 @@ module.exports = function(broccoli){
 										e.stopPropagation();
 										var $this = $(this);
 										var instancePath = $this.attr('data-broccoli-instance-path');
-										broccoli.focusInstance( instancePath );
+										var selectInstancePath = instancePath;
+										if( $this.attr('data-broccoli-is-appender') == 'yes' ){
+											selectInstancePath = php.dirname(instancePath);
+										}
+										broccoli.selectInstance( selectInstancePath, function(){
+											broccoli.focusInstance( instancePath );
+										} );
 									})
 									.append( $('<div>')
 										.addClass('broccoli--panel-drop-to-insert-here')
@@ -148,7 +154,13 @@ module.exports = function(broccoli){
 										e.stopPropagation();
 										var $this = $(this);
 										var instancePath = $this.attr('data-broccoli-instance-path');
-										broccoli.focusInstance( instancePath );
+										var selectInstancePath = instancePath;
+										if( $this.attr('data-broccoli-is-appender') == 'yes' ){
+											selectInstancePath = php.dirname(instancePath);
+										}
+										broccoli.selectInstance( selectInstancePath, function(){
+											broccoli.focusInstance( instancePath );
+										} );
 									})
 									.append( $('<div>')
 										.addClass('broccoli--panel-drop-to-insert-here')
@@ -196,7 +208,9 @@ module.exports = function(broccoli){
 							// if( $this.attr('data-broccoli-is-appender') == 'yes' ){
 							// 	instancePath = php.dirname(instancePath);
 							// }
-							broccoli.focusInstance( instancePath );
+							broccoli.selectInstance( instancePath, function(){
+								broccoli.focusInstance( instancePath );
+							} );
 						})
 						.bind('mouseover', function(e){
 							e.stopPropagation();

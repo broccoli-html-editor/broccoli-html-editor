@@ -336,37 +336,43 @@
 		 * @return {[type]}              [description]
 		 */
 		this.editInstance = function( instancePath ){
-			this.selectInstance(instancePath);
 			console.log("Edit: "+instancePath);
-			this.lightbox( function( lbElm ){
-				_this.drawEditWindow( instancePath, lbElm, function(){
-					_this.closeLightbox(function(){});
-					it79.fnc({},[
-						function(it1, data){
-							// 編集パネルを一旦消去
-							_this.panels.clearPanels(function(){
+			var broccoli = this;
+			broccoli.selectInstance(instancePath, function(){
+				broccoli.lightbox( function( lbElm ){
+					broccoli.drawEditWindow( instancePath, lbElm, function(){
+						it79.fnc({},[
+							function(it1, data){
+								// 編集パネルを一旦消去
+								_this.panels.clearPanels(function(){
+									it1.next(data);
+								});
+							} ,
+							function(it1, data){
+								// コンテンツデータを保存
+								_this.saveContents(function(){
+									it1.next(data);
+								});
+							} ,
+							function(it1, data){
+								// 画面を再描画
+								_this.redraw(function(){
+									it1.next(data);
+								});
+							} ,
+							function(it1, data){
+								broccoli.closeLightbox(function(){
+									it1.next(data);
+								});
+							} ,
+							function(it1, data){
+								console.log('editInstance done.');
 								it1.next(data);
-							});
-						} ,
-						function(it1, data){
-							// コンテンツデータを保存
-							_this.saveContents(function(){
-								it1.next(data);
-							});
-						} ,
-						function(it1, data){
-							// 画面を再描画
-							_this.redraw(function(){
-								it1.next(data);
-							});
-						} ,
-						function(it1, data){
-							console.log('editInstance done.');
-							it1.next(data);
-						}
-					]);
+							}
+						]);
+					} );
 				} );
-			} );
+			});
 			return this;
 		} // editInstance()
 
@@ -552,8 +558,8 @@
 				_this.message('インスタンスを削除しました。');
 				_this.saveContents(function(result){
 					// 画面を再描画
-					_this.redraw(function(){
-						_this.unselectInstance(function(){
+					_this.unselectInstance(function(){
+						_this.redraw(function(){
 							callback(true);
 						});
 					});
