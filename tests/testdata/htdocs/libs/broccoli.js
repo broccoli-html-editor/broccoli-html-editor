@@ -3990,10 +3990,10 @@ module.exports = function(broccoli){
 				})
 				.css({'width':'100%','height':'auto'})
 			)
-			.append($('<ul class="horizontal">')
-				.append($('<li class="horizontal-li"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="" /> HTML</label></li>'))
-				.append($('<li class="horizontal-li"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="text" /> テキスト</label></li>'))
-				.append($('<li class="horizontal-li"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="markdown" /> Markdown</label></li>'))
+			.append($('<p>')
+				.append($('<span style="margin-right: 10px;"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="" /> HTML</label></span>'))
+				.append($('<span style="margin-right: 10px;"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="text" /> テキスト</label></span>'))
+				.append($('<span style="margin-right: 10px;"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="markdown" /> Markdown</label></span>'))
 			)
 		;
 		rtn.find('textarea').val(data.src);
