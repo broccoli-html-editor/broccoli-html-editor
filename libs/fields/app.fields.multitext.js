@@ -70,7 +70,7 @@ module.exports = function(broccoli){
 			rows = mod.rows;
 		}
 		var rtn = $('<div>')
-			.append($('<textarea>')
+			.append($('<textarea class="form-control">')
 				.attr({
 					"name":mod.name,
 					"rows":rows

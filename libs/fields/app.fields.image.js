@@ -119,44 +119,58 @@ module.exports = function(broccoli){
 			}
 
 			var $img = $('<img>');
-			rtn.append( $img
-				.attr({
-					"src": path ,
-					"data-size": res.size ,
-					"data-extension": res.ext,
-					"data-mime-type": res.type,
-					"data-base64": res.base64
-				})
+			var $inputImageName = $('<input class="form-control" style="width:12em;">');
+			rtn.append( $('<label>')
 				.css({
-					'min-width':'100px',
-					'max-width':'100%',
-					'min-height':'100px',
-					'max-height':'200px'
+					'border':'1px solid #999',
+					'padding': 10,
+					'border-radius': 5
 				})
-			);
-			rtn.append( $('<input>')
-				.attr({
-					"name":mod.name ,
-					"type":"file",
-					"webkitfile":"webkitfile"
-				})
-				.css({'width':'100%'})
-				.bind('change', function(e){
-					// console.log(e.target.files);
-					var fileInfo = e.target.files[0];
+				.append( $img
+					.attr({
+						"src": path ,
+						"data-size": res.size ,
+						"data-extension": res.ext,
+						"data-mime-type": res.type,
+						"data-base64": res.base64
+					})
+					.css({
+						'min-width':'100px',
+						'max-width':'100%',
+						'min-height':'100px',
+						'max-height':'200px'
+					})
+				)
+				.append( $('<input>')
+					.attr({
+						"name":mod.name ,
+						"type":"file",
+						"webkitfile":"webkitfile"
+					})
+					.css({'width':'100%'})
+					.bind('change', function(e){
+						// console.log(e.target.files);
+						var fileInfo = e.target.files[0];
 
-					function readSelectedLocalFile(fileInfo, callback){
-						var reader = new FileReader();
-						reader.onload = function(evt) {
-							callback( evt.target.result );
+						function readSelectedLocalFile(fileInfo, callback){
+							var reader = new FileReader();
+							reader.onload = function(evt) {
+								callback( evt.target.result );
+							}
+							reader.readAsDataURL(fileInfo);
 						}
-						reader.readAsDataURL(fileInfo);
-					}
 
-					var realpathSelected = $(this).val();
-					if( realpathSelected ){
-						readSelectedLocalFile(fileInfo, function(dataUri){
-							$img
+						var realpathSelected = $(this).val();
+						if( realpathSelected ){
+							if( !$inputImageName.val() ){
+								// アップした画像名をプリセット
+								// ただし、既に名前がセットされている場合は変更しない
+								var fname = fileInfo.name;
+								fname = fname.replace(new RegExp('\\.[a-zA-Z0-9]*$'), '');
+								$inputImageName.val(fname);
+							}
+							readSelectedLocalFile(fileInfo, function(dataUri){
+								$img
 								.attr({
 									"src": dataUri ,
 									"data-size": fileInfo.size ,
@@ -168,27 +182,28 @@ module.exports = function(broccoli){
 										return dataUri;
 									})(dataUri)
 								})
-							;
-						});
-					}
+								;
+							});
+						}
 
-					// _this.callGpi(
-					// 	{
-					// 		'fileInfo': fileInfo
-					// 	},
-					// 	function(result){
-					// 		console.log(result);
-					// 	}
-					// );
+						// _this.callGpi(
+						// 	{
+						// 		'fileInfo': fileInfo
+						// 	},
+						// 	function(result){
+						// 		console.log(result);
+						// 	}
+						// );
 
-				})
+					})
+				)
 			);
 			rtn.append(
 				$('<div>')
 					.append( $('<span>')
 						.text('出力ファイル名(拡張子を含まない):')
 					)
-					.append( $('<input>')
+					.append( $inputImageName
 						.attr({
 							"name":mod.name+'-publicFilename' ,
 							"type":"text",

@@ -25,7 +25,7 @@ module.exports = function(broccoli){
 	 * エディタUIを生成
 	 */
 	this.mkEditor = function( mod, data, elm, callback ){
-		var $input = $('<input>')
+		var $input = $('<input class="form-control">')
 			.attr({
 				"name":mod.name
 			})
