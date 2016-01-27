@@ -157,6 +157,7 @@ module.exports = function(broccoli){
 						// console.log( data );
 						// console.log( mod );
 
+						_this.lock();//フォームをロック
 						it79.ary(
 							mod.fields,
 							function(it2, field2, fieldName2){
@@ -208,7 +209,9 @@ module.exports = function(broccoli){
 				;
 				$editWindow.find('button.broccoli--edit-window-btn-remove')
 					.bind('click', function(){
+						_this.lock();
 						if( !confirm('このモジュールを削除します。よろしいですか？') ){
+							_this.unlock();
 							return;
 						}
 						broccoli.contentsSourceData.removeInstance(instancePath, function(){
@@ -220,6 +223,28 @@ module.exports = function(broccoli){
 				;
 			}
 		);
+		return this;
+	}
+
+	/**
+	 * フォーム操作を凍結する
+	 */
+	this.lock = function(callback){
+		callback = callback || function(){};
+		$editWindow.find('.broccoli--edit-window-builtin-fields').find('input, textarea').attr({'disabled': true});
+		$editWindow.find('.broccoli--edit-window-form-buttons').find('button').attr({'disabled': true});
+		callback();
+		return this;
+	}
+
+	/**
+	 * フォーム操作の凍結を解除する
+	 */
+	this.unlock = function(callback){
+		callback = callback || function(){};
+		$editWindow.find('.broccoli--edit-window-builtin-fields').find('input, textarea').attr({'disabled': false});
+		$editWindow.find('.broccoli--edit-window-form-buttons').find('button').attr({'disabled': false});
+		callback();
 		return this;
 	}
 
