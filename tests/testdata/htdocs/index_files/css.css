@@ -5,7 +5,7 @@
 	position:relative;
 	float: left;
 	width: 30%;
-	height: 600px;
+	height: 200px;
 	overflow: auto;
 }
 .canvas{
@@ -13,7 +13,7 @@
 	position:relative;
 	float: left;
 	width: 50%;
-	height: 600px;
+	height: 200px;
 	overflow: auto;
 	z-index: 90;
 }
@@ -22,7 +22,7 @@
 	position:relative;
 	float: right;
 	width: 20%;
-	height: 600px;
+	height: 200px;
 	overflow: auto;
 	z-index: 100;
 }
@@ -32,4 +32,20 @@
 	clear:both;
 	width: auto;
 	height: auto;
+}
+.test_funcs{
+}
+.test_funcs ul{
+	margin: 0;
+	padding: 0;
+}
+.test_funcs ul li{
+	margin: 0;
+	padding: 0;
+	list-style-type:none;
+	display: inline-block;
+	font-size: 11px;
+}
+.test_funcs ul li a:before{
+	content: "> ";
 }

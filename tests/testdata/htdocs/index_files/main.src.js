@@ -84,8 +84,12 @@ window.main = new (function(){
 			function(){
 				console.log('broccoli standby.');
 				$(window).resize(function(){
+					var h = $(window).height() - 70;
+					$('.instanceTreeView').css({'height':h});
+					$('.canvas').css({'height':h});
+					$('.palette').css({'height':h});
 					broccoli.redraw();
-				});
+				}).resize();
 				callback();
 			}
 		);

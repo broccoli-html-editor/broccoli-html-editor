@@ -1,6 +1,7 @@
 # broccoli-html-editor
 
 _broccoli-html-editor_ は、GUIベースのHTMLエディタライブラリです。
+断片化されたHTMLの部品(モジュール)をドラッグ＆ドロップ操作で組み合わせて、ウェブページを構成できます。
 
 ## インストール - Install
 
@@ -79,6 +80,8 @@ broccoli.gpi(
 	}
 );
 ```
+
+APIの一覧は[こちらを参照](docs/api_server.md)ください。
 
 
 ### クライアント側 - Client side JavaScript
@@ -163,10 +166,14 @@ window.removeEventListener('message', f, false);
 </script>
 ```
 
+APIの一覧は[こちらを参照](docs/api_client.md)ください。
+
+
 
 ## モジュールの開発 - developing HTML module
 
 coming soon.
+
 
 ## カスタムフィールドの開発 - developing custom field
 
