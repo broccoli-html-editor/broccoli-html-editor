@@ -3026,7 +3026,7 @@ module.exports = function(broccoli, iframe){
 		}else if(data.api == 'onClickContentsLink'){
 			// console.log(event.data.options);
 			var data = event.data.options;
-			broccoli.options.onClickContentsLink(data.href, data);
+			broccoli.options.onClickContentsLink(data.url, data);
 			return;
 
 		}else{

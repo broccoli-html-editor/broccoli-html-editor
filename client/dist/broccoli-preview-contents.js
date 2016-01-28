@@ -127,6 +127,7 @@
 	$iframeWindow.on("click", "a", function() {
 		var data = {};
 		var $this = $(this);
+		data.url = $this.prop('href');
 		data.tagName = this.tagName.toLowerCase();
 		data.href = $this.attr('href');
 		data.target = $this.attr('target');
@@ -136,8 +137,9 @@
 	$iframeWindow.find('form').bind("submit", function() {
 		var data = {};
 		var $this = $(this);
+		data.url = $this.prop('action');
 		data.tagName = this.tagName.toLowerCase();
-		data.href = $this.attr('action');
+		data.action = $this.attr('action');
 		data.target = $this.attr('target');
 		callbackMessage( 'onClickContentsLink', data );
 		return false;
