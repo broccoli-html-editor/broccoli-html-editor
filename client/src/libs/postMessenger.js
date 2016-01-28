@@ -78,12 +78,19 @@ module.exports = function(broccoli, iframe){
 			broccoli.unfocusInstance();
 			return;
 
+		}else if(data.api == 'onClickContentsLink'){
+			// console.log(event.data.options);
+			var data = event.data.options;
+			broccoli.options.onClickContentsLink(data.href, data);
+			return;
+
 		}else{
 			if(!callbackMemory[data.api]){return;}
 			callbackMemory[data.api](data.options);
 			callbackMemory[data.api] = undefined;
 			delete callbackMemory[data.api];
 		}
+		return;
 
 	});
 

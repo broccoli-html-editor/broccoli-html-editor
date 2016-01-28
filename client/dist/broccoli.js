@@ -49,6 +49,8 @@
 			options.contents_area_selector = options.contents_area_selector || '.contents';
 			options.contents_bowl_name_by = options.contents_bowl_name_by || 'id';
 			options.gpiBridge = options.gpiBridge || function(){};
+			options.onClickContentsLink = options.onClickContentsLink || function(){};
+
 			this.options = options;
 
 			$canvas = $(options.elmCanvas);
@@ -261,7 +263,7 @@
 							{},
 							function(height){
 								// console.log(height);
-								$canvas.find('iframe').height( height + 16 );
+								$canvas.find('iframe').height( height + 0 );
 								it1.next(data);
 							}
 						);
@@ -3021,12 +3023,19 @@ module.exports = function(broccoli, iframe){
 			broccoli.unfocusInstance();
 			return;
 
+		}else if(data.api == 'onClickContentsLink'){
+			// console.log(event.data.options);
+			var data = event.data.options;
+			broccoli.options.onClickContentsLink(data.href, data);
+			return;
+
 		}else{
 			if(!callbackMemory[data.api]){return;}
 			callbackMemory[data.api](data.options);
 			callbackMemory[data.api] = undefined;
 			delete callbackMemory[data.api];
 		}
+		return;
 
 	});
 

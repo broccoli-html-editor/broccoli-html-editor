@@ -13427,6 +13427,11 @@ window.main = new (function(){
 						}
 					);
 					return;
+				},
+				'onClickContentsLink': function( uri, data ){
+					alert(uri + ' へ移動');
+					console.log(data);
+					return false;
 				}
 			} ,
 			function(){

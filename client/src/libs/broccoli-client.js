@@ -43,6 +43,8 @@
 			options.contents_area_selector = options.contents_area_selector || '.contents';
 			options.contents_bowl_name_by = options.contents_bowl_name_by || 'id';
 			options.gpiBridge = options.gpiBridge || function(){};
+			options.onClickContentsLink = options.onClickContentsLink || function(){};
+
 			this.options = options;
 
 			$canvas = $(options.elmCanvas);
@@ -255,7 +257,7 @@
 							{},
 							function(height){
 								// console.log(height);
-								$canvas.find('iframe').height( height + 16 );
+								$canvas.find('iframe').height( height + 0 );
 								it1.next(data);
 							}
 						);

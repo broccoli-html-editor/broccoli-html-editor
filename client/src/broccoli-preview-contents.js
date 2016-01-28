@@ -97,7 +97,7 @@
 			return;
 
 		}else if(data.api == 'getHtmlContentHeight'){
-			var height = $iframeWindow.outerHeight();
+			var height = $iframeWindow.height() + 16;
 			callbackMessage(data.callback, height);
 			return;
 
@@ -123,12 +123,22 @@
 		return;
 	});
 
-	$("body").on("click", "a", function() {
-		alert("clicked.");
+	$iframeWindow.on("click", "a", function() {
+		var data = {};
+		var $this = $(this);
+		data.tagName = this.tagName.toLowerCase();
+		data.href = $this.attr('href');
+		data.target = $this.attr('target');
+		callbackMessage( 'onClickContentsLink', data );
 		return false;
 	});
-	$("body").on("submit", "form", function() {
-		alert("submitted.");
+	$iframeWindow.find('form').bind("submit", function() {
+		var data = {};
+		var $this = $(this);
+		data.tagName = this.tagName.toLowerCase();
+		data.href = $this.attr('action');
+		data.target = $this.attr('target');
+		callbackMessage( 'onClickContentsLink', data );
 		return false;
 	});
 
