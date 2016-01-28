@@ -124,6 +124,15 @@
 		return;
 	});
 
+	$("body").on("click", "a", function() {
+		alert("clicked.");
+		return false;
+	});
+	$("body").on("submit", "form", function() {
+		alert("submitted.");
+		return false;
+	});
+
 })();
 
 },{"jquery":2}],2:[function(require,module,exports){

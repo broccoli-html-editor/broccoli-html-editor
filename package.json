@@ -4,6 +4,7 @@
   "description": "GUI HTML Editor Library.",
   "main": "libs/main.js",
   "scripts": {
+    "start":"gulp watch",
     "up": "node ./node_modules/baobab-fw/lib/cmd/server.js",
     "test": "mocha --ui tdd ./tests/"
   },

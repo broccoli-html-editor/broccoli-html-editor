@@ -73,6 +73,12 @@ module.exports = function( data, callback, main, socket ){
 						fin += '        <div class="contents" data-contents="secondly">'+"\n";
 						fin += htmls['secondly']+"\n";
 						fin += '        </div><!-- /secondly -->'+"\n";
+						fin += '        <footer>'+"\n";
+						fin += '            <a href="/editpage/">top</a>'+"\n";
+						fin += '            <form action="javascript:alert(\'form submit done.\');">'+"\n";
+						fin += '                <input type="submit" value="submit!" />'+"\n";
+						fin += '            </form>'+"\n";
+						fin += '        </footer>'+"\n";
 						fin += '    </body>'+"\n";
 						fin += '</html>'+"\n";
 						fin += '<script data-broccoli-receive-message="yes">'+"\n";
