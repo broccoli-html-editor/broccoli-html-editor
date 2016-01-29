@@ -15,9 +15,9 @@
 			<ul>
 				<li><a href="javascript:window.main.broccoli.historyBack(function(){alert('history Back done.');});">history Back</a></li>
 				<li><a href="javascript:window.main.broccoli.historyGo(function(){alert('history Go done.');});">history Go</a></li>
-				<li><a href="javascript:window.main.broccoli.copy(function(){alert('copy done.');});">copy</a></li>
-				<li><a href="javascript:window.main.broccoli.paste(function(){alert('paste done.');});">paste</a></li>
-				<li><a href="javascript:window.main.broccoli.remove(function(){alert('remove done.');});">remove</a></li>
+				<li><a href="javascript:window.main.broccoli.copy(function(res){console.log(res);alert('copy done.');});">copy</a></li>
+				<li><a href="javascript:window.main.broccoli.paste(function(res){console.log(res);alert('paste done.');});">paste</a></li>
+				<li><a href="javascript:window.main.broccoli.remove(function(res){console.log(res);alert('remove done.');});">remove</a></li>
 				<li><a href="javascript:alert(window.main.broccoli.getSelectedInstance());">getSelectedInstance</a></li>
 			</ul>
 		</div>

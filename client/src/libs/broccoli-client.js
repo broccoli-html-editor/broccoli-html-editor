@@ -44,6 +44,7 @@
 			options.contents_bowl_name_by = options.contents_bowl_name_by || 'id';
 			options.gpiBridge = options.gpiBridge || function(){};
 			options.onClickContentsLink = options.onClickContentsLink || function(){};
+			options.onMessage = options.onMessage || function(){};
 
 			this.options = options;
 
@@ -672,7 +673,10 @@
 		 * @return {Object}            this.
 		 */
 		this.message = function(message, callback){
+			callback  = callback||function(){};
 			console.info(message);
+			this.options.onMessage(message);
+			callback();
 			return this;
 		}
 

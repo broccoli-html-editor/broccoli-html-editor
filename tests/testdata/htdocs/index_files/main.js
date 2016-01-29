@@ -13432,6 +13432,9 @@ window.main = new (function(){
 					alert(uri + ' へ移動');
 					console.log(data);
 					return false;
+				},
+				'onMessage': function(message){
+					console.info('message: '+message);
 				}
 			} ,
 			function(){

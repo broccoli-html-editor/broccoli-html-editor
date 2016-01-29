@@ -138,6 +138,10 @@ broccoli.init(
 			alert(uri + ' へ移動');
 			console.log(data);
 			return false;
+		},
+		'onMessage': function( message ){
+			// ユーザーへ知らせるメッセージを表示する
+			console.info('message: '+message);
 		}
 	} ,
 	function(){
