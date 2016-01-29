@@ -12,14 +12,17 @@ function makeDefaultBroccoli(options, callback){
 		'testMod1': '../modules1/',
 		'testMod2': '../modules2/'
 	};
+	var contents_id = options.contents_id||'test1/test1';
+	// console.log(contents_id);
+
 	var broccoli = new Broccoli();
 	broccoli.init(
 		{
 			'paths_module_template': paths_module_template,
 			'documentRoot': path.resolve(__dirname, 'testdata/htdocs/')+'/',
-			'pathHtml': '/test1/test1.html',
-			'pathResourceDir': '/test1/test1_files/resources/',
-			'realpathDataDir': path.resolve(__dirname, 'testdata/htdocs/test1/test1_files/guieditor.ignore/')+'/'
+			'pathHtml': '/'+contents_id+'.html',
+			'pathResourceDir': '/'+contents_id+'_files/resources/',
+			'realpathDataDir': path.resolve(__dirname, 'testdata/htdocs/'+contents_id+'_files/guieditor.ignore/')+'/'
 		},
 		function(){
 			callback(broccoli);
@@ -326,8 +329,13 @@ describe('ビルドする', function() {
 		makeDefaultBroccoli( {}, function(broccoli){
 			var data = require(__dirname+'/testdata/htdocs/editpage/index_files/guieditor.ignore/data.json');
 			// console.log(data);
+			var dataBowlMain = undefined;
+			try {
+				dataBowlMain = data.bowl.main;
+			} catch (e) {
+			}
 			broccoli.buildBowl(
-				data.bowl.main ,
+				dataBowlMain ,
 				{
 					'mode': 'finalize'
 				} ,
@@ -340,7 +348,31 @@ describe('ビルドする', function() {
 		} );
 	});
 
-	it("テストデータをfinalizeモードでビルドする", function(done) {
+	it("editpageをcanvasモードでビルドする", function(done) {
+		this.timeout(15*1000);
+		makeDefaultBroccoli( {}, function(broccoli){
+			var data = require(__dirname+'/testdata/htdocs/editpage/index_files/guieditor.ignore/data.json');
+			// console.log(data);
+			var dataBowlMain = undefined;
+			try {
+				dataBowlMain = data.bowl.main;
+			} catch (e) {
+			}
+			broccoli.buildBowl(
+				dataBowlMain ,
+				{
+					'mode': 'canvas'
+				} ,
+				function( html, err ){
+					fs.writeFileSync(path.resolve(__dirname, './testdata/htdocs/test2/index.canvas.html'), html);
+					// console.log( html );
+					done();
+				}
+			);
+		} );
+	});
+
+	it("テストデータ1をfinalizeモードでビルドする", function(done) {
 		this.timeout(15*1000);
 		makeDefaultBroccoli( {}, function(broccoli){
 			var data = require(__dirname+'/testdata/htdocs/test1/test1_files/guieditor.ignore/data.json');
@@ -359,7 +391,7 @@ describe('ビルドする', function() {
 		} );
 	});
 
-	it("テストデータをcanvasモードでビルドする", function(done) {
+	it("テストデータ1をcanvasモードでビルドする", function(done) {
 		this.timeout(15*1000);
 		makeDefaultBroccoli( {}, function(broccoli){
 			var data = require(__dirname+'/testdata/htdocs/test1/test1_files/guieditor.ignore/data.json');
@@ -372,6 +404,42 @@ describe('ビルドする', function() {
 				function( html, err ){
 					fs.writeFileSync(path.resolve(__dirname, './testdata/htdocs/test1/test1.canvas.html'), html);
 					// console.log( html );
+					done();
+				}
+			);
+		} );
+	});
+
+	it("テストデータ3-1 新規ブランクdata.json をfinalizeモードでビルドする", function(done) {
+		this.timeout(15*1000);
+		makeDefaultBroccoli( {'contents_id': 'test3/1'}, function(broccoli){
+			broccoli.buildHtml(
+				{
+					'mode': 'finalize',
+					'bowlList': ['main','secondly']
+				} ,
+				function( htmls ){
+					// console.log( htmls );
+					fs.writeFileSync(path.resolve(__dirname, './testdata/htdocs/test3/1.main.html'), htmls['main'] );
+					fs.writeFileSync(path.resolve(__dirname, './testdata/htdocs/test3/1.secondly.html'), htmls['secondly'] );
+					done();
+				}
+			);
+		} );
+	});
+
+	it("テストデータ3-1 新規ブランクdata.json をcanvasモードでビルドする", function(done) {
+		this.timeout(15*1000);
+		makeDefaultBroccoli( {'contents_id': 'test3/1'}, function(broccoli){
+			broccoli.buildHtml(
+				{
+					'mode': 'canvas',
+					'bowlList': ['main','secondly']
+				} ,
+				function( htmls ){
+					// console.log( htmls );
+					fs.writeFileSync(path.resolve(__dirname, './testdata/htdocs/test3/1.main.canvas.html'), htmls['main'] );
+					fs.writeFileSync(path.resolve(__dirname, './testdata/htdocs/test3/1.secondly.canvas.html'), htmls['secondly'] );
 					done();
 				}
 			);

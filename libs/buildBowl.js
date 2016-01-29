@@ -549,6 +549,9 @@ module.exports = function(broccoli, data, options, callback){
 					// console.log( d.html );
 
 					var isSingleRootElement = (function(tplSrc){
+						if( options.instancePath.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
+							return false;
+						}
 						tplSrc = tplSrc.replace( new RegExp('\\<\\!\\-\\-.*?\\-\\-\\>','g'), '' );
 						tplSrc = tplSrc.replace( new RegExp('\\{\\&.*?\\&\\}','g'), '' );
 						tplSrc = tplSrc.replace( new RegExp('\r\n|\r|\n','g'), '' );
