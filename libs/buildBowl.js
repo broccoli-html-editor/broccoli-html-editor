@@ -474,12 +474,13 @@ module.exports = function(broccoli, data, options, callback){
 											var tmpOpe = php.trim(RegExp.$2);
 											var tmpDiff = php.trim(RegExp.$3);
 											if( tmpOpe == '==' ){
-												if( _this.nameSpace.vars[tmpValue].val != tmpDiff ){
-													condBool = false;
+												condBool = false;
+												if( _this.nameSpace.vars[tmpValue] && _this.nameSpace.vars[tmpValue].val == tmpDiff ){
+													condBool = true;
 													break;
 												}
 											}else if( tmpOpe == '!=' ){
-												if( _this.nameSpace.vars[tmpValue].val == tmpDiff ){
+												if( _this.nameSpace.vars[tmpValue] && _this.nameSpace.vars[tmpValue].val == tmpDiff ){
 													condBool = false;
 													break;
 												}
