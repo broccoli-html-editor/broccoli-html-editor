@@ -225,7 +225,10 @@
 								'contents_bowl_name_by': _this.options.contents_bowl_name_by
 							},
 							function(bowlList){
-								// console.log(bowlList);
+								if( typeof(bowlList)!==typeof([]) || !bowlList.length ){
+									broccoli.message('FAILED to list bowls.');
+									console.log('bowlList - - - - - -', bowlList);
+								}
 								for( var idx in bowlList ){
 									_this.contentsSourceData.initBowlData(bowlList[idx]);
 								}
@@ -233,7 +236,7 @@
 									'buildHtml',
 									{'bowlList': bowlList},
 									function(htmls){
-										// console.log(htmls);
+										// console.log('htmls - - - - - - - -', htmls);
 										_this.postMessenger.send(
 											'updateHtml',
 											{
