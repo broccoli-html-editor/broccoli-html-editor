@@ -127,8 +127,10 @@
         {
          "modId": "testMod1:parts/md",
          "fields": {
-          "md_src": "## (3) Composer から呼び出す場合\n\n- require に、リポジトリを指定する。\n- ディレクトリのパスは `./vendor/vendorname/libname/~~~~` になるはず。"
-         }
+          "md_src": "## (3) Composer から呼び出す場合\n\n- require に、リポジトリを指定する。\n- ディレクトリのパスは `./vendor/vendorname/libname/~~~~` になるはず。\n\n長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。"
+         },
+         "anchor": "",
+         "dec": ""
         },
         {
          "modId": "PlainHTMLElements:PlainHTML/MultiText",
@@ -229,7 +231,9 @@
          "modId": "testMod1:parts/text",
          "fields": {
           "text_src": "宿題やったかー？\n＼(^o^)／\n\nやってるYo！ ＼(^o^)／"
-         }
+         },
+         "anchor": "",
+         "dec": ""
         },
         {
          "modId": "testMod1:parts/md",
@@ -265,11 +269,13 @@
                   "fields": {
                    "md_src3": "だはぁぁぁぁぁ",
                    "multitext_src3": {
-                    "src": "",
+                    "src": "マルチテキスト3",
                     "editor": "markdown"
                    }
                   },
-                  "subModName": "sample_loop3"
+                  "subModName": "sample_loop3",
+                  "anchor": "",
+                  "dec": ""
                  },
                  {
                   "modId": "testMod1:parts/deeploop",

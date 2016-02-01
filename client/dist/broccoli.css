@@ -5323,6 +5323,28 @@
       box-sizing: border-box;
       clear: both;
       white-space: nowrap; }
+  .broccoli--instance-tree-view [data-broccoli-instance-path] .broccoli--instance-tree-view-fieldname {
+    display: block;
+    border-left: 0.3em solid #d9d9d9;
+    padding-left: 0.5em;
+    margin: 3px 0;
+    font-size: 11px; }
+  .broccoli--instance-tree-view [data-broccoli-instance-path] .broccoli--instance-tree-view-fieldpreview {
+    display: block;
+    padding: 2px 5px;
+    overflow: auto;
+    max-height: 100px;
+    line-height: 1; }
+    .broccoli--instance-tree-view [data-broccoli-instance-path] .broccoli--instance-tree-view-fieldpreview * {
+      margin: 0;
+      padding: 0;
+      font-size: 9px;
+      line-height: 1;
+      font-weight: normal;
+      display: inline;
+      color: #999;
+      border: 0 none;
+      background: transparent none; }
 
 .broccoli--panel {
   border-width: 3px !important;

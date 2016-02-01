@@ -65,26 +65,30 @@ module.exports = function(broccoli){
 	 * プレビュー用の簡易なHTMLを生成する
 	 */
 	this.mkPreviewHtml = function( fieldData, mod, callback ){
+		var cheerio = require('cheerio');
 		var rtn = {}
 		if( typeof(fieldData) === typeof({}) ){
 			rtn = fieldData;
 		}
+
 		_resMgr.getResource( rtn.resKey, function(res){
 			rtn.path = 'data:'+res.type+';base64,' + res.base64;
 			if( !res.base64 ){
 				// ↓ ダミーの Sample Image
 				rtn.path = _imgDummy;
 			}
-			rtn = $('<img src="'+rtn.path+'" />');
-			rtn.css({
-				'max-width': 200,
-				'max-height': 200
-			});
-
-			callback( rtn.get(0).outerHTML );
+			var $ = cheerio.load('<img>', {decodeEntities: false});
+			$('img')
+				.attr({'src': rtn.path})
+				.css({
+					'max-width': '80px',
+					'max-height': '80px'
+				})
+			;
+			callback( $.html() );
 		} );
 		return;
-	}
+	}// mkPreviewHtml()
 
 	/**
 	 * データを正規化する
@@ -98,7 +102,7 @@ module.exports = function(broccoli){
 			};
 		}
 		return rtn;
-	}
+	}// normalizeData()
 
 	/**
 	 * エディタUIを生成
