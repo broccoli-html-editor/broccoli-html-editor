@@ -106,10 +106,13 @@
 			var bowls = [];
 			$iframeWindow
 				.find(data.options.contents_area_selector)
-				.html('...')
+				// .html('...')
 				.each(function(){
 					var $this = $(this);
 					var bowlName = $this.attr(data.options.contents_bowl_name_by);
+					if( typeof(bowlName) !== typeof('') || !bowlName.length ){
+						bowlName = 'main';// <- default bowl name
+					}
 					bowls.push(bowlName);
 				})
 			;

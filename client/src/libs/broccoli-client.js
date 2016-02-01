@@ -220,8 +220,12 @@
 							},
 							function(bowlList){
 								if( typeof(bowlList)!==typeof([]) || !bowlList.length ){
-									broccoli.message('FAILED to list bowls.');
+									_this.message('FAILED to list bowls.');
 									console.log('bowlList - - - - - -', bowlList);
+								}
+								var indexOfMain = bowlList.indexOf('main');
+								if( typeof(indexOfMain) != typeof(0) || indexOfMain < 0 ){
+									_this.message('bowl "main" is NOT found in bowlList.');
 								}
 								for( var idx in bowlList ){
 									_this.contentsSourceData.initBowlData(bowlList[idx]);
