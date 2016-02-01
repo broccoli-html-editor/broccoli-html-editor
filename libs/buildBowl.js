@@ -552,12 +552,12 @@ module.exports = function(broccoli, data, options, callback){
 						if( options.instancePath.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
 							return false;
 						}
-						tplSrc = tplSrc.replace( new RegExp('\\<\\!\\-\\-.*?\\-\\-\\>','g'), '' );
-						tplSrc = tplSrc.replace( new RegExp('\\{\\&.*?\\&\\}','g'), '' );
-						tplSrc = tplSrc.replace( new RegExp('\r\n|\r|\n','g'), '' );
-						tplSrc = tplSrc.replace( new RegExp('\t','g'), '' );
-						tplSrc = tplSrc.replace( new RegExp('^[\s\r\n]*'), '' );
-						tplSrc = tplSrc.replace( new RegExp('[\s\r\n]*$'), '' );
+						tplSrc = tplSrc.replace( new RegExp('\\<\\!\\-\\-[\\s\\S]*?\\-\\-\\>','g'), '' );
+						tplSrc = tplSrc.replace( new RegExp('\\{\\&[\\s\\S]*?\\&\\}','g'), '' );
+						tplSrc = tplSrc.replace( new RegExp('\\r\\n|\\r|\\n','g'), '' );
+						tplSrc = tplSrc.replace( new RegExp('\\t','g'), '' );
+						tplSrc = tplSrc.replace( new RegExp('^[\\s\\r\\n]*'), '' );
+						tplSrc = tplSrc.replace( new RegExp('[\\s\\r\\n]*$'), '' );
 
 						if( tplSrc.length && tplSrc.indexOf('<') === 0 && tplSrc.match(new RegExp('\\>$')) ){
 							var htmlparser = require('htmlparser');

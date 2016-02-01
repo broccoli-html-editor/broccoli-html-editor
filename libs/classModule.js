@@ -190,12 +190,12 @@ module.exports = function(broccoli, moduleId, options){
 			_this.isSingleRootElement = (function(tplSrc){
 				// 単一のルート要素を持っているかどうか判定。
 				tplSrc = JSON.parse( JSON.stringify(tplSrc) );
-				tplSrc = tplSrc.replace( new RegExp('\\<\\!\\-\\-.*?\\-\\-\\>','g'), '' );
-				tplSrc = tplSrc.replace( new RegExp('\\{\\&.*?\\&\\}','g'), '' );
-				tplSrc = tplSrc.replace( new RegExp('\r\n|\r|\n','g'), '' );
-				tplSrc = tplSrc.replace( new RegExp('\t','g'), '' );
-				tplSrc = tplSrc.replace( new RegExp('^[\s\r\n]*'), '' );
-				tplSrc = tplSrc.replace( new RegExp('[\s\r\n]*$'), '' );
+				tplSrc = tplSrc.replace( new RegExp('\\<\\!\\-\\-[\\s\\S]*?\\-\\-\\>','g'), '' );
+				tplSrc = tplSrc.replace( new RegExp('\\{\\&[\\s\\S]*?\\&\\}','g'), '' );
+				tplSrc = tplSrc.replace( new RegExp('\\r\\n|\\r|\\n','g'), '' );
+				tplSrc = tplSrc.replace( new RegExp('\\t','g'), '' );
+				tplSrc = tplSrc.replace( new RegExp('^[\\s\\r\\n]*'), '' );
+				tplSrc = tplSrc.replace( new RegExp('[\\s\\r\\n]*$'), '' );
 				if( tplSrc.length && tplSrc.indexOf('<') === 0 && tplSrc.match(new RegExp('\\>$')) ){
 					var htmlparser = require('htmlparser');
 					var handler = new htmlparser.DefaultHandler(function (error, dom) {
