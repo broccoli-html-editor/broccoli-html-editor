@@ -212,8 +212,9 @@
 
 		.broccoli--instance-tree-view-fieldpreview{
 			display: block;
+			height: auto;
 			padding: 2px 5px;
-			overflow: auto;
+			overflow: hidden;
 			max-height: 100px;
 			line-height: 1;
 
@@ -222,6 +223,7 @@
 				padding: 0;
 				font-size: 9px;
 				line-height: 1;
+				list-style-type: none;
 				font-weight: normal;
 				display: inline;
 				color: #999;

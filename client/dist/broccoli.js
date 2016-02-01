@@ -2301,31 +2301,31 @@ module.exports = function(broccoli){
 					;
 
 					if(row.fieldType == 'input'){
-						broccoli.gpi(
-							'field.mkPreviewHtml',
-							{
-								'__fieldId__': row.type ,
-								'fieldData': data.fields[row.name],
-								'mod': mod
-							},
-							function(html){
-								$li.append(
-									$('<span class="broccoli--instance-tree-view-fieldpreview">')
-										.html('<span>'+html+'</span>')
-								);
-								$ul.append($li);
-								it1.next();
-							}
-						);
-						// var fieldDef = broccoli.getFieldDefinition( row.type ); // フィールドタイプ定義を呼び出す
-						// fieldDef.mkPreviewHtml( row, mod, function(html){
-						// 	$li.append(
-						// 		$('<span>')
-						// 			.html(html)
-						// 	);
-						// 	$ul.append($li);
-						// 	it1.next();
-						// } );
+						// broccoli.gpi(
+						// 	'field.mkPreviewHtml',
+						// 	{
+						// 		'__fieldId__': row.type ,
+						// 		'fieldData': data.fields[row.name],
+						// 		'mod': mod
+						// 	},
+						// 	function(html){
+						// 		$li.append(
+						// 			$('<span class="broccoli--instance-tree-view-fieldpreview">')
+						// 				.html('<span>'+html+'</span>')
+						// 		);
+						// 		$ul.append($li);
+						// 		it1.next();
+						// 	}
+						// );
+						var fieldDef = broccoli.getFieldDefinition( row.type ); // フィールドタイプ定義を呼び出す
+						fieldDef.mkPreviewHtml( data.fields[row.name], mod, function(html){
+							$li.append(
+								$('<span class="broccoli--instance-tree-view-fieldpreview">')
+									.html('<span>'+html+'</span>')
+							);
+							$ul.append($li);
+							it1.next();
+						} );
 						return;
 					}else if(row.fieldType == 'module'){
 
@@ -3413,24 +3413,20 @@ module.exports = function(broccoli){
 	}
 
 	/**
-	 * プレビュー用の簡易なHTMLを生成する (Server Side)
+	 * プレビュー用の簡易なHTMLを生成する (Client Side)
+	 * InstanceTreeViewで利用する。
 	 */
 	this.mkPreviewHtml = function( fieldData, mod, callback ){
-		// InstanceTreeViewで利用する
-		var cheerio = require('cheerio');
-		var rtn = '- not provided -';
-		// console.log(fieldData.type);
-		// console.log(234567890);
+		var rtn = '';
 		this.bind(fieldData, 'finalize', mod, function(rtn){
 			// console.log(rtn);
-			// var $rtn = $('<div>').append(rtn);
-			var $rtn = cheerio.load(rtn, {decodeEntities: false});
-			$rtn('*').each(function(i, elem){
-				$rtn(this)
+			var $rtn = $('<div>').append(rtn);
+			$rtn.find('*').each(function(){
+				$(this)
 					.removeAttr('style') //スタイル削除しちゃう
 				;
 			});
-			$rtn('style').remove(); // styleタグも削除しちゃう
+			$rtn.find('style').remove(); // styleタグも削除しちゃう
 			rtn = $rtn.html();
 
 			callback( rtn );
@@ -3524,7 +3520,7 @@ module.exports = function(broccoli){
 
 }
 
-},{"cheerio":22,"jquery":108,"utils79":114}],14:[function(require,module,exports){
+},{"jquery":108,"utils79":114}],14:[function(require,module,exports){
 module.exports = function(broccoli){
 	var php = require('phpjs');
 	var utils79 = require('utils79');

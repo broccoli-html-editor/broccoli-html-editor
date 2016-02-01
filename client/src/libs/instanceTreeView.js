@@ -67,31 +67,31 @@ module.exports = function(broccoli){
 					;
 
 					if(row.fieldType == 'input'){
-						broccoli.gpi(
-							'field.mkPreviewHtml',
-							{
-								'__fieldId__': row.type ,
-								'fieldData': data.fields[row.name],
-								'mod': mod
-							},
-							function(html){
-								$li.append(
-									$('<span class="broccoli--instance-tree-view-fieldpreview">')
-										.html('<span>'+html+'</span>')
-								);
-								$ul.append($li);
-								it1.next();
-							}
-						);
-						// var fieldDef = broccoli.getFieldDefinition( row.type ); // フィールドタイプ定義を呼び出す
-						// fieldDef.mkPreviewHtml( row, mod, function(html){
-						// 	$li.append(
-						// 		$('<span>')
-						// 			.html(html)
-						// 	);
-						// 	$ul.append($li);
-						// 	it1.next();
-						// } );
+						// broccoli.gpi(
+						// 	'field.mkPreviewHtml',
+						// 	{
+						// 		'__fieldId__': row.type ,
+						// 		'fieldData': data.fields[row.name],
+						// 		'mod': mod
+						// 	},
+						// 	function(html){
+						// 		$li.append(
+						// 			$('<span class="broccoli--instance-tree-view-fieldpreview">')
+						// 				.html('<span>'+html+'</span>')
+						// 		);
+						// 		$ul.append($li);
+						// 		it1.next();
+						// 	}
+						// );
+						var fieldDef = broccoli.getFieldDefinition( row.type ); // フィールドタイプ定義を呼び出す
+						fieldDef.mkPreviewHtml( data.fields[row.name], mod, function(html){
+							$li.append(
+								$('<span class="broccoli--instance-tree-view-fieldpreview">')
+									.html('<span>'+html+'</span>')
+							);
+							$ul.append($li);
+							it1.next();
+						} );
 						return;
 					}else if(row.fieldType == 'module'){
 

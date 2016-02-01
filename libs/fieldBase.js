@@ -27,24 +27,20 @@ module.exports = function(broccoli){
 	}
 
 	/**
-	 * プレビュー用の簡易なHTMLを生成する (Server Side)
+	 * プレビュー用の簡易なHTMLを生成する (Client Side)
+	 * InstanceTreeViewで利用する。
 	 */
 	this.mkPreviewHtml = function( fieldData, mod, callback ){
-		// InstanceTreeViewで利用する
-		var cheerio = require('cheerio');
-		var rtn = '- not provided -';
-		// console.log(fieldData.type);
-		// console.log(234567890);
+		var rtn = '';
 		this.bind(fieldData, 'finalize', mod, function(rtn){
 			// console.log(rtn);
-			// var $rtn = $('<div>').append(rtn);
-			var $rtn = cheerio.load(rtn, {decodeEntities: false});
-			$rtn('*').each(function(i, elem){
-				$rtn(this)
+			var $rtn = $('<div>').append(rtn);
+			$rtn.find('*').each(function(){
+				$(this)
 					.removeAttr('style') //スタイル削除しちゃう
 				;
 			});
-			$rtn('style').remove(); // styleタグも削除しちゃう
+			$rtn.find('style').remove(); // styleタグも削除しちゃう
 			rtn = $rtn.html();
 
 			callback( rtn );

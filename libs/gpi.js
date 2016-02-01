@@ -205,20 +205,6 @@ module.exports = function(broccoli, api, options, callback){
 			);
 			break;
 
-		case "field.mkPreviewHtml":
-			// console.log(api);
-			// console.log(options.__fieldId__);
-			// console.log(options.fieldData);
-			// console.log(options.mod);
-			broccoli.fieldDefinitions[options.__fieldId__].mkPreviewHtml(
-				options.fieldData,
-				options.mod,
-				function(result){
-					callback(result);
-				}
-			);
-			break;
-
 		case "fieldGpi":
 			// console.log(api);
 			// console.log(options.__fieldId__);
