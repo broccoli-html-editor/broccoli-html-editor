@@ -30,14 +30,33 @@ module.exports = function(broccoli){
 	tplFrame += '			</div>';
 	tplFrame += '		</div>';
 	tplFrame += '		<div class="broccoli--edit-window-form-buttons">';
-	tplFrame += '			<div class="btn-group btn-group-justified" role="group">';
-	tplFrame += '				<div class="btn-group">';
-	tplFrame += '					<button disabled="disabled" type="submit" class="btn btn-primary btn-lg">OK</button>';
+	tplFrame += '			<div class="container-fluid">';
+	tplFrame += '				<div class="row">';
+	tplFrame += '					<div class="col-sm-6 col-sm-offset-3">';
+	tplFrame += '						<div class="btn-group btn-group-justified" role="group">';
+	tplFrame += '							<div class="btn-group">';
+	tplFrame += '								<button disabled="disabled" type="submit" class="btn btn-primary btn-lg">OK</button>';
+	tplFrame += '							</div>';
+	tplFrame += '						</div>';
+	tplFrame += '					</div>';
 	tplFrame += '				</div>';
 	tplFrame += '			</div>';
-	tplFrame += '			<div class="btn-group" role="group" style="margin-top:20px;">';
-	tplFrame += '				<div class="btn-group">';
-	tplFrame += '					<button disabled="disabled" type="button" class="btn btn-danger btn-sm broccoli--edit-window-btn-remove">このモジュールを削除する</button>';
+	tplFrame += '			<div class="container-fluid">';
+	tplFrame += '				<div class="row">';
+	tplFrame += '					<div class="col-sm-4">';
+	tplFrame += '						<div class="btn-group btn-group-justified" role="group" style="margin-top:20px;">';
+	tplFrame += '							<div class="btn-group">';
+	tplFrame += '								<button disabled="disabled" type="button" class="btn btn-default btn-sm broccoli--edit-window-btn-cancel">キャンセル</button>';
+	tplFrame += '							</div>';
+	tplFrame += '						</div>';
+	tplFrame += '					</div>';
+	tplFrame += '					<div class="col-sm-4 col-sm-offset-4">';
+	tplFrame += '						<div class="btn-group btn-group-justified" role="group" style="margin-top:20px;">';
+	tplFrame += '							<div class="btn-group">';
+	tplFrame += '								<button disabled="disabled" type="button" class="btn btn-danger btn-sm broccoli--edit-window-btn-remove">このモジュールを削除する</button>';
+	tplFrame += '							</div>';
+	tplFrame += '						</div>';
+	tplFrame += '					</div>';
 	tplFrame += '				</div>';
 	tplFrame += '			</div>';
 	tplFrame += '		</div>';
@@ -205,6 +224,12 @@ module.exports = function(broccoli){
 						);
 
 
+					})
+				;
+				$editWindow.find('button.broccoli--edit-window-btn-cancel')
+					.bind('click', function(){
+						_this.lock();
+						callback();
 					})
 				;
 				$editWindow.find('button.broccoli--edit-window-btn-remove')
