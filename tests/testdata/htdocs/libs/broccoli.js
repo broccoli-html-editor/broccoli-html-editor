@@ -3689,31 +3689,25 @@ module.exports = function(broccoli){
 			[
 				function(it1, data){
 					_resMgr.getResource( rtn.resKey, function(res){
-						if( mode == 'finalize' ){
-							_resMgr.getResourcePublicPath( rtn.resKey, function(publicPath){
-								rtn.path = publicPath;
-								it1.next(data);
-							} );
-							return;
-						}else if( mode == 'canvas' ){
-							rtn.path = 'data:'+res.type+';base64,' + res.base64;
+						_resMgr.getResourcePublicPath( rtn.resKey, function(publicPath){
+							rtn.path = publicPath;
+							data.path = publicPath;
 
-							if( !res.base64 ){
+							if( mode == 'canvas' ){
 								// ↓ ダミーの Sample Image
-								rtn.path = _imgDummy;
+								data.path = _imgDummy;
+
+								if( res.base64 ){
+									data.path = 'data:'+res.type+';base64,' + res.base64;
+								}
 							}
 							it1.next(data);
-							return;
-						}
-						it1.next(data);
-						return;
+						} );
 					} );
+					return;
 				},
-				// function(it1, data){
-				// 	it1.next();
-				// },
 				function(it1, data){
-					callback(rtn.path);
+					callback(data.path);
 					it1.next();
 				}
 			]
@@ -3732,14 +3726,14 @@ module.exports = function(broccoli){
 		}
 
 		_resMgr.getResource( rtn.resKey, function(res){
-			rtn.path = 'data:'+res.type+';base64,' + res.base64;
+			var imagePath = 'data:'+res.type+';base64,' + res.base64;
 			if( !res.base64 ){
 				// ↓ ダミーの Sample Image
-				rtn.path = _imgDummy;
+				imagePath = _imgDummy;
 			}
 			var $ = cheerio.load('<img>', {decodeEntities: false});
 			$('img')
-				.attr({'src': rtn.path})
+				.attr({'src': imagePath})
 				.css({
 					'max-width': '80px',
 					'max-height': '80px'
