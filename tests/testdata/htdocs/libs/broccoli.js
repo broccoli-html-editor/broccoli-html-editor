@@ -2308,12 +2308,8 @@ module.exports = function(broccoli){
 			callback();
 			return this;
 		}
-		$instanceTreeView.html('...');
-		var $ul = $('<ul>')
-			// .css({
-			// 	"border":"1px solid #666"
-			// })
-		;
+		// $instanceTreeView.html('...');
+		var $ul = $('<ul>');
 
 		var data = broccoli.contentsSourceData.get();
 		// console.log(data);
@@ -2350,22 +2346,6 @@ module.exports = function(broccoli){
 					;
 
 					if(row.fieldType == 'input'){
-						// broccoli.gpi(
-						// 	'field.mkPreviewHtml',
-						// 	{
-						// 		'__fieldId__': row.type ,
-						// 		'fieldData': data.fields[row.name],
-						// 		'mod': mod
-						// 	},
-						// 	function(html){
-						// 		$li.append(
-						// 			$('<span class="broccoli--instance-tree-view-fieldpreview">')
-						// 				.html('<span>'+html+'</span>')
-						// 		);
-						// 		$ul.append($li);
-						// 		it1.next();
-						// 	}
-						// );
 						var fieldDef = broccoli.getFieldDefinition( row.type ); // フィールドタイプ定義を呼び出す
 						fieldDef.mkPreviewHtml( data.fields[row.name], mod, function(html){
 							$li.append(
