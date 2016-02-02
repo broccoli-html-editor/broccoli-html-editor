@@ -215,7 +215,7 @@ module.exports = function(broccoli){
 										// 	});
 										// } ,
 										function(it2, data){
-											callback();
+											callback(true);
 											it2.next(data);
 										}
 									]
@@ -229,7 +229,7 @@ module.exports = function(broccoli){
 				$editWindow.find('button.broccoli--edit-window-btn-cancel')
 					.bind('click', function(){
 						_this.lock();
-						callback();
+						callback(false);
 					})
 				;
 				$editWindow.find('button.broccoli--edit-window-btn-remove')
@@ -241,7 +241,7 @@ module.exports = function(broccoli){
 						}
 						broccoli.contentsSourceData.removeInstance(instancePath, function(){
 							broccoli.unselectInstance(function(){
-								callback();
+								callback(true);
 							});
 						});
 					})

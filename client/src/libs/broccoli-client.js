@@ -350,7 +350,7 @@
 			var broccoli = this;
 			broccoli.selectInstance(instancePath, function(){
 				broccoli.lightbox( function( lbElm ){
-					broccoli.drawEditWindow( instancePath, lbElm, function(){
+					broccoli.drawEditWindow( instancePath, lbElm, function(isSave){
 						it79.fnc({},[
 							function(it1, data){
 								// 編集パネルを一旦消去
@@ -360,6 +360,10 @@
 							} ,
 							function(it1, data){
 								// コンテンツデータを保存
+								if( !isSave ){
+									it1.next(data);
+									return;
+								}
 								_this.saveContents(function(){
 									it1.next(data);
 								});
