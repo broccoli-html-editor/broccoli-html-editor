@@ -1576,14 +1576,14 @@ module.exports = function(broccoli, callback){
 						// px.message( $(this).data('id') );
 						event.dataTransfer.setData('method', 'add' );
 						event.dataTransfer.setData('modId', $(this).attr('data-id') );
-						updateModuleInfoPreview(null, {}, function(){});
+						updateModuleInfoPreview(null, {'elm': this}, function(){});
 					})
 					.on('mouseover', function(e){
 						var html = generateModuleInfoHtml(this);
-						updateModuleInfoPreview(html, {}, function(){});
+						updateModuleInfoPreview(html, {'elm': this}, function(){});
 					})
 					.on('mouseout', function(e){
-						updateModuleInfoPreview(null, {}, function(){});
+						updateModuleInfoPreview(null, {'elm': this}, function(){});
 					})
 					.on('dblclick', function(e){
 						var html = generateModuleInfoHtml(this);
@@ -1631,7 +1631,7 @@ module.exports = function(broccoli, callback){
 		$readme.find('a').each(function(){
 			$(this).attr({'target':'_blank'})
 		});
-		html += '<div class="broccoli__user-selectable">'+ (readme ? $readme.html() : '<p style="text-align:center; margin: 100px;">-- no readme --</p>' ) +'</div>';
+		html += '<div class="broccoli__user-selectable">'+ (readme ? $readme.html() : '<p style="text-align:center; margin: 100px auto;">-- no readme --</p>' ) +'</div>';
 
 		var pics = JSON.parse( $elm.attr('data-pics') );
 		if( pics.length ){
@@ -1658,15 +1658,35 @@ module.exports = function(broccoli, callback){
 		callback = callback||function(){};
 		var $body = $('body');
 		$body.find('.broccoli--module-info-preview').remove();
+		if( $(window).height() < 400 || $(window).width() < 400 ){
+			// Window が小さすぎたら表示しない
+			callback();
+			return this;
+		}
 		if( $html === null ){
 			callback();
 			return this;
 		}
+		var $preview = $('<div class="broccoli broccoli--module-info-preview">');
+		$preview.append( $html );
+
 		$body
-			.append( $('<div class="broccoli broccoli--module-info-preview">')
-				.append( $html )
-			)
+			.append( $preview )
 		;
+		if( options.elm ){
+			var $elm = $(options.elm);
+			var elmOffset = $elm.offset();
+			// console.log($elm.offset().top);
+			// console.log($elm.offset().left);
+			var left = elmOffset.left - $preview.outerWidth() - 10;
+			var top = elmOffset.top - 10;
+			if( top < 10 ){ top = 10; }
+			if( $(window).height()-(top+$preview.outerHeight()) < 10 ){ top = $(window).height()-($preview.outerHeight()) - 10; }
+			$preview.css({
+				'left': left,
+				'top': top
+			});
+		}
 		callback();
 		return this;
 	}
