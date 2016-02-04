@@ -341,7 +341,7 @@ module.exports = function(){
 	 */
 	this.buildBowl = function( data, options, callback ){
 		var buildBowl = require( __dirname+'/buildBowl.js' );
-		buildBowl(_this, data, options, callback);
+		new buildBowl(_this, data, options, callback);
 		return this;
 	}
 

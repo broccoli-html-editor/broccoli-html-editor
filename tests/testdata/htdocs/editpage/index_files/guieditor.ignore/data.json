@@ -823,8 +823,26 @@
       "modId": "testMod1:dev/if",
       "fields": {
        "additionalElements": "1",
-       "main": [],
-       "additionals": []
+       "main": [
+        {
+         "modId": "PlainHTMLElements:PlainHTML/Markdown",
+         "fields": {
+          "main": "うまく行ってますか？？？"
+         },
+         "anchor": "",
+         "dec": ""
+        }
+       ],
+       "additionals": [
+        {
+         "modId": "PlainHTMLElements:PlainHTML/Markdown",
+         "fields": {
+          "main": "表示されていますか？"
+         },
+         "anchor": "",
+         "dec": ""
+        }
+       ]
       },
       "anchor": "",
       "dec": ""
