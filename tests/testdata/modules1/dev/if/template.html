@@ -1,0 +1,14 @@
+{&{"input":{"type":"select", "name":"additionalElements", "label":"追加要素", "options":[
+	{"value":"0", "label":"なし"},
+	{"value":"1", "label":"あり"}
+],"hidden":true}}&}
+<div class="if">
+{&{"module":{"name":"main"}}&}
+{&{"if":{"cond":[
+	[
+		"additionalElements==1"
+	]
+]}}&}
+<div class="if--additional-elements">{&{"module":{"name":"additionals"}}&}</div>
+{&"endif"&}
+</div>

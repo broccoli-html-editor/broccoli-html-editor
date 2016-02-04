@@ -29,6 +29,18 @@
 
 
 /**
+ * module: testMod1:dev/if
+ */
+.if {
+  border: 1px solid #0ff;
+  padding: 20px;
+  margin: 1em 10%; }
+  .if--additional-elements {
+    border: 1px solid #000;
+    padding: 20px; }
+
+
+/**
  * module: testMod1:dev/singleRootElement
  */
 .single-root-element--element {

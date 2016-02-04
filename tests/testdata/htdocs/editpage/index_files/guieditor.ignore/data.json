@@ -5,24 +5,6 @@
    "fields": {
     "main": [
      {
-      "modId": "testMod1:dev/twig",
-      "fields": {
-       "heading": {
-        "src": "",
-        "editor": "markdown"
-       },
-       "body": {
-        "src": "",
-        "editor": "markdown"
-       },
-       "select": "",
-       "include_main": [],
-       "loop": []
-      },
-      "anchor": "",
-      "dec": ""
-     },
-     {
       "modId": "testMod1:dev/multitext",
       "fields": {
        "main": {
@@ -833,6 +815,34 @@
        ],
        "heading": "Heading",
        "main": []
+      },
+      "anchor": "",
+      "dec": ""
+     },
+     {
+      "modId": "testMod1:dev/if",
+      "fields": {
+       "additionalElements": "1",
+       "main": [],
+       "additionals": []
+      },
+      "anchor": "",
+      "dec": ""
+     },
+     {
+      "modId": "testMod1:dev/twig",
+      "fields": {
+       "heading": {
+        "src": "",
+        "editor": "markdown"
+       },
+       "body": {
+        "src": "",
+        "editor": "markdown"
+       },
+       "select": "",
+       "include_main": [],
+       "loop": []
       },
       "anchor": "",
       "dec": ""
