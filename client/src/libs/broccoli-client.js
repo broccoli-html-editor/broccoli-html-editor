@@ -711,6 +711,7 @@
 				} ,
 				function(it1, data){
 					// console.log('editInstance done.');
+					_this.message('コンテンツを保存しました。');
 					callback(true);
 					it1.next(data);
 				}

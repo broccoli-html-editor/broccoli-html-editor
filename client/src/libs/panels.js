@@ -169,17 +169,17 @@ module.exports = function(broccoli){
 				var subModName = $(this).attr('data-broccoli-sub-mod-name');
 				var isAppenderFrom = (event.dataTransfer.getData("data-broccoli-is-appender") == 'yes');
 				var isAppender = ($(this).attr('data-broccoli-is-appender') == 'yes');
+				var moveFrom = event.dataTransfer.getData("data-broccoli-instance-path");
+				var moveTo = $(this).attr('data-broccoli-instance-path');
+				if( moveFrom === moveTo ){
+					// 移動元と移動先が同一の場合、キャンセルとみなす
+					$(this).removeClass('broccoli--panel__drag-entered');
+					return;
+				}
 				if( subModNameFrom.length ){
 					if( method === 'moveTo' ){
 						// これはloop要素(=subModNameがある場合)を並べ替えるための moveTo です。
 						// その他のインスタンスをここに移動したり、作成することはできません。
-						var moveFrom = event.dataTransfer.getData("data-broccoli-instance-path");
-						var moveTo = $(this).attr('data-broccoli-instance-path');
-						if( moveFrom === moveTo ){
-							// 移動元と移動先が同一の場合、キャンセルとみなす
-							$(this).removeClass('broccoli--panel__drag-entered');
-							return;
-						}
 
 						function removeNum(str){
 							return str.replace(new RegExp('[0-9]+$'),'');
@@ -202,13 +202,6 @@ module.exports = function(broccoli){
 					broccoli.message('ダブルクリックしてください。ドロップできません。');
 				}else{
 					if( method === 'moveTo' ){
-						var moveFrom = event.dataTransfer.getData("data-broccoli-instance-path");
-						var moveTo = $(this).attr('data-broccoli-instance-path');
-						if( moveFrom === moveTo ){
-							// 移動元と移動先が同一の場合、キャンセルとみなす
-							$(this).removeClass('broccoli--panel__drag-entered');
-							return;
-						}
 						if(subModName){
 							broccoli.message('loopフィールドへの移動はできません。');
 							$(this).removeClass('broccoli--panel__drag-entered');
@@ -223,7 +216,13 @@ module.exports = function(broccoli){
 						} );
 						return;
 					}
+					if( subModName && method === 'add' ){
+						// loopフィールドのサブモジュールに新しいモジュールを追加しようとした場合の処理
+						broccoli.message('loopフィールドに新しいモジュールを追加することはできません。');
+						return;
+					}
 					if( method !== 'add' ){
+						// 移動(moveTo)でも追加(add)でもない場合の処理
 						broccoli.message('追加するモジュールをドラッグしてください。ここに移動することはできません。');
 						return;
 					}
