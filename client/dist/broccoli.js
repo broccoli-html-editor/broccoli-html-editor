@@ -3220,8 +3220,7 @@ module.exports = function(broccoli){
 					{'resKey': resKey} ,
 					function(resInfo){
 						if(resInfo.size === undefined){
-							callback(false);
-							return ;
+							resInfo.size = 0;
 						}
 						_resourceDb[resKey] = resInfo;
 						callback(resInfo);
