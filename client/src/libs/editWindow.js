@@ -19,6 +19,7 @@ module.exports = function(broccoli){
 	tplFrame += '		<h2 class="broccoli--edit-window-module-name">---</h2>';
 	tplFrame += '		<div class="broccoli--edit-window-fields">';
 	tplFrame += '		</div>';
+	tplFrame += '		<div><a href="javascript:;" class="broccoli--edit-window-builtin-fields-switch">詳細設定を表示する</a></div>';
 	tplFrame += '		<div class="broccoli--edit-window-builtin-fields">';
 	tplFrame += '			<div class="form-group">';
 	tplFrame += '				<label for="broccoli--edit-window-builtin-anchor-field">アンカー</label>';
@@ -102,6 +103,21 @@ module.exports = function(broccoli){
 		$editWindow.append(tplFrame);
 		$editWindow.find('.broccoli--edit-window-module-name').text(mod.info.name||mod.id);
 		$editWindow.find('.broccoli--edit-window-fields').append($fields);
+
+		$editWindow.find('.broccoli--edit-window-builtin-fields').hide();
+		$editWindow.find('.broccoli--edit-window-builtin-fields-switch').click(function(){
+			var $this = $(this);
+			var className = 'broccoli--edit-window-builtin-fields-switch__on';
+			$editWindow.find('.broccoli--edit-window-builtin-fields').toggle('fast', function(){
+				if($(this).is(':visible')){
+					$this.addClass(className);
+					$this.text('詳細設定を隠す')
+				}else{
+					$this.removeClass(className);
+					$this.text('詳細設定を表示する')
+				}
+			});
+		});
 
 		it79.ary(
 			mod.fields,

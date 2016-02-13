@@ -5435,6 +5435,12 @@
   margin: 1em 5%;
   background: #eef; }
 
+.broccoli--edit-window-builtin-fields-switch:before {
+  content: "─ "; }
+
+.broccoli--edit-window-builtin-fields-switch__on:before {
+  content: "▼ "; }
+
 .broccoli--lightbox {
   position: fixed;
   top: 0;
