@@ -111,8 +111,12 @@ module.exports = function(broccoli){
 					'resourceMgr.getResource',
 					{'resKey': resKey} ,
 					function(resInfo){
-						if(resInfo.size === undefined){
+						if(resInfo && resInfo.base64 && resInfo.type && resInfo.size === undefined){
 							resInfo.size = 0;
+						}
+						if(resInfo.size === undefined){
+							callback(false);
+							return;
 						}
 						_resourceDb[resKey] = resInfo;
 						callback(resInfo);
