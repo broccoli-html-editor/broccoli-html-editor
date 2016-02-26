@@ -5508,14 +5508,25 @@
         border: 2px solid #999;
         box-sizing: border-box; }
 
-.broccoli--module-palette ul {
+.broccoli--module-palette div.broccoli--module-palette-inner {
+  overflow: hidden; }
+
+.broccoli--module-palette div.broccoli--module-palette-filter {
+  overflow: hidden;
+  padding: 3px 1px; }
+  .broccoli--module-palette div.broccoli--module-palette-filter input {
+    font-size: 11px;
+    border: 1px #999 solid; }
+
+.broccoli--module-palette ul.broccoli--module-palette-list {
   margin: 0;
   padding: 0;
-  font-size: small; }
-  .broccoli--module-palette ul li {
+  font-size: small;
+  overflow: auto; }
+  .broccoli--module-palette ul.broccoli--module-palette-list li {
     list-style-type: none;
     padding: 0 0 10px 0; }
-    .broccoli--module-palette ul li a {
+    .broccoli--module-palette ul.broccoli--module-palette-list li a {
       display: block;
       color: #eee;
       background-color: #333;
@@ -5525,19 +5536,27 @@
       text-overflow: ellipsis;
       font-weight: bold;
       font-size: 12px; }
-      .broccoli--module-palette ul li a:active, .broccoli--module-palette ul li a:focus, .broccoli--module-palette ul li a:hover {
+      .broccoli--module-palette ul.broccoli--module-palette-list li a:active, .broccoli--module-palette ul.broccoli--module-palette-list li a:focus, .broccoli--module-palette ul.broccoli--module-palette-list li a:hover {
         color: #fff; }
-    .broccoli--module-palette ul li ul li a {
-      color: #000;
-      background-color: #666;
-      color: #eee;
-      padding: 0.3em 2em;
-      font-weight: normal;
-      font-size: 11px; }
-      .broccoli--module-palette ul li ul li a:active, .broccoli--module-palette ul li ul li a:focus, .broccoli--module-palette ul li ul li a:hover {
-        color: #fff; }
-    .broccoli--module-palette ul li ul li ul li {
-      padding: 0; }
+    .broccoli--module-palette ul.broccoli--module-palette-list li ul {
+      margin: 0;
+      padding: 0;
+      font-size: small; }
+      .broccoli--module-palette ul.broccoli--module-palette-list li ul li a {
+        color: #000;
+        background-color: #666;
+        color: #eee;
+        padding: 0.3em 2em;
+        font-weight: normal;
+        font-size: 11px; }
+        .broccoli--module-palette ul.broccoli--module-palette-list li ul li a:active, .broccoli--module-palette ul.broccoli--module-palette-list li ul li a:focus, .broccoli--module-palette ul.broccoli--module-palette-list li ul li a:hover {
+          color: #fff; }
+      .broccoli--module-palette ul.broccoli--module-palette-list li ul li ul {
+        margin: 0;
+        padding: 0;
+        font-size: small; }
+        .broccoli--module-palette ul.broccoli--module-palette-list li ul li ul li {
+          padding: 0; }
 
 .broccoli--module-palette button {
   box-sizing: border-box;

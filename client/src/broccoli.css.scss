@@ -425,10 +425,22 @@
 // Module Palette
 .broccoli--module-palette{
 
-	ul{
+	div.broccoli--module-palette-inner{
+		overflow: hidden;
+	}
+	div.broccoli--module-palette-filter{
+		overflow: hidden;
+		padding: 3px 1px;
+		input{
+			font-size: 11px;
+			border: 1px #999 solid;
+		}
+	}
+	ul.broccoli--module-palette-list{
 		margin: 0;
 		padding: 0;
 		font-size: small;
+		overflow: auto;
 		li{
 			list-style-type: none;
 			padding:0 0 10px 0;
@@ -449,6 +461,9 @@
 				}
 			}
 			ul{
+				margin: 0;
+				padding: 0;
+				font-size: small;
 				li{
 					a{
 						color: #000;
@@ -464,6 +479,9 @@
 						}
 					}
 					ul{
+						margin: 0;
+						padding: 0;
+						font-size: small;
 						li{
 							padding: 0;
 						}

@@ -284,6 +284,16 @@
 						} );
 					} ,
 					function( it1, data ){
+						// モジュールパレットのサイズ合わせ
+						var $elm = $(_this.options.elmModulePalette).find('.broccoli--module-palette-inner');
+						var filterHeight = $elm.find('.broccoli--module-palette-filter').outerHeight();
+						$elm.find('.broccoli--module-palette-list').css({
+							'height': $elm.parent().outerHeight() - filterHeight
+						});
+
+						it1.next(data);
+					} ,
+					function( it1, data ){
 						// インスタンスツリービュー描画
 						_this.instanceTreeView.update( function(){
 							it1.next(data);
