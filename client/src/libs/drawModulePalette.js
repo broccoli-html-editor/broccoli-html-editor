@@ -78,6 +78,7 @@ module.exports = function(broccoli, callback){
 						'data-id': mod.moduleId,
 						'data-name': mod.moduleName,
 						'data-readme': mod.readme,
+						'data-clip': JSON.stringify(mod.clip),
 						'data-pics': JSON.stringify(mod.pics),
 						'draggable': true //←HTML5のAPI http://www.htmq.com/dnd/
 					})
@@ -85,6 +86,7 @@ module.exports = function(broccoli, callback){
 						// px.message( $(this).data('id') );
 						event.dataTransfer.setData('method', 'add' );
 						event.dataTransfer.setData('modId', $(this).attr('data-id') );
+						event.dataTransfer.setData('modClip', $(this).attr('data-clip') );
 						updateModuleInfoPreview(null, {'elm': this}, function(){});
 					})
 					.on('mouseover', function(e){

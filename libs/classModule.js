@@ -359,44 +359,42 @@ module.exports = function(broccoli, moduleId, options){
 	 * @return {Object}            this.
 	 */
 	this.init = function(callback){
-		// setTimeout(function(){
-			callback = callback || function(){};
-			if( realpath === false && !_this.isSystemModule ){
-				callback(false); return;
-			}
 
-			if( moduleId == '_sys/root' ){
-				parseTpl( '{&{"module":{"name":"main"}}&}', _this, _this, callback );
-			}else if( moduleId == '_sys/unknown' ){
-				parseTpl( '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;">[ERROR] 未知のモジュールテンプレートです。<!-- .error --></div>'+"\n", _this, _this, callback );
-			}else if( moduleId == '_sys/html' ){
-				parseTpl( '{&{"input":{"type":"html","name":"main"}}&}', _this, _this, callback );
-			}else if( typeof(options.src) === typeof('') ){
-				parseTpl( options.src, _this, options.topThis, callback );
-			}else if( _this.topThis.templateType != 'broccoli' && typeof(_this.subModName) == typeof('') ){
-				parseTpl( null, _this, options.topThis, callback );
-			}else if( _this.path ){
-				var tmpTplSrc = null;
-				if( isFile( _this.path+'finalize.js' ) ){
-					_this.finalize = require(_this.path+'finalize.js');
-				}
-				if( isFile( _this.path+'template.html' ) ){
-					_this.templateFilename = _this.path+'template.html';
-					_this.templateType = 'broccoli';
-					tmpTplSrc = fs.readFileSync( _this.templateFilename );
-				}else if( isFile( _this.path+'template.html.twig' ) ){
-					_this.templateFilename = _this.path+'template.html.twig';
-					_this.templateType = 'twig';
-					tmpTplSrc = fs.readFileSync( _this.templateFilename );
-				}
-				if( !tmpTplSrc ){
-					tmpTplSrc = '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;">[ERROR] モジュールテンプレートの読み込みエラーです。<!-- .error --></div>'+"\n";
-				}
-				tmpTplSrc = JSON.parse( JSON.stringify( tmpTplSrc.toString() ) );
-				parseTpl( tmpTplSrc, _this, _this, callback );
-			}
+		callback = callback || function(){};
+		if( realpath === false && !_this.isSystemModule ){
+			callback(false); return;
+		}
 
-		// }, 0);
+		if( moduleId == '_sys/root' ){
+			parseTpl( '{&{"module":{"name":"main"}}&}', _this, _this, callback );
+		}else if( moduleId == '_sys/unknown' ){
+			parseTpl( '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;">[ERROR] 未知のモジュールテンプレートです。<!-- .error --></div>'+"\n", _this, _this, callback );
+		}else if( moduleId == '_sys/html' ){
+			parseTpl( '{&{"input":{"type":"html","name":"main"}}&}', _this, _this, callback );
+		}else if( typeof(options.src) === typeof('') ){
+			parseTpl( options.src, _this, options.topThis, callback );
+		}else if( _this.topThis.templateType != 'broccoli' && typeof(_this.subModName) == typeof('') ){
+			parseTpl( null, _this, options.topThis, callback );
+		}else if( _this.path ){
+			var tmpTplSrc = null;
+			if( isFile( _this.path+'finalize.js' ) ){
+				_this.finalize = require(_this.path+'finalize.js');
+			}
+			if( isFile( _this.path+'template.html' ) ){
+				_this.templateFilename = _this.path+'template.html';
+				_this.templateType = 'broccoli';
+				tmpTplSrc = fs.readFileSync( _this.templateFilename );
+			}else if( isFile( _this.path+'template.html.twig' ) ){
+				_this.templateFilename = _this.path+'template.html.twig';
+				_this.templateType = 'twig';
+				tmpTplSrc = fs.readFileSync( _this.templateFilename );
+			}
+			if( !tmpTplSrc ){
+				tmpTplSrc = '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;">[ERROR] モジュールテンプレートの読み込みエラーです。<!-- .error --></div>'+"\n";
+			}
+			tmpTplSrc = JSON.parse( JSON.stringify( tmpTplSrc.toString() ) );
+			parseTpl( tmpTplSrc, _this, _this, callback );
+		}
 
 		return this;
 	}

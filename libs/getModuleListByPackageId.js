@@ -129,14 +129,31 @@ module.exports = function(broccoli, packageId, callback){
 								if( fs.statSync(realpath).isDirectory() ){
 									realpath += '/';
 									rtn.categories[idx].modules[row2] = {};
+
+									// moduleId
 									rtn.categories[idx].modules[row2].moduleId = rtn.packageId+':'+rtn.categories[idx].categoryId+'/'+row2;
+
+									// info.json
 									try {
 										rtn.categories[idx].modules[row2].moduleInfo = require( path.resolve( realpath, 'info.json' ) );
 									} catch (e) {
 										rtn.categories[idx].modules[row2].moduleInfo = {};
 									}
+
+									// clip.json
+									try {
+										rtn.categories[idx].modules[row2].clip = require( path.resolve( realpath, 'clip.json' ) );
+									} catch (e) {
+										rtn.categories[idx].modules[row2].clip = false;
+									}
+
+									// moduleName
 									rtn.categories[idx].modules[row2].moduleName = rtn.categories[idx].modules[row2].moduleInfo.name||rtn.categories[idx].modules[row2].moduleId;
+
+									// realpath
 									rtn.categories[idx].modules[row2].realpath = realpath;
+
+									// thumb.png
 									var realpathThumb = path.resolve( realpath, 'thumb.png' );
 									rtn.categories[idx].modules[row2].thumb = null;
 									try{
@@ -147,6 +164,7 @@ module.exports = function(broccoli, packageId, callback){
 										rtn.categories[idx].modules[row2].thumb = null;
 									}
 
+									// README.md (html)
 									var realpathReadme = path.resolve( realpath, 'README' );
 									var readme = '';
 									try{
@@ -173,6 +191,7 @@ module.exports = function(broccoli, packageId, callback){
 									}
 									rtn.categories[idx].modules[row2].readme = readme;
 
+									// pics/
 									var realpathPics = path.resolve( realpath, 'pics/' );
 									rtn.categories[idx].modules[row2].pics = [];
 									if( isDir(realpathPics) ){

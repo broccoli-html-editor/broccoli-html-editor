@@ -176,7 +176,8 @@ module.exports = function(broccoli){
 					$(this).removeClass('broccoli--panel__drag-entered');
 					return;
 				}
-				if( subModNameFrom.length ){
+				if( subModNameFrom.length ){ // ドロップ元のインスタンスがサブモジュールだったら
+
 					if( method === 'moveTo' ){
 						// これはloop要素(=subModNameがある場合)を並べ替えるための moveTo です。
 						// その他のインスタンスをここに移動したり、作成することはできません。
@@ -227,14 +228,39 @@ module.exports = function(broccoli){
 						return;
 					}
 					var modId = event.dataTransfer.getData("modId");
+					var modClip = event.dataTransfer.getData("modClip");
+					try {
+						modClip = JSON.parse(modClip);
+					} catch (e) {
+						modClip = false;
+					}
 					// console.log(modId);
-					broccoli.contentsSourceData.addInstance( modId, $(this).attr('data-broccoli-instance-path'), function(){
-						// コンテンツを保存
-						broccoli.contentsSourceData.save(function(){
-							// alert('インスタンスを追加しました。');
-							broccoli.redraw();
+					console.log(modClip);
+					if( modClip !== false ){
+						console.log('クリップがドロップされました。');
+
+						broccoli.contentsSourceData.duplicateInstance(modClip.data[0], function(newData){
+							console.log(newData);
+
+							broccoli.contentsSourceData.addInstance( newData, moveTo, function(){
+								broccoli.message('クリップを挿入しました。');
+								broccoli.contentsSourceData.save(function(){
+									broccoli.redraw();
+								});
+							} );
+
 						});
-					} );
+
+					}else{
+						broccoli.contentsSourceData.addInstance( modId, $(this).attr('data-broccoli-instance-path'), function(){
+							// コンテンツを保存
+							broccoli.contentsSourceData.save(function(){
+								// alert('インスタンスを追加しました。');
+								broccoli.redraw();
+							});
+						} );
+
+					}
 				}
 				return;
 			})

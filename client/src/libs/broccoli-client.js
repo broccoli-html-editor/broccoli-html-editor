@@ -544,7 +544,7 @@
 				callback(false);
 				return;
 			}
-			console.log(data.data[0]);
+			// console.log(data.data[0]);
 			_this.contentsSourceData.duplicateInstance(data.data[0], function(newData){
 				console.log(newData);
 
