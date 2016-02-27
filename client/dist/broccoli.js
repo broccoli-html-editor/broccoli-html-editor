@@ -530,7 +530,7 @@
 						});
 					} ,
 					function(){
-						console.log(data);
+						// console.log(data);
 						data = JSON.stringify( data, null, 1 );
 						_this.clipboard.set( data );
 						_this.message('インスタンスをコピーしました。');
@@ -4059,10 +4059,12 @@ module.exports = function(broccoli){
 			data,
 			[
 				function(it1, data){
-					_resMgr.duplicateResource( data.resKey, function(newResKey){
-						// console.log(newResKey);
-						data.resKey = newResKey;
-						it1.next(data);
+					_resMgr.addResource( function(newResKey){
+						_resMgr.updateResource( newResKey, resources[data.resKey], function(result){
+							// console.log(newResKey);
+							data.resKey = newResKey;
+							it1.next(data);
+						} );
 					} );
 				} ,
 				function(it1, data){

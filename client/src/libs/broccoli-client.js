@@ -524,7 +524,7 @@
 						});
 					} ,
 					function(){
-						console.log(data);
+						// console.log(data);
 						data = JSON.stringify( data, null, 1 );
 						_this.clipboard.set( data );
 						_this.message('インスタンスをコピーしました。');
