@@ -87,12 +87,23 @@ module.exports = function(broccoli){
 	/**
 	 * データを複製する (Client Side)
 	 */
-	this.duplicateData = function( data, callback ){
+	this.duplicateData = function( data, resources, callback ){
 		callback = callback||function(){};
 		data = JSON.parse( JSON.stringify( data ) );
 		callback(data);
 		return this;
 	}
+
+	/**
+	 * データから使用するリソースのリソースIDを抽出する (Client Side)
+	 */
+	this.extractResourceId = function( data, callback ){
+		callback = callback||function(){};
+		data = [];
+		callback(data);
+		return this;
+	}
+
 
 	/**
 	 * エディタUIで編集した内容を保存 (Client Side)

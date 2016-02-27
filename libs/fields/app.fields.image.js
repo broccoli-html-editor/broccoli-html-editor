@@ -220,9 +220,9 @@ module.exports = function(broccoli){
 	}
 
 	/**
-	 * データを複製する
+	 * データを複製する (Client Side)
 	 */
-	this.duplicateData = function( data, callback ){
+	this.duplicateData = function( data, resources, callback ){
 		data = JSON.parse( JSON.stringify( data ) );
 		it79.fnc(
 			data,
@@ -247,6 +247,17 @@ module.exports = function(broccoli){
 			]
 		);
 		return;
+	}
+
+	/**
+	 * データから使用するリソースのリソースIDを抽出する (Client Side)
+	 */
+	this.extractResourceId = function( data, callback ){
+		callback = callback||function(){};
+		resourceIdList = [];
+		resourceIdList.push(data.resKey);
+		callback(resourceIdList);
+		return this;
 	}
 
 	/**

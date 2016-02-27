@@ -413,7 +413,7 @@ module.exports = function(broccoli){
 	 *
 	 * このメソッドは、インスタンスパスではなく、インスタンスの実体を受け取ります。
 	 */
-	this.duplicateInstance = function( objInstance, callback ){
+	this.duplicateInstance = function( objInstance, objResources, callback ){
 		callback = callback || function(){};
 		var _this = this;
 		var newData = JSON.parse( JSON.stringify( objInstance ) );
@@ -425,7 +425,7 @@ module.exports = function(broccoli){
 			modTpl.fields,
 			function(it1, field, fieldName){
 				if( modTpl.fields[fieldName].fieldType == 'input' ){
-					broccoli.getFieldDefinition(modTpl.fields[fieldName].type).duplicateData( objInstance.fields[fieldName], function( result ){
+					broccoli.getFieldDefinition(modTpl.fields[fieldName].type).duplicateData( objInstance.fields[fieldName], objResources, function( result ){
 						newData.fields[fieldName] = result;
 						it1.next();
 						return;
@@ -435,7 +435,7 @@ module.exports = function(broccoli){
 					it79.ary(
 						objInstance.fields[fieldName],
 						function(it2, row2, idx2){
-							_this.duplicateInstance( objInstance.fields[fieldName][idx2], function( result ){
+							_this.duplicateInstance( objInstance.fields[fieldName][idx2], objResources, function( result ){
 								newData.fields[fieldName][idx2] = result;
 								it2.next();
 							} );
@@ -449,7 +449,7 @@ module.exports = function(broccoli){
 					it79.ary(
 						objInstance.fields[fieldName],
 						function(it2, row2, idx2){
-							_this.duplicateInstance( objInstance.fields[fieldName][idx2], function( result ){
+							_this.duplicateInstance( objInstance.fields[fieldName][idx2], objResources, function( result ){
 								newData.fields[fieldName][idx2] = result;
 								it2.next();
 							} );
@@ -477,7 +477,78 @@ module.exports = function(broccoli){
 			}
 		);
 		return this;
-	}
+	} // duplicateInstance()
+
+	/**
+	 * インスタンスからリソースIDを抽出する(非同期)
+	 *
+	 * このメソッドは、リソースの実体ではなく、IDを格納する配列を返します。
+	 */
+	this.extractResourceId = function( objInstance, callback ){
+		callback = callback || function(){};
+		var _this = this;
+		var resourceIdList = [];
+		var modTpl = _this.getModule( objInstance.modId, objInstance.subModName );
+
+		// 初期データ追加
+		var fieldList = _.keys( modTpl.fields );
+		it79.ary(
+			modTpl.fields,
+			function(it1, field, fieldName){
+				if( modTpl.fields[fieldName].fieldType == 'input' ){
+					broccoli.getFieldDefinition(modTpl.fields[fieldName].type).extractResourceId( objInstance.fields[fieldName], function( result ){
+						resourceIdList = resourceIdList.concat(result);
+						it1.next();
+						return;
+					} );
+					return;
+				}else if( modTpl.fields[fieldName].fieldType == 'module' ){
+					it79.ary(
+						objInstance.fields[fieldName],
+						function(it2, row2, idx2){
+							_this.extractResourceId( objInstance.fields[fieldName][idx2], function( result ){
+								resourceIdList = resourceIdList.concat(result);
+								it2.next();
+							} );
+						},
+						function(){
+							it1.next();
+						}
+					);
+					return;
+				}else if( modTpl.fields[fieldName].fieldType == 'loop' ){
+					it79.ary(
+						objInstance.fields[fieldName],
+						function(it2, row2, idx2){
+							_this.extractResourceId( objInstance.fields[fieldName][idx2], function( result ){
+								resourceIdList = resourceIdList.concat(result);
+								it2.next();
+							} );
+						},
+						function(){
+							it1.next();
+						}
+					);
+					return;
+				}else if( modTpl.fields[fieldName].fieldType == 'if' ){
+					it1.next();
+					return;
+				}else if( modTpl.fields[fieldName].fieldType == 'echo' ){
+					it1.next();
+					return;
+				}
+				it1.next();
+				return;
+			},
+			function(){
+				// setTimeout( function(){ cb(resourceIdList); }, 0 );
+				broccoli.resourceMgr.init(function(){
+					callback(resourceIdList);
+				});
+			}
+		);
+		return this;
+	}// extractResourceId()
 
 	/**
 	 * インスタンスを削除する(非同期)

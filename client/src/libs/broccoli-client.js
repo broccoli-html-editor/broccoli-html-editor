@@ -512,13 +512,27 @@
 			var data = {};
 			data.data = [];
 			data.data[0] = this.contentsSourceData.get( instancePath );
-			data.resources = {}; // TODO: 未実装
-			// console.log(data);
-			data = JSON.stringify( data, null, 1 );
-			this.clipboard.set( data );
-			this.message('インスタンスをコピーしました。');
+			data.resources = {};
+			this.contentsSourceData.extractResourceId(data.data[0], function(resourceIdList){
+				// console.log(resourceIdList);
+				it79.ary(
+					resourceIdList ,
+					function(it1, row1, idx1){
+						_this.resourceMgr.getResource(row1, function(resInfo){
+							data.resources[row1] = resInfo;
+							it1.next();
+						});
+					} ,
+					function(){
+						console.log(data);
+						data = JSON.stringify( data, null, 1 );
+						_this.clipboard.set( data );
+						_this.message('インスタンスをコピーしました。');
+						callback(true);
+					}
+				);
 
-			callback(true);
+			});
 			return;
 		}
 
@@ -545,7 +559,7 @@
 				return;
 			}
 			// console.log(data.data[0]);
-			_this.contentsSourceData.duplicateInstance(data.data[0], function(newData){
+			_this.contentsSourceData.duplicateInstance(data.data[0], data.resources, function(newData){
 				console.log(newData);
 
 				_this.contentsSourceData.addInstance( newData, selectedInstance, function(){
