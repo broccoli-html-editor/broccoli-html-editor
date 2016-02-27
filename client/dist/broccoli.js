@@ -566,7 +566,7 @@
 			}
 			// console.log(data.data[0]);
 			_this.contentsSourceData.duplicateInstance(data.data[0], data.resources, function(newData){
-				console.log(newData);
+				// console.log(newData);
 
 				_this.contentsSourceData.addInstance( newData, selectedInstance, function(){
 					_this.message('インスタンスをペーストしました。');
@@ -772,6 +772,8 @@ module.exports = function(broccoli){
 		$("body").append(copyArea);
 		copyArea.select();
 		document.execCommand("copy");
+		// console.log('copied.');
+		// console.log(text);
 		copyArea.remove();
 		return this;
 	}// broccoli.clipboard.set();
@@ -3018,12 +3020,12 @@ module.exports = function(broccoli){
 						modClip = false;
 					}
 					// console.log(modId);
-					console.log(modClip);
+					// console.log(modClip);
 					if( modClip !== false ){
 						console.log('クリップがドロップされました。');
 
-						broccoli.contentsSourceData.duplicateInstance(modClip.data[0], function(newData){
-							console.log(newData);
+						broccoli.contentsSourceData.duplicateInstance(modClip.data[0], modClip.resources, function(newData){
+							// console.log(newData);
 
 							broccoli.contentsSourceData.addInstance( newData, moveTo, function(){
 								broccoli.message('クリップを挿入しました。');

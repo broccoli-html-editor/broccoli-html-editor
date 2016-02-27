@@ -560,7 +560,7 @@
 			}
 			// console.log(data.data[0]);
 			_this.contentsSourceData.duplicateInstance(data.data[0], data.resources, function(newData){
-				console.log(newData);
+				// console.log(newData);
 
 				_this.contentsSourceData.addInstance( newData, selectedInstance, function(){
 					_this.message('インスタンスをペーストしました。');

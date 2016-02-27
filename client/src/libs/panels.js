@@ -235,12 +235,12 @@ module.exports = function(broccoli){
 						modClip = false;
 					}
 					// console.log(modId);
-					console.log(modClip);
+					// console.log(modClip);
 					if( modClip !== false ){
 						console.log('クリップがドロップされました。');
 
-						broccoli.contentsSourceData.duplicateInstance(modClip.data[0], function(newData){
-							console.log(newData);
+						broccoli.contentsSourceData.duplicateInstance(modClip.data[0], modClip.resources, function(newData){
+							// console.log(newData);
 
 							broccoli.contentsSourceData.addInstance( newData, moveTo, function(){
 								broccoli.message('クリップを挿入しました。');

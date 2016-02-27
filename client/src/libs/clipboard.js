@@ -16,6 +16,8 @@ module.exports = function(broccoli){
 		$("body").append(copyArea);
 		copyArea.select();
 		document.execCommand("copy");
+		// console.log('copied.');
+		// console.log(text);
 		copyArea.remove();
 		return this;
 	}// broccoli.clipboard.set();
