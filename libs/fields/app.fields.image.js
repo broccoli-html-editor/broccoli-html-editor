@@ -222,7 +222,7 @@ module.exports = function(broccoli){
 	/**
 	 * データを複製する (Client Side)
 	 */
-	this.duplicateData = function( data, resources, callback ){
+	this.duplicateData = function( data, callback, resources ){
 		data = JSON.parse( JSON.stringify( data ) );
 		it79.fnc(
 			data,

@@ -425,11 +425,11 @@ module.exports = function(broccoli){
 			modTpl.fields,
 			function(it1, field, fieldName){
 				if( modTpl.fields[fieldName].fieldType == 'input' ){
-					broccoli.getFieldDefinition(modTpl.fields[fieldName].type).duplicateData( objInstance.fields[fieldName], objResources, function( result ){
+					broccoli.getFieldDefinition(modTpl.fields[fieldName].type).duplicateData( objInstance.fields[fieldName], function( result ){
 						newData.fields[fieldName] = result;
 						it1.next();
 						return;
-					} );
+					}, objResources );
 					return;
 				}else if( modTpl.fields[fieldName].fieldType == 'module' ){
 					it79.ary(
