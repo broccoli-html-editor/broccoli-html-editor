@@ -243,17 +243,29 @@ module.exports = function(broccoli){
 						var parsedModId = broccoli.parseModuleId(modId);
 						// console.log(parsedModId.package);
 
-						broccoli.contentsSourceData.duplicateInstance(modClip.data[0], modClip.resources, {'supplementModPackage': parsedModId.package}, function(newData){
-							// console.log(newData);
+						it79.ary(
+							modClip.data ,
+							function(it1, row1, idx1){
+								broccoli.contentsSourceData.duplicateInstance(modClip.data[idx1], modClip.resources, {'supplementModPackage': parsedModId.package}, function(newData){
+									// console.log(newData);
 
-							broccoli.contentsSourceData.addInstance( newData, moveTo, function(){
-								broccoli.message('クリップを挿入しました。');
+									broccoli.contentsSourceData.addInstance( newData, moveTo, function(){
+										// 上から順番に挿入していくので、
+										// moveTo を1つインクリメントしなければいけない。
+										// (そうしないと、天地逆さまに積み上げられることになる。)
+										moveTo = broccoli.incrementInstancePath(moveTo);
+										it1.next();
+									} );
+
+								});
+							} ,
+							function(){
 								broccoli.contentsSourceData.save(function(){
+									broccoli.message('クリップを挿入しました。');
 									broccoli.redraw();
 								});
-							} );
-
-						});
+							}
+						);
 
 					}else{
 						broccoli.contentsSourceData.addInstance( modId, $(this).attr('data-broccoli-instance-path'), function(){

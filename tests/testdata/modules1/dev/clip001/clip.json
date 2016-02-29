@@ -7,7 +7,7 @@
      {
       "modId": ":parts/md",
       "fields": {
-       "md_src": "## (1) モジュールIDの表現形式\n\n```\n{$idx}:{$dir}/{$name}\n```"
+       "md_src": "## (1-1) モジュールIDの表現形式\n\n```\n{$idx}:{$dir}/{$name}\n```"
       },
       "dec": "",
       "anchor": ""
@@ -38,7 +38,7 @@
      {
       "modId": "parts/md",
       "fields": {
-       "md_src": "## (2) モジュールテンプレートの定義場所\n\n`px-files/px2dtconfig.json` に定義する。\nあああああ"
+       "md_src": "## (1-2) モジュールテンプレートの定義場所\n\n`px-files/px2dtconfig.json` に定義する。\nあああああ"
       },
       "dec": "",
       "anchor": ""
@@ -56,7 +56,84 @@
      {
       "modId": "testMod1:parts/md",
       "fields": {
-       "md_src": "## (3) Composer から呼び出す場合\n\n- require に、リポジトリを指定する。\n- ディレクトリのパスは `./vendor/vendorname/libname/~~~~` になるはず。\n\n長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。"
+       "md_src": "## (1-3) Composer から呼び出す場合\n\n- require に、リポジトリを指定する。\n- ディレクトリのパスは `./vendor/vendorname/libname/~~~~` になるはず。\n\n長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。"
+      },
+      "anchor": "",
+      "dec": ""
+     },
+     {
+      "modId": "PlainHTMLElements:PlainHTML/MultiText",
+      "fields": {
+       "main": {
+        "src": "## まるちテキストを追加してみました。",
+        "editor": "markdown"
+       }
+      },
+      "anchor": "",
+      "dec": ""
+     }
+    ]
+   },
+   "dec": "",
+   "anchor": ""
+  },
+  {
+   "modId": "testMod1:units/cols3",
+   "fields": {
+    "column1": [
+     {
+      "modId": ":parts/md",
+      "fields": {
+       "md_src": "## (2-1) モジュールIDの表現形式\n\n```\n{$idx}:{$dir}/{$name}\n```"
+      },
+      "dec": "",
+      "anchor": ""
+     },
+     {
+      "modId": "PlainHTMLElements:PlainHTML/image",
+      "fields": {
+       "href": "",
+       "image_src": {
+        "resKey": "b949e7429bdfed6bd195a89f69fd2c13",
+        "path": "./index_files/resources/otosan.png"
+       },
+       "alt_text": ""
+      },
+      "anchor": "",
+      "dec": ""
+     },
+     {
+      "modId": "parts/minimum_module",
+      "fields": {
+       "md_src": "## 最小構成のモジュールのサンプル"
+      },
+      "dec": "DEC入力テスト",
+      "anchor": "minimum"
+     }
+    ],
+    "column2": [
+     {
+      "modId": "parts/md",
+      "fields": {
+       "md_src": "## (2-2) モジュールテンプレートの定義場所\n\n`px-files/px2dtconfig.json` に定義する。\nあああああ"
+      },
+      "dec": "",
+      "anchor": ""
+     },
+     {
+      "modId": "PlainHTMLElements:PlainHTML/Markdown",
+      "fields": {
+       "main": "## Markdownフィールド\n\n- list 1\n- list 2\n\n再描画されます。\n\n再描画されました。"
+      },
+      "dec": "",
+      "anchor": ""
+     }
+    ],
+    "column3": [
+     {
+      "modId": "testMod1:parts/md",
+      "fields": {
+       "md_src": "## (2-3) Composer から呼び出す場合\n\n- require に、リポジトリを指定する。\n- ディレクトリのパスは `./vendor/vendorname/libname/~~~~` になるはず。\n\n長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。長い文字コンテンツ。"
       },
       "anchor": "",
       "dec": ""

@@ -143,6 +143,11 @@ module.exports = function(){
 	this.parseModuleId = require('./fncs/parseModuleId.js');
 
 	/**
+	 * インスタンスパスの末尾の連番を1つ進める
+	 */
+	this.incrementInstancePath = require('./fncs/incrementInstancePath.js');
+
+	/**
 	 * モジュールの絶対パスを取得する。
 	 * @param  {String} moduleId モジュールID
 	 * @return {String}          モジュールの絶対パス

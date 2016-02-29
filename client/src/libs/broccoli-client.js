@@ -722,6 +722,11 @@
 		this.parseModuleId = require('../../../libs/fncs/parseModuleId.js');
 
 		/**
+		 * インスタンスパスの末尾の連番を1つ進める
+		 */
+		this.incrementInstancePath = require('../../../libs/fncs/incrementInstancePath.js');
+
+		/**
 		 * コンテンツデータを保存する
 		 */
 		this.saveContents = function(callback){
