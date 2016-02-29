@@ -244,7 +244,7 @@ module.exports = function(broccoli){
 						// console.log(parsedModId.package);
 
 						broccoli.contentsSourceData.duplicateInstance(modClip.data[0], modClip.resources, {'supplementModPackage': parsedModId.package}, function(newData){
-							console.log(newData);
+							// console.log(newData);
 
 							broccoli.contentsSourceData.addInstance( newData, moveTo, function(){
 								broccoli.message('クリップを挿入しました。');

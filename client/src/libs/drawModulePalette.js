@@ -57,7 +57,8 @@ module.exports = function(broccoli, callback){
 			modules ,
 			function(it1, mod, moduleId){
 				var $liMod = $('<li>');
-				$liMod.append( $('<button>')
+				var $button = $('<button>');
+				$liMod.append( $button
 					.html((function(d){
 						var rtn = '';
 						var label = d.moduleName;
@@ -112,6 +113,7 @@ module.exports = function(broccoli, callback){
 					})
 					// .tooltip({'placement':'left'})
 				);
+
 				$ul.append( $liMod );
 
 				it1.next();

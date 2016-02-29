@@ -1654,7 +1654,8 @@ module.exports = function(broccoli, callback){
 			modules ,
 			function(it1, mod, moduleId){
 				var $liMod = $('<li>');
-				$liMod.append( $('<button>')
+				var $button = $('<button>');
+				$liMod.append( $button
 					.html((function(d){
 						var rtn = '';
 						var label = d.moduleName;
@@ -1709,6 +1710,7 @@ module.exports = function(broccoli, callback){
 					})
 					// .tooltip({'placement':'left'})
 				);
+
 				$ul.append( $liMod );
 
 				it1.next();
@@ -3042,7 +3044,7 @@ module.exports = function(broccoli){
 						// console.log(parsedModId.package);
 
 						broccoli.contentsSourceData.duplicateInstance(modClip.data[0], modClip.resources, {'supplementModPackage': parsedModId.package}, function(newData){
-							console.log(newData);
+							// console.log(newData);
 
 							broccoli.contentsSourceData.addInstance( newData, moveTo, function(){
 								broccoli.message('クリップを挿入しました。');

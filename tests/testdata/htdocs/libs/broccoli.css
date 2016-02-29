@@ -5573,7 +5573,17 @@
   vertical-align: middle;
   overflow: hidden;
   white-space: nowrap;
-  text-overflow: ellipsis; }
+  text-overflow: ellipsis;
+  font-weight: bold; }
+  .broccoli--module-palette button:after {
+    content: "@";
+    margin-left: 0.5em;
+    color: #669; }
+  .broccoli--module-palette button[data-clip="false"] {
+    font-weight: normal; }
+    .broccoli--module-palette button[data-clip="false"]:after {
+      content: "";
+      margin-left: 0; }
   .broccoli--module-palette button:hover {
     background-color: #ddd; }
 

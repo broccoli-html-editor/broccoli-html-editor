@@ -506,6 +506,22 @@
 		overflow: hidden;
 		white-space: nowrap;
 		text-overflow: ellipsis;
+
+		// クリップモジュールの場合の表示差異
+		font-weight: bold;
+		&:after{
+			content: "@";
+			margin-left: 0.5em;
+			color: #669;
+		}
+		&[data-clip="false"]{
+			font-weight: normal;
+			&:after{
+				content: "";
+				margin-left: 0;
+			}
+		}
+
 		&:hover{
 			background-color: #ddd;
 		}
