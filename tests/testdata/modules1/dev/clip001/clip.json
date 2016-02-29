@@ -5,7 +5,7 @@
    "fields": {
     "column1": [
      {
-      "modId": "testMod1:parts/md",
+      "modId": ":parts/md",
       "fields": {
        "md_src": "## (1) モジュールIDの表現形式\n\n```\n{$idx}:{$dir}/{$name}\n```"
       },
@@ -26,7 +26,7 @@
       "dec": ""
      },
      {
-      "modId": "testMod1:parts/minimum_module",
+      "modId": "parts/minimum_module",
       "fields": {
        "md_src": "## 最小構成のモジュールのサンプル"
       },
@@ -36,7 +36,7 @@
     ],
     "column2": [
      {
-      "modId": "testMod1:parts/md",
+      "modId": "parts/md",
       "fields": {
        "md_src": "## (2) モジュールテンプレートの定義場所\n\n`px-files/px2dtconfig.json` に定義する。\nあああああ"
       },

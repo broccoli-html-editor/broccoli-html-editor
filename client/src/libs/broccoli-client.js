@@ -555,11 +555,12 @@
 				data = JSON.parse( data );
 			} catch (e) {
 				_this.message('クリップボードのデータをデコードできませんでした。');
+				console.log('FAILED to decode clipboard.', data);
 				callback(false);
 				return;
 			}
 			// console.log(data.data[0]);
-			_this.contentsSourceData.duplicateInstance(data.data[0], data.resources, function(newData){
+			_this.contentsSourceData.duplicateInstance(data.data[0], data.resources, {}, function(newData){
 				// console.log(newData);
 
 				_this.contentsSourceData.addInstance( newData, selectedInstance, function(){
@@ -714,6 +715,11 @@
 			callback();
 			return this;
 		}
+
+		/**
+		 * モジュールIDをパースする
+		 */
+		this.parseModuleId = require('../../../libs/fncs/parseModuleId.js');
 
 		/**
 		 * コンテンツデータを保存する

@@ -413,9 +413,16 @@ module.exports = function(broccoli){
 	 *
 	 * このメソッドは、インスタンスパスではなく、インスタンスの実体を受け取ります。
 	 */
-	this.duplicateInstance = function( objInstance, objResources, callback ){
+	this.duplicateInstance = function( objInstance, objResources, options, callback ){
 		callback = callback || function(){};
+		options = options || {};
 		var _this = this;
+		var supplementModPackage = options.supplementModPackage;
+		var parsedModId = broccoli.parseModuleId(objInstance.modId);
+		if( parsedModId.package === null ){
+			objInstance.modId = supplementModPackage + ':' + parsedModId.category + '/' + parsedModId.module;
+		}
+
 		var newData = JSON.parse( JSON.stringify( objInstance ) );
 		var modTpl = _this.getModule( objInstance.modId, objInstance.subModName );
 
@@ -435,7 +442,7 @@ module.exports = function(broccoli){
 					it79.ary(
 						objInstance.fields[fieldName],
 						function(it2, row2, idx2){
-							_this.duplicateInstance( objInstance.fields[fieldName][idx2], objResources, function( result ){
+							_this.duplicateInstance( objInstance.fields[fieldName][idx2], objResources, options, function( result ){
 								newData.fields[fieldName][idx2] = result;
 								it2.next();
 							} );
@@ -449,7 +456,7 @@ module.exports = function(broccoli){
 					it79.ary(
 						objInstance.fields[fieldName],
 						function(it2, row2, idx2){
-							_this.duplicateInstance( objInstance.fields[fieldName][idx2], objResources, function( result ){
+							_this.duplicateInstance( objInstance.fields[fieldName][idx2], objResources, options, function( result ){
 								newData.fields[fieldName][idx2] = result;
 								it2.next();
 							} );

@@ -76,6 +76,16 @@ describe('モジュールIDを分解する', function() {
 			assert.equal(parsedId.category, 'cat-_=+1');
 			assert.equal(parsedId.module, 'mod-_=+1');
 
+			var parsedId = broccoli.parseModuleId('pkg1cat1/mod1');
+			assert.equal(parsedId.package, null);
+			assert.equal(parsedId.category, 'pkg1cat1');
+			assert.equal(parsedId.module, 'mod1');
+
+			var parsedId = broccoli.parseModuleId(':pkg1cat1/mod1');
+			assert.equal(parsedId.package, null);
+			assert.equal(parsedId.category, 'pkg1cat1');
+			assert.equal(parsedId.module, 'mod1');
+
 			done();
 		} );
 	});
@@ -91,9 +101,6 @@ describe('モジュールIDを分解する', function() {
 			assert.equal(parsedId, false);
 
 			var parsedId = broccoli.parseModuleId('pkg1:cat1mod1');
-			assert.equal(parsedId, false);
-
-			var parsedId = broccoli.parseModuleId('pkg1cat1/mod1');
 			assert.equal(parsedId, false);
 
 			var parsedId = broccoli.parseModuleId('pkg1cat1mod1');
