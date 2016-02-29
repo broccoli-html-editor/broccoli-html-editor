@@ -560,22 +560,37 @@
 				return;
 			}
 			// console.log(data.data[0]);
-			_this.contentsSourceData.duplicateInstance(data.data[0], data.resources, {}, function(newData){
-				// console.log(newData);
 
-				_this.contentsSourceData.addInstance( newData, selectedInstance, function(){
-					_this.message('インスタンスをペーストしました。');
+			it79.ary(
+				data.data ,
+				function(it1, row1, idx1){
+					_this.contentsSourceData.duplicateInstance(data.data[idx1], data.resources, {}, function(newData){
+						// console.log(newData);
+
+						_this.contentsSourceData.addInstance( newData, selectedInstance, function(){
+							// 上から順番に挿入していくので、
+							// moveTo を1つインクリメントしなければいけない。
+							// (そうしないと、天地逆さまに積み上げられることになる。)
+							selectedInstance = _this.incrementInstancePath(selectedInstance);
+							it1.next();
+						} );
+
+					});
+
+				} ,
+				function(){
 					_this.saveContents(function(result){
 						// 画面を再描画
 						_this.redraw(function(){
 							_this.selectInstance(selectedInstance, function(){
+								_this.message('インスタンスをペーストしました。');
 								callback(true);
 							});
 						});
 					});
-				} );
+				}
+			);
 
-			});
 			return;
 		}
 
