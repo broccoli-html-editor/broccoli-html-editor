@@ -79,8 +79,7 @@ gulp.task("test/main.js", function() {
 gulp.task("watch", function() {
 	gulp.watch(["client/src/**/*","libs/**/*","tests/testdata/htdocs/index_files/main.src.js"], _tasks);
 
-	var port = packageJson.baobabConfig.defaultPort;
-	var svrCtrl = require('baobab-fw').createSvrCtrl();
+	var svrCtrl = require( './tests/biflora/serverCtrl.js' );
 	svrCtrl.boot(function(){
 		require('child_process').spawn('open',[svrCtrl.getUrl()]);
 	});
