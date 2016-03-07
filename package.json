@@ -4,10 +4,8 @@
   "description": "GUI HTML Editor Library.",
   "main": "libs/main.js",
   "scripts": {
-    "preinstall": "git submodule update -i -r -f",
-    "start":"gulp watch",
+    "start": "gulp watch",
     "up": "node ./tests/biflora/server.js",
-    "submodules-update": "rm -rfv node_modules/node-biflora; npm install; gulp;",
     "test": "mocha --ui tdd ./tests/"
   },
   "repository": {
@@ -37,7 +35,7 @@
     "utils79": "0.0.1-alpha.1"
   },
   "devDependencies": {
-    "biflora": "file:submodules/node-biflora",
+    "biflora": "0.0.1-alpha.1",
     "bootstrap": "^3.3.5",
     "gulp": "^3.8.10",
     "gulp-autoprefixer": "^2.3.1",
@@ -51,11 +49,5 @@
     "gulp-uglify": "^1.2.0",
     "jquery": "^2.1.4",
     "mocha": "^2.1.0"
-  },
-  "bifloraConfig": {
-    "defaultPort": 8088,
-    "frontendDocumentRoot": "./tests/testdata/htdocs/",
-    "backendJs": "./tests/baobab/backend/main.js",
-    "backendApis": "./tests/baobab/backend/apis/"
   }
 }
