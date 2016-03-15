@@ -87,8 +87,10 @@ APIの一覧は[こちらを参照](docs/api_server.md)ください。
 ### クライアント側 - Client side JavaScript
 
 ```html
-<div id="canvas" data-broccoli-preview="/path/to/your_preview.html"></div>
+<div id="canvas" data-broccoli-preview="http://127.0.0.1/path/to/your_preview.html"></div>
 <div id="palette"></div>
+<div id="instanceTreeView"></div>
+<div id="instancePathView"></div>
 
 <!-- jQuery -->
 <script src="/path/to/jquery.js"></script><!-- <- option; not required -->
@@ -102,6 +104,8 @@ broccoli.init(
 	{
 		'elmCanvas': document.getElementById('canvas'),
 		'elmModulePalette': document.getElementById('palette'),
+		'elmInstanceTreeView': document.getElementById('instanceTreeView'),
+		'elmInstancePathView': document.getElementById('instancePathView'),
 		'contents_area_selector': '[data-contents]',
 			// ↑編集可能領域を探すためのクエリを設定します。
 			// 　この例では、data-contents属性が付いている要素が編集可能領域として認識されます。

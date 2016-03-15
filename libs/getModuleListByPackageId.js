@@ -10,6 +10,7 @@ module.exports = function(broccoli, packageId, callback){
 	var path = require('path');
 	var php = require('phpjs');
 	var fs = require('fs');
+	var Promise = require('es6-promise').Promise;
 	var rtn = {};
 
 	function isFile(path){
