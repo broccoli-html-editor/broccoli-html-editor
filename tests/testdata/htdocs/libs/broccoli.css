@@ -5526,10 +5526,11 @@
   overflow: auto; }
   .broccoli--module-palette ul.broccoli--module-palette-list li {
     list-style-type: none;
-    padding: 0 0 10px 0; }
+    padding: 0; }
     .broccoli--module-palette ul.broccoli--module-palette-list li a {
       display: block;
       color: #eee;
+      border-top: 1px solid #666;
       background-color: #333;
       padding: 0.3em 1em;
       white-space: nowrap;
@@ -5545,6 +5546,7 @@
       font-size: small; }
       .broccoli--module-palette ul.broccoli--module-palette-list li ul li a {
         color: #000;
+        border-top: 1px solid #999;
         background-color: #666;
         color: #eee;
         padding: 0.3em 2em;
@@ -5562,7 +5564,7 @@
 .broccoli--module-palette button {
   box-sizing: border-box;
   display: block;
-  width: 99%;
+  width: 100%;
   height: 50px;
   border: 1px solid #999;
   text-align: left;

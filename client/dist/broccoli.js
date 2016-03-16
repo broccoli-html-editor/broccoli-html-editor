@@ -1885,6 +1885,7 @@ module.exports = function(broccoli, callback){
 				$(targetElm).html('').append($wrap);
 
 				function onChange(){
+					// フィルター機能
 					var keyword = $(this).val();
 					if( lastKeyword == keyword ){ return; }
 					lastKeyword = keyword;
@@ -1893,7 +1894,6 @@ module.exports = function(broccoli, callback){
 
 					$(targetElm).find('a').removeClass('broccoli--module-palette__closed');
 					$(targetElm).find('ul').show();
-
 
 					changeTimer = setTimeout(function(){
 						$(targetElm).find('button').each(function(){
@@ -1910,6 +1910,18 @@ module.exports = function(broccoli, callback){
 							// }
 							$this.hide();
 						});
+
+						$(targetElm).find('li').each(function(){
+							var $this = $(this);
+							var $btns = $this.find('button:visible');
+							if( !$btns.size() ){
+								$this.css({'display':'none'});
+							}else{
+								$this.css({'display':'block'});
+							}
+							return;
+						});
+
 					}, 100);
 
 				}
