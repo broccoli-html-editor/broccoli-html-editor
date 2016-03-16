@@ -13,7 +13,7 @@ module.exports = function(broccoli){
 	var twig = require('twig');
 	var $ = require('jquery');
 
-	var $instancePathView;
+	var $instancePathView, $instancePathViewInner;
 
 
 	/**
@@ -23,7 +23,7 @@ module.exports = function(broccoli){
 		callback = callback||function(){};
 		var selectedInstance = broccoli.getSelectedInstance();
 		if( selectedInstance === null ){
-			$instancePathView.text('-');
+			$instancePathViewInner.text('-');
 			callback();
 			return this;
 		}
@@ -69,7 +69,7 @@ module.exports = function(broccoli){
 				)
 			);
 		}
-		$instancePathView.html('').append($ul).show();
+		$instancePathViewInner.html('').append($ul).show();
 
 		broccoli.contentsSourceData.getChildren( selectedInstance, function(children){
 			if(children.length){
@@ -134,12 +134,16 @@ module.exports = function(broccoli){
 		;
 		// console.log(domElm);
 		// console.log($instancePathView);
+		$instancePathViewInner = $('<div>')
+			.addClass('broccoli--instance-path-view-inner')
+		;
 
 		it79.fnc(
 			{},
 			[
 				function( it1, data ){
-					$instancePathView.html('initialize...');
+					$instancePathView.html('').append($instancePathViewInner);
+					$instancePathViewInner.html('initialize...');
 					it1.next(data);
 				} ,
 				function( it1, data ){
