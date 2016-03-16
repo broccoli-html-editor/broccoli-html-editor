@@ -98,7 +98,7 @@
 			return;
 
 		}else if(data.api == 'getHtmlContentHeight'){
-			var height = $iframeWindow.height() + 16;
+			var height = $iframeWindow.find('html').height() + 16;
 			callbackMessage(data.callback, height);
 			return;
 
