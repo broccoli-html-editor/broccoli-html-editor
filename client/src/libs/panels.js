@@ -81,7 +81,9 @@ module.exports = function(broccoli){
 				// if( $this.attr('data-broccoli-is-appender') == 'yes' ){
 				// 	instancePath = php.dirname(instancePath);
 				// }
-				broccoli.selectInstance( instancePath );
+				broccoli.selectInstance( instancePath, function(){
+					broccoli.instanceTreeView.focusInstance( instancePath, function(){} );
+				} );
 			})
 		;
 		_this.setPanelEventHandlers($panel);
@@ -114,7 +116,7 @@ module.exports = function(broccoli){
 				var instancePath = $this.attr('data-broccoli-instance-path');
 
 				if( $this.attr('data-broccoli-sub-mod-name') && $this.attr('data-broccoli-is-appender') == 'yes' ){
-					// alert('開発中: loopモジュールの繰り返し要素を増やします。');
+					// loopモジュールの繰り返し要素を増やします。
 					var modId = $(this).attr("data-broccoli-mod-id");
 					var subModName = $(this).attr("data-broccoli-sub-mod-name");
 					broccoli.contentsSourceData.addInstance( modId, instancePath, function(){

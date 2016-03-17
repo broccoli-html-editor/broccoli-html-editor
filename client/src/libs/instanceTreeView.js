@@ -313,6 +313,35 @@ module.exports = function(broccoli){
 		return this;
 	}
 
+	/**
+	 * モジュールインスタンスにフォーカスする
+	 */
+	this.focusInstance = function( instancePath, callback ){
+		callback = callback || function(){};
+
+		var $targetElm = $(this.getElement(instancePath));
+		if($targetElm.size()){
+			var minTop = $instanceTreeView.scrollTop() + $targetElm.offset().top - 30;
+			var topLine = $instanceTreeView.scrollTop();
+			var targetTop = topLine + $targetElm.offset().top;
+			var targetHeight = $targetElm.height();
+			var to = targetTop + (targetHeight/2) - ($instanceTreeView.height()/2);
+			if( to > minTop ){
+				to = minTop;
+			}
+			$instanceTreeView.stop().animate({"scrollTop":to} , 'fast' );
+		}
+		callback();
+		return this;
+	}
+
+	/**
+	 * 指定instanceのHTMLエレメントを取得する
+	 */
+	this.getElement = function( instancePath ){
+		var $rtn = $instanceTreeView.find('[data-broccoli-instance-path="'+php.htmlspecialchars(instancePath)+'"]');
+		return $rtn.get(0);
+	}
 
 	/**
 	 * 初期化する

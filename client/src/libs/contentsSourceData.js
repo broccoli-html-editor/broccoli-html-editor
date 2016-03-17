@@ -165,6 +165,12 @@ module.exports = function(broccoli){
 		// console.log( '開発中: '+modId+': '+containerInstancePath );
 		cb = cb||function(){};
 
+		if( containerInstancePath.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
+			broccoli.message('bowl に追加することはできません。アペンダーに追加してください。');
+			cb();
+			return this;
+		}
+
 		var newData = {};
 		if( typeof(modId) === typeof('') ){
 			newData = new (function(){
@@ -348,6 +354,24 @@ module.exports = function(broccoli){
 	 */
 	this.moveInstanceTo = function( fromContainerInstancePath, toContainerInstancePath, cb ){
 		cb = cb||function(){};
+
+		function isBowlRoot(instancePath){
+			if( instancePath.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
+				return true;
+			}
+			return false;
+		}
+		if( isBowlRoot(fromContainerInstancePath) ){
+			broccoli.message('bowl を移動することはできません。');
+			cb();
+			return this;
+		}
+		if( isBowlRoot(toContainerInstancePath) ){
+			broccoli.message('bowl への移動はできません。アペンダーへドロップしてください。');
+			cb();
+			return this;
+		}
+
 
 		function parseInstancePath(path){
 			function parsePath( path ){

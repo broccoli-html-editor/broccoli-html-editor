@@ -68,7 +68,11 @@ module.exports = function(broccoli){
 					.bind('click', function(e){
 						var dataPath = $(this).attr('data-broccoli-instance-path');
 						timer = setTimeout(function(){
-							broccoli.selectInstance( dataPath );
+							broccoli.selectInstance( dataPath, function(){
+								broccoli.focusInstance( dataPath, function(){
+									broccoli.instanceTreeView.focusInstance( dataPath, function(){} );
+								} );
+							} );
 						}, 20);
 						return false;
 					} )
@@ -96,7 +100,9 @@ module.exports = function(broccoli){
 							})
 							.bind('mouseover', function(e){
 								var dataPath = $(this).attr('data-broccoli-instance-path');
-								broccoli.focusInstance( dataPath );
+								broccoli.focusInstance( dataPath, function(){
+									broccoli.instanceTreeView.focusInstance( dataPath, function(){} );
+								} );
 							} )
 							.bind('mouseout', function(e){
 								broccoli.unfocusInstance();
@@ -104,14 +110,19 @@ module.exports = function(broccoli){
 							.bind('dblclick', function(e){
 								var dataPath = $(this).attr('data-broccoli-instance-path');
 								clearTimeout(timer);
-								broccoli.selectInstance( dataPath );
-								broccoli.editInstance( dataPath );
+								broccoli.selectInstance( dataPath, function(){
+									broccoli.editInstance( dataPath );
+								} );
 							} )
 							.bind('click', function(e){
 								broccoli.unfocusInstance();
 								var dataPath = $(this).attr('data-broccoli-instance-path');
 								timer = setTimeout(function(){
-									broccoli.selectInstance( dataPath );
+									broccoli.selectInstance( dataPath, function(){
+										broccoli.focusInstance( dataPath, function(){
+											broccoli.instanceTreeView.focusInstance( dataPath, function(){} );
+										} );
+									} );
 								}, 20);
 								return false;
 							} )
