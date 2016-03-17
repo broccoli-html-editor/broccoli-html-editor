@@ -246,23 +246,23 @@ module.exports = function(broccoli){
 							.text('bowl.'+idx) // ← bowl name
 							.addClass('broccoli--instance-tree-view-bowlname')
 					)
-					.attr({
-						'data-broccoli-instance-path':'/bowl.'+idx
-					})
-					.bind('click',function(e){
-						var instancePath = $(this).attr('data-broccoli-instance-path');
-						broccoli.focusInstance(instancePath);
-						e.stopPropagation();
-					})
-					.bind('mouseout',function(e){
-						broccoli.unfocusInstance();
-						e.stopPropagation();
-					})
-					.bind('click',function(e){
-						var instancePath = $(this).attr('data-broccoli-instance-path');
-						broccoli.focusInstance(instancePath);
-						e.stopPropagation();
-					})
+					// .attr({
+					// 	'data-broccoli-instance-path':'/bowl.'+idx
+					// })
+					// .bind('click',function(e){
+					// 	var instancePath = $(this).attr('data-broccoli-instance-path');
+					// 	broccoli.focusInstance(instancePath);
+					// 	e.stopPropagation();
+					// })
+					// .bind('mouseout',function(e){
+					// 	broccoli.unfocusInstance();
+					// 	e.stopPropagation();
+					// })
+					// .bind('click',function(e){
+					// 	var instancePath = $(this).attr('data-broccoli-instance-path');
+					// 	broccoli.focusInstance(instancePath);
+					// 	e.stopPropagation();
+					// })
 				;
 				buildInstance(
 					row,
