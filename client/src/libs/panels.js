@@ -48,6 +48,12 @@ module.exports = function(broccoli){
 		var $this = domElm;
 		var $panel = $('<div>');
 		var isAppender = $this.isAppender;
+
+		// if( $this.instancePath.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
+		// 		// bowl自体は選択も操作もできないので、パネルを描画しない。
+		// 	return;
+		// }
+
 		$panels.append($panel);
 		$panel
 			.css({
@@ -72,9 +78,9 @@ module.exports = function(broccoli){
 				e.stopPropagation();
 				var $this = $(this);
 				var instancePath = $this.attr('data-broccoli-instance-path');
-				if( $this.attr('data-broccoli-is-appender') == 'yes' ){
-					instancePath = php.dirname(instancePath);
-				}
+				// if( $this.attr('data-broccoli-is-appender') == 'yes' ){
+				// 	instancePath = php.dirname(instancePath);
+				// }
 				broccoli.selectInstance( instancePath );
 			})
 		;
@@ -99,9 +105,6 @@ module.exports = function(broccoli){
 
 	/**
 	 * パネルにイベントハンドラをセットする
-	 *
-	 * @param  {[type]} $panel [description]
-	 * @return {[type]}        [description]
 	 */
 	this.setPanelEventHandlers = function($panel){
 		$panel

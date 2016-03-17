@@ -38,6 +38,13 @@ module.exports = function(broccoli){
 			instPathMemo.push(instPath[idx]);
 			if( instPathMemo.length <= 1 ){ continue; }
 			var contData = broccoli.contentsSourceData.get(instPathMemo.join('/'));
+			if( !contData ){
+				// appender を選択した場合に、
+				// 存在しない instance が末尾に含まれた状態で送られてくる。
+				// その場合、contData は undefined になる。
+				// 処理できないので、スキップする。
+				continue;
+			}
 			var mod = broccoli.contentsSourceData.getModule(contData.modId, contData.subModName);
 			var label = mod && mod.info.name||mod.id;
 			if(instPathMemo.length==2){

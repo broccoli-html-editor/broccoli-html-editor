@@ -408,6 +408,12 @@
 			callback = callback || function(){};
 			var broccoli = this;
 
+			// if( instancePath.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
+			// 	// bowl自体は選択できない。
+			// 	_this.message('bowlは選択できません。');
+			// 	return this;
+			// }
+
 			//一旦選択解除
 			broccoli.unselectInstance(function(){
 				//フォーカスも解除

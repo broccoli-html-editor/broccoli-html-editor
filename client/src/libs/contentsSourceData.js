@@ -135,6 +135,9 @@ module.exports = function(broccoli){
 	this.getChildren = function( containerInstancePath, callback ){
 		callback = callback|| function(){};
 		var current = this.get(containerInstancePath);
+		if( !current ){
+			callback([]);return;
+		}
 		var modTpl = _this.getModule( current.modId, current.subModName );
 		var targetFieldNames = {};
 		for( var fieldName in modTpl.fields ){

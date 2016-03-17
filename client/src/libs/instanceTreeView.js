@@ -106,9 +106,9 @@ module.exports = function(broccoli){
 										var $this = $(this);
 										var instancePath = $this.attr('data-broccoli-instance-path');
 										var selectInstancePath = instancePath;
-										if( $this.attr('data-broccoli-is-appender') == 'yes' ){
-											selectInstancePath = php.dirname(instancePath);
-										}
+										// if( $this.attr('data-broccoli-is-appender') == 'yes' ){
+										// 	selectInstancePath = php.dirname(instancePath);
+										// }
 										broccoli.selectInstance( selectInstancePath, function(){
 											broccoli.focusInstance( instancePath );
 										} );
@@ -158,9 +158,9 @@ module.exports = function(broccoli){
 										var $this = $(this);
 										var instancePath = $this.attr('data-broccoli-instance-path');
 										var selectInstancePath = instancePath;
-										if( $this.attr('data-broccoli-is-appender') == 'yes' ){
-											selectInstancePath = php.dirname(instancePath);
-										}
+										// if( $this.attr('data-broccoli-is-appender') == 'yes' ){
+										// 	selectInstancePath = php.dirname(instancePath);
+										// }
 										broccoli.selectInstance( selectInstancePath, function(){
 											broccoli.focusInstance( instancePath );
 										} );

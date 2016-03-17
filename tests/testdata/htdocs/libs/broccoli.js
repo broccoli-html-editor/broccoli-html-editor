@@ -414,6 +414,12 @@
 			callback = callback || function(){};
 			var broccoli = this;
 
+			// if( instancePath.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
+			// 	// bowl自体は選択できない。
+			// 	_this.message('bowlは選択できません。');
+			// 	return this;
+			// }
+
 			//一旦選択解除
 			broccoli.unselectInstance(function(){
 				//フォーカスも解除
@@ -959,6 +965,9 @@ module.exports = function(broccoli){
 	this.getChildren = function( containerInstancePath, callback ){
 		callback = callback|| function(){};
 		var current = this.get(containerInstancePath);
+		if( !current ){
+			callback([]);return;
+		}
 		var modTpl = _this.getModule( current.modId, current.subModName );
 		var targetFieldNames = {};
 		for( var fieldName in modTpl.fields ){
@@ -2360,6 +2369,13 @@ module.exports = function(broccoli){
 			instPathMemo.push(instPath[idx]);
 			if( instPathMemo.length <= 1 ){ continue; }
 			var contData = broccoli.contentsSourceData.get(instPathMemo.join('/'));
+			if( !contData ){
+				// appender を選択した場合に、
+				// 存在しない instance が末尾に含まれた状態で送られてくる。
+				// その場合、contData は undefined になる。
+				// 処理できないので、スキップする。
+				continue;
+			}
 			var mod = broccoli.contentsSourceData.getModule(contData.modId, contData.subModName);
 			var label = mod && mod.info.name||mod.id;
 			if(instPathMemo.length==2){
@@ -2594,9 +2610,9 @@ module.exports = function(broccoli){
 										var $this = $(this);
 										var instancePath = $this.attr('data-broccoli-instance-path');
 										var selectInstancePath = instancePath;
-										if( $this.attr('data-broccoli-is-appender') == 'yes' ){
-											selectInstancePath = php.dirname(instancePath);
-										}
+										// if( $this.attr('data-broccoli-is-appender') == 'yes' ){
+										// 	selectInstancePath = php.dirname(instancePath);
+										// }
 										broccoli.selectInstance( selectInstancePath, function(){
 											broccoli.focusInstance( instancePath );
 										} );
@@ -2646,9 +2662,9 @@ module.exports = function(broccoli){
 										var $this = $(this);
 										var instancePath = $this.attr('data-broccoli-instance-path');
 										var selectInstancePath = instancePath;
-										if( $this.attr('data-broccoli-is-appender') == 'yes' ){
-											selectInstancePath = php.dirname(instancePath);
-										}
+										// if( $this.attr('data-broccoli-is-appender') == 'yes' ){
+										// 	selectInstancePath = php.dirname(instancePath);
+										// }
 										broccoli.selectInstance( selectInstancePath, function(){
 											broccoli.focusInstance( instancePath );
 										} );
@@ -2884,6 +2900,12 @@ module.exports = function(broccoli){
 		var $this = domElm;
 		var $panel = $('<div>');
 		var isAppender = $this.isAppender;
+
+		// if( $this.instancePath.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
+		// 		// bowl自体は選択も操作もできないので、パネルを描画しない。
+		// 	return;
+		// }
+
 		$panels.append($panel);
 		$panel
 			.css({
@@ -2908,9 +2930,9 @@ module.exports = function(broccoli){
 				e.stopPropagation();
 				var $this = $(this);
 				var instancePath = $this.attr('data-broccoli-instance-path');
-				if( $this.attr('data-broccoli-is-appender') == 'yes' ){
-					instancePath = php.dirname(instancePath);
-				}
+				// if( $this.attr('data-broccoli-is-appender') == 'yes' ){
+				// 	instancePath = php.dirname(instancePath);
+				// }
 				broccoli.selectInstance( instancePath );
 			})
 		;
@@ -2935,9 +2957,6 @@ module.exports = function(broccoli){
 
 	/**
 	 * パネルにイベントハンドラをセットする
-	 *
-	 * @param  {[type]} $panel [description]
-	 * @return {[type]}        [description]
 	 */
 	this.setPanelEventHandlers = function($panel){
 		$panel
