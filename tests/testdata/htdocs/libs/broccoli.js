@@ -3068,8 +3068,13 @@ module.exports = function(broccoli){
 			.bind('dragover', function(e){
 				e.stopPropagation();
 				e.preventDefault();
-				$(this).addClass('broccoli--panel__drag-entered');
 				var instancePath = $(this).attr('data-broccoli-instance-path');
+				if( instancePath.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
+					// bowl に追加することはできません。アペンダーに追加してください。
+					return;
+				}
+
+				$(this).addClass('broccoli--panel__drag-entered');
 				if( $(this).attr('data-broccoli-is-instance-tree-view') == 'yes' ){
 					if(focusedInstance != instancePath){
 						// if( $this.attr('data-broccoli-is-appender') == 'yes' ){
