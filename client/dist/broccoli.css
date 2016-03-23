@@ -5193,7 +5193,7 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 10000px;
+    height: 10px;
     border: none; }
   .broccoli--canvas .broccoli--panels {
     position: absolute;
@@ -5204,45 +5204,46 @@
     border: none; }
 
 .broccoli--instance-path-view {
-  width: 100%;
-  padding: 3px 10px;
-  border-top: 1px solid #000;
-  background: #f7f7f7;
   font-size: 11px; }
-  .broccoli--instance-path-view > ul {
-    display: block;
-    padding: 0;
-    margin: 0; }
-    .broccoli--instance-path-view > ul > li {
-      margin: 0;
+  .broccoli--instance-path-view-inner {
+    width: 100%;
+    padding: 3px 10px;
+    border-top: 1px solid #000;
+    background: #f7f7f7; }
+    .broccoli--instance-path-view-inner > ul {
+      display: block;
       padding: 0;
-      list-style-type: none;
-      display: inline;
-      position: relative; }
-      .broccoli--instance-path-view > ul > li:before {
-        content: ' > '; }
-      .broccoli--instance-path-view > ul > li ul.broccoli--instance-path-view-children {
-        display: none;
-        background: #fff;
-        border: 1px solid #000;
+      margin: 0; }
+      .broccoli--instance-path-view-inner > ul > li {
+        margin: 0;
         padding: 0;
-        z-index: 1000; }
-        .broccoli--instance-path-view > ul > li ul.broccoli--instance-path-view-children li {
-          display: block;
-          list-style-type: none;
-          margin: 0; }
-          .broccoli--instance-path-view > ul > li ul.broccoli--instance-path-view-children li a {
+        list-style-type: none;
+        display: inline;
+        position: relative; }
+        .broccoli--instance-path-view-inner > ul > li:before {
+          content: ' > '; }
+        .broccoli--instance-path-view-inner > ul > li ul.broccoli--instance-path-view-children {
+          display: none;
+          background: #fff;
+          border: 1px solid #000;
+          padding: 0;
+          z-index: 1000; }
+          .broccoli--instance-path-view-inner > ul > li ul.broccoli--instance-path-view-children li {
             display: block;
-            font-size: 120%;
-            white-space: nowrap;
-            padding: 3px 10px; }
-            .broccoli--instance-path-view > ul > li ul.broccoli--instance-path-view-children li a:hover {
-              background-color: #f2f2f2; }
-      .broccoli--instance-path-view > ul > li:last-child:hover ul.broccoli--instance-path-view-children {
-        display: inline-block;
-        position: absolute;
-        left: 100%;
-        bottom: 0; }
+            list-style-type: none;
+            margin: 0; }
+            .broccoli--instance-path-view-inner > ul > li ul.broccoli--instance-path-view-children li a {
+              display: block;
+              font-size: 120%;
+              white-space: nowrap;
+              padding: 3px 10px; }
+              .broccoli--instance-path-view-inner > ul > li ul.broccoli--instance-path-view-children li a:hover {
+                background-color: #f2f2f2; }
+        .broccoli--instance-path-view-inner > ul > li:last-child:hover ul.broccoli--instance-path-view-children {
+          display: inline-block;
+          position: absolute;
+          left: 100%;
+          bottom: 0; }
 
 .broccoli--instance-tree-view ul {
   margin: 0;
@@ -5261,7 +5262,9 @@
   background-color: #f5f5f5; }
 
 .broccoli--instance-tree-view-bowlname {
-  font-weight: bold; }
+  font-weight: bold;
+  margin: 1em 0 0.5em 0;
+  display: block; }
 
 .broccoli--instance-tree-view-modulename {
   font-weight: bold; }
@@ -5525,10 +5528,11 @@
   overflow: auto; }
   .broccoli--module-palette ul.broccoli--module-palette-list li {
     list-style-type: none;
-    padding: 0 0 10px 0; }
+    padding: 0; }
     .broccoli--module-palette ul.broccoli--module-palette-list li a {
       display: block;
       color: #eee;
+      border-top: 1px solid #666;
       background-color: #333;
       padding: 0.3em 1em;
       white-space: nowrap;
@@ -5544,6 +5548,7 @@
       font-size: small; }
       .broccoli--module-palette ul.broccoli--module-palette-list li ul li a {
         color: #000;
+        border-top: 1px solid #999;
         background-color: #666;
         color: #eee;
         padding: 0.3em 2em;
@@ -5561,7 +5566,7 @@
 .broccoli--module-palette button {
   box-sizing: border-box;
   display: block;
-  width: 99%;
+  width: 100%;
   height: 50px;
   border: 1px solid #999;
   text-align: left;

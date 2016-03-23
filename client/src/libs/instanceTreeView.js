@@ -106,9 +106,9 @@ module.exports = function(broccoli){
 										var $this = $(this);
 										var instancePath = $this.attr('data-broccoli-instance-path');
 										var selectInstancePath = instancePath;
-										if( $this.attr('data-broccoli-is-appender') == 'yes' ){
-											selectInstancePath = php.dirname(instancePath);
-										}
+										// if( $this.attr('data-broccoli-is-appender') == 'yes' ){
+										// 	selectInstancePath = php.dirname(instancePath);
+										// }
 										broccoli.selectInstance( selectInstancePath, function(){
 											broccoli.focusInstance( instancePath );
 										} );
@@ -158,9 +158,9 @@ module.exports = function(broccoli){
 										var $this = $(this);
 										var instancePath = $this.attr('data-broccoli-instance-path');
 										var selectInstancePath = instancePath;
-										if( $this.attr('data-broccoli-is-appender') == 'yes' ){
-											selectInstancePath = php.dirname(instancePath);
-										}
+										// if( $this.attr('data-broccoli-is-appender') == 'yes' ){
+										// 	selectInstancePath = php.dirname(instancePath);
+										// }
 										broccoli.selectInstance( selectInstancePath, function(){
 											broccoli.focusInstance( instancePath );
 										} );
@@ -246,23 +246,23 @@ module.exports = function(broccoli){
 							.text('bowl.'+idx) // ← bowl name
 							.addClass('broccoli--instance-tree-view-bowlname')
 					)
-					.attr({
-						'data-broccoli-instance-path':'/bowl.'+idx
-					})
-					.bind('click',function(e){
-						var instancePath = $(this).attr('data-broccoli-instance-path');
-						broccoli.focusInstance(instancePath);
-						e.stopPropagation();
-					})
-					.bind('mouseout',function(e){
-						broccoli.unfocusInstance();
-						e.stopPropagation();
-					})
-					.bind('click',function(e){
-						var instancePath = $(this).attr('data-broccoli-instance-path');
-						broccoli.focusInstance(instancePath);
-						e.stopPropagation();
-					})
+					// .attr({
+					// 	'data-broccoli-instance-path':'/bowl.'+idx
+					// })
+					// .bind('click',function(e){
+					// 	var instancePath = $(this).attr('data-broccoli-instance-path');
+					// 	broccoli.focusInstance(instancePath);
+					// 	e.stopPropagation();
+					// })
+					// .bind('mouseout',function(e){
+					// 	broccoli.unfocusInstance();
+					// 	e.stopPropagation();
+					// })
+					// .bind('click',function(e){
+					// 	var instancePath = $(this).attr('data-broccoli-instance-path');
+					// 	broccoli.focusInstance(instancePath);
+					// 	e.stopPropagation();
+					// })
 				;
 				buildInstance(
 					row,
@@ -313,6 +313,35 @@ module.exports = function(broccoli){
 		return this;
 	}
 
+	/**
+	 * モジュールインスタンスにフォーカスする
+	 */
+	this.focusInstance = function( instancePath, callback ){
+		callback = callback || function(){};
+
+		var $targetElm = $(this.getElement(instancePath));
+		if($targetElm.size()){
+			var minTop = $instanceTreeView.scrollTop() + $targetElm.offset().top - 30;
+			var topLine = $instanceTreeView.scrollTop();
+			var targetTop = topLine + $targetElm.offset().top;
+			var targetHeight = $targetElm.height();
+			var to = targetTop + (targetHeight/2) - ($instanceTreeView.height()/2);
+			if( to > minTop ){
+				to = minTop;
+			}
+			$instanceTreeView.stop().animate({"scrollTop":to} , 'fast' );
+		}
+		callback();
+		return this;
+	}
+
+	/**
+	 * 指定instanceのHTMLエレメントを取得する
+	 */
+	this.getElement = function( instancePath ){
+		var $rtn = $instanceTreeView.find('[data-broccoli-instance-path="'+php.htmlspecialchars(instancePath)+'"]');
+		return $rtn.get(0);
+	}
 
 	/**
 	 * 初期化する

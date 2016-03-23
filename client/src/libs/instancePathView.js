@@ -13,7 +13,7 @@ module.exports = function(broccoli){
 	var twig = require('twig');
 	var $ = require('jquery');
 
-	var $instancePathView;
+	var $instancePathView, $instancePathViewInner;
 
 
 	/**
@@ -23,7 +23,7 @@ module.exports = function(broccoli){
 		callback = callback||function(){};
 		var selectedInstance = broccoli.getSelectedInstance();
 		if( selectedInstance === null ){
-			$instancePathView.text('-');
+			$instancePathViewInner.text('-');
 			callback();
 			return this;
 		}
@@ -38,6 +38,13 @@ module.exports = function(broccoli){
 			instPathMemo.push(instPath[idx]);
 			if( instPathMemo.length <= 1 ){ continue; }
 			var contData = broccoli.contentsSourceData.get(instPathMemo.join('/'));
+			if( !contData ){
+				// appender を選択した場合に、
+				// 存在しない instance が末尾に含まれた状態で送られてくる。
+				// その場合、contData は undefined になる。
+				// 処理できないので、スキップする。
+				continue;
+			}
 			var mod = broccoli.contentsSourceData.getModule(contData.modId, contData.subModName);
 			var label = mod && mod.info.name||mod.id;
 			if(instPathMemo.length==2){
@@ -61,7 +68,11 @@ module.exports = function(broccoli){
 					.bind('click', function(e){
 						var dataPath = $(this).attr('data-broccoli-instance-path');
 						timer = setTimeout(function(){
-							broccoli.selectInstance( dataPath );
+							broccoli.selectInstance( dataPath, function(){
+								broccoli.focusInstance( dataPath, function(){
+									broccoli.instanceTreeView.focusInstance( dataPath, function(){} );
+								} );
+							} );
 						}, 20);
 						return false;
 					} )
@@ -69,7 +80,7 @@ module.exports = function(broccoli){
 				)
 			);
 		}
-		$instancePathView.html('').append($ul).show();
+		$instancePathViewInner.html('').append($ul).show();
 
 		broccoli.contentsSourceData.getChildren( selectedInstance, function(children){
 			if(children.length){
@@ -89,7 +100,9 @@ module.exports = function(broccoli){
 							})
 							.bind('mouseover', function(e){
 								var dataPath = $(this).attr('data-broccoli-instance-path');
-								broccoli.focusInstance( dataPath );
+								broccoli.focusInstance( dataPath, function(){
+									broccoli.instanceTreeView.focusInstance( dataPath, function(){} );
+								} );
 							} )
 							.bind('mouseout', function(e){
 								broccoli.unfocusInstance();
@@ -97,14 +110,19 @@ module.exports = function(broccoli){
 							.bind('dblclick', function(e){
 								var dataPath = $(this).attr('data-broccoli-instance-path');
 								clearTimeout(timer);
-								broccoli.selectInstance( dataPath );
-								broccoli.editInstance( dataPath );
+								broccoli.selectInstance( dataPath, function(){
+									broccoli.editInstance( dataPath );
+								} );
 							} )
 							.bind('click', function(e){
 								broccoli.unfocusInstance();
 								var dataPath = $(this).attr('data-broccoli-instance-path');
 								timer = setTimeout(function(){
-									broccoli.selectInstance( dataPath );
+									broccoli.selectInstance( dataPath, function(){
+										broccoli.focusInstance( dataPath, function(){
+											broccoli.instanceTreeView.focusInstance( dataPath, function(){} );
+										} );
+									} );
 								}, 20);
 								return false;
 							} )
@@ -134,12 +152,16 @@ module.exports = function(broccoli){
 		;
 		// console.log(domElm);
 		// console.log($instancePathView);
+		$instancePathViewInner = $('<div>')
+			.addClass('broccoli--instance-path-view-inner')
+		;
 
 		it79.fnc(
 			{},
 			[
 				function( it1, data ){
-					$instancePathView.html('initialize...');
+					$instancePathView.html('').append($instancePathViewInner);
+					$instancePathViewInner.html('initialize...');
 					it1.next(data);
 				} ,
 				function( it1, data ){

@@ -268,6 +268,7 @@ module.exports = function(broccoli, callback){
 				$(targetElm).html('').append($wrap);
 
 				function onChange(){
+					// フィルター機能
 					var keyword = $(this).val();
 					if( lastKeyword == keyword ){ return; }
 					lastKeyword = keyword;
@@ -277,22 +278,33 @@ module.exports = function(broccoli, callback){
 					$(targetElm).find('a').removeClass('broccoli--module-palette__closed');
 					$(targetElm).find('ul').show();
 
-
 					changeTimer = setTimeout(function(){
 						$(targetElm).find('button').each(function(){
 							var $this = $(this);
 							if( $this.attr('data-id').toLowerCase().match( keyword.toLowerCase() ) ){
-								$this.show();
+								$this.show().addClass('broccoli--module-palette__shown-module');
 								return;
 							}
 							if( $this.attr('data-name').toLowerCase().match( keyword.toLowerCase() ) ){
-								$this.show();
+								$this.show().addClass('broccoli--module-palette__shown-module');
 								return;
 							}
 							// if( $this.attr('data-readme') ){
 							// }
-							$this.hide();
+							$this.hide().removeClass('broccoli--module-palette__shown-module');
 						});
+
+						$(targetElm).find('li').each(function(){
+							var $this = $(this);
+							var $btns = $this.find('button.broccoli--module-palette__shown-module');
+							if( !$btns.size() ){
+								$this.css({'display':'none'});
+							}else{
+								$this.css({'display':'block'});
+							}
+							return;
+						});
+
 					}, 100);
 
 				}

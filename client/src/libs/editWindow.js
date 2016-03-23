@@ -255,6 +255,11 @@ module.exports = function(broccoli){
 							_this.unlock();
 							return;
 						}
+						if( instancePath.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
+							alert('bowlは削除できません。');
+							_this.unlock();
+							return;
+						}
 						broccoli.contentsSourceData.removeInstance(instancePath, function(){
 							broccoli.unselectInstance(function(){
 								callback(true);

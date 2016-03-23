@@ -408,6 +408,12 @@
 			callback = callback || function(){};
 			var broccoli = this;
 
+			// if( instancePath.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
+			// 	// bowl自体は選択できない。
+			// 	_this.message('bowlは選択できません。');
+			// 	return this;
+			// }
+
 			//一旦選択解除
 			broccoli.unselectInstance(function(){
 				//フォーカスも解除
@@ -601,12 +607,17 @@
 			callback = callback||function(){};
 
 			var selectedInstance = _this.getSelectedInstance();
+			// console.log(selectedInstance);
 			if( typeof(selectedInstance) !== typeof('') ){
 				_this.message('インスタンスを選択した状態で削除してください。');
 				callback(false);
 				return;
 			}
-			// console.log(selectedInstance);
+			if( selectedInstance.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
+				_this.message('bowlを削除することはできません。');
+				callback(false);
+				return;
+			}
 
 			_this.contentsSourceData.removeInstance(selectedInstance, function(){
 				_this.message('インスタンスを削除しました。');

@@ -48,6 +48,12 @@ module.exports = function(broccoli){
 		var $this = domElm;
 		var $panel = $('<div>');
 		var isAppender = $this.isAppender;
+
+		// if( $this.instancePath.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
+		// 		// bowl自体は選択も操作もできないので、パネルを描画しない。
+		// 	return;
+		// }
+
 		$panels.append($panel);
 		$panel
 			.css({
@@ -72,10 +78,12 @@ module.exports = function(broccoli){
 				e.stopPropagation();
 				var $this = $(this);
 				var instancePath = $this.attr('data-broccoli-instance-path');
-				if( $this.attr('data-broccoli-is-appender') == 'yes' ){
-					instancePath = php.dirname(instancePath);
-				}
-				broccoli.selectInstance( instancePath );
+				// if( $this.attr('data-broccoli-is-appender') == 'yes' ){
+				// 	instancePath = php.dirname(instancePath);
+				// }
+				broccoli.selectInstance( instancePath, function(){
+					broccoli.instanceTreeView.focusInstance( instancePath, function(){} );
+				} );
 			})
 		;
 		_this.setPanelEventHandlers($panel);
@@ -99,9 +107,6 @@ module.exports = function(broccoli){
 
 	/**
 	 * パネルにイベントハンドラをセットする
-	 *
-	 * @param  {[type]} $panel [description]
-	 * @return {[type]}        [description]
 	 */
 	this.setPanelEventHandlers = function($panel){
 		$panel
@@ -111,7 +116,7 @@ module.exports = function(broccoli){
 				var instancePath = $this.attr('data-broccoli-instance-path');
 
 				if( $this.attr('data-broccoli-sub-mod-name') && $this.attr('data-broccoli-is-appender') == 'yes' ){
-					// alert('開発中: loopモジュールの繰り返し要素を増やします。');
+					// loopモジュールの繰り返し要素を増やします。
 					var modId = $(this).attr("data-broccoli-mod-id");
 					var subModName = $(this).attr("data-broccoli-sub-mod-name");
 					broccoli.contentsSourceData.addInstance( modId, instancePath, function(){
@@ -137,8 +142,13 @@ module.exports = function(broccoli){
 			.bind('dragover', function(e){
 				e.stopPropagation();
 				e.preventDefault();
-				$(this).addClass('broccoli--panel__drag-entered');
 				var instancePath = $(this).attr('data-broccoli-instance-path');
+				if( instancePath.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
+					// bowl に追加することはできません。アペンダーに追加してください。
+					return;
+				}
+
+				$(this).addClass('broccoli--panel__drag-entered');
 				if( $(this).attr('data-broccoli-is-instance-tree-view') == 'yes' ){
 					if(focusedInstance != instancePath){
 						// if( $this.attr('data-broccoli-is-appender') == 'yes' ){
