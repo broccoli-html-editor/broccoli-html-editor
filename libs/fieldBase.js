@@ -85,6 +85,16 @@ module.exports = function(broccoli){
 	}
 
 	/**
+	 * エディタUIにフォーカス (Client Side)
+	 */
+	this.focus = function( elm, callback ){
+		callback = callback || function(){};
+		$(elm).find('textarea, input').eq(0).focus();
+		callback();
+		return this;
+	}
+
+	/**
 	 * データを複製する (Client Side)
 	 */
 	this.duplicateData = function( data, callback, resources ){
