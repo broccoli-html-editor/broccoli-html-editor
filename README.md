@@ -197,9 +197,13 @@ coming soon.
 - bind(fieldData, mode, mod, callback) - データをバインドする (Server Side)
 - mkPreviewHtml(fieldData, mod, callback) - プレビュー用の簡易なHTMLを生成する (Server Side/Client Side)
 - normalizeData(fieldData, mode) - データを正規化する (Server Side/Client Side)
-- mkEditor( mod, data, elm, callback ) - エディタUIを生成 (Client Side)
-- duplicateData( data, callback ) - データを複製する (Client Side)
-- saveEditorContent( elm, data, mod, callback ) - エディタUIで編集した内容を保存 (Client Side)
+- mkEditor(mod, data, elm, callback) - エディタUIを生成 (Client Side)
+- focus(elm, callback) - エディタUIにフォーカス (Client Side)
+- duplicateData(data, callback) - データを複製する (Client Side)
+- extractResourceId(data, callback) - データから使用するリソースのリソースIDを抽出する (Client Side)
+- saveEditorContent(elm, data, mod, callback) - エディタUIで編集した内容を保存 (Client Side)
+- gpi(options, callback) - GPI (Server Side)
+- callGpi(options, callback) - GPIを呼び出す (Cliend Side)
 
 
 ## for developer
