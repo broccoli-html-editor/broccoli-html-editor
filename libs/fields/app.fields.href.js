@@ -22,7 +22,7 @@ module.exports = function(broccoli){
 	}
 
 	/**
-	 * エディタUIを生成
+	 * エディタUIを生成 (Client Side)
 	 */
 	this.mkEditor = function( mod, data, elm, callback ){
 		var $input = $('<input class="form-control">')

@@ -119,6 +119,7 @@ module.exports = function(broccoli){
 			});
 		});
 
+		var focusDone = false;
 		it79.ary(
 			mod.fields,
 			function(it1, field, fieldName){
@@ -158,7 +159,15 @@ module.exports = function(broccoli){
 					case 'input':
 						var fieldDefinition = broccoli.getFieldDefinition(field.type);
 						fieldDefinition.mkEditor(mod.fields[field.name], data.fields[field.name], elmFieldContent, function(){
+							if(!focusDone){
+								focusDone = true;
+								fieldDefinition.focus(elmFieldContent, function(){
+									it1.next();
+								});
+								return;
+							}
 							it1.next();
+							return;
 						})
 						break;
 					case 'module':
@@ -267,6 +276,7 @@ module.exports = function(broccoli){
 						});
 					})
 				;
+
 			}
 		);
 		return this;
