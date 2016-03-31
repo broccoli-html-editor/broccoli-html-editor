@@ -4160,7 +4160,8 @@ module.exports = function(broccoli){
 							dataUri = dataUri.replace(new RegExp('^data\\:[^\\;]*\\;base64\\,'), '');
 							// console.log(dataUri);
 							return dataUri;
-						})(dataUri)
+						})(dataUri),
+						"data-is-updated": 'yes'
 					})
 				;
 			});
@@ -4186,7 +4187,8 @@ module.exports = function(broccoli){
 						"data-size": res.size ,
 						"data-extension": res.ext,
 						"data-mime-type": res.type,
-						"data-base64": res.base64
+						"data-base64": res.base64,
+						"data-is-updated": 'no'
 					})
 					.css({
 						'min-width':'100px',
@@ -4300,8 +4302,7 @@ module.exports = function(broccoli){
 	 * エディタUIで編集した内容を保存
 	 */
 	this.saveEditorContent = function( elm, data, mod, callback ){
-		var resInfo,
-			realpathSelected;
+		var resInfo;
 		var $dom = $(elm);
 		if( typeof(data) !== typeof({}) ){
 			data = {};
@@ -4340,12 +4341,12 @@ module.exports = function(broccoli){
 					return;
 				} ,
 				function(it1, data){
-					realpathSelected = $dom.find('input[type=file]').val();
-					if( realpathSelected ){
-						resInfo.ext = $dom.find('img').attr('data-extension');
-						resInfo.type = $dom.find('img').attr('data-mime-type');
-						resInfo.size = $dom.find('img').attr('data-size');
-						resInfo.base64 = $dom.find('img').attr('data-base64');
+					var $img = $dom.find('img');
+					if( $img.attr('data-is-updated') == 'yes' ){
+						resInfo.ext = $img.attr('data-extension');
+						resInfo.type = $img.attr('data-mime-type');
+						resInfo.size = $img.attr('data-size');
+						resInfo.base64 = $img.attr('data-base64');
 					}
 					resInfo.isPrivateMaterial = false;
 					resInfo.publicFilename = $dom.find('input[name='+mod.name+'-publicFilename]').val();
