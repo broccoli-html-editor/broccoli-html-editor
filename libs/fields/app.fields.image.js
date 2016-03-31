@@ -108,6 +108,44 @@ module.exports = function(broccoli){
 			data.resKey = '';
 		}
 		// if( typeof(data.original) !== typeof({}) ){ data.original = {}; }
+		var $img = $('<img>');
+		var $inputImageName = $('<input class="form-control" style="width:12em;">');
+
+		/**
+		 * fileAPIからファイルを取り出して反映する
+		 */
+		function applyFile(fileInfo){
+			function readSelectedLocalFile(fileInfo, callback){
+				var reader = new FileReader();
+				reader.onload = function(evt) {
+					callback( evt.target.result );
+				}
+				reader.readAsDataURL(fileInfo);
+			}
+			if( !$inputImageName.val() ){
+				// アップした画像名をプリセット
+				// ただし、既に名前がセットされている場合は変更しない
+				var fname = fileInfo.name;
+				fname = fname.replace(new RegExp('\\.[a-zA-Z0-9]*$'), '');
+				$inputImageName.val(fname);
+			}
+			readSelectedLocalFile(fileInfo, function(dataUri){
+				$img
+					.attr({
+						"src": dataUri ,
+						"data-size": fileInfo.size ,
+						"data-extension": getExtension( fileInfo.name ),
+						"data-mime-type": fileInfo.type ,
+						"data-base64": (function(dataUri){
+							dataUri = dataUri.replace(new RegExp('^data\\:[^\\;]*\\;base64\\,'), '');
+							// console.log(dataUri);
+							return dataUri;
+						})(dataUri)
+					})
+				;
+			});
+		}
+
 		_resMgr.getResource( data.resKey, function(res){
 			// console.log(res);
 			var path = 'data:'+res.type+';base64,' + res.base64;
@@ -116,8 +154,6 @@ module.exports = function(broccoli){
 				path = _imgDummy;
 			}
 
-			var $img = $('<img>');
-			var $inputImageName = $('<input class="form-control" style="width:12em;">');
 			rtn.append( $('<label>')
 				.css({
 					'border':'1px solid #999',
@@ -149,52 +185,30 @@ module.exports = function(broccoli){
 					.bind('change', function(e){
 						// console.log(e.target.files);
 						var fileInfo = e.target.files[0];
-
-						function readSelectedLocalFile(fileInfo, callback){
-							var reader = new FileReader();
-							reader.onload = function(evt) {
-								callback( evt.target.result );
-							}
-							reader.readAsDataURL(fileInfo);
-						}
-
 						var realpathSelected = $(this).val();
-						if( realpathSelected ){
-							if( !$inputImageName.val() ){
-								// アップした画像名をプリセット
-								// ただし、既に名前がセットされている場合は変更しない
-								var fname = fileInfo.name;
-								fname = fname.replace(new RegExp('\\.[a-zA-Z0-9]*$'), '');
-								$inputImageName.val(fname);
-							}
-							readSelectedLocalFile(fileInfo, function(dataUri){
-								$img
-								.attr({
-									"src": dataUri ,
-									"data-size": fileInfo.size ,
-									"data-extension": getExtension( fileInfo.name ),
-									"data-mime-type": fileInfo.type ,
-									"data-base64": (function(dataUri){
-										dataUri = dataUri.replace(new RegExp('^data\\:[^\\;]*\\;base64\\,'), '');
-										// console.log(dataUri);
-										return dataUri;
-									})(dataUri)
-								})
-								;
-							});
-						}
 
-						// _this.callGpi(
-						// 	{
-						// 		'fileInfo': fileInfo
-						// 	},
-						// 	function(result){
-						// 		console.log(result);
-						// 	}
-						// );
+						if( realpathSelected ){
+							applyFile(fileInfo);
+						}
 
 					})
 				)
+				.bind('dragleave', function(e){
+					e.stopPropagation();
+					e.preventDefault();
+				})
+				.bind('dragover', function(e){
+					// console.log(123478987654.123456);
+					e.stopPropagation();
+					e.preventDefault();
+					// console.log(event);
+				})
+				.bind('drop', function(e){
+					e.stopPropagation();
+					e.preventDefault();
+					var fileInfo = event.dataTransfer.files[0];
+					applyFile(fileInfo);
+				})
 			);
 			rtn.append(
 				$('<div>')
