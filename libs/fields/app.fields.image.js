@@ -227,15 +227,48 @@ module.exports = function(broccoli){
 							var params = {
 								'url': url
 							}
-							console.log(params);
+							// console.log(params);
 							_this.callGpi(
 								{
 									'api': 'getImageByUrl',
 									'data': params
 								} ,
 								function(result){
-									console.log(result);
+									// console.log(result);
 									var dataUri = 'data:'+result.responseHeaders['content-type']+';base64,' + result.base64;
+									switch(result.status){
+										case 200:
+										case 301:
+										case 302:
+										case 304:
+											// 成功
+											break;
+										case 404:
+											alert('画像が見つかりません。 ('+result.status+')');
+											return; // この場合は反映させない
+											break;
+										case 400:
+										case 405:
+											alert('不正なリクエストです。 ('+result.status+')');
+											return; // この場合は反映させない
+											break;
+										case 401:
+										case 402:
+										case 403:
+											alert('アクセスが許可されていません。 ('+result.status+')');
+											return; // この場合は反映させない
+											break;
+										case 0:
+											// おそらくURLの形式としてリクエストできない値が送られた。
+											alert('画像の取得に失敗しました。 ('+result.status+')');
+											return; // この場合は反映させない
+											break;
+										default:
+											alert('画像の取得に失敗しました。 ('+result.status+')');
+											// とれたデータが画像ではないとも限らないので、
+											// 失敗を伝えるが、反映はしてみることにする。
+											break;
+									}
 									$img
 										.attr({
 											"src": dataUri ,
