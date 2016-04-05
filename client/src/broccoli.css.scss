@@ -353,6 +353,26 @@
 .broccoli--edit-window-builtin-fields-switch__on:before{
 	content:"▼ ";
 }
+.broccoli--edit-window-module-fields{
+	max-height: 200px;
+	overflow: auto;
+	border: 2px solid #bbb;
+	border-radius: 5px;
+	background: #fafafa;
+	padding: 0;
+	li{
+		border-bottom: 1px solid #bbb;
+		list-style-type: none;
+		margin: 0;
+		padding: 10px;
+		&:hover{
+			background: #eee;
+		}
+		&:last-child{
+			border-bottom: none;
+		}
+	}
+}
 
 // lightbox
 .broccoli--lightbox{
