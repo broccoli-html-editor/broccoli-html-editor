@@ -360,7 +360,9 @@
 			var broccoli = this;
 			broccoli.selectInstance(instancePath, function(){
 				broccoli.lightbox( function( lbElm ){
-					broccoli.drawEditWindow( instancePath, lbElm, function(isSave){
+					broccoli.drawEditWindow( instancePath, lbElm, function(isSave, callback){
+						callback = callback || function(){};
+						// console.log(callback);
 						it79.fnc({},[
 							function(it1, data){
 								// 編集パネルを一旦消去
@@ -391,6 +393,7 @@
 							} ,
 							function(it1, data){
 								console.log('editInstance done.');
+								callback();
 								it1.next(data);
 							}
 						]);
@@ -714,7 +717,7 @@
 		/**
 		 * ライトボックスを閉じる
 		 */
-		this.closeLightbox = function( html, callback ){
+		this.closeLightbox = function( callback ){
 			callback = callback||function(){};
 			$('body').find('.broccoli--lightbox')
 				.fadeOut(

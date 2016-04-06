@@ -31,10 +31,22 @@
                "modId": "testMod1:dev/mod_in_loop",
                "fields": {
                 "multitext_src3": {
-                 "src": "## multitext field.\n\nmultitext.",
+                 "src": "## multitext field.\n\nmultitext. -",
                  "editor": "markdown"
                 },
-                "main": []
+                "main": [
+                 {
+                  "modId": "PlainHTMLElements:PlainHTML/MultiText",
+                  "fields": {
+                   "main": {
+                    "src": "child.",
+                    "editor": "markdown"
+                   }
+                  },
+                  "anchor": "",
+                  "dec": ""
+                 }
+                ]
                },
                "subModName": "sample_loop3",
                "anchor": "",
@@ -42,11 +54,15 @@
               }
              ]
             },
-            "subModName": "sample_loop2"
+            "subModName": "sample_loop2",
+            "anchor": "",
+            "dec": ""
            }
           ]
          },
-         "subModName": "sample_loop1"
+         "subModName": "sample_loop1",
+         "anchor": "",
+         "dec": ""
         }
        ]
       },
@@ -173,7 +189,9 @@
          "subModName": "thumb_loop"
         }
        ]
-      }
+      },
+      "anchor": "",
+      "dec": ""
      },
      {
       "modId": "testMod1:units/cols3",
@@ -406,7 +424,9 @@
          "modId": "testMod1:parts/md",
          "fields": {
           "md_src": "複雑な画面をつくろうと思うと・・・やっぱそこそこ大変ね。\n\n配列処理を毎回キックしてるので、リフレッシュに時間がかかる。重い。"
-         }
+         },
+         "anchor": "",
+         "dec": ""
         }
        ],
        "column3": [
@@ -414,10 +434,14 @@
          "modId": "testMod1:parts/md",
          "fields": {
           "md_src": "したーーーのほうも再描画テスト。"
-         }
+         },
+         "anchor": "",
+         "dec": ""
         }
        ]
-      }
+      },
+      "anchor": "",
+      "dec": ""
      },
      {
       "modId": "testMod1:units/cols2",
@@ -440,7 +464,9 @@
          "anchor": ""
         }
        ]
-      }
+      },
+      "anchor": "",
+      "dec": ""
      },
      {
       "modId": "testMod1:parts/md",
@@ -644,7 +670,9 @@
          }
         }
        ]
-      }
+      },
+      "anchor": "",
+      "dec": ""
      },
      {
       "modId": "testMod1:units/cols3",
