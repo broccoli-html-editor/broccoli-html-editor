@@ -12,6 +12,12 @@ module.exports = function(broccoli, api, options, callback){
 	var fs = require('fs');
 
 	switch(api){
+		case "getConfig":
+			// broccoli の設定を取得する
+			var conf = {};
+			conf.appMode = broccoli.getAppMode();
+			callback(conf);
+			break;
 		case "getModulePackageList":
 			// モジュールパッケージ一覧を取得する
 			broccoli.getPackageList(function(list){

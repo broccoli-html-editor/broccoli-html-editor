@@ -46,6 +46,7 @@ module.exports = function(){
 	 */
 	this.init = function(options, callback){
 		options = options || {};
+		options.appMode = options.appMode || 'web'; // web | desktop
 		options.paths_module_template = options.paths_module_template || {};
 		options.documentRoot = options.documentRoot || '.'; // current directory.
 		options.pathHtml = options.pathHtml || null;
@@ -116,6 +117,23 @@ module.exports = function(){
 			}
 		);
 		return this;
+	}
+
+	/**
+	 * アプリケーションの実行モード設定を取得する (同期)
+	 * @return string 'web'|'desktop'
+	 */
+	this.getAppMode = function(){
+		var rtn = this.options.appMode;
+		switch(rtn){
+			case 'web':
+			case 'desktop':
+				break;
+			default:
+				rtn = 'web';
+				break;
+		}
+		return rtn;
 	}
 
 	/**

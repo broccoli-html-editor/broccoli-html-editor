@@ -25,6 +25,7 @@
 		var selectedInstance = null;
 		var $canvas;
 		var redrawTimer;
+		var serverConfig; // サーバー側から取得した設定情報
 		this.__dirname = __dirname;
 
 		/**
@@ -105,6 +106,17 @@
 				{},
 				[
 					function(it1, data){
+						_this.gpi(
+							'getConfig',
+							{} ,
+							function(config){
+								// console.log(config);
+								serverConfig = config;
+								it1.next(data);
+							}
+						);
+					} ,
+					function(it1, data){
 						_this.contentsSourceData = new (require('./contentsSourceData.js'))(_this).init(
 							function(){
 								it1.next(data);
@@ -184,6 +196,24 @@
 				]
 			);
 			return this;
+		}
+
+
+		/**
+		 * アプリケーションの実行モード設定を取得する (同期)
+		 * @return string 'web'|'desktop'
+		 */
+		this.getAppMode = function(){
+			var rtn = serverConfig.appMode;
+			switch(rtn){
+				case 'web':
+				case 'desktop':
+					break;
+				default:
+					rtn = 'web';
+					break;
+			}
+			return rtn;
 		}
 
 		/**
@@ -410,12 +440,6 @@
 			console.log("Select: "+instancePath);
 			callback = callback || function(){};
 			var broccoli = this;
-
-			// if( instancePath.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
-			// 	// bowl自体は選択できない。
-			// 	_this.message('bowlは選択できません。');
-			// 	return this;
-			// }
 
 			//一旦選択解除
 			broccoli.unselectInstance(function(){
