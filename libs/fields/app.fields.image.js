@@ -283,6 +283,13 @@ module.exports = function(broccoli){
 											"data-is-updated": 'yes'
 										})
 									;
+									if( !$inputImageName.val() ){
+										// アップした画像名をプリセット
+										// ただし、既に名前がセットされている場合は変更しない
+										var fname = utils79.basename( params.url );
+										fname = fname.replace(new RegExp('\\.[a-zA-Z0-9]*$'), '');
+										$inputImageName.val(fname);
+									}
 
 									return;
 								}
