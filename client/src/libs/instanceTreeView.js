@@ -113,6 +113,13 @@ module.exports = function(broccoli){
 											broccoli.focusInstance( instancePath );
 										} );
 									})
+									.bind('mouseover', function(e){
+										e.stopPropagation();
+										$(this).addClass('broccoli--panel__hovered')
+									})
+									.bind('mouseout',function(e){
+										$(this).removeClass('broccoli--panel__hovered')
+									})
 									.append( $('<div>')
 										.addClass('broccoli--panel-drop-to-insert-here')
 									)
@@ -164,6 +171,13 @@ module.exports = function(broccoli){
 										broccoli.selectInstance( selectInstancePath, function(){
 											broccoli.focusInstance( instancePath );
 										} );
+									})
+									.bind('mouseover', function(e){
+										e.stopPropagation();
+										$(this).addClass('broccoli--panel__hovered')
+									})
+									.bind('mouseout',function(e){
+										$(this).removeClass('broccoli--panel__hovered')
 									})
 									.append( $('<div>')
 										.addClass('broccoli--panel-drop-to-insert-here')

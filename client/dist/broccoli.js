@@ -2752,6 +2752,13 @@ module.exports = function(broccoli){
 											broccoli.focusInstance( instancePath );
 										} );
 									})
+									.bind('mouseover', function(e){
+										e.stopPropagation();
+										$(this).addClass('broccoli--panel__hovered')
+									})
+									.bind('mouseout',function(e){
+										$(this).removeClass('broccoli--panel__hovered')
+									})
 									.append( $('<div>')
 										.addClass('broccoli--panel-drop-to-insert-here')
 									)
@@ -2803,6 +2810,13 @@ module.exports = function(broccoli){
 										broccoli.selectInstance( selectInstancePath, function(){
 											broccoli.focusInstance( instancePath );
 										} );
+									})
+									.bind('mouseover', function(e){
+										e.stopPropagation();
+										$(this).addClass('broccoli--panel__hovered')
+									})
+									.bind('mouseout',function(e){
+										$(this).removeClass('broccoli--panel__hovered')
 									})
 									.append( $('<div>')
 										.addClass('broccoli--panel-drop-to-insert-here')
@@ -3145,7 +3159,9 @@ module.exports = function(broccoli){
 				}
 
 				if( $this.attr('data-broccoli-is-appender') == 'yes' ){
-					instancePath = php.dirname(instancePath);
+					broccoli.message('編集できません。ここには、モジュールをドロップして追加または移動することができます。');
+					// instancePath = php.dirname(instancePath);
+					return;
 				}
 				broccoli.editInstance( instancePath );
 			})
