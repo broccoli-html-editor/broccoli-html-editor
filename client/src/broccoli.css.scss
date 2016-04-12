@@ -1,8 +1,5 @@
 @charset "utf-8";
 .broccoli{
-	// border: 1px solid #000;
-	@import "../../node_modules/bootstrap/dist/css/bootstrap";
-
 	/* http://www.softel.co.jp/blogs/tech/archives/2909 */
 	user-select: none; // CSS3
 	-moz-user-select: none; // Firefox
@@ -347,12 +344,12 @@
 	margin: 1em 5%;
 	background: #eef;
 }
-.broccoli--edit-window-builtin-fields-switch:before{
-	content:"─ ";
-}
-.broccoli--edit-window-builtin-fields-switch__on:before{
-	content:"▼ ";
-}
+// .broccoli--edit-window-builtin-fields-switch:before{
+// 	content:"─ ";
+// }
+// .broccoli--edit-window-builtin-fields-switch__on:before{
+// 	content:"▼ ";
+// }
 .broccoli--edit-window-module-fields{
 	max-height: 200px;
 	overflow: auto;
@@ -559,10 +556,10 @@
 		}
 	}
 	button.broccoli--module-palette__shown-module{}
-	a:before{
-		content: "▼";
-	}
-	a.broccoli--module-palette__closed:before{
-		content: "ー";
-	}
+	// a:before{
+	// 	content: "▼";
+	// }
+	// a.broccoli--module-palette__closed:before{
+	// 	content: "ー";
+	// }
 }

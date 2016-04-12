@@ -97,7 +97,6 @@ APIの一覧は[こちらを参照](docs/api_server.md)ください。
 <script src="/path/to/jquery.js"></script><!-- <- option; not required -->
 
 <!-- broccoli -->
-<link rel="stylesheet" href="node_modules/broccoli-html-editor/client/dist/broccoli.min.css" />
 <script src="node_modules/broccoli-html-editor/client/dist/broccoli.min.js"></script>
 <script>
 var broccoli = new Broccoli();

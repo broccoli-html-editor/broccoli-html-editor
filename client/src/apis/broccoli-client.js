@@ -14,6 +14,14 @@
 		}
 	})().replace(/\\/g, '/').replace(/\/[^\/]*\/?$/, '');
 
+	// bootstrap をロード
+	document.write('<link rel="stylesheet" href="'+__dirname+'/libs/bootstrap/dist/css/bootstrap.css" />');
+	document.write('<script src="'+__dirname+'/libs/bootstrap/dist/js/bootstrap.js"></script>');
+
+	// broccoli-html-editor をロード
+	document.write('<link rel="stylesheet" href="'+__dirname+'/broccoli.css" />');
+
+
 	module.exports = function(){
 		// if(!window){delete(require.cache[require('path').resolve(__filename)]);}
 		// console.log(__dirname);

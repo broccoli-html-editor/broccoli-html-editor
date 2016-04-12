@@ -19,7 +19,7 @@ module.exports = function(broccoli){
 	tplFrame += '		<h2 class="broccoli--edit-window-module-name">---</h2>';
 	tplFrame += '		<div class="broccoli--edit-window-fields">';
 	tplFrame += '		</div>';
-	tplFrame += '		<div><a href="javascript:;" class="broccoli--edit-window-builtin-fields-switch">詳細設定を表示する</a></div>';
+	tplFrame += '		<div><a href="javascript:;" class="broccoli--edit-window-builtin-fields-switch"><span class="glyphicon glyphicon-menu-right"></span>  詳細設定を表示する</a></div>';
 	tplFrame += '		<div class="broccoli--edit-window-builtin-fields">';
 	tplFrame += '			<div class="form-group">';
 	tplFrame += '				<label for="broccoli--edit-window-builtin-anchor-field">アンカー</label>';
@@ -36,7 +36,7 @@ module.exports = function(broccoli){
 	tplFrame += '					<div class="col-sm-6 col-sm-offset-3">';
 	tplFrame += '						<div class="btn-group btn-group-justified" role="group">';
 	tplFrame += '							<div class="btn-group">';
-	tplFrame += '								<button disabled="disabled" type="submit" class="btn btn-primary btn-lg">OK</button>';
+	tplFrame += '								<button disabled="disabled" type="submit" class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-ok"></span> OK</button>';
 	tplFrame += '							</div>';
 	tplFrame += '						</div>';
 	tplFrame += '					</div>';
@@ -54,7 +54,7 @@ module.exports = function(broccoli){
 	tplFrame += '					<div class="col-sm-4 col-sm-offset-4">';
 	tplFrame += '						<div class="btn-group btn-group-justified" role="group" style="margin-top:20px;">';
 	tplFrame += '							<div class="btn-group">';
-	tplFrame += '								<button disabled="disabled" type="button" class="btn btn-danger btn-sm broccoli--edit-window-btn-remove">このモジュールを削除する</button>';
+	tplFrame += '								<button disabled="disabled" type="button" class="btn btn-danger btn-sm broccoli--edit-window-btn-remove"><span class="glyphicon glyphicon-trash"></span> このモジュールを削除する</button>';
 	tplFrame += '							</div>';
 	tplFrame += '						</div>';
 	tplFrame += '					</div>';
@@ -111,10 +111,10 @@ module.exports = function(broccoli){
 			$editWindow.find('.broccoli--edit-window-builtin-fields').toggle('fast', function(){
 				if($(this).is(':visible')){
 					$this.addClass(className);
-					$this.text('詳細設定を隠す')
+					$this.html('<span class="glyphicon glyphicon-menu-down"></span> 詳細設定を隠す')
 				}else{
 					$this.removeClass(className);
-					$this.text('詳細設定を表示する')
+					$this.html('<span class="glyphicon glyphicon-menu-right"></span>  詳細設定を表示する')
 				}
 			});
 		});
