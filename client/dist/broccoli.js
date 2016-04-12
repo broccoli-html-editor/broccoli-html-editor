@@ -17,7 +17,10 @@
 
 	// bootstrap をロード
 	document.write('<link rel="stylesheet" href="'+__dirname+'/libs/bootstrap/dist/css/bootstrap.css" />');
-	document.write('<script src="'+__dirname+'/libs/bootstrap/dist/js/bootstrap.js"></script>');
+	// document.write('<script src="'+__dirname+'/libs/bootstrap/dist/js/bootstrap.js"></script>');
+		// ↑ bootstrap.js は、 window.jQuery が存在していないと利用できない。
+		// 　 = bootstrap.js を利用するためには、jQueryをグローバルに宣言しなければならない(隠蔽できない)
+		// 　 ということのようなので、差し迫って必要がない限りは bootstrap.js をロードしないことにする。
 
 	// broccoli-html-editor をロード
 	document.write('<link rel="stylesheet" href="'+__dirname+'/broccoli.css" />');
