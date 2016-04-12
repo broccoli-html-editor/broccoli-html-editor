@@ -2044,65 +2044,70 @@ module.exports = function(broccoli){
 	var $ = require('jquery');
 
 	var $editWindow;
-	var tplFrame = '';
-	tplFrame += '<div class="broccoli--edit-window">';
-	tplFrame += '	<form action="javascript:;">';
-	tplFrame += '		<h2 class="broccoli--edit-window-module-name">---</h2>';
-	tplFrame += '		<div class="broccoli--edit-window-fields">';
-	tplFrame += '		</div>';
-	tplFrame += '		<div><a href="javascript:;" class="broccoli--edit-window-builtin-fields-switch"><span class="glyphicon glyphicon-menu-right"></span>  詳細設定を表示する</a></div>';
-	tplFrame += '		<div class="broccoli--edit-window-builtin-fields">';
-	tplFrame += '			<div class="form-group">';
-	tplFrame += '				<label for="broccoli--edit-window-builtin-anchor-field">アンカー</label>';
-	tplFrame += '				<input type="text" class="form-control" id="broccoli--edit-window-builtin-anchor-field" placeholder="">';
-	tplFrame += '			</div>';
-	tplFrame += '			<div class="form-group">';
-	tplFrame += '				<label for="broccoli--edit-window-builtin-dec-field">埋め込みコメント入力欄</label>';
-	tplFrame += '				<textarea class="form-control" id="broccoli--edit-window-builtin-dec-field" placeholder=""></textarea>';
-	tplFrame += '			</div>';
-	tplFrame += '		</div>';
-	tplFrame += '		<div class="broccoli--edit-window-form-buttons">';
-	tplFrame += '			<div class="container-fluid">';
-	tplFrame += '				<div class="row">';
-	tplFrame += '					<div class="col-sm-6 col-sm-offset-3">';
-	tplFrame += '						<div class="btn-group btn-group-justified" role="group">';
-	tplFrame += '							<div class="btn-group">';
-	tplFrame += '								<button disabled="disabled" type="submit" class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-ok"></span> OK</button>';
-	tplFrame += '							</div>';
-	tplFrame += '						</div>';
-	tplFrame += '					</div>';
-	tplFrame += '				</div>';
-	tplFrame += '			</div>';
-	tplFrame += '			<div class="container-fluid">';
-	tplFrame += '				<div class="row">';
-	tplFrame += '					<div class="col-sm-4">';
-	tplFrame += '						<div class="btn-group btn-group-justified" role="group" style="margin-top:20px;">';
-	tplFrame += '							<div class="btn-group">';
-	tplFrame += '								<button disabled="disabled" type="button" class="btn btn-default btn-sm broccoli--edit-window-btn-cancel">キャンセル</button>';
-	tplFrame += '							</div>';
-	tplFrame += '						</div>';
-	tplFrame += '					</div>';
-	tplFrame += '					<div class="col-sm-4 col-sm-offset-4">';
-	tplFrame += '						<div class="btn-group btn-group-justified" role="group" style="margin-top:20px;">';
-	tplFrame += '							<div class="btn-group">';
-	tplFrame += '								<button disabled="disabled" type="button" class="btn btn-danger btn-sm broccoli--edit-window-btn-remove"><span class="glyphicon glyphicon-trash"></span> このモジュールを削除する</button>';
-	tplFrame += '							</div>';
-	tplFrame += '						</div>';
-	tplFrame += '					</div>';
-	tplFrame += '				</div>';
-	tplFrame += '			</div>';
-	tplFrame += '		</div>';
-	tplFrame += '	</form>';
-	tplFrame += '</div>';
+	var tplFrame = ''
+				+ '<div class="broccoli--edit-window">'
+				+ '	<form action="javascript:;">'
+				+ '		<h2 class="broccoli--edit-window-module-name">---</h2>'
+				+ '		<div class="broccoli--edit-window-fields">'
+				+ '		</div>'
+				+ '		<div><a href="javascript:;" class="broccoli--edit-window-builtin-fields-switch"><span class="glyphicon glyphicon-menu-right"></span>  詳細設定を表示する</a></div>'
+				+ '		<div class="broccoli--edit-window-builtin-fields">'
+				+ '			<div class="form-group">'
+				+ '				<label for="broccoli--edit-window-builtin-anchor-field">アンカー</label>'
+				+ '				<div class="input-group">'
+				+ '					<span class="input-group-addon" id="basic-addon1">#</span>'
+				+ '					<input type="text" class="form-control" id="broccoli--edit-window-builtin-anchor-field" placeholder="">'
+				+ '				</div>'
+				+ '			</div>'
+				+ '			<div class="form-group">'
+				+ '				<label for="broccoli--edit-window-builtin-dec-field">埋め込みコメント入力欄</label>'
+				+ '				<textarea class="form-control" id="broccoli--edit-window-builtin-dec-field" placeholder=""></textarea>'
+				+ '			</div>'
+				+ '		</div>'
+				+ '		<div class="broccoli--edit-window-form-buttons">'
+				+ '			<div class="container-fluid">'
+				+ '				<div class="row">'
+				+ '					<div class="col-sm-6 col-sm-offset-3">'
+				+ '						<div class="btn-group btn-group-justified" role="group">'
+				+ '							<div class="btn-group">'
+				+ '								<button disabled="disabled" type="submit" class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-ok"></span> OK</button>'
+				+ '							</div>'
+				+ '						</div>'
+				+ '					</div>'
+				+ '				</div>'
+				+ '			</div>'
+				+ '			<div class="container-fluid">'
+				+ '				<div class="row">'
+				+ '					<div class="col-sm-4">'
+				+ '						<div class="btn-group btn-group-justified" role="group" style="margin-top:20px;">'
+				+ '							<div class="btn-group">'
+				+ '								<button disabled="disabled" type="button" class="btn btn-default btn-sm broccoli--edit-window-btn-cancel">キャンセル</button>'
+				+ '							</div>'
+				+ '						</div>'
+				+ '					</div>'
+				+ '					<div class="col-sm-4 col-sm-offset-4">'
+				+ '						<div class="btn-group btn-group-justified" role="group" style="margin-top:20px;">'
+				+ '							<div class="btn-group">'
+				+ '								<button disabled="disabled" type="button" class="btn btn-danger btn-sm broccoli--edit-window-btn-remove"><span class="glyphicon glyphicon-trash"></span> このモジュールを削除する</button>'
+				+ '							</div>'
+				+ '						</div>'
+				+ '					</div>'
+				+ '				</div>'
+				+ '			</div>'
+				+ '		</div>'
+				+ '	</form>'
+				+ '</div>'
+	;
 
-	var tplField = '';
-	tplField += '<div class="broccoli--edit-window-field">';
-	tplField += '	<h3>---</h3>';
-	tplField += '	<div class="broccoli--edit-window-field-description">';
-	tplField += '	</div>';
-	tplField += '	<div class="broccoli--edit-window-field-content">';
-	tplField += '	</div>';
-	tplField += '</div>';
+	var tplField = ''
+				+ '<div class="broccoli--edit-window-field">'
+				+ '	<h3>---</h3>'
+				+ '	<div class="broccoli--edit-window-field-description">'
+				+ '	</div>'
+				+ '	<div class="broccoli--edit-window-field-content">'
+				+ '	</div>'
+				+ '</div>'
+	;
 
 
 	/**
