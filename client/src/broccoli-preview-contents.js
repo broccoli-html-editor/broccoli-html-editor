@@ -96,9 +96,14 @@
 			callbackMessage(data.callback, rtn);
 			return;
 
-		}else if(data.api == 'getHtmlContentHeight'){
-			var height = $iframeWindow.find('html').height() + 16;
-			callbackMessage(data.callback, height);
+		}else if(data.api == 'getHtmlContentHeightWidth'){
+			// var height = $iframeWindow.find('html').outerHeight();
+			var hw = {};
+			hw.h = Math.max.apply( null, [document.body.clientHeight , document.body.scrollHeight, document.documentElement.scrollHeight, document.documentElement.clientHeight] );
+			hw.w = Math.max.apply( null, [document.body.clientWidth , document.body.scrollWidth, document.documentElement.scrollWidth, document.documentElement.clientWidth] );
+			hw.h += 16;
+
+			callbackMessage(data.callback, hw);
 			return;
 
 		}else if(data.api == 'getBowlList'){

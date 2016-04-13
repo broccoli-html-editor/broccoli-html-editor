@@ -302,11 +302,11 @@
 					function( it1, data ){
 						// iframeのサイズ合わせ
 						_this.postMessenger.send(
-							'getHtmlContentHeight',
+							'getHtmlContentHeightWidth',
 							{},
-							function(height){
+							function(hw){
 								// console.log(height);
-								$canvas.find('iframe').height( height + 0 );
+								$canvas.find('iframe').height( hw.h + 0 ).width( hw.w + 0 );
 								it1.next(data);
 							}
 						);
