@@ -302,6 +302,7 @@
 					} ,
 					function( it1, data ){
 						// iframeのサイズ合わせ
+						$canvas.find('iframe').height( 'auto' ).width( '100%' );
 						_this.postMessenger.send(
 							'getHtmlContentHeightWidth',
 							{},
