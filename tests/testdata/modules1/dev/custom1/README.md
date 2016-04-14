@@ -1,1 +1,9 @@
 このモジュールは、開発用に作成したカスタムフィールドを使用したモジュールの実装例です。
+
+```
+<div>
+    <p>custom1 field</p>
+{&{"input":{"type":"custom1","name":"main","description":"これはカスタムフィールドです。\n\nカスタムフィールドは、broccoli-html-editor の初期化時に設定して、追加することができます。"}}&}
+    <p>/custom1 field</p>
+</div>
+```
