@@ -33,7 +33,7 @@
     "twig": "^0.8.2",
     "underscore": "^1.8.3",
     "url-parse": "^1.1.1",
-    "utils79": "0.0.1-alpha.1"
+    "utils79": "0.0.1-alpha.2"
   },
   "devDependencies": {
     "biflora": "0.0.1-alpha.1",
@@ -48,7 +48,7 @@
     "gulp-sass": "^2.0.1",
     "gulp-twig": "^0.3.0",
     "gulp-uglify": "^1.2.0",
-    "jquery": "^2.1.4",
+    "jquery": "^2.2.3",
     "mocha": "^2.1.0"
   }
 }

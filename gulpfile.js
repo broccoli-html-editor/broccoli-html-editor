@@ -12,24 +12,44 @@ var packageJson = require(__dirname+'/package.json');
 var _tasks = [
 	'broccoli.js',
 	'broccoli-preview-contents.js',
-	'broccoli.css',
-	'test/main.js'
+	'.css.scss',
+	'test/main.js',
+	'client-libs'
 ];
 
+// client-libs (frontend) を処理
+gulp.task("client-libs", function() {
+	gulp.src(["node_modules/bootstrap/dist/fonts/**/*"])
+		.pipe(gulp.dest( './client/dist/libs/bootstrap/dist/fonts/' ))
+		.pipe(gulp.dest( './tests/testdata/htdocs/libs/libs/bootstrap/dist/fonts/' ))
+	;
+	gulp.src(["node_modules/bootstrap/dist/js/**/*"])
+		.pipe(gulp.dest( './client/dist/libs/bootstrap/dist/js/' ))
+		.pipe(gulp.dest( './tests/testdata/htdocs/libs/libs/bootstrap/dist/js/' ))
+	;
+});
 
-// broccoli.scss を処理
-gulp.task('broccoli.css', function(){
-	gulp.src("client/src/broccoli.css.scss")
+// src 中の *.css.scss を処理
+gulp.task('.css.scss', function(){
+	gulp.src("client/src/**/*.css.scss")
 		.pipe(plumber())
-		.pipe(sass())
+		.pipe(sass({
+			"sourceComments": false
+		}))
 		.pipe(autoprefixer())
-		.pipe(concat('broccoli.css'))
+		.pipe(rename({
+			extname: ''
+		}))
+		.pipe(rename({
+			extname: '.css'
+		}))
 		.pipe(gulp.dest( './client/dist/' ))
 		.pipe(gulp.dest( './tests/testdata/htdocs/libs/' ))
-		.pipe(concat('broccoli.min.css'))
+
 		.pipe(minifyCss({compatibility: 'ie8'}))
-		// .pipe(sourcemaps.write())
-		// .pipe(uglify())
+		.pipe(rename({
+			extname: '.min.css'
+		}))
 		.pipe(gulp.dest( './client/dist/' ))
 		.pipe(gulp.dest( './tests/testdata/htdocs/libs/' ))
 	;

@@ -20,11 +20,12 @@ var broccoli = new Broccoli();
 // 初期化を実行してください。
 broccoli.init(
 	{
+		'appMode': 'web', // 'web' or 'desktop'. default to 'web'
 		'paths_module_template': {
-			'testMod1': '/realpath/to/modules1/',
+			'testMod1': '/realpath/to/modules1/' ,
 			'testMod2': '/realpath/to/modules2/'
 		} ,
-		'documentRoot': '/realpath/to/www/htdocs/',// realpath
+		'documentRoot': '/realpath/to/www/htdocs/', // realpath
 		'pathHtml': '/editpage/index.html',
 		'pathResourceDir': '/editpage/index_files/resources/',
 		'realpathDataDir':  '/realpath/to/www/htdocs/editpage/index_files/guieditor.ignore/',
@@ -96,7 +97,6 @@ APIの一覧は[こちらを参照](docs/api_server.md)ください。
 <script src="/path/to/jquery.js"></script><!-- <- option; not required -->
 
 <!-- broccoli -->
-<link rel="stylesheet" href="node_modules/broccoli-html-editor/client/dist/broccoli.min.css" />
 <script src="node_modules/broccoli-html-editor/client/dist/broccoli.min.js"></script>
 <script>
 var broccoli = new Broccoli();

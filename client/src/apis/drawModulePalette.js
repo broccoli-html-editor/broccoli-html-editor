@@ -18,6 +18,9 @@ module.exports = function(broccoli, callback){
 	var twig = require('twig');
 	var $ = require('jquery');
 
+	var btIconClosed = '<span class="glyphicon glyphicon-menu-right"></span> ';
+	var btIconOpened = '<span class="glyphicon glyphicon-menu-down"></span> ';
+
 	// カテゴリの階層を描画
 	function drawCategories(categories, $ul, callback){
 		it79.ary(
@@ -26,11 +29,17 @@ module.exports = function(broccoli, callback){
 				var $liCat = $('<li>');
 				var $ulMod = $('<ul>');
 				$liCat.append( $('<a>')
-					.text(category.categoryName)
+					.append( btIconOpened )
+					.append( $('<span>').text(category.categoryName)  )
 					.attr({'href':'javascript:;'})
 					.click(function(){
 						$(this).toggleClass('broccoli--module-palette__closed');
 						$ulMod.toggle(100)
+						if( $(this).hasClass('broccoli--module-palette__closed') ){
+							$(this).find('.glyphicon').get(0).outerHTML = btIconClosed;
+						}else{
+							$(this).find('.glyphicon').get(0).outerHTML = btIconOpened;
+						}
 					})
 				);
 				$ul.append( $liCat );
@@ -231,11 +240,17 @@ module.exports = function(broccoli, callback){
 						var $li = $('<li>');
 						var $ulCat = $('<ul>');
 						$li.append( $('<a>')
-							.text( pkg.packageName )
+							.append( btIconOpened )
+							.append( $('<span>').text( pkg.packageName ) )
 							.attr({'href':'javascript:;'})
 							.click(function(){
 								$(this).toggleClass('broccoli--module-palette__closed');
 								$ulCat.toggle(100)
+								if( $(this).hasClass('broccoli--module-palette__closed') ){
+									$(this).find('.glyphicon').get(0).outerHTML = btIconClosed;
+								}else{
+									$(this).find('.glyphicon').get(0).outerHTML = btIconOpened;
+								}
 							})
 						);
 

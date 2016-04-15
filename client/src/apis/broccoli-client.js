@@ -14,6 +14,17 @@
 		}
 	})().replace(/\\/g, '/').replace(/\/[^\/]*\/?$/, '');
 
+	// bootstrap をロード
+	document.write('<link rel="stylesheet" href="'+__dirname+'/libs/bootstrap/dist/css/bootstrap.css" />');
+	// document.write('<script src="'+__dirname+'/libs/bootstrap/dist/js/bootstrap.js"></script>');
+		// ↑ bootstrap.js は、 window.jQuery が存在していないと利用できない。
+		// 　 = bootstrap.js を利用するためには、jQueryをグローバルに宣言しなければならない(隠蔽できない)
+		// 　 ということのようなので、差し迫って必要がない限りは bootstrap.js をロードしないことにする。
+
+	// broccoli-html-editor をロード
+	document.write('<link rel="stylesheet" href="'+__dirname+'/broccoli.css" />');
+
+
 	module.exports = function(){
 		// if(!window){delete(require.cache[require('path').resolve(__filename)]);}
 		// console.log(__dirname);
@@ -25,6 +36,7 @@
 		var selectedInstance = null;
 		var $canvas;
 		var redrawTimer;
+		var serverConfig; // サーバー側から取得した設定情報
 		this.__dirname = __dirname;
 
 		/**
@@ -104,6 +116,17 @@
 			it79.fnc(
 				{},
 				[
+					function(it1, data){
+						_this.gpi(
+							'getConfig',
+							{} ,
+							function(config){
+								// console.log(config);
+								serverConfig = config;
+								it1.next(data);
+							}
+						);
+					} ,
 					function(it1, data){
 						_this.contentsSourceData = new (require('./contentsSourceData.js'))(_this).init(
 							function(){
@@ -186,6 +209,24 @@
 			return this;
 		}
 
+
+		/**
+		 * アプリケーションの実行モード設定を取得する (同期)
+		 * @return string 'web'|'desktop'
+		 */
+		this.getAppMode = function(){
+			var rtn = serverConfig.appMode;
+			switch(rtn){
+				case 'web':
+				case 'desktop':
+					break;
+				default:
+					rtn = 'web';
+					break;
+			}
+			return rtn;
+		}
+
 		/**
 		 * 画面を再描画
 		 * @return {[type]} [description]
@@ -260,12 +301,13 @@
 					} ,
 					function( it1, data ){
 						// iframeのサイズ合わせ
+						$canvas.find('iframe').width( '100%' );
 						_this.postMessenger.send(
-							'getHtmlContentHeight',
+							'getHtmlContentHeightWidth',
 							{},
-							function(height){
+							function(hw){
 								// console.log(height);
-								$canvas.find('iframe').height( height + 0 );
+								$canvas.find('iframe').height( hw.h + 0 ).width( hw.w + 0 );
 								it1.next(data);
 							}
 						);
@@ -410,12 +452,6 @@
 			console.log("Select: "+instancePath);
 			callback = callback || function(){};
 			var broccoli = this;
-
-			// if( instancePath.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
-			// 	// bowl自体は選択できない。
-			// 	_this.message('bowlは選択できません。');
-			// 	return this;
-			// }
 
 			//一旦選択解除
 			broccoli.unselectInstance(function(){
