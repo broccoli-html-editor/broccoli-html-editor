@@ -13,9 +13,16 @@ module.exports = function(broccoli, iframe){
 		return "uuid-"+((new Date).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16));
 	}
 	function getTargetOrigin(iframe){
-		var origin = window.location.origin;
-		if(origin=='file://'){origin = '*';}
-		return origin;
+		if(window.location.origin=='file://'){
+			return '*';
+		}
+
+		var url = $(iframe).attr('src');
+		// console.log(url);
+		var parser = document.createElement('a');
+		parser.href=url;
+		// console.log(parser);
+		return parser.protocol+'//'+parser.host
 	}
 
 	/**
