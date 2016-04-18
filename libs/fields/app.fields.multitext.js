@@ -1,6 +1,13 @@
 module.exports = function(broccoli){
 	var php = require('phpjs');
 	var utils79 = require('utils79');
+	var editorLib = null;
+	try {
+		if(window.ace){
+			editorLib = 'ace';
+		}
+	} catch (e) {
+	}
 
 	/**
 	 * データをバインドする
@@ -69,28 +76,62 @@ module.exports = function(broccoli){
 		if( mod.rows ){
 			rows = mod.rows;
 		}
-		var rtn = $('<div>')
-			.append($('<textarea class="form-control">')
+
+		var $rtn = $('<div>'),
+			$formElm
+		;
+
+		if( rows == 1 ){
+			$formElm = $('<input type="text" class="form-control">')
 				.attr({
-					"name":mod.name,
-					"rows":rows
+					"name": mod.name
 				})
-				.css({'width':'100%','height':'auto'})
-			)
-			.append($('<p>')
+				.val(data.src)
+				.css({'width':'100%'})
+			;
+			$rtn.append( $formElm );
+
+		}else if( editorLib == 'ace' ){
+			$formElm = $('<div>')
+				.text(data.src)
+				.css({
+					'position': 'relative',
+					'width': '100%',
+					'height': 16 * rows
+				})
+			;
+			$rtn.append( $formElm );
+			this.aceEditor = ace.edit( $formElm.get(0) );
+			this.aceEditor.$blockScrolling = Infinity;
+
+		}else{
+			$formElm = $('<textarea class="form-control">')
+				.attr({
+					"name": mod.name,
+					"rows": rows
+				})
+				.css({
+					'width':'100%',
+					'height':'auto'
+				})
+				.val(data.src)
+			;
+			$rtn.append( $formElm );
+
+		}
+
+		$rtn
+			.append( $('<p>')
 				.append($('<span style="margin-right: 10px;"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="" /> HTML</label></span>'))
 				.append($('<span style="margin-right: 10px;"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="text" /> テキスト</label></span>'))
 				.append($('<span style="margin-right: 10px;"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="markdown" /> Markdown</label></span>'))
 			)
 		;
-		rtn.find('textarea').val(data.src);
-		rtn.find('input[type=radio][name=editor-'+mod.name+'][value="'+data.editor+'"]').attr({'checked':'checked'});
+		$rtn.find('input[type=radio][name=editor-'+mod.name+'][value="'+data.editor+'"]').attr({'checked':'checked'});
 
-		$(elm).html(rtn);
+		$(elm).html($rtn);
 
-		// setTimeout(function(){
-			callback();
-		// }, 0);
+		callback();
 		return;
 	}
 
@@ -103,13 +144,17 @@ module.exports = function(broccoli){
 		if(typeof(data) !== typeof({})){
 			data = {};
 		}
-		data.src = $dom.find('textarea').val();
+		if( $dom.find('input[type=text]').size() ){
+			data.src = $dom.find('input[type=text]').val();
+		}else if( editorLib == 'ace' && this.aceEditor ){
+			data.src = this.aceEditor.getValue();
+		}else{
+			data.src = $dom.find('textarea').val();
+		}
 		data.src = JSON.parse( JSON.stringify(data.src) );
 		data.editor = $dom.find('input[type=radio][name=editor-'+mod.name+']:checked').val();
 
-		// setTimeout(function(){
-			callback(data);
-		// }, 0);
+		callback(data);
 		return;
 	}
 

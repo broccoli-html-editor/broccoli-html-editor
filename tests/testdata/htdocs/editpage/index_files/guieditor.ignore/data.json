@@ -893,6 +893,27 @@
       },
       "anchor": "",
       "dec": ""
+     },
+     {
+      "modId": "testMod1:dev/texts",
+      "fields": {
+       "text": "テキスト入力しています。\n<b>テキスト</b>です。",
+       "text-1liner": "1行<b>テキスト</b>です。",
+       "html": "<p>HTML入力です。</p>\n<p>HTMLソースを入力しています。</p>",
+       "html-1liner": "<p>1行HTML入力です。</p>",
+       "markdown": "マークダウンです。\n\n- markdown 1\n- markdown 2",
+       "markdown-1liner": "- 1行マークダウンです",
+       "multitext": {
+        "src": "## MultiText\n\nマルチテキストです。",
+        "editor": "markdown"
+       },
+       "multitext-1liner": {
+        "src": "- 1行マルチテキストです。",
+        "editor": "text"
+       }
+      },
+      "anchor": "",
+      "dec": ""
      }
     ]
    },

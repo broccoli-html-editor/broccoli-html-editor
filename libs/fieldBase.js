@@ -6,6 +6,13 @@ module.exports = function(broccoli){
 	this.__fieldId__ = null;
 	var $ = require('jquery');
 	var utils79 = require('utils79');
+	var editorLib = null;
+	try {
+		if(window.ace){
+			editorLib = 'ace';
+		}
+	} catch (e) {
+	}
 
 	/**
 	 * データをバインドする (Server Side)
@@ -66,21 +73,48 @@ module.exports = function(broccoli){
 		if( mod.rows ){
 			rows = mod.rows;
 		}
-		var rtn = $('<div>')
-			.append($('<textarea class="form-control">')
+		var $rtn = $('<div>'),
+			$formElm
+		;
+
+		if( rows == 1 ){
+			$formElm = $('<input type="text" class="form-control">')
 				.attr({
-					"name":mod.name,
-					"rows":rows
+					"name": mod.name
+				})
+				.val(data)
+				.css({'width':'100%'})
+			;
+			$rtn.append( $formElm );
+
+		}else if( editorLib == 'ace' ){
+			$formElm = $('<div>')
+				.text(data)
+				.css({
+					'position': 'relative',
+					'width': '100%',
+					'height': 16 * rows
+				})
+			;
+			$rtn.append( $formElm );
+			this.aceEditor = ace.edit( $formElm.get(0) );
+			this.aceEditor.$blockScrolling = Infinity;
+
+		}else{
+			$formElm = $('<textarea class="form-control">')
+				.attr({
+					"name": mod.name,
+					"rows": rows
 				})
 				.val(data)
 				.css({'width':'100%','height':'auto'})
-			)
-		;
+			;
+			$rtn.append( $formElm );
 
-		$(elm).html(rtn);
-		// setTimeout(function(){
-			callback();
-		// }, 0);
+		}
+		$(elm).html($rtn);
+
+		callback();
 		return this;
 	}
 
@@ -119,8 +153,17 @@ module.exports = function(broccoli){
 	 * エディタUIで編集した内容を保存 (Client Side)
 	 */
 	this.saveEditorContent = function( elm, data, mod, callback ){
-		var src = $(elm).find('textarea').val();
+		var $dom = $(elm);
+		var src;
+		if( $dom.find('input[type=text]').size() ){
+			src = $dom.find('input[type=text]').val();
+		}else if( editorLib == 'ace' && this.aceEditor ){
+			src = this.aceEditor.getValue();
+		}else{
+			src = $dom.find('textarea').val();
+		}
 		src = JSON.parse( JSON.stringify(src) );
+
 		callback(src);
 		return this;
 	}
