@@ -895,6 +895,57 @@
       "dec": ""
      },
      {
+      "modId": "testMod1:dev/Dropdown",
+      "fields": {
+       "Dropdown_id": "attr text id",
+       "Dropdown_name": "attr text name",
+       "Dropdown_loop": [
+        {
+         "modId": "testMod1:dev/Dropdown",
+         "fields": {
+          "body": [
+           {
+            "modId": "PlainHTMLElements:PlainHTML/MultiText",
+            "fields": {
+             "main": {
+              "src": "これは、Twigテンプレートに組み込まれたloopフィールドの中で、外部のモジュールを呼び出すテストです。\n繰り返しの1件目。",
+              "editor": "markdown"
+             }
+            },
+            "anchor": "",
+            "dec": ""
+           }
+          ]
+         },
+         "subModName": "Dropdown_loop"
+        },
+        {
+         "modId": "testMod1:dev/Dropdown",
+         "fields": {
+          "body": [
+           {
+            "modId": "PlainHTMLElements:PlainHTML/MultiText",
+            "fields": {
+             "main": {
+              "src": "これは、Twigテンプレートに組み込まれたloopフィールドの中で、外部のモジュールを呼び出すテストです。\n繰り返しの2件目。",
+              "editor": "markdown"
+             }
+            },
+            "anchor": "",
+            "dec": ""
+           }
+          ]
+         },
+         "subModName": "Dropdown_loop",
+         "anchor": "",
+         "dec": ""
+        }
+       ]
+      },
+      "anchor": "",
+      "dec": ""
+     },
+     {
       "modId": "testMod1:dev/texts",
       "fields": {
        "text": "テキスト入力しています。\n<b>テキスト</b>です。",

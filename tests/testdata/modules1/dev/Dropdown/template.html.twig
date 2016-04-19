@@ -4,9 +4,9 @@
 		<span class="caret"></span>
 	</button>
 	<ul class="dropdown-menu" role="menu">
-		{{ dump(Dropdown_loop) }}
-    {% for row in Dropdown_loop.body %}
-      <li role="presentation">{{ dump(row) }}</li>
-    {% endfor %}
+		<!-- {{ dump(Dropdown_loop) }} -->
+		{% for row in Dropdown_loop %}
+			<li role="presentation">{{ dump(row) }}</li>
+		{% endfor %}
 	</ul>
 </div><!-- / #{{ Dropdown_id }} -->
