@@ -2,8 +2,8 @@
  * postMessenger.js
  * iframeに展開されるプレビューHTMLとの通信を仲介します。
  */
-
 module.exports = function(broccoli, iframe){
+	var $ = require('jquery');
 
 	var __dirname = broccoli.__dirname;
 	// console.log(__dirname);
@@ -13,6 +13,10 @@ module.exports = function(broccoli, iframe){
 		return "uuid-"+((new Date).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16));
 	}
 	function getTargetOrigin(iframe){
+		if(window.location.origin=='file://'){
+			return '*';
+		}
+
 		var url = $(iframe).attr('src');
 		// console.log(url);
 		var parser = document.createElement('a');
@@ -31,8 +35,19 @@ module.exports = function(broccoli, iframe){
 		// console.log(targetWindowOrigin);
 
 		var win = $(iframe).get(0).contentWindow;
-		win.postMessage({'scriptUrl':__dirname+'/broccoli-preview-contents.js'}, targetWindowOrigin);
-		callback();
+		$.ajax({
+			"url": __dirname+'/broccoli-preview-contents.js',
+			// "dataType": "text/plain",
+			"complete": function(XMLHttpRequest, textStatus){
+				// console.log(XMLHttpRequest, textStatus);
+				// console.log(XMLHttpRequest.responseText);
+				var base64 = new Buffer(XMLHttpRequest.responseText).toString('base64');
+				// console.log(base64);
+				// console.log(__dirname+'/broccoli-preview-contents.js');
+				win.postMessage({'scriptUrl':'data:text/javascript;base64,'+base64}, targetWindowOrigin);
+				callback();
+			}
+		});
 		return this;
 	}
 

@@ -173,6 +173,7 @@ module.exports = function(broccoli, data, options, callback){
 												function( it2, row, idx ){
 													// ネストされたモジュールの再帰処理
 													var tmpopt = JSON.parse( JSON.stringify(opt) );
+													delete(tmpopt.subModName);// サブモジュールから外部のモジュールを参照する場合に、subModName を渡さないように配慮する必要がある。
 													tmpopt.instancePath += '@'+idx;
 													broccoli.buildBowl(row, tmpopt, function(html){
 														tplDataObj[field.name] += html;

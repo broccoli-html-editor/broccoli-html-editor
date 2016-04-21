@@ -4,7 +4,7 @@
 		"fields": {
 			"text":{
 				"fieldType": "input",
-				"type":"html_attr_text",
+				"type":"text",
 				"rows":1
 			}
 		}
