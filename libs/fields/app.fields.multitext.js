@@ -71,6 +71,7 @@ module.exports = function(broccoli){
 	 * エディタUIを生成
 	 */
 	this.mkEditor = function( mod, data, elm, callback ){
+		var _this = this;
 		if(typeof(data) !== typeof({})){ data = {'src':''+data,'editor':'markdown'}; }
 		var rows = 12;
 		if( mod.rows ){
@@ -97,11 +98,23 @@ module.exports = function(broccoli){
 				.css({
 					'position': 'relative',
 					'width': '100%',
-					'height': 16 * rows
+					'height': 16 * rows,
+					'border': '1px solid #ccc',
+					'box-shadow': 'inset 0px 1px 1px rgba(0,0,0,0.075)',
+					'border-radius': '4px',
+					'overflow': 'hidden'
 				})
 			;
 			$rtn.append( $formElm );
 			this.aceEditor = ace.edit( $formElm.get(0) );
+			this.aceEditor.getSession().setMode("ace/mode/html");
+			if( data.editor == 'text' ){
+				this.aceEditor.getSession().setMode("ace/mode/plain_text");
+			}else if( data.editor == 'markdown' ){
+				this.aceEditor.getSession().setMode("ace/mode/markdown");
+			}else{
+				this.aceEditor.getSession().setMode("ace/mode/html");
+			}
 			this.aceEditor.$blockScrolling = Infinity;
 
 		}else{
@@ -128,6 +141,20 @@ module.exports = function(broccoli){
 			)
 		;
 		$rtn.find('input[type=radio][name=editor-'+mod.name+'][value="'+data.editor+'"]').attr({'checked':'checked'});
+
+		if( editorLib == 'ace' && _this.aceEditor ){
+			$rtn.find('input[type=radio][name=editor-'+mod.name+']').change(function(){
+				var $this = $(this);
+				var val = $this.val();
+				if( val == 'text' ){
+					_this.aceEditor.getSession().setMode("ace/mode/plain_text");
+				}else if( val == 'markdown' ){
+					_this.aceEditor.getSession().setMode("ace/mode/markdown");
+				}else{
+					_this.aceEditor.getSession().setMode("ace/mode/html");
+				}
+			});
+		}
 
 		$(elm).html($rtn);
 
