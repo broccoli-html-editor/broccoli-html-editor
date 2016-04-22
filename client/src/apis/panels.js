@@ -163,6 +163,7 @@ module.exports = function(broccoli){
 			})
 			.bind('dragstart', function(e){
 				e.stopPropagation();
+				var event = e.originalEvent;
 				event.dataTransfer.setData("method", 'moveTo' );
 				event.dataTransfer.setData("data-broccoli-instance-path", $(this).attr('data-broccoli-instance-path') );
 				var subModName = $(this).attr('data-broccoli-sub-mod-name');
@@ -173,6 +174,7 @@ module.exports = function(broccoli){
 			})
 			.bind('drop', function(e){
 				e.stopPropagation();
+				var event = e.originalEvent;
 				$(this).removeClass('broccoli--panel__drag-entered');
 				var method = event.dataTransfer.getData("method");
 				// options.drop($(this).attr('data-broccoli-instance-path'), method);

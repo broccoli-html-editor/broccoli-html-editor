@@ -28,7 +28,7 @@ module.exports = function(broccoli, callback){
 			function(it1, category, categoryId){
 				var $liCat = $('<li>');
 				var $ulMod = $('<ul>');
-				$liCat.append( $('<a>')
+				$liCat.append( $('<a class="broccoli--module-palette--buttongroups">')
 					.append( btIconOpened )
 					.append( $('<span>').text(category.categoryName)  )
 					.attr({'href':'javascript:;'})
@@ -66,7 +66,7 @@ module.exports = function(broccoli, callback){
 			modules ,
 			function(it1, mod, moduleId){
 				var $liMod = $('<li>');
-				var $button = $('<button>');
+				var $button = $('<a class="broccoli--module-palette--draggablebutton">');
 				$liMod.append( $button
 					.html((function(d){
 						var rtn = '';
@@ -93,6 +93,8 @@ module.exports = function(broccoli, callback){
 						'draggable': true //←HTML5のAPI http://www.htmq.com/dnd/
 					})
 					.on('dragstart', function(e){
+						// console.log(e);
+						var event = e.originalEvent;
 						// px.message( $(this).data('id') );
 						event.dataTransfer.setData('method', 'add' );
 						event.dataTransfer.setData('modId', $(this).attr('data-id') );
@@ -239,7 +241,7 @@ module.exports = function(broccoli, callback){
 					function(it2, pkg, packageId){
 						var $li = $('<li>');
 						var $ulCat = $('<ul>');
-						$li.append( $('<a>')
+						$li.append( $('<a class="broccoli--module-palette--buttongroups">')
 							.append( btIconOpened )
 							.append( $('<span>').text( pkg.packageName ) )
 							.attr({'href':'javascript:;'})
@@ -294,7 +296,7 @@ module.exports = function(broccoli, callback){
 					$(targetElm).find('ul').show();
 
 					changeTimer = setTimeout(function(){
-						$(targetElm).find('button').each(function(){
+						$(targetElm).find('a.broccoli--module-palette--draggablebutton').each(function(){
 							var $this = $(this);
 							if( $this.attr('data-id').toLowerCase().match( keyword.toLowerCase() ) ){
 								$this.show().addClass('broccoli--module-palette__shown-module');
@@ -311,7 +313,7 @@ module.exports = function(broccoli, callback){
 
 						$(targetElm).find('li').each(function(){
 							var $this = $(this);
-							var $btns = $this.find('button.broccoli--module-palette__shown-module');
+							var $btns = $this.find('a.broccoli--module-palette--draggablebutton.broccoli--module-palette__shown-module');
 							if( !$btns.size() ){
 								$this.css({'display':'none'});
 							}else{

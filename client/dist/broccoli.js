@@ -1717,7 +1717,7 @@ module.exports = function(broccoli, callback){
 			function(it1, category, categoryId){
 				var $liCat = $('<li>');
 				var $ulMod = $('<ul>');
-				$liCat.append( $('<a>')
+				$liCat.append( $('<a class="broccoli--module-palette--buttongroups">')
 					.append( btIconOpened )
 					.append( $('<span>').text(category.categoryName)  )
 					.attr({'href':'javascript:;'})
@@ -1755,7 +1755,7 @@ module.exports = function(broccoli, callback){
 			modules ,
 			function(it1, mod, moduleId){
 				var $liMod = $('<li>');
-				var $button = $('<button>');
+				var $button = $('<a class="broccoli--module-palette--draggablebutton">');
 				$liMod.append( $button
 					.html((function(d){
 						var rtn = '';
@@ -1782,6 +1782,8 @@ module.exports = function(broccoli, callback){
 						'draggable': true //←HTML5のAPI http://www.htmq.com/dnd/
 					})
 					.on('dragstart', function(e){
+						// console.log(e);
+						var event = e.originalEvent;
 						// px.message( $(this).data('id') );
 						event.dataTransfer.setData('method', 'add' );
 						event.dataTransfer.setData('modId', $(this).attr('data-id') );
@@ -1928,7 +1930,7 @@ module.exports = function(broccoli, callback){
 					function(it2, pkg, packageId){
 						var $li = $('<li>');
 						var $ulCat = $('<ul>');
-						$li.append( $('<a>')
+						$li.append( $('<a class="broccoli--module-palette--buttongroups">')
 							.append( btIconOpened )
 							.append( $('<span>').text( pkg.packageName ) )
 							.attr({'href':'javascript:;'})
@@ -1983,7 +1985,7 @@ module.exports = function(broccoli, callback){
 					$(targetElm).find('ul').show();
 
 					changeTimer = setTimeout(function(){
-						$(targetElm).find('button').each(function(){
+						$(targetElm).find('a.broccoli--module-palette--draggablebutton').each(function(){
 							var $this = $(this);
 							if( $this.attr('data-id').toLowerCase().match( keyword.toLowerCase() ) ){
 								$this.show().addClass('broccoli--module-palette__shown-module');
@@ -2000,7 +2002,7 @@ module.exports = function(broccoli, callback){
 
 						$(targetElm).find('li').each(function(){
 							var $this = $(this);
-							var $btns = $this.find('button.broccoli--module-palette__shown-module');
+							var $btns = $this.find('a.broccoli--module-palette--draggablebutton.broccoli--module-palette__shown-module');
 							if( !$btns.size() ){
 								$this.css({'display':'none'});
 							}else{
@@ -3220,6 +3222,7 @@ module.exports = function(broccoli){
 			})
 			.bind('dragstart', function(e){
 				e.stopPropagation();
+				var event = e.originalEvent;
 				event.dataTransfer.setData("method", 'moveTo' );
 				event.dataTransfer.setData("data-broccoli-instance-path", $(this).attr('data-broccoli-instance-path') );
 				var subModName = $(this).attr('data-broccoli-sub-mod-name');
@@ -3230,6 +3233,7 @@ module.exports = function(broccoli){
 			})
 			.bind('drop', function(e){
 				e.stopPropagation();
+				var event = e.originalEvent;
 				$(this).removeClass('broccoli--panel__drag-entered');
 				var method = event.dataTransfer.getData("method");
 				// options.drop($(this).attr('data-broccoli-instance-path'), method);
@@ -4420,6 +4424,7 @@ module.exports = function(broccoli){
 				.bind('drop', function(e){
 					e.stopPropagation();
 					e.preventDefault();
+					var event = e.originalEvent;
 					var fileInfo = event.dataTransfer.files[0];
 					applyFile(fileInfo);
 				})

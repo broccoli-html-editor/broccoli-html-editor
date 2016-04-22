@@ -7,6 +7,13 @@
 	-ms-user-select: none; // IE10かららしい
 	cursor: default;
 
+	[draggable=true]{
+		cursor: move;
+	}
+	[draggable=false]{
+		cursor: default;
+	}
+
 	// 選択可能領域
 	&__user-selectable{
 		user-select: auto; // CSS3
@@ -248,6 +255,7 @@
 	text-align: center;
 	background-color: transparent;
 	z-index: 0;
+	cursor: move;
 
 	&-module-name{
 		display:none;
@@ -285,6 +293,7 @@
 	width:90%;
 	margin:0 auto;
 	height:1px;
+
 	&:before,
 	&:after{
 		content:' ';
@@ -475,7 +484,7 @@
 			list-style-type: none;
 			padding: 0;
 
-			a{
+			a.broccoli--module-palette--buttongroups{
 				display: block;
 				color: #eee;
 				border-top: 1px solid #666;
@@ -497,7 +506,7 @@
 				padding: 0;
 				font-size: small;
 				li{ // <- category
-					a{
+					a.broccoli--module-palette--buttongroups{
 						color: #000;
 						border-top: 1px solid #999;
 						background-color: #666;
@@ -523,7 +532,7 @@
 			}
 		}
 	}
-	button{
+	a.broccoli--module-palette--draggablebutton{
 		box-sizing: border-box;
 		display: block;
 		width: 100%;
@@ -533,12 +542,14 @@
 		padding: 3px;
 		margin: 0;
 		background-color: #eee;
+		color: #333;
 		font-size: 11px;
 		line-height: 1;
 		vertical-align: middle;
 		overflow: hidden;
 		white-space: nowrap;
 		text-overflow: ellipsis;
+		cursor: move;
 
 		// クリップモジュールの場合の表示差異
 		font-weight: bold;
