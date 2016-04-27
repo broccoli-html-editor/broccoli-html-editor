@@ -235,6 +235,11 @@ $ npm test
 
 ## 更新履歴 - Change log
 
+### broccoli-html-editor@0.1.0-beta.9
+
+- ?????
+
+
 ### broccoli-html-editor@0.1.0-beta.8
 
 - 埋め込み Ace Editor に対応。
