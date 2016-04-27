@@ -232,6 +232,46 @@ $ npm run up
 $ npm test
 ```
 
+
+## 更新履歴 - Change log
+
+### broccoli-html-editor@0.1.0-beta.8
+
+- 埋め込み Ace Editor に対応。
+- 1行のフィールドを textarea ではなく input[type=text] に変更。
+- ドラッグ＆ドロップ操作が Firefox に対応した。
+- loopモジュール内にモジュールが入る場合のデータが扱えない問題を修正。
+- `postMessage()` に関する不具合を修正。
+
+
+### broccoli-html-editor@0.1.0-beta.7
+
+- imageフィールドに、ローカルディスク上の画像ファイルをドラッグ＆ドロップで登録できるようになった。
+- imageフィールドが、画像のURL指定で登録できるようになった。
+- moduleフィールドとloopフィールドの内容をリスト表示するようになった。
+- サーバー側設定に appMode を追加
+- appender に mouseover, mouseout したときの不自然な挙動を修正
+- bootstrap アイコン を使用
+- editWindow: アンカーのinputの前に # の表示をつけた
+- コンテンツで html,body が height:100%; になっているときにプレビュー画面の高さ設定に失敗する問題を修正
+- CSS調整: モジュールの README.md
+
+### broccoli-html-editor@0.1.0-beta.6
+
+- 編集エリアが無駄に縦に長くなる問題を修正
+- instancePathView のレイアウト調整
+- modulePalette のフィルター機能の振る舞いを改善
+- appenderを選択できるようにした。
+- panelクリックでinstanceTreeViewをフォーカスするようにした。
+- bowl操作の制御調整
+- instanceTreeView の bowl のデザイン修正
+
+### broccoli-html-editor@0.1.0-beta.4
+
+- リソース情報を含むコピー＆ペーストが可能になった。
+- クリップモジュール機能を追加。
+
+
 ## ライセンス - License
 
 MIT License
