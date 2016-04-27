@@ -93,11 +93,22 @@ module.exports = function(broccoli){
 				.css({
 					'position': 'relative',
 					'width': '100%',
-					'height': 16 * rows
+					'height': 16 * rows,
+					'border': '1px solid #ccc',
+					'box-shadow': 'inset 0px 1px 1px rgba(0,0,0,0.075)',
+					'border-radius': '4px',
+					'overflow': 'hidden'
 				})
 			;
 			$rtn.append( $formElm );
 			this.aceEditor = ace.edit( $formElm.get(0) );
+			if( mod.type == 'html' ){
+				this.aceEditor.getSession().setMode("ace/mode/html");
+			}else if( mod.type == 'markdown' ){
+				this.aceEditor.getSession().setMode("ace/mode/markdown");
+			}else{
+				this.aceEditor.getSession().setMode("ace/mode/plain_text");
+			}
 			this.aceEditor.$blockScrolling = Infinity;
 
 		}else{

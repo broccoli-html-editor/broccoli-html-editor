@@ -5,6 +5,10 @@
   -webkit-user-select: none;
   -ms-user-select: none;
   cursor: default; }
+  .broccoli [draggable=true] {
+    cursor: move; }
+  .broccoli [draggable=false] {
+    cursor: default; }
   .broccoli__user-selectable {
     user-select: auto;
     -moz-user-select: auto;
@@ -185,7 +189,8 @@
   border-color: transparent;
   text-align: center;
   background-color: transparent;
-  z-index: 0; }
+  z-index: 0;
+  cursor: move; }
   .broccoli--panel-module-name {
     display: none; }
   .broccoli--panel:hover {
@@ -372,7 +377,7 @@
   .broccoli--module-palette ul.broccoli--module-palette-list li {
     list-style-type: none;
     padding: 0; }
-    .broccoli--module-palette ul.broccoli--module-palette-list li a {
+    .broccoli--module-palette ul.broccoli--module-palette-list li a.broccoli--module-palette--buttongroups {
       display: block;
       color: #eee;
       border-top: 1px solid #666;
@@ -383,13 +388,13 @@
       text-overflow: ellipsis;
       font-weight: bold;
       font-size: 12px; }
-      .broccoli--module-palette ul.broccoli--module-palette-list li a:active, .broccoli--module-palette ul.broccoli--module-palette-list li a:focus, .broccoli--module-palette ul.broccoli--module-palette-list li a:hover {
+      .broccoli--module-palette ul.broccoli--module-palette-list li a.broccoli--module-palette--buttongroups:active, .broccoli--module-palette ul.broccoli--module-palette-list li a.broccoli--module-palette--buttongroups:focus, .broccoli--module-palette ul.broccoli--module-palette-list li a.broccoli--module-palette--buttongroups:hover {
         color: #fff; }
     .broccoli--module-palette ul.broccoli--module-palette-list li ul {
       margin: 0;
       padding: 0;
       font-size: small; }
-      .broccoli--module-palette ul.broccoli--module-palette-list li ul li a {
+      .broccoli--module-palette ul.broccoli--module-palette-list li ul li a.broccoli--module-palette--buttongroups {
         color: #000;
         border-top: 1px solid #999;
         background-color: #666;
@@ -397,7 +402,7 @@
         padding: 0.3em 2em;
         font-weight: normal;
         font-size: 11px; }
-        .broccoli--module-palette ul.broccoli--module-palette-list li ul li a:active, .broccoli--module-palette ul.broccoli--module-palette-list li ul li a:focus, .broccoli--module-palette ul.broccoli--module-palette-list li ul li a:hover {
+        .broccoli--module-palette ul.broccoli--module-palette-list li ul li a.broccoli--module-palette--buttongroups:active, .broccoli--module-palette ul.broccoli--module-palette-list li ul li a.broccoli--module-palette--buttongroups:focus, .broccoli--module-palette ul.broccoli--module-palette-list li ul li a.broccoli--module-palette--buttongroups:hover {
           color: #fff; }
       .broccoli--module-palette ul.broccoli--module-palette-list li ul li ul {
         margin: 0;
@@ -406,7 +411,7 @@
         .broccoli--module-palette ul.broccoli--module-palette-list li ul li ul li {
           padding: 0; }
 
-.broccoli--module-palette button {
+.broccoli--module-palette a.broccoli--module-palette--draggablebutton {
   box-sizing: border-box;
   display: block;
   width: 100%;
@@ -416,21 +421,23 @@
   padding: 3px;
   margin: 0;
   background-color: #eee;
+  color: #333;
   font-size: 11px;
   line-height: 1;
   vertical-align: middle;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  cursor: move;
   font-weight: bold; }
-  .broccoli--module-palette button:after {
+  .broccoli--module-palette a.broccoli--module-palette--draggablebutton:after {
     content: "@";
     margin-left: 0.5em;
     color: #669; }
-  .broccoli--module-palette button[data-clip="false"] {
+  .broccoli--module-palette a.broccoli--module-palette--draggablebutton[data-clip="false"] {
     font-weight: normal; }
-    .broccoli--module-palette button[data-clip="false"]:after {
+    .broccoli--module-palette a.broccoli--module-palette--draggablebutton[data-clip="false"]:after {
       content: "";
       margin-left: 0; }
-  .broccoli--module-palette button:hover {
+  .broccoli--module-palette a.broccoli--module-palette--draggablebutton:hover {
     background-color: #ddd; }

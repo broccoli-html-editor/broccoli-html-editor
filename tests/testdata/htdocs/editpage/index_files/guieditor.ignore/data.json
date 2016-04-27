@@ -955,7 +955,7 @@
        "markdown": "マークダウンです。\n\n- markdown 1\n- markdown 2",
        "markdown-1liner": "- 1行マークダウンです",
        "multitext": {
-        "src": "## MultiText\n\nマルチテキストです。",
+        "src": "## MultiText\n\n<strong>マルチテキスト</strong>です。\n\n- list 1\n- list 2",
         "editor": "markdown"
        },
        "multitext-1liner": {

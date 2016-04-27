@@ -1717,7 +1717,7 @@ module.exports = function(broccoli, callback){
 			function(it1, category, categoryId){
 				var $liCat = $('<li>');
 				var $ulMod = $('<ul>');
-				$liCat.append( $('<a>')
+				$liCat.append( $('<a class="broccoli--module-palette--buttongroups">')
 					.append( btIconOpened )
 					.append( $('<span>').text(category.categoryName)  )
 					.attr({'href':'javascript:;'})
@@ -1755,7 +1755,7 @@ module.exports = function(broccoli, callback){
 			modules ,
 			function(it1, mod, moduleId){
 				var $liMod = $('<li>');
-				var $button = $('<button>');
+				var $button = $('<a class="broccoli--module-palette--draggablebutton">');
 				$liMod.append( $button
 					.html((function(d){
 						var rtn = '';
@@ -1782,6 +1782,8 @@ module.exports = function(broccoli, callback){
 						'draggable': true //←HTML5のAPI http://www.htmq.com/dnd/
 					})
 					.on('dragstart', function(e){
+						// console.log(e);
+						var event = e.originalEvent;
 						// px.message( $(this).data('id') );
 						event.dataTransfer.setData('method', 'add' );
 						event.dataTransfer.setData('modId', $(this).attr('data-id') );
@@ -1928,7 +1930,7 @@ module.exports = function(broccoli, callback){
 					function(it2, pkg, packageId){
 						var $li = $('<li>');
 						var $ulCat = $('<ul>');
-						$li.append( $('<a>')
+						$li.append( $('<a class="broccoli--module-palette--buttongroups">')
 							.append( btIconOpened )
 							.append( $('<span>').text( pkg.packageName ) )
 							.attr({'href':'javascript:;'})
@@ -1983,7 +1985,7 @@ module.exports = function(broccoli, callback){
 					$(targetElm).find('ul').show();
 
 					changeTimer = setTimeout(function(){
-						$(targetElm).find('button').each(function(){
+						$(targetElm).find('a.broccoli--module-palette--draggablebutton').each(function(){
 							var $this = $(this);
 							if( $this.attr('data-id').toLowerCase().match( keyword.toLowerCase() ) ){
 								$this.show().addClass('broccoli--module-palette__shown-module');
@@ -2000,7 +2002,7 @@ module.exports = function(broccoli, callback){
 
 						$(targetElm).find('li').each(function(){
 							var $this = $(this);
-							var $btns = $this.find('button.broccoli--module-palette__shown-module');
+							var $btns = $this.find('a.broccoli--module-palette--draggablebutton.broccoli--module-palette__shown-module');
 							if( !$btns.size() ){
 								$this.css({'display':'none'});
 							}else{
@@ -3220,6 +3222,7 @@ module.exports = function(broccoli){
 			})
 			.bind('dragstart', function(e){
 				e.stopPropagation();
+				var event = e.originalEvent;
 				event.dataTransfer.setData("method", 'moveTo' );
 				event.dataTransfer.setData("data-broccoli-instance-path", $(this).attr('data-broccoli-instance-path') );
 				var subModName = $(this).attr('data-broccoli-sub-mod-name');
@@ -3230,6 +3233,7 @@ module.exports = function(broccoli){
 			})
 			.bind('drop', function(e){
 				e.stopPropagation();
+				var event = e.originalEvent;
 				$(this).removeClass('broccoli--panel__drag-entered');
 				var method = event.dataTransfer.getData("method");
 				// options.drop($(this).attr('data-broccoli-instance-path'), method);
@@ -4012,11 +4016,22 @@ module.exports = function(broccoli){
 				.css({
 					'position': 'relative',
 					'width': '100%',
-					'height': 16 * rows
+					'height': 16 * rows,
+					'border': '1px solid #ccc',
+					'box-shadow': 'inset 0px 1px 1px rgba(0,0,0,0.075)',
+					'border-radius': '4px',
+					'overflow': 'hidden'
 				})
 			;
 			$rtn.append( $formElm );
 			this.aceEditor = ace.edit( $formElm.get(0) );
+			if( mod.type == 'html' ){
+				this.aceEditor.getSession().setMode("ace/mode/html");
+			}else if( mod.type == 'markdown' ){
+				this.aceEditor.getSession().setMode("ace/mode/markdown");
+			}else{
+				this.aceEditor.getSession().setMode("ace/mode/plain_text");
+			}
 			this.aceEditor.$blockScrolling = Infinity;
 
 		}else{
@@ -4420,6 +4435,7 @@ module.exports = function(broccoli){
 				.bind('drop', function(e){
 					e.stopPropagation();
 					e.preventDefault();
+					var event = e.originalEvent;
 					var fileInfo = event.dataTransfer.files[0];
 					applyFile(fileInfo);
 				})
@@ -4832,6 +4848,7 @@ module.exports = function(broccoli){
 	 * エディタUIを生成
 	 */
 	this.mkEditor = function( mod, data, elm, callback ){
+		var _this = this;
 		if(typeof(data) !== typeof({})){ data = {'src':''+data,'editor':'markdown'}; }
 		var rows = 12;
 		if( mod.rows ){
@@ -4858,11 +4875,23 @@ module.exports = function(broccoli){
 				.css({
 					'position': 'relative',
 					'width': '100%',
-					'height': 16 * rows
+					'height': 16 * rows,
+					'border': '1px solid #ccc',
+					'box-shadow': 'inset 0px 1px 1px rgba(0,0,0,0.075)',
+					'border-radius': '4px',
+					'overflow': 'hidden'
 				})
 			;
 			$rtn.append( $formElm );
 			this.aceEditor = ace.edit( $formElm.get(0) );
+			this.aceEditor.getSession().setMode("ace/mode/html");
+			if( data.editor == 'text' ){
+				this.aceEditor.getSession().setMode("ace/mode/plain_text");
+			}else if( data.editor == 'markdown' ){
+				this.aceEditor.getSession().setMode("ace/mode/markdown");
+			}else{
+				this.aceEditor.getSession().setMode("ace/mode/html");
+			}
 			this.aceEditor.$blockScrolling = Infinity;
 
 		}else{
@@ -4889,6 +4918,20 @@ module.exports = function(broccoli){
 			)
 		;
 		$rtn.find('input[type=radio][name=editor-'+mod.name+'][value="'+data.editor+'"]').attr({'checked':'checked'});
+
+		if( editorLib == 'ace' && _this.aceEditor ){
+			$rtn.find('input[type=radio][name=editor-'+mod.name+']').change(function(){
+				var $this = $(this);
+				var val = $this.val();
+				if( val == 'text' ){
+					_this.aceEditor.getSession().setMode("ace/mode/plain_text");
+				}else if( val == 'markdown' ){
+					_this.aceEditor.getSession().setMode("ace/mode/markdown");
+				}else{
+					_this.aceEditor.getSession().setMode("ace/mode/html");
+				}
+			});
+		}
 
 		$(elm).html($rtn);
 

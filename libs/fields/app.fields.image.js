@@ -211,6 +211,7 @@ module.exports = function(broccoli){
 				.bind('drop', function(e){
 					e.stopPropagation();
 					e.preventDefault();
+					var event = e.originalEvent;
 					var fileInfo = event.dataTransfer.files[0];
 					applyFile(fileInfo);
 				})
