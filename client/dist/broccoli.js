@@ -118,6 +118,11 @@
 				{},
 				[
 					function(it1, data){
+						_this.progress(function(){
+							it1.next(data);
+						});
+					} ,
+					function(it1, data){
 						_this.gpi(
 							'getConfig',
 							{} ,
@@ -198,6 +203,11 @@
 					function( it1, data ){
 						// 編集画面描画
 						_this.redraw(function(){
+							it1.next(data);
+						});
+					} ,
+					function(it1, data){
+						_this.closeProgress(function(){
 							it1.next(data);
 						});
 					} ,
@@ -408,6 +418,12 @@
 						// console.log(callback);
 						it79.fnc({},[
 							function(it1, data){
+								// プログレスを表示
+								broccoli.progress(function(){
+									it1.next(data);
+								});
+							} ,
+							function(it1, data){
 								// 編集パネルを一旦消去
 								_this.panels.clearPanels(function(){
 									it1.next(data);
@@ -431,6 +447,12 @@
 							} ,
 							function(it1, data){
 								broccoli.closeLightbox(function(){
+									it1.next(data);
+								});
+							} ,
+							function(it1, data){
+								// プログレスを消去
+								broccoli.closeProgress(function(){
 									it1.next(data);
 								});
 							} ,
@@ -757,6 +779,47 @@
 		this.closeLightbox = function( callback ){
 			callback = callback||function(){};
 			$('body').find('.broccoli--lightbox')
+				.fadeOut(
+					'fast',
+					function(){
+						$(this).remove();
+						callback();
+					}
+				)
+			;
+			return this;
+		}
+
+		/**
+		 * プログレスを表示する
+		 */
+		this.progress = function( callback ){
+			callback = callback||function(){};
+			$('body').find('.broccoli--progress').remove();//一旦削除
+			$('body')
+				.append( $('<div class="broccoli broccoli--progress">')
+					.append( $('<div class="broccoli--progress-inner">')
+						.append( $('<div class="broccoli--progress-image">')
+						)
+					)
+				)
+			;
+			var dom = $('body').find('.broccoli--progress-inner').get(0);
+			callback(dom);
+			return this;
+		}
+
+		/**
+		 * プログレスを閉じる
+		 */
+		this.closeProgress = function( callback ){
+			callback = callback||function(){};
+			var $progress = $('body').find('.broccoli--progress');
+			if( !$progress.size() ){
+				callback();
+				return this;
+			}
+			$progress
 				.fadeOut(
 					'fast',
 					function(){
@@ -2290,7 +2353,9 @@ module.exports = function(broccoli){
 						// console.log( mod );
 
 						_this.lock();//フォームをロック
+						broccoli.progress();
 						saveInstance(instancePath, mod, data, function(res){
+							broccoli.closeProgress();
 							callback(res);
 						});
 

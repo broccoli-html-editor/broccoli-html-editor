@@ -303,6 +303,53 @@
     padding: 20px;
     margin: 100px auto; }
 
+.broccoli--progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  background-color: rgba(128, 128, 128, 0.05);
+  width: 100%;
+  height: 100%;
+  z-index: 11000; }
+  .broccoli--progress-inner {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 180px;
+    height: 1px; }
+  .broccoli--progress-image {
+    position: absolute;
+    left: -50%;
+    top: -50%;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    -webkit-animation: broccoli--progress 1.4s infinite normal ease;
+            animation: broccoli--progress 1.4s infinite normal ease; }
+
+@-webkit-keyframes broccoli--progress {
+  0% {
+    -webkit-transform: rotate(0deg) scale(0, 0);
+            transform: rotate(0deg) scale(0, 0); }
+  30% {
+    -webkit-transform: rotate(270deg) scale(1, 1);
+            transform: rotate(270deg) scale(1, 1); }
+  100% {
+    -webkit-transform: rotate(720deg) scale(0, 0);
+            transform: rotate(720deg) scale(0, 0); } }
+
+@keyframes broccoli--progress {
+  0% {
+    -webkit-transform: rotate(0deg) scale(0, 0);
+            transform: rotate(0deg) scale(0, 0); }
+  30% {
+    -webkit-transform: rotate(270deg) scale(1, 1);
+            transform: rotate(270deg) scale(1, 1); }
+  100% {
+    -webkit-transform: rotate(720deg) scale(0, 0);
+            transform: rotate(720deg) scale(0, 0); } }
+
 .broccoli--module-info-preview {
   position: fixed;
   width: 280px;

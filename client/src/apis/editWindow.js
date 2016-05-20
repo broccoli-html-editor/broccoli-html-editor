@@ -256,7 +256,9 @@ module.exports = function(broccoli){
 						// console.log( mod );
 
 						_this.lock();//フォームをロック
+						broccoli.progress();
 						saveInstance(instancePath, mod, data, function(res){
+							broccoli.closeProgress();
 							callback(res);
 						});
 
