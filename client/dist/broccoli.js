@@ -118,11 +118,6 @@
 				{},
 				[
 					function(it1, data){
-						_this.progress(function(){
-							it1.next(data);
-						});
-					} ,
-					function(it1, data){
 						_this.gpi(
 							'getConfig',
 							{} ,
@@ -203,11 +198,6 @@
 					function( it1, data ){
 						// 編集画面描画
 						_this.redraw(function(){
-							it1.next(data);
-						});
-					} ,
-					function(it1, data){
-						_this.closeProgress(function(){
 							it1.next(data);
 						});
 					} ,
@@ -4090,11 +4080,18 @@ module.exports = function(broccoli){
 			;
 			$rtn.append( $formElm );
 			this.aceEditor = ace.edit( $formElm.get(0) );
+			// Ace Snippets - https://ace.c9.io/build/kitchen-sink.html
+			this.aceEditor.setFontSize(16);
+			this.aceEditor.setTheme("ace/theme/github");
+			this.aceEditor.getSession().setMode("ace/mode/html");
 			if( mod.type == 'html' ){
+				this.aceEditor.setTheme("ace/theme/monokai");
 				this.aceEditor.getSession().setMode("ace/mode/html");
 			}else if( mod.type == 'markdown' ){
+				this.aceEditor.setTheme("ace/theme/github");
 				this.aceEditor.getSession().setMode("ace/mode/markdown");
 			}else{
+				this.aceEditor.setTheme("ace/theme/katzenmilch");
 				this.aceEditor.getSession().setMode("ace/mode/plain_text");
 			}
 			this.aceEditor.getSession().setUseWrapMode(true);//Ace 自然改行
@@ -4950,15 +4947,21 @@ module.exports = function(broccoli){
 			;
 			$rtn.append( $formElm );
 			this.aceEditor = ace.edit( $formElm.get(0) );
+			this.aceEditor.setFontSize(16);
+			this.aceEditor.setTheme("ace/theme/github");
 			this.aceEditor.getSession().setMode("ace/mode/html");
 			if( data.editor == 'text' ){
+				this.aceEditor.setTheme("ace/theme/katzenmilch");
 				this.aceEditor.getSession().setMode("ace/mode/plain_text");
 			}else if( data.editor == 'markdown' ){
+				this.aceEditor.setTheme("ace/theme/github");
 				this.aceEditor.getSession().setMode("ace/mode/markdown");
 			}else{
+				this.aceEditor.setTheme("ace/theme/monokai");
 				this.aceEditor.getSession().setMode("ace/mode/html");
 			}
-			this.aceEditor.getSession().setUseWrapMode(true);//Ace 自然改行
+			this.aceEditor.getSession().setUseWrapMode(true);// Ace 自然改行
+			this.aceEditor.setShowInvisibles(true);// Ace 不可視文字の可視化
 			this.aceEditor.$blockScrolling = Infinity;
 
 		}else{
@@ -4991,10 +4994,13 @@ module.exports = function(broccoli){
 				var $this = $(this);
 				var val = $this.val();
 				if( val == 'text' ){
+					_this.aceEditor.setTheme("ace/theme/katzenmilch");
 					_this.aceEditor.getSession().setMode("ace/mode/plain_text");
 				}else if( val == 'markdown' ){
+					_this.aceEditor.setTheme("ace/theme/github");
 					_this.aceEditor.getSession().setMode("ace/mode/markdown");
 				}else{
+					_this.aceEditor.setTheme("ace/theme/monokai");
 					_this.aceEditor.getSession().setMode("ace/mode/html");
 				}
 			});

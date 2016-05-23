@@ -237,7 +237,10 @@ $ npm test
 
 ### broccoli-html-editor@0.1.0-beta.9
 
-- ?????
+- Ace Editor を自然改行されるように設定した。
+- Ace Editor で、書式に応じてテーマが変わるようにした。
+- Ace Editor の文字サイズを最適化。
+- 編集保存中のアニメーション追加。
 
 
 ### broccoli-html-editor@0.1.0-beta.8

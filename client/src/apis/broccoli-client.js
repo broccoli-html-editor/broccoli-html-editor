@@ -117,11 +117,6 @@
 				{},
 				[
 					function(it1, data){
-						_this.progress(function(){
-							it1.next(data);
-						});
-					} ,
-					function(it1, data){
 						_this.gpi(
 							'getConfig',
 							{} ,
@@ -202,11 +197,6 @@
 					function( it1, data ){
 						// 編集画面描画
 						_this.redraw(function(){
-							it1.next(data);
-						});
-					} ,
-					function(it1, data){
-						_this.closeProgress(function(){
 							it1.next(data);
 						});
 					} ,

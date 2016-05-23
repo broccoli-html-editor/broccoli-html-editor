@@ -102,11 +102,18 @@ module.exports = function(broccoli){
 			;
 			$rtn.append( $formElm );
 			this.aceEditor = ace.edit( $formElm.get(0) );
+			// Ace Snippets - https://ace.c9.io/build/kitchen-sink.html
+			this.aceEditor.setFontSize(16);
+			this.aceEditor.setTheme("ace/theme/github");
+			this.aceEditor.getSession().setMode("ace/mode/html");
 			if( mod.type == 'html' ){
+				this.aceEditor.setTheme("ace/theme/monokai");
 				this.aceEditor.getSession().setMode("ace/mode/html");
 			}else if( mod.type == 'markdown' ){
+				this.aceEditor.setTheme("ace/theme/github");
 				this.aceEditor.getSession().setMode("ace/mode/markdown");
 			}else{
+				this.aceEditor.setTheme("ace/theme/katzenmilch");
 				this.aceEditor.getSession().setMode("ace/mode/plain_text");
 			}
 			this.aceEditor.getSession().setUseWrapMode(true);//Ace 自然改行
