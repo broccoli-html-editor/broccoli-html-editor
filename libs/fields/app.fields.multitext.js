@@ -115,6 +115,7 @@ module.exports = function(broccoli){
 			}else{
 				this.aceEditor.getSession().setMode("ace/mode/html");
 			}
+			this.aceEditor.getSession().setUseWrapMode(true);//Ace 自然改行
 			this.aceEditor.$blockScrolling = Infinity;
 
 		}else{
