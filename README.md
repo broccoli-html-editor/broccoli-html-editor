@@ -235,6 +235,14 @@ $ npm test
 
 ## 更新履歴 - Change log
 
+### broccoli-html-editor@0.1.0-beta.9
+
+- Ace Editor を自然改行されるように設定した。
+- Ace Editor で、書式に応じてテーマが変わるようにした。
+- Ace Editor の文字サイズを最適化。
+- 編集保存中のアニメーション追加。
+
+
 ### broccoli-html-editor@0.1.0-beta.8
 
 - 埋め込み Ace Editor に対応。
@@ -279,6 +287,6 @@ MIT License
 
 ## 作者 - Author
 
-- (C)Tomoya Koyanagi <tomk79@gmail.com>
+- Tomoya Koyanagi <tomk79@gmail.com>
 - website: <http://www.pxt.jp/>
 - Twitter: @tomk79 <http://twitter.com/tomk79/>

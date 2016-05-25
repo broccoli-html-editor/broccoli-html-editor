@@ -408,6 +408,12 @@
 						// console.log(callback);
 						it79.fnc({},[
 							function(it1, data){
+								// プログレスを表示
+								broccoli.progress(function(){
+									it1.next(data);
+								});
+							} ,
+							function(it1, data){
 								// 編集パネルを一旦消去
 								_this.panels.clearPanels(function(){
 									it1.next(data);
@@ -431,6 +437,12 @@
 							} ,
 							function(it1, data){
 								broccoli.closeLightbox(function(){
+									it1.next(data);
+								});
+							} ,
+							function(it1, data){
+								// プログレスを消去
+								broccoli.closeProgress(function(){
 									it1.next(data);
 								});
 							} ,
@@ -757,6 +769,47 @@
 		this.closeLightbox = function( callback ){
 			callback = callback||function(){};
 			$('body').find('.broccoli--lightbox')
+				.fadeOut(
+					'fast',
+					function(){
+						$(this).remove();
+						callback();
+					}
+				)
+			;
+			return this;
+		}
+
+		/**
+		 * プログレスを表示する
+		 */
+		this.progress = function( callback ){
+			callback = callback||function(){};
+			$('body').find('.broccoli--progress').remove();//一旦削除
+			$('body')
+				.append( $('<div class="broccoli broccoli--progress">')
+					.append( $('<div class="broccoli--progress-inner">')
+						.append( $('<div class="broccoli--progress-image">')
+						)
+					)
+				)
+			;
+			var dom = $('body').find('.broccoli--progress-inner').get(0);
+			callback(dom);
+			return this;
+		}
+
+		/**
+		 * プログレスを閉じる
+		 */
+		this.closeProgress = function( callback ){
+			callback = callback||function(){};
+			var $progress = $('body').find('.broccoli--progress');
+			if( !$progress.size() ){
+				callback();
+				return this;
+			}
+			$progress
 				.fadeOut(
 					'fast',
 					function(){
@@ -2290,7 +2343,9 @@ module.exports = function(broccoli){
 						// console.log( mod );
 
 						_this.lock();//フォームをロック
+						broccoli.progress();
 						saveInstance(instancePath, mod, data, function(res){
+							broccoli.closeProgress();
 							callback(res);
 						});
 
@@ -4025,14 +4080,24 @@ module.exports = function(broccoli){
 			;
 			$rtn.append( $formElm );
 			this.aceEditor = ace.edit( $formElm.get(0) );
+			// Ace Snippets - https://ace.c9.io/build/kitchen-sink.html
+			this.aceEditor.setFontSize(16);
+			this.aceEditor.getSession().setUseWrapMode(true);// Ace 自然改行
+			this.aceEditor.setShowInvisibles(true);// Ace 不可視文字の可視化
+			this.aceEditor.$blockScrolling = Infinity;
+			this.aceEditor.setTheme("ace/theme/github");
+			this.aceEditor.getSession().setMode("ace/mode/html");
+
 			if( mod.type == 'html' ){
+				this.aceEditor.setTheme("ace/theme/monokai");
 				this.aceEditor.getSession().setMode("ace/mode/html");
 			}else if( mod.type == 'markdown' ){
+				this.aceEditor.setTheme("ace/theme/github");
 				this.aceEditor.getSession().setMode("ace/mode/markdown");
 			}else{
+				this.aceEditor.setTheme("ace/theme/katzenmilch");
 				this.aceEditor.getSession().setMode("ace/mode/plain_text");
 			}
-			this.aceEditor.$blockScrolling = Infinity;
 
 		}else{
 			$formElm = $('<textarea class="form-control">')
@@ -4884,15 +4949,24 @@ module.exports = function(broccoli){
 			;
 			$rtn.append( $formElm );
 			this.aceEditor = ace.edit( $formElm.get(0) );
+			// Ace Snippets - https://ace.c9.io/build/kitchen-sink.html
+			this.aceEditor.setFontSize(16);
+			this.aceEditor.getSession().setUseWrapMode(true);// Ace 自然改行
+			this.aceEditor.setShowInvisibles(true);// Ace 不可視文字の可視化
+			this.aceEditor.$blockScrolling = Infinity;
+			this.aceEditor.setTheme("ace/theme/github");
 			this.aceEditor.getSession().setMode("ace/mode/html");
+
 			if( data.editor == 'text' ){
+				this.aceEditor.setTheme("ace/theme/katzenmilch");
 				this.aceEditor.getSession().setMode("ace/mode/plain_text");
 			}else if( data.editor == 'markdown' ){
+				this.aceEditor.setTheme("ace/theme/github");
 				this.aceEditor.getSession().setMode("ace/mode/markdown");
 			}else{
+				this.aceEditor.setTheme("ace/theme/monokai");
 				this.aceEditor.getSession().setMode("ace/mode/html");
 			}
-			this.aceEditor.$blockScrolling = Infinity;
 
 		}else{
 			$formElm = $('<textarea class="form-control">')
@@ -4924,10 +4998,13 @@ module.exports = function(broccoli){
 				var $this = $(this);
 				var val = $this.val();
 				if( val == 'text' ){
+					_this.aceEditor.setTheme("ace/theme/katzenmilch");
 					_this.aceEditor.getSession().setMode("ace/mode/plain_text");
 				}else if( val == 'markdown' ){
+					_this.aceEditor.setTheme("ace/theme/github");
 					_this.aceEditor.getSession().setMode("ace/mode/markdown");
 				}else{
+					_this.aceEditor.setTheme("ace/theme/monokai");
 					_this.aceEditor.getSession().setMode("ace/mode/html");
 				}
 			});
