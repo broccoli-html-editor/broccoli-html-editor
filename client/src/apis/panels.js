@@ -185,6 +185,9 @@ module.exports = function(broccoli){
 				var isAppender = ($(this).attr('data-broccoli-is-appender') == 'yes');
 				var moveFrom = event.dataTransfer.getData("data-broccoli-instance-path");
 				var moveTo = $(this).attr('data-broccoli-instance-path');
+				var isInstanceTreeView = $(this).attr('data-broccoli-is-instance-tree-view') == 'yes';
+				var isEditWindow = $(this).attr('data-broccoli-is-edit-window') == 'yes';
+
 				if( moveFrom === moveTo ){
 					// 移動元と移動先が同一の場合、キャンセルとみなす
 					$(this).removeClass('broccoli--panel__drag-entered');

@@ -2272,6 +2272,7 @@ module.exports = function(broccoli){
 								var childInstancePath = instancePath + '/fields.'+field.name+'@'+idx2+''
 								// console.log(childInstancePath);
 								// console.log(childData);
+								// console.log(childMod);
 								// console.log(mod);
 								var label = childData.modId;
 								if( childMod.info && childMod.info.name ){
@@ -2281,7 +2282,12 @@ module.exports = function(broccoli){
 								$li
 									.text(label)
 									.attr({
-										'data-broccoli-instance-path': childInstancePath
+										'data-broccoli-instance-path': childInstancePath,
+										'data-broccoli-mod-id': childMod.id,
+										'data-broccoli-sub-mod-name': childMod.subModName,
+										// 'data-broccoli-is-appender':'yes',
+										'data-broccoli-is-edit-window': 'yes',
+										'draggable': true
 									})
 									.bind('dblclick', function(e){
 										var $this = $(this);
@@ -2298,7 +2304,20 @@ module.exports = function(broccoli){
 										});
 
 									})
+									.bind('drop', function(e){
+										_this.lock();//フォームをロック
+										callback(true, function(){
+											// インスタンス instancePath の変更を保存し、
+											// 一旦編集ウィンドウを閉じたあと、
+											// instancePath の編集画面を開きなおす。
+											broccoli.editInstance(instancePath);
+										});
+									})
+									.append( $('<div>')
+										.addClass('broccoli--panel-drop-to-insert-here')
+									)
 								;
+								broccoli.panels.setPanelEventHandlers( $li );
 								$ul
 									.append($li)
 								;
@@ -3299,6 +3318,9 @@ module.exports = function(broccoli){
 				var isAppender = ($(this).attr('data-broccoli-is-appender') == 'yes');
 				var moveFrom = event.dataTransfer.getData("data-broccoli-instance-path");
 				var moveTo = $(this).attr('data-broccoli-instance-path');
+				var isInstanceTreeView = $(this).attr('data-broccoli-is-instance-tree-view') == 'yes';
+				var isEditWindow = $(this).attr('data-broccoli-is-edit-window') == 'yes';
+
 				if( moveFrom === moveTo ){
 					// 移動元と移動先が同一の場合、キャンセルとみなす
 					$(this).removeClass('broccoli--panel__drag-entered');
