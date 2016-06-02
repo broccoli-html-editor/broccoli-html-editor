@@ -194,11 +194,12 @@ module.exports = function(broccoli){
 										})
 										.bind('drop', function(e){
 											_this.lock();//フォームをロック
-											setTimeout(function(){ // TODO: ドロップ処理の終了を待ってから実行するべき。暫定的にタイマーで逃げている。
+											broccoli.panels.onDrop(e, this, function(){
 												updateModuleAndLoopField( instancePath, function(){
 													_this.unlock();//フォームのロックを解除
+													console.log('drop event done.');
 												} );
-											}, 2000);
+											});
 										})
 										.append( $('<div>')
 											.addClass('broccoli--panel-drop-to-insert-here')

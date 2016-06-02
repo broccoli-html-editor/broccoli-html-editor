@@ -2281,11 +2281,12 @@ module.exports = function(broccoli){
 										})
 										.bind('drop', function(e){
 											_this.lock();//フォームをロック
-											setTimeout(function(){ // TODO: ドロップ処理の終了を待ってから実行するべき。暫定的にタイマーで逃げている。
+											broccoli.panels.onDrop(e, this, function(){
 												updateModuleAndLoopField( instancePath, function(){
 													_this.unlock();//フォームのロックを解除
+													console.log('drop event done.');
 												} );
-											}, 2000);
+											});
 										})
 										.append( $('<div>')
 											.addClass('broccoli--panel-drop-to-insert-here')
@@ -3295,6 +3296,150 @@ module.exports = function(broccoli){
 	}
 
 	/**
+	 * パネルの ondrop イベントハンドラ
+	 * このメソッドは、 this.setPanelEventHandlers() の他、
+	 * editWindow からもコールされています。
+	 */
+	this.onDrop = function(e, elm, callback){
+		callback = callback || function(){};
+		e.stopPropagation();
+		var event = e.originalEvent;
+		$(elm).removeClass('broccoli--panel__drag-entered');
+		var method = event.dataTransfer.getData("method");
+		// options.drop($(elm).attr('data-broccoli-instance-path'), method);
+		// console.log(method);
+		var subModNameFrom = event.dataTransfer.getData("data-broccoli-sub-mod-name");
+		var subModName = $(elm).attr('data-broccoli-sub-mod-name');
+		var isAppenderFrom = (event.dataTransfer.getData("data-broccoli-is-appender") == 'yes');
+		var isAppender = ($(elm).attr('data-broccoli-is-appender') == 'yes');
+		var moveFrom = event.dataTransfer.getData("data-broccoli-instance-path");
+		var moveTo = $(elm).attr('data-broccoli-instance-path');
+		var isInstanceTreeView = $(elm).attr('data-broccoli-is-instance-tree-view') == 'yes';
+		var isEditWindow = $(elm).attr('data-broccoli-is-edit-window') == 'yes';
+
+		if( moveFrom === moveTo ){
+			// 移動元と移動先が同一の場合、キャンセルとみなす
+			$(elm).removeClass('broccoli--panel__drag-entered');
+			callback();
+			return;
+		}
+		if( subModNameFrom.length ){ // ドロップ元のインスタンスがサブモジュールだったら
+
+			if( method === 'moveTo' ){
+				// これはloop要素(=subModNameがある場合)を並べ替えるための moveTo です。
+				// その他のインスタンスをここに移動したり、作成することはできません。
+
+				function removeNum(str){
+					return str.replace(new RegExp('[0-9]+$'),'');
+				}
+				if( removeNum(moveFrom) !== removeNum(moveTo) ){
+					broccoli.message('並べ替え以外の移動操作はできません。');
+					$(elm).removeClass('broccoli--panel__drag-entered');
+					callback();
+					return;
+				}
+
+				broccoli.contentsSourceData.moveInstanceTo( moveFrom, moveTo, function(){
+					// コンテンツを保存
+					broccoli.contentsSourceData.save(function(){
+						// alert('インスタンスを移動しました。');
+						broccoli.redraw();
+						callback();
+					});
+				} );
+				return;
+			}
+			broccoli.message('ダブルクリックしてください。ドロップできません。');
+			callback();
+			return;
+		}else{
+			if( method === 'moveTo' ){
+				if(subModName){
+					broccoli.message('loopフィールドへの移動はできません。');
+					$(elm).removeClass('broccoli--panel__drag-entered');
+					callback();
+					return;
+				}
+				broccoli.contentsSourceData.moveInstanceTo( moveFrom, moveTo, function(){
+					// コンテンツを保存
+					broccoli.contentsSourceData.save(function(){
+						// alert('インスタンスを移動しました。');
+						broccoli.redraw();
+						callback();
+					});
+				} );
+				return;
+			}
+			if( subModName && method === 'add' ){
+				// loopフィールドのサブモジュールに新しいモジュールを追加しようとした場合の処理
+				broccoli.message('loopフィールドに新しいモジュールを追加することはできません。');
+				callback();
+				return;
+			}
+			if( method !== 'add' ){
+				// 移動(moveTo)でも追加(add)でもない場合の処理
+				broccoli.message('追加するモジュールをドラッグしてください。ここに移動することはできません。');
+				callback();
+				return;
+			}
+			var modId = event.dataTransfer.getData("modId");
+			var modClip = event.dataTransfer.getData("modClip");
+			try {
+				modClip = JSON.parse(modClip);
+			} catch (e) {
+				modClip = false;
+			}
+			// console.log(modId);
+			// console.log(modClip);
+			if( modClip !== false ){
+				console.log('クリップがドロップされました。');
+				// console.log(modId);
+				// console.log(modClip);
+				var parsedModId = broccoli.parseModuleId(modId);
+				// console.log(parsedModId.package);
+
+				it79.ary(
+					modClip.data ,
+					function(it1, row1, idx1){
+						broccoli.contentsSourceData.duplicateInstance(modClip.data[idx1], modClip.resources, {'supplementModPackage': parsedModId.package}, function(newData){
+							// console.log(newData);
+
+							broccoli.contentsSourceData.addInstance( newData, moveTo, function(){
+								// 上から順番に挿入していくので、
+								// moveTo を1つインクリメントしなければいけない。
+								// (そうしないと、天地逆さまに積み上げられることになる。)
+								moveTo = broccoli.incrementInstancePath(moveTo);
+								it1.next();
+							} );
+
+						});
+					} ,
+					function(){
+						broccoli.contentsSourceData.save(function(){
+							broccoli.message('クリップを挿入しました。');
+							broccoli.redraw();
+							callback();
+						});
+					}
+				);
+
+			}else{
+				broccoli.contentsSourceData.addInstance( modId, $(elm).attr('data-broccoli-instance-path'), function(){
+					// コンテンツを保存
+					broccoli.contentsSourceData.save(function(){
+						// alert('インスタンスを追加しました。');
+						broccoli.redraw();
+						callback();
+					});
+				} );
+
+			}
+			return;
+		}
+		return;
+	}
+
+	/**
 	 * パネルにイベントハンドラをセットする
 	 */
 	this.setPanelEventHandlers = function($panel){
@@ -3362,128 +3507,9 @@ module.exports = function(broccoli){
 				event.dataTransfer.setData("data-broccoli-is-appender", $(this).attr('data-broccoli-is-appender') );
 			})
 			.bind('drop', function(e){
-				e.stopPropagation();
-				var event = e.originalEvent;
-				$(this).removeClass('broccoli--panel__drag-entered');
-				var method = event.dataTransfer.getData("method");
-				// options.drop($(this).attr('data-broccoli-instance-path'), method);
-				// console.log(method);
-				var subModNameFrom = event.dataTransfer.getData("data-broccoli-sub-mod-name");
-				var subModName = $(this).attr('data-broccoli-sub-mod-name');
-				var isAppenderFrom = (event.dataTransfer.getData("data-broccoli-is-appender") == 'yes');
-				var isAppender = ($(this).attr('data-broccoli-is-appender') == 'yes');
-				var moveFrom = event.dataTransfer.getData("data-broccoli-instance-path");
-				var moveTo = $(this).attr('data-broccoli-instance-path');
-				var isInstanceTreeView = $(this).attr('data-broccoli-is-instance-tree-view') == 'yes';
-				var isEditWindow = $(this).attr('data-broccoli-is-edit-window') == 'yes';
-
-				if( moveFrom === moveTo ){
-					// 移動元と移動先が同一の場合、キャンセルとみなす
-					$(this).removeClass('broccoli--panel__drag-entered');
-					return;
-				}
-				if( subModNameFrom.length ){ // ドロップ元のインスタンスがサブモジュールだったら
-
-					if( method === 'moveTo' ){
-						// これはloop要素(=subModNameがある場合)を並べ替えるための moveTo です。
-						// その他のインスタンスをここに移動したり、作成することはできません。
-
-						function removeNum(str){
-							return str.replace(new RegExp('[0-9]+$'),'');
-						}
-						if( removeNum(moveFrom) !== removeNum(moveTo) ){
-							broccoli.message('並べ替え以外の移動操作はできません。');
-							$(this).removeClass('broccoli--panel__drag-entered');
-							return;
-						}
-
-						broccoli.contentsSourceData.moveInstanceTo( moveFrom, moveTo, function(){
-							// コンテンツを保存
-							broccoli.contentsSourceData.save(function(){
-								// alert('インスタンスを移動しました。');
-								broccoli.redraw();
-							});
-						} );
-						return;
-					}
-					broccoli.message('ダブルクリックしてください。ドロップできません。');
-				}else{
-					if( method === 'moveTo' ){
-						if(subModName){
-							broccoli.message('loopフィールドへの移動はできません。');
-							$(this).removeClass('broccoli--panel__drag-entered');
-							return;
-						}
-						broccoli.contentsSourceData.moveInstanceTo( moveFrom, moveTo, function(){
-							// コンテンツを保存
-							broccoli.contentsSourceData.save(function(){
-								// alert('インスタンスを移動しました。');
-								broccoli.redraw();
-							});
-						} );
-						return;
-					}
-					if( subModName && method === 'add' ){
-						// loopフィールドのサブモジュールに新しいモジュールを追加しようとした場合の処理
-						broccoli.message('loopフィールドに新しいモジュールを追加することはできません。');
-						return;
-					}
-					if( method !== 'add' ){
-						// 移動(moveTo)でも追加(add)でもない場合の処理
-						broccoli.message('追加するモジュールをドラッグしてください。ここに移動することはできません。');
-						return;
-					}
-					var modId = event.dataTransfer.getData("modId");
-					var modClip = event.dataTransfer.getData("modClip");
-					try {
-						modClip = JSON.parse(modClip);
-					} catch (e) {
-						modClip = false;
-					}
-					// console.log(modId);
-					// console.log(modClip);
-					if( modClip !== false ){
-						console.log('クリップがドロップされました。');
-						// console.log(modId);
-						// console.log(modClip);
-						var parsedModId = broccoli.parseModuleId(modId);
-						// console.log(parsedModId.package);
-
-						it79.ary(
-							modClip.data ,
-							function(it1, row1, idx1){
-								broccoli.contentsSourceData.duplicateInstance(modClip.data[idx1], modClip.resources, {'supplementModPackage': parsedModId.package}, function(newData){
-									// console.log(newData);
-
-									broccoli.contentsSourceData.addInstance( newData, moveTo, function(){
-										// 上から順番に挿入していくので、
-										// moveTo を1つインクリメントしなければいけない。
-										// (そうしないと、天地逆さまに積み上げられることになる。)
-										moveTo = broccoli.incrementInstancePath(moveTo);
-										it1.next();
-									} );
-
-								});
-							} ,
-							function(){
-								broccoli.contentsSourceData.save(function(){
-									broccoli.message('クリップを挿入しました。');
-									broccoli.redraw();
-								});
-							}
-						);
-
-					}else{
-						broccoli.contentsSourceData.addInstance( modId, $(this).attr('data-broccoli-instance-path'), function(){
-							// コンテンツを保存
-							broccoli.contentsSourceData.save(function(){
-								// alert('インスタンスを追加しました。');
-								broccoli.redraw();
-							});
-						} );
-
-					}
-				}
+				_this.onDrop(e, this, function(){
+					console.log('drop event done.');
+				});
 				return;
 			})
 		;
