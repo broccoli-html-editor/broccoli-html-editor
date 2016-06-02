@@ -272,22 +272,24 @@
   background: #eef; }
 
 .broccoli--edit-window-module-fields {
-  max-height: 200px;
+  padding: 10px;
   overflow: auto;
-  border: 2px solid #bbb;
+  max-height: 200px;
+  border: 1px solid #bbb;
   border-radius: 5px;
-  background: #fafafa;
-  padding: 0; }
-  .broccoli--edit-window-module-fields li {
-    position: relative;
-    border-bottom: 1px solid #bbb;
-    list-style-type: none;
-    margin: 0;
-    padding: 10px; }
-    .broccoli--edit-window-module-fields li:hover {
-      background: #eee; }
-    .broccoli--edit-window-module-fields li:last-child {
-      border-bottom: none; }
+  background: #fafafa; }
+  .broccoli--edit-window-module-fields ul {
+    padding: 0; }
+    .broccoli--edit-window-module-fields ul li {
+      position: relative;
+      border-bottom: 1px solid #bbb;
+      list-style-type: none;
+      margin: 0;
+      padding: 10px; }
+      .broccoli--edit-window-module-fields ul li:hover {
+        background: #eee; }
+      .broccoli--edit-window-module-fields ul li:last-child {
+        border-bottom: none; }
 
 .broccoli--lightbox {
   position: fixed;

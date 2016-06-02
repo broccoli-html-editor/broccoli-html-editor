@@ -360,23 +360,27 @@
 // 	content:"▼ ";
 // }
 .broccoli--edit-window-module-fields{
-	max-height: 200px;
+	padding: 10px;
 	overflow: auto;
-	border: 2px solid #bbb;
+	max-height: 200px;
+	border: 1px solid #bbb;
 	border-radius: 5px;
 	background: #fafafa;
-	padding: 0;
-	li{
-		position: relative;
-		border-bottom: 1px solid #bbb;
-		list-style-type: none;
-		margin: 0;
-		padding: 10px;
-		&:hover{
-			background: #eee;
-		}
-		&:last-child{
-			border-bottom: none;
+
+	ul{
+		padding: 0;
+		li{
+			position: relative;
+			border-bottom: 1px solid #bbb;
+			list-style-type: none;
+			margin: 0;
+			padding: 10px;
+			&:hover{
+				background: #eee;
+			}
+			&:last-child{
+				border-bottom: none;
+			}
 		}
 	}
 }
