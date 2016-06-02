@@ -2279,6 +2279,13 @@ module.exports = function(broccoli){
 											});
 
 										})
+										.append( $('<div>')
+											.addClass('broccoli--panel-drop-to-insert-here')
+										)
+									;
+									broccoli.panels.setPanelEventHandlers( $li );
+									$li
+										.unbind('drop')
 										.bind('drop', function(e){
 											_this.lock();//フォームをロック
 											broccoli.panels.onDrop(e, this, function(){
@@ -2288,23 +2295,55 @@ module.exports = function(broccoli){
 												} );
 											});
 										})
-										.append( $('<div>')
-											.addClass('broccoli--panel-drop-to-insert-here')
-										)
 									;
-									broccoli.panels.setPanelEventHandlers( $li );
 									$ul
 										.append($li)
 									;
 									it2.next();
 								},
 								function(){
+									var appenderInstancePath = instancePath+'/fields.'+field.name+'@'+(data.fields[field.name].length);
+									var $appender = $('<li>')
+										.text('(+) ここにモジュールをドラッグしてください。')
+										.attr({
+											'data-broccoli-instance-path':appenderInstancePath,
+											'data-broccoli-is-appender':'yes',
+											'data-broccoli-is-instance-tree-view': 'yes',
+											'draggable': false
+										})
+										.bind('mouseover', function(e){
+											e.stopPropagation();
+											$(this).addClass('broccoli--panel__hovered')
+										})
+										.bind('mouseout',function(e){
+											$(this).removeClass('broccoli--panel__hovered')
+										})
+										.append( $('<div>')
+											.addClass('broccoli--panel-drop-to-insert-here')
+										)
+									;
+									broccoli.panels.setPanelEventHandlers( $appender );
+									$appender
+										.unbind('drop')
+										.bind('drop', function(e){
+											_this.lock();//フォームをロック
+											broccoli.panels.onDrop(e, this, function(){
+												updateModuleAndLoopField( instancePath, function(){
+													_this.unlock();//フォームのロックを解除
+													console.log('drop event done.');
+												} );
+											});
+										})
+									;
+									$ul.append( $appender );
+
 									var elmFieldContent = $fields.find('.broccoli--edit-window-module-fields[data-broccoli--editwindow-field-name='+field.name+']').get(0);
 									$(elmFieldContent).html('')
 										.append(
 											$ul
 										)
 									;
+
 									it1.next();
 								}
 							);
