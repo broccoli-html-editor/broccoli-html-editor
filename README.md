@@ -235,8 +235,9 @@ $ npm test
 
 ## 更新履歴 - Change log
 
-### broccoli-html-editor@0.1.0-beta.9
+### broccoli-html-editor@0.1.0-beta.9 (2016年6月8日)
 
+- editWindow 上で、moduleフィールドとloopフィールドの並べ替えができるようになった。
 - Ace Editor を自然改行されるように設定した。
 - Ace Editor で、書式に応じてテーマが変わるようにした。
 - Ace Editor の文字サイズを最適化。
