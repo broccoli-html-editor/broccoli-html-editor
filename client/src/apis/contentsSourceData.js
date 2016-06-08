@@ -717,7 +717,7 @@ module.exports = function(broccoli){
 	}
 
 	/**
-	 * モジュールを取得
+	 * モジュールを取得 (同期)
 	 */
 	this.getModule = function( modId, subModName ){
 		var rtn = _modTpls[modId];
@@ -733,7 +733,7 @@ module.exports = function(broccoli){
 	}
 
 	/**
-	 * すべてのモジュールを取得
+	 * すべてのモジュールを取得 (同期)
 	 */
 	this.getAllModules = function(){
 		return _modTpls;

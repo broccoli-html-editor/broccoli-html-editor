@@ -22,6 +22,21 @@
 		-ms-user-select: auto; // IE10かららしい
 	}
 }
+
+// mixin: appender
+@mixin broccoli--appender(){
+	padding:9px;
+	background-color: #eef;
+	border-color: #8585d2;
+	font-family: "YuGothic", "Yu Gothic", Meiryo, "Hiragino Kaku Gothic ProN", Verdana, sans-serif;
+	font-size: 11px;
+	color:#000;
+	text-align:center;
+	box-sizing:border-box;
+	clear:both;
+	white-space:nowrap;
+}
+
 // Canvas
 .broccoli--canvas{
 	display: block;
@@ -188,13 +203,8 @@
 
 		&[data-broccoli-is-appender]{
 			// moduleフィールド の appender
-			padding:9px;
-			background-color: #eef;
-			border-color: #8585d2;
-			font-family: "YuGothic", "Yu Gothic", Meiryo, "Hiragino Kaku Gothic ProN", Verdana, sans-serif;
+			@include broccoli--appender();
 			font-size: 11px;
-			color:#000;
-			text-align:center;
 			box-sizing:border-box;
 			clear:both;
 			white-space:nowrap;
@@ -360,25 +370,53 @@
 // 	content:"▼ ";
 // }
 .broccoli--edit-window-module-fields{
-	max-height: 200px;
+	padding: 10px;
 	overflow: auto;
-	border: 2px solid #bbb;
+	max-height: 200px;
+	border: 1px solid #bbb;
 	border-radius: 5px;
 	background: #fafafa;
-	padding: 0;
-	li{
-		position: relative;
-		border-bottom: 1px solid #bbb;
-		list-style-type: none;
-		margin: 0;
-		padding: 10px;
-		&:hover{
-			background: #eee;
-		}
-		&:last-child{
-			border-bottom: none;
+
+	ul{
+		padding: 0;
+		li{
+			position: relative;
+			border-bottom: 1px solid #bbb;
+			list-style-type: none;
+			margin: 0;
+			padding: 10px;
+			&:hover{
+				background: #eee;
+			}
+			&:last-child{
+				border-bottom: none;
+			}
 		}
 	}
+
+	[data-broccoli-is-appender]{
+		// moduleフィールド の appender
+		@include broccoli--appender();
+		font-size: 11px;
+		box-sizing:border-box;
+		clear:both;
+		white-space:nowrap;
+
+		&[data-broccoli-sub-mod-name]{
+			// loopフィールド の appender
+			padding:5px 15px;
+			background-color:#dfe;
+			border-color:#6dcd9d;
+			font-family: "YuGothic", "Yu Gothic", Meiryo, "Hiragino Kaku Gothic ProN", Verdana, sans-serif;
+			font-size:9px;
+			text-align:center;
+			box-sizing:border-box;
+			clear:both;
+			white-space:nowrap;
+
+		}
+	}
+
 }
 
 // lightbox

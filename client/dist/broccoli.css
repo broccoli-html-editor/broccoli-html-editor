@@ -147,6 +147,10 @@
     text-align: center;
     box-sizing: border-box;
     clear: both;
+    white-space: nowrap;
+    font-size: 11px;
+    box-sizing: border-box;
+    clear: both;
     white-space: nowrap; }
     .broccoli--instance-tree-view [data-broccoli-instance-path][data-broccoli-is-appender][data-broccoli-sub-mod-name] {
       padding: 5px 15px;
@@ -272,22 +276,49 @@
   background: #eef; }
 
 .broccoli--edit-window-module-fields {
-  max-height: 200px;
+  padding: 10px;
   overflow: auto;
-  border: 2px solid #bbb;
+  max-height: 200px;
+  border: 1px solid #bbb;
   border-radius: 5px;
-  background: #fafafa;
-  padding: 0; }
-  .broccoli--edit-window-module-fields li {
-    position: relative;
-    border-bottom: 1px solid #bbb;
-    list-style-type: none;
-    margin: 0;
-    padding: 10px; }
-    .broccoli--edit-window-module-fields li:hover {
-      background: #eee; }
-    .broccoli--edit-window-module-fields li:last-child {
-      border-bottom: none; }
+  background: #fafafa; }
+  .broccoli--edit-window-module-fields ul {
+    padding: 0; }
+    .broccoli--edit-window-module-fields ul li {
+      position: relative;
+      border-bottom: 1px solid #bbb;
+      list-style-type: none;
+      margin: 0;
+      padding: 10px; }
+      .broccoli--edit-window-module-fields ul li:hover {
+        background: #eee; }
+      .broccoli--edit-window-module-fields ul li:last-child {
+        border-bottom: none; }
+  .broccoli--edit-window-module-fields [data-broccoli-is-appender] {
+    padding: 9px;
+    background-color: #eef;
+    border-color: #8585d2;
+    font-family: "YuGothic", "Yu Gothic", Meiryo, "Hiragino Kaku Gothic ProN", Verdana, sans-serif;
+    font-size: 11px;
+    color: #000;
+    text-align: center;
+    box-sizing: border-box;
+    clear: both;
+    white-space: nowrap;
+    font-size: 11px;
+    box-sizing: border-box;
+    clear: both;
+    white-space: nowrap; }
+    .broccoli--edit-window-module-fields [data-broccoli-is-appender][data-broccoli-sub-mod-name] {
+      padding: 5px 15px;
+      background-color: #dfe;
+      border-color: #6dcd9d;
+      font-family: "YuGothic", "Yu Gothic", Meiryo, "Hiragino Kaku Gothic ProN", Verdana, sans-serif;
+      font-size: 9px;
+      text-align: center;
+      box-sizing: border-box;
+      clear: both;
+      white-space: nowrap; }
 
 .broccoli--lightbox {
   position: fixed;
