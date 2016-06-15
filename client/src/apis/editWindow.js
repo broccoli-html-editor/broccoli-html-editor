@@ -284,6 +284,16 @@ module.exports = function(broccoli){
 												} );
 											});
 										})
+										.unbind('dblclick')
+										.bind('dblclick', function(e){
+											_this.lock();//フォームをロック
+											broccoli.panels.onDblClick(e, this, function(){
+												updateModuleAndLoopField( instancePath, function(){
+													_this.unlock();//フォームのロックを解除
+													console.log('dblclick event done.');
+												} );
+											});
+										})
 									;
 									$ul.append( $appender );
 

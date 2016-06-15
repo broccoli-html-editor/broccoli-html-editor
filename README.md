@@ -235,6 +235,10 @@ $ npm test
 
 ## 更新履歴 - Change log
 
+### broccoli-html-editor@0.1.0-beta.10 (2016年??月??日)
+
+- editWindow上 の loop appender をダブルクリック操作した後に表示が更新されない問題を修正。
+
 ### broccoli-html-editor@0.1.0-beta.9 (2016年6月8日)
 
 - editWindow 上で、moduleフィールドとloopフィールドの並べ替えができるようになった。

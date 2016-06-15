@@ -2371,6 +2371,16 @@ module.exports = function(broccoli){
 												} );
 											});
 										})
+										.unbind('dblclick')
+										.bind('dblclick', function(e){
+											_this.lock();//フォームをロック
+											broccoli.panels.onDblClick(e, this, function(){
+												updateModuleAndLoopField( instancePath, function(){
+													_this.unlock();//フォームのロックを解除
+													console.log('dblclick event done.');
+												} );
+											});
+										})
 									;
 									$ul.append( $appender );
 
@@ -3513,7 +3523,44 @@ module.exports = function(broccoli){
 			return;
 		}
 		return;
-	}
+	} // onDrop()
+
+	/**
+	 * パネルの ondblclick イベントハンドラ
+	 * このメソッドは、 this.setPanelEventHandlers() の他、
+	 * editWindow からもコールされています。
+	 */
+	this.onDblClick = function(e, elm, callback){
+		callback = callback || function(){};
+
+		e.stopPropagation();
+		var $this = $(elm);
+		var instancePath = $this.attr('data-broccoli-instance-path');
+
+		if( $this.attr('data-broccoli-sub-mod-name') && $this.attr('data-broccoli-is-appender') == 'yes' ){
+			// loopモジュールの繰り返し要素を増やします。
+			var modId = $this.attr("data-broccoli-mod-id");
+			var subModName = $this.attr("data-broccoli-sub-mod-name");
+			broccoli.contentsSourceData.addInstance( modId, instancePath, function(){
+				broccoli.saveContents(function(){
+					broccoli.redraw();
+					callback();
+				});
+			}, subModName );
+			e.preventDefault();
+			return;
+		}
+
+		if( $this.attr('data-broccoli-is-appender') == 'yes' ){
+			broccoli.message('編集できません。ここには、モジュールをドロップして追加または移動することができます。');
+			// instancePath = php.dirname(instancePath);
+			callback();
+			return;
+		}
+		broccoli.editInstance( instancePath );
+		callback();
+		return;
+	} // onDblClick()
 
 	/**
 	 * パネルにイベントハンドラをセットする
@@ -3521,29 +3568,10 @@ module.exports = function(broccoli){
 	this.setPanelEventHandlers = function($panel){
 		$panel
 			.bind('dblclick', function(e){
-				e.stopPropagation();
-				var $this = $(this);
-				var instancePath = $this.attr('data-broccoli-instance-path');
-
-				if( $this.attr('data-broccoli-sub-mod-name') && $this.attr('data-broccoli-is-appender') == 'yes' ){
-					// loopモジュールの繰り返し要素を増やします。
-					var modId = $(this).attr("data-broccoli-mod-id");
-					var subModName = $(this).attr("data-broccoli-sub-mod-name");
-					broccoli.contentsSourceData.addInstance( modId, instancePath, function(){
-						broccoli.saveContents(function(){
-							broccoli.redraw();
-						});
-					}, subModName );
-					e.preventDefault();
-					return;
-				}
-
-				if( $this.attr('data-broccoli-is-appender') == 'yes' ){
-					broccoli.message('編集できません。ここには、モジュールをドロップして追加または移動することができます。');
-					// instancePath = php.dirname(instancePath);
-					return;
-				}
-				broccoli.editInstance( instancePath );
+				_this.onDblClick(e, this, function(){
+					console.log('dblclick event done.');
+				});
+				return;
 			})
 
 			.bind('dragleave', function(e){
