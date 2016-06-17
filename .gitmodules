@@ -1,0 +1,3 @@
+[submodule "submodules/px2style"]
+	path = submodules/px2style
+	url = https://github.com/pickles2/px2style.git

@@ -21,6 +21,9 @@
 		// 　 = bootstrap.js を利用するためには、jQueryをグローバルに宣言しなければならない(隠蔽できない)
 		// 　 ということのようなので、差し迫って必要がない限りは bootstrap.js をロードしないことにする。
 
+	// px2style をロード
+	document.write('<link rel="stylesheet" href="'+__dirname+'/libs/px2style/dist/styles.css" />');
+
 	// broccoli-html-editor をロード
 	document.write('<link rel="stylesheet" href="'+__dirname+'/broccoli.css" />');
 
