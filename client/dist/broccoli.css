@@ -346,41 +346,16 @@
   z-index: 11000; }
   .broccoli--progress-inner {
     position: absolute;
-    left: 50%;
+    left: 0;
     top: 50%;
-    width: 180px;
-    height: 1px; }
-  .broccoli--progress-image {
+    width: 100%;
+    height: 180px; }
+  .broccoli--progress-inner2 {
     position: absolute;
-    left: -50%;
+    left: 0;
     top: -50%;
     width: 100%;
-    height: 100%;
-    background-color: #000;
-    -webkit-animation: broccoli--progress 1.4s infinite normal ease;
-            animation: broccoli--progress 1.4s infinite normal ease; }
-
-@-webkit-keyframes broccoli--progress {
-  0% {
-    -webkit-transform: rotate(0deg) scale(0, 0);
-            transform: rotate(0deg) scale(0, 0); }
-  30% {
-    -webkit-transform: rotate(270deg) scale(1, 1);
-            transform: rotate(270deg) scale(1, 1); }
-  100% {
-    -webkit-transform: rotate(720deg) scale(0, 0);
-            transform: rotate(720deg) scale(0, 0); } }
-
-@keyframes broccoli--progress {
-  0% {
-    -webkit-transform: rotate(0deg) scale(0, 0);
-            transform: rotate(0deg) scale(0, 0); }
-  30% {
-    -webkit-transform: rotate(270deg) scale(1, 1);
-            transform: rotate(270deg) scale(1, 1); }
-  100% {
-    -webkit-transform: rotate(720deg) scale(0, 0);
-            transform: rotate(720deg) scale(0, 0); } }
+    height: 180px; }
 
 .broccoli--module-info-preview {
   position: fixed;

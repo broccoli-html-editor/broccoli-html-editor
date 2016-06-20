@@ -447,23 +447,15 @@
 	z-index: 11000;
 	&-inner{
 		position: absolute;
-		left: 50%; top: 50%;
-		width: 180px;
-		height: 1px;
-	}
-	&-image{
-		position: absolute;
-		left: -50%; top: -50%;
+		left: 0; top: 50%;
 		width: 100%;
-		height: 100%;
-		background-color:#000;
-
-		animation: broccoli--progress 1.4s infinite normal ease;
-		@keyframes broccoli--progress {
-			0% { transform: rotate(0deg) scale(0,0); }
-			30% { transform: rotate(270deg) scale(1,1); }
-			100% { transform: rotate(720deg) scale(0,0); }
-		}
+		height: 180px;
+	}
+	&-inner2{
+		position: absolute;
+		left: 0; top: -50%;
+		width: 100%;
+		height: 180px;
 	}
 }
 
