@@ -22,6 +22,9 @@
 		// 　 = bootstrap.js を利用するためには、jQueryをグローバルに宣言しなければならない(隠蔽できない)
 		// 　 ということのようなので、差し迫って必要がない限りは bootstrap.js をロードしないことにする。
 
+	// px2style をロード
+	document.write('<link rel="stylesheet" href="'+__dirname+'/libs/px2style/dist/styles.css" />');
+
 	// broccoli-html-editor をロード
 	document.write('<link rel="stylesheet" href="'+__dirname+'/broccoli.css" />');
 
@@ -788,13 +791,14 @@
 			$('body').find('.broccoli--progress').remove();//一旦削除
 			$('body')
 				.append( $('<div class="broccoli broccoli--progress">')
-					.append( $('<div class="broccoli--progress-inner">')
-						.append( $('<div class="broccoli--progress-image">')
+					.append( $('<div class="broccoli broccoli--progress-inner">')
+						.append( $('<div class="broccoli broccoli--progress-inner2">')
+							.append( $('<div class="px2-loading">') )
 						)
 					)
 				)
 			;
-			var dom = $('body').find('.broccoli--progress-inner').get(0);
+			var dom = $('body').find('.px2-loading').get(0);
 			callback(dom);
 			return this;
 		}
@@ -1855,7 +1859,7 @@ module.exports = function(broccoli, callback){
 						broccoli.lightbox(function(elm){
 							$(elm)
 								.append(html)
-								.append( $('<button class="btn btn-primary btn-block">')
+								.append( $('<button class="px2-btn px2-btn--primary px2-btn--block">')
 									.text('close')
 									.bind('click', function(){
 										broccoli.closeLightbox();
@@ -2126,7 +2130,7 @@ module.exports = function(broccoli){
 				+ '					<div class="col-sm-6 col-sm-offset-3">'
 				+ '						<div class="btn-group btn-group-justified" role="group">'
 				+ '							<div class="btn-group">'
-				+ '								<button disabled="disabled" type="submit" class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-ok"></span> OK</button>'
+				+ '								<button disabled="disabled" type="submit" class="px2-btn px2-btn--primary px2-btn--lg px2-btn--block"><span class="glyphicon glyphicon-ok"></span> OK</button>'
 				+ '							</div>'
 				+ '						</div>'
 				+ '					</div>'
@@ -2137,14 +2141,14 @@ module.exports = function(broccoli){
 				+ '					<div class="col-sm-4">'
 				+ '						<div class="btn-group btn-group-justified" role="group" style="margin-top:20px;">'
 				+ '							<div class="btn-group">'
-				+ '								<button disabled="disabled" type="button" class="btn btn-default btn-sm broccoli--edit-window-btn-cancel">キャンセル</button>'
+				+ '								<button disabled="disabled" type="button" class="px2-btn px2-btn--sm px2-btn--block broccoli--edit-window-btn-cancel">キャンセル</button>'
 				+ '							</div>'
 				+ '						</div>'
 				+ '					</div>'
 				+ '					<div class="col-sm-4 col-sm-offset-4">'
 				+ '						<div class="btn-group btn-group-justified" role="group" style="margin-top:20px;">'
 				+ '							<div class="btn-group">'
-				+ '								<button disabled="disabled" type="button" class="btn btn-danger btn-sm broccoli--edit-window-btn-remove"><span class="glyphicon glyphicon-trash"></span> このモジュールを削除する</button>'
+				+ '								<button disabled="disabled" type="button" class="px2-btn px2-btn--danger px2-btn--sm px2-btn--block broccoli--edit-window-btn-remove"><span class="glyphicon glyphicon-trash"></span> このモジュールを削除する</button>'
 				+ '							</div>'
 				+ '						</div>'
 				+ '					</div>'

@@ -113,7 +113,7 @@ module.exports = function(broccoli, callback){
 						broccoli.lightbox(function(elm){
 							$(elm)
 								.append(html)
-								.append( $('<button class="btn btn-primary btn-block">')
+								.append( $('<button class="px2-btn px2-btn--primary px2-btn--block">')
 									.text('close')
 									.bind('click', function(){
 										broccoli.closeLightbox();

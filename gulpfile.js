@@ -27,6 +27,14 @@ gulp.task("client-libs", function() {
 		.pipe(gulp.dest( './client/dist/libs/bootstrap/dist/js/' ))
 		.pipe(gulp.dest( './tests/testdata/htdocs/libs/libs/bootstrap/dist/js/' ))
 	;
+	gulp.src(["node_modules/px2style/dist/scripts.js"])
+		.pipe(gulp.dest( './client/dist/libs/px2style/dist/' ))
+		.pipe(gulp.dest( './tests/testdata/htdocs/libs/libs/px2style/dist/' ))
+	;
+	gulp.src(["node_modules/px2style/dist/images/**/*"])
+		.pipe(gulp.dest( './client/dist/libs/px2style/dist/images/' ))
+		.pipe(gulp.dest( './tests/testdata/htdocs/libs/libs/px2style/dist/images/' ))
+	;
 });
 
 // src 中の *.css.scss を処理

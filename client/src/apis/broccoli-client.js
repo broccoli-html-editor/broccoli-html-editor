@@ -21,6 +21,9 @@
 		// 　 = bootstrap.js を利用するためには、jQueryをグローバルに宣言しなければならない(隠蔽できない)
 		// 　 ということのようなので、差し迫って必要がない限りは bootstrap.js をロードしないことにする。
 
+	// px2style をロード
+	document.write('<link rel="stylesheet" href="'+__dirname+'/libs/px2style/dist/styles.css" />');
+
 	// broccoli-html-editor をロード
 	document.write('<link rel="stylesheet" href="'+__dirname+'/broccoli.css" />');
 
@@ -787,13 +790,14 @@
 			$('body').find('.broccoli--progress').remove();//一旦削除
 			$('body')
 				.append( $('<div class="broccoli broccoli--progress">')
-					.append( $('<div class="broccoli--progress-inner">')
-						.append( $('<div class="broccoli--progress-image">')
+					.append( $('<div class="broccoli broccoli--progress-inner">')
+						.append( $('<div class="broccoli broccoli--progress-inner2">')
+							.append( $('<div class="px2-loading">') )
 						)
 					)
 				)
 			;
-			var dom = $('body').find('.broccoli--progress-inner').get(0);
+			var dom = $('body').find('.px2-loading').get(0);
 			callback(dom);
 			return this;
 		}
