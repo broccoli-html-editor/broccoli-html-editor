@@ -237,6 +237,7 @@ $ npm test
 
 ### broccoli-html-editor@0.1.0-beta.10 (2016年??月??日)
 
+- selectフィールドに、オプション `"display": "radio"` を追加。ラジオボタン形式の入力欄を作成できるようになった。
 - editWindow上 の loop appender をダブルクリック操作した後に表示が更新されない問題を修正。
 
 ### broccoli-html-editor@0.1.0-beta.9 (2016年6月8日)
