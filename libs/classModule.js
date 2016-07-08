@@ -70,9 +70,16 @@ module.exports = function(broccoli, moduleId, options){
 	this.templateType = 'broccoli';
 	this.finalize = function(html, callback){callback(html);return;}
 
+	this.info = {
+		name: null,
+		areaSizeDetection: 'shallow',
+		interface: {}
+	};
+
 	if( options.topThis ){
 		this.topThis = options.topThis;
 		this.templateType = this.topThis.templateType;
+		this.info.name = '- ' + this.topThis.info.name + ' -';
 		// this.nameSpace = options.topThis.nameSpace;
 		if( options.subModName ){
 			this.subModName = options.subModName;
@@ -130,12 +137,6 @@ module.exports = function(broccoli, moduleId, options){
 			src = JSON.parse( JSON.stringify( src ) );
 		}
 		_this.template = src;
-
-		_this.info = {
-			name: null,
-			areaSizeDetection: 'shallow',
-			interface: {}
-		};
 
 		if( _this.path && isDirectory( _this.path ) ){
 			if( isFile( _this.path+'/info.json' ) ){
