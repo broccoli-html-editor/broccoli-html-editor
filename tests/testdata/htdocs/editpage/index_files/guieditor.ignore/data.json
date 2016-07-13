@@ -439,6 +439,17 @@
          },
          "anchor": "",
          "dec": ""
+        },
+        {
+         "modId": "testMod1:dev/select1",
+         "fields": {
+          "text-align": "",
+          "select-test-1": "default2",
+          "select-test-2": "select2",
+          "select-test-3": "radio3"
+         },
+         "anchor": "",
+         "dec": ""
         }
        ]
       },
