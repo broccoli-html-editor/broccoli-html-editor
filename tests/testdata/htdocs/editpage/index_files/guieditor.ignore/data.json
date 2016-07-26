@@ -680,7 +680,9 @@
          "modId": "testMod1:parts/md",
          "fields": {
           "md_src": "マークダウン。"
-         }
+         },
+         "anchor": "",
+         "dec": ""
         }
        ]
       },
@@ -695,7 +697,9 @@
          "modId": "testMod1:parts/text",
          "fields": {
           "text_src": "## JSON のフォーマットを、人にやさしくしてみました。\n\nテキストコード。"
-         }
+         },
+         "anchor": "",
+         "dec": ""
         }
        ],
        "column2": [
@@ -703,7 +707,9 @@
          "modId": "testMod1:parts/md",
          "fields": {
           "md_src": "## JSON自体の差分を追えるようになりたい。\n\nやっぱね、マークダウンが便利っす。\n\n大抵のことはこれで事足りる。\n\nちゃんとマークアップできるし。コードもそこそこキレイにできる。"
-         }
+         },
+         "anchor": "",
+         "dec": ""
         }
        ],
        "column3": [
@@ -711,7 +717,9 @@
          "modId": "testMod1:parts/md",
          "fields": {
           "md_src": "こうすると、なるらしい。\n\n```\nvar jsonStr = JSON.stringify( {\"JSON\":\"value\"}, null, 1 );\n```"
-         }
+         },
+         "anchor": "",
+         "dec": ""
         },
         {
          "modId": "testMod1:parts/ul",
@@ -722,14 +730,18 @@
             "fields": {
              "md_src2": "増えたっていいじゃない？"
             },
-            "subModName": "sample_loop"
+            "subModName": "sample_loop",
+            "anchor": "",
+            "dec": ""
            },
            {
             "modId": "testMod1:parts/ul",
             "fields": {
              "md_src2": "PHP必要？\n\n- マークダウンをリスト編集する。\n- リストモジュールなのに、さらにリストをネストして編集してるんだからっ。"
             },
-            "subModName": "sample_loop"
+            "subModName": "sample_loop",
+            "anchor": "",
+            "dec": ""
            }
           ]
          }
@@ -975,6 +987,16 @@
         "src": "- 1行マルチテキストです。",
         "editor": "text"
        }
+      },
+      "anchor": "",
+      "dec": ""
+     },
+     {
+      "modId": "testMod1:dev/same_type_of_field",
+      "fields": {
+       "sameType1": "フィールド1",
+       "sameType2": "フィールド2",
+       "sameType3": "フィールド3"
       },
       "anchor": "",
       "dec": ""
