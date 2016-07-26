@@ -101,24 +101,24 @@ module.exports = function(broccoli){
 				})
 			;
 			$rtn.append( $formElm );
-			this.aceEditor = ace.edit( $formElm.get(0) );
+			mod.aceEditor = ace.edit( $formElm.get(0) );
 			// Ace Snippets - https://ace.c9.io/build/kitchen-sink.html
-			this.aceEditor.setFontSize(16);
-			this.aceEditor.getSession().setUseWrapMode(true);// Ace 自然改行
-			this.aceEditor.setShowInvisibles(true);// Ace 不可視文字の可視化
-			this.aceEditor.$blockScrolling = Infinity;
-			this.aceEditor.setTheme("ace/theme/github");
-			this.aceEditor.getSession().setMode("ace/mode/html");
+			mod.aceEditor.setFontSize(16);
+			mod.aceEditor.getSession().setUseWrapMode(true);// Ace 自然改行
+			mod.aceEditor.setShowInvisibles(true);// Ace 不可視文字の可視化
+			mod.aceEditor.$blockScrolling = Infinity;
+			mod.aceEditor.setTheme("ace/theme/github");
+			mod.aceEditor.getSession().setMode("ace/mode/html");
 
 			if( mod.type == 'html' ){
-				this.aceEditor.setTheme("ace/theme/monokai");
-				this.aceEditor.getSession().setMode("ace/mode/html");
+				mod.aceEditor.setTheme("ace/theme/monokai");
+				mod.aceEditor.getSession().setMode("ace/mode/html");
 			}else if( mod.type == 'markdown' ){
-				this.aceEditor.setTheme("ace/theme/github");
-				this.aceEditor.getSession().setMode("ace/mode/markdown");
+				mod.aceEditor.setTheme("ace/theme/github");
+				mod.aceEditor.getSession().setMode("ace/mode/markdown");
 			}else{
-				this.aceEditor.setTheme("ace/theme/katzenmilch");
-				this.aceEditor.getSession().setMode("ace/mode/plain_text");
+				mod.aceEditor.setTheme("ace/theme/katzenmilch");
+				mod.aceEditor.getSession().setMode("ace/mode/plain_text");
 			}
 
 		}else{
@@ -178,8 +178,8 @@ module.exports = function(broccoli){
 		var src;
 		if( $dom.find('input[type=text]').size() ){
 			src = $dom.find('input[type=text]').val();
-		}else if( editorLib == 'ace' && this.aceEditor ){
-			src = this.aceEditor.getValue();
+		}else if( editorLib == 'ace' && mod.aceEditor ){
+			src = mod.aceEditor.getValue();
 		}else{
 			src = $dom.find('textarea').val();
 		}
