@@ -727,6 +727,10 @@ module.exports = function(broccoli){
 		if( typeof(subModName) === typeof('') ){
 			// console.log(subModName);
 			// console.log(rtn.subModule[subModName]);
+			if( !rtn.subModule || !rtn.subModule[subModName] ){
+				console.error('Undefined subModule "'+subModName+'" was called.');
+				return false;
+			}
 			return rtn.subModule[subModName];
 		}
 		return rtn;
