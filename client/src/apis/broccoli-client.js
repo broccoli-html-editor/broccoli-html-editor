@@ -642,7 +642,18 @@
 					typeFrom = 'loop';
 				}
 
-				return (typeTo == typeFrom);
+				if( typeTo != typeFrom ){
+					// loopフィールドとmoduleフィールド間の相互のコピペは禁止。
+					return false;
+				}
+				if( typeTo == 'loop' ){
+					// loopフィールドの場合、型が一致しないフィールドへのコピペは禁止。
+					if( dataToParent.modId != data.data[0].modId || currentInstanceTo[0] != data.data[0].subModName ){
+						return false;
+					}
+				}
+
+				return true;
 			})();
 			if( !isValid ){
 				_this.message('ここにはペーストできません。');
