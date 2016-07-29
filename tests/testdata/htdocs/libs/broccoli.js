@@ -601,6 +601,7 @@
 		 * クリップボードの内容を選択したインスタンスの位置に挿入する
 		 */
 		this.paste = function(callback){
+			var broccoli = this;
 			callback = callback||function(){};
 			var selectedInstance = this.getSelectedInstance();
 			if( typeof(selectedInstance) !== typeof('') ){
@@ -620,7 +621,35 @@
 				callback(false);
 				return;
 			}
-			// console.log(data.data[0]);
+			// console.log(data);
+
+			var isValid = (function(){
+				var php = require('phpjs');
+				var dataToParent = broccoli.contentsSourceData.get(php.dirname(selectedInstance));
+				var modToParent = broccoli.contentsSourceData.getModule(dataToParent.modId);//subModuleの全量を知りたいので、第2引数は渡さない。
+				var currentInstanceTo = php.basename(selectedInstance).split('.')[1].split('@');
+				// console.log(modToParent);
+				// console.log(currentInstanceTo);
+				// console.log(dataToParent);
+				var typeTo = 'module';
+				if( modToParent.subModule && modToParent.subModule[currentInstanceTo[0]] ){
+					typeTo = 'loop';
+				}
+
+				var modFrom = broccoli.contentsSourceData.getModule(data.data[0].modId, data.data[0].subModName);
+				// console.log(modFrom);
+				var typeFrom = 'module';
+				if( modFrom.subModName ){
+					typeFrom = 'loop';
+				}
+
+				return (typeTo == typeFrom);
+			})();
+			if( !isValid ){
+				_this.message('ここにはペーストできません。');
+				callback(false);
+				return;
+			}
 
 			it79.ary(
 				data.data ,
@@ -881,7 +910,7 @@
 
 })(module);
 
-},{"../../../libs/fncs/incrementInstancePath.js":22,"../../../libs/fncs/parseModuleId.js":23,"./../../../libs/fieldBase.js":13,"./../../../libs/fields/app.fields.href.js":14,"./../../../libs/fields/app.fields.html.js":15,"./../../../libs/fields/app.fields.html_attr_text.js":16,"./../../../libs/fields/app.fields.image.js":17,"./../../../libs/fields/app.fields.markdown.js":18,"./../../../libs/fields/app.fields.multitext.js":19,"./../../../libs/fields/app.fields.select.js":20,"./../../../libs/fields/app.fields.text.js":21,"./clipboard.js":2,"./contentsSourceData.js":3,"./drawModulePalette.js":4,"./editWindow.js":5,"./instancePathView.js":7,"./instanceTreeView.js":8,"./panels.js":9,"./postMessenger.js":10,"./resourceMgr.js":11,"iterate79":119,"jquery":120,"underscore":127}],2:[function(require,module,exports){
+},{"../../../libs/fncs/incrementInstancePath.js":22,"../../../libs/fncs/parseModuleId.js":23,"./../../../libs/fieldBase.js":13,"./../../../libs/fields/app.fields.href.js":14,"./../../../libs/fields/app.fields.html.js":15,"./../../../libs/fields/app.fields.html_attr_text.js":16,"./../../../libs/fields/app.fields.image.js":17,"./../../../libs/fields/app.fields.markdown.js":18,"./../../../libs/fields/app.fields.multitext.js":19,"./../../../libs/fields/app.fields.select.js":20,"./../../../libs/fields/app.fields.text.js":21,"./clipboard.js":2,"./contentsSourceData.js":3,"./drawModulePalette.js":4,"./editWindow.js":5,"./instancePathView.js":7,"./instanceTreeView.js":8,"./panels.js":9,"./postMessenger.js":10,"./resourceMgr.js":11,"iterate79":119,"jquery":120,"phpjs":123,"underscore":127}],2:[function(require,module,exports){
 /**
  * clipboard.js
  * クリップボード管理オブジェクト
