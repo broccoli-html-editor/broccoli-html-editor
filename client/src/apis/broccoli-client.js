@@ -600,6 +600,7 @@
 		 * クリップボードの内容を選択したインスタンスの位置に挿入する
 		 */
 		this.paste = function(callback){
+			var broccoli = this;
 			callback = callback||function(){};
 			var selectedInstance = this.getSelectedInstance();
 			if( typeof(selectedInstance) !== typeof('') ){
@@ -619,7 +620,46 @@
 				callback(false);
 				return;
 			}
-			// console.log(data.data[0]);
+			// console.log(data);
+
+			var isValid = (function(){
+				var php = require('phpjs');
+				var dataToParent = broccoli.contentsSourceData.get(php.dirname(selectedInstance));
+				var modToParent = broccoli.contentsSourceData.getModule(dataToParent.modId);//subModuleの全量を知りたいので、第2引数は渡さない。
+				var currentInstanceTo = php.basename(selectedInstance).split('.')[1].split('@');
+				// console.log(modToParent);
+				// console.log(currentInstanceTo);
+				// console.log(dataToParent);
+				var typeTo = 'module';
+				if( modToParent.subModule && modToParent.subModule[currentInstanceTo[0]] ){
+					typeTo = 'loop';
+				}
+
+				var modFrom = broccoli.contentsSourceData.getModule(data.data[0].modId, data.data[0].subModName);
+				// console.log(modFrom);
+				var typeFrom = 'module';
+				if( modFrom.subModName ){
+					typeFrom = 'loop';
+				}
+
+				if( typeTo != typeFrom ){
+					// loopフィールドとmoduleフィールド間の相互のコピペは禁止。
+					return false;
+				}
+				if( typeTo == 'loop' ){
+					// loopフィールドの場合、型が一致しないフィールドへのコピペは禁止。
+					if( dataToParent.modId != data.data[0].modId || currentInstanceTo[0] != data.data[0].subModName ){
+						return false;
+					}
+				}
+
+				return true;
+			})();
+			if( !isValid ){
+				_this.message('ここにはペーストできません。');
+				callback(false);
+				return;
+			}
 
 			it79.ary(
 				data.data ,

@@ -303,6 +303,11 @@ module.exports = function(){
 			return this;
 		}
 		if( typeof(subModName) === typeof('') ){
+			if( !rtn.subModule || !rtn.subModule[subModName] ){
+				console.error('Undefined subModule "'+subModName+'" was called.');
+				callback(false);
+				return this;
+			}
 			callback(rtn.subModule[subModName]);
 			return this;
 		}
