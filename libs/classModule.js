@@ -73,7 +73,8 @@ module.exports = function(broccoli, moduleId, options){
 	this.info = {
 		name: null,
 		areaSizeDetection: 'shallow',
-		interface: {}
+		interface: {},
+		deprecated: false
 	};
 
 	if( options.topThis ){
@@ -169,6 +170,9 @@ module.exports = function(broccoli, moduleId, options){
 							}
 						}
 					}
+				}
+				if( tmpJson.deprecated ){
+					_this.info.deprecated = tmpJson.deprecated;
 				}
 			}
 			_this.thumb = null;

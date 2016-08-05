@@ -237,7 +237,7 @@ $ npm test
 
 ### broccoli-html-editor@0.1.0-beta.11 (2016年??月??日)
 
-- ??????????????????
+- モジュール設定 `deprecated` を追加。非推奨のモジュールに `true` をセットすると、モジュールパレットに表示されなくなる。
 
 ### broccoli-html-editor@0.1.0-beta.10 (2016年8月3日)
 

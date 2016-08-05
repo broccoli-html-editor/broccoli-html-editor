@@ -6,6 +6,15 @@
 
 
 /**
+ * module: testMod1:dev/deprecated
+ */
+.deprecated {
+  background-color: #eee;
+  color: #666;
+  padding: 0.5em; }
+
+
+/**
  * module: testMod1:dev/float_loop
  */
 .dev-float-loop:before, .dev-float-loop:after {
