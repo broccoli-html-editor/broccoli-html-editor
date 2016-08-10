@@ -1,7 +1,8 @@
 {
   "name": "broccoli-html-editor",
-  "version": "0.1.0-beta.10",
+  "version": "0.1.0-beta.11+nb",
   "description": "GUI HTML Editor Library.",
+  "private": true,
   "main": "libs/main.js",
   "scripts": {
     "start": "gulp watch",

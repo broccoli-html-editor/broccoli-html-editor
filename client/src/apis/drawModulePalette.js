@@ -65,6 +65,10 @@ module.exports = function(broccoli, callback){
 		it79.ary(
 			modules ,
 			function(it1, mod, moduleId){
+				if( mod.moduleInfo.deprecated ){
+					it1.next();
+					return;
+				}
 				var $liMod = $('<li>');
 				var $button = $('<a class="broccoli--module-palette--draggablebutton">');
 				$liMod.append( $button

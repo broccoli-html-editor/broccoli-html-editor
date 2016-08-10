@@ -1000,6 +1000,10 @@
       },
       "anchor": "",
       "dec": ""
+     },
+     {
+      "modId": "testMod1:dev/deprecated",
+      "fields": {}
      }
     ]
    },
