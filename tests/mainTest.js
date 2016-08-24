@@ -333,7 +333,7 @@ describe('ビルドする', function() {
 
 	it("editpageをfinalizeモードでビルドする", function(done) {
 		this.timeout(15*1000);
-		makeDefaultBroccoli( {}, function(broccoli){
+		makeDefaultBroccoli( {'contents_id': 'editpage/index'}, function(broccoli){
 			var data = require(__dirname+'/testdata/htdocs/editpage/index_files/guieditor.ignore/data.json');
 			// console.log(data);
 			var dataBowlMain = undefined;
@@ -349,7 +349,21 @@ describe('ビルドする', function() {
 				function( html, err ){
 					fs.writeFileSync(path.resolve(__dirname, './testdata/htdocs/test2/index.html'), html);
 					// console.log( html );
-					done();
+
+					broccoli.resourceMgr.getResourceDb(
+						function(resourceDb){
+							// console.log(resourceDb);
+							assert.strictEqual(typeof(resourceDb), typeof({}));
+
+							broccoli.resourceMgr.save(
+								resourceDb ,
+								function(result){
+									assert.strictEqual(result, true);
+									done();
+								}
+							);
+						}
+					);
 				}
 			);
 		} );
@@ -357,7 +371,7 @@ describe('ビルドする', function() {
 
 	it("editpageをcanvasモードでビルドする", function(done) {
 		this.timeout(15*1000);
-		makeDefaultBroccoli( {}, function(broccoli){
+		makeDefaultBroccoli( {'contents_id': 'editpage/index'}, function(broccoli){
 			var data = require(__dirname+'/testdata/htdocs/editpage/index_files/guieditor.ignore/data.json');
 			// console.log(data);
 			var dataBowlMain = undefined;
@@ -373,7 +387,21 @@ describe('ビルドする', function() {
 				function( html, err ){
 					fs.writeFileSync(path.resolve(__dirname, './testdata/htdocs/test2/index.canvas.html'), html);
 					// console.log( html );
-					done();
+
+					broccoli.resourceMgr.getResourceDb(
+						function(resourceDb){
+							// console.log(resourceDb);
+							assert.strictEqual(typeof(resourceDb), typeof({}));
+
+							broccoli.resourceMgr.save(
+								resourceDb ,
+								function(result){
+									assert.strictEqual(result, true);
+									done();
+								}
+							);
+						}
+					);
 				}
 			);
 		} );
