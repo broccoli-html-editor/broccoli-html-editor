@@ -13,6 +13,10 @@ module.exports = function(broccoli){
 	var mkdirp = require('mkdirp');
 	var DIRECTORY_SEPARATOR = '/';
 
+	const imagemin = require('imagemin');
+	const imageminOptipng = require('imagemin-optipng');
+	const imageminJpegtran = require('imagemin-jpegtran');
+
 	var _this = this;
 	var _resourcesDirPath;
 	var _resourcesPublishDirPath;
@@ -139,7 +143,7 @@ module.exports = function(broccoli){
 	 * save resources
 	 * @param  {Object} newResourceDb resource Database
 	 * @param  {Function} callback Callback function.
-	 * @return {boolean}     Always true.
+	 * @return {boolean}	 Always true.
 	 */
 	this.save = function( newResourceDb, callback ){
 		callback = callback || function(){};
@@ -167,14 +171,21 @@ module.exports = function(broccoli){
 		}
 
 		// リソースデータの保存と公開領域への設置
-		for( var resKey in _resourceDb ){
-			mkdir( _resourcesDirPath+'/'+resKey );
-			fs.writeFileSync(
-				_resourcesDirPath+'/'+resKey+'/res.json',
-				JSON.stringify( _resourceDb[resKey], null, 1 )
-			);
+		it79.ary(
+			_resourceDb,
+			function(it1, res, resKey){
+				mkdir( _resourcesDirPath+'/'+resKey );
+				fs.writeFileSync(
+					_resourcesDirPath+'/'+resKey+'/res.json',
+					JSON.stringify( _resourceDb[resKey], null, 1 )
+				);
 
-			if(_resourceDb[resKey].base64 !== undefined){
+				if(_resourceDb[resKey].base64 === undefined){
+					// base64がセットされていなかったら終わり
+					it1.next();
+					return;
+				}
+
 				var bin = '';
 				try {
 					bin = new Buffer(_resourceDb[resKey].base64, 'base64');
@@ -182,30 +193,50 @@ module.exports = function(broccoli){
 					bin = '';
 				}
 
-				fs.writeFileSync(
-					_resourcesDirPath+'/'+resKey+'/bin.'+_resourceDb[resKey].ext,
-					bin
-				);
-
+				// オリジナルファイルを保存
 				fs.writeFileSync(
 					_resourcesDirPath+'/'+resKey+'/bin.'+_resourceDb[resKey].ext,
 					bin
 				);
 
 				// 公開ファイル
-				if( !_resourceDb[resKey].isPrivateMaterial ){
-					var filename = resKey;
-					if( typeof(_resourceDb[resKey].publicFilename) == typeof('') && _resourceDb[resKey].publicFilename.length ){
-						filename = _resourceDb[resKey].publicFilename;
-					}
-					fs.writeFileSync(
-						_resourcesPublishDirPath+'/'+filename+'.'+_resourceDb[resKey].ext,
-						bin
-					);
+				if( _resourceDb[resKey].isPrivateMaterial ){
+					// 非公開ファイルなら終わり
+					it1.next();
+					return;
 				}
+
+				var filename = resKey;
+				if( typeof(_resourceDb[resKey].publicFilename) == typeof('') && _resourceDb[resKey].publicFilename.length ){
+					filename = _resourceDb[resKey].publicFilename;
+				}
+				fs.writeFileSync(
+					_resourcesPublishDirPath+'/'+filename+'.'+_resourceDb[resKey].ext,
+					bin
+				);
+				it1.next();
+				return;
+			},
+			function(){
+				new imagemin()
+					.src( _resourcesPublishDirPath+'/*.png' )
+					.dest( _resourcesPublishDirPath+'/' )
+					.use( imageminOptipng({optimizationLevel: 0}) )
+					.run(function (err, files) {
+
+						new imagemin()
+							.src( _resourcesPublishDirPath+'/*.{jpg,jpeg,jpe}' )
+							.dest( _resourcesPublishDirPath+'/' )
+							.use( imageminJpegtran({progressive: true}) )
+							.run(function (err, files) {
+								// console.log('Images optimized');
+								callback(true);
+							});
+					});
+				return;
 			}
-		}
-		callback(true);
+		);
+
 		return this;
 	}
 
@@ -321,7 +352,7 @@ module.exports = function(broccoli){
 	 * <dt>publicFilename</dt><dd>公開時のファイル名</dd>
 	 * <dt>isPrivateMaterial</dt><dd>非公開ファイル。</dd>
 	 * </dl>
-	 * @return {boolean}        always true.
+	 * @return {boolean}		always true.
 	 */
 	this.updateResource = function( resKey, resInfo, callback ){
 		callback = callback || function(){};

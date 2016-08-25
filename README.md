@@ -238,6 +238,7 @@ $ npm test
 ### broccoli-html-editor@0.1.0-beta.11 (2016年??月??日)
 
 - モジュール設定 `deprecated` を追加。非推奨のモジュールに `true` をセットすると、モジュールパレットに表示されなくなる。
+- resourceMgr に、JPEG, PNG 画像の自動ロスレス圧縮機能を追加。
 
 ### broccoli-html-editor@0.1.0-beta.10 (2016年8月3日)
 
