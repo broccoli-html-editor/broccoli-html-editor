@@ -402,6 +402,46 @@ module.exports = function(){
 	}
 
 	/**
+	 * コンテンツをビルドし、更新する
+	 *
+	 * ビルドしたHTMLは、`pathHtml` のファイルに上書き保存されます。
+	 * リソースも合わせて処理されます。
+	 *
+	 * @param  {Function} callback callback function.
+	 * @return {Object}            this
+	 */
+	this.updateContents = function( callback ){
+		callback = callback || function(){};
+		var broccoli = this;
+		broccoli.buildHtml(
+			{
+				'mode': 'finalize'
+			},
+			function(htmls){
+				broccoli.options.bindTemplate(htmls, function(fin){
+					fs.writeFile(
+						broccoli.realpathHtml ,
+						fin ,
+						function(){
+							broccoli.resourceMgr.getResourceDb(
+								function(resourceDb){
+									broccoli.resourceMgr.save(
+										resourceDb ,
+										function(result){
+											callback(true);
+										}
+									);
+								}
+							);
+						}
+					);
+				});
+			}
+		);
+		return this;
+	}
+
+	/**
 	 * モジュールのCSSをビルドする
 	 */
 	this.buildModuleCss = function( callback ){
