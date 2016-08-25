@@ -4575,34 +4575,40 @@ module.exports = function(broccoli){
 			rtn = fieldData;
 		}
 
-		it79.fnc(
-			{},
-			[
-				function(it1, data){
-					_resMgr.getResource( rtn.resKey, function(res){
-						_resMgr.getResourcePublicPath( rtn.resKey, function(publicPath){
-							rtn.path = publicPath;
-							data.path = publicPath;
+		if( rtn.resType == 'web' ){
+			callback(rtn.webUrl);
+			return;
+		}else{
+			it79.fnc(
+				{},
+				[
+					function(it1, data){
+						_resMgr.getResource( rtn.resKey, function(res){
+							_resMgr.getResourcePublicPath( rtn.resKey, function(publicPath){
+								rtn.path = publicPath;
+								data.path = publicPath;
 
-							if( mode == 'canvas' ){
-								// ↓ ダミーの Sample Image
-								data.path = _imgDummy;
+								if( mode == 'canvas' ){
+									// ↓ ダミーの Sample Image
+									data.path = _imgDummy;
 
-								if( res.base64 ){
-									data.path = 'data:'+res.type+';base64,' + res.base64;
+									if( res.base64 ){
+										data.path = 'data:'+res.type+';base64,' + res.base64;
+									}
 								}
-							}
-							it1.next(data);
+								it1.next(data);
+							} );
 						} );
-					} );
-					return;
-				},
-				function(it1, data){
-					callback(data.path);
-					it1.next();
-				}
-			]
-		);
+						return;
+					},
+					function(it1, data){
+						callback(data.path);
+						it1.next();
+					}
+				]
+			);
+			return;
+		}
 		return;
 	}
 
@@ -4616,22 +4622,36 @@ module.exports = function(broccoli){
 			rtn = fieldData;
 		}
 
-		_resMgr.getResource( rtn.resKey, function(res){
-			var imagePath = 'data:'+res.type+';base64,' + res.base64;
-			if( !res.base64 ){
-				// ↓ ダミーの Sample Image
-				imagePath = _imgDummy;
-			}
+		if( rtn.resType == 'web' ){
 			var $ = cheerio.load('<img>', {decodeEntities: false});
 			$('img')
-				.attr({'src': imagePath})
+				.attr({'src': rtn.webUrl})
 				.css({
 					'max-width': '80px',
 					'max-height': '80px'
 				})
 			;
 			callback( $.html() );
-		} );
+			return;
+		}else{
+			_resMgr.getResource( rtn.resKey, function(res){
+				var imagePath = 'data:'+res.type+';base64,' + res.base64;
+				if( !res.base64 ){
+					// ↓ ダミーの Sample Image
+					imagePath = _imgDummy;
+				}
+				var $ = cheerio.load('<img>', {decodeEntities: false});
+				$('img')
+					.attr({'src': imagePath})
+					.css({
+						'max-width': '80px',
+						'max-height': '80px'
+					})
+				;
+				callback( $.html() );
+			} );
+			return;
+		}
 		return;
 	}// mkPreviewHtml()
 
@@ -4654,14 +4674,34 @@ module.exports = function(broccoli){
 	 */
 	this.mkEditor = function( mod, data, elm, callback ){
 		var rtn = $('<div>');
+		var $uiImageResource = $('<div>');
+		var $uiWebResource = $('<div>');
 		var _this = this;
 		if( typeof(data) !== typeof({}) ){ data = {}; }
 		if( typeof(data.resKey) !== typeof('') ){
 			data.resKey = '';
 		}
+		if( typeof(data.resType) !== typeof('') ){
+			data.resType = '';
+		}
+		if( typeof(data.webUrl) !== typeof('') ){
+			data.webUrl = '';
+		}
 		// if( typeof(data.original) !== typeof({}) ){ data.original = {}; }
 		var $img = $('<img>');
 		var $inputImageName = $('<input class="form-control" style="width:12em;">');
+		var $inputWebUrl = $('<input class="form-control">');
+
+		function selectResourceType(){
+			var val = rtn.find('[name='+mod.name+'-resourceType]:checked').val();
+			$uiWebResource.hide();
+			$uiImageResource.hide();
+			if(val == 'web'){
+				$uiWebResource.show();
+			}else{
+				$uiImageResource.show();
+			}
+		}
 
 		/**
 		 * fileAPIからファイルを取り出して反映する
@@ -4707,7 +4747,45 @@ module.exports = function(broccoli){
 				path = _imgDummy;
 			}
 
-			rtn.append( $('<label>')
+			var tmpListStyle = {
+				'list-style-type': 'none',
+				'display': 'inline-block',
+				'padding': '0.2em 1em',
+				'margin': '0'
+			}
+			rtn.append( $('<ul>')
+				.css({'padding': 0})
+				.append( $( '<li>' )
+					.css(tmpListStyle)
+					.append( $( '<label>' )
+						.append( $( '<input type="radio">' )
+							.change(selectResourceType)
+							.attr({
+								"name":mod.name+'-resourceType',
+								"value":"",
+								"checked": (data.resType=='')
+							})
+						)
+						.append( $( '<span>' ).text('画像アップロード') )
+					)
+				)
+				.append( $( '<li>' )
+					.css(tmpListStyle)
+					.append( $( '<label>' )
+						.append( $( '<input type="radio">' )
+							.change(selectResourceType)
+							.attr({
+								"name":mod.name+'-resourceType',
+								"value":"web",
+								"checked": (data.resType=='web')
+							})
+						)
+						.append( $( '<span>' ).text('ウェブリソース') )
+					)
+				)
+			);
+
+			$uiImageResource.append( $('<label>')
 				.css({
 					'border':'1px solid #999',
 					'padding': 10,
@@ -4765,12 +4843,13 @@ module.exports = function(broccoli){
 					applyFile(fileInfo);
 				})
 			);
-			rtn.append(
+			$uiImageResource.append(
 				$('<p>')
 					.append( $('<a>')
 						.text('URLから取得する')
+						.attr({'href':'javascript:;'})
 						.click(function(){
-							var url = prompt('画像ファイルのURLを入力してください。');
+							var url = prompt('指定のURLから画像ファイルを取得して保存します。'+"\n"+'画像ファイルのURLを入力してください。');
 							if( !url ){
 								return;
 							}
@@ -4847,7 +4926,7 @@ module.exports = function(broccoli){
 						})
 					)
 			);
-			rtn.append(
+			$uiImageResource.append(
 				$('<div>')
 					.append( $('<span>')
 						.text('出力ファイル名(拡張子を含まない):')
@@ -4858,10 +4937,32 @@ module.exports = function(broccoli){
 							"type":"text",
 							"placeholder": "output file name"
 						})
+						.css({
+							'display': 'inline-block'
+						})
 						.val( (typeof(res.publicFilename)==typeof('') ? res.publicFilename : '') )
 					)
 			);
+			$uiWebResource.append(
+				$('<p>').text('このモードでは、画像リソースを URL で指定します。画像は取得して保存されることはありません。指定したURLが直接参照されます。')
+			);
+			$uiWebResource.append(
+				$('<div>')
+					.append( $('<span>')
+						.text('URL: ')
+					)
+					.append( $inputWebUrl
+						.attr({
+							"name":mod.name+'-webUrl' ,
+							"type":"text",
+							"placeholder": "http://example.com/example.png"
+						})
+						.val( (typeof(data.webUrl)==typeof('') ? data.webUrl : '') )
+					)
+			);
+			rtn.append($uiImageResource).append($uiWebResource);
 			$(elm).html(rtn);
+			selectResourceType();
 
 			// setTimeout(function(){
 				callback();
@@ -4972,6 +5073,13 @@ module.exports = function(broccoli){
 							it1.next(data);
 						} );
 					} );
+					return;
+
+				} ,
+				function(it1, data){
+					data.resType = $dom.find('[name='+mod.name+'-resourceType]:checked').val();
+					data.webUrl = $dom.find('[name='+mod.name+'-webUrl]').val();
+					it1.next(data);
 					return;
 
 				} ,
