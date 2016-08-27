@@ -895,16 +895,27 @@
 			callback = callback || function(){};
 			it79.fnc({},[
 				function(it1, data){
+					// コンテンツを保存
+					_this.contentsSourceData.save(function(){
+						it1.next(data);
+					});
+				} ,
+				function(it1, data){
 					// リソースを保存
 					_this.resourceMgr.save(function(){
 						it1.next(data);
 					});
 				} ,
 				function(it1, data){
-					// コンテンツを保存
-					_this.contentsSourceData.save(function(){
-						it1.next(data);
-					});
+					// コンテンツを更新
+					_this.gpi(
+						'updateContents',
+						{} ,
+						function(result){
+							// console.log(result);
+							it1.next(data);
+						}
+					);
 				} ,
 				function(it1, data){
 					// console.log('editInstance done.');

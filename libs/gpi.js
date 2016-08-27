@@ -57,23 +57,6 @@ module.exports = function(broccoli, api, options, callback){
 						);
 					} ,
 					function(it1, data){
-						// HTML本体を更新する
-						broccoli.buildHtml(
-							{"mode":"finalize"},
-							function(htmls){
-								broccoli.options.bindTemplate(htmls, function(fin){
-									fs.writeFile(
-										broccoli.realpathHtml ,
-										fin ,
-										function(){
-											it1.next(data);
-										}
-									);
-								});
-							}
-						);
-					} ,
-					function(it1, data){
 						callback(true);
 					}
 				]
@@ -88,6 +71,15 @@ module.exports = function(broccoli, api, options, callback){
 				function(htmls){
 					// console.log(htmls);
 					callback(htmls);
+				}
+			);
+			break;
+
+		case "updateContents":
+			broccoli.updateContents(
+				function(result){
+					// console.log(result);
+					callback(result);
 				}
 			);
 			break;
