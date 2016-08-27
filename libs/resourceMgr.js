@@ -13,10 +13,6 @@ module.exports = function(broccoli){
 	var mkdirp = require('mkdirp');
 	var DIRECTORY_SEPARATOR = '/';
 
-	const imagemin = require('imagemin');
-	const imageminOptipng = require('imagemin-optipng');
-	const imageminJpegtran = require('imagemin-jpegtran');
-
 	var _this = this;
 	var _resourcesDirPath;
 	var _resourcesPublishDirPath;
@@ -220,21 +216,8 @@ module.exports = function(broccoli){
 				return;
 			},
 			function(){
-				new imagemin()
-					.src( _resourcesPublishDirPath+'/*.png' )
-					.dest( _resourcesPublishDirPath+'/' )
-					.use( imageminOptipng({optimizationLevel: 0}) )
-					.run(function (err, files) {
-
-						new imagemin()
-							.src( _resourcesPublishDirPath+'/*.{jpg,jpeg,jpe}' )
-							.dest( _resourcesPublishDirPath+'/' )
-							.use( imageminJpegtran({progressive: true}) )
-							.run(function (err, files) {
-								// console.log('Images optimized');
-								callback(true);
-							});
-					});
+				// console.log('resourceMgr.save() done.');
+				callback(true);
 				return;
 			}
 		);
@@ -452,6 +435,30 @@ module.exports = function(broccoli){
 			var ext = utils79.toStr(res.ext);
 			if(!ext.length){ext = 'unknown';}
 			var rtn = './' + path.relative(path.dirname(contentsPath), resourcesPublishDirPath+'/'+filename+'.'+ext);
+
+			callback(rtn);
+		} );
+		return this;
+	}
+
+	/**
+	 * get resource public realpath
+	 */
+	this.getResourcePublicRealpath = function( resKey, callback ){
+		callback = callback || function(){};
+		var filename = resKey;
+		this.getResource( resKey, function(res){
+			// console.log(res);
+			if( typeof(res.publicFilename) == typeof('') && res.publicFilename.length ){
+				filename = res.publicFilename;
+			}
+			// console.log(filename);
+
+			filename = utils79.toStr(filename);
+			if(!filename.length){filename = 'noname';}
+			var ext = utils79.toStr(res.ext);
+			if(!ext.length){ext = 'unknown';}
+			var rtn = path.resolve(_resourcesPublishDirPath+'/'+filename+'.'+ext);
 
 			callback(rtn);
 		} );

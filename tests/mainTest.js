@@ -449,16 +449,6 @@ describe('ビルドする', function() {
 		} );
 	});
 
-	it("editpageをビルドして更新する", function(done) {
-		this.timeout(15*1000);
-		makeDefaultBroccoli( {'contents_id': 'editpage/index'}, function(broccoli){
-			broccoli.updateContents( function(result){
-				assert.strictEqual(result, true);
-				done();
-			} );
-		} );
-	});
-
 	it("テストデータ1をfinalizeモードでビルドする", function(done) {
 		this.timeout(15*1000);
 		makeDefaultBroccoli( {}, function(broccoli){
@@ -568,6 +558,16 @@ describe('ビルドする', function() {
 					done();
 				}
 			);
+		} );
+	});
+
+	it("editpageをビルドして更新する", function(done) {
+		this.timeout(15*1000);
+		makeDefaultBroccoli( {'contents_id': 'editpage/index'}, function(broccoli){
+			broccoli.updateContents( function(result){
+				assert.strictEqual(result, true);
+				done();
+			} );
 		} );
 	});
 
