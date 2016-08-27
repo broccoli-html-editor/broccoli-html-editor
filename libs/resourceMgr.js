@@ -160,6 +160,8 @@ module.exports = function(broccoli){
 		}
 		resetDirectory(_resourcesDirPath);// 公開リソースディレクトリ 一旦削除して作成
 		resetDirectory(_resourcesPublishDirPath);// 公開リソースディレクトリ 一旦削除して作成
+		// console.log(_resourcesDirPath);
+		// console.log(_resourcesPublishDirPath);
 
 		// 使われていないリソースを削除
 		var jsonSrc = fs.readFileSync( _dataJsonPath );

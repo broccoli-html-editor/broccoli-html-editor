@@ -35,22 +35,35 @@ module.exports = function(broccoli){
 				[
 					function(it1, data){
 						_resMgr.getResource( rtn.resKey, function(res){
-							_resMgr.getResourcePublicPath( rtn.resKey, function(publicPath){
-								rtn.path = publicPath;
-								data.path = publicPath;
-
-								if( mode == 'canvas' ){
-									// ↓ ダミーの Sample Image
-									data.path = _imgDummy;
-
-									if( res.base64 ){
-										data.path = 'data:'+res.type+';base64,' + res.base64;
-									}
-								}
-								it1.next(data);
-							} );
+							data.resourceInfo = res;
+							it1.next(data);
 						} );
 						return;
+					},
+					// function(it1, data){
+					// 	_resMgr.getResourceOriginalRealpath( rtn.resKey, function(realpath){
+					// 		data.originalRealpath = realpath;
+					// 		it1.next(data);
+					// 	} );
+					// 	return;
+					// },
+					function(it1, data){
+						_resMgr.getResourcePublicPath( rtn.resKey, function(publicPath){
+							rtn.path = publicPath;
+							data.path = publicPath;
+							it1.next(data);
+						} );
+					},
+					function(it1, data){
+						if( mode == 'canvas' ){
+							// ↓ ダミーの Sample Image
+							data.path = _imgDummy;
+
+							if( data.resourceInfo.base64 ){
+								data.path = 'data:'+data.resourceInfo.type+';base64,' + data.resourceInfo.base64;
+							}
+						}
+						it1.next(data);
 					},
 					function(it1, data){
 						callback(data.path);

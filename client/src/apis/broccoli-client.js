@@ -895,14 +895,14 @@
 			callback = callback || function(){};
 			it79.fnc({},[
 				function(it1, data){
-					// コンテンツを保存
-					_this.contentsSourceData.save(function(){
+					// リソースを保存
+					_this.resourceMgr.save(function(){
 						it1.next(data);
 					});
 				} ,
 				function(it1, data){
-					// リソースを保存
-					_this.resourceMgr.save(function(){
+					// コンテンツを保存
+					_this.contentsSourceData.save(function(){
 						it1.next(data);
 					});
 				} ,

@@ -413,29 +413,29 @@ module.exports = function(){
 	this.updateContents = function( callback ){
 		callback = callback || function(){};
 		var broccoli = this;
-		broccoli.buildHtml(
-			{
-				'mode': 'finalize'
-			},
-			function(htmls){
-				broccoli.options.bindTemplate(htmls, function(fin){
-					fs.writeFile(
-						broccoli.realpathHtml ,
-						fin ,
-						function(){
-							broccoli.resourceMgr.getResourceDb(
-								function(resourceDb){
-									broccoli.resourceMgr.save(
-										resourceDb ,
-										function(result){
+		broccoli.resourceMgr.getResourceDb(
+			function(resourceDb){
+				broccoli.resourceMgr.save(
+					resourceDb ,
+					function(result){
+						broccoli.buildHtml(
+							{
+								'mode': 'finalize'
+							},
+							function(htmls){
+								broccoli.options.bindTemplate(htmls, function(fin){
+									fs.writeFile(
+										broccoli.realpathHtml ,
+										fin ,
+										function(){
 											callback(true);
 										}
 									);
-								}
-							);
-						}
-					);
-				});
+								});
+							}
+						);
+					}
+				);
 			}
 		);
 		return this;
