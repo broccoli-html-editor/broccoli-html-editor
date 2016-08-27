@@ -4655,12 +4655,11 @@ module.exports = function(broccoli){
 						} );
 					},
 					function(it1, data){
+						// console.log(utils79.is_file(data.publicRealpath));
 						if( mode == 'canvas' ){
-							// ↓ ダミーの Sample Image
-							data.path = _imgDummy;
-
-							if( data.resourceInfo.base64 ){
-								data.path = 'data:'+data.resourceInfo.type+';base64,' + data.resourceInfo.base64;
+							if( !utils79.is_file(data.publicRealpath) ){
+								// ↓ ダミーの Sample Image
+								data.path = _imgDummy;
 							}
 						}
 						it1.next(data);
@@ -4727,7 +4726,9 @@ module.exports = function(broccoli){
 		if( typeof(fieldData) !== typeof({}) ){
 			rtn = {
 				"resKey":'',
-				"path":'about:blank'
+				"path":'about:blank',
+				"resType":'',
+				"webUrl":''
 			};
 		}
 		return rtn;
