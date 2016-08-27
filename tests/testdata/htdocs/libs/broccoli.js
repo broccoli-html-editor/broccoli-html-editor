@@ -3490,7 +3490,7 @@ module.exports = function(broccoli){
 
 				broccoli.contentsSourceData.moveInstanceTo( moveFrom, moveTo, function(){
 					// コンテンツを保存
-					broccoli.contentsSourceData.save(function(){
+					broccoli.saveContents(function(){
 						// alert('インスタンスを移動しました。');
 						broccoli.redraw();
 						callback();
@@ -3511,7 +3511,7 @@ module.exports = function(broccoli){
 				}
 				broccoli.contentsSourceData.moveInstanceTo( moveFrom, moveTo, function(){
 					// コンテンツを保存
-					broccoli.contentsSourceData.save(function(){
+					broccoli.saveContents(function(){
 						// alert('インスタンスを移動しました。');
 						broccoli.redraw();
 						callback();
@@ -3564,7 +3564,7 @@ module.exports = function(broccoli){
 						});
 					} ,
 					function(){
-						broccoli.contentsSourceData.save(function(){
+						broccoli.saveContents(function(){
 							broccoli.message('クリップを挿入しました。');
 							broccoli.redraw();
 							callback();
@@ -3575,7 +3575,7 @@ module.exports = function(broccoli){
 			}else{
 				broccoli.contentsSourceData.addInstance( modId, $(elm).attr('data-broccoli-instance-path'), function(){
 					// コンテンツを保存
-					broccoli.contentsSourceData.save(function(){
+					broccoli.saveContents(function(){
 						// alert('インスタンスを追加しました。');
 						broccoli.redraw();
 						callback();
