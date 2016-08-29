@@ -4609,6 +4609,12 @@ module.exports = function(broccoli){
 						return;
 					},
 					function(it1, data){
+						if( mode == 'canvas' ){
+							// canvasモードのときは画像の加工はしなくてよい。
+							it1.next(data);
+							return;
+						}
+
 						const imagemin = require(''+'imagemin');
 						const imageminOptipng = require(''+'imagemin-optipng');
 						const imageminJpegtran = require(''+'imagemin-jpegtran');
