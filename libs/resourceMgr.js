@@ -435,6 +435,7 @@ module.exports = function(broccoli){
 			var ext = utils79.toStr(res.ext);
 			if(!ext.length){ext = 'unknown';}
 			var rtn = './' + path.relative(path.dirname(contentsPath), resourcesPublishDirPath+'/'+filename+'.'+ext);
+			rtn = rtn.replace(/\\/g, '/'); // <= convert Windows path to Linux path
 
 			callback(rtn);
 		} );
