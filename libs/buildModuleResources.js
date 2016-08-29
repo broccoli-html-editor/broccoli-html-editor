@@ -5,6 +5,7 @@ module.exports = function(broccoli){
 	delete(require.cache[require('path').resolve(__filename)]);
 
 	var _this = this;
+	var utils79 = require('utils79');
 	var it79 = require('iterate79');
 	var path = require('path');
 	var php = require('phpjs');
@@ -29,90 +30,118 @@ module.exports = function(broccoli){
 		}
 		// console.log($array_files);
 
-		for( var $packageId in $array_files ){
-			var $array_files_row = $array_files[$packageId];
+		it79.ary(
+			$array_files,
+			function(it1, $array_files_row, $packageId){
 
-			for( var idx in $array_files_row ){
-				var $path = $array_files_row[idx];
-				$matched = $path.match( new RegExp('\\/([a-zA-Z0-9\\.\\-\\_]+?)\\/([a-zA-Z0-9\\.\\-\\_]+?)\\/[a-zA-Z0-9\\.\\-\\_]+?$','i') );
+				it79.ary(
+					$array_files_row,
+					function(it2, $path, idx){
 
-				// console.log($path);
-				// console.log($matched);
+						var $matched = $path.match( new RegExp('\\/([a-zA-Z0-9\\.\\-\\_]+?)\\/([a-zA-Z0-9\\.\\-\\_]+?)\\/[a-zA-Z0-9\\.\\-\\_]+?$','i') );
 
-				$rtn += '/**'+"\n";
-				$rtn += ' * module: '+$packageId+':'+$matched[1]+'/'+$matched[2]+"\n";
-				$rtn += ' */'+"\n";
+						// console.log($path);
+						// console.log($matched);
 
-				var $tmp_bin = fs.readFileSync( $path ).toString();
-				if( $path.match( new RegExp('\\.scss$', 'i') ) ){
-					// console.log($tmp_bin);
+						$rtn += '/**'+"\n";
+						$rtn += ' * module: '+$packageId+':'+$matched[1]+'/'+$matched[2]+"\n";
+						$rtn += ' */'+"\n";
 
-					$tmp_bin = sass.renderSync({
-						'file': $path,
-						'data': $tmp_bin
-					});
-					$tmp_bin = $tmp_bin.css.toString();
-				}
+						var $tmp_bin = fs.readFileSync( $path ).toString();
+						if( $path.match( new RegExp('\\.scss$', 'i') ) ){
+							// console.log($tmp_bin);
 
-				// $tmp_bin = buildCssResources( $path, $tmp_bin );
+							$tmp_bin = sass.renderSync({
+								'file': $path,
+								'data': $tmp_bin
+							});
+							$tmp_bin = $tmp_bin.css.toString();
+						}
 
-				$rtn += $tmp_bin;
-				$rtn += "\n"+"\n";
+						buildCssResources( $path, $tmp_bin, function( $tmp_bin ){
+							$rtn += $tmp_bin;
+							$rtn += "\n"+"\n";
+							it2.next();
+							return;
+						} );
+						return;
+					},
+					function(){
+						it1.next();
+						return;
+					}
+				);
+
+			},
+			function(){
+				callback($rtn);
+				return;
 			}
-		}
+		);
+
 		// console.log($rtn);
 		// $rtn = trim($rtn);
-
-		callback($rtn);
 		return this;
 	}
+
 	/**
-	 * CSSリソースをビルドする (TODO: 未実装)
+	 * CSSリソースをビルドする
 	 */
 	function buildCssResources( $path, $bin, callback ){
 		callback = callback || function(){};
 
 		var $rtn = '';
 
-		// while( 1 ){
-		// 	if( !preg_match( '/^(.*?)url\s*\\((.*?)\\)(.*)$/si', $bin, $matched ) ){
-		// 		$rtn += $bin;
-		// 		break;
-		// 	}
-		// 	$rtn += $matched[1];
-		// 	$rtn += 'url("';
-		// 	$res = trim( $matched[2] );
-		// 	if( preg_match( '/^(\"|\')(.*)\1$/si', $res, $matched2 ) ){
-		// 		$res = trim( $matched2[2] );
-		// 	}
-		// 	$res = preg_replace('/#.*$/si', '', $res);
-		// 	$res = preg_replace('/\\?.*$/si', '', $res);
-		// 	if( is_file( dirname($path).'/'.$res ) ){
-		// 		$ext = $this->px->fs()->get_extension( dirname($path).'/'.$res );
-		// 		$ext = strtolower( $ext );
-		// 		$mime = 'image/png';
-		// 		switch( $ext ){
-		// 			// styles
-		// 			case 'css': $mime = 'text/css'; break;
-		// 			// images
-		// 			case 'png': $mime = 'image/png'; break;
-		// 			case 'gif': $mime = 'image/gif'; break;
-		// 			case 'jpg': case 'jpeg': case 'jpe': $mime = 'image/jpeg'; break;
-		// 			case 'svg': $mime = 'image/svg+xml'; break;
-		// 			// fonts
-		// 			case 'eot': $mime = 'application/vnd.ms-fontobject'; break;
-		// 			case 'woff': $mime = 'application/x-woff'; break;
-		// 			case 'otf': $mime = 'application/x-font-opentype'; break;
-		// 			case 'ttf': $mime = 'application/x-font-truetype'; break;
-		// 		}
-		// 		$res = 'data:'.$mime.';base64,'.base64_encode($this->px->fs()->read_file(dirname($path).'/'.$res));
-		// 	}
-		// 	$rtn += $res;
-		// 	$rtn += '")';
-		// 	$bin = $matched[3];
-		// }
+		function replaceLoop(){
+			if( !$bin.match( /^([\s\S]*?)url\s*\(([\s\S]*?)\)([\s\S]*)$/i ) ){
+				$rtn += $bin;
+				callback( $rtn );
+				return;
+			}
+			$rtn += RegExp.$1;
+			$rtn += 'url(';
+			var $originalRes = RegExp.$2;
+			var $res = php.trim( $originalRes );
+			$bin = RegExp.$3;
+			if( $res.match( /^(\"|\')([\s\S]*)\1$/i ) ){
+				$res = php.trim( RegExp.$2 );
+			}
+			$res = $res.replace( /\#[\s\S]*$/i , '');
+			$res = $res.replace( /\?[\s\S]*$/i , '');
+			if( utils79.is_file( utils79.dirname($path) + '/' + $res ) ){
+				$rtn += '"';
+				var $ext = $res.replace( /^[\s\S]*?\.([a-zA-Z0-9\_\-]+)$/ , '$1' );
+				$ext = $ext.toLowerCase();
+				var $mime = 'image/png';
+				switch( $ext ){
+					// styles
+					case 'css': $mime = 'text/css'; break;
+					// images
+					case 'png': $mime = 'image/png'; break;
+					case 'gif': $mime = 'image/gif'; break;
+					case 'jpg': case 'jpeg': case 'jpe': $mime = 'image/jpeg'; break;
+					case 'svg': $mime = 'image/svg+xml'; break;
+					// fonts
+					case 'eot': $mime = 'application/vnd.ms-fontobject'; break;
+					case 'woff': $mime = 'application/x-woff'; break;
+					case 'otf': $mime = 'application/x-font-opentype'; break;
+					case 'ttf': $mime = 'application/x-font-truetype'; break;
+				}
+				$res = 'data:'+$mime+';base64,'+utils79.base64_encode( fs.readFileSync(utils79.dirname($path) + '/' + $res) );
+				$rtn += $res;
+				$rtn += '"';
+			}else{
+				$rtn += $originalRes;
+			}
+			$rtn += ')';
 
-		return $rtn;
+			setTimeout(function(){
+				replaceLoop();
+			}, 0);
+		}
+		replaceLoop();
+
+		return;
 	}
 
 	/**

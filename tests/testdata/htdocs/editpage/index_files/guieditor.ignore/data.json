@@ -5,6 +5,12 @@
    "fields": {
     "main": [
      {
+      "modId": "testMod1:dev/resource_build",
+      "fields": {},
+      "anchor": "",
+      "dec": ""
+     },
+     {
       "modId": "testMod1:dev/multitext",
       "fields": {
        "main": {
