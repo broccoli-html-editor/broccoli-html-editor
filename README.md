@@ -202,6 +202,7 @@ coming soon.
 - duplicateData(data, callback) - データを複製する (Client Side)
 - extractResourceId(data, callback) - データから使用するリソースのリソースIDを抽出する (Client Side)
 - saveEditorContent(elm, data, mod, callback) - エディタUIで編集した内容を保存 (Client Side)
+- resourceProcessor(path_orig, path_public, resInfo, callback) - リソースを加工する (Server Side)
 - gpi(options, callback) - GPI (Server Side)
 - callGpi(options, callback) - GPIを呼び出す (Cliend Side)
 

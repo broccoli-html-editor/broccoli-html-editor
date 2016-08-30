@@ -142,6 +142,7 @@ module.exports = function(broccoli){
 	 * @return {boolean}	 Always true.
 	 */
 	this.save = function( newResourceDb, callback ){
+		// var logStartTime = Date.now(); // debug code
 		callback = callback || function(){};
 		_resourceDb = newResourceDb;
 
@@ -172,51 +173,96 @@ module.exports = function(broccoli){
 		it79.ary(
 			_resourceDb,
 			function(it1, res, resKey){
-				mkdir( _resourcesDirPath+'/'+resKey );
-				fs.writeFileSync(
-					_resourcesDirPath+'/'+resKey+'/res.json',
-					JSON.stringify( _resourceDb[resKey], null, 1 )
+
+				it79.fnc(
+					res,
+					[
+						function(it2, res){
+							mkdir( _resourcesDirPath+'/'+resKey );
+							it2.next(res);
+							return;
+						},
+						function(it2, res){
+							if(_resourceDb[resKey].base64 === undefined){
+								// base64がセットされていなかったら終わり
+								it2.next();
+								return;
+							}
+
+							var bin = '';
+							try {
+								bin = new Buffer(_resourceDb[resKey].base64, 'base64');
+							} catch (e) {
+								bin = '';
+							}
+
+							(function(){
+								var md5 = require('crypto').createHash('md5');
+								md5.update(bin);
+								_resourceDb[resKey].md5 = md5.digest('hex');
+							})();
+
+							// オリジナルファイルを保存
+							fs.writeFileSync(
+								_resourcesDirPath+'/'+resKey+'/bin.'+_resourceDb[resKey].ext,
+								bin
+							);
+
+							// 公開ファイル
+							if( _resourceDb[resKey].isPrivateMaterial ){
+								// 非公開ファイルなら終わり
+								it2.next(res);
+								return;
+							}
+
+							var filename = resKey;
+							if( typeof(_resourceDb[resKey].publicFilename) == typeof('') && _resourceDb[resKey].publicFilename.length ){
+								filename = _resourceDb[resKey].publicFilename;
+							}
+							if( _resourceDb[resKey].field ){
+								var fieldDefinition = broccoli.getFieldDefinition( _resourceDb[resKey].field );
+								if( fieldDefinition !== false ){
+									fieldDefinition.resourceProcessor(
+										_resourcesDirPath+'/'+resKey+'/bin.'+_resourceDb[resKey].ext ,
+										_resourcesPublishDirPath+'/'+filename+'.'+_resourceDb[resKey].ext ,
+										_resourceDb[resKey],
+										function(){
+											it2.next(res);
+										}
+									);
+									return;
+								}
+							}
+
+							// フィールド名が記録されていない場合のデフォルトの処理
+							fsEx.copySync(
+								_resourcesDirPath+'/'+resKey+'/bin.'+_resourceDb[resKey].ext,
+								_resourcesPublishDirPath+'/'+filename+'.'+_resourceDb[resKey].ext
+							);
+							it2.next(res);
+							return;
+						},
+						function(it2, res){
+							// res.json を保存する
+							fs.writeFileSync(
+								_resourcesDirPath+'/'+resKey+'/res.json',
+								JSON.stringify( _resourceDb[resKey], null, 1 )
+							);
+							it2.next(res);
+							return;
+						},
+						function(it2, res){
+							it1.next();
+							return;
+						}
+					]
 				);
 
-				if(_resourceDb[resKey].base64 === undefined){
-					// base64がセットされていなかったら終わり
-					it1.next();
-					return;
-				}
-
-				var bin = '';
-				try {
-					bin = new Buffer(_resourceDb[resKey].base64, 'base64');
-				} catch (e) {
-					bin = '';
-				}
-
-				// オリジナルファイルを保存
-				fs.writeFileSync(
-					_resourcesDirPath+'/'+resKey+'/bin.'+_resourceDb[resKey].ext,
-					bin
-				);
-
-				// 公開ファイル
-				if( _resourceDb[resKey].isPrivateMaterial ){
-					// 非公開ファイルなら終わり
-					it1.next();
-					return;
-				}
-
-				var filename = resKey;
-				if( typeof(_resourceDb[resKey].publicFilename) == typeof('') && _resourceDb[resKey].publicFilename.length ){
-					filename = _resourceDb[resKey].publicFilename;
-				}
-				fs.writeFileSync(
-					_resourcesPublishDirPath+'/'+filename+'.'+_resourceDb[resKey].ext,
-					bin
-				);
-				it1.next();
 				return;
 			},
 			function(){
 				// console.log('resourceMgr.save() done.');
+				// console.log( (Date.now() - logStartTime)/1000 ); // debug code
 				callback(true);
 				return;
 			}
@@ -242,8 +288,11 @@ module.exports = function(broccoli){
 				'ext': 'txt',
 				'size': 0,
 				'base64': '',
+				'md5': '',
 				'isPrivateMaterial': false,
-				'publicFilename': ''
+				'publicFilename': '',
+				'field': '', // <= フィールド名 (ex: image, multitext)
+				'fieldNote': {} // <= フィールドが記録する欄
 			};
 			break;
 		}

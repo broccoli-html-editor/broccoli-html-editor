@@ -49,62 +49,6 @@ module.exports = function(broccoli){
 						return;
 					},
 					function(it1, data){
-						if( mode == 'canvas' ){
-							// canvasモードのときは画像の加工はしなくてよい。
-							it1.next(data);
-							return;
-						}
-
-						const imagemin = require(''+'imagemin');
-						const imageminOptipng = require(''+'imagemin-optipng');
-						const imageminJpegtran = require(''+'imagemin-jpegtran');
-
-						data.publicRealpath.match( new RegExp('\\.([a-zA-Z0-9\\_\\-]+?)$') );
-						var ext = (RegExp.$1).toLowerCase();
-						// console.log(data.publicRealpath);
-						// console.log(utils79.dirname(data.publicRealpath));
-						// console.log(ext);
-						switch(ext){
-							case 'jpg':
-							case 'jpeg':
-							case 'jpe':
-								new imagemin()
-									.src( [data.publicRealpath] )
-									.dest( utils79.dirname(data.publicRealpath) )
-									.use( imageminJpegtran({progressive: true}) )
-									.run(function (err, files) {
-										// console.log('Images optimized (JPEG)');
-										// console.log(err);
-										// console.log(files);
-										it1.next(data);
-										return;
-									})
-								;
-								break;
-
-							case 'png':
-								new imagemin()
-									.src( [data.publicRealpath] )
-									.dest( utils79.dirname(data.publicRealpath) )
-									.use( imageminOptipng({optimizationLevel: 0}) )
-									.run(function (err, files) {
-										// console.log('Images optimized (PNG)');
-										// console.log(err);
-										// console.log(files);
-										it1.next(data);
-										return;
-									})
-								;
-								break;
-
-							default:
-								it1.next(data);
-								break;
-
-						}
-						return;
-					},
-					function(it1, data){
 						_resMgr.getResourcePublicPath( rtn.resKey, function(publicPath){
 							rtn.path = publicPath;
 							data.path = publicPath;
@@ -595,6 +539,8 @@ module.exports = function(broccoli){
 						resInfo.type = $img.attr('data-mime-type');
 						resInfo.size = $img.attr('data-size');
 						resInfo.base64 = $img.attr('data-base64');
+						resInfo.field = mod.type;
+						resInfo.fieldNote = {}; // <= フィールド記録欄をクリア
 					}
 					resInfo.isPrivateMaterial = false;
 					resInfo.publicFilename = $dom.find('input[name='+mod.name+'-publicFilename]').val();
@@ -624,6 +570,116 @@ module.exports = function(broccoli){
 		return;
 	}// this.saveEditorContent()
 
+
+	/**
+	 * リソースを加工する (Server Side)
+	 */
+	this.resourceProcessor = function( path_orig, path_public, resInfo, callback ){
+		// console.log(resInfo);
+		function md5(content){
+			var md5 = require('crypto').createHash('md5');
+			md5.update(content);
+			return md5.digest('hex');
+		}
+		function md5file(path){
+			if(!utils79.is_file(path)){return false;}
+			var content = require('fs').readFileSync( path );
+			return md5(content);
+		}
+
+		resInfo.fieldNote = resInfo.fieldNote || {};
+
+		it79.fnc(
+			{},
+			[
+				function(it1, data){
+					// 一旦複製
+					var fsEx = require('fs-extra');
+					setTimeout(function(){
+						fsEx.copySync( path_orig, path_public );
+						it1.next(data);
+						return;
+					}, 0);
+					return;
+				},
+				function(it1, data){
+					// 公開ファイルを加工
+					// ロスレス圧縮処理
+					const imagemin = require(''+'imagemin');
+					const imageminOptipng = require(''+'imagemin-optipng');
+					const imageminJpegtran = require(''+'imagemin-jpegtran');
+
+					path_public.match( new RegExp('\\.([a-zA-Z0-9\\_\\-]+?)$') );
+					var ext = (RegExp.$1).toLowerCase();
+					// console.log(path_public);
+					// console.log(utils79.dirname(path_public));
+					// console.log(ext);
+					switch(ext){
+						case 'jpg':
+						case 'jpeg':
+						case 'jpe':
+							new imagemin()
+								.src( [path_public] )
+								.dest( utils79.dirname(path_public) )
+								.use( imageminJpegtran({progressive: true}) )
+								.run(function (err, files) {
+									// console.log('Images optimized (JPEG)');
+									// console.log(err);
+									// console.log(files);
+									it1.next(data);
+									return;
+								})
+							;
+							break;
+
+						case 'png':
+							new imagemin()
+								.src( [path_public] )
+								.dest( utils79.dirname(path_public) )
+								.use( imageminOptipng({optimizationLevel: 0}) )
+								.run(function (err, files) {
+									// console.log('Images optimized (PNG)');
+									// console.log(err);
+									// console.log(files);
+									it1.next(data);
+									return;
+								})
+							;
+							break;
+
+						default:
+							it1.next(data);
+							break;
+
+					}
+					return;
+				},
+				function(it1, data){
+					// オリジナルのMD5ハッシュを記録
+					if( resInfo.md5 ){
+						resInfo.fieldNote.origMd5 = resInfo.md5;
+					}else{
+						resInfo.fieldNote.origMd5 = md5file(path_orig);
+					}
+
+					// 加工後のファイルの情報を記録
+					var bin = require('fs').readFileSync( path_public );
+					// MD5
+					resInfo.fieldNote.md5 = md5(bin);
+					resInfo.fieldNote.size = bin.length;
+
+					it1.next(data);
+					return;
+				},
+				function(it1, data){
+					callback(true);
+					return;
+				}
+			]
+		);
+
+		return this;
+	}
 
 	/**
 	 * GPI (Server Side)
