@@ -618,6 +618,8 @@ module.exports = function(broccoli){
 					const imagemin = require(''+'imagemin');
 					const imageminOptipng = require(''+'imagemin-optipng');
 					const imageminJpegtran = require(''+'imagemin-jpegtran');
+					const imageminPngcrush = require(''+'imagemin-pngcrush');
+					const imageminPngquant = require(''+'imagemin-pngquant');
 
 					path_public.match( new RegExp('\\.([a-zA-Z0-9\\_\\-]+?)$') );
 					var ext = (RegExp.$1).toLowerCase();
@@ -646,7 +648,9 @@ module.exports = function(broccoli){
 							new imagemin()
 								.src( [path_public] )
 								.dest( utils79.dirname(path_public) )
-								.use( imageminOptipng({optimizationLevel: 0}) )
+								.use( imageminOptipng({optimizationLevel: 7}) ) // 圧縮
+								.use( imageminPngcrush() ) // PNGからメタデータを削除
+								.use( imageminPngquant() ) // 圧縮
 								.run(function (err, files) {
 									// console.log('Images optimized (PNG)');
 									// console.log(err);
