@@ -146,6 +146,18 @@ module.exports = function(broccoli){
 		callback = callback || function(){};
 		_resourceDb = newResourceDb;
 
+		function md5(bin){
+			var md5 = require('crypto').createHash('md5');
+			md5.update(bin);
+			return md5.digest('hex');
+		}
+		function md5file(path){
+			if(!utils79.is_file(path)){return false;}
+			var content = require('fs').readFileSync( path );
+			return md5(content);
+		}
+
+
 		function resetDirectory(dir){
 			if( isDirectory( dir ) ){ // 一旦削除
 				rmdir_r( dir );
@@ -155,9 +167,7 @@ module.exports = function(broccoli){
 			}
 			return;
 		}
-		resetDirectory(_resourcesDirPath);// 公開リソースディレクトリ 一旦削除して作成
 		resetDirectory(_resourcesPublishDirPath);// 公開リソースディレクトリ 一旦削除して作成
-		// console.log(_resourcesDirPath);
 		// console.log(_resourcesPublishDirPath);
 
 		// 使われていないリソースを削除
@@ -197,10 +207,16 @@ module.exports = function(broccoli){
 							}
 
 							(function(){
-								var md5 = require('crypto').createHash('md5');
-								md5.update(bin);
-								_resourceDb[resKey].md5 = md5.digest('hex');
+								// 違う拡張子のファイルが存在していたら削除
+								var filelist = fs.readdirSync( _resourcesDirPath + '/' + resKey );
+								for( var idx in filelist ){
+									if(filelist[idx] === 'bin.'+_resourceDb[resKey].ext){continue;}
+									if(filelist[idx] === 'res.json'){continue;}
+									fs.unlinkSync( _resourcesDirPath + '/' + resKey + '/' + filelist[idx] );
+								}
 							})();
+
+							_resourceDb[resKey].md5 = md5(bin);
 
 							// オリジナルファイルを保存
 							fs.writeFileSync(
@@ -269,7 +285,7 @@ module.exports = function(broccoli){
 		);
 
 		return this;
-	}
+	} // save()
 
 	/**
 	 * add resource

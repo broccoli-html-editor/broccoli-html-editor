@@ -5162,6 +5162,16 @@ module.exports = function(broccoli){
 
 		resInfo.fieldNote = resInfo.fieldNote || {};
 
+		if( resInfo.fieldNote.origMd5 == resInfo.md5 && resInfo.fieldNote.base64 ){
+			// console.log('変更されていないファイル =-=-=-=-=-=-=-=-=-=-=-=-=');
+			require('fs').writeFileSync(
+				path_public,
+				(new Buffer(resInfo.fieldNote.base64, 'base64'))
+			);
+			callback(true);
+			return;
+		}
+
 		it79.fnc(
 			{},
 			[
@@ -5237,8 +5247,11 @@ module.exports = function(broccoli){
 
 					// 加工後のファイルの情報を記録
 					var bin = require('fs').readFileSync( path_public );
+					// base64
+					resInfo.fieldNote.base64 = (new Buffer(bin)).toString('base64');
 					// MD5
 					resInfo.fieldNote.md5 = md5(bin);
+					// size
 					resInfo.fieldNote.size = bin.length;
 
 					it1.next(data);
