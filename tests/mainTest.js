@@ -1,6 +1,8 @@
 var assert = require('assert');
 var path = require('path');
 var fs = require('fs');
+var fsEx = require('fs-extra');
+var utils79 = require('utils79');
 var phpjs = require('phpjs');
 var Promise = require("es6-promise").Promise;
 var Broccoli = require('../libs/main.js');
@@ -568,6 +570,36 @@ describe('ビルドする', function() {
 				assert.strictEqual(result, true);
 				done();
 			} );
+		} );
+	});
+
+	it("editpageのリソースを保存しなおす(imageフィールドの加工処理を含む)", function(done) {
+		this.timeout(15*1000);
+		makeDefaultBroccoli( {'contents_id': 'editpage/index'}, function(broccoli){
+			broccoli.resourceMgr.getResourceDb(
+				function(resourceDb){
+
+					// 一旦ディレクトリをすべて削除して、復元されることを確認する。
+					fsEx.emptyDir(
+						require('path').resolve(__dirname, './testdata/htdocs/editpage/index_files/guieditor.ignore/resources/'),
+						function(err){
+							setTimeout(function(){
+								broccoli.resourceMgr.save(
+									resourceDb ,
+									function(result){
+
+										assert.strictEqual(utils79.is_file( require('path').resolve(__dirname, './testdata/htdocs/editpage/index_files/guieditor.ignore/resources/1e970f28b68cf1c3318431e73040c492/bin.svg') ), true);
+										assert.strictEqual(utils79.is_file( require('path').resolve(__dirname, './testdata/htdocs/editpage/index_files/guieditor.ignore/resources/1e970f28b68cf1c3318431e73040c492/res.json') ), true);
+										assert.strictEqual(result, true);
+										done();
+									}
+								);
+							}, 500);
+						}
+					);
+
+				}
+			);
 		} );
 	});
 
