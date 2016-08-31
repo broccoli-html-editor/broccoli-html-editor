@@ -907,6 +907,17 @@
 					});
 				} ,
 				function(it1, data){
+					// コンテンツを更新
+					_this.gpi(
+						'updateContents',
+						{} ,
+						function(result){
+							// console.log(result);
+							it1.next(data);
+						}
+					);
+				} ,
+				function(it1, data){
 					// console.log('editInstance done.');
 					_this.message('コンテンツを保存しました。');
 					callback(true);

@@ -139,11 +139,24 @@ module.exports = function(broccoli){
 	 * save resources
 	 * @param  {Object} newResourceDb resource Database
 	 * @param  {Function} callback Callback function.
-	 * @return {boolean}     Always true.
+	 * @return {boolean}	 Always true.
 	 */
 	this.save = function( newResourceDb, callback ){
+		// var logStartTime = Date.now(); // debug code
 		callback = callback || function(){};
 		_resourceDb = newResourceDb;
+
+		function md5(bin){
+			var md5 = require('crypto').createHash('md5');
+			md5.update(bin);
+			return md5.digest('hex');
+		}
+		function md5file(path){
+			if(!utils79.is_file(path)){return false;}
+			var content = require('fs').readFileSync( path );
+			return md5(content);
+		}
+
 
 		function resetDirectory(dir){
 			if( isDirectory( dir ) ){ // 一旦削除
@@ -154,8 +167,8 @@ module.exports = function(broccoli){
 			}
 			return;
 		}
-		resetDirectory(_resourcesDirPath);// 公開リソースディレクトリ 一旦削除して作成
 		resetDirectory(_resourcesPublishDirPath);// 公開リソースディレクトリ 一旦削除して作成
+		// console.log(_resourcesPublishDirPath);
 
 		// 使われていないリソースを削除
 		var jsonSrc = fs.readFileSync( _dataJsonPath );
@@ -167,47 +180,112 @@ module.exports = function(broccoli){
 		}
 
 		// リソースデータの保存と公開領域への設置
-		for( var resKey in _resourceDb ){
-			mkdir( _resourcesDirPath+'/'+resKey );
-			fs.writeFileSync(
-				_resourcesDirPath+'/'+resKey+'/res.json',
-				JSON.stringify( _resourceDb[resKey], null, 1 )
-			);
+		it79.ary(
+			_resourceDb,
+			function(it1, res, resKey){
 
-			if(_resourceDb[resKey].base64 !== undefined){
-				var bin = '';
-				try {
-					bin = new Buffer(_resourceDb[resKey].base64, 'base64');
-				} catch (e) {
-					bin = '';
-				}
+				it79.fnc(
+					res,
+					[
+						function(it2, res){
+							mkdir( _resourcesDirPath+'/'+resKey );
+							it2.next(res);
+							return;
+						},
+						function(it2, res){
+							if(_resourceDb[resKey].base64 === undefined){
+								// base64がセットされていなかったら終わり
+								it2.next();
+								return;
+							}
 
-				fs.writeFileSync(
-					_resourcesDirPath+'/'+resKey+'/bin.'+_resourceDb[resKey].ext,
-					bin
+							var bin = '';
+							try {
+								bin = new Buffer(_resourceDb[resKey].base64, 'base64');
+							} catch (e) {
+								bin = '';
+							}
+
+							(function(){
+								// 違う拡張子のファイルが存在していたら削除
+								var filelist = fs.readdirSync( _resourcesDirPath + '/' + resKey );
+								for( var idx in filelist ){
+									if(filelist[idx] === 'bin.'+_resourceDb[resKey].ext){continue;}
+									if(filelist[idx] === 'res.json'){continue;}
+									fs.unlinkSync( _resourcesDirPath + '/' + resKey + '/' + filelist[idx] );
+								}
+							})();
+
+							_resourceDb[resKey].md5 = md5(bin);
+
+							// オリジナルファイルを保存
+							fs.writeFileSync(
+								_resourcesDirPath+'/'+resKey+'/bin.'+_resourceDb[resKey].ext,
+								bin
+							);
+
+							// 公開ファイル
+							if( _resourceDb[resKey].isPrivateMaterial ){
+								// 非公開ファイルなら終わり
+								it2.next(res);
+								return;
+							}
+
+							var filename = resKey;
+							if( typeof(_resourceDb[resKey].publicFilename) == typeof('') && _resourceDb[resKey].publicFilename.length ){
+								filename = _resourceDb[resKey].publicFilename;
+							}
+							if( _resourceDb[resKey].field ){
+								var fieldDefinition = broccoli.getFieldDefinition( _resourceDb[resKey].field );
+								if( fieldDefinition !== false ){
+									fieldDefinition.resourceProcessor(
+										_resourcesDirPath+'/'+resKey+'/bin.'+_resourceDb[resKey].ext ,
+										_resourcesPublishDirPath+'/'+filename+'.'+_resourceDb[resKey].ext ,
+										_resourceDb[resKey],
+										function(){
+											it2.next(res);
+										}
+									);
+									return;
+								}
+							}
+
+							// フィールド名が記録されていない場合のデフォルトの処理
+							fsEx.copySync(
+								_resourcesDirPath+'/'+resKey+'/bin.'+_resourceDb[resKey].ext,
+								_resourcesPublishDirPath+'/'+filename+'.'+_resourceDb[resKey].ext
+							);
+							it2.next(res);
+							return;
+						},
+						function(it2, res){
+							// res.json を保存する
+							fs.writeFileSync(
+								_resourcesDirPath+'/'+resKey+'/res.json',
+								JSON.stringify( _resourceDb[resKey], null, 1 )
+							);
+							it2.next(res);
+							return;
+						},
+						function(it2, res){
+							it1.next();
+							return;
+						}
+					]
 				);
 
-				fs.writeFileSync(
-					_resourcesDirPath+'/'+resKey+'/bin.'+_resourceDb[resKey].ext,
-					bin
-				);
-
-				// 公開ファイル
-				if( !_resourceDb[resKey].isPrivateMaterial ){
-					var filename = resKey;
-					if( typeof(_resourceDb[resKey].publicFilename) == typeof('') && _resourceDb[resKey].publicFilename.length ){
-						filename = _resourceDb[resKey].publicFilename;
-					}
-					fs.writeFileSync(
-						_resourcesPublishDirPath+'/'+filename+'.'+_resourceDb[resKey].ext,
-						bin
-					);
-				}
+				return;
+			},
+			function(){
+				// console.log('resourceMgr.save() done.');
+				// console.log( (Date.now() - logStartTime)/1000 ); // debug code
+				callback(true);
+				return;
 			}
-		}
-		callback(true);
+		);
+
 		return this;
-	}
+	} // save()
 
 	/**
 	 * add resource
@@ -226,8 +304,11 @@ module.exports = function(broccoli){
 				'ext': 'txt',
 				'size': 0,
 				'base64': '',
+				'md5': '',
 				'isPrivateMaterial': false,
-				'publicFilename': ''
+				'publicFilename': '',
+				'field': '', // <= フィールド名 (ex: image, multitext)
+				'fieldNote': {} // <= フィールドが記録する欄
 			};
 			break;
 		}
@@ -321,7 +402,7 @@ module.exports = function(broccoli){
 	 * <dt>publicFilename</dt><dd>公開時のファイル名</dd>
 	 * <dt>isPrivateMaterial</dt><dd>非公開ファイル。</dd>
 	 * </dl>
-	 * @return {boolean}        always true.
+	 * @return {boolean}		always true.
 	 */
 	this.updateResource = function( resKey, resInfo, callback ){
 		callback = callback || function(){};
@@ -419,6 +500,31 @@ module.exports = function(broccoli){
 			var ext = utils79.toStr(res.ext);
 			if(!ext.length){ext = 'unknown';}
 			var rtn = './' + path.relative(path.dirname(contentsPath), resourcesPublishDirPath+'/'+filename+'.'+ext);
+			rtn = rtn.replace(/\\/g, '/'); // <= convert Windows path to Linux path
+
+			callback(rtn);
+		} );
+		return this;
+	}
+
+	/**
+	 * get resource public realpath
+	 */
+	this.getResourcePublicRealpath = function( resKey, callback ){
+		callback = callback || function(){};
+		var filename = resKey;
+		this.getResource( resKey, function(res){
+			// console.log(res);
+			if( typeof(res.publicFilename) == typeof('') && res.publicFilename.length ){
+				filename = res.publicFilename;
+			}
+			// console.log(filename);
+
+			filename = utils79.toStr(filename);
+			if(!filename.length){filename = 'noname';}
+			var ext = utils79.toStr(res.ext);
+			if(!ext.length){ext = 'unknown';}
+			var rtn = path.resolve(_resourcesPublishDirPath+'/'+filename+'.'+ext);
 
 			callback(rtn);
 		} );

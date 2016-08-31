@@ -1,0 +1,14 @@
+.resource-build{
+    background: url('./resources/sample.png?abc=def#ghi');
+    background: url('./resources/notexists.png?abc=def#ghi');
+    background: url('http://example.com/external.png?abc=def#ghi');
+    background: url('./resources/sample.png');
+
+    padding: 1em 2em;
+    margin:1em 0;
+
+    p{
+        margin: 0;
+        padding: 0;
+    }
+}

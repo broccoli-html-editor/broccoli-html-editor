@@ -1,6 +1,8 @@
 var assert = require('assert');
 var path = require('path');
 var fs = require('fs');
+var fsEx = require('fs-extra');
+var utils79 = require('utils79');
 var phpjs = require('phpjs');
 var Promise = require("es6-promise").Promise;
 var Broccoli = require('../libs/main.js');
@@ -22,7 +24,77 @@ function makeDefaultBroccoli(options, callback){
 			'documentRoot': path.resolve(__dirname, 'testdata/htdocs/')+'/',
 			'pathHtml': '/'+contents_id+'.html',
 			'pathResourceDir': '/'+contents_id+'_files/resources/',
-			'realpathDataDir': path.resolve(__dirname, 'testdata/htdocs/'+contents_id+'_files/guieditor.ignore/')+'/'
+			'realpathDataDir': path.resolve(__dirname, 'testdata/htdocs/'+contents_id+'_files/guieditor.ignore/')+'/',
+			'customFields': {
+				'custom1': function(broccoli){
+					/**
+					 * データをバインドする
+					 */
+					this.bind = function( fieldData, mode, mod, callback ){
+						var php = require('phpjs');
+						var rtn = ''
+						if(typeof(fieldData)===typeof('')){
+							rtn = php.htmlspecialchars( fieldData ); // ←HTML特殊文字変換
+							rtn = rtn.replace(new RegExp('\r\n|\r|\n','g'), '<br />'); // ← 改行コードは改行タグに変換
+						}
+						if( mode == 'canvas' && !rtn.length ){
+							rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてテキストを編集してください)</span>';
+						}
+						rtn = '<div style="background-color:#993; color:#fff; padding:1em;">'+rtn+'</div>';
+						setTimeout(function(){
+							callback(rtn);
+						}, 0);
+						return;
+					}
+
+				}
+			} ,
+			'bindTemplate': function(htmls, callback){
+				var fin = '';
+				fin += '<!DOCTYPE html>'+"\n";
+				fin += '<html>'+"\n";
+				fin += '    <head>'+"\n";
+				fin += '        <meta charset="utf-8" />'+"\n";
+				fin += '        <title>sample page</title>'+"\n";
+				fin += '        <link rel="stylesheet" href="/common/css/common.css" />'+"\n";
+				fin += '        <link rel="stylesheet" href="/common/css/module.css" />'+"\n";
+				fin += '        <script src="/common/js/module.js"></script>'+"\n";
+				fin += '        <style media="screen">'+"\n";
+				fin += '            img{max-width:100%;}'+"\n";
+				fin += '        </style>'+"\n";
+				fin += '    </head>'+"\n";
+				fin += '    <body>'+"\n";
+				fin += '        <h1>sample page</h1>'+"\n";
+				fin += '        <h2>main</h2>'+"\n";
+				fin += '        <div class="contents" data-contents="main">'+"\n";
+				fin += htmls['main']+"\n";
+				fin += '        </div><!-- /main -->'+"\n";
+				fin += '        <h2>secondly</h2>'+"\n";
+				fin += '        <div class="contents" data-contents="secondly">'+"\n";
+				fin += htmls['secondly']+"\n";
+				fin += '        </div><!-- /secondly -->'+"\n";
+				fin += '        <footer>'+"\n";
+				fin += '            <a href="/editpage/">top</a>, <a href="http://www.pxt.jp/" target="_blank">pxt</a>'+"\n";
+				fin += '            <form action="javascript:alert(\'form submit done.\');">'+"\n";
+				fin += '                <input type="submit" value="submit!" />'+"\n";
+				fin += '            </form>'+"\n";
+				fin += '        </footer>'+"\n";
+				fin += '    </body>'+"\n";
+				fin += '</html>'+"\n";
+				fin += '<script data-broccoli-receive-message="yes">'+"\n";
+				fin += 'window.addEventListener(\'message\',(function() {'+"\n";
+				fin += 'return function f(event) {'+"\n";
+				fin += 'if(event.origin!=\'http://127.0.0.1:8088\'){return;}// <- check your own server\'s origin.'+"\n";
+				fin += 'var s=document.createElement(\'script\');'+"\n";
+				fin += 'document.querySelector(\'body\').appendChild(s);s.src=event.data.scriptUrl;'+"\n";
+				fin += 'window.removeEventListener(\'message\', f, false);'+"\n";
+				fin += '}'+"\n";
+				fin += '})(),false);'+"\n";
+				fin += '</script>'+"\n";
+
+				callback(fin);
+				return;
+			}
 		},
 		function(){
 			callback(broccoli);
@@ -333,7 +405,7 @@ describe('ビルドする', function() {
 
 	it("editpageをfinalizeモードでビルドする", function(done) {
 		this.timeout(15*1000);
-		makeDefaultBroccoli( {}, function(broccoli){
+		makeDefaultBroccoli( {'contents_id': 'editpage/index'}, function(broccoli){
 			var data = require(__dirname+'/testdata/htdocs/editpage/index_files/guieditor.ignore/data.json');
 			// console.log(data);
 			var dataBowlMain = undefined;
@@ -357,7 +429,7 @@ describe('ビルドする', function() {
 
 	it("editpageをcanvasモードでビルドする", function(done) {
 		this.timeout(15*1000);
-		makeDefaultBroccoli( {}, function(broccoli){
+		makeDefaultBroccoli( {'contents_id': 'editpage/index'}, function(broccoli){
 			var data = require(__dirname+'/testdata/htdocs/editpage/index_files/guieditor.ignore/data.json');
 			// console.log(data);
 			var dataBowlMain = undefined;
@@ -486,6 +558,46 @@ describe('ビルドする', function() {
 					fs.writeFileSync(path.resolve(__dirname, './testdata/htdocs/unknown_module/empty_data_json.html'), html);
 					// console.log( html );
 					done();
+				}
+			);
+		} );
+	});
+
+	it("editpageをビルドして更新する", function(done) {
+		this.timeout(15*1000);
+		makeDefaultBroccoli( {'contents_id': 'editpage/index'}, function(broccoli){
+			broccoli.updateContents( function(result){
+				assert.strictEqual(result, true);
+				done();
+			} );
+		} );
+	});
+
+	it("editpageのリソースを保存しなおす(imageフィールドの加工処理を含む)", function(done) {
+		this.timeout(15*1000);
+		makeDefaultBroccoli( {'contents_id': 'editpage/index'}, function(broccoli){
+			broccoli.resourceMgr.getResourceDb(
+				function(resourceDb){
+
+					// 一旦ディレクトリをすべて削除して、復元されることを確認する。
+					fsEx.emptyDir(
+						require('path').resolve(__dirname, './testdata/htdocs/editpage/index_files/guieditor.ignore/resources/'),
+						function(err){
+							setTimeout(function(){
+								broccoli.resourceMgr.save(
+									resourceDb ,
+									function(result){
+
+										assert.strictEqual(utils79.is_file( require('path').resolve(__dirname, './testdata/htdocs/editpage/index_files/guieditor.ignore/resources/1e970f28b68cf1c3318431e73040c492/bin.svg') ), true);
+										assert.strictEqual(utils79.is_file( require('path').resolve(__dirname, './testdata/htdocs/editpage/index_files/guieditor.ignore/resources/1e970f28b68cf1c3318431e73040c492/res.json') ), true);
+										assert.strictEqual(result, true);
+										done();
+									}
+								);
+							}, 500);
+						}
+					);
+
 				}
 			);
 		} );

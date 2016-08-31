@@ -190,6 +190,19 @@ module.exports = function(broccoli){
 	}
 
 	/**
+	 * リソースを加工する (Server Side)
+	 */
+	this.resourceProcessor = function( path_orig, path_public, resInfo, callback ){
+		// ↓デフォルトの処理。オリジナルファイルをそのまま公開パスへ複製する。
+		var fsEx = require('fs-extra');
+		fsEx.copySync( path_orig, path_public );
+		setTimeout(function(){
+			callback(true);
+		}, 0)
+		return this;
+	}
+
+	/**
 	 * GPI (Server Side)
 	 */
 	this.gpi = function(options, callback){

@@ -26,34 +26,63 @@ module.exports = function(broccoli){
 			rtn = fieldData;
 		}
 
-		it79.fnc(
-			{},
-			[
-				function(it1, data){
-					_resMgr.getResource( rtn.resKey, function(res){
+		if( rtn.resType == 'web' ){
+			callback(rtn.webUrl);
+			return;
+		}else{
+			it79.fnc(
+				{},
+				[
+					function(it1, data){
+						_resMgr.getResource( rtn.resKey, function(res){
+							data.resourceInfo = res;
+							it1.next(data);
+						} );
+						return;
+					},
+					function(it1, data){
+						_resMgr.getResourcePublicRealpath( rtn.resKey, function(realpath){
+							// console.log(realpath);
+							data.publicRealpath = realpath;
+							it1.next(data);
+						} );
+						return;
+					},
+					function(it1, data){
 						_resMgr.getResourcePublicPath( rtn.resKey, function(publicPath){
 							rtn.path = publicPath;
 							data.path = publicPath;
-
-							if( mode == 'canvas' ){
-								// ↓ ダミーの Sample Image
-								data.path = _imgDummy;
-
-								if( res.base64 ){
-									data.path = 'data:'+res.type+';base64,' + res.base64;
-								}
-							}
 							it1.next(data);
 						} );
-					} );
-					return;
-				},
-				function(it1, data){
-					callback(data.path);
-					it1.next();
-				}
-			]
-		);
+					},
+					function(it1, data){
+						// console.log(utils79.is_file(data.publicRealpath));
+						if( mode == 'canvas' ){
+							if( !utils79.is_file(data.publicRealpath) ){
+								// ↓ ダミーの Sample Image
+								data.path = _imgDummy;
+							}else{
+								try {
+									var imageBin = fs.readFileSync(data.publicRealpath);
+									data.path = 'data:'+data.resourceInfo.type+';base64,' + utils79.base64_encode( imageBin );
+								} catch (e) {
+									data.path = false;
+								}
+							}
+						}
+						if( data.path == false && data.resourceInfo.base64 ){
+							data.path = 'data:'+data.resourceInfo.type+';base64,' + data.resourceInfo.base64;
+						}
+						it1.next(data);
+					},
+					function(it1, data){
+						callback(data.path);
+						it1.next();
+					}
+				]
+			);
+			return;
+		}
 		return;
 	}
 
@@ -67,22 +96,36 @@ module.exports = function(broccoli){
 			rtn = fieldData;
 		}
 
-		_resMgr.getResource( rtn.resKey, function(res){
-			var imagePath = 'data:'+res.type+';base64,' + res.base64;
-			if( !res.base64 ){
-				// ↓ ダミーの Sample Image
-				imagePath = _imgDummy;
-			}
+		if( rtn.resType == 'web' ){
 			var $ = cheerio.load('<img>', {decodeEntities: false});
 			$('img')
-				.attr({'src': imagePath})
+				.attr({'src': rtn.webUrl})
 				.css({
 					'max-width': '80px',
 					'max-height': '80px'
 				})
 			;
 			callback( $.html() );
-		} );
+			return;
+		}else{
+			_resMgr.getResource( rtn.resKey, function(res){
+				var imagePath = 'data:'+res.type+';base64,' + res.base64;
+				if( !res.base64 ){
+					// ↓ ダミーの Sample Image
+					imagePath = _imgDummy;
+				}
+				var $ = cheerio.load('<img>', {decodeEntities: false});
+				$('img')
+					.attr({'src': imagePath})
+					.css({
+						'max-width': '80px',
+						'max-height': '80px'
+					})
+				;
+				callback( $.html() );
+			} );
+			return;
+		}
 		return;
 	}// mkPreviewHtml()
 
@@ -94,7 +137,9 @@ module.exports = function(broccoli){
 		if( typeof(fieldData) !== typeof({}) ){
 			rtn = {
 				"resKey":'',
-				"path":'about:blank'
+				"path":'about:blank',
+				"resType":'',
+				"webUrl":''
 			};
 		}
 		return rtn;
@@ -105,14 +150,34 @@ module.exports = function(broccoli){
 	 */
 	this.mkEditor = function( mod, data, elm, callback ){
 		var rtn = $('<div>');
+		var $uiImageResource = $('<div>');
+		var $uiWebResource = $('<div>');
 		var _this = this;
 		if( typeof(data) !== typeof({}) ){ data = {}; }
 		if( typeof(data.resKey) !== typeof('') ){
 			data.resKey = '';
 		}
+		if( typeof(data.resType) !== typeof('') ){
+			data.resType = '';
+		}
+		if( typeof(data.webUrl) !== typeof('') ){
+			data.webUrl = '';
+		}
 		// if( typeof(data.original) !== typeof({}) ){ data.original = {}; }
 		var $img = $('<img>');
 		var $inputImageName = $('<input class="form-control" style="width:12em;">');
+		var $inputWebUrl = $('<input class="form-control">');
+
+		function selectResourceType(){
+			var val = rtn.find('[name='+mod.name+'-resourceType]:checked').val();
+			$uiWebResource.hide();
+			$uiImageResource.hide();
+			if(val == 'web'){
+				$uiWebResource.show();
+			}else{
+				$uiImageResource.show();
+			}
+		}
 
 		/**
 		 * fileAPIからファイルを取り出して反映する
@@ -158,7 +223,45 @@ module.exports = function(broccoli){
 				path = _imgDummy;
 			}
 
-			rtn.append( $('<label>')
+			var tmpListStyle = {
+				'list-style-type': 'none',
+				'display': 'inline-block',
+				'padding': '0.2em 1em',
+				'margin': '0'
+			}
+			rtn.append( $('<ul>')
+				.css({'padding': 0})
+				.append( $( '<li>' )
+					.css(tmpListStyle)
+					.append( $( '<label>' )
+						.append( $( '<input type="radio">' )
+							.change(selectResourceType)
+							.attr({
+								"name":mod.name+'-resourceType',
+								"value":"",
+								"checked": (data.resType=='')
+							})
+						)
+						.append( $( '<span>' ).text('画像アップロード') )
+					)
+				)
+				.append( $( '<li>' )
+					.css(tmpListStyle)
+					.append( $( '<label>' )
+						.append( $( '<input type="radio">' )
+							.change(selectResourceType)
+							.attr({
+								"name":mod.name+'-resourceType',
+								"value":"web",
+								"checked": (data.resType=='web')
+							})
+						)
+						.append( $( '<span>' ).text('ウェブリソース') )
+					)
+				)
+			);
+
+			$uiImageResource.append( $('<label>')
 				.css({
 					'border':'1px solid #999',
 					'padding': 10,
@@ -216,12 +319,13 @@ module.exports = function(broccoli){
 					applyFile(fileInfo);
 				})
 			);
-			rtn.append(
+			$uiImageResource.append(
 				$('<p>')
 					.append( $('<a>')
 						.text('URLから取得する')
+						.attr({'href':'javascript:;'})
 						.click(function(){
-							var url = prompt('画像ファイルのURLを入力してください。');
+							var url = prompt('指定のURLから画像ファイルを取得して保存します。'+"\n"+'画像ファイルのURLを入力してください。');
 							if( !url ){
 								return;
 							}
@@ -298,7 +402,7 @@ module.exports = function(broccoli){
 						})
 					)
 			);
-			rtn.append(
+			$uiImageResource.append(
 				$('<div>')
 					.append( $('<span>')
 						.text('出力ファイル名(拡張子を含まない):')
@@ -309,10 +413,32 @@ module.exports = function(broccoli){
 							"type":"text",
 							"placeholder": "output file name"
 						})
+						.css({
+							'display': 'inline-block'
+						})
 						.val( (typeof(res.publicFilename)==typeof('') ? res.publicFilename : '') )
 					)
 			);
+			$uiWebResource.append(
+				$('<p>').text('このモードでは、画像リソースを URL で指定します。画像は取得して保存されることはありません。指定したURLが直接参照されます。')
+			);
+			$uiWebResource.append(
+				$('<div>')
+					.append( $('<span>')
+						.text('URL: ')
+					)
+					.append( $inputWebUrl
+						.attr({
+							"name":mod.name+'-webUrl' ,
+							"type":"text",
+							"placeholder": "http://example.com/example.png"
+						})
+						.val( (typeof(data.webUrl)==typeof('') ? data.webUrl : '') )
+					)
+			);
+			rtn.append($uiImageResource).append($uiWebResource);
 			$(elm).html(rtn);
+			selectResourceType();
 
 			// setTimeout(function(){
 				callback();
@@ -413,6 +539,8 @@ module.exports = function(broccoli){
 						resInfo.type = $img.attr('data-mime-type');
 						resInfo.size = $img.attr('data-size');
 						resInfo.base64 = $img.attr('data-base64');
+						resInfo.field = mod.type;
+						resInfo.fieldNote = {}; // <= フィールド記録欄をクリア
 					}
 					resInfo.isPrivateMaterial = false;
 					resInfo.publicFilename = $dom.find('input[name='+mod.name+'-publicFilename]').val();
@@ -427,6 +555,13 @@ module.exports = function(broccoli){
 
 				} ,
 				function(it1, data){
+					data.resType = $dom.find('[name='+mod.name+'-resourceType]:checked').val();
+					data.webUrl = $dom.find('[name='+mod.name+'-webUrl]').val();
+					it1.next(data);
+					return;
+
+				} ,
+				function(it1, data){
 					callback(data);
 					it1.next(data);
 				}
@@ -435,6 +570,133 @@ module.exports = function(broccoli){
 		return;
 	}// this.saveEditorContent()
 
+
+	/**
+	 * リソースを加工する (Server Side)
+	 */
+	this.resourceProcessor = function( path_orig, path_public, resInfo, callback ){
+		// console.log(resInfo);
+		function md5(content){
+			var md5 = require('crypto').createHash('md5');
+			md5.update(content);
+			return md5.digest('hex');
+		}
+		function md5file(path){
+			if(!utils79.is_file(path)){return false;}
+			var content = require('fs').readFileSync( path );
+			return md5(content);
+		}
+
+		resInfo.fieldNote = resInfo.fieldNote || {};
+
+		if( resInfo.fieldNote.origMd5 == resInfo.md5 && resInfo.fieldNote.base64 ){
+			// console.log('変更されていないファイル =-=-=-=-=-=-=-=-=-=-=-=-=');
+			require('fs').writeFileSync(
+				path_public,
+				(new Buffer(resInfo.fieldNote.base64, 'base64'))
+			);
+			callback(true);
+			return;
+		}
+
+		it79.fnc(
+			{},
+			[
+				function(it1, data){
+					// 一旦複製
+					var fsEx = require('fs-extra');
+					setTimeout(function(){
+						fsEx.copySync( path_orig, path_public );
+						it1.next(data);
+						return;
+					}, 0);
+					return;
+				},
+				function(it1, data){
+					// 公開ファイルを加工
+					// ロスレス圧縮処理
+					const imagemin = require(''+'imagemin');
+					const imageminOptipng = require(''+'imagemin-optipng');
+					const imageminJpegtran = require(''+'imagemin-jpegtran');
+					const imageminPngcrush = require(''+'imagemin-pngcrush');
+					const imageminPngquant = require(''+'imagemin-pngquant');
+
+					path_public.match( new RegExp('\\.([a-zA-Z0-9\\_\\-]+?)$') );
+					var ext = (RegExp.$1).toLowerCase();
+					// console.log(path_public);
+					// console.log(utils79.dirname(path_public));
+					// console.log(ext);
+					switch(ext){
+						case 'jpg':
+						case 'jpeg':
+						case 'jpe':
+							new imagemin()
+								.src( [path_public] )
+								.dest( utils79.dirname(path_public) )
+								.use( imageminJpegtran({progressive: true}) )
+								.run(function (err, files) {
+									// console.log('Images optimized (JPEG)');
+									// console.log(err);
+									// console.log(files);
+									it1.next(data);
+									return;
+								})
+							;
+							break;
+
+						case 'png':
+							new imagemin()
+								.src( [path_public] )
+								.dest( utils79.dirname(path_public) )
+								.use( imageminOptipng({optimizationLevel: 7}) ) // 圧縮
+								.use( imageminPngcrush() ) // PNGからメタデータを削除
+								.use( imageminPngquant() ) // 圧縮
+								.run(function (err, files) {
+									// console.log('Images optimized (PNG)');
+									// console.log(err);
+									// console.log(files);
+									it1.next(data);
+									return;
+								})
+							;
+							break;
+
+						default:
+							it1.next(data);
+							break;
+
+					}
+					return;
+				},
+				function(it1, data){
+					// オリジナルのMD5ハッシュを記録
+					if( resInfo.md5 ){
+						resInfo.fieldNote.origMd5 = resInfo.md5;
+					}else{
+						resInfo.fieldNote.origMd5 = md5file(path_orig);
+					}
+
+					// 加工後のファイルの情報を記録
+					var bin = require('fs').readFileSync( path_public );
+					// base64
+					resInfo.fieldNote.base64 = (new Buffer(bin)).toString('base64');
+					// MD5
+					resInfo.fieldNote.md5 = md5(bin);
+					// size
+					resInfo.fieldNote.size = bin.length;
+
+					it1.next(data);
+					return;
+				},
+				function(it1, data){
+					callback(true);
+					return;
+				}
+			]
+		);
+
+		return this;
+	}
 
 	/**
 	 * GPI (Server Side)
