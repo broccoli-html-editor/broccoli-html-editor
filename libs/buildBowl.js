@@ -538,6 +538,9 @@ module.exports = function(broccoli, data, options, callback){
 				mod.finalize( d.html, function(html){
 					d.html = html;
 					it1.next(d);
+				}, {
+					// supplying libs and resources to "finalize.js".
+					'cheerio': require('cheerio')
 				} );
 				return;
 			} ,
