@@ -260,11 +260,13 @@ module.exports = function(broccoli){
 							}
 
 							// フィールド名が記録されていない場合のデフォルトの処理
-							fsEx.copySync(
+							fsEx.copy(
 								_resourcesDirPath+'/'+resKey+'/bin.'+_resourceDb[resKey].ext,
-								_resourcesPublishDirPath+'/'+filename+'.'+_resourceDb[resKey].ext
+								_resourcesPublishDirPath+'/'+filename+'.'+_resourceDb[resKey].ext,
+								function(err){
+									it2.next(res);
+								}
 							);
-							it2.next(res);
 							return;
 						},
 						function(it2, res){

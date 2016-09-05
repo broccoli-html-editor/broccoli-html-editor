@@ -616,11 +616,9 @@ module.exports = function(broccoli){
 					function(it1, data){
 						// 一旦複製
 						var fsEx = require('fs-extra');
-						setTimeout(function(){
-							fsEx.copySync( path_orig, path_public );
+						fsEx.copy( path_orig, path_public, function(err){
 							it1.next(data);
-							return;
-						}, 0);
+						} );
 						return;
 					},
 					function(it1, data){

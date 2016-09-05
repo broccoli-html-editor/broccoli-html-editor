@@ -210,10 +210,9 @@ module.exports = function(broccoli){
 	this.resourceProcessor = function( path_orig, path_public, resInfo, callback ){
 		// ↓デフォルトの処理。オリジナルファイルをそのまま公開パスへ複製する。
 		var fsEx = require('fs-extra');
-		fsEx.copySync( path_orig, path_public );
-		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+		fsEx.copy( path_orig, path_public, function(err){
 			callback(true);
-		}); });
+		} );
 		return this;
 	}
 
