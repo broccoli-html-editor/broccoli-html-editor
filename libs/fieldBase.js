@@ -4,6 +4,7 @@
 module.exports = function(broccoli){
 	// delete(require.cache[require('path').resolve(__filename)]);
 	this.__fieldId__ = null;
+	var Promise = require('es6-promise').Promise;
 	var $ = require('jquery');
 	var utils79 = require('utils79');
 	var editorLib = null;
@@ -27,9 +28,10 @@ module.exports = function(broccoli){
 		if( mode == 'canvas' && !rtn.length ){
 			rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてHTMLコードを編集してください)</span>';
 		}
-		// setTimeout(function(){
+
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 			callback(rtn);
-		// }, 0);
+		}); });
 		return this;
 	}
 
@@ -39,19 +41,21 @@ module.exports = function(broccoli){
 	 */
 	this.mkPreviewHtml = function( fieldData, mod, callback ){
 		var rtn = '';
-		this.bind(fieldData, 'finalize', mod, function(rtn){
-			// console.log(rtn);
-			var $rtn = $('<div>').append(rtn);
-			$rtn.find('*').each(function(){
-				$(this)
-					.removeAttr('style') //スタイル削除しちゃう
-				;
-			});
-			$rtn.find('style').remove(); // styleタグも削除しちゃう
-			rtn = $rtn.html();
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+			this.bind(fieldData, 'finalize', mod, function(rtn){
+				// console.log(rtn);
+				var $rtn = $('<div>').append(rtn);
+				$rtn.find('*').each(function(){
+					$(this)
+						.removeAttr('style') //スタイル削除しちゃう
+					;
+				});
+				$rtn.find('style').remove(); // styleタグも削除しちゃう
+				rtn = $rtn.html();
 
-			callback( rtn );
-		});
+				callback( rtn );
+			});
+		}); });
 		return this;
 	}
 
@@ -135,7 +139,9 @@ module.exports = function(broccoli){
 		}
 		$(elm).html($rtn);
 
-		callback();
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+			callback();
+		}); });
 		return this;
 	}
 
@@ -145,7 +151,9 @@ module.exports = function(broccoli){
 	this.focus = function( elm, callback ){
 		callback = callback || function(){};
 		$(elm).find('textarea, input').eq(0).focus();
-		callback();
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+			callback();
+		}); });
 		return this;
 	}
 
@@ -155,7 +163,9 @@ module.exports = function(broccoli){
 	this.duplicateData = function( data, callback, resources ){
 		callback = callback||function(){};
 		data = JSON.parse( JSON.stringify( data ) );
-		callback(data);
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+			callback(data);
+		}); });
 		return this;
 	}
 
@@ -165,7 +175,9 @@ module.exports = function(broccoli){
 	this.extractResourceId = function( data, callback ){
 		callback = callback||function(){};
 		data = [];
-		callback(data);
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+			callback(data);
+		}); });
 		return this;
 	}
 
@@ -185,7 +197,9 @@ module.exports = function(broccoli){
 		}
 		src = JSON.parse( JSON.stringify(src) );
 
-		callback(src);
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+			callback(src);
+		}); });
 		return this;
 	}
 
@@ -196,9 +210,9 @@ module.exports = function(broccoli){
 		// ↓デフォルトの処理。オリジナルファイルをそのまま公開パスへ複製する。
 		var fsEx = require('fs-extra');
 		fsEx.copySync( path_orig, path_public );
-		setTimeout(function(){
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 			callback(true);
-		}, 0)
+		}); });
 		return this;
 	}
 
@@ -207,7 +221,9 @@ module.exports = function(broccoli){
 	 */
 	this.gpi = function(options, callback){
 		callback = callback || function(){};
-		callback(options);
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+			callback(options);
+		}); });
 		return this;
 	}
 

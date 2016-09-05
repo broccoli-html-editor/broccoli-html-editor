@@ -10,6 +10,7 @@ module.exports = function(broccoli, moduleId, options){
 	var _this = this;
 	options = options || {};
 
+	var Promise = require('es6-promise').Promise;
 	var it79 = require('iterate79');
 	var path = require('path');
 	var php = require('phpjs');
@@ -133,228 +134,231 @@ module.exports = function(broccoli, moduleId, options){
 	 * テンプレートを解析する
 	 */
 	function parseTpl(src, _this, _topThis, callback){
-		callback = callback||function(){};
-		if(src !== null){
-			src = JSON.parse( JSON.stringify( src ) );
-		}
-		_this.template = src;
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 
-		if( _this.path && isDirectory( _this.path ) ){
-			if( isFile( _this.path+'/info.json' ) ){
-				var tmpJson = {};
-				try{
-					tmpJson = JSON.parse( fs.readFileSync( _this.path+'/info.json' ) );
-				}catch(e){
-					console.log( 'module info.json parse error: ' + _this.path+'/info.json' );
-				}
-				if( tmpJson.name ){
-					_this.info.name = tmpJson.name;
-				}
-				if( tmpJson.areaSizeDetection ){
-					_this.info.areaSizeDetection = tmpJson.areaSizeDetection;
-				}
-				if( tmpJson.interface ){
-					if( tmpJson.interface.fields ){
-						_this.fields = tmpJson.interface.fields;
-						for( var tmpIdx in _this.fields ){
-							// name属性を自動補完
-							_this.fields[tmpIdx].name = tmpIdx;
-						}
+			callback = callback||function(){};
+			if(src !== null){
+				src = JSON.parse( JSON.stringify( src ) );
+			}
+			_this.template = src;
+
+			if( _this.path && isDirectory( _this.path ) ){
+				if( isFile( _this.path+'/info.json' ) ){
+					var tmpJson = {};
+					try{
+						tmpJson = JSON.parse( fs.readFileSync( _this.path+'/info.json' ) );
+					}catch(e){
+						console.log( 'module info.json parse error: ' + _this.path+'/info.json' );
 					}
-					if( tmpJson.interface.subModule ){
-						_this.subModule = tmpJson.interface.subModule;
-						for( var tmpIdx in _this.subModule ){
-							for( var tmpIdx2 in _this.subModule[tmpIdx].fields ){
+					if( tmpJson.name ){
+						_this.info.name = tmpJson.name;
+					}
+					if( tmpJson.areaSizeDetection ){
+						_this.info.areaSizeDetection = tmpJson.areaSizeDetection;
+					}
+					if( tmpJson.interface ){
+						if( tmpJson.interface.fields ){
+							_this.fields = tmpJson.interface.fields;
+							for( var tmpIdx in _this.fields ){
 								// name属性を自動補完
-								_this.subModule[tmpIdx].fields[tmpIdx2].name = tmpIdx2;
+								_this.fields[tmpIdx].name = tmpIdx;
+							}
+						}
+						if( tmpJson.interface.subModule ){
+							_this.subModule = tmpJson.interface.subModule;
+							for( var tmpIdx in _this.subModule ){
+								for( var tmpIdx2 in _this.subModule[tmpIdx].fields ){
+									// name属性を自動補完
+									_this.subModule[tmpIdx].fields[tmpIdx2].name = tmpIdx2;
+								}
 							}
 						}
 					}
-				}
-				if( tmpJson.deprecated ){
-					_this.info.deprecated = tmpJson.deprecated;
-				}
-			}
-			_this.thumb = null;
-			if( isFile( _this.path+'/thumb.png' ) ){
-				_this.thumb = (function(){
-					var tmpBin = fs.readFileSync( _this.path+'/thumb.png' ).toString();
-					var tmpBase64;
-					try {
-						tmpBase64 = base64_encode( tmpBin );
-					} catch (e) {
-						console.log('ERROR: base64_encode() FAILED; -> '+_this.path+'/thumb.png');
-						return null;
+					if( tmpJson.deprecated ){
+						_this.info.deprecated = tmpJson.deprecated;
 					}
-					return 'data:image/png;base64,'+tmpBase64;
-				})();
-			}
-		}
-
-		if( src ){
-			_this.isSingleRootElement = (function(tplSrc){
-				// 単一のルート要素を持っているかどうか判定。
-				tplSrc = JSON.parse( JSON.stringify(tplSrc) );
-				tplSrc = tplSrc.replace( new RegExp('\\<\\!\\-\\-[\\s\\S]*?\\-\\-\\>','g'), '' );
-				tplSrc = tplSrc.replace( new RegExp('\\{\\&[\\s\\S]*?\\&\\}','g'), '' );
-				tplSrc = tplSrc.replace( new RegExp('\\r\\n|\\r|\\n','g'), '' );
-				tplSrc = tplSrc.replace( new RegExp('\\t','g'), '' );
-				tplSrc = tplSrc.replace( new RegExp('^[\\s\\r\\n]*'), '' );
-				tplSrc = tplSrc.replace( new RegExp('[\\s\\r\\n]*$'), '' );
-				if( tplSrc.length && tplSrc.indexOf('<') === 0 && tplSrc.match(new RegExp('\\>$')) ){
-					var htmlparser = require('htmlparser');
-					var handler = new htmlparser.DefaultHandler(function (error, dom) {
-						// console.log('htmlparser callback');
-						if (error){
-							// console.log(error);
+				}
+				_this.thumb = null;
+				if( isFile( _this.path+'/thumb.png' ) ){
+					_this.thumb = (function(){
+						var tmpBin = fs.readFileSync( _this.path+'/thumb.png' ).toString();
+						var tmpBase64;
+						try {
+							tmpBase64 = base64_encode( tmpBin );
+						} catch (e) {
+							console.log('ERROR: base64_encode() FAILED; -> '+_this.path+'/thumb.png');
+							return null;
 						}
-					});
-					// console.log('htmlparser after');
-					var parser = new htmlparser.Parser(handler);
-					parser.parseComplete(tplSrc);
-					// console.log(handler.dom);
-
-					if( handler.dom.length == 1 ){
-						return true;
-					}
+						return 'data:image/png;base64,'+tmpBase64;
+					})();
 				}
-				return false;
-			})(src);
-		}
-
-		var field = null;
-
-		if( _topThis.templateType != 'broccoli' ){
-			// テンプレートエンジン(Twigなど)利用の場合の処理
-			if( _this.subModName ){
-				_this.fields = _topThis.subModule[_this.subModName].fields;
 			}
 
-			it79.ary(
-				_this.fields ,
-				function( it2, row, tmpFieldName ){
-					if( row.description ){
-						row.description = markdownSync( row.description );
-					}
-
-					if( _this.fields[tmpFieldName].fieldType == 'loop' ){
-						_this.subModule = _this.subModule || {};
-
-						_topThis.subModule[tmpFieldName] = broccoli.createModuleInstance( _this.id, {
-							"src": '',
-							"subModName": tmpFieldName,
-							"topThis":_topThis
-						} );
-						_topThis.subModule[tmpFieldName].init(function(){
-							it2.next();
+			if( src ){
+				_this.isSingleRootElement = (function(tplSrc){
+					// 単一のルート要素を持っているかどうか判定。
+					tplSrc = JSON.parse( JSON.stringify(tplSrc) );
+					tplSrc = tplSrc.replace( new RegExp('\\<\\!\\-\\-[\\s\\S]*?\\-\\-\\>','g'), '' );
+					tplSrc = tplSrc.replace( new RegExp('\\{\\&[\\s\\S]*?\\&\\}','g'), '' );
+					tplSrc = tplSrc.replace( new RegExp('\\r\\n|\\r|\\n','g'), '' );
+					tplSrc = tplSrc.replace( new RegExp('\\t','g'), '' );
+					tplSrc = tplSrc.replace( new RegExp('^[\\s\\r\\n]*'), '' );
+					tplSrc = tplSrc.replace( new RegExp('[\\s\\r\\n]*$'), '' );
+					if( tplSrc.length && tplSrc.indexOf('<') === 0 && tplSrc.match(new RegExp('\\>$')) ){
+						var htmlparser = require('htmlparser');
+						var handler = new htmlparser.DefaultHandler(function (error, dom) {
+							// console.log('htmlparser callback');
+							if (error){
+								// console.log(error);
+							}
 						});
+						// console.log('htmlparser after');
+						var parser = new htmlparser.Parser(handler);
+						parser.parseComplete(tplSrc);
+						// console.log(handler.dom);
+
+						if( handler.dom.length == 1 ){
+							return true;
+						}
+					}
+					return false;
+				})(src);
+			}
+
+			var field = null;
+
+			if( _topThis.templateType != 'broccoli' ){
+				// テンプレートエンジン(Twigなど)利用の場合の処理
+				if( _this.subModName ){
+					_this.fields = _topThis.subModule[_this.subModName].fields;
+				}
+
+				it79.ary(
+					_this.fields ,
+					function( it2, row, tmpFieldName ){
+						if( row.description ){
+							row.description = markdownSync( row.description );
+						}
+
+						if( _this.fields[tmpFieldName].fieldType == 'loop' ){
+							_this.subModule = _this.subModule || {};
+
+							_topThis.subModule[tmpFieldName] = broccoli.createModuleInstance( _this.id, {
+								"src": '',
+								"subModName": tmpFieldName,
+								"topThis":_topThis
+							} );
+							_topThis.subModule[tmpFieldName].init(function(){
+								it2.next();
+							});
+							return;
+						}
+						it2.next();return;
+					} ,
+					function(){
+						callback(true);
+					}
+				);
+				return;
+
+			}else{
+				// Broccoliエンジン利用の処理
+				function parseBroccoliTemplate(src, callback){
+					if( !src.match(new RegExp('^((?:.|\r|\n)*?)\\{\\&((?:.|\r|\n)*?)\\&\\}((?:.|\r|\n)*)$') ) ){
+						callback();
 						return;
 					}
-					it2.next();return;
-				} ,
-				function(){
-					callback(true);
-				}
-			);
-			return;
+					field = RegExp.$2;
+					src = RegExp.$3;
 
-		}else{
-			// Broccoliエンジン利用の処理
-			function parseBroccoliTemplate(src, callback){
-				if( !src.match(new RegExp('^((?:.|\r|\n)*?)\\{\\&((?:.|\r|\n)*?)\\&\\}((?:.|\r|\n)*)$') ) ){
-					callback();
-					return;
-				}
-				field = RegExp.$2;
-				src = RegExp.$3;
-
-				try{
-					field = JSON.parse( field );
-				}catch(e){
-					console.log( 'module template parse error: ' + _this.templateFilename );
-					field = {'input':{
-						'type':'html',
-						'name':'__error__'
-					}};
-				}
-
-				if( typeof(field) == typeof('') ){
-					// end系：無視
-					parseBroccoliTemplate( src, function(){
-						callback();
-					} );
-					return;
-
-				}else if( field.input ){
-					_this.fields[field.input.name] = field.input;
-					_this.fields[field.input.name].fieldType = 'input';
-
-					if( _this.fields[field.input.name].description ){
-						_this.fields[field.input.name].description = markdownSync( _this.fields[field.input.name].description );
+					try{
+						field = JSON.parse( field );
+					}catch(e){
+						console.log( 'module template parse error: ' + _this.templateFilename );
+						field = {'input':{
+							'type':'html',
+							'name':'__error__'
+						}};
 					}
 
-					parseBroccoliTemplate( src, function(){
-						callback();
-					} );
-					return;
-				}else if( field.module ){
-					_this.fields[field.module.name] = field.module;
-					_this.fields[field.module.name].fieldType = 'module';
-
-					if( _this.fields[field.module.name].description ){
-						_this.fields[field.module.name].description = markdownSync( _this.fields[field.module.name].description );
-					}
-
-					parseBroccoliTemplate( src, function(){
-						callback();
-					} );
-					return;
-				}else if( field.loop ){
-					_this.fields[field.loop.name] = field.loop;
-					_this.fields[field.loop.name].fieldType = 'loop';
-
-					if( _this.fields[field.loop.name].description ){
-						_this.fields[field.loop.name].description = markdownSync( _this.fields[field.loop.name].description );
-					}
-
-					var tmpSearchResult = _this.searchEndTag( src, 'loop' );
-					src = tmpSearchResult.nextSrc;
-					if( typeof(_this.subModule) !== typeof({}) ){
-						_this.subModule = {};
-					}
-					// console.log(' <------- ');
-					// console.log(field.loop.name);
-					// console.log('on '+_topThis.moduleId);
-					// console.log(tmpSearchResult.content);
-					// console.log(' =======> ');
-					_topThis.subModule[field.loop.name] = broccoli.createModuleInstance( _this.id, {
-						"src": tmpSearchResult.content,
-						"subModName": field.loop.name,
-						"topThis":_topThis
-					});
-					_topThis.subModule[field.loop.name].init(function(){
+					if( typeof(field) == typeof('') ){
+						// end系：無視
 						parseBroccoliTemplate( src, function(){
 							callback();
 						} );
-					});
+						return;
 
-					return;
+					}else if( field.input ){
+						_this.fields[field.input.name] = field.input;
+						_this.fields[field.input.name].fieldType = 'input';
 
-				}else{
-					parseBroccoliTemplate( src, function(){
-						callback();
-					} );
-					return;
-				}
-			}//parseBroccoliTemplate()
+						if( _this.fields[field.input.name].description ){
+							_this.fields[field.input.name].description = markdownSync( _this.fields[field.input.name].description );
+						}
 
-			parseBroccoliTemplate( src, function(){
-				callback(true);
-			} );
-			return;
-		}
-		// console.log(_this.fields);
-		// callback(true);
+						parseBroccoliTemplate( src, function(){
+							callback();
+						} );
+						return;
+					}else if( field.module ){
+						_this.fields[field.module.name] = field.module;
+						_this.fields[field.module.name].fieldType = 'module';
+
+						if( _this.fields[field.module.name].description ){
+							_this.fields[field.module.name].description = markdownSync( _this.fields[field.module.name].description );
+						}
+
+						parseBroccoliTemplate( src, function(){
+							callback();
+						} );
+						return;
+					}else if( field.loop ){
+						_this.fields[field.loop.name] = field.loop;
+						_this.fields[field.loop.name].fieldType = 'loop';
+
+						if( _this.fields[field.loop.name].description ){
+							_this.fields[field.loop.name].description = markdownSync( _this.fields[field.loop.name].description );
+						}
+
+						var tmpSearchResult = _this.searchEndTag( src, 'loop' );
+						src = tmpSearchResult.nextSrc;
+						if( typeof(_this.subModule) !== typeof({}) ){
+							_this.subModule = {};
+						}
+						// console.log(' <------- ');
+						// console.log(field.loop.name);
+						// console.log('on '+_topThis.moduleId);
+						// console.log(tmpSearchResult.content);
+						// console.log(' =======> ');
+						_topThis.subModule[field.loop.name] = broccoli.createModuleInstance( _this.id, {
+							"src": tmpSearchResult.content,
+							"subModName": field.loop.name,
+							"topThis":_topThis
+						});
+						_topThis.subModule[field.loop.name].init(function(){
+							parseBroccoliTemplate( src, function(){
+								callback();
+							} );
+						});
+
+						return;
+
+					}else{
+						parseBroccoliTemplate( src, function(){
+							callback();
+						} );
+						return;
+					}
+				}//parseBroccoliTemplate()
+
+				parseBroccoliTemplate( src, function(){
+					callback(true);
+				} );
+				return;
+			}
+			// console.log(_this.fields);
+			// callback(true);
+		}); }); // Promise
 		return;
 	} // parseTpl()
 
@@ -364,10 +368,13 @@ module.exports = function(broccoli, moduleId, options){
 	 * @return {Object}            this.
 	 */
 	this.init = function(callback){
-
 		callback = callback || function(){};
+
 		if( realpath === false && !_this.isSystemModule ){
-			callback(false); return;
+			new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+				callback(false);
+			}); });
+			return;
 		}
 
 		if( moduleId == '_sys/root' ){

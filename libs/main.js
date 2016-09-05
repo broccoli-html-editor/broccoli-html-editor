@@ -13,6 +13,7 @@ module.exports = function(){
 	var it79 = require('iterate79');
 	var fs = require('fs');
 	var _ = require('underscore');
+	var Promise = require('es6-promise').Promise;
 
 	function loadFieldDefinition(){
 		function loadFieldDefinition(fieldId, mod){
@@ -278,7 +279,11 @@ module.exports = function(){
 		var rtn = _moduleCollection[moduleId];
 		if( rtn === false ){
 			// 過去に生成を試みて、falseになっていた場合
-			callback(false);
+			new Promise(function(rlv){rlv();})
+				.then(function(){ return new Promise(function(rlv, rjt){
+					callback(false);
+				}); })
+			;
 			return this;
 		}
 		if( rtn === undefined ){
@@ -287,7 +292,11 @@ module.exports = function(){
 			if( _moduleCollection[moduleId] === false ){
 				// falseの場合、該当するモジュールが定義されていない。
 				// 結果を記憶して、falseを返す。
-				callback(false);
+				new Promise(function(rlv){rlv();})
+					.then(function(){ return new Promise(function(rlv, rjt){
+						callback(false);
+					}); })
+				;
 				return this;
 			}
 
@@ -305,13 +314,25 @@ module.exports = function(){
 		if( typeof(subModName) === typeof('') ){
 			if( !rtn.subModule || !rtn.subModule[subModName] ){
 				console.error('Undefined subModule "'+subModName+'" was called.');
-				callback(false);
+				new Promise(function(rlv){rlv();})
+					.then(function(){ return new Promise(function(rlv, rjt){
+						callback(false);
+					}); })
+				;
 				return this;
 			}
-			callback(rtn.subModule[subModName]);
+			new Promise(function(rlv){rlv();})
+				.then(function(){ return new Promise(function(rlv, rjt){
+					callback(rtn.subModule[subModName]);
+				}); })
+			;
 			return this;
 		}
-		callback(rtn);
+		new Promise(function(rlv){rlv();})
+			.then(function(){ return new Promise(function(rlv, rjt){
+				callback(rtn);
+			}); })
+		;
 		return this;
 	}
 
@@ -335,7 +356,11 @@ module.exports = function(){
 		if(typeof(md)===typeof('')){
 			md = marked(md);
 		}
-		callback(md);
+		new Promise(function(rlv){rlv();})
+			.then(function(){ return new Promise(function(rlv, rjt){
+				callback(md);
+			}); })
+		;
 		return this;
 	}
 

@@ -11,6 +11,7 @@ module.exports = function(broccoli, data, options, callback){
 	options.instancePath = options.instancePath || '';
 	callback = callback || function(){};
 
+	var Promise = require('es6-promise').Promise;
 	var it79 = require('iterate79');
 	var path = require('path');
 	var php = require('phpjs');
