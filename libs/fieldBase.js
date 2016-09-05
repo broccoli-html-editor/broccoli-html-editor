@@ -5,6 +5,7 @@ module.exports = function(broccoli){
 	// delete(require.cache[require('path').resolve(__filename)]);
 	this.__fieldId__ = null;
 	var Promise = require('es6-promise').Promise;
+	var _this = this;
 	var $ = require('jquery');
 	var utils79 = require('utils79');
 	var editorLib = null;
@@ -42,7 +43,7 @@ module.exports = function(broccoli){
 	this.mkPreviewHtml = function( fieldData, mod, callback ){
 		var rtn = '';
 		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
-			this.bind(fieldData, 'finalize', mod, function(rtn){
+			_this.bind(fieldData, 'finalize', mod, function(rtn){
 				// console.log(rtn);
 				var $rtn = $('<div>').append(rtn);
 				$rtn.find('*').each(function(){
