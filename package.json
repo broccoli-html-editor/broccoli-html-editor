@@ -31,7 +31,7 @@
     "imagemin-optipng": "^4.*",
     "imagemin-pngcrush": "^4.*",
     "imagemin-pngquant": "^4.*",
-    "iterate79": "0.0.1",
+    "iterate79": "^0.1.0",
     "jquery": "^2.2.3",
     "markdown": "^0.5.0",
     "marked": "0.3.*",
