@@ -543,6 +543,10 @@ module.exports = function(broccoli){
 				} ,
 				function(it1, data){
 					var $img = $dom.find('img');
+
+					resInfo.field = resInfo.field || mod.type; // フィールド名をセット
+					resInfo.fieldNote = resInfo.fieldNote || {}; // <= フィールド記録欄を初期化
+
 					if( $img.attr('data-is-updated') == 'yes' ){
 						resInfo.ext = $img.attr('data-extension');
 						resInfo.type = $img.attr('data-mime-type');
