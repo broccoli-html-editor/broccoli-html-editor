@@ -10,9 +10,9 @@ var Broccoli = require('../libs/main.js');
 function makeDefaultBroccoli(options, callback){
 	options = options||{};
 	var paths_module_template = options.paths_module_template || {
-		'PlainHTMLElements': '../PlainHTMLElements/',
-		'testMod1': '../modules1/',
-		'testMod2': '../modules2/'
+		'PlainHTMLElements': '../PlainHTMLElements',
+		'testMod1': '../modules1',
+		'testMod2': '../modules2'
 	};
 	var contents_id = options.contents_id||'test1/test1';
 	// console.log(contents_id);
@@ -21,10 +21,10 @@ function makeDefaultBroccoli(options, callback){
 	broccoli.init(
 		{
 			'paths_module_template': paths_module_template,
-			'documentRoot': path.resolve(__dirname, 'testdata/htdocs/')+'/',
-			'pathHtml': '/'+contents_id+'.html',
-			'pathResourceDir': '/'+contents_id+'_files/resources/',
-			'realpathDataDir': path.resolve(__dirname, 'testdata/htdocs/'+contents_id+'_files/guieditor.ignore/')+'/',
+			'documentRoot': require('path').resolve(__dirname, 'testdata/htdocs/'),
+			'pathHtml': require('path').resolve('/'+contents_id+'.html'),
+			'pathResourceDir': require('path').resolve('/'+contents_id+'_files/resources/'),
+			'realpathDataDir': require('path').resolve(__dirname, 'testdata/htdocs/'+contents_id+'_files/guieditor.ignore/'),
 			'customFields': {
 				'custom1': function(broccoli){
 					/**

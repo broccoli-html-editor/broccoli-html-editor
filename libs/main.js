@@ -11,6 +11,7 @@ module.exports = function(){
 	var _this = this;
 	var path = require('path');
 	var it79 = require('iterate79');
+	var utils79 = require('utils79');
 	var fs = require('fs');
 	var _ = require('underscore');
 	var Promise = require('es6-promise').Promise;
@@ -67,13 +68,16 @@ module.exports = function(){
 		}
 
 		for( var i in options.paths_module_template ){
-			options.paths_module_template[i] = path.resolve( options.documentRoot, options.paths_module_template[i] )+'/';
+			options.paths_module_template[i] = path.resolve( options.documentRoot, utils79.normalize_path( options.paths_module_template[i] ) )+'/';
 		}
+
+		options.pathHtml = utils79.normalize_path( path.resolve(options.pathHtml) );
+		options.pathResourceDir = utils79.normalize_path( path.resolve(options.pathResourceDir) );
 
 		this.paths_module_template = options.paths_module_template;
 		this.realpathHtml = path.resolve( options.documentRoot, './'+options.pathHtml );
-		this.realpathResourceDir = path.resolve( options.documentRoot, './'+options.pathResourceDir );
-		this.realpathDataDir = path.resolve( options.realpathDataDir );
+		this.realpathResourceDir = path.resolve( options.documentRoot, './'+options.pathResourceDir )+'/';
+		this.realpathDataDir = path.resolve( options.realpathDataDir )+'/';
 		this.options = options;
 
 		this.resourceMgr = new (require('./resourceMgr.js'))(this);
