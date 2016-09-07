@@ -1,5 +1,6 @@
 module.exports = function(broccoli){
 
+	var Promise = require('es6-promise').Promise;
 	var it79 = require('iterate79');
 	var utils79 = require('utils79');
 	var urlParse = require('url-parse');
@@ -26,63 +27,67 @@ module.exports = function(broccoli){
 			rtn = fieldData;
 		}
 
-		if( rtn.resType == 'web' ){
-			callback(rtn.webUrl);
-			return;
-		}else{
-			it79.fnc(
-				{},
-				[
-					function(it1, data){
-						_resMgr.getResource( rtn.resKey, function(res){
-							data.resourceInfo = res;
-							it1.next(data);
-						} );
-						return;
-					},
-					function(it1, data){
-						_resMgr.getResourcePublicRealpath( rtn.resKey, function(realpath){
-							// console.log(realpath);
-							data.publicRealpath = realpath;
-							it1.next(data);
-						} );
-						return;
-					},
-					function(it1, data){
-						_resMgr.getResourcePublicPath( rtn.resKey, function(publicPath){
-							rtn.path = publicPath;
-							data.path = publicPath;
-							it1.next(data);
-						} );
-					},
-					function(it1, data){
-						// console.log(utils79.is_file(data.publicRealpath));
-						if( mode == 'canvas' ){
-							if( !utils79.is_file(data.publicRealpath) ){
-								// ↓ ダミーの Sample Image
-								data.path = _imgDummy;
-							}else{
-								try {
-									var imageBin = fs.readFileSync(data.publicRealpath);
-									data.path = 'data:'+data.resourceInfo.type+';base64,' + utils79.base64_encode( imageBin );
-								} catch (e) {
-									data.path = false;
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+
+			if( rtn.resType == 'web' ){
+				callback(rtn.webUrl);
+				return;
+			}else{
+				it79.fnc(
+					{},
+					[
+						function(it1, data){
+							_resMgr.getResource( rtn.resKey, function(res){
+								data.resourceInfo = res;
+								it1.next(data);
+							} );
+							return;
+						},
+						function(it1, data){
+							_resMgr.getResourcePublicRealpath( rtn.resKey, function(realpath){
+								// console.log(realpath);
+								data.publicRealpath = realpath;
+								it1.next(data);
+							} );
+							return;
+						},
+						function(it1, data){
+							_resMgr.getResourcePublicPath( rtn.resKey, function(publicPath){
+								rtn.path = publicPath;
+								data.path = publicPath;
+								it1.next(data);
+							} );
+						},
+						function(it1, data){
+							// console.log(utils79.is_file(data.publicRealpath));
+							if( mode == 'canvas' ){
+								if( !utils79.is_file(data.publicRealpath) ){
+									// ↓ ダミーの Sample Image
+									data.path = _imgDummy;
+								}else{
+									try {
+										var imageBin = fs.readFileSync(data.publicRealpath);
+										data.path = 'data:'+data.resourceInfo.type+';base64,' + utils79.base64_encode( imageBin );
+									} catch (e) {
+										data.path = false;
+									}
 								}
 							}
+							if( data.path == false && data.resourceInfo.base64 ){
+								data.path = 'data:'+data.resourceInfo.type+';base64,' + data.resourceInfo.base64;
+							}
+							it1.next(data);
+						},
+						function(it1, data){
+							callback(data.path);
+							it1.next();
 						}
-						if( data.path == false && data.resourceInfo.base64 ){
-							data.path = 'data:'+data.resourceInfo.type+';base64,' + data.resourceInfo.base64;
-						}
-						it1.next(data);
-					},
-					function(it1, data){
-						callback(data.path);
-						it1.next();
-					}
-				]
-			);
+					]
+				);
+				return;
+			}
 			return;
-		}
+		}); });
 		return;
 	}
 
@@ -96,36 +101,40 @@ module.exports = function(broccoli){
 			rtn = fieldData;
 		}
 
-		if( rtn.resType == 'web' ){
-			var $ = cheerio.load('<img>', {decodeEntities: false});
-			$('img')
-				.attr({'src': rtn.webUrl})
-				.css({
-					'max-width': '80px',
-					'max-height': '80px'
-				})
-			;
-			callback( $.html() );
-			return;
-		}else{
-			_resMgr.getResource( rtn.resKey, function(res){
-				var imagePath = 'data:'+res.type+';base64,' + res.base64;
-				if( !res.base64 ){
-					// ↓ ダミーの Sample Image
-					imagePath = _imgDummy;
-				}
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+
+			if( rtn.resType == 'web' ){
 				var $ = cheerio.load('<img>', {decodeEntities: false});
 				$('img')
-					.attr({'src': imagePath})
+					.attr({'src': rtn.webUrl})
 					.css({
 						'max-width': '80px',
 						'max-height': '80px'
 					})
 				;
 				callback( $.html() );
-			} );
+				return;
+			}else{
+				_resMgr.getResource( rtn.resKey, function(res){
+					var imagePath = 'data:'+res.type+';base64,' + res.base64;
+					if( !res.base64 ){
+						// ↓ ダミーの Sample Image
+						imagePath = _imgDummy;
+					}
+					var $ = cheerio.load('<img>', {decodeEntities: false});
+					$('img')
+						.attr({'src': imagePath})
+						.css({
+							'max-width': '80px',
+							'max-height': '80px'
+						})
+					;
+					callback( $.html() );
+				} );
+				return;
+			}
 			return;
-		}
+		}); });
 		return;
 	}// mkPreviewHtml()
 
@@ -534,6 +543,10 @@ module.exports = function(broccoli){
 				} ,
 				function(it1, data){
 					var $img = $dom.find('img');
+
+					resInfo.field = resInfo.field || mod.type; // フィールド名をセット
+					resInfo.fieldNote = resInfo.fieldNote || {}; // <= フィールド記録欄を初期化
+
 					if( $img.attr('data-is-updated') == 'yes' ){
 						resInfo.ext = $img.attr('data-extension');
 						resInfo.type = $img.attr('data-mime-type');
@@ -589,111 +602,112 @@ module.exports = function(broccoli){
 
 		resInfo.fieldNote = resInfo.fieldNote || {};
 
-		if( resInfo.fieldNote.origMd5 == resInfo.md5 && resInfo.fieldNote.base64 ){
-			// console.log('変更されていないファイル =-=-=-=-=-=-=-=-=-=-=-=-=');
-			require('fs').writeFileSync(
-				path_public,
-				(new Buffer(resInfo.fieldNote.base64, 'base64'))
-			);
-			callback(true);
-			return;
-		}
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 
-		it79.fnc(
-			{},
-			[
-				function(it1, data){
-					// 一旦複製
-					var fsEx = require('fs-extra');
-					setTimeout(function(){
-						fsEx.copySync( path_orig, path_public );
+			if( resInfo.fieldNote.origMd5 == resInfo.md5 && resInfo.fieldNote.base64 ){
+				// console.log('変更されていないファイル =-=-=-=-=-=-=-=-=-=-=-=-=');
+				require('fs').writeFileSync(
+					path_public,
+					(new Buffer(resInfo.fieldNote.base64, 'base64'))
+				);
+				callback(true);
+				return;
+			}
+
+			it79.fnc(
+				{},
+				[
+					function(it1, data){
+						// 一旦複製
+						var fsEx = require('fs-extra');
+						fsEx.copy( path_orig, path_public, function(err){
+							it1.next(data);
+						} );
+						return;
+					},
+					function(it1, data){
+						// 公開ファイルを加工
+						// ロスレス圧縮処理
+						const imagemin = require(''+'imagemin');
+						const imageminOptipng = require(''+'imagemin-optipng');
+						const imageminJpegtran = require(''+'imagemin-jpegtran');
+						const imageminPngcrush = require(''+'imagemin-pngcrush');
+						const imageminPngquant = require(''+'imagemin-pngquant');
+
+						path_public.match( new RegExp('\\.([a-zA-Z0-9\\_\\-]+?)$') );
+						var ext = (RegExp.$1).toLowerCase();
+						// console.log(path_public);
+						// console.log(utils79.dirname(path_public));
+						// console.log(ext);
+						switch(ext){
+							case 'jpg':
+							case 'jpeg':
+							case 'jpe':
+								new imagemin()
+									.src( [path_public] )
+									.dest( utils79.dirname(path_public) )
+									.use( imageminJpegtran({progressive: true}) )
+									.run(function (err, files) {
+										// console.log('Images optimized (JPEG)');
+										// console.log(err);
+										// console.log(files);
+										it1.next(data);
+										return;
+									})
+								;
+								break;
+
+							case 'png':
+								new imagemin()
+									.src( [path_public] )
+									.dest( utils79.dirname(path_public) )
+									.use( imageminOptipng({optimizationLevel: 7}) ) // 圧縮
+									.use( imageminPngcrush() ) // PNGからメタデータを削除
+									.use( imageminPngquant() ) // 圧縮
+									.run(function (err, files) {
+										// console.log('Images optimized (PNG)');
+										// console.log(err);
+										// console.log(files);
+										it1.next(data);
+										return;
+									})
+								;
+								break;
+
+							default:
+								it1.next(data);
+								break;
+
+						}
+						return;
+					},
+					function(it1, data){
+						// オリジナルのMD5ハッシュを記録
+						if( resInfo.md5 ){
+							resInfo.fieldNote.origMd5 = resInfo.md5;
+						}else{
+							resInfo.fieldNote.origMd5 = md5file(path_orig);
+						}
+
+						// 加工後のファイルの情報を記録
+						var bin = require('fs').readFileSync( path_public );
+						// base64
+						resInfo.fieldNote.base64 = (new Buffer(bin)).toString('base64');
+						// MD5
+						resInfo.fieldNote.md5 = md5(bin);
+						// size
+						resInfo.fieldNote.size = bin.length;
+
 						it1.next(data);
 						return;
-					}, 0);
-					return;
-				},
-				function(it1, data){
-					// 公開ファイルを加工
-					// ロスレス圧縮処理
-					const imagemin = require(''+'imagemin');
-					const imageminOptipng = require(''+'imagemin-optipng');
-					const imageminJpegtran = require(''+'imagemin-jpegtran');
-					const imageminPngcrush = require(''+'imagemin-pngcrush');
-					const imageminPngquant = require(''+'imagemin-pngquant');
-
-					path_public.match( new RegExp('\\.([a-zA-Z0-9\\_\\-]+?)$') );
-					var ext = (RegExp.$1).toLowerCase();
-					// console.log(path_public);
-					// console.log(utils79.dirname(path_public));
-					// console.log(ext);
-					switch(ext){
-						case 'jpg':
-						case 'jpeg':
-						case 'jpe':
-							new imagemin()
-								.src( [path_public] )
-								.dest( utils79.dirname(path_public) )
-								.use( imageminJpegtran({progressive: true}) )
-								.run(function (err, files) {
-									// console.log('Images optimized (JPEG)');
-									// console.log(err);
-									// console.log(files);
-									it1.next(data);
-									return;
-								})
-							;
-							break;
-
-						case 'png':
-							new imagemin()
-								.src( [path_public] )
-								.dest( utils79.dirname(path_public) )
-								.use( imageminOptipng({optimizationLevel: 7}) ) // 圧縮
-								.use( imageminPngcrush() ) // PNGからメタデータを削除
-								.use( imageminPngquant() ) // 圧縮
-								.run(function (err, files) {
-									// console.log('Images optimized (PNG)');
-									// console.log(err);
-									// console.log(files);
-									it1.next(data);
-									return;
-								})
-							;
-							break;
-
-						default:
-							it1.next(data);
-							break;
-
+					},
+					function(it1, data){
+						callback(true);
+						return;
 					}
-					return;
-				},
-				function(it1, data){
-					// オリジナルのMD5ハッシュを記録
-					if( resInfo.md5 ){
-						resInfo.fieldNote.origMd5 = resInfo.md5;
-					}else{
-						resInfo.fieldNote.origMd5 = md5file(path_orig);
-					}
-
-					// 加工後のファイルの情報を記録
-					var bin = require('fs').readFileSync( path_public );
-					// base64
-					resInfo.fieldNote.base64 = (new Buffer(bin)).toString('base64');
-					// MD5
-					resInfo.fieldNote.md5 = md5(bin);
-					// size
-					resInfo.fieldNote.size = bin.length;
-
-					it1.next(data);
-					return;
-				},
-				function(it1, data){
-					callback(true);
-					return;
-				}
-			]
-		);
+				]
+			);
+		}); });
 
 		return this;
 	}
@@ -751,24 +765,27 @@ module.exports = function(broccoli){
 			return;
 		}
 
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 
-		switch(options.api){
-			case 'getImageByUrl':
-				// console.log(options.data);
-				var result = {};
-				httpRequest( options.data.url, {}, function(data, status, responseHeaders){
-					result.base64 = utils79.base64_encode(data);
-					result.status = status;
-					result.responseHeaders = responseHeaders;
-					// console.log(result);
-					callback(result);
-				} );
-				break;
+			switch(options.api){
+				case 'getImageByUrl':
+					// console.log(options.data);
+					var result = {};
+					httpRequest( options.data.url, {}, function(data, status, responseHeaders){
+						result.base64 = utils79.base64_encode(data);
+						result.status = status;
+						result.responseHeaders = responseHeaders;
+						// console.log(result);
+						callback(result);
+					} );
+					break;
 
-			default:
-				callback('ERROR: Unknown API');
-				break;
-		}
+				default:
+					callback('ERROR: Unknown API');
+					break;
+			}
+
+		}); });
 
 		return this;
 	}

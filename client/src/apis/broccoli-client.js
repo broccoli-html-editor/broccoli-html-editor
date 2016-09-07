@@ -341,12 +341,14 @@
 					function( it1, data ){
 						// インスタンスツリービュー描画
 						_this.instanceTreeView.update( function(){
+							// console.log('broccoli: instanceTreeView redoraw : done.');
 							it1.next(data);
 						} );
 					} ,
 					function( it1, data ){
 						// インスタンスパスビューを更新
 						_this.instancePathView.update( function(){
+							// console.log('broccoli: instancePathView redoraw : done.');
 							it1.next(data);
 						} );
 					} ,

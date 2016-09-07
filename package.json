@@ -31,7 +31,8 @@
     "imagemin-optipng": "^4.*",
     "imagemin-pngcrush": "^4.*",
     "imagemin-pngquant": "^4.*",
-    "iterate79": "0.0.1",
+    "iterate79": "^0.1.0",
+    "jquery": "^2.2.3",
     "markdown": "^0.5.0",
     "marked": "0.3.*",
     "mkdirp": "^0.5.1",
@@ -40,7 +41,7 @@
     "twig": "^0.8.2",
     "underscore": "^1.8.3",
     "url-parse": "^1.1.1",
-    "utils79": "0.0.1-alpha.2"
+    "utils79": "^0.0.1"
   },
   "devDependencies": {
     "biflora": "0.0.1-alpha.1",
@@ -55,7 +56,6 @@
     "gulp-sass": "^2.0.1",
     "gulp-twig": "^0.3.0",
     "gulp-uglify": "^1.2.0",
-    "jquery": "^2.2.3",
     "mocha": "^2.1.0",
     "px2style": "file:submodules/px2style"
   }

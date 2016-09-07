@@ -4,6 +4,7 @@
 module.exports = function(broccoli){
 	delete(require.cache[require('path').resolve(__filename)]);
 
+	var Promise = require('es6-promise').Promise;
 	var path = require('path');
 	var fs = require('fs');
 	var fsEx = require('fs-extra');
@@ -111,7 +112,11 @@ module.exports = function(broccoli){
 			if( !isDirectory( _resourcesDirPath ) ){
 				// リソースディレクトリが存在しない場合、
 				// この段階ではムリに作成しない。
-				callback();
+				new Promise(function(rlv){rlv();})
+					.then(function(){ return new Promise(function(rlv, rjt){
+						callback();
+					}); })
+				;
 				return;
 			}
 
@@ -131,7 +136,11 @@ module.exports = function(broccoli){
 			}
 		} catch (e) {
 		}
-		callback();
+		new Promise(function(rlv){rlv();})
+			.then(function(){ return new Promise(function(rlv, rjt){
+				callback();
+			}); })
+		;
 		return;
 	}
 
@@ -251,11 +260,13 @@ module.exports = function(broccoli){
 							}
 
 							// フィールド名が記録されていない場合のデフォルトの処理
-							fsEx.copySync(
+							fsEx.copy(
 								_resourcesDirPath+'/'+resKey+'/bin.'+_resourceDb[resKey].ext,
-								_resourcesPublishDirPath+'/'+filename+'.'+_resourceDb[resKey].ext
+								_resourcesPublishDirPath+'/'+filename+'.'+_resourceDb[resKey].ext,
+								function(err){
+									it2.next(res);
+								}
 							);
-							it2.next(res);
 							return;
 						},
 						function(it2, res){
@@ -279,7 +290,11 @@ module.exports = function(broccoli){
 			function(){
 				// console.log('resourceMgr.save() done.');
 				// console.log( (Date.now() - logStartTime)/1000 ); // debug code
-				callback(true);
+				new Promise(function(rlv){rlv();})
+					.then(function(){ return new Promise(function(rlv, rjt){
+						callback(true);
+					}); })
+				;
 				return;
 			}
 		);
@@ -327,7 +342,11 @@ module.exports = function(broccoli){
 			''
 		);
 
-		callback( newResKey );
+		new Promise(function(rlv){rlv();})
+			.then(function(){ return new Promise(function(rlv, rjt){
+				callback( newResKey );
+			}); })
+		;
 		return this;
 	}
 
@@ -336,7 +355,11 @@ module.exports = function(broccoli){
 	 */
 	this.getResourceDb = function( callback ){
 		callback = callback || function(){};
-		callback(_resourceDb);
+		new Promise(function(rlv){rlv();})
+			.then(function(){ return new Promise(function(rlv, rjt){
+				callback(_resourceDb);
+			}); })
+		;
 		return this;
 	}
 
@@ -350,7 +373,11 @@ module.exports = function(broccoli){
 			callback(false);
 			return this;
 		}
-		callback(_resourceDb[resKey]);
+		new Promise(function(rlv){rlv();})
+			.then(function(){ return new Promise(function(rlv, rjt){
+				callback(_resourceDb[resKey]);
+			}); })
+		;
 		return this;
 	}
 
@@ -363,7 +390,11 @@ module.exports = function(broccoli){
 		// console.log( resKey );
 		if( typeof(_resourceDb[resKey]) !== typeof({}) ){
 			// 未登録の resKey
-			callback(false);
+			new Promise(function(rlv){rlv();})
+				.then(function(){ return new Promise(function(rlv, rjt){
+					callback(false);
+				}); })
+			;
 			return this;
 		}
 		this.addResource(function(newResKey){
@@ -408,7 +439,11 @@ module.exports = function(broccoli){
 		callback = callback || function(){};
 		if( typeof(_resourceDb[resKey]) !== typeof({}) ){
 			// 未登録の resKey
-			callback(false);
+			new Promise(function(rlv){rlv();})
+				.then(function(){ return new Promise(function(rlv, rjt){
+					callback(false);
+				}); })
+			;
 			return this;
 		}
 		_resourceDb[resKey] = resInfo;
@@ -429,7 +464,11 @@ module.exports = function(broccoli){
 			bin
 		);
 
-		callback(true);
+		new Promise(function(rlv){rlv();})
+			.then(function(){ return new Promise(function(rlv, rjt){
+				callback(true);
+			}); })
+		;
 		return this;
 	}
 
@@ -461,7 +500,9 @@ module.exports = function(broccoli){
 		callback = callback || function(){};
 		if( typeof(_resourceDb[resKey]) !== typeof({}) ){
 			// 未登録の resKey
-			callback(false);
+			new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+				callback(false);
+			}); });
 			return this;
 		}
 		this.getResourceOriginalRealpath( resKey, function(realpath){
@@ -560,7 +601,9 @@ module.exports = function(broccoli){
 			rmdir_r( _resourcesDirPath+'/'+resKey+'/' );
 		}
 
-		callback(true);
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+			callback(true);
+		}); });
 		return this;
 	}
 

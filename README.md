@@ -243,6 +243,7 @@ $ npm test
 - imageフィールドに、JPEG, PNG 画像の自動ロスレス圧縮機能を追加。
 - imageフィールドに、ウェブ上のURLを直接参照できる機能を追加。
 - buildCss() が、モジュールのCSSに含まれる `url()` を base64 に置き換えてビルドするようになった。
+- finalize.js の第3引数に、ライブラリやリソースを供給する `supply` を追加。この中に含まれる `cheerio` を利用できるようになった。
 
 ### broccoli-html-editor@0.1.0-beta.10 (2016年8月3日)
 

@@ -11,8 +11,10 @@ module.exports = function(){
 	var _this = this;
 	var path = require('path');
 	var it79 = require('iterate79');
+	var utils79 = require('utils79');
 	var fs = require('fs');
 	var _ = require('underscore');
+	var Promise = require('es6-promise').Promise;
 
 	function loadFieldDefinition(){
 		function loadFieldDefinition(fieldId, mod){
@@ -66,13 +68,16 @@ module.exports = function(){
 		}
 
 		for( var i in options.paths_module_template ){
-			options.paths_module_template[i] = path.resolve( options.documentRoot, options.paths_module_template[i] )+'/';
+			options.paths_module_template[i] = path.resolve( options.documentRoot, utils79.normalize_path( options.paths_module_template[i] ) )+'/';
 		}
+
+		options.pathHtml = utils79.normalize_path( path.resolve(options.pathHtml) );
+		options.pathResourceDir = utils79.normalize_path( path.resolve(options.pathResourceDir) );
 
 		this.paths_module_template = options.paths_module_template;
 		this.realpathHtml = path.resolve( options.documentRoot, './'+options.pathHtml );
-		this.realpathResourceDir = path.resolve( options.documentRoot, './'+options.pathResourceDir );
-		this.realpathDataDir = path.resolve( options.realpathDataDir );
+		this.realpathResourceDir = path.resolve( options.documentRoot, './'+options.pathResourceDir )+'/';
+		this.realpathDataDir = path.resolve( options.realpathDataDir )+'/';
 		this.options = options;
 
 		this.resourceMgr = new (require('./resourceMgr.js'))(this);
@@ -278,7 +283,11 @@ module.exports = function(){
 		var rtn = _moduleCollection[moduleId];
 		if( rtn === false ){
 			// 過去に生成を試みて、falseになっていた場合
-			callback(false);
+			new Promise(function(rlv){rlv();})
+				.then(function(){ return new Promise(function(rlv, rjt){
+					callback(false);
+				}); })
+			;
 			return this;
 		}
 		if( rtn === undefined ){
@@ -287,7 +296,11 @@ module.exports = function(){
 			if( _moduleCollection[moduleId] === false ){
 				// falseの場合、該当するモジュールが定義されていない。
 				// 結果を記憶して、falseを返す。
-				callback(false);
+				new Promise(function(rlv){rlv();})
+					.then(function(){ return new Promise(function(rlv, rjt){
+						callback(false);
+					}); })
+				;
 				return this;
 			}
 
@@ -305,13 +318,25 @@ module.exports = function(){
 		if( typeof(subModName) === typeof('') ){
 			if( !rtn.subModule || !rtn.subModule[subModName] ){
 				console.error('Undefined subModule "'+subModName+'" was called.');
-				callback(false);
+				new Promise(function(rlv){rlv();})
+					.then(function(){ return new Promise(function(rlv, rjt){
+						callback(false);
+					}); })
+				;
 				return this;
 			}
-			callback(rtn.subModule[subModName]);
+			new Promise(function(rlv){rlv();})
+				.then(function(){ return new Promise(function(rlv, rjt){
+					callback(rtn.subModule[subModName]);
+				}); })
+			;
 			return this;
 		}
-		callback(rtn);
+		new Promise(function(rlv){rlv();})
+			.then(function(){ return new Promise(function(rlv, rjt){
+				callback(rtn);
+			}); })
+		;
 		return this;
 	}
 
@@ -335,7 +360,11 @@ module.exports = function(){
 		if(typeof(md)===typeof('')){
 			md = marked(md);
 		}
-		callback(md);
+		new Promise(function(rlv){rlv();})
+			.then(function(){ return new Promise(function(rlv, rjt){
+				callback(md);
+			}); })
+		;
 		return this;
 	}
 

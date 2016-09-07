@@ -5,6 +5,7 @@ module.exports = function(broccoli){
 	delete(require.cache[require('path').resolve(__filename)]);
 
 	var _this = this;
+	var Promise = require('es6-promise').Promise;
 	var utils79 = require('utils79');
 	var it79 = require('iterate79');
 	var path = require('path');
@@ -135,12 +136,14 @@ module.exports = function(broccoli){
 			}
 			$rtn += ')';
 
-			setTimeout(function(){
+			new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 				replaceLoop();
-			}, 0);
+			}); });
 		}
-		replaceLoop();
 
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+			replaceLoop();
+		}); });
 		return;
 	}
 
@@ -163,7 +166,9 @@ module.exports = function(broccoli){
 		}
 		// $rtn = trim($rtn);
 
-		callback($rtn);
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+			callback($rtn);
+		}); });
 		return this;
 	}
 
