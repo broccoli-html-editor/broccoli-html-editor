@@ -184,6 +184,18 @@ module.exports = function(broccoli){
 
 
 	/**
+	 * エディタUIで編集した内容を検証する (Client Side)
+	 */
+	this.validateEditorContent = function( elm, data, mod, callback ){
+		var errorMsgs = [];
+		// errorMsgs.push('エラーがあります。');
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+			callback( errorMsgs );
+		}); });
+		return this;
+	}
+
+	/**
 	 * エディタUIで編集した内容を保存 (Client Side)
 	 */
 	this.saveEditorContent = function( elm, data, mod, callback ){
