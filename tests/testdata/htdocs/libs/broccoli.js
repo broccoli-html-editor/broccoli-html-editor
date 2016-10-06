@@ -2286,7 +2286,10 @@ module.exports = function(broccoli){
 		// moduleフィールド、loopフィールドの内容を更新する
 		function updateModuleAndLoopField( instancePath, callback ){
 			console.log('updateModuleAndLoopField();');
-			callback = callback || function(){};
+			callback = callback || function(res, callback){
+				callback = callback || function(){};
+				return;
+			};
 			var data = broccoli.contentsSourceData.get(instancePath);
 			// console.log( data );
 			var mod = initMod(data);
@@ -2333,15 +2336,22 @@ module.exports = function(broccoli){
 										})
 										.bind('dblclick', function(e){
 											var $this = $(this);
-											var childInstancePath = $this.attr('data-broccoli-instance-path');
-											// alert(childInstancePath);
 											_this.lock();//フォームをロック
-											saveInstance(instancePath, mod, data, function(res){
-												callback(res, function(){
-													// インスタンス instancePath の変更を保存し、
-													// 一旦編集ウィンドウを閉じたあと、
-													// childInstancePath の編集画面を開く。
-													broccoli.editInstance(childInstancePath);
+											validateInstance(instancePath, mod, data, function(res){
+												if( !res ){
+													// エラーがあるため次へ進めない
+													_this.unlock();
+													return;
+												}
+												saveInstance(instancePath, mod, data, function(res){
+													callback(res, function(){
+														// インスタンス instancePath の変更を保存し、
+														// 一旦編集ウィンドウを閉じたあと、
+														// childInstancePath の編集画面を開く。
+														var childInstancePath = $this.attr('data-broccoli-instance-path');
+														// alert(childInstancePath);
+														broccoli.editInstance(childInstancePath);
+													});
 												});
 											});
 
@@ -2571,9 +2581,17 @@ module.exports = function(broccoli){
 
 							_this.lock();//フォームをロック
 							broccoli.progress();
-							saveInstance(instancePath, mod, data, function(res){
-								broccoli.closeProgress();
-								callback(res);
+							validateInstance(instancePath, mod, data, function(res){
+								if( !res ){
+									// エラーがあるため次へ進めない
+									_this.unlock();
+									broccoli.closeProgress();
+									return;
+								}
+								saveInstance(instancePath, mod, data, function(res){
+									broccoli.closeProgress();
+									callback(res);
+								});
 							});
 
 						})
@@ -2610,6 +2628,45 @@ module.exports = function(broccoli){
 		);
 		return this;
 	}
+
+	/**
+	 * インスタンスの編集内容を検証する
+	 */
+	function validateInstance( instancePath, mod, data, callback ){
+		var errors = {};
+		var isError = false;
+		it79.ary(
+			mod.fields,
+			function(it2, field2, fieldName2){
+				var $dom = $editWindow.find('[data-broccoli-edit-window-field-name='+field2.name+']');
+				if( $dom.attr('data-broccoli-edit-window-field-type') != 'input' ){
+					it2.next();return;
+				}
+				var fieldDefinition = broccoli.getFieldDefinition(field2.type);
+				fieldDefinition.validateEditorContent($dom.get(0), data.fields[fieldName2], mod.fields[fieldName2], function(errorMsgs){
+					if( typeof(errorMsgs)==typeof([]) && errorMsgs.length ){
+						isError = true;
+						errors[fieldName2] = errorMsgs;
+					}else if( typeof(errorMsgs)==typeof('') && errorMsgs.length ){
+						isError = true;
+						errors[fieldName2] = [errorMsgs];
+					}
+					it2.next();
+				});
+				return;
+			},
+			function(){
+				if( isError ){
+					console.info('ERROR:', errors);
+					broccoli.message('入力エラーがあります。確認してください。');
+				}
+				callback( !isError );
+				return;
+			}
+		);
+
+		return;
+	} // validateInstance()
 
 	/**
 	 * インスタンスの編集を保存する
@@ -2656,7 +2713,7 @@ module.exports = function(broccoli){
 		);
 
 		return;
-	}
+	} // saveInstance()
 
 	/**
 	 * フォーム操作を凍結する
@@ -4435,6 +4492,18 @@ module.exports = function(broccoli){
 		return this;
 	}
 
+
+	/**
+	 * エディタUIで編集した内容を検証する (Client Side)
+	 */
+	this.validateEditorContent = function( elm, data, mod, callback ){
+		var errorMsgs = [];
+		// errorMsgs.push('エラーがあります。');
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+			callback( errorMsgs );
+		}); });
+		return this;
+	}
 
 	/**
 	 * エディタUIで編集した内容を保存 (Client Side)

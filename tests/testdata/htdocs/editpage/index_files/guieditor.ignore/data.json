@@ -63,6 +63,38 @@
             "subModName": "sample_loop2",
             "anchor": "",
             "dec": ""
+           },
+           {
+            "modId": "testMod1:dev/mod_in_loop",
+            "fields": {
+             "sample_loop3": [
+              {
+               "modId": "testMod1:dev/mod_in_loop",
+               "fields": {
+                "multitext_src3": {
+                 "src": "",
+                 "editor": "markdown"
+                },
+                "main": []
+               },
+               "subModName": "sample_loop3"
+              },
+              {
+               "modId": "testMod1:dev/mod_in_loop",
+               "fields": {
+                "multitext_src3": {
+                 "src": "",
+                 "editor": "markdown"
+                },
+                "main": []
+               },
+               "subModName": "sample_loop3"
+              }
+             ]
+            },
+            "subModName": "sample_loop2",
+            "anchor": "",
+            "dec": ""
            }
           ]
          },
@@ -349,7 +381,9 @@
               }
              ]
             },
-            "subModName": "sample_loop1"
+            "subModName": "sample_loop1",
+            "anchor": "",
+            "dec": ""
            },
            {
             "modId": "testMod1:parts/deeploop",
@@ -368,7 +402,9 @@
             "subModName": "sample_loop1"
            }
           ]
-         }
+         },
+         "anchor": "",
+         "dec": ""
         },
         {
          "modId": "testMod1:parts/md",
@@ -1037,19 +1073,6 @@
    "modId": "_sys/root",
    "fields": {
     "main": [
-     {
-      "modId": "PlainHTMLElements:PlainHTML/image",
-      "fields": {
-       "href": "",
-       "image_src": {
-        "resKey": "",
-        "path": "about:blank",
-        "resType": "",
-        "webUrl": ""
-       },
-       "alt_text": ""
-      }
-     },
      {
       "modId": "testMod1:units/unit",
       "fields": {
