@@ -15,8 +15,7 @@
   box-sizing: border-box;
   -webkit-box-align: stretch;
   -ms-flex-align: stretch;
-  -webkit-align-items: stretch;
-          align-items: stretch;
+  align-items: stretch;
   font-family: sans-serif; }
 
 .broccoli .px2-btn:focus, .broccoli .px2-btn:hover {

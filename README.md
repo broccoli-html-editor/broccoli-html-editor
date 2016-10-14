@@ -201,6 +201,7 @@ coming soon.
 - focus(elm, callback) - エディタUIにフォーカス (Client Side)
 - duplicateData(data, callback) - データを複製する (Client Side)
 - extractResourceId(data, callback) - データから使用するリソースのリソースIDを抽出する (Client Side)
+- validateEditorContent(elm, data, mod, callback) - エディタUIで編集した内容を検証する (Client Side)
 - saveEditorContent(elm, data, mod, callback) - エディタUIで編集した内容を保存 (Client Side)
 - resourceProcessor(path_orig, path_public, resInfo, callback) - リソースを加工する (Server Side)
 - gpi(options, callback) - GPI (Server Side)
@@ -240,10 +241,12 @@ $ npm test
 
 - モジュール設定 `deprecated` を追加。非推奨のモジュールに `true` をセットすると、モジュールパレットに表示されなくなる。
 - サーバーサイドに新しいAPI `broccoli.updateContents()` を追加。
+- クライアントサイドの新しいフィールドAPI `validateEditorContent()` を追加。
 - imageフィールドに、JPEG, PNG 画像の自動ロスレス圧縮機能を追加。
 - imageフィールドに、ウェブ上のURLを直接参照できる機能を追加。
 - buildCss() が、モジュールのCSSに含まれる `url()` を base64 に置き換えてビルドするようになった。
 - finalize.js の第3引数に、ライブラリやリソースを供給する `supply` を追加。この中に含まれる `cheerio` を利用できるようになった。
+- ライトボックス表示中のtabキーによるフォーカス操作を改善。ライトボックス以外の領域にフォーカスしないようにした。
 
 ### broccoli-html-editor@0.1.0-beta.10 (2016年8月3日)
 

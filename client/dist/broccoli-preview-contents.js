@@ -29,6 +29,10 @@
 		);
 	}
 
+	function tabCancel(){
+		$('body *').attr({'tabindex':'-1'});
+	}
+
 	window.addEventListener('message',function(event){
 		var data=event.data;
 		_origin = event.origin;
@@ -50,6 +54,7 @@
 					}
 				})
 			;
+			tabCancel();
 			callbackMessage(data.callback, true);
 			return;
 
@@ -152,6 +157,7 @@
 		callbackMessage( 'onClickContentsLink', data );
 		return false;
 	});
+	tabCancel();
 
 })();
 

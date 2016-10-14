@@ -796,6 +796,7 @@
 		this.lightbox = function( callback ){
 			callback = callback||function(){};
 			$('body').find('.broccoli--lightbox').remove();//一旦削除
+			$('.broccoli *').attr({'tabindex':'-1'});
 			$('body')
 				.append( $('<div class="broccoli broccoli--lightbox">')
 					.append( $('<div class="broccoli--lightbox-inner">')
@@ -817,6 +818,7 @@
 					'fast',
 					function(){
 						$(this).remove();
+						$('.broccoli *').removeAttr('tabindex');
 						callback();
 					}
 				)
