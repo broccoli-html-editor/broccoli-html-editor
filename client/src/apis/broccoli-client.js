@@ -116,6 +116,27 @@
 			}
 			loadFieldDefinition();
 
+			function bindDropCancel(elm){
+				$(elm)
+					.bind('dragover', function(e){
+						e.stopPropagation();
+						e.preventDefault();
+						return;
+					})
+					.bind('drop', function(e){
+						var event = e.originalEvent;
+						var fileInfo = event.dataTransfer.files[0];
+						e.stopPropagation();
+						e.preventDefault();
+						return;
+					})
+				;
+			}
+			bindDropCancel($canvas);
+			bindDropCancel(options.elmInstancePathView);
+			bindDropCancel(options.elmInstanceTreeView);
+			bindDropCancel(options.elmModulePalette);
+
 			it79.fnc(
 				{},
 				[

@@ -113,6 +113,7 @@ module.exports = function(broccoli){
 	this.onDrop = function(e, elm, callback){
 		callback = callback || function(){};
 		e.stopPropagation();
+		e.preventDefault();
 		var event = e.originalEvent;
 		$(elm).removeClass('broccoli--panel__drag-entered');
 		var method = event.dataTransfer.getData("method");
