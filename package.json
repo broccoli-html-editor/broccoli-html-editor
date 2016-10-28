@@ -5,6 +5,7 @@
   "private": true,
   "main": "libs/main.js",
   "scripts": {
+    "preinstall": "git submodule update --init --recursive --force",
     "start": "gulp watch",
     "up": "node ./tests/biflora/server.js",
     "submodules-update": "rm -rfv node_modules/px2style; npm install; gulp;",
