@@ -80,9 +80,11 @@ module.exports = function(broccoli, callback){
 							thumb = d.thumb;
 						}
 						if(thumb){
-							rtn += '<img src="'+php.htmlspecialchars( thumb )+'" alt="'+php.htmlspecialchars( label )+'" style="width:35px; margin-right:5px;" />';
+							rtn += '<span class="broccoli--module-palette--draggablebutton-thumb"><img src="'+php.htmlspecialchars( thumb )+'" alt="'+php.htmlspecialchars( label )+'" /></span>';
+						}else{
+							rtn += '<span class="broccoli--module-palette--draggablebutton-thumb"></span>';
 						}
-						rtn += php.htmlspecialchars( label );
+						rtn += '<span class="broccoli--module-palette--draggablebutton-label">'+php.htmlspecialchars( label )+'</span>';
 						return rtn;
 					})(mod))
 					.attr({

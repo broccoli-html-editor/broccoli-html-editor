@@ -471,21 +471,30 @@
 
 .broccoli--module-palette a.broccoli--module-palette--draggablebutton {
   box-sizing: border-box;
-  display: block;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   width: 100%;
-  height: 50px;
+  height: 42px;
   border: 1px solid #999;
   text-align: left;
-  padding: 3px;
+  padding: 4px;
   margin: 0;
   background-color: #eee;
+  background: -webkit-linear-gradient(top, #eee, #ccc);
+  background: linear-gradient(to bottom, #eee, #ccc);
   color: #333;
   font-size: 11px;
   line-height: 1;
   vertical-align: middle;
   overflow: hidden;
   white-space: nowrap;
+  text-decoration: none;
   text-overflow: ellipsis;
+  overflow: hidden;
   cursor: move;
   font-weight: bold; }
   .broccoli--module-palette a.broccoli--module-palette--draggablebutton:after {
@@ -498,4 +507,26 @@
       content: "";
       margin-left: 0; }
   .broccoli--module-palette a.broccoli--module-palette--draggablebutton:hover {
-    background-color: #ddd; }
+    background-color: #ddd;
+    background: -webkit-linear-gradient(top, #f9f9f9, #ddd);
+    background: linear-gradient(to bottom, #f9f9f9, #ddd);
+    text-decoration: none;
+    color: #000; }
+
+.broccoli--module-palette span.broccoli--module-palette--draggablebutton-thumb {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  background-color: #ccc;
+  padding: 0;
+  width: 35px;
+  min-width: 35px;
+  height: 35px;
+  min-height: 35px; }
+  .broccoli--module-palette span.broccoli--module-palette--draggablebutton-thumb img {
+    width: 100%;
+    height: 100%; }
+
+.broccoli--module-palette span.broccoli--module-palette--draggablebutton-label {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  padding-left: 8px; }

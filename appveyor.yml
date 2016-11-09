@@ -18,8 +18,9 @@ environment:
     - nodejs_version: "0.10"
     - nodejs_version: "0.11"
     - nodejs_version: "0.12"
-    - nodejs_version: "4.2"
-    - nodejs_version: "5.1"
+    - nodejs_version: "4.6"
+    - nodejs_version: "5.12"
+    - nodejs_version: "6.9"
 
 # branches
 branches:
@@ -73,6 +74,7 @@ install:
   # Get the latest stable version of Node.js or io.js
   - ps: Install-Product node $env:nodejs_version
   # install modules
+  - git submodule update --init --recursive --force
   - npm install
 
 

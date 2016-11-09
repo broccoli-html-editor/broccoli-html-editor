@@ -117,6 +117,27 @@
 			}
 			loadFieldDefinition();
 
+			function bindDropCancel(elm){
+				$(elm)
+					.bind('dragover', function(e){
+						e.stopPropagation();
+						e.preventDefault();
+						return;
+					})
+					.bind('drop', function(e){
+						var event = e.originalEvent;
+						var fileInfo = event.dataTransfer.files[0];
+						e.stopPropagation();
+						e.preventDefault();
+						return;
+					})
+				;
+			}
+			bindDropCancel($canvas);
+			bindDropCancel(options.elmInstancePathView);
+			bindDropCancel(options.elmInstanceTreeView);
+			bindDropCancel(options.elmModulePalette);
+
 			it79.fnc(
 				{},
 				[
@@ -1885,9 +1906,11 @@ module.exports = function(broccoli, callback){
 							thumb = d.thumb;
 						}
 						if(thumb){
-							rtn += '<img src="'+php.htmlspecialchars( thumb )+'" alt="'+php.htmlspecialchars( label )+'" style="width:35px; margin-right:5px;" />';
+							rtn += '<span class="broccoli--module-palette--draggablebutton-thumb"><img src="'+php.htmlspecialchars( thumb )+'" alt="'+php.htmlspecialchars( label )+'" /></span>';
+						}else{
+							rtn += '<span class="broccoli--module-palette--draggablebutton-thumb"></span>';
 						}
-						rtn += php.htmlspecialchars( label );
+						rtn += '<span class="broccoli--module-palette--draggablebutton-label">'+php.htmlspecialchars( label )+'</span>';
 						return rtn;
 					})(mod))
 					.attr({
@@ -3513,6 +3536,7 @@ module.exports = function(broccoli){
 	this.onDrop = function(e, elm, callback){
 		callback = callback || function(){};
 		e.stopPropagation();
+		e.preventDefault();
 		var event = e.originalEvent;
 		$(elm).removeClass('broccoli--panel__drag-entered');
 		var method = event.dataTransfer.getData("method");

@@ -601,25 +601,30 @@
 	}
 	a.broccoli--module-palette--draggablebutton{
 		box-sizing: border-box;
-		display: block;
+		display: flex;
+		align-items: center;
 		width: 100%;
-		height: 50px;
+		height: 42px;
 		border: 1px solid #999;
 		text-align:left;
-		padding: 3px;
+		padding: 4px;
 		margin: 0;
 		background-color: #eee;
+		background: linear-gradient(to bottom, #eee, #ccc);
 		color: #333;
 		font-size: 11px;
 		line-height: 1;
 		vertical-align: middle;
 		overflow: hidden;
 		white-space: nowrap;
+		text-decoration: none;
 		text-overflow: ellipsis;
+		overflow: hidden;
 		cursor: move;
 
 		// クリップモジュールの場合の表示差異
 		font-weight: bold;
+
 		&:after{
 			content: "@";
 			margin-left: 0.5em;
@@ -635,13 +640,31 @@
 
 		&:hover{
 			background-color: #ddd;
+			background: linear-gradient(to bottom, #f9f9f9, #ddd);
+			text-decoration: none;
+			color: #000;
+		}
+
+	}
+	span.broccoli--module-palette--draggablebutton-thumb{
+		text-overflow: ellipsis;
+		overflow: hidden;
+		background-color: #ccc;
+		padding: 0;
+		width: 35px;
+		min-width: 35px;
+		height: 35px;
+		min-height: 35px;
+		img{
+			width:100%;
+			height:100%;
 		}
 	}
+	span.broccoli--module-palette--draggablebutton-label{
+		text-overflow: ellipsis;
+		overflow: hidden;
+		padding-left: 8px;
+	}
+
 	button.broccoli--module-palette__shown-module{}
-	// a:before{
-	// 	content: "▼";
-	// }
-	// a.broccoli--module-palette__closed:before{
-	// 	content: "ー";
-	// }
 }
