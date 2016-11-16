@@ -63,38 +63,6 @@
             "subModName": "sample_loop2",
             "anchor": "",
             "dec": ""
-           },
-           {
-            "modId": "testMod1:dev/mod_in_loop",
-            "fields": {
-             "sample_loop3": [
-              {
-               "modId": "testMod1:dev/mod_in_loop",
-               "fields": {
-                "multitext_src3": {
-                 "src": "",
-                 "editor": "markdown"
-                },
-                "main": []
-               },
-               "subModName": "sample_loop3"
-              },
-              {
-               "modId": "testMod1:dev/mod_in_loop",
-               "fields": {
-                "multitext_src3": {
-                 "src": "",
-                 "editor": "markdown"
-                },
-                "main": []
-               },
-               "subModName": "sample_loop3"
-              }
-             ]
-            },
-            "subModName": "sample_loop2",
-            "anchor": "",
-            "dec": ""
            }
           ]
          },
