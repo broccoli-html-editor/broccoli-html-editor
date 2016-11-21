@@ -20,6 +20,12 @@ module.exports = function(broccoli, api, options, callback){
 				conf.appMode = broccoli.getAppMode();
 				callback(conf);
 				break;
+			case "getLanguageCsv":
+				// 言語ファイル(CSV)を取得
+				var conf = {};
+				var csv = fs.readFileSync( __dirname+'/../data/language.csv' ).toString();
+				callback(csv);
+				break;
 			case "getModulePackageList":
 				// モジュールパッケージ一覧を取得する
 				broccoli.getPackageList(function(list){

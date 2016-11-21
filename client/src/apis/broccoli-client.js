@@ -36,6 +36,8 @@
 		var it79 = require('iterate79');
 		var _ = require('underscore');
 		var $ = require('jquery');
+		var LangBank = require('langbank');
+		this.lb = {};
 		var selectedInstance = null;
 		var $canvas;
 		var redrawTimer;
@@ -60,6 +62,7 @@
 			options.gpiBridge = options.gpiBridge || function(){};
 			options.onClickContentsLink = options.onClickContentsLink || function(){};
 			options.onMessage = options.onMessage || function(){};
+			options.lang = options.lang || 'en';
 
 			this.options = options;
 
@@ -148,6 +151,21 @@
 								// console.log(config);
 								serverConfig = config;
 								it1.next(data);
+							}
+						);
+					} ,
+					function(it1, data){
+						_this.gpi(
+							'getLanguageCsv',
+							{} ,
+							function(csv){
+								// console.log(csv);
+								_this.lb = new LangBank(csv, function(){
+									console.log('broccoli: set language "'+options.lang+'"');
+									_this.lb.setLang( options.lang );
+									// console.log( _this.lb.get('ui_label.close') );
+									it1.next(data);
+								});
 							}
 						);
 					} ,
