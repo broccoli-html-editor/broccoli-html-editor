@@ -15,6 +15,8 @@ module.exports = function(){
 	var fs = require('fs');
 	var _ = require('underscore');
 	var Promise = require('es6-promise').Promise;
+	var LangBank = require('langbank');
+	this.lb = {};
 
 	function loadFieldDefinition(){
 		function loadFieldDefinition(fieldId, mod){
@@ -86,6 +88,12 @@ module.exports = function(){
 
 		it79.fnc({},
 			[
+				function(it1, data){
+					_this.lb = new LangBank(__dirname+'/../data/language.csv', function(){
+						// _this.lb.setLang( 'ja' ); // <- 言語設定はクライアントからオプションで投げられるので、 gpi がセットし直します。
+						it1.next(data);
+					});
+				} ,
 				function(it1, data){
 					_this.resourceMgr.init( function(){
 						it1.next(data);
