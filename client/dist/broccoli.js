@@ -2323,10 +2323,10 @@ module.exports = function(broccoli){
 			$editWindow.find('.broccoli--edit-window-builtin-fields').toggle('fast', function(){
 				if($(this).is(':visible')){
 					$this.addClass(className);
-					$this.html('<span class="glyphicon glyphicon-menu-down"></span> '+broccoli.lb('ui_label.hide_advanced_setting'))
+					$this.html('<span class="glyphicon glyphicon-menu-down"></span> '+broccoli.lb.get('ui_label.hide_advanced_setting'))
 				}else{
 					$this.removeClass(className);
-					$this.html('<span class="glyphicon glyphicon-menu-right"></span> '+broccoli.lb('ui_label.show_advanced_setting'))
+					$this.html('<span class="glyphicon glyphicon-menu-right"></span> '+broccoli.lb.get('ui_label.show_advanced_setting'))
 				}
 			});
 		});
