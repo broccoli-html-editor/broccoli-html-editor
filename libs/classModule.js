@@ -390,7 +390,9 @@ module.exports = function(broccoli, moduleId, options){
 		}else if( _this.path ){
 			var tmpTplSrc = null;
 			if( isFile( _this.path+'finalize.js' ) ){
-				_this.finalize = require(_this.path+'finalize.js');
+				var tmpRealathFinalizeJs = require('path').resolve(_this.path+'finalize.js');
+				delete(require.cache[tmpRealathFinalizeJs]);
+				_this.finalize = require(tmpRealathFinalizeJs);
 			}
 			if( isFile( _this.path+'template.html' ) ){
 				_this.templateFilename = _this.path+'template.html';
