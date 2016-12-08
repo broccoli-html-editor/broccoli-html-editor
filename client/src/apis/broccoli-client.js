@@ -36,6 +36,8 @@
 		var it79 = require('iterate79');
 		var _ = require('underscore');
 		var $ = require('jquery');
+		var LangBank = require('langbank');
+		this.lb = {};
 		var selectedInstance = null;
 		var $canvas;
 		var redrawTimer;
@@ -60,6 +62,7 @@
 			options.gpiBridge = options.gpiBridge || function(){};
 			options.onClickContentsLink = options.onClickContentsLink || function(){};
 			options.onMessage = options.onMessage || function(){};
+			options.lang = options.lang || 'en';
 
 			this.options = options;
 
@@ -148,6 +151,21 @@
 								// console.log(config);
 								serverConfig = config;
 								it1.next(data);
+							}
+						);
+					} ,
+					function(it1, data){
+						_this.gpi(
+							'getLanguageCsv',
+							{} ,
+							function(csv){
+								// console.log(csv);
+								_this.lb = new LangBank(csv, function(){
+									console.log('broccoli: set language "'+options.lang+'"');
+									_this.lb.setLang( options.lang );
+									// console.log( _this.lb.get('ui_label.close') );
+									it1.next(data);
+								});
 							}
 						);
 					} ,
@@ -362,14 +380,14 @@
 					function( it1, data ){
 						// インスタンスツリービュー描画
 						_this.instanceTreeView.update( function(){
-							// console.log('broccoli: instanceTreeView redoraw : done.');
+							console.log('broccoli: instanceTreeView redoraw : done.');
 							it1.next(data);
 						} );
 					} ,
 					function( it1, data ){
 						// インスタンスパスビューを更新
 						_this.instancePathView.update( function(){
-							// console.log('broccoli: instancePathView redoraw : done.');
+							console.log('broccoli: instancePathView redoraw : done.');
 							it1.next(data);
 						} );
 					} ,
@@ -414,6 +432,8 @@
 		 * GPIから値を得る
 		 */
 		this.gpi = function(api, options, callback){
+			options = options || {};
+			options.lang = options.lang || this.options.lang;
 			this.options.gpiBridge(api, options, callback);
 			return this;
 		} // gpi()
@@ -950,6 +970,24 @@
 				}
 			]);
 			return this;
+		}
+
+		/**
+		 * ejs テンプレートにデータをバインドする
+		 */
+		this.bindEjs = function( tpl, data, options ){
+			var ejs = require('ejs');
+			var rtn = '';
+			try {
+				var template = ejs.compile(tpl.toString(), options);
+				rtn = template(data);
+			} catch (e) {
+				var errorMessage = 'TemplateEngine "EJS" Rendering ERROR.';
+				console.error( errorMessage );
+				rtn = errorMessage;
+			}
+
+			return rtn;
 		}
 
 	}

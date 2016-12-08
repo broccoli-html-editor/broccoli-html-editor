@@ -38,6 +38,7 @@ window.main = new (function(){
 				'elmInstanceTreeView': $('.instanceTreeView').get(0),
 				'contents_area_selector': '[data-contents]',
 				'contents_bowl_name_by': 'data-contents',
+				'lang': 'ja',
 				'customFields': {
 					'custom1': function(broccoli){
 						/**

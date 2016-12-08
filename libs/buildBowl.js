@@ -76,7 +76,7 @@ module.exports = function(broccoli, data, options, callback){
 				rtn +=     'margin:10px 0;';
 				rtn += '"';
 				rtn += '>';
-				rtn += '(+) ここにモジュールをドラッグしてください。';
+				rtn += '(+) '+broccoli.lb.get('ui_label.drop_a_module_here');
 				rtn += '</div>';
 				break;
 
@@ -101,7 +101,7 @@ module.exports = function(broccoli, data, options, callback){
 				rtn +=     'margin:10px 0;';
 				rtn += '"';
 				rtn += '>';
-				rtn += 'ここをダブルクリックして配列要素を追加してください。';
+				rtn += ''+broccoli.lb.get('ui_label.dblclick_here_and_add_array_element');
 				rtn += '</div>';
 				break;
 		}

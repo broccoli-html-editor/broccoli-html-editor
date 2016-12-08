@@ -123,6 +123,7 @@ broccoli.init(
 		'elmModulePalette': document.getElementById('palette'),
 		'elmInstanceTreeView': document.getElementById('instanceTreeView'),
 		'elmInstancePathView': document.getElementById('instancePathView'),
+		'lang': 'en', // language
 		'contents_area_selector': '[data-contents]',
 			// ↑編集可能領域を探すためのクエリを設定します。
 			// 　この例では、data-contents属性が付いている要素が編集可能領域として認識されます。
@@ -257,6 +258,7 @@ $ npm test
 - モジュール設定 `deprecated` を追加。非推奨のモジュールに `true` をセットすると、モジュールパレットに表示されなくなる。
 - サーバーサイドに新しいAPI `broccoli.updateContents()` を追加。
 - クライアントサイドの新しいフィールドAPI `validateEditorContent()` を追加。
+- クライアントサイドの新しいオプション `lang` を追加。
 - imageフィールドに、JPEG, PNG 画像の自動ロスレス圧縮機能を追加。
 - imageフィールドに、ウェブ上のURLを直接参照できる機能を追加。
 - buildCss() が、モジュールのCSSに含まれる `url()` を base64 に置き換えてビルドするようになった。

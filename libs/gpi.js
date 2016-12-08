@@ -12,6 +12,10 @@ module.exports = function(broccoli, api, options, callback){
 	var path = require('path');
 	var fs = require('fs');
 
+	// console.log('broccoli: set language "'+options.lang+'"');
+	broccoli.lb.setLang( options.lang );
+	// console.log( broccoli.lb.get('ui_label.close') );
+
 	new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 		switch(api){
 			case "getConfig":
@@ -19,6 +23,12 @@ module.exports = function(broccoli, api, options, callback){
 				var conf = {};
 				conf.appMode = broccoli.getAppMode();
 				callback(conf);
+				break;
+			case "getLanguageCsv":
+				// 言語ファイル(CSV)を取得
+				var conf = {};
+				var csv = fs.readFileSync( __dirname+'/../data/language.csv' ).toString();
+				callback(csv);
 				break;
 			case "getModulePackageList":
 				// モジュールパッケージ一覧を取得する

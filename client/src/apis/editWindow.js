@@ -19,17 +19,17 @@ module.exports = function(broccoli){
 				+ '		<h2 class="broccoli--edit-window-module-name">---</h2>'
 				+ '		<div class="broccoli--edit-window-fields">'
 				+ '		</div>'
-				+ '		<div><a href="javascript:;" class="broccoli--edit-window-builtin-fields-switch"><span class="glyphicon glyphicon-menu-right"></span>  詳細設定を表示する</a></div>'
+				+ '		<div><a href="javascript:;" class="broccoli--edit-window-builtin-fields-switch"><span class="glyphicon glyphicon-menu-right"></span> <%= lb.get(\'ui_label.show_advanced_setting\') %></a></div>'
 				+ '		<div class="broccoli--edit-window-builtin-fields">'
 				+ '			<div class="form-group">'
-				+ '				<label for="broccoli--edit-window-builtin-anchor-field">アンカー</label>'
+				+ '				<label for="broccoli--edit-window-builtin-anchor-field"><%= lb.get(\'ui_label.anchor\') %></label>'
 				+ '				<div class="input-group">'
 				+ '					<span class="input-group-addon" id="basic-addon1">#</span>'
 				+ '					<input type="text" class="form-control" id="broccoli--edit-window-builtin-anchor-field" placeholder="">'
 				+ '				</div>'
 				+ '			</div>'
 				+ '			<div class="form-group">'
-				+ '				<label for="broccoli--edit-window-builtin-dec-field">埋め込みコメント入力欄</label>'
+				+ '				<label for="broccoli--edit-window-builtin-dec-field"><%= lb.get(\'ui_label.embed_comment\') %></label>'
 				+ '				<textarea class="form-control" id="broccoli--edit-window-builtin-dec-field" placeholder=""></textarea>'
 				+ '			</div>'
 				+ '		</div>'
@@ -39,7 +39,7 @@ module.exports = function(broccoli){
 				+ '					<div class="col-sm-6 col-sm-offset-3">'
 				+ '						<div class="btn-group btn-group-justified" role="group">'
 				+ '							<div class="btn-group">'
-				+ '								<button disabled="disabled" type="submit" class="px2-btn px2-btn--primary px2-btn--lg px2-btn--block"><span class="glyphicon glyphicon-ok"></span> OK</button>'
+				+ '								<button disabled="disabled" type="submit" class="px2-btn px2-btn--primary px2-btn--lg px2-btn--block"><span class="glyphicon glyphicon-ok"></span> <%= lb.get(\'ui_label.ok\') %></button>'
 				+ '							</div>'
 				+ '						</div>'
 				+ '					</div>'
@@ -50,14 +50,14 @@ module.exports = function(broccoli){
 				+ '					<div class="col-sm-4">'
 				+ '						<div class="btn-group btn-group-justified" role="group" style="margin-top:20px;">'
 				+ '							<div class="btn-group">'
-				+ '								<button disabled="disabled" type="button" class="px2-btn px2-btn--sm px2-btn--block broccoli--edit-window-btn-cancel">キャンセル</button>'
+				+ '								<button disabled="disabled" type="button" class="px2-btn px2-btn--sm px2-btn--block broccoli--edit-window-btn-cancel"><%= lb.get(\'ui_label.cancel\') %></button>'
 				+ '							</div>'
 				+ '						</div>'
 				+ '					</div>'
 				+ '					<div class="col-sm-4 col-sm-offset-4">'
 				+ '						<div class="btn-group btn-group-justified" role="group" style="margin-top:20px;">'
 				+ '							<div class="btn-group">'
-				+ '								<button disabled="disabled" type="button" class="px2-btn px2-btn--danger px2-btn--sm px2-btn--block broccoli--edit-window-btn-remove"><span class="glyphicon glyphicon-trash"></span> このモジュールを削除する</button>'
+				+ '								<button disabled="disabled" type="button" class="px2-btn px2-btn--danger px2-btn--sm px2-btn--block broccoli--edit-window-btn-remove"><span class="glyphicon glyphicon-trash"></span> <%= lb.get(\'ui_label.remove_this_module\') %></button>'
 				+ '							</div>'
 				+ '						</div>'
 				+ '					</div>'
@@ -81,10 +81,10 @@ module.exports = function(broccoli){
 
 	/**
 	 * 初期化
-	 * @param  {[type]}   instancePath  [description]
-	 * @param  {[type]}   elmEditWindow [description]
+	 * @param  {String}   instancePath  [description]
+	 * @param  {Object}   elmEditWindow [description]
 	 * @param  {Function} callback      [description]
-	 * @return {[type]}                 [description]
+	 * @return {Void}                 [description]
 	 */
 	this.init = function(instancePath, elmEditWindow, callback){
 		callback = callback || function(){};
@@ -97,7 +97,7 @@ module.exports = function(broccoli){
 
 		var $fields = $('<div>');
 		$editWindow = $(elmEditWindow);
-		$editWindow.append(tplFrame);
+		$editWindow.append( broccoli.bindEjs(tplFrame, {'lb':broccoli.lb}) );
 		$editWindow.find('.broccoli--edit-window-module-name').text(mod.info.name||mod.id);
 		$editWindow.find('.broccoli--edit-window-fields').append($fields);
 
@@ -108,10 +108,10 @@ module.exports = function(broccoli){
 			$editWindow.find('.broccoli--edit-window-builtin-fields').toggle('fast', function(){
 				if($(this).is(':visible')){
 					$this.addClass(className);
-					$this.html('<span class="glyphicon glyphicon-menu-down"></span> 詳細設定を隠す')
+					$this.html('<span class="glyphicon glyphicon-menu-down"></span> '+broccoli.lb.get('ui_label.hide_advanced_setting'))
 				}else{
 					$this.removeClass(className);
-					$this.html('<span class="glyphicon glyphicon-menu-right"></span>  詳細設定を表示する')
+					$this.html('<span class="glyphicon glyphicon-menu-right"></span> '+broccoli.lb.get('ui_label.show_advanced_setting'))
 				}
 			});
 		});
@@ -229,7 +229,7 @@ module.exports = function(broccoli){
 									var $appender = $('<li>');
 									if( field.fieldType == 'module' ){
 										$appender
-											.text('(+) ここにモジュールをドラッグしてください。')
+											.text('(+) '+broccoli.lb.get('ui_label.drop_a_module_here'))
 											.attr({
 												'data-broccoli-instance-path':appenderInstancePath,
 												'data-broccoli-is-appender':'yes',
@@ -249,7 +249,7 @@ module.exports = function(broccoli){
 										;
 									}else if( field.fieldType == 'loop' ){
 										$appender
-											.text('ここをダブルクリックして配列要素を追加してください。')
+											.text(''+broccoli.lb.get('ui_label.dblclick_here_and_add_array_element'))
 											.attr({
 												'data-broccoli-instance-path':appenderInstancePath,
 												'data-broccoli-mod-id': mod.id,

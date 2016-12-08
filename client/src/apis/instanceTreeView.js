@@ -94,7 +94,7 @@ module.exports = function(broccoli){
 								var instancePath = parentInstancePath+'/fields.'+idx+'@'+(data.fields[idx]?data.fields[idx].length:0);
 
 								var $appender = $('<div>')
-									.text('(+) ここにモジュールをドラッグしてください。')
+									.text('(+) '+broccoli.lb.get('ui_label.drop_a_module_here'))
 									.attr({
 										'data-broccoli-instance-path':instancePath,
 										'data-broccoli-is-appender':'yes',
@@ -151,7 +151,7 @@ module.exports = function(broccoli){
 								var instancePath = parentInstancePath+'/fields.'+idx+'@'+(data.fields[idx]?data.fields[idx].length:0);
 
 								var $appender = $('<div>')
-									.text('ここをダブルクリックして配列要素を追加してください。')
+									.text(''+broccoli.lb.get('ui_label.dblclick_here_and_add_array_element'))
 									.attr({
 										'data-broccoli-instance-path':instancePath,
 										'data-broccoli-mod-id': mod.id,

@@ -23,6 +23,7 @@
   "homepage": "https://github.com/pickles2/broccoli-html-editor#readme",
   "dependencies": {
     "cheerio": "^0.19.0",
+    "ejs": "^2.5.2",
     "es6-promise": "^3.0.2",
     "fs-extra": "^0.24.0",
     "glob": "^5.0.14",
@@ -34,6 +35,7 @@
     "imagemin-pngquant": "^4.*",
     "iterate79": "^0.1.0",
     "jquery": "^2.2.3",
+    "langbank": "0.0.2",
     "markdown": "^0.5.0",
     "marked": "0.3.*",
     "mkdirp": "^0.5.1",
