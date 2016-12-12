@@ -92,7 +92,7 @@
 			this.instancePathView = new (require( './instancePathView.js' ))(this);
 			this.instanceTreeView = new (require( './instanceTreeView.js' ))(this);
 			this.editWindow = new (require( './editWindow.js' ))(this);
-			this.fieldBase = new (require('./../../../libs/fieldBase.js'))(this);
+			this.fieldBase = new (require('./fieldBase.js'))(this);
 			this.fieldDefinitions = {};
 			function loadFieldDefinition(){
 				function loadFieldDefinition(fieldId, mod){
@@ -100,14 +100,14 @@
 					rtn.__fieldId__ = fieldId;
 					return rtn;
 				}
-				_this.fieldDefinitions.href = loadFieldDefinition('href', require('./../../../libs/fields/app.fields.href.js'));
-				_this.fieldDefinitions.html = loadFieldDefinition('html', require('./../../../libs/fields/app.fields.html.js'));
-				_this.fieldDefinitions.html_attr_text = loadFieldDefinition('html_attr_text', require('./../../../libs/fields/app.fields.html_attr_text.js'));
-				_this.fieldDefinitions.image = loadFieldDefinition('image', require('./../../../libs/fields/app.fields.image.js'));
-				_this.fieldDefinitions.markdown = loadFieldDefinition('markdown', require('./../../../libs/fields/app.fields.markdown.js'));
-				_this.fieldDefinitions.multitext = loadFieldDefinition('multitext', require('./../../../libs/fields/app.fields.multitext.js'));
-				_this.fieldDefinitions.select = loadFieldDefinition('select', require('./../../../libs/fields/app.fields.select.js'));
-				_this.fieldDefinitions.text = loadFieldDefinition('text', require('./../../../libs/fields/app.fields.text.js'));
+				_this.fieldDefinitions.href = loadFieldDefinition('href', require('./../../../fields/client/app.fields.href.js'));
+				_this.fieldDefinitions.html = loadFieldDefinition('html', require('./../../../fields/client/app.fields.html.js'));
+				_this.fieldDefinitions.html_attr_text = loadFieldDefinition('html_attr_text', require('./../../../fields/client/app.fields.html_attr_text.js'));
+				_this.fieldDefinitions.image = loadFieldDefinition('image', require('./../../../fields/client/app.fields.image.js'));
+				_this.fieldDefinitions.markdown = loadFieldDefinition('markdown', require('./../../../fields/client/app.fields.markdown.js'));
+				_this.fieldDefinitions.multitext = loadFieldDefinition('multitext', require('./../../../fields/client/app.fields.multitext.js'));
+				_this.fieldDefinitions.select = loadFieldDefinition('select', require('./../../../fields/client/app.fields.select.js'));
+				_this.fieldDefinitions.text = loadFieldDefinition('text', require('./../../../fields/client/app.fields.text.js'));
 
 				if( _this.options.customFields ){
 					for( var idx in _this.options.customFields ){
