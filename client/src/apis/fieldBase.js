@@ -17,26 +17,6 @@ module.exports = function(broccoli){
 	}
 
 	/**
-	 * データをバインドする (Server Side)
-	 */
-	this.bind = function( fieldData, mode, mod, callback ){
-		var rtn = '';
-		try {
-			rtn = utils79.toStr(fieldData);
-		} catch (e) {
-			rtn = '[error]'
-		}
-		if( mode == 'canvas' && !rtn.length ){
-			rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてHTMLコードを編集してください)</span>';
-		}
-
-		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
-			callback(rtn);
-		}); });
-		return this;
-	}
-
-	/**
 	 * プレビュー用の簡易なHTMLを生成する (Client Side)
 	 * InstanceTreeViewで利用する。
 	 */
@@ -58,16 +38,6 @@ module.exports = function(broccoli){
 			});
 		}); });
 		return this;
-	}
-
-	/**
-	 * データを正規化する (Server Side/Client Side)
-	 * このメソッドは、同期的に振る舞います。
-	 */
-	this.normalizeData = function( fieldData, mode ){
-		// 編集画面用にデータを初期化。
-		var rtn = fieldData;
-		return rtn;
 	}
 
 	/**
@@ -212,29 +182,6 @@ module.exports = function(broccoli){
 
 		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 			callback(src);
-		}); });
-		return this;
-	}
-
-	/**
-	 * リソースを加工する (Server Side)
-	 */
-	this.resourceProcessor = function( path_orig, path_public, resInfo, callback ){
-		// ↓デフォルトの処理。オリジナルファイルをそのまま公開パスへ複製する。
-		var fsEx = require('fs-extra');
-		fsEx.copy( path_orig, path_public, function(err){
-			callback(true);
-		} );
-		return this;
-	}
-
-	/**
-	 * GPI (Server Side)
-	 */
-	this.gpi = function(options, callback){
-		callback = callback || function(){};
-		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
-			callback(options);
 		}); });
 		return this;
 	}
