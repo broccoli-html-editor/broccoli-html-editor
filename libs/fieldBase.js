@@ -37,16 +37,6 @@ module.exports = function(broccoli){
 	}
 
 	/**
-	 * データを正規化する (Server Side)
-	 * このメソッドは、同期的に振る舞います。
-	 */
-	this.normalizeData = function( fieldData, mode ){
-		// 編集画面用にデータを初期化。
-		var rtn = fieldData;
-		return rtn;
-	}
-
-	/**
 	 * リソースを加工する (Server Side)
 	 */
 	this.resourceProcessor = function( path_orig, path_public, resInfo, callback ){

@@ -10,6 +10,23 @@ module.exports = function(broccoli){
 	}
 
 	/**
+	 * データを正規化する
+	 */
+	this.normalizeData = function( fieldData, mode ){
+		// 編集画面用にデータを初期化。
+		var rtn = {};
+		if( typeof(fieldData) === typeof({}) ){
+			rtn = fieldData;
+		}else if( typeof(fieldData) === typeof('') ){
+			rtn.src = fieldData;
+			rtn.editor = 'markdown';
+		}
+		rtn.src = rtn.src||'';
+		rtn.editor = rtn.editor||'';
+		return rtn;
+	}
+
+	/**
 	 * エディタUIを生成
 	 */
 	this.mkEditor = function( mod, data, elm, callback ){

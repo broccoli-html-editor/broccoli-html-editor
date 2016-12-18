@@ -19,6 +19,22 @@ module.exports = function(broccoli){
 	}
 
 	/**
+	 * データを正規化する
+	 */
+	this.normalizeData = function( fieldData, mode ){
+		var rtn = fieldData;
+		if( typeof(fieldData) !== typeof({}) ){
+			rtn = {
+				"resKey":'',
+				"path":'about:blank',
+				"resType":'',
+				"webUrl":''
+			};
+		}
+		return rtn;
+	}// normalizeData()
+
+	/**
 	 * プレビュー用の簡易なHTMLを生成する
 	 */
 	this.mkPreviewHtml = function( fieldData, mod, callback ){

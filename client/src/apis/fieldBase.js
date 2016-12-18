@@ -17,6 +17,16 @@ module.exports = function(broccoli){
 	}
 
 	/**
+	 * データを正規化する (Client Side)
+	 * このメソッドは、同期的に振る舞います。
+	 */
+	this.normalizeData = function( fieldData, mode ){
+		// 編集画面用にデータを初期化。
+		var rtn = fieldData;
+		return rtn;
+	}
+
+	/**
 	 * プレビュー用の簡易なHTMLを生成する (Client Side)
 	 * InstanceTreeViewで利用する。
 	 */

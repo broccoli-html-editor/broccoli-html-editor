@@ -10,15 +10,6 @@ module.exports = function(broccoli){
 	var _this = this;
 
 	/**
-	 * パスから拡張子を取り出して返す
-	 */
-	function getExtension(path){
-		var ext = path.replace( new RegExp('^.*?\.([a-zA-Z0-9\_\-]+)$'), '$1' );
-		ext = ext.toLowerCase();
-		return ext;
-	}
-
-	/**
 	 * データをバインドする
 	 */
 	this.bind = function( fieldData, mode, mod, callback ){
@@ -90,23 +81,6 @@ module.exports = function(broccoli){
 		}); });
 		return;
 	}
-
-	/**
-	 * データを正規化する
-	 */
-	this.normalizeData = function( fieldData, mode ){
-		var rtn = fieldData;
-		if( typeof(fieldData) !== typeof({}) ){
-			rtn = {
-				"resKey":'',
-				"path":'about:blank',
-				"resType":'',
-				"webUrl":''
-			};
-		}
-		return rtn;
-	}// normalizeData()
-
 
 	/**
 	 * リソースを加工する (Server Side)

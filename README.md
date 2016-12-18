@@ -211,19 +211,19 @@ coming soon.
 このメソッドは、サーバーサイドは `libs/fieldBase.js` を、クライアントサイドは `client/src/apis/fieldBase.js` を、基底クラスとして継承します。
 
 - server side
-	- bind(fieldData, mode, mod, callback) - データをバインドする (Server Side)
-	- normalizeData(fieldData, mode) - データを正規化する (Server Side)
-	- resourceProcessor(path_orig, path_public, resInfo, callback) - リソースを加工する (Server Side)
-	- gpi(options, callback) - GPI (Server Side)
+	- bind(fieldData, mode, mod, callback) - データをバインドする
+	- resourceProcessor(path_orig, path_public, resInfo, callback) - リソースを加工する
+	- gpi(options, callback) - GPI
 - client side
-	- mkPreviewHtml(fieldData, mod, callback) - プレビュー用の簡易なHTMLを生成する (Client Side)
-	- mkEditor(mod, data, elm, callback) - エディタUIを生成 (Client Side)
-	- focus(elm, callback) - エディタUIにフォーカス (Client Side)
-	- duplicateData(data, callback) - データを複製する (Client Side)
-	- extractResourceId(data, callback) - データから使用するリソースのリソースIDを抽出する (Client Side)
-	- validateEditorContent(elm, data, mod, callback) - エディタUIで編集した内容を検証する (Client Side)
-	- saveEditorContent(elm, data, mod, callback) - エディタUIで編集した内容を保存 (Client Side)
-	- callGpi(options, callback) - GPIを呼び出す (Cliend Side)
+	- normalizeData(fieldData, mode) - データを正規化する
+	- mkPreviewHtml(fieldData, mod, callback) - プレビュー用の簡易なHTMLを生成する
+	- mkEditor(mod, data, elm, callback) - エディタUIを生成
+	- focus(elm, callback) - エディタUIにフォーカス
+	- duplicateData(data, callback) - データを複製する
+	- extractResourceId(data, callback) - データから使用するリソースのリソースIDを抽出する
+	- validateEditorContent(elm, data, mod, callback) - エディタUIで編集した内容を検証する
+	- saveEditorContent(elm, data, mod, callback) - エディタUIで編集した内容を保存
+	- callGpi(options, callback) - GPIを呼び出す
 
 
 ## for developer
