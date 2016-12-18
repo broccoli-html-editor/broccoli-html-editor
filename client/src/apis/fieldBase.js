@@ -22,8 +22,20 @@ module.exports = function(broccoli){
 	 */
 	this.mkPreviewHtml = function( fieldData, mod, callback ){
 		var rtn = '';
-		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
-			_this.bind(fieldData, 'finalize', mod, function(rtn){
+		new Promise(function(rlv){rlv();})
+			.then(function(){ return new Promise(function(rlv, rjt){
+
+				// サーバーサイドの bind() に相当する処理
+				try {
+					rtn = utils79.toStr(fieldData);
+				} catch (e) {
+					rtn = '[error]'
+				}
+				rlv();
+
+			}); })
+			.then(function(){ return new Promise(function(rlv, rjt){
+
 				// console.log(rtn);
 				var $rtn = $('<div>').append(rtn);
 				$rtn.find('*').each(function(){
@@ -34,9 +46,13 @@ module.exports = function(broccoli){
 				$rtn.find('style').remove(); // styleタグも削除しちゃう
 				rtn = $rtn.html();
 
+				rlv();
+
+			}); })
+			.then(function(){ return new Promise(function(rlv, rjt){
 				callback( rtn );
-			});
-		}); });
+			}); })
+		;
 		return this;
 	}
 
