@@ -208,20 +208,22 @@ coming soon.
 
 サーバー側、クライアント側 ともに、オプション `customFields[fieldName]` にメソッドを定義します。
 
-このメソッドは、 `libs/fieldBase.js` を基底クラスとして継承します。
+このメソッドは、サーバーサイドは `libs/fieldBase.js` を、クライアントサイドは `client/src/apis/fieldBase.js` を、基底クラスとして継承します。
 
-- bind(fieldData, mode, mod, callback) - データをバインドする (Server Side)
-- mkPreviewHtml(fieldData, mod, callback) - プレビュー用の簡易なHTMLを生成する (Server Side/Client Side)
-- normalizeData(fieldData, mode) - データを正規化する (Server Side/Client Side)
-- mkEditor(mod, data, elm, callback) - エディタUIを生成 (Client Side)
-- focus(elm, callback) - エディタUIにフォーカス (Client Side)
-- duplicateData(data, callback) - データを複製する (Client Side)
-- extractResourceId(data, callback) - データから使用するリソースのリソースIDを抽出する (Client Side)
-- validateEditorContent(elm, data, mod, callback) - エディタUIで編集した内容を検証する (Client Side)
-- saveEditorContent(elm, data, mod, callback) - エディタUIで編集した内容を保存 (Client Side)
-- resourceProcessor(path_orig, path_public, resInfo, callback) - リソースを加工する (Server Side)
-- gpi(options, callback) - GPI (Server Side)
-- callGpi(options, callback) - GPIを呼び出す (Cliend Side)
+- server side
+	- bind(fieldData, mode, mod, callback) - データをバインドする
+	- resourceProcessor(path_orig, path_public, resInfo, callback) - リソースを加工する
+	- gpi(options, callback) - GPI
+- client side
+	- normalizeData(fieldData, mode) - データを正規化する
+	- mkPreviewHtml(fieldData, mod, callback) - プレビュー用の簡易なHTMLを生成する
+	- mkEditor(mod, data, elm, callback) - エディタUIを生成
+	- focus(elm, callback) - エディタUIにフォーカス
+	- duplicateData(data, callback) - データを複製する
+	- extractResourceId(data, callback) - データから使用するリソースのリソースIDを抽出する
+	- validateEditorContent(elm, data, mod, callback) - エディタUIで編集した内容を検証する
+	- saveEditorContent(elm, data, mod, callback) - エディタUIで編集した内容を保存
+	- callGpi(options, callback) - GPIを呼び出す
 
 
 ## for developer
@@ -264,6 +266,7 @@ $ npm test
 - buildCss() が、モジュールのCSSに含まれる `url()` を base64 に置き換えてビルドするようになった。
 - finalize.js の第3引数に、ライブラリやリソースを供給する `supply` を追加。この中に含まれる `cheerio` を利用できるようになった。
 - ライトボックス表示中のtabキーによるフォーカス操作を改善。ライトボックス以外の領域にフォーカスしないようにした。
+- モジュールの `info.json` や `clip.json` がキャッシュされ、更新が反映されない場合がある問題を修正。
 - その他幾つかの細かい修正。
 
 ### broccoli-html-editor@0.1.0-beta.10 (2016年8月3日)

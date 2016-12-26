@@ -24,14 +24,14 @@ module.exports = function(){
 			rtn.__fieldId__ = fieldId;
 			return rtn;
 		}
-		_this.fieldDefinitions.href = loadFieldDefinition('href', require('./fields/app.fields.href.js'));
-		_this.fieldDefinitions.html = loadFieldDefinition('html', require('./fields/app.fields.html.js'));
-		_this.fieldDefinitions.html_attr_text = loadFieldDefinition('html_attr_text', require('./fields/app.fields.html_attr_text.js'));
-		_this.fieldDefinitions.image = loadFieldDefinition('image', require('./fields/app.fields.image.js'));
-		_this.fieldDefinitions.markdown = loadFieldDefinition('markdown', require('./fields/app.fields.markdown.js'));
-		_this.fieldDefinitions.multitext = loadFieldDefinition('multitext', require('./fields/app.fields.multitext.js'));
-		_this.fieldDefinitions.select = loadFieldDefinition('select', require('./fields/app.fields.select.js'));
-		_this.fieldDefinitions.text = loadFieldDefinition('text', require('./fields/app.fields.text.js'));
+		_this.fieldDefinitions.href = loadFieldDefinition('href', require('../fields/server/app.fields.href.js'));
+		_this.fieldDefinitions.html = loadFieldDefinition('html', require('../fields/server/app.fields.html.js'));
+		_this.fieldDefinitions.html_attr_text = loadFieldDefinition('html_attr_text', require('../fields/server/app.fields.html_attr_text.js'));
+		_this.fieldDefinitions.image = loadFieldDefinition('image', require('../fields/server/app.fields.image.js'));
+		_this.fieldDefinitions.markdown = loadFieldDefinition('markdown', require('../fields/server/app.fields.markdown.js'));
+		_this.fieldDefinitions.multitext = loadFieldDefinition('multitext', require('../fields/server/app.fields.multitext.js'));
+		_this.fieldDefinitions.select = loadFieldDefinition('select', require('../fields/server/app.fields.select.js'));
+		_this.fieldDefinitions.text = loadFieldDefinition('text', require('../fields/server/app.fields.text.js'));
 
 		if( _this.options.customFields ){
 			for( var idx in _this.options.customFields ){

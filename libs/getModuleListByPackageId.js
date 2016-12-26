@@ -73,7 +73,7 @@ module.exports = function(broccoli, packageId, callback){
 				return;
 			}
 			try {
-				rtn.packageInfo = require( rtn.realpath + 'info.json' );
+				rtn.packageInfo = JSON.parse(fs.readFileSync( rtn.realpath + 'info.json' ));
 			} catch (e) {
 				rtn.packageInfo = {};
 			}
@@ -95,7 +95,7 @@ module.exports = function(broccoli, packageId, callback){
 							rtn.categories[row] = {};
 							rtn.categories[row].categoryId = row;
 							try {
-								rtn.categories[row].categoryInfo = require( path.resolve( realpath, 'info.json' ) );
+								rtn.categories[row].categoryInfo = JSON.parse(fs.readFileSync( path.resolve( realpath, 'info.json' ) ));
 							} catch (e) {
 								rtn.categories[row].categoryInfo = {};
 							}
@@ -136,14 +136,14 @@ module.exports = function(broccoli, packageId, callback){
 
 									// info.json
 									try {
-										rtn.categories[idx].modules[row2].moduleInfo = require( path.resolve( realpath, 'info.json' ) );
+										rtn.categories[idx].modules[row2].moduleInfo = JSON.parse(fs.readFileSync( path.resolve( realpath, 'info.json' ) ));
 									} catch (e) {
 										rtn.categories[idx].modules[row2].moduleInfo = {};
 									}
 
 									// clip.json
 									try {
-										rtn.categories[idx].modules[row2].clip = require( path.resolve( realpath, 'clip.json' ) );
+										rtn.categories[idx].modules[row2].clip = JSON.parse(fs.readFileSync( path.resolve( realpath, 'clip.json' ) ));
 									} catch (e) {
 										rtn.categories[idx].modules[row2].clip = false;
 									}
