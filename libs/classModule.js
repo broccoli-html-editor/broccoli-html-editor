@@ -178,6 +178,7 @@ module.exports = function(broccoli, moduleId, options){
 						_this.info.deprecated = tmpJson.deprecated;
 					}
 				}
+				_this.deprecated = (_this.info.deprecated||false);
 				_this.thumb = null;
 				if( isFile( _this.path+'/thumb.png' ) ){
 					_this.thumb = (function(){
