@@ -101,6 +101,7 @@ module.exports = function(broccoli, packageId, callback){
 							}
 							rtn.categories[row].categoryName = rtn.categories[row].categoryInfo.name||row;
 							rtn.categories[row].realpath = realpath;
+							rtn.categories[row].deprecated = (rtn.categories[row].categoryInfo.deprecated || false)
 							rtn.categories[row].modules = {};
 						}
 						it1.next();
@@ -140,6 +141,7 @@ module.exports = function(broccoli, packageId, callback){
 									} catch (e) {
 										rtn.categories[idx].modules[row2].moduleInfo = {};
 									}
+									rtn.categories[idx].modules[row2].deprecated = (rtn.categories[idx].modules[row2].moduleInfo.deprecated||false);
 
 									// clip.json
 									try {

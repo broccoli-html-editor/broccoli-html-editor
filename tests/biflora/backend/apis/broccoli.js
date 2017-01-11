@@ -19,7 +19,8 @@ module.exports = function( data, callback, main, socket ){
 					'paths_module_template': {
 						'PlainHTMLElements': '../PlainHTMLElements/',
 						'testMod1': '../modules1/',
-						'testMod2': '../modules2/'
+						'testMod2': '../modules2/',
+						'testMod3': '../modules3-deprecated/'
 					} ,
 					'documentRoot': path.resolve(__dirname, '../../../testdata/htdocs/')+'/',
 					'pathHtml': '/editpage/index.html',

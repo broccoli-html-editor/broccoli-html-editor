@@ -26,6 +26,11 @@ module.exports = function(broccoli, callback){
 		it79.ary(
 			categories ,
 			function(it1, category, categoryId){
+				// console.log(category);
+				if( category.deprecated ){
+					it1.next();return;
+				}
+
 				var $liCat = $('<li>');
 				var $ulMod = $('<ul>');
 				$liCat.append( $('<a class="broccoli--module-palette--buttongroups">')
@@ -65,7 +70,8 @@ module.exports = function(broccoli, callback){
 		it79.ary(
 			modules ,
 			function(it1, mod, moduleId){
-				if( mod.moduleInfo.deprecated ){
+				// console.log(mod);
+				if( mod.deprecated ){
 					it1.next();
 					return;
 				}
@@ -245,6 +251,11 @@ module.exports = function(broccoli, callback){
 				it79.ary(
 					moduleList ,
 					function(it2, pkg, packageId){
+						// console.log(pkg);
+						if( pkg.deprecated ){
+							it2.next();return;
+						}
+
 						var $li = $('<li>');
 						var $ulCat = $('<ul>');
 						$li.append( $('<a class="broccoli--module-palette--buttongroups">')

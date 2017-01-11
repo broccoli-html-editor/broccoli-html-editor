@@ -32,7 +32,8 @@ module.exports = function(broccoli, callback){
 							'packageId': idx,
 							'packageName': (infoJson.name || idx),
 							'realpath': realpath,
-							'infoJson': infoJson
+							'infoJson': infoJson,
+							'deprecated': (infoJson.deprecated || false)
 						};
 						broccoli.getModuleListByPackageId(idx, function(modList){
 							rtn[idx].categories = modList.categories;
