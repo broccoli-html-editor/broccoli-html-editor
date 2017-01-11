@@ -29,7 +29,7 @@
 	}
 
 	function tabCancel(){
-		$('body *').attr({'tabindex':'-1'});
+		$('body *').attr({'tabindex':'-1'}).css({'outline':'none'});
 	}
 
 	window.addEventListener('message',function(event){
