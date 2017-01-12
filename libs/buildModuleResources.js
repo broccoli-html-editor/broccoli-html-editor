@@ -44,10 +44,6 @@ module.exports = function(broccoli){
 						// console.log($path);
 						// console.log($matched);
 
-						$rtn += '/**'+"\n";
-						$rtn += ' * module: '+$packageId+':'+$matched[1]+'/'+$matched[2]+"\n";
-						$rtn += ' */'+"\n";
-
 						var $tmp_bin = fs.readFileSync( $path ).toString();
 						if( $path.match( new RegExp('\\.scss$', 'i') ) ){
 							// console.log($tmp_bin);
@@ -59,9 +55,16 @@ module.exports = function(broccoli){
 							$tmp_bin = $tmp_bin.css.toString();
 						}
 
+						$tmp_bin = php.trim( $tmp_bin );
+						if( !$tmp_bin.length ){ it2.next(); return; }
+
+						$rtn += '/**'+"\n";
+						$rtn += ' * module: '+$packageId+':'+$matched[1]+'/'+$matched[2]+"\n";
+						$rtn += ' */'+"\n";
+
 						buildCssResources( $path, $tmp_bin, function( $tmp_bin ){
-							$rtn += $tmp_bin;
-							$rtn += "\n"+"\n";
+							$rtn += php.trim( $tmp_bin )+"\n"+"\n";
+							// $rtn += "\n"+"\n";
 							it2.next();
 							return;
 						} );
@@ -75,13 +78,13 @@ module.exports = function(broccoli){
 
 			},
 			function(){
+				// console.log($rtn);
+				$rtn = php.trim($rtn)+"\n";
 				callback($rtn);
 				return;
 			}
 		);
 
-		// console.log($rtn);
-		// $rtn = trim($rtn);
 		return this;
 	}
 
@@ -156,17 +159,30 @@ module.exports = function(broccoli){
 
 		var $array_files = [];
 		var module_templates = broccoli.options.paths_module_template;
-		for( var idx in module_templates ){
-			$array_files = $array_files.concat( glob.sync(module_templates[idx]+"**/**/module.js") );
+		for( var $packageId in module_templates ){
+			$array_files = glob.sync(module_templates[$packageId]+"**/**/module.js");
+
+			for( var idx in $array_files ){
+				var $path = $array_files[idx];
+				var bin = php.trim( fs.readFileSync( $path ).toString() );
+				if( !bin.length ){continue;}
+
+				var $matched = $path.match( new RegExp('\\/([a-zA-Z0-9\\.\\-\\_]+?)\\/([a-zA-Z0-9\\.\\-\\_]+?)\\/[a-zA-Z0-9\\.\\-\\_]+?$','i') );
+
+				// console.log($path);
+				// console.log($matched);
+
+				$rtn += '/**'+"\n";
+				$rtn += ' * module: '+$packageId+':'+$matched[1]+'/'+$matched[2]+"\n";
+				$rtn += ' */'+"\n";
+
+				$rtn += bin+"\n"+"\n";
+			}
 		}
 
-		for( var idx in $array_files ){
-			var $path = $array_files[idx];
-			 $rtn += fs.readFileSync( $path ).toString();
-		}
-		// $rtn = trim($rtn);
 
 		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+			$rtn = php.trim($rtn)+"\n";
 			callback($rtn);
 		}); });
 		return this;
