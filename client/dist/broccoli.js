@@ -5043,7 +5043,8 @@ module.exports = function(broccoli){
 			// }, 0);
 		} );
 		return;
-	}
+
+	} // this.mkEditor()
 
 	/**
 	 * データを複製する (Client Side)
@@ -5105,6 +5106,12 @@ module.exports = function(broccoli){
 			data,
 			[
 				function(it1, data){
+					data.resType = $dom.find('[name='+mod.name+'-resourceType]:checked').val();
+					data.webUrl = $dom.find('[name='+mod.name+'-webUrl]').val();
+					it1.next(data);
+					return;
+				} ,
+				function(it1, data){
 					// console.log('saving image field data.');
 					_resMgr.getResource(data.resKey, function(result){
 						// console.log(result);
@@ -5144,7 +5151,7 @@ module.exports = function(broccoli){
 						resInfo.field = mod.type;
 						resInfo.fieldNote = {}; // <= フィールド記録欄をクリア
 					}
-					resInfo.isPrivateMaterial = false;
+					resInfo.isPrivateMaterial = (data.resType == 'web' ? true : false);
 					resInfo.publicFilename = $dom.find('input[name='+mod.name+'-publicFilename]').val();
 
 					_resMgr.updateResource( data.resKey, resInfo, function(result){
@@ -5153,13 +5160,6 @@ module.exports = function(broccoli){
 							it1.next(data);
 						} );
 					} );
-					return;
-
-				} ,
-				function(it1, data){
-					data.resType = $dom.find('[name='+mod.name+'-resourceType]:checked').val();
-					data.webUrl = $dom.find('[name='+mod.name+'-webUrl]').val();
-					it1.next(data);
 					return;
 
 				} ,
