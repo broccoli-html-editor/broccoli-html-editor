@@ -95,7 +95,7 @@ gulp.task("test/main.js", function() {
 
 // src 中のすべての拡張子を監視して処理
 gulp.task("watch", function() {
-	gulp.watch(["client/src/**/*","libs/**/*","tests/testdata/htdocs/index_files/main.src.js"], _tasks);
+	gulp.watch(["client/src/**/*","fields/client/**/*","libs/**/*","tests/testdata/htdocs/index_files/main.src.js"], _tasks);
 
 	var svrCtrl = require( './tests/biflora/serverCtrl.js' );
 	svrCtrl.boot(function(){
