@@ -167,7 +167,7 @@ module.exports = function(broccoli, data, options, callback){
 											// module field
 											var opt = JSON.parse( JSON.stringify(options) );
 											opt.instancePath += '/fields.'+field.name;
-											tplDataObj[field.name] = '';
+											var tmp_tplDataObj = '';
 
 											it79.ary(
 												fieldData[field.name],
@@ -177,7 +177,7 @@ module.exports = function(broccoli, data, options, callback){
 													delete(tmpopt.subModName);// サブモジュールから外部のモジュールを参照する場合に、subModName を渡さないように配慮する必要がある。
 													tmpopt.instancePath += '@'+idx;
 													broccoli.buildBowl(row, tmpopt, function(html){
-														tplDataObj[field.name] += html;
+														tmp_tplDataObj += html;
 														it2.next();
 													});
 												} ,
@@ -186,13 +186,20 @@ module.exports = function(broccoli, data, options, callback){
 														var tmpopt = JSON.parse( JSON.stringify(opt) );
 														if(typeof(fieldData[field.name]) != typeof([])){ fieldData[field.name] = []; }
 														tmpopt.instancePath += '@'+(fieldData[field.name].length);
-														tplDataObj[field.name] += mkAppender(
+														tmp_tplDataObj += mkAppender(
 															'module',
 															{
 																'modId': mod.id,
 																'instancePath': tmpopt.instancePath
 															}
 														);
+													}
+
+													if( !field.hidden ){//← "hidden": true だったら、非表示(=出力しない)
+														tplDataObj[field.name] = tmp_tplDataObj;
+													}
+													_this.nameSpace.vars[field.name] = {
+														fieldType: "module", val: tmp_tplDataObj
 													}
 													it3.next();
 												}
@@ -207,15 +214,10 @@ module.exports = function(broccoli, data, options, callback){
 											var opt = JSON.parse( JSON.stringify(options) );
 											opt.instancePath += '/fields.'+field.name;
 											tplDataObj[field.name] = [];
-											// console.log(fieldData);
-											// console.log(field.loop);
-											// console.log(fieldData[field.name]);
 											it79.ary(
 												fieldData[field.name],
 												function( it2, row, idx ){
 													// ネストされたモジュールの再帰処理
-													// console.log('----------');
-													// console.log(row);
 													var tmpopt = JSON.parse( JSON.stringify(opt) );
 													tmpopt.instancePath += '@'+idx;
 													tmpopt.subModName = field.name;
@@ -230,25 +232,11 @@ module.exports = function(broccoli, data, options, callback){
 														var tmpopt = JSON.parse( JSON.stringify(opt) );
 														if(typeof(fieldData[field.name]) != typeof([])){ fieldData[field.name] = []; }
 														tmpopt.instancePath += '@'+(fieldData[field.name].length);
-														// tplDataObj[field.name].push(mkAppender(
-														// 	'loop',
-														// 	{
-														// 		'modId': mod.id,
-														// 		'subModName': field.name,
-														// 		'instancePath': tmpopt.instancePath
-														// 	}
-														// ));
 													}
 													it3.next();
-													// buildBroccoliHtml( src, rtn, function(html){
-													// 	callback(html);
-													// } );
 												}
 											);
 
-											// loop field
-											// tplDataObj[field.name] = fieldData[field.name];
-											// it3.next();
 											return;
 
 										}
@@ -362,6 +350,7 @@ module.exports = function(broccoli, data, options, callback){
 							// module field
 							var opt = JSON.parse( JSON.stringify(options) );
 							opt.instancePath += '/fields.'+field.module.name;
+							var tmpVal = '';
 							it79.ary(
 								fieldData[field.module.name],
 								function( it2, row, idx ){
@@ -372,7 +361,7 @@ module.exports = function(broccoli, data, options, callback){
 									delete(tmpopt.subModName);
 									// console.log(tmpopt);
 									broccoli.buildBowl(row, tmpopt, function(html){
-										rtn += html;
+										tmpVal += html;
 										it2.next();
 									});
 								} ,
@@ -381,7 +370,7 @@ module.exports = function(broccoli, data, options, callback){
 										var tmpopt = JSON.parse( JSON.stringify(opt) );
 										if(typeof(fieldData[field.module.name]) != typeof([])){ fieldData[field.module.name] = []; }
 										tmpopt.instancePath += '@'+(fieldData[field.module.name].length);
-										rtn += mkAppender(
+										tmpVal += mkAppender(
 											'module',
 											{
 												'modId': mod.id,
@@ -389,6 +378,14 @@ module.exports = function(broccoli, data, options, callback){
 											}
 										);
 									}
+
+									if( !field.module.hidden ){//← "hidden": true だったら、非表示(=出力しない)
+										rtn += tmpVal;
+									}
+									_this.nameSpace.vars[field.module.name] = {
+										fieldType: "module", val: tmpVal
+									}
+
 									buildBroccoliHtml( src, rtn, function(html){
 										callback(html);
 									} );
@@ -403,8 +400,7 @@ module.exports = function(broccoli, data, options, callback){
 
 							var opt = JSON.parse( JSON.stringify(options) );
 							opt.instancePath += '/fields.'+field.loop.name;
-							// console.log(fieldData);
-							// console.log(field.loop);
+							var tmpVal = '';
 							it79.ary(
 								fieldData[field.loop.name],
 								function( it2, row, idx ){
@@ -414,9 +410,9 @@ module.exports = function(broccoli, data, options, callback){
 									tmpopt.subModName = field.loop.name;
 									// console.log(tmpopt);
 									broccoli.buildBowl(row, tmpopt, function(html){
-										// rtn += '<!-- ---- LOOP ---- -->';
-										rtn += html;
-										// rtn += '<!-- ---- /LOOP ---- -->';
+										// tmpVal += '<!-- ---- LOOP ---- -->';
+										tmpVal += html;
+										// tmpVal += '<!-- ---- /LOOP ---- -->';
 										it2.next();
 									});
 								} ,
@@ -425,7 +421,7 @@ module.exports = function(broccoli, data, options, callback){
 										var tmpopt = JSON.parse( JSON.stringify(opt) );
 										if(typeof(fieldData[field.loop.name]) != typeof([])){ fieldData[field.loop.name] = []; }
 										tmpopt.instancePath += '@'+(fieldData[field.loop.name].length);
-										rtn += mkAppender(
+										tmpVal += mkAppender(
 											'loop',
 											{
 												'modId': mod.id,
@@ -434,6 +430,14 @@ module.exports = function(broccoli, data, options, callback){
 											}
 										);
 									}
+
+									if( !field.loop.hidden ){//← "hidden": true だったら、非表示(=出力しない)
+										rtn += tmpVal;
+									}
+									_this.nameSpace.vars[field.loop.name] = {
+										fieldType: "loop", val: tmpVal
+									}
+
 									buildBroccoliHtml( src, rtn, function(html){
 										callback(html);
 									} );
@@ -450,6 +454,7 @@ module.exports = function(broccoli, data, options, callback){
 							var boolResult = false;
 							src = '';
 							if( field.if.cond && typeof(field.if.cond) == typeof([]) ){
+								// cond の評価
 								// cond に、2次元配列を受け取った場合。
 								// 1次元目は or 条件、2次元目は and 条件で評価する。
 								for( var condIdx in field.if.cond ){
@@ -496,9 +501,12 @@ module.exports = function(broccoli, data, options, callback){
 									}
 								}
 							}
+
 							if( _this.nameSpace.vars[field.if.is_set] && php.trim(_this.nameSpace.vars[field.if.is_set].val).length ){
+								// is_set の評価
 								boolResult = true;
 							}
+
 							if( boolResult ){
 								src += tmpSearchResult.content;
 							}
