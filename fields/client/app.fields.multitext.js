@@ -129,7 +129,9 @@ module.exports = function(broccoli){
 
 		$(elm).html($rtn);
 
-		callback();
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+			callback();
+		}); });
 		return;
 	}
 
@@ -152,7 +154,9 @@ module.exports = function(broccoli){
 		data.src = JSON.parse( JSON.stringify(data.src) );
 		data.editor = $dom.find('input[type=radio][name=editor-'+mod.name+']:checked').val();
 
-		callback(data);
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+			callback(data);
+		}); });
 		return;
 	}
 

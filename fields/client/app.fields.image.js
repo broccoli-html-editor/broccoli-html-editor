@@ -376,9 +376,9 @@ module.exports = function(broccoli){
 			$(elm).html(rtn);
 			selectResourceType();
 
-			// setTimeout(function(){
+			new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 				callback();
-			// }, 0);
+			}); });
 		} );
 		return;
 
@@ -423,7 +423,9 @@ module.exports = function(broccoli){
 		callback = callback||function(){};
 		resourceIdList = [];
 		resourceIdList.push(data.resKey);
-		callback(resourceIdList);
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+			callback(resourceIdList);
+		}); });
 		return this;
 	}
 

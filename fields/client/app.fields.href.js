@@ -15,9 +15,10 @@ module.exports = function(broccoli){
 			.append( $input )
 		;
 		$(elm).html(rtn);
-		// setTimeout(function(){
+
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 			callback();
-		// }, 0);
+		}); });
 		return;
 	}
 
@@ -28,7 +29,10 @@ module.exports = function(broccoli){
 		var $dom = $(elm);
 		var src = $dom.find('input').val();
 		src = JSON.parse( JSON.stringify(src) );
-		callback(src);
+
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+			callback(src);
+		}); });
 		return;
 	}
 
