@@ -376,12 +376,13 @@ module.exports = function(broccoli){
 			$(elm).html(rtn);
 			selectResourceType();
 
-			// setTimeout(function(){
+			new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 				callback();
-			// }, 0);
+			}); });
 		} );
 		return;
-	}
+
+	} // this.mkEditor()
 
 	/**
 	 * データを複製する (Client Side)
@@ -422,7 +423,9 @@ module.exports = function(broccoli){
 		callback = callback||function(){};
 		resourceIdList = [];
 		resourceIdList.push(data.resKey);
-		callback(resourceIdList);
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+			callback(resourceIdList);
+		}); });
 		return this;
 	}
 
@@ -442,6 +445,12 @@ module.exports = function(broccoli){
 		it79.fnc(
 			data,
 			[
+				function(it1, data){
+					data.resType = $dom.find('[name='+mod.name+'-resourceType]:checked').val();
+					data.webUrl = $dom.find('[name='+mod.name+'-webUrl]').val();
+					it1.next(data);
+					return;
+				} ,
 				function(it1, data){
 					// console.log('saving image field data.');
 					_resMgr.getResource(data.resKey, function(result){
@@ -482,7 +491,7 @@ module.exports = function(broccoli){
 						resInfo.field = mod.type;
 						resInfo.fieldNote = {}; // <= フィールド記録欄をクリア
 					}
-					resInfo.isPrivateMaterial = false;
+					resInfo.isPrivateMaterial = (data.resType == 'web' ? true : false);
 					resInfo.publicFilename = $dom.find('input[name='+mod.name+'-publicFilename]').val();
 
 					_resMgr.updateResource( data.resKey, resInfo, function(result){
@@ -491,13 +500,6 @@ module.exports = function(broccoli){
 							it1.next(data);
 						} );
 					} );
-					return;
-
-				} ,
-				function(it1, data){
-					data.resType = $dom.find('[name='+mod.name+'-resourceType]:checked').val();
-					data.webUrl = $dom.find('[name='+mod.name+'-webUrl]').val();
-					it1.next(data);
 					return;
 
 				} ,

@@ -1,0 +1,22 @@
+<!-- module field -->
+{&{"module":{"name":"main","label":"Main Area","hidden": true}}&}
+
+{&{"if":{"is_set":"main"}}&}
+<div style="border: 1px solid #f00;">
+    <div>test</div>
+{&{"echo":{"ref":"main"}}&}
+<!-- /.unit --></div>
+{&"endif"&}
+
+
+<!-- loop field -->
+{&{"loop":{"name":"loop", "label":"Loop Area","hidden": true}}&}
+    <li>リスト</li>
+{&"endloop"&}
+
+{&{"if":{"is_set":"loop"}}&}
+<ul style="border: 1px solid #f00;">
+    <li>test</li>
+{&{"echo":{"ref":"loop"}}&}
+</ul>
+{&"endif"&}

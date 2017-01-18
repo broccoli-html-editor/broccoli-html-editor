@@ -6,6 +6,12 @@ module.exports = function(broccoli){
 	 */
 	this.bind = function( fieldData, mode, mod, callback ){
 		var rtn = '';
+		if( fieldData === undefined && mod.default ){
+			// 値が undefined の場合は、defaultの値を参照する。
+			// このケースは、既に使用されたモジュールに、
+			// 後からselectフィールドを追加した場合などに発生する。
+			fieldData = mod.default;
+		}
 		rtn = utils79.toStr(fieldData);
 
 		if( !rtn.length && mod.options ){

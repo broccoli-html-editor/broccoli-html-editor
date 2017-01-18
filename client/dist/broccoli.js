@@ -4634,9 +4634,10 @@ module.exports = function(broccoli){
 			.append( $input )
 		;
 		$(elm).html(rtn);
-		// setTimeout(function(){
+
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 			callback();
-		// }, 0);
+		}); });
 		return;
 	}
 
@@ -4647,7 +4648,10 @@ module.exports = function(broccoli){
 		var $dom = $(elm);
 		var src = $dom.find('input').val();
 		src = JSON.parse( JSON.stringify(src) );
-		callback(src);
+
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+			callback(src);
+		}); });
 		return;
 	}
 
@@ -5038,12 +5042,13 @@ module.exports = function(broccoli){
 			$(elm).html(rtn);
 			selectResourceType();
 
-			// setTimeout(function(){
+			new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 				callback();
-			// }, 0);
+			}); });
 		} );
 		return;
-	}
+
+	} // this.mkEditor()
 
 	/**
 	 * データを複製する (Client Side)
@@ -5084,7 +5089,9 @@ module.exports = function(broccoli){
 		callback = callback||function(){};
 		resourceIdList = [];
 		resourceIdList.push(data.resKey);
-		callback(resourceIdList);
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+			callback(resourceIdList);
+		}); });
 		return this;
 	}
 
@@ -5104,6 +5111,12 @@ module.exports = function(broccoli){
 		it79.fnc(
 			data,
 			[
+				function(it1, data){
+					data.resType = $dom.find('[name='+mod.name+'-resourceType]:checked').val();
+					data.webUrl = $dom.find('[name='+mod.name+'-webUrl]').val();
+					it1.next(data);
+					return;
+				} ,
 				function(it1, data){
 					// console.log('saving image field data.');
 					_resMgr.getResource(data.resKey, function(result){
@@ -5144,7 +5157,7 @@ module.exports = function(broccoli){
 						resInfo.field = mod.type;
 						resInfo.fieldNote = {}; // <= フィールド記録欄をクリア
 					}
-					resInfo.isPrivateMaterial = false;
+					resInfo.isPrivateMaterial = (data.resType == 'web' ? true : false);
 					resInfo.publicFilename = $dom.find('input[name='+mod.name+'-publicFilename]').val();
 
 					_resMgr.updateResource( data.resKey, resInfo, function(result){
@@ -5153,13 +5166,6 @@ module.exports = function(broccoli){
 							it1.next(data);
 						} );
 					} );
-					return;
-
-				} ,
-				function(it1, data){
-					data.resType = $dom.find('[name='+mod.name+'-resourceType]:checked').val();
-					data.webUrl = $dom.find('[name='+mod.name+'-webUrl]').val();
-					it1.next(data);
 					return;
 
 				} ,
@@ -5308,7 +5314,9 @@ module.exports = function(broccoli){
 
 		$(elm).html($rtn);
 
-		callback();
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+			callback();
+		}); });
 		return;
 	}
 
@@ -5331,7 +5339,9 @@ module.exports = function(broccoli){
 		data.src = JSON.parse( JSON.stringify(data.src) );
 		data.editor = $dom.find('input[type=radio][name=editor-'+mod.name+']:checked').val();
 
-		callback(data);
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+			callback(data);
+		}); });
 		return;
 	}
 
@@ -5378,6 +5388,15 @@ module.exports = function(broccoli){
 					}
 					$select.append( $option );
 				}
+				// 選択されていなかったら default を選択。
+				if( !$select.find('input[type=radio]:checked').size() && mod.default ){
+					$select.find('input[type=radio][value='+mod.default+']').attr({'checked':'checked'});
+				}
+				// それでも選択されていなかったら、最初の選択肢を選択。
+				if( !$select.find('input[type=radio]:checked').size() ){
+					$select.find('input[type=radio]:first').attr({'checked':'checked'});
+				}
+
 			}else{
 				// デフォルトはselectタグ
 				$select = $('<select>')
@@ -5409,9 +5428,9 @@ module.exports = function(broccoli){
 		;
 		$(elm).html(rtn);
 
-		// setTimeout(function(){
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 			callback();
-		// }, 0);
+		}); });
 		return;
 	}
 
@@ -5423,11 +5442,23 @@ module.exports = function(broccoli){
 		var src = '';
 		if(mod.display == 'radio'){
 			src = $dom.find('input[type=radio]:checked').val();
+
+			// 選択されていなかったら default を選択。
+			if( src === undefined && mod.default ){
+				src = mod.default;
+			}
+			// それでも選択されていなかったら、最初の選択肢を選択。
+			if( src === undefined ){
+				src = $dom.find('input[type=radio]:first').val();
+			}
+
 		}else{
 			src = $dom.find('select').val();
 		}
 		src = JSON.parse( JSON.stringify(src) );
-		callback(src);
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+			callback(src);
+		}); });
 		return;
 	}
 

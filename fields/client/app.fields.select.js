@@ -38,6 +38,15 @@ module.exports = function(broccoli){
 					}
 					$select.append( $option );
 				}
+				// 選択されていなかったら default を選択。
+				if( !$select.find('input[type=radio]:checked').size() && mod.default ){
+					$select.find('input[type=radio][value='+mod.default+']').attr({'checked':'checked'});
+				}
+				// それでも選択されていなかったら、最初の選択肢を選択。
+				if( !$select.find('input[type=radio]:checked').size() ){
+					$select.find('input[type=radio]:first').attr({'checked':'checked'});
+				}
+
 			}else{
 				// デフォルトはselectタグ
 				$select = $('<select>')
@@ -69,9 +78,9 @@ module.exports = function(broccoli){
 		;
 		$(elm).html(rtn);
 
-		// setTimeout(function(){
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 			callback();
-		// }, 0);
+		}); });
 		return;
 	}
 
@@ -83,11 +92,23 @@ module.exports = function(broccoli){
 		var src = '';
 		if(mod.display == 'radio'){
 			src = $dom.find('input[type=radio]:checked').val();
+
+			// 選択されていなかったら default を選択。
+			if( src === undefined && mod.default ){
+				src = mod.default;
+			}
+			// それでも選択されていなかったら、最初の選択肢を選択。
+			if( src === undefined ){
+				src = $dom.find('input[type=radio]:first').val();
+			}
+
 		}else{
 			src = $dom.find('select').val();
 		}
 		src = JSON.parse( JSON.stringify(src) );
-		callback(src);
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+			callback(src);
+		}); });
 		return;
 	}
 

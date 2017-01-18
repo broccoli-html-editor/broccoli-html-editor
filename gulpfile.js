@@ -21,19 +21,15 @@ var _tasks = [
 gulp.task("client-libs", function() {
 	gulp.src(["node_modules/bootstrap/dist/fonts/**/*"])
 		.pipe(gulp.dest( './client/dist/libs/bootstrap/dist/fonts/' ))
-		.pipe(gulp.dest( './tests/testdata/htdocs/libs/libs/bootstrap/dist/fonts/' ))
 	;
 	gulp.src(["node_modules/bootstrap/dist/js/**/*"])
 		.pipe(gulp.dest( './client/dist/libs/bootstrap/dist/js/' ))
-		.pipe(gulp.dest( './tests/testdata/htdocs/libs/libs/bootstrap/dist/js/' ))
 	;
 	gulp.src(["node_modules/px2style/dist/scripts.js"])
 		.pipe(gulp.dest( './client/dist/libs/px2style/dist/' ))
-		.pipe(gulp.dest( './tests/testdata/htdocs/libs/libs/px2style/dist/' ))
 	;
 	gulp.src(["node_modules/px2style/dist/images/**/*"])
 		.pipe(gulp.dest( './client/dist/libs/px2style/dist/images/' ))
-		.pipe(gulp.dest( './tests/testdata/htdocs/libs/libs/px2style/dist/images/' ))
 	;
 });
 
@@ -52,14 +48,12 @@ gulp.task('.css.scss', function(){
 			extname: '.css'
 		}))
 		.pipe(gulp.dest( './client/dist/' ))
-		.pipe(gulp.dest( './tests/testdata/htdocs/libs/' ))
 
 		.pipe(minifyCss({compatibility: 'ie8'}))
 		.pipe(rename({
 			extname: '.min.css'
 		}))
 		.pipe(gulp.dest( './client/dist/' ))
-		.pipe(gulp.dest( './tests/testdata/htdocs/libs/' ))
 	;
 });
 
@@ -70,11 +64,9 @@ gulp.task("broccoli.js", function() {
 		.pipe(browserify({}))
 		.pipe(concat('broccoli.js'))
 		.pipe(gulp.dest( './client/dist/' ))
-		.pipe(gulp.dest( './tests/testdata/htdocs/libs/' ))
 		.pipe(concat('broccoli.min.js'))
 		.pipe(uglify())
 		.pipe(gulp.dest( './client/dist/' ))
-		.pipe(gulp.dest( './tests/testdata/htdocs/libs/' ))
 	;
 });
 
@@ -85,11 +77,9 @@ gulp.task("broccoli-preview-contents.js", function() {
 		.pipe(browserify({}))
 		.pipe(concat('broccoli-preview-contents.js'))
 		.pipe(gulp.dest( './client/dist/' ))
-		.pipe(gulp.dest( './tests/testdata/htdocs/libs/' ))
 		.pipe(concat('broccoli-preview-contents.min.js'))
 		.pipe(uglify())
 		.pipe(gulp.dest( './client/dist/' ))
-		.pipe(gulp.dest( './tests/testdata/htdocs/libs/' ))
 	;
 });
 
@@ -105,7 +95,7 @@ gulp.task("test/main.js", function() {
 
 // src 中のすべての拡張子を監視して処理
 gulp.task("watch", function() {
-	gulp.watch(["client/src/**/*","libs/**/*","tests/testdata/htdocs/index_files/main.src.js"], _tasks);
+	gulp.watch(["client/src/**/*","fields/client/**/*","libs/**/*","tests/testdata/htdocs/index_files/main.src.js"], _tasks);
 
 	var svrCtrl = require( './tests/biflora/serverCtrl.js' );
 	svrCtrl.boot(function(){

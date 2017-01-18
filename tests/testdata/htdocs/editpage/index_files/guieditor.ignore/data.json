@@ -1031,6 +1031,27 @@
      {
       "modId": "testMod1:dev/deprecated",
       "fields": {}
+     },
+     {
+      "modId": "testMod1:dev/module_hidden",
+      "fields": {
+       "main": [
+        {
+         "modId": "testMod1:dev/module_hidden",
+         "fields": {
+          "main": [],
+          "loop": [
+           {
+            "modId": "testMod1:dev/module_hidden",
+            "fields": {},
+            "subModName": "loop"
+           }
+          ]
+         }
+        }
+       ],
+       "loop": []
+      }
      }
     ]
    },
