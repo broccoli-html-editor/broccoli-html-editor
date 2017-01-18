@@ -255,7 +255,7 @@ $ npm test
 
 ## 更新履歴 - Change log
 
-### broccoli-html-editor@0.1.0-beta.11 (2016年??月??日)
+### broccoli-html-editor@0.1.0-beta.11 (2017年1月18日)
 
 - モジュール設定 `deprecated` を追加。非推奨のモジュールに `true` をセットすると、モジュールパレットに表示されなくなる。
 - サーバーサイドに新しいAPI `broccoli.updateContents()` を追加。
