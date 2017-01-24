@@ -350,7 +350,9 @@ module.exports = function(broccoli){
 							"placeholder": "output file name"
 						})
 						.css({
-							'display': 'inline-block'
+							'display': 'inline-block',
+							'width': 500,
+							'max-width': '90%'
 						})
 						.val( (typeof(res.publicFilename)==typeof('') ? res.publicFilename : '') )
 					)
