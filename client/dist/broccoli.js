@@ -128,8 +128,8 @@
 						return;
 					})
 					.bind('drop', function(e){
-						var event = e.originalEvent;
-						var fileInfo = event.dataTransfer.files[0];
+						// var event = e.originalEvent;
+						// var fileInfo = event.dataTransfer.files[0];
 						e.stopPropagation();
 						e.preventDefault();
 						return;
@@ -841,10 +841,21 @@
 			$('.broccoli *').attr({'tabindex':'-1'});
 			$('body')
 				.append( $('<div class="broccoli broccoli--lightbox">')
+					// dropイベントをキャンセル
+					.bind('dragover', function(e){
+						e.stopPropagation();
+						e.preventDefault();
+						return;
+					}).bind('drop', function(e){
+						e.stopPropagation();
+						e.preventDefault();
+						return;
+					})
 					.append( $('<div class="broccoli--lightbox-inner">')
 					)
 				)
 			;
+
 			var dom = $('body').find('.broccoli--lightbox-inner').get(0);
 			callback(dom);
 			return this;
