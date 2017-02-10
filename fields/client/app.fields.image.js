@@ -13,8 +13,13 @@ module.exports = function(broccoli){
 	 * パスから拡張子を取り出して返す
 	 */
 	function getExtension(path){
-		var ext = path.replace( new RegExp('^.*?\.([a-zA-Z0-9\_\-]+)$'), '$1' );
-		ext = ext.toLowerCase();
+		var ext = '';
+		try {
+			var ext = path.replace( new RegExp('^.*?\.([a-zA-Z0-9\_\-]+)$'), '$1' );
+			ext = ext.toLowerCase();
+		} catch (e) {
+			ext = false;
+		}
 		return ext;
 	}
 
@@ -226,7 +231,7 @@ module.exports = function(broccoli){
 						"webkitfile":"webkitfile"
 					})
 					.css({'width':'100%'})
-					.bind('change', function(e){
+					.on('change', function(e){
 						// console.log(e.target.files);
 						var fileInfo = e.target.files[0];
 						var realpathSelected = $(this).val();
@@ -374,6 +379,28 @@ module.exports = function(broccoli){
 						.val( (typeof(data.webUrl)==typeof('') ? data.webUrl : '') )
 					)
 			);
+
+			$uiImageResource.on('paste', function(e){
+				var items = e.originalEvent.clipboardData.items;
+				// console.log(items);
+				for (var i = 0 ; i < items.length ; i++) {
+					var item = items[i];
+					// console.log(item);
+					if(item.type.indexOf("image") != -1){
+						var file = item.getAsFile();
+						file.name = file.name||'clipboard.'+(function(type){
+							if(type.match(/png$/i)){return 'png';}
+							if(type.match(/gif$/i)){return 'gif';}
+							if(type.match(/(?:jpeg|jpg|jpe)$/i)){return 'jpg';}
+							if(type.match(/svg/i)){return 'svg';}
+							return 'txt';
+						})(file.type);
+						// console.log(file);
+						applyFile(file);
+					}
+				}
+			}).addClass('broccoli__user-selectable');
+
 			rtn.append($uiImageResource).append($uiWebResource);
 			$(elm).html(rtn);
 			selectResourceType();
