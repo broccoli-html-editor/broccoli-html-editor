@@ -134,6 +134,24 @@
 						e.preventDefault();
 						return;
 					})
+					.bind('copy', function(e){
+						switch(e.target.tagName.toLowerCase()){
+							case 'textarea': case 'input': return;break;
+						}
+						e.stopPropagation();
+						e.preventDefault();
+						_this.copy();
+						return;
+					})
+					.bind('paste', function(e){
+						switch(e.target.tagName.toLowerCase()){
+							case 'textarea': case 'input': return;break;
+						}
+						e.stopPropagation();
+						e.preventDefault();
+						_this.paste();
+						return;
+					})
 				;
 			}
 			bindDropCancel($canvas);
@@ -3529,23 +3547,13 @@ module.exports = function(broccoli){
 								.text(mod.info.name||mod.id) // ← module name
 								.addClass('broccoli--instance-tree-view-modulename')
 						)
-						.css({
-							// "border":"1px solid #666"
-						})
+						.addClass('broccoli--instance-tree-view-panel-item')
 						.attr({
 							'data-broccoli-instance-path': parentInstancePath,
 							'data-broccoli-sub-mod-name': subModName,
 							'data-broccoli-is-instance-tree-view': 'yes',
 							'draggable': true
 						})
-						// .bind('dragover', function(e){
-						// 	e.stopPropagation();
-						// 	var instancePath = $this.attr('data-broccoli-instance-path');
-						// 	// if( $this.attr('data-broccoli-is-appender') == 'yes' ){
-						// 	// 	instancePath = php.dirname(instancePath);
-						// 	// }
-						// 	broccoli.focusInstance( instancePath );
-						// })
 						.bind('click', function(e){
 							e.stopPropagation();
 							var $this = $(this);
@@ -3588,23 +3596,6 @@ module.exports = function(broccoli){
 							.text('bowl.'+idx) // ← bowl name
 							.addClass('broccoli--instance-tree-view-bowlname')
 					)
-					// .attr({
-					// 	'data-broccoli-instance-path':'/bowl.'+idx
-					// })
-					// .bind('click',function(e){
-					// 	var instancePath = $(this).attr('data-broccoli-instance-path');
-					// 	broccoli.focusInstance(instancePath);
-					// 	e.stopPropagation();
-					// })
-					// .bind('mouseout',function(e){
-					// 	broccoli.unfocusInstance();
-					// 	e.stopPropagation();
-					// })
-					// .bind('click',function(e){
-					// 	var instancePath = $(this).attr('data-broccoli-instance-path');
-					// 	broccoli.focusInstance(instancePath);
-					// 	e.stopPropagation();
-					// })
 				;
 				buildInstance(
 					row,
@@ -4017,7 +4008,6 @@ module.exports = function(broccoli){
 				});
 				return;
 			})
-
 			.bind('dragleave', function(e){
 				e.stopPropagation();
 				e.preventDefault();
