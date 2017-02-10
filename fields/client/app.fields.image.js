@@ -202,11 +202,45 @@ module.exports = function(broccoli){
 				)
 			);
 
-			$uiImageResource.append( $('<label>')
+			$uiImageResource.append( $('<div>')
 				.css({
 					'border':'1px solid #999',
 					'padding': 10,
+					'margin': '10px auto',
+					'background': '#fff',
+					'outline': 'none',
 					'border-radius': 5
+				})
+				.addClass('broccoli__user-selectable')
+				.on('paste', function(e){
+					var items = e.originalEvent.clipboardData.items;
+					// console.log(items);
+					for (var i = 0 ; i < items.length ; i++) {
+						var item = items[i];
+						// console.log(item);
+						if(item.type.indexOf("image") != -1){
+							var file = item.getAsFile();
+							file.name = file.name||'clipboard.'+(function(type){
+								if(type.match(/png$/i)){return 'png';}
+								if(type.match(/gif$/i)){return 'gif';}
+								if(type.match(/(?:jpeg|jpg|jpe)$/i)){return 'jpg';}
+								if(type.match(/svg/i)){return 'svg';}
+								return 'txt';
+							})(file.type);
+							// console.log(file);
+							applyFile(file);
+						}
+					}
+				})
+				.attr({'tabindex': '1'})
+				.on('focus', function(e){
+					$(this).css({'background': '#eee'});
+				})
+				.on('blur', function(e){
+					$(this).css({'background': '#fff'});
+				})
+				.on('dblclick', function(e){
+					$(this).find('input').focus();
 				})
 				.append( $img
 					.attr({
@@ -245,11 +279,13 @@ module.exports = function(broccoli){
 				.bind('dragleave', function(e){
 					e.stopPropagation();
 					e.preventDefault();
+					$(this).css({'background': '#fff'});
 				})
 				.bind('dragover', function(e){
 					// console.log(123478987654.123456);
 					e.stopPropagation();
 					e.preventDefault();
+					$(this).css({'background': '#eee'});
 					// console.log(event);
 				})
 				.bind('drop', function(e){
@@ -264,8 +300,9 @@ module.exports = function(broccoli){
 				$('<p>')
 					.append( $('<a>')
 						.text('URLから取得する')
+						.addClass('px2-btn')
 						.attr({'href':'javascript:;'})
-						.click(function(){
+						.on('click', function(){
 							var url = prompt('指定のURLから画像ファイルを取得して保存します。'+"\n"+'画像ファイルのURLを入力してください。');
 							if( !url ){
 								return;
@@ -379,27 +416,6 @@ module.exports = function(broccoli){
 						.val( (typeof(data.webUrl)==typeof('') ? data.webUrl : '') )
 					)
 			);
-
-			$uiImageResource.on('paste', function(e){
-				var items = e.originalEvent.clipboardData.items;
-				// console.log(items);
-				for (var i = 0 ; i < items.length ; i++) {
-					var item = items[i];
-					// console.log(item);
-					if(item.type.indexOf("image") != -1){
-						var file = item.getAsFile();
-						file.name = file.name||'clipboard.'+(function(type){
-							if(type.match(/png$/i)){return 'png';}
-							if(type.match(/gif$/i)){return 'gif';}
-							if(type.match(/(?:jpeg|jpg|jpe)$/i)){return 'jpg';}
-							if(type.match(/svg/i)){return 'svg';}
-							return 'txt';
-						})(file.type);
-						// console.log(file);
-						applyFile(file);
-					}
-				}
-			}).addClass('broccoli__user-selectable');
 
 			rtn.append($uiImageResource).append($uiWebResource);
 			$(elm).html(rtn);
