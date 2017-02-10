@@ -298,7 +298,6 @@ module.exports = function(broccoli){
 				});
 				return;
 			})
-
 			.bind('dragleave', function(e){
 				e.stopPropagation();
 				e.preventDefault();

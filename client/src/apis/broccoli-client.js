@@ -133,6 +133,24 @@
 						e.preventDefault();
 						return;
 					})
+					.bind('copy', function(e){
+						switch(e.target.tagName.toLowerCase()){
+							case 'textarea': case 'input': return;break;
+						}
+						e.stopPropagation();
+						e.preventDefault();
+						_this.copy();
+						return;
+					})
+					.bind('paste', function(e){
+						switch(e.target.tagName.toLowerCase()){
+							case 'textarea': case 'input': return;break;
+						}
+						e.stopPropagation();
+						e.preventDefault();
+						_this.paste();
+						return;
+					})
 				;
 			}
 			bindDropCancel($canvas);
