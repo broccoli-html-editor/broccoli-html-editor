@@ -239,9 +239,6 @@ module.exports = function(broccoli){
 				.on('blur', function(e){
 					$(this).css({'background': '#fff'});
 				})
-				.on('dblclick', function(e){
-					$(this).find('input').focus();
-				})
 				.append( $img
 					.attr({
 						"src": path ,
@@ -256,24 +253,6 @@ module.exports = function(broccoli){
 						'max-width':'100%',
 						'min-height':'100px',
 						'max-height':'200px'
-					})
-				)
-				.append( $('<input>')
-					.attr({
-						"name":mod.name ,
-						"type":"file",
-						"webkitfile":"webkitfile"
-					})
-					.css({'width':'100%'})
-					.on('change', function(e){
-						// console.log(e.target.files);
-						var fileInfo = e.target.files[0];
-						var realpathSelected = $(this).val();
-
-						if( realpathSelected ){
-							applyFile(fileInfo);
-						}
-
 					})
 				)
 				.bind('dragleave', function(e){
@@ -298,10 +277,31 @@ module.exports = function(broccoli){
 			);
 			$uiImageResource.append(
 				$('<p>')
-					.append( $('<a>')
+					.append( $('<label>')
+						.text('画像ファイルを選択する')
+						.addClass('px2-btn')
+						.append( $('<input>')
+							.attr({
+								"name":mod.name ,
+								"type":"file",
+								"webkitfile":"webkitfile"
+							})
+							.css({'display': 'none'})
+							.on('change', function(e){
+								// console.log(e.target.files);
+								var fileInfo = e.target.files[0];
+								var realpathSelected = $(this).val();
+
+								if( realpathSelected ){
+									applyFile(fileInfo);
+								}
+
+							})
+						)
+					)
+					.append( $('<button>')
 						.text('URLから取得する')
 						.addClass('px2-btn')
-						.attr({'href':'javascript:;'})
 						.on('click', function(){
 							var url = prompt('指定のURLから画像ファイルを取得して保存します。'+"\n"+'画像ファイルのURLを入力してください。');
 							if( !url ){
