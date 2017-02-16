@@ -297,6 +297,7 @@ module.exports = function(broccoli, data, options, callback){
 							}};
 						}
 						src = RegExp.$3;
+						src = src.replace(/^(?:\r\n|\r|\n)/g, '');
 
 						if( typeof(field) == typeof('') ){
 							// end系：無視

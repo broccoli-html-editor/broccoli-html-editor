@@ -14,6 +14,16 @@
 		callbackMessage('unselectInstance');
 		callbackMessage('unfocusInstance');
 	});
+	// dropイベントをキャンセル
+	$iframeWindow.bind('dragover', function(e){
+		e.stopPropagation();
+		e.preventDefault();
+		return;
+	}).bind('drop', function(e){
+		e.stopPropagation();
+		e.preventDefault();
+		return;
+	});
 
 	// console.log(window.location);
 

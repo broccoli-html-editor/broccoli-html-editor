@@ -5,15 +5,15 @@
   -webkit-user-select: none;
   -ms-user-select: none;
   cursor: default; }
-  .broccoli [draggable=true] {
-    cursor: move; }
-  .broccoli [draggable=false] {
-    cursor: default; }
   .broccoli__user-selectable {
     user-select: auto;
     -moz-user-select: auto;
     -webkit-user-select: auto;
     -ms-user-select: auto; }
+  .broccoli [draggable=true] {
+    cursor: move; }
+  .broccoli [draggable=false] {
+    cursor: default; }
 
 .broccoli--canvas {
   display: block;
@@ -191,7 +191,18 @@
   text-align: center;
   background-color: transparent;
   z-index: 0;
-  cursor: move; }
+  cursor: move;
+  user-select: auto;
+  -moz-user-select: auto;
+  -webkit-user-select: auto;
+  -ms-user-select: auto;
+  pointer-events: auto; }
+  .broccoli--panel > * {
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    pointer-events: none; }
   .broccoli--panel-module-name {
     display: none; }
   .broccoli--panel:hover {
@@ -212,6 +223,19 @@
     .broccoli--panel:hover[data-broccoli-sub-mod-name] {
       border-color: #3c3;
       background-color: rgba(232, 255, 231, 0.5); }
+
+.broccoli--instance-tree-view-panel-item {
+  user-select: auto;
+  -moz-user-select: auto;
+  -webkit-user-select: auto;
+  -ms-user-select: auto;
+  pointer-events: auto; }
+  .broccoli--instance-tree-view-panel-item > * {
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    pointer-events: none; }
 
 .broccoli--panel-drop-to-insert-here {
   display: none;
