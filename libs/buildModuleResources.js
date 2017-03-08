@@ -13,7 +13,12 @@ module.exports = function(broccoli){
 	var twig = require('twig');
 	var glob = require('glob');
 	var fs = require('fs');
-	var sass = require('node-sass');
+	var sass;
+	try {
+		sass = require('node-sass');
+	} catch (e) {
+		console.error('Failed to load "node-sass"', e);
+	}
 
 	/**
 	 * ドキュメントモジュール定義のスタイルを統合
@@ -48,11 +53,17 @@ module.exports = function(broccoli){
 						if( $path.match( new RegExp('\\.scss$', 'i') ) ){
 							// console.log($tmp_bin);
 
-							$tmp_bin = sass.renderSync({
-								'file': $path,
-								'data': $tmp_bin
-							});
-							$tmp_bin = $tmp_bin.css.toString();
+							try {
+								$tmp_bin = sass.renderSync({
+									'file': $path,
+									'data': $tmp_bin
+								});
+								$tmp_bin = $tmp_bin.css.toString();
+							} catch (e) {
+								console.error('Failed to process "SASS" content.', e);
+								callback(false);
+								return;
+							}
 						}
 
 						$tmp_bin = php.trim( $tmp_bin );
