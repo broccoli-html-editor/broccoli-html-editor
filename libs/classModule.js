@@ -108,7 +108,13 @@ module.exports = function(broccoli, moduleId, options){
 			}
 			rtn.content += RegExp.$1;
 			var fieldSrc = RegExp.$2;
-			var field = JSON.parse( fieldSrc );
+			var field = {};
+			try {
+				field = JSON.parse( fieldSrc );
+			} catch (e) {
+				console.error('ERROR: Failed to parse field.', fieldSrc);
+				broccoli.log('ERROR: Failed to parse field. '+fieldSrc);
+			}
 			rtn.nextSrc = RegExp.$3;
 
 			if( field == 'end'+fieldType ){
@@ -148,7 +154,8 @@ module.exports = function(broccoli, moduleId, options){
 					try{
 						tmpJson = JSON.parse( fs.readFileSync( _this.path+'/info.json' ) );
 					}catch(e){
-						console.log( 'module info.json parse error: ' + _this.path+'/info.json' );
+						console.error( 'module info.json parse error: ' + _this.path+'/info.json' );
+						broccoli.log( 'module info.json parse error: ' + _this.path+'/info.json' );
 					}
 					if( tmpJson.name ){
 						_this.info.name = tmpJson.name;
@@ -275,7 +282,8 @@ module.exports = function(broccoli, moduleId, options){
 					try{
 						field = JSON.parse( field );
 					}catch(e){
-						console.log( 'module template parse error: ' + _this.templateFilename );
+						console.error( 'module template parse error: ' + _this.templateFilename );
+						broccoli.log( 'module template parse error: ' + _this.templateFilename );
 						field = {'input':{
 							'type':'html',
 							'name':'__error__'

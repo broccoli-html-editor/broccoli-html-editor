@@ -407,7 +407,13 @@ module.exports = function(){
 	 */
 	this.buildHtml = function( options, callback ){
 		var dataJson = fs.readFileSync(this.realpathDataDir+'/data.json');
-		dataJson = JSON.parse( dataJson );
+		try {
+			dataJson = JSON.parse( dataJson );
+		} catch (e) {
+			console.error('ERROR: Failed to parse data.json.', this.realpathDataDir+'/data.json');
+			this.log('ERROR: Failed to parse data.json. '+this.realpathDataDir+'/data.json');
+			dataJson = {};
+		}
 		dataJson.bowl = dataJson.bowl||{};
 		options.bowlList = options.bowlList||[];
 		if( options.bowlList.length ){

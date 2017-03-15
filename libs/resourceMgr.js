@@ -130,6 +130,7 @@ module.exports = function(broccoli){
 					try {
 						_resourceDb[resKey] = JSON.parse( jsonStr );
 					} catch (e) {
+						console.error('ERROR: FAILED to parse res.json', _resourcesDirPath+'/'+resKey+'/res.json');
 						_resourceDb[resKey] = {};
 					}
 				}
