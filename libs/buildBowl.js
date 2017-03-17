@@ -555,6 +555,20 @@ module.exports = function(broccoli, data, options, callback){
 				return;
 			} ,
 			function(it1, d){
+				// canvasモードのとき、scriptタグは削除する。
+				// scriptの挙動がGUI編集画面を破壊する可能性があるため。
+				if( options.mode == 'canvas' ){
+					var $ = cheerio.load(d.html, {decodeEntities: false});
+					var $script = $('script');
+					$script.each(function(idx, elm){
+						$(this).replaceWith( $('<div style="color:#eee; background-color: #f00; border: 3px solid #f00; text-align: center;">script element</div>') );
+					});
+					d.html = $.html();
+				}
+				it1.next(d);
+				return;
+			} ,
+			function(it1, d){
 				if(typeof(d.html) !== typeof('')){
 					// console.log(d.html);
 					it1.next(d);
