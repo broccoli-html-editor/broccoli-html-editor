@@ -94,7 +94,10 @@ module.exports = function(broccoli){
 								var instancePath = parentInstancePath+'/fields.'+idx+'@'+(data.fields[idx]?data.fields[idx].length:0);
 
 								var $appender = $('<div>')
-									.text('(+) '+broccoli.lb.get('ui_label.drop_a_module_here'))
+									.append( $('<span>')
+										.text('(+) '+broccoli.lb.get('ui_label.drop_a_module_here'))
+									)
+									.addClass('broccoli--instance-tree-view-panel-item')
 									.attr({
 										'data-broccoli-instance-path':instancePath,
 										'data-broccoli-is-appender':'yes',
@@ -151,7 +154,10 @@ module.exports = function(broccoli){
 								var instancePath = parentInstancePath+'/fields.'+idx+'@'+(data.fields[idx]?data.fields[idx].length:0);
 
 								var $appender = $('<div>')
-									.text(''+broccoli.lb.get('ui_label.dblclick_here_and_add_array_element'))
+									.append( $('<span>')
+										.text(''+broccoli.lb.get('ui_label.dblclick_here_and_add_array_element'))
+									)
+									.addClass('broccoli--instance-tree-view-panel-item')
 									.attr({
 										'data-broccoli-instance-path':instancePath,
 										'data-broccoli-mod-id': mod.id,
