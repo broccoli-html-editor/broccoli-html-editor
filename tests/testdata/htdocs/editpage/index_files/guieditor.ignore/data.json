@@ -45,7 +45,7 @@
                   "modId": "PlainHTMLElements:PlainHTML/MultiText",
                   "fields": {
                    "main": {
-                    "src": "child.",
+                    "src": "\n\nchild.",
                     "editor": "markdown"
                    }
                   },

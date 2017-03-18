@@ -14,6 +14,8 @@
     cursor: move; }
   .broccoli [draggable=false] {
     cursor: default; }
+  .broccoli [tabindex] {
+    outline: none; }
 
 .broccoli--canvas {
   display: block;

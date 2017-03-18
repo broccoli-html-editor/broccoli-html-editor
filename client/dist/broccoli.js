@@ -890,6 +890,8 @@
 					function(){
 						$(this).remove();
 						$('.broccoli *').removeAttr('tabindex');
+						$('.broccoli .broccoli--panel').attr({'tabindex':'1'});
+						$('.broccoli .broccoli--instance-tree-view-panel-item').attr({'tabindex':'1'});
 						callback();
 					}
 				)
@@ -3450,7 +3452,10 @@ module.exports = function(broccoli){
 										'data-broccoli-is-instance-tree-view': 'yes',
 										'draggable': false
 									})
-									.bind('click', function(e){
+									.attr({
+										'tabindex': 1
+									})
+									.bind('focus', function(e){
 										e.stopPropagation();
 										var $this = $(this);
 										var instancePath = $this.attr('data-broccoli-instance-path');
@@ -3512,7 +3517,10 @@ module.exports = function(broccoli){
 										'data-broccoli-is-instance-tree-view': 'yes',
 										'draggable': false
 									})
-									.bind('click', function(e){
+									.attr({
+										'tabindex': 1
+									})
+									.bind('focus', function(e){
 										e.stopPropagation();
 										var $this = $(this);
 										var instancePath = $this.attr('data-broccoli-instance-path');
@@ -3560,7 +3568,10 @@ module.exports = function(broccoli){
 							'data-broccoli-is-instance-tree-view': 'yes',
 							'draggable': true
 						})
-						.bind('click', function(e){
+						.attr({
+							'tabindex': 1
+						})
+						.bind('focus', function(e){
 							e.stopPropagation();
 							var $this = $(this);
 							var instancePath = $this.attr('data-broccoli-instance-path');
@@ -3790,7 +3801,11 @@ module.exports = function(broccoli){
 			.append( $('<div>')
 				.addClass('broccoli--panel-drop-to-insert-here')
 			)
-			.bind('click', function(e){
+			.attr({
+				'tabindex': 1
+			})
+			.bind('focus', function(e){
+				e.preventDefault();
 				e.stopPropagation();
 				var $this = $(this);
 				var instancePath = $this.attr('data-broccoli-instance-path');
@@ -4008,9 +4023,24 @@ module.exports = function(broccoli){
 	 */
 	this.setPanelEventHandlers = function($panel){
 		$panel
+			.attr({
+				'tabindex': 1
+			})
+			.bind('keypress', function(e){
+				// console.log(e);
+				try {
+					if( e.key.toLowerCase() == 'enter' ){
+						_this.onDblClick(e, this, function(){
+							// console.log('dblclick event done.');
+						});
+					}
+				} catch (e) {
+				}
+				return;
+			})
 			.bind('dblclick', function(e){
 				_this.onDblClick(e, this, function(){
-					console.log('dblclick event done.');
+					// console.log('dblclick event done.');
 				});
 				return;
 			})
@@ -4053,6 +4083,24 @@ module.exports = function(broccoli){
 			.bind('drop', function(e){
 				_this.onDrop(e, this, function(){
 					console.log('drop event done.');
+				});
+				return;
+			})
+			.bind('copy', function(e){
+				e.preventDefault();
+				e.stopPropagation();
+				var $this = $(this);
+				broccoli.copy(function(){
+					// $this.focus();
+				});
+				return;
+			})
+			.bind('paste', function(e){
+				e.preventDefault();
+				e.stopPropagation();
+				var $this = $(this);
+				broccoli.paste(function(){
+					// $this.focus();
 				});
 				return;
 			})
