@@ -74,7 +74,11 @@ module.exports = function(broccoli){
 			.append( $('<div>')
 				.addClass('broccoli--panel-drop-to-insert-here')
 			)
-			.on('click', function(e){
+			.attr({
+				'tabindex': 1
+			})
+			.bind('focus', function(e){
+				e.preventDefault();
 				e.stopPropagation();
 				var $this = $(this);
 				var instancePath = $this.attr('data-broccoli-instance-path');
@@ -292,18 +296,33 @@ module.exports = function(broccoli){
 	 */
 	this.setPanelEventHandlers = function($panel){
 		$panel
-			.on('dblclick', function(e){
+			.attr({
+				'tabindex': 1
+			})
+			.bind('keypress', function(e){
+				// console.log(e);
+				try {
+					if( e.key.toLowerCase() == 'enter' ){
+						_this.onDblClick(e, this, function(){
+							// console.log('dblclick event done.');
+						});
+					}
+				} catch (e) {
+				}
+				return;
+			})
+			.bind('dblclick', function(e){
 				_this.onDblClick(e, this, function(){
-					console.log('dblclick event done.');
+					// console.log('dblclick event done.');
 				});
 				return;
 			})
-			.on('dragleave', function(e){
+			.bind('dragleave', function(e){
 				e.stopPropagation();
 				e.preventDefault();
 				$(this).removeClass('broccoli--panel__drag-entered');
 			})
-			.on('dragover', function(e){
+			.bind('dragover', function(e){
 				e.stopPropagation();
 				e.preventDefault();
 				var instancePath = $(this).attr('data-broccoli-instance-path');
@@ -323,7 +342,7 @@ module.exports = function(broccoli){
 					}
 				}
 			})
-			.on('dragstart', function(e){
+			.bind('dragstart', function(e){
 				e.stopPropagation();
 				var event = e.originalEvent;
 				event.dataTransfer.setData("method", 'moveTo' );
@@ -334,32 +353,27 @@ module.exports = function(broccoli){
 				}
 				event.dataTransfer.setData("data-broccoli-is-appender", $(this).attr('data-broccoli-is-appender') );
 			})
-			.on('drop', function(e){
+			.bind('drop', function(e){
 				_this.onDrop(e, this, function(){
 					console.log('drop event done.');
 				});
 				return;
 			})
-			.attr({
-				'tabindex': 1
-			})
-			.on('copy', function(e){
+			.bind('copy', function(e){
 				e.preventDefault();
 				e.stopPropagation();
-				broccoli.copy();
+				var $this = $(this);
+				broccoli.copy(function(){
+					// $this.focus();
+				});
 				return;
 			})
-			.on('paste', function(e){
+			.bind('paste', function(e){
 				e.preventDefault();
 				e.stopPropagation();
-				broccoli.paste();
-				return;
-			})
-			.on('focus', function(e){
-				e.preventDefault();
-				e.stopPropagation();
-				var instancePath = $(this).attr('data-broccoli-instance-path');
-				broccoli.selectInstance(instancePath, function(){
+				var $this = $(this);
+				broccoli.paste(function(){
+					// $this.focus();
 				});
 				return;
 			})

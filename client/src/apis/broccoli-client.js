@@ -133,6 +133,24 @@
 						e.preventDefault();
 						return;
 					})
+					.bind('copy', function(e){
+						switch(e.target.tagName.toLowerCase()){
+							case 'textarea': case 'input': return;break;
+						}
+						e.stopPropagation();
+						e.preventDefault();
+						_this.copy();
+						return;
+					})
+					.bind('paste', function(e){
+						switch(e.target.tagName.toLowerCase()){
+							case 'textarea': case 'input': return;break;
+						}
+						e.stopPropagation();
+						e.preventDefault();
+						_this.paste();
+						return;
+					})
 				;
 			}
 			bindDropCancel($canvas);
@@ -871,6 +889,8 @@
 					function(){
 						$(this).remove();
 						$('.broccoli *').removeAttr('tabindex');
+						$('.broccoli .broccoli--panel').attr({'tabindex':'1'});
+						$('.broccoli .broccoli--instance-tree-view-panel-item').attr({'tabindex':'1'});
 						callback();
 					}
 				)

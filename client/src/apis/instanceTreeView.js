@@ -104,7 +104,10 @@ module.exports = function(broccoli){
 										'data-broccoli-is-instance-tree-view': 'yes',
 										'draggable': false
 									})
-									.bind('click', function(e){
+									.attr({
+										'tabindex': 1
+									})
+									.bind('focus', function(e){
 										e.stopPropagation();
 										var $this = $(this);
 										var instancePath = $this.attr('data-broccoli-instance-path');
@@ -166,7 +169,10 @@ module.exports = function(broccoli){
 										'data-broccoli-is-instance-tree-view': 'yes',
 										'draggable': false
 									})
-									.bind('click', function(e){
+									.attr({
+										'tabindex': 1
+									})
+									.bind('focus', function(e){
 										e.stopPropagation();
 										var $this = $(this);
 										var instancePath = $this.attr('data-broccoli-instance-path');
@@ -214,7 +220,10 @@ module.exports = function(broccoli){
 							'data-broccoli-is-instance-tree-view': 'yes',
 							'draggable': true
 						})
-						.bind('click', function(e){
+						.attr({
+							'tabindex': 1
+						})
+						.bind('focus', function(e){
 							e.stopPropagation();
 							var $this = $(this);
 							var instancePath = $this.attr('data-broccoli-instance-path');
