@@ -74,7 +74,7 @@ module.exports = function(broccoli){
 			.append( $('<div>')
 				.addClass('broccoli--panel-drop-to-insert-here')
 			)
-			.bind('click', function(e){
+			.on('click', function(e){
 				e.stopPropagation();
 				var $this = $(this);
 				var instancePath = $this.attr('data-broccoli-instance-path');
@@ -292,18 +292,18 @@ module.exports = function(broccoli){
 	 */
 	this.setPanelEventHandlers = function($panel){
 		$panel
-			.bind('dblclick', function(e){
+			.on('dblclick', function(e){
 				_this.onDblClick(e, this, function(){
 					console.log('dblclick event done.');
 				});
 				return;
 			})
-			.bind('dragleave', function(e){
+			.on('dragleave', function(e){
 				e.stopPropagation();
 				e.preventDefault();
 				$(this).removeClass('broccoli--panel__drag-entered');
 			})
-			.bind('dragover', function(e){
+			.on('dragover', function(e){
 				e.stopPropagation();
 				e.preventDefault();
 				var instancePath = $(this).attr('data-broccoli-instance-path');
@@ -323,7 +323,7 @@ module.exports = function(broccoli){
 					}
 				}
 			})
-			.bind('dragstart', function(e){
+			.on('dragstart', function(e){
 				e.stopPropagation();
 				var event = e.originalEvent;
 				event.dataTransfer.setData("method", 'moveTo' );
@@ -334,9 +334,32 @@ module.exports = function(broccoli){
 				}
 				event.dataTransfer.setData("data-broccoli-is-appender", $(this).attr('data-broccoli-is-appender') );
 			})
-			.bind('drop', function(e){
+			.on('drop', function(e){
 				_this.onDrop(e, this, function(){
 					console.log('drop event done.');
+				});
+				return;
+			})
+			.attr({
+				'tabindex': 1
+			})
+			.on('copy', function(e){
+				e.preventDefault();
+				e.stopPropagation();
+				broccoli.copy();
+				return;
+			})
+			.on('paste', function(e){
+				e.preventDefault();
+				e.stopPropagation();
+				broccoli.paste();
+				return;
+			})
+			.on('focus', function(e){
+				e.preventDefault();
+				e.stopPropagation();
+				var instancePath = $(this).attr('data-broccoli-instance-path');
+				broccoli.selectInstance(instancePath, function(){
 				});
 				return;
 			})
