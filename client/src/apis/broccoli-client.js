@@ -39,6 +39,7 @@
 		var LangBank = require('langbank');
 		this.lb = {};
 		var selectedInstance = null;
+		var selectedInstanceRegion = [];
 		var $canvas;
 		var redrawTimer;
 		var serverConfig; // サーバー側から取得した設定情報
@@ -543,9 +544,10 @@
 				//フォーカスも解除
 				broccoli.unfocusInstance(function(){
 					selectedInstance = instancePath;
+					selectedInstanceRegion = [instancePath];
 
-					broccoli.panels.selectInstance(instancePath, function(){
-						broccoli.instanceTreeView.selectInstance(instancePath, function(){
+					broccoli.panels.updateInstanceSelection(function(){
+						broccoli.instanceTreeView.updateInstanceSelection(function(){
 							broccoli.instancePathView.update(function(){
 								// console.log("Selected: "+broccoli.getSelectedInstance());
 								callback();
@@ -558,11 +560,59 @@
 		}
 
 		/**
+		 * インスタンスを範囲選択する
+		 */
+		this.selectInstanceRegion = function( instancePathRegionTo, callback ){
+			callback = callback || function(){};
+			var broccoli = this;
+			if( !selectedInstance ){
+				// 無選択状態だったら、選択操作に転送する。
+				this.selectInstance(instancePathRegionTo, callback);
+				return this;
+			}
+			console.log("Select Region: from "+selectedInstance+" to "+instancePathRegionTo);
+			selectedInstance.match(/^([\s\S]*?)([0-9]*)$/, '$1');
+			var commonLayer = RegExp.$1;
+			var startNumber = RegExp.$2;
+
+			var idx = instancePathRegionTo.indexOf(commonLayer);
+			if(idx !== 0){
+				// ずれた階層間での範囲選択はできません。
+				console.error('ずれた階層間での範囲選択はできません。');
+				callback(false);
+				return this;
+			}
+
+			var numberTo = instancePathRegionTo.split(commonLayer)[1];
+			numberTo.match(/^([0-9]*)/);
+			var endNumber = RegExp.$1;
+
+			// 数値にキャスト
+			var fromTo = [Number(startNumber), Number(endNumber)].sort();
+			// console.log(fromTo);
+
+			selectedInstanceRegion = [];
+			for( var i = fromTo[0]; i <= fromTo[1]; i ++ ){
+				selectedInstanceRegion.push( commonLayer+i );
+			}
+			// console.log(selectedInstanceRegion);
+
+			broccoli.panels.updateInstanceSelection(function(){
+				broccoli.instanceTreeView.updateInstanceSelection(function(){
+					// console.log("Selected: "+broccoli.getSelectedInstance());
+					callback();
+				});
+			});
+			return this;
+		}
+
+		/**
 		 * モジュールインスタンスの選択状態を解除する
 		 */
 		this.unselectInstance = function(callback){
 			callback = callback || function(){};
 			selectedInstance = null;
+			selectedInstanceRegion = [];
 			var broccoli = this;
 			broccoli.panels.unselectInstance(function(){
 				broccoli.instanceTreeView.unselectInstance(function(){
@@ -624,6 +674,12 @@
 		 */
 		this.getSelectedInstance = function(){
 			return selectedInstance;
+		}
+		/**
+		 * 選択されたインスタンス範囲のパスの一覧を取得する
+		 */
+		this.getSelectedInstanceRegion = function(){
+			return selectedInstanceRegion;
 		}
 
 		/**

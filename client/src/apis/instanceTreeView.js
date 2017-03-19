@@ -104,26 +104,11 @@ module.exports = function(broccoli){
 										'data-broccoli-is-instance-tree-view': 'yes',
 										'draggable': false
 									})
-									.attr({
-										'tabindex': 1
-									})
-									.bind('focus', function(e){
-										e.stopPropagation();
-										var $this = $(this);
-										var instancePath = $this.attr('data-broccoli-instance-path');
-										var selectInstancePath = instancePath;
-										// if( $this.attr('data-broccoli-is-appender') == 'yes' ){
-										// 	selectInstancePath = php.dirname(instancePath);
-										// }
-										broccoli.selectInstance( selectInstancePath, function(){
-											broccoli.focusInstance( instancePath );
-										} );
-									})
-									.bind('mouseover', function(e){
+									.on('mouseover', function(e){
 										e.stopPropagation();
 										$(this).addClass('broccoli--panel__hovered')
 									})
-									.bind('mouseout',function(e){
+									.on('mouseout',function(e){
 										$(this).removeClass('broccoli--panel__hovered')
 									})
 									.append( $('<div>')
@@ -169,26 +154,11 @@ module.exports = function(broccoli){
 										'data-broccoli-is-instance-tree-view': 'yes',
 										'draggable': false
 									})
-									.attr({
-										'tabindex': 1
-									})
-									.bind('focus', function(e){
-										e.stopPropagation();
-										var $this = $(this);
-										var instancePath = $this.attr('data-broccoli-instance-path');
-										var selectInstancePath = instancePath;
-										// if( $this.attr('data-broccoli-is-appender') == 'yes' ){
-										// 	selectInstancePath = php.dirname(instancePath);
-										// }
-										broccoli.selectInstance( selectInstancePath, function(){
-											broccoli.focusInstance( instancePath );
-										} );
-									})
-									.bind('mouseover', function(e){
+									.on('mouseover', function(e){
 										e.stopPropagation();
 										$(this).addClass('broccoli--panel__hovered')
 									})
-									.bind('mouseout',function(e){
+									.on('mouseout',function(e){
 										$(this).removeClass('broccoli--panel__hovered')
 									})
 									.append( $('<div>')
@@ -220,25 +190,11 @@ module.exports = function(broccoli){
 							'data-broccoli-is-instance-tree-view': 'yes',
 							'draggable': true
 						})
-						.attr({
-							'tabindex': 1
-						})
-						.bind('focus', function(e){
-							e.stopPropagation();
-							var $this = $(this);
-							var instancePath = $this.attr('data-broccoli-instance-path');
-							// if( $this.attr('data-broccoli-is-appender') == 'yes' ){
-							// 	instancePath = php.dirname(instancePath);
-							// }
-							broccoli.selectInstance( instancePath, function(){
-								broccoli.focusInstance( instancePath );
-							} );
-						})
-						.bind('mouseover', function(e){
+						.on('mouseover', function(e){
 							e.stopPropagation();
 							$(this).addClass('broccoli--panel__hovered')
 						})
-						.bind('mouseout',function(e){
+						.on('mouseout',function(e){
 							$(this).removeClass('broccoli--panel__hovered')
 						})
 						.append( $('<div>')
@@ -290,15 +246,23 @@ module.exports = function(broccoli){
 	/**
 	 * インスタンスを選択する
 	 */
-	this.selectInstance = function( instancePath, callback ){
+	this.updateInstanceSelection = function( callback ){
 		callback = callback || function(){};
-		$instanceTreeView.find('[data-broccoli-instance-path]')
-			.filter(function (index) {
-				return $(this).attr("data-broccoli-instance-path") == instancePath;
-			})
-			.addClass('broccoli--panel__selected')
-		;
-		callback();
+		var instancePath = broccoli.getSelectedInstance();
+		var instancePathRegion = broccoli.getSelectedInstanceRegion();
+		this.unselectInstance(function(){
+			$instanceTreeView.find('[data-broccoli-instance-path]')
+				.filter(function (index) {
+					var isPathSelected = $.inArray($(this).attr("data-broccoli-instance-path"), instancePathRegion);
+					if( isPathSelected === false || isPathSelected < 0 ){
+						return false;
+					}
+					return true;
+				})
+				.addClass('broccoli--panel__selected')
+			;
+			callback();
+		});
 		return this;
 	}
 
