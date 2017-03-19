@@ -879,6 +879,7 @@
 			callback = callback||function(){};
 
 			var selectedInstance = _this.getSelectedInstance();
+			var selectedInstanceRegion = _this.getSelectedInstanceRegion();
 			// console.log(selectedInstance);
 			if( typeof(selectedInstance) !== typeof('') ){
 				_this.message('インスタンスを選択した状態で削除してください。');
@@ -890,18 +891,29 @@
 				callback(false);
 				return;
 			}
+			selectedInstanceRegion = JSON.parse( JSON.stringify(selectedInstanceRegion) );
+			selectedInstanceRegion.reverse();//先頭から削除すると添字がリアルタイムに変わってしまうので、逆順に削除する。
 
-			_this.contentsSourceData.removeInstance(selectedInstance, function(){
-				_this.message('インスタンスを削除しました。');
-				_this.saveContents(function(result){
-					// 画面を再描画
-					_this.unselectInstance(function(){
-						_this.redraw(function(){
-							callback(true);
+			it79.ary(
+				selectedInstanceRegion,
+				function(it1, selectedInstanceRow, idx){
+					_this.contentsSourceData.removeInstance(selectedInstanceRow, function(){
+						console.log(selectedInstanceRow + ' removed.');
+						it1.next();
+					});
+				},
+				function(){
+					_this.message('インスタンスを削除しました。');
+					_this.saveContents(function(result){
+						// 画面を再描画
+						_this.unselectInstance(function(){
+							_this.redraw(function(){
+								callback(true);
+							});
 						});
 					});
-				});
-			});
+				}
+			);
 			return;
 		}
 
