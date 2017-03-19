@@ -40,6 +40,7 @@
 		var LangBank = require('langbank');
 		this.lb = {};
 		var selectedInstance = null;
+		var selectedInstanceRegion = [];
 		var $canvas;
 		var redrawTimer;
 		var serverConfig; // サーバー側から取得した設定情報
@@ -141,6 +142,15 @@
 						e.stopPropagation();
 						e.preventDefault();
 						_this.copy();
+						return;
+					})
+					.bind('cut', function(e){
+						switch(e.target.tagName.toLowerCase()){
+							case 'textarea': case 'input': return;break;
+						}
+						e.stopPropagation();
+						e.preventDefault();
+						_this.cut();
 						return;
 					})
 					.bind('paste', function(e){
@@ -535,9 +545,10 @@
 				//フォーカスも解除
 				broccoli.unfocusInstance(function(){
 					selectedInstance = instancePath;
+					selectedInstanceRegion = [instancePath];
 
-					broccoli.panels.selectInstance(instancePath, function(){
-						broccoli.instanceTreeView.selectInstance(instancePath, function(){
+					broccoli.panels.updateInstanceSelection(function(){
+						broccoli.instanceTreeView.updateInstanceSelection(function(){
 							broccoli.instancePathView.update(function(){
 								// console.log("Selected: "+broccoli.getSelectedInstance());
 								callback();
@@ -550,11 +561,59 @@
 		}
 
 		/**
+		 * インスタンスを範囲選択する
+		 */
+		this.selectInstanceRegion = function( instancePathRegionTo, callback ){
+			callback = callback || function(){};
+			var broccoli = this;
+			if( !selectedInstance ){
+				// 無選択状態だったら、選択操作に転送する。
+				this.selectInstance(instancePathRegionTo, callback);
+				return this;
+			}
+			console.log("Select Region: from "+selectedInstance+" to "+instancePathRegionTo);
+			selectedInstance.match(/^([\s\S]*?)([0-9]*)$/, '$1');
+			var commonLayer = RegExp.$1;
+			var startNumber = RegExp.$2;
+
+			var idx = instancePathRegionTo.indexOf(commonLayer);
+			if(idx !== 0){
+				// ずれた階層間での範囲選択はできません。
+				console.error('ずれた階層間での範囲選択はできません。');
+				callback(false);
+				return this;
+			}
+
+			var numberTo = instancePathRegionTo.split(commonLayer)[1];
+			numberTo.match(/^([0-9]*)/);
+			var endNumber = RegExp.$1;
+
+			// 数値にキャスト
+			var fromTo = [Number(startNumber), Number(endNumber)].sort();
+			// console.log(fromTo);
+
+			selectedInstanceRegion = [];
+			for( var i = fromTo[0]; i <= fromTo[1]; i ++ ){
+				selectedInstanceRegion.push( commonLayer+i );
+			}
+			// console.log(selectedInstanceRegion);
+
+			broccoli.panels.updateInstanceSelection(function(){
+				broccoli.instanceTreeView.updateInstanceSelection(function(){
+					// console.log("Selected: "+broccoli.getSelectedInstance());
+					callback();
+				});
+			});
+			return this;
+		}
+
+		/**
 		 * モジュールインスタンスの選択状態を解除する
 		 */
 		this.unselectInstance = function(callback){
 			callback = callback || function(){};
 			selectedInstance = null;
+			selectedInstanceRegion = [];
 			var broccoli = this;
 			broccoli.panels.unselectInstance(function(){
 				broccoli.instanceTreeView.unselectInstance(function(){
@@ -617,6 +676,61 @@
 		this.getSelectedInstance = function(){
 			return selectedInstance;
 		}
+		/**
+		 * 選択されたインスタンス範囲のパスの一覧を取得する
+		 */
+		this.getSelectedInstanceRegion = function(){
+			return selectedInstanceRegion;
+		}
+
+		/**
+		 * 選択しているインスタンスをJSON文字列に変換する
+		 */
+		this.selectedInstanceToJsonString = function(callback){
+			callback = callback||function(){};
+			var broccoli = this;
+			var instancePath = this.getSelectedInstance();
+			var instancePathRegion = this.getSelectedInstanceRegion();
+			// console.log(instancePath);
+			if( typeof(instancePath) !== typeof('') ){
+				callback(false);
+				return;
+			}
+
+			var data = {};
+			data.data = [];
+			for( var idx = 0; idx<instancePathRegion.length; idx ++ ){
+				data.data.push( this.contentsSourceData.get( instancePathRegion[idx] ) );
+			}
+			data.resources = {};
+			it79.ary(
+				data.data,
+				function(it1, row1, idx1){
+					_this.contentsSourceData.extractResourceId(row1, function(resourceIdList){
+						// console.log(resourceIdList);
+						it79.ary(
+							resourceIdList ,
+							function(it2, row2, idx2){
+								_this.resourceMgr.getResource(row2, function(resInfo){
+									data.resources[row2] = resInfo;
+									it2.next();
+								});
+							} ,
+							function(){
+								it1.next();
+							}
+						);
+
+					});
+				} ,
+				function(){
+					// console.log(data);
+					data = JSON.stringify( data, null, 1 );
+					callback(data);
+				}
+			);
+			return;
+		}
 
 		/**
 		 * 選択したインスタンスをクリップボードへコピーする
@@ -631,29 +745,44 @@
 				return;
 			}
 
-			var data = {};
-			data.data = [];
-			data.data[0] = this.contentsSourceData.get( instancePath );
-			data.resources = {};
-			this.contentsSourceData.extractResourceId(data.data[0], function(resourceIdList){
-				// console.log(resourceIdList);
-				it79.ary(
-					resourceIdList ,
-					function(it1, row1, idx1){
-						_this.resourceMgr.getResource(row1, function(resInfo){
-							data.resources[row1] = resInfo;
-							it1.next();
-						});
-					} ,
-					function(){
-						// console.log(data);
-						data = JSON.stringify( data, null, 1 );
-						_this.clipboard.set( data );
-						_this.message('インスタンスをコピーしました。');
-						callback(true);
-					}
-				);
+			this.selectedInstanceToJsonString(function(jsonStr){
+				if(jsonStr === false){
+					_this.message('インスタンスのコピーに失敗しました。');
+					callback(false);
+					return;
+				}
+				_this.clipboard.set( jsonStr );
+				_this.message('インスタンスをコピーしました。');
+				callback(true);
+			});
+			return;
+		}
 
+		/**
+		 * 選択したインスタンスをクリップボードへコピーして削除する
+		 */
+		this.cut = function(callback){
+			callback = callback||function(){};
+			var instancePath = this.getSelectedInstance();
+			// console.log(instancePath);
+			if( typeof(instancePath) !== typeof('') ){
+				_this.message('インスタンスを選択した状態でカットしてください。');
+				callback(false);
+				return;
+			}
+
+			this.selectedInstanceToJsonString(function(jsonStr){
+				if(jsonStr === false){
+					_this.message('インスタンスのコピーに失敗しました。');
+					callback(false);
+					return;
+				}
+				_this.clipboard.set( jsonStr );
+
+				_this.remove(function(){
+					_this.message('インスタンスをカットしました。');
+					callback(true);
+				});
 			});
 			return;
 		}
@@ -763,6 +892,7 @@
 			callback = callback||function(){};
 
 			var selectedInstance = _this.getSelectedInstance();
+			var selectedInstanceRegion = _this.getSelectedInstanceRegion();
 			// console.log(selectedInstance);
 			if( typeof(selectedInstance) !== typeof('') ){
 				_this.message('インスタンスを選択した状態で削除してください。');
@@ -774,18 +904,29 @@
 				callback(false);
 				return;
 			}
+			selectedInstanceRegion = JSON.parse( JSON.stringify(selectedInstanceRegion) );
+			selectedInstanceRegion.reverse();//先頭から削除すると添字がリアルタイムに変わってしまうので、逆順に削除する。
 
-			_this.contentsSourceData.removeInstance(selectedInstance, function(){
-				_this.message('インスタンスを削除しました。');
-				_this.saveContents(function(result){
-					// 画面を再描画
-					_this.unselectInstance(function(){
-						_this.redraw(function(){
-							callback(true);
+			it79.ary(
+				selectedInstanceRegion,
+				function(it1, selectedInstanceRow, idx){
+					_this.contentsSourceData.removeInstance(selectedInstanceRow, function(){
+						console.log(selectedInstanceRow + ' removed.');
+						it1.next();
+					});
+				},
+				function(){
+					_this.message('インスタンスを削除しました。');
+					_this.saveContents(function(result){
+						// 画面を再描画
+						_this.unselectInstance(function(){
+							_this.redraw(function(){
+								callback(true);
+							});
 						});
 					});
-				});
-			});
+				}
+			);
 			return;
 		}
 
@@ -3452,26 +3593,11 @@ module.exports = function(broccoli){
 										'data-broccoli-is-instance-tree-view': 'yes',
 										'draggable': false
 									})
-									.attr({
-										'tabindex': 1
-									})
-									.bind('focus', function(e){
-										e.stopPropagation();
-										var $this = $(this);
-										var instancePath = $this.attr('data-broccoli-instance-path');
-										var selectInstancePath = instancePath;
-										// if( $this.attr('data-broccoli-is-appender') == 'yes' ){
-										// 	selectInstancePath = php.dirname(instancePath);
-										// }
-										broccoli.selectInstance( selectInstancePath, function(){
-											broccoli.focusInstance( instancePath );
-										} );
-									})
-									.bind('mouseover', function(e){
+									.on('mouseover', function(e){
 										e.stopPropagation();
 										$(this).addClass('broccoli--panel__hovered')
 									})
-									.bind('mouseout',function(e){
+									.on('mouseout',function(e){
 										$(this).removeClass('broccoli--panel__hovered')
 									})
 									.append( $('<div>')
@@ -3517,26 +3643,11 @@ module.exports = function(broccoli){
 										'data-broccoli-is-instance-tree-view': 'yes',
 										'draggable': false
 									})
-									.attr({
-										'tabindex': 1
-									})
-									.bind('focus', function(e){
-										e.stopPropagation();
-										var $this = $(this);
-										var instancePath = $this.attr('data-broccoli-instance-path');
-										var selectInstancePath = instancePath;
-										// if( $this.attr('data-broccoli-is-appender') == 'yes' ){
-										// 	selectInstancePath = php.dirname(instancePath);
-										// }
-										broccoli.selectInstance( selectInstancePath, function(){
-											broccoli.focusInstance( instancePath );
-										} );
-									})
-									.bind('mouseover', function(e){
+									.on('mouseover', function(e){
 										e.stopPropagation();
 										$(this).addClass('broccoli--panel__hovered')
 									})
-									.bind('mouseout',function(e){
+									.on('mouseout',function(e){
 										$(this).removeClass('broccoli--panel__hovered')
 									})
 									.append( $('<div>')
@@ -3568,25 +3679,11 @@ module.exports = function(broccoli){
 							'data-broccoli-is-instance-tree-view': 'yes',
 							'draggable': true
 						})
-						.attr({
-							'tabindex': 1
-						})
-						.bind('focus', function(e){
-							e.stopPropagation();
-							var $this = $(this);
-							var instancePath = $this.attr('data-broccoli-instance-path');
-							// if( $this.attr('data-broccoli-is-appender') == 'yes' ){
-							// 	instancePath = php.dirname(instancePath);
-							// }
-							broccoli.selectInstance( instancePath, function(){
-								broccoli.focusInstance( instancePath );
-							} );
-						})
-						.bind('mouseover', function(e){
+						.on('mouseover', function(e){
 							e.stopPropagation();
 							$(this).addClass('broccoli--panel__hovered')
 						})
-						.bind('mouseout',function(e){
+						.on('mouseout',function(e){
 							$(this).removeClass('broccoli--panel__hovered')
 						})
 						.append( $('<div>')
@@ -3638,15 +3735,23 @@ module.exports = function(broccoli){
 	/**
 	 * インスタンスを選択する
 	 */
-	this.selectInstance = function( instancePath, callback ){
+	this.updateInstanceSelection = function( callback ){
 		callback = callback || function(){};
-		$instanceTreeView.find('[data-broccoli-instance-path]')
-			.filter(function (index) {
-				return $(this).attr("data-broccoli-instance-path") == instancePath;
-			})
-			.addClass('broccoli--panel__selected')
-		;
-		callback();
+		var instancePath = broccoli.getSelectedInstance();
+		var instancePathRegion = broccoli.getSelectedInstanceRegion();
+		this.unselectInstance(function(){
+			$instanceTreeView.find('[data-broccoli-instance-path]')
+				.filter(function (index) {
+					var isPathSelected = $.inArray($(this).attr("data-broccoli-instance-path"), instancePathRegion);
+					if( isPathSelected === false || isPathSelected < 0 ){
+						return false;
+					}
+					return true;
+				})
+				.addClass('broccoli--panel__selected')
+			;
+			callback();
+		});
 		return this;
 	}
 
@@ -3801,21 +3906,6 @@ module.exports = function(broccoli){
 			.append( $('<div>')
 				.addClass('broccoli--panel-drop-to-insert-here')
 			)
-			.attr({
-				'tabindex': 1
-			})
-			.bind('focus', function(e){
-				e.preventDefault();
-				e.stopPropagation();
-				var $this = $(this);
-				var instancePath = $this.attr('data-broccoli-instance-path');
-				// if( $this.attr('data-broccoli-is-appender') == 'yes' ){
-				// 	instancePath = php.dirname(instancePath);
-				// }
-				broccoli.selectInstance( instancePath, function(){
-					broccoli.instanceTreeView.focusInstance( instancePath, function(){} );
-				} );
-			})
 		;
 		_this.setPanelEventHandlers($panel);
 		if( !isAppender ){
@@ -4022,11 +4112,46 @@ module.exports = function(broccoli){
 	 * パネルにイベントハンドラをセットする
 	 */
 	this.setPanelEventHandlers = function($panel){
+		var timerFocus;
 		$panel
 			.attr({
 				'tabindex': 1
 			})
-			.bind('keypress', function(e){
+			.on('click', function(e){
+				e.preventDefault();
+				e.stopPropagation();
+				// console.log(e);
+				clearTimeout(timerFocus);
+				var $this = $(this);
+				var instancePath = $this.attr('data-broccoli-instance-path');
+				var selectedInstancePath = broccoli.getSelectedInstance();
+
+				if( e.shiftKey ){
+					broccoli.selectInstanceRegion( instancePath, function(){
+					} );
+					return;
+				}
+
+				broccoli.selectInstance( instancePath, function(){
+					if( $this.hasClass('broccoli--instance-tree-view-panel-item') ){
+						// インスタンスツリービュー上での処理
+						broccoli.focusInstance( instancePath );
+						return;
+					}
+					// プレビューカンヴァス上での処理
+					broccoli.instanceTreeView.focusInstance( instancePath, function(){} );
+				} );
+			})
+			.on('focus', function(e){
+				e.preventDefault();
+				e.stopPropagation();
+				var $this = $(this);
+				clearTimeout(timerFocus);
+				timerFocus = setTimeout(function(){
+					$this.click();
+				}, 200);
+			})
+			.on('keypress', function(e){
 				// console.log(e);
 				try {
 					if( e.key.toLowerCase() == 'enter' ){
@@ -4038,18 +4163,18 @@ module.exports = function(broccoli){
 				}
 				return;
 			})
-			.bind('dblclick', function(e){
+			.on('dblclick', function(e){
 				_this.onDblClick(e, this, function(){
 					// console.log('dblclick event done.');
 				});
 				return;
 			})
-			.bind('dragleave', function(e){
+			.on('dragleave', function(e){
 				e.stopPropagation();
 				e.preventDefault();
 				$(this).removeClass('broccoli--panel__drag-entered');
 			})
-			.bind('dragover', function(e){
+			.on('dragover', function(e){
 				e.stopPropagation();
 				e.preventDefault();
 				var instancePath = $(this).attr('data-broccoli-instance-path');
@@ -4069,7 +4194,7 @@ module.exports = function(broccoli){
 					}
 				}
 			})
-			.bind('dragstart', function(e){
+			.on('dragstart', function(e){
 				e.stopPropagation();
 				var event = e.originalEvent;
 				event.dataTransfer.setData("method", 'moveTo' );
@@ -4080,13 +4205,13 @@ module.exports = function(broccoli){
 				}
 				event.dataTransfer.setData("data-broccoli-is-appender", $(this).attr('data-broccoli-is-appender') );
 			})
-			.bind('drop', function(e){
+			.on('drop', function(e){
 				_this.onDrop(e, this, function(){
 					console.log('drop event done.');
 				});
 				return;
 			})
-			.bind('copy', function(e){
+			.on('copy', function(e){
 				e.preventDefault();
 				e.stopPropagation();
 				var $this = $(this);
@@ -4095,7 +4220,16 @@ module.exports = function(broccoli){
 				});
 				return;
 			})
-			.bind('paste', function(e){
+			.on('cut', function(e){
+				e.preventDefault();
+				e.stopPropagation();
+				var $this = $(this);
+				broccoli.cut(function(){
+					// $this.focus();
+				});
+				return;
+			})
+			.on('paste', function(e){
 				e.preventDefault();
 				e.stopPropagation();
 				var $this = $(this);
@@ -4157,16 +4291,24 @@ module.exports = function(broccoli){
 	/**
 	 * インスタンスを選択する
 	 */
-	this.selectInstance = function( instancePath, callback ){
+	this.updateInstanceSelection = function( callback ){
 		callback = callback || function(){};
-		$panels.find('[data-broccoli-instance-path]')
-			.filter(function (index) {
-				return $(this).attr("data-broccoli-instance-path") == instancePath;
-			})
-			.addClass('broccoli--panel__selected')
-		;
-		// this.updateInstancePathView();
-		callback();
+		var instancePath = broccoli.getSelectedInstance();
+		var instancePathRegion = broccoli.getSelectedInstanceRegion();
+		this.unselectInstance(function(){
+			$panels.find('[data-broccoli-instance-path]')
+				.filter(function (index) {
+					var isPathSelected = $.inArray($(this).attr("data-broccoli-instance-path"), instancePathRegion);
+					if( isPathSelected === false || isPathSelected < 0 ){
+						return false;
+					}
+					return true;
+				})
+				.addClass('broccoli--panel__selected')
+			;
+			// this.updateInstancePathView();
+			callback();
+		});
 		return this;
 	}
 
