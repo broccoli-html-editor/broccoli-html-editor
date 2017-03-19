@@ -687,7 +687,9 @@
 		 */
 		this.selectedInstanceToJsonString = function(callback){
 			callback = callback||function(){};
+			var broccoli = this;
 			var instancePath = this.getSelectedInstance();
+			var instancePathRegion = this.getSelectedInstanceRegion();
 			// console.log(instancePath);
 			if( typeof(instancePath) !== typeof('') ){
 				callback(false);
@@ -696,26 +698,36 @@
 
 			var data = {};
 			data.data = [];
-			data.data[0] = this.contentsSourceData.get( instancePath );
+			for( var idx = 0; idx<instancePathRegion.length; idx ++ ){
+				data.data.push( this.contentsSourceData.get( instancePathRegion[idx] ) );
+			}
 			data.resources = {};
-			this.contentsSourceData.extractResourceId(data.data[0], function(resourceIdList){
-				// console.log(resourceIdList);
-				it79.ary(
-					resourceIdList ,
-					function(it1, row1, idx1){
-						_this.resourceMgr.getResource(row1, function(resInfo){
-							data.resources[row1] = resInfo;
-							it1.next();
-						});
-					} ,
-					function(){
-						// console.log(data);
-						data = JSON.stringify( data, null, 1 );
-						callback(data);
-					}
-				);
+			it79.ary(
+				data.data,
+				function(it1, row1, idx1){
+					_this.contentsSourceData.extractResourceId(row1, function(resourceIdList){
+						// console.log(resourceIdList);
+						it79.ary(
+							resourceIdList ,
+							function(it2, row2, idx2){
+								_this.resourceMgr.getResource(row2, function(resInfo){
+									data.resources[row2] = resInfo;
+									it2.next();
+								});
+							} ,
+							function(){
+								it1.next();
+							}
+						);
 
-			});
+					});
+				} ,
+				function(){
+					// console.log(data);
+					data = JSON.stringify( data, null, 1 );
+					callback(data);
+				}
+			);
 			return;
 		}
 
