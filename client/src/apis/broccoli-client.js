@@ -142,6 +142,15 @@
 						_this.copy();
 						return;
 					})
+					.bind('cut', function(e){
+						switch(e.target.tagName.toLowerCase()){
+							case 'textarea': case 'input': return;break;
+						}
+						e.stopPropagation();
+						e.preventDefault();
+						_this.cut();
+						return;
+					})
 					.bind('paste', function(e){
 						switch(e.target.tagName.toLowerCase()){
 							case 'textarea': case 'input': return;break;
@@ -618,14 +627,13 @@
 		}
 
 		/**
-		 * 選択したインスタンスをクリップボードへコピーする
+		 * 選択しているインスタンスをJSON文字列に変換する
 		 */
-		this.copy = function(callback){
+		this.selectedInstanceToJsonString = function(callback){
 			callback = callback||function(){};
 			var instancePath = this.getSelectedInstance();
 			// console.log(instancePath);
 			if( typeof(instancePath) !== typeof('') ){
-				_this.message('インスタンスを選択した状態でコピーしてください。');
 				callback(false);
 				return;
 			}
@@ -647,12 +655,65 @@
 					function(){
 						// console.log(data);
 						data = JSON.stringify( data, null, 1 );
-						_this.clipboard.set( data );
-						_this.message('インスタンスをコピーしました。');
-						callback(true);
+						callback(data);
 					}
 				);
 
+			});
+			return;
+		}
+
+		/**
+		 * 選択したインスタンスをクリップボードへコピーする
+		 */
+		this.copy = function(callback){
+			callback = callback||function(){};
+			var instancePath = this.getSelectedInstance();
+			// console.log(instancePath);
+			if( typeof(instancePath) !== typeof('') ){
+				_this.message('インスタンスを選択した状態でコピーしてください。');
+				callback(false);
+				return;
+			}
+
+			this.selectedInstanceToJsonString(function(jsonStr){
+				if(jsonStr === false){
+					_this.message('インスタンスのコピーに失敗しました。');
+					callback(false);
+					return;
+				}
+				_this.clipboard.set( jsonStr );
+				_this.message('インスタンスをコピーしました。');
+				callback(true);
+			});
+			return;
+		}
+
+		/**
+		 * 選択したインスタンスをクリップボードへコピーして削除する
+		 */
+		this.cut = function(callback){
+			callback = callback||function(){};
+			var instancePath = this.getSelectedInstance();
+			// console.log(instancePath);
+			if( typeof(instancePath) !== typeof('') ){
+				_this.message('インスタンスを選択した状態でカットしてください。');
+				callback(false);
+				return;
+			}
+
+			this.selectedInstanceToJsonString(function(jsonStr){
+				if(jsonStr === false){
+					_this.message('インスタンスのコピーに失敗しました。');
+					callback(false);
+					return;
+				}
+				_this.clipboard.set( jsonStr );
+
+				_this.remove(function(){
+					_this.message('インスタンスをカットしました。');
+					callback(true);
+				});
 			});
 			return;
 		}

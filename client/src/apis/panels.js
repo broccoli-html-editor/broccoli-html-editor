@@ -368,6 +368,15 @@ module.exports = function(broccoli){
 				});
 				return;
 			})
+			.bind('cut', function(e){
+				e.preventDefault();
+				e.stopPropagation();
+				var $this = $(this);
+				broccoli.cut(function(){
+					// $this.focus();
+				});
+				return;
+			})
 			.bind('paste', function(e){
 				e.preventDefault();
 				e.stopPropagation();
