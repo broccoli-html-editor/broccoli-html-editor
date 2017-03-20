@@ -851,35 +851,39 @@
 				return;
 			}
 
-			it79.ary(
-				data.data ,
-				function(it1, row1, idx1){
-					_this.contentsSourceData.duplicateInstance(data.data[idx1], data.resources, {}, function(newData){
-						// console.log(newData);
+			broccoli.progress(function(){
+				it79.ary(
+					data.data ,
+					function(it1, row1, idx1){
+						_this.contentsSourceData.duplicateInstance(data.data[idx1], data.resources, {}, function(newData){
+							// console.log(newData);
 
-						_this.contentsSourceData.addInstance( newData, selectedInstance, function(){
-							// 上から順番に挿入していくので、
-							// moveTo を1つインクリメントしなければいけない。
-							// (そうしないと、天地逆さまに積み上げられることになる。)
-							selectedInstance = _this.incrementInstancePath(selectedInstance);
-							it1.next();
-						} );
+							_this.contentsSourceData.addInstance( newData, selectedInstance, function(){
+								// 上から順番に挿入していくので、
+								// moveTo を1つインクリメントしなければいけない。
+								// (そうしないと、天地逆さまに積み上げられることになる。)
+								selectedInstance = _this.incrementInstancePath(selectedInstance);
+								it1.next();
+							} );
 
-					});
+						});
 
-				} ,
-				function(){
-					_this.saveContents(function(result){
-						// 画面を再描画
-						_this.redraw(function(){
-							_this.selectInstance(selectedInstance, function(){
-								_this.message('インスタンスをペーストしました。');
-								callback(true);
+					} ,
+					function(){
+						_this.saveContents(function(result){
+							// 画面を再描画
+							_this.redraw(function(){
+								_this.selectInstance(selectedInstance, function(){
+									_this.message('インスタンスをペーストしました。');
+									broccoli.closeProgress(function(){
+										callback(true);
+									});
+								});
 							});
 						});
-					});
-				}
-			);
+					}
+				);
+			});
 
 			return;
 		}
@@ -889,6 +893,7 @@
 		 */
 		this.remove = function(callback){
 			callback = callback||function(){};
+			var broccoli = this;
 
 			var selectedInstance = _this.getSelectedInstance();
 			var selectedInstanceRegion = _this.getSelectedInstanceRegion();
@@ -906,39 +911,49 @@
 			selectedInstanceRegion = JSON.parse( JSON.stringify(selectedInstanceRegion) );
 			selectedInstanceRegion.reverse();//先頭から削除すると添字がリアルタイムに変わってしまうので、逆順に削除する。
 
-			it79.ary(
-				selectedInstanceRegion,
-				function(it1, selectedInstanceRow, idx){
-					_this.contentsSourceData.removeInstance(selectedInstanceRow, function(){
-						console.log(selectedInstanceRow + ' removed.');
-						it1.next();
-					});
-				},
-				function(){
-					_this.message('インスタンスを削除しました。');
-					_this.saveContents(function(result){
-						// 画面を再描画
-						_this.unselectInstance(function(){
-							_this.redraw(function(){
-								callback(true);
+			broccoli.progress(function(){
+				it79.ary(
+					selectedInstanceRegion,
+					function(it1, selectedInstanceRow, idx){
+						_this.contentsSourceData.removeInstance(selectedInstanceRow, function(){
+							console.log(selectedInstanceRow + ' removed.');
+							it1.next();
+						});
+					},
+					function(){
+						_this.message('インスタンスを削除しました。');
+						_this.saveContents(function(result){
+							// 画面を再描画
+							_this.unselectInstance(function(){
+								_this.redraw(function(){
+									broccoli.closeProgress(function(){
+										callback(true);
+									});
+								});
 							});
 						});
-					});
-				}
-			);
+					}
+				);
+			});
 			return;
 		}
 
 		/**
 		 * history: 取り消し (非同期)
 		 */
-		this.historyBack = function( cb ){
-			cb = cb||function(){};
-			this.contentsSourceData.historyBack(function(result){
-				if(result === false){cb();return;}
-				_this.saveContents(function(){
-					// 画面を再描画
-					_this.redraw(cb);
+		this.historyBack = function( callback ){
+			callback = callback||function(){};
+			_this.progress(function(){
+				_this.contentsSourceData.historyBack(function(result){
+					if(result === false){callback();return;}
+					_this.saveContents(function(){
+						// 画面を再描画
+						_this.redraw(function(){
+							_this.closeProgress(function(){
+								callback();
+							});
+						});
+					});
 				});
 			});
 			return this;
@@ -947,13 +962,19 @@
 		/**
 		 * history: やりなおし (非同期)
 		 */
-		this.historyGo = function( cb ){
-			cb = cb||function(){};
-			this.contentsSourceData.historyGo(function(result){
-				if(result === false){cb();return;}
-				_this.saveContents(function(){
-					// 画面を再描画
-					_this.redraw(cb);
+		this.historyGo = function( callback ){
+			callback = callback||function(){};
+			_this.progress(function(){
+				_this.contentsSourceData.historyGo(function(result){
+					if(result === false){callback();return;}
+					_this.saveContents(function(){
+						// 画面を再描画
+						_this.redraw(function(){
+							_this.closeProgress(function(){
+								callback();
+							});
+						});
+					});
 				});
 			});
 			return this;
