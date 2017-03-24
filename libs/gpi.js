@@ -49,6 +49,7 @@ module.exports = function(broccoli, api, options, callback){
 					dataJson = JSON.parse( dataJson );
 				} catch (e) {
 					broccoli.log('[ERROR] FAILED to load data.json - '+broccoli.realpathDataDir+'/data.json');
+					dataJson = {};
 				}
 				callback(dataJson);
 				break;

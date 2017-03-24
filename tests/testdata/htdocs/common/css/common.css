@@ -1,3 +1,8 @@
 html, body{
 	/*height: 100%;*/
 }
+.theme_wrap{
+	max-width: 800px;
+	width: auto;
+	margin: 0 auto;
+}

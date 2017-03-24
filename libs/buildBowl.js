@@ -65,8 +65,8 @@ module.exports = function(broccoli, data, options, callback){
 				rtn +=     'padding:'+style['padding']+'px;';
 				rtn +=     'background-color:'+style['background-color']+';';
 				rtn +=     'border:3px solid transparent;';
-				rtn +=     'border-radius:5;';
-				rtn +=     'font-family: &amp;YuGothic&amp;, &amp;Yu Gothic&amp;, Meiryo, &amp;Hiragino Kaku Gothic ProN&amp;, Verdana, sans-serif;';
+				rtn +=     'border-radius:5px;';
+				rtn +=     'font-family: &quot;YuGothic&quot;, &quot;Yu Gothic&quot;, Meiryo, &quot;Hiragino Kaku Gothic ProN&quot;, Verdana, sans-serif;';
 				rtn +=     'font-size:'+style['font-size']+'px;';
 				rtn +=     'color:#000;';
 				rtn +=     'text-align:center;';
@@ -92,8 +92,9 @@ module.exports = function(broccoli, data, options, callback){
 				rtn +=     'background-color:#dfe;';
 				rtn +=     'border:3px solid transparent;';
 				rtn +=     'border-radius:5px;';
-				rtn +=     'font-family: &amp;YuGothic&amp;, &amp;Yu Gothic&amp;, Meiryo, &amp;Hiragino Kaku Gothic ProN&amp;, Verdana, sans-serif;';
+				rtn +=     'font-family: &quot;YuGothic&quot;, &quot;Yu Gothic&quot;, Meiryo, &quot;Hiragino Kaku Gothic ProN&quot;, Verdana, sans-serif;';
 				rtn +=     'font-size:9px;';
+				rtn +=     'color:#000;';
 				rtn +=     'text-align:center;';
 				rtn +=     'box-sizing:border-box;';
 				rtn +=     'clear:both;';
@@ -552,6 +553,20 @@ module.exports = function(broccoli, data, options, callback){
 					// supplying libs and resources to "finalize.js".
 					'cheerio': require('cheerio')
 				} );
+				return;
+			} ,
+			function(it1, d){
+				// canvasモードのとき、scriptタグは削除する。
+				// scriptの挙動がGUI編集画面を破壊する可能性があるため。
+				if( options.mode == 'canvas' ){
+					var $ = cheerio.load(d.html, {decodeEntities: false});
+					var $script = $('script');
+					$script.each(function(idx, elm){
+						$(this).replaceWith( $('<div style="color:#eee; background-color: #f00; border: 3px solid #f00; text-align: center;">script element</div>') );
+					});
+					d.html = $.html();
+				}
+				it1.next(d);
 				return;
 			} ,
 			function(it1, d){

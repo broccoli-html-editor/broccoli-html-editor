@@ -21,6 +21,9 @@
 	[draggable=false]{
 		cursor: default;
 	}
+	[tabindex]{
+		outline: none;
+	}
 }
 
 // mixin: appender

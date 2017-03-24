@@ -39,6 +39,7 @@
 		var LangBank = require('langbank');
 		this.lb = {};
 		var selectedInstance = null;
+		var selectedInstanceRegion = [];
 		var $canvas;
 		var redrawTimer;
 		var serverConfig; // サーバー側から取得した設定情報
@@ -140,6 +141,15 @@
 						e.stopPropagation();
 						e.preventDefault();
 						_this.copy();
+						return;
+					})
+					.bind('cut', function(e){
+						switch(e.target.tagName.toLowerCase()){
+							case 'textarea': case 'input': return;break;
+						}
+						e.stopPropagation();
+						e.preventDefault();
+						_this.cut();
 						return;
 					})
 					.bind('paste', function(e){
@@ -534,9 +544,10 @@
 				//フォーカスも解除
 				broccoli.unfocusInstance(function(){
 					selectedInstance = instancePath;
+					selectedInstanceRegion = [instancePath];
 
-					broccoli.panels.selectInstance(instancePath, function(){
-						broccoli.instanceTreeView.selectInstance(instancePath, function(){
+					broccoli.panels.updateInstanceSelection(function(){
+						broccoli.instanceTreeView.updateInstanceSelection(function(){
 							broccoli.instancePathView.update(function(){
 								// console.log("Selected: "+broccoli.getSelectedInstance());
 								callback();
@@ -549,11 +560,59 @@
 		}
 
 		/**
+		 * インスタンスを範囲選択する
+		 */
+		this.selectInstanceRegion = function( instancePathRegionTo, callback ){
+			callback = callback || function(){};
+			var broccoli = this;
+			if( !selectedInstance ){
+				// 無選択状態だったら、選択操作に転送する。
+				this.selectInstance(instancePathRegionTo, callback);
+				return this;
+			}
+			console.log("Select Region: from "+selectedInstance+" to "+instancePathRegionTo);
+			selectedInstance.match(/^([\s\S]*?)([0-9]*)$/, '$1');
+			var commonLayer = RegExp.$1;
+			var startNumber = RegExp.$2;
+
+			var idx = instancePathRegionTo.indexOf(commonLayer);
+			if(idx !== 0){
+				// ずれた階層間での範囲選択はできません。
+				console.error('ずれた階層間での範囲選択はできません。');
+				callback(false);
+				return this;
+			}
+
+			var numberTo = instancePathRegionTo.split(commonLayer)[1];
+			numberTo.match(/^([0-9]*)/);
+			var endNumber = RegExp.$1;
+
+			// 数値にキャスト
+			var fromTo = [Number(startNumber), Number(endNumber)].sort();
+			// console.log(fromTo);
+
+			selectedInstanceRegion = [];
+			for( var i = fromTo[0]; i <= fromTo[1]; i ++ ){
+				selectedInstanceRegion.push( commonLayer+i );
+			}
+			// console.log(selectedInstanceRegion);
+
+			broccoli.panels.updateInstanceSelection(function(){
+				broccoli.instanceTreeView.updateInstanceSelection(function(){
+					// console.log("Selected: "+broccoli.getSelectedInstance());
+					callback();
+				});
+			});
+			return this;
+		}
+
+		/**
 		 * モジュールインスタンスの選択状態を解除する
 		 */
 		this.unselectInstance = function(callback){
 			callback = callback || function(){};
 			selectedInstance = null;
+			selectedInstanceRegion = [];
 			var broccoli = this;
 			broccoli.panels.unselectInstance(function(){
 				broccoli.instanceTreeView.unselectInstance(function(){
@@ -616,6 +675,61 @@
 		this.getSelectedInstance = function(){
 			return selectedInstance;
 		}
+		/**
+		 * 選択されたインスタンス範囲のパスの一覧を取得する
+		 */
+		this.getSelectedInstanceRegion = function(){
+			return selectedInstanceRegion;
+		}
+
+		/**
+		 * 選択しているインスタンスをJSON文字列に変換する
+		 */
+		this.selectedInstanceToJsonString = function(callback){
+			callback = callback||function(){};
+			var broccoli = this;
+			var instancePath = this.getSelectedInstance();
+			var instancePathRegion = this.getSelectedInstanceRegion();
+			// console.log(instancePath);
+			if( typeof(instancePath) !== typeof('') ){
+				callback(false);
+				return;
+			}
+
+			var data = {};
+			data.data = [];
+			for( var idx = 0; idx<instancePathRegion.length; idx ++ ){
+				data.data.push( this.contentsSourceData.get( instancePathRegion[idx] ) );
+			}
+			data.resources = {};
+			it79.ary(
+				data.data,
+				function(it1, row1, idx1){
+					_this.contentsSourceData.extractResourceId(row1, function(resourceIdList){
+						// console.log(resourceIdList);
+						it79.ary(
+							resourceIdList ,
+							function(it2, row2, idx2){
+								_this.resourceMgr.getResource(row2, function(resInfo){
+									data.resources[row2] = resInfo;
+									it2.next();
+								});
+							} ,
+							function(){
+								it1.next();
+							}
+						);
+
+					});
+				} ,
+				function(){
+					// console.log(data);
+					data = JSON.stringify( data, null, 1 );
+					callback(data);
+				}
+			);
+			return;
+		}
 
 		/**
 		 * 選択したインスタンスをクリップボードへコピーする
@@ -630,29 +744,44 @@
 				return;
 			}
 
-			var data = {};
-			data.data = [];
-			data.data[0] = this.contentsSourceData.get( instancePath );
-			data.resources = {};
-			this.contentsSourceData.extractResourceId(data.data[0], function(resourceIdList){
-				// console.log(resourceIdList);
-				it79.ary(
-					resourceIdList ,
-					function(it1, row1, idx1){
-						_this.resourceMgr.getResource(row1, function(resInfo){
-							data.resources[row1] = resInfo;
-							it1.next();
-						});
-					} ,
-					function(){
-						// console.log(data);
-						data = JSON.stringify( data, null, 1 );
-						_this.clipboard.set( data );
-						_this.message('インスタンスをコピーしました。');
-						callback(true);
-					}
-				);
+			this.selectedInstanceToJsonString(function(jsonStr){
+				if(jsonStr === false){
+					_this.message('インスタンスのコピーに失敗しました。');
+					callback(false);
+					return;
+				}
+				_this.clipboard.set( jsonStr );
+				_this.message('インスタンスをコピーしました。');
+				callback(true);
+			});
+			return;
+		}
 
+		/**
+		 * 選択したインスタンスをクリップボードへコピーして削除する
+		 */
+		this.cut = function(callback){
+			callback = callback||function(){};
+			var instancePath = this.getSelectedInstance();
+			// console.log(instancePath);
+			if( typeof(instancePath) !== typeof('') ){
+				_this.message('インスタンスを選択した状態でカットしてください。');
+				callback(false);
+				return;
+			}
+
+			this.selectedInstanceToJsonString(function(jsonStr){
+				if(jsonStr === false){
+					_this.message('インスタンスのコピーに失敗しました。');
+					callback(false);
+					return;
+				}
+				_this.clipboard.set( jsonStr );
+
+				_this.remove(function(){
+					_this.message('インスタンスをカットしました。');
+					callback(true);
+				});
 			});
 			return;
 		}
@@ -722,35 +851,39 @@
 				return;
 			}
 
-			it79.ary(
-				data.data ,
-				function(it1, row1, idx1){
-					_this.contentsSourceData.duplicateInstance(data.data[idx1], data.resources, {}, function(newData){
-						// console.log(newData);
+			broccoli.progress(function(){
+				it79.ary(
+					data.data ,
+					function(it1, row1, idx1){
+						_this.contentsSourceData.duplicateInstance(data.data[idx1], data.resources, {}, function(newData){
+							// console.log(newData);
 
-						_this.contentsSourceData.addInstance( newData, selectedInstance, function(){
-							// 上から順番に挿入していくので、
-							// moveTo を1つインクリメントしなければいけない。
-							// (そうしないと、天地逆さまに積み上げられることになる。)
-							selectedInstance = _this.incrementInstancePath(selectedInstance);
-							it1.next();
-						} );
+							_this.contentsSourceData.addInstance( newData, selectedInstance, function(){
+								// 上から順番に挿入していくので、
+								// moveTo を1つインクリメントしなければいけない。
+								// (そうしないと、天地逆さまに積み上げられることになる。)
+								selectedInstance = _this.incrementInstancePath(selectedInstance);
+								it1.next();
+							} );
 
-					});
+						});
 
-				} ,
-				function(){
-					_this.saveContents(function(result){
-						// 画面を再描画
-						_this.redraw(function(){
-							_this.selectInstance(selectedInstance, function(){
-								_this.message('インスタンスをペーストしました。');
-								callback(true);
+					} ,
+					function(){
+						_this.saveContents(function(result){
+							// 画面を再描画
+							_this.redraw(function(){
+								_this.selectInstance(selectedInstance, function(){
+									_this.message('インスタンスをペーストしました。');
+									broccoli.closeProgress(function(){
+										callback(true);
+									});
+								});
 							});
 						});
-					});
-				}
-			);
+					}
+				);
+			});
 
 			return;
 		}
@@ -760,8 +893,10 @@
 		 */
 		this.remove = function(callback){
 			callback = callback||function(){};
+			var broccoli = this;
 
 			var selectedInstance = _this.getSelectedInstance();
+			var selectedInstanceRegion = _this.getSelectedInstanceRegion();
 			// console.log(selectedInstance);
 			if( typeof(selectedInstance) !== typeof('') ){
 				_this.message('インスタンスを選択した状態で削除してください。');
@@ -773,17 +908,32 @@
 				callback(false);
 				return;
 			}
+			selectedInstanceRegion = JSON.parse( JSON.stringify(selectedInstanceRegion) );
+			selectedInstanceRegion.reverse();//先頭から削除すると添字がリアルタイムに変わってしまうので、逆順に削除する。
 
-			_this.contentsSourceData.removeInstance(selectedInstance, function(){
-				_this.message('インスタンスを削除しました。');
-				_this.saveContents(function(result){
-					// 画面を再描画
-					_this.unselectInstance(function(){
-						_this.redraw(function(){
-							callback(true);
+			broccoli.progress(function(){
+				it79.ary(
+					selectedInstanceRegion,
+					function(it1, selectedInstanceRow, idx){
+						_this.contentsSourceData.removeInstance(selectedInstanceRow, function(){
+							console.log(selectedInstanceRow + ' removed.');
+							it1.next();
 						});
-					});
-				});
+					},
+					function(){
+						_this.message('インスタンスを削除しました。');
+						_this.saveContents(function(result){
+							// 画面を再描画
+							_this.unselectInstance(function(){
+								_this.redraw(function(){
+									broccoli.closeProgress(function(){
+										callback(true);
+									});
+								});
+							});
+						});
+					}
+				);
 			});
 			return;
 		}
@@ -791,13 +941,19 @@
 		/**
 		 * history: 取り消し (非同期)
 		 */
-		this.historyBack = function( cb ){
-			cb = cb||function(){};
-			this.contentsSourceData.historyBack(function(result){
-				if(result === false){cb();return;}
-				_this.saveContents(function(){
-					// 画面を再描画
-					_this.redraw(cb);
+		this.historyBack = function( callback ){
+			callback = callback||function(){};
+			_this.progress(function(){
+				_this.contentsSourceData.historyBack(function(result){
+					if(result === false){callback();return;}
+					_this.saveContents(function(){
+						// 画面を再描画
+						_this.redraw(function(){
+							_this.closeProgress(function(){
+								callback();
+							});
+						});
+					});
 				});
 			});
 			return this;
@@ -806,13 +962,19 @@
 		/**
 		 * history: やりなおし (非同期)
 		 */
-		this.historyGo = function( cb ){
-			cb = cb||function(){};
-			this.contentsSourceData.historyGo(function(result){
-				if(result === false){cb();return;}
-				_this.saveContents(function(){
-					// 画面を再描画
-					_this.redraw(cb);
+		this.historyGo = function( callback ){
+			callback = callback||function(){};
+			_this.progress(function(){
+				_this.contentsSourceData.historyGo(function(result){
+					if(result === false){callback();return;}
+					_this.saveContents(function(){
+						// 画面を再描画
+						_this.redraw(function(){
+							_this.closeProgress(function(){
+								callback();
+							});
+						});
+					});
 				});
 			});
 			return this;
@@ -889,6 +1051,8 @@
 					function(){
 						$(this).remove();
 						$('.broccoli *').removeAttr('tabindex');
+						$('.broccoli .broccoli--panel').attr({'tabindex':'1'});
+						$('.broccoli .broccoli--instance-tree-view-panel-item').attr({'tabindex':'1'});
 						callback();
 					}
 				)

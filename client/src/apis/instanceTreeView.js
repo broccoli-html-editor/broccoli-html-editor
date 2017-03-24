@@ -94,30 +94,21 @@ module.exports = function(broccoli){
 								var instancePath = parentInstancePath+'/fields.'+idx+'@'+(data.fields[idx]?data.fields[idx].length:0);
 
 								var $appender = $('<div>')
-									.text('(+) '+broccoli.lb.get('ui_label.drop_a_module_here'))
+									.append( $('<span>')
+										.text('(+) '+broccoli.lb.get('ui_label.drop_a_module_here'))
+									)
+									.addClass('broccoli--instance-tree-view-panel-item')
 									.attr({
 										'data-broccoli-instance-path':instancePath,
 										'data-broccoli-is-appender':'yes',
 										'data-broccoli-is-instance-tree-view': 'yes',
 										'draggable': false
 									})
-									.bind('click', function(e){
-										e.stopPropagation();
-										var $this = $(this);
-										var instancePath = $this.attr('data-broccoli-instance-path');
-										var selectInstancePath = instancePath;
-										// if( $this.attr('data-broccoli-is-appender') == 'yes' ){
-										// 	selectInstancePath = php.dirname(instancePath);
-										// }
-										broccoli.selectInstance( selectInstancePath, function(){
-											broccoli.focusInstance( instancePath );
-										} );
-									})
-									.bind('mouseover', function(e){
+									.on('mouseover', function(e){
 										e.stopPropagation();
 										$(this).addClass('broccoli--panel__hovered')
 									})
-									.bind('mouseout',function(e){
+									.on('mouseout',function(e){
 										$(this).removeClass('broccoli--panel__hovered')
 									})
 									.append( $('<div>')
@@ -151,7 +142,10 @@ module.exports = function(broccoli){
 								var instancePath = parentInstancePath+'/fields.'+idx+'@'+(data.fields[idx]?data.fields[idx].length:0);
 
 								var $appender = $('<div>')
-									.text(''+broccoli.lb.get('ui_label.dblclick_here_and_add_array_element'))
+									.append( $('<span>')
+										.text(''+broccoli.lb.get('ui_label.dblclick_here_and_add_array_element'))
+									)
+									.addClass('broccoli--instance-tree-view-panel-item')
 									.attr({
 										'data-broccoli-instance-path':instancePath,
 										'data-broccoli-mod-id': mod.id,
@@ -160,23 +154,11 @@ module.exports = function(broccoli){
 										'data-broccoli-is-instance-tree-view': 'yes',
 										'draggable': false
 									})
-									.bind('click', function(e){
-										e.stopPropagation();
-										var $this = $(this);
-										var instancePath = $this.attr('data-broccoli-instance-path');
-										var selectInstancePath = instancePath;
-										// if( $this.attr('data-broccoli-is-appender') == 'yes' ){
-										// 	selectInstancePath = php.dirname(instancePath);
-										// }
-										broccoli.selectInstance( selectInstancePath, function(){
-											broccoli.focusInstance( instancePath );
-										} );
-									})
-									.bind('mouseover', function(e){
+									.on('mouseover', function(e){
 										e.stopPropagation();
 										$(this).addClass('broccoli--panel__hovered')
 									})
-									.bind('mouseout',function(e){
+									.on('mouseout',function(e){
 										$(this).removeClass('broccoli--panel__hovered')
 									})
 									.append( $('<div>')
@@ -208,22 +190,11 @@ module.exports = function(broccoli){
 							'data-broccoli-is-instance-tree-view': 'yes',
 							'draggable': true
 						})
-						.bind('click', function(e){
-							e.stopPropagation();
-							var $this = $(this);
-							var instancePath = $this.attr('data-broccoli-instance-path');
-							// if( $this.attr('data-broccoli-is-appender') == 'yes' ){
-							// 	instancePath = php.dirname(instancePath);
-							// }
-							broccoli.selectInstance( instancePath, function(){
-								broccoli.focusInstance( instancePath );
-							} );
-						})
-						.bind('mouseover', function(e){
+						.on('mouseover', function(e){
 							e.stopPropagation();
 							$(this).addClass('broccoli--panel__hovered')
 						})
-						.bind('mouseout',function(e){
+						.on('mouseout',function(e){
 							$(this).removeClass('broccoli--panel__hovered')
 						})
 						.append( $('<div>')
@@ -275,15 +246,23 @@ module.exports = function(broccoli){
 	/**
 	 * インスタンスを選択する
 	 */
-	this.selectInstance = function( instancePath, callback ){
+	this.updateInstanceSelection = function( callback ){
 		callback = callback || function(){};
-		$instanceTreeView.find('[data-broccoli-instance-path]')
-			.filter(function (index) {
-				return $(this).attr("data-broccoli-instance-path") == instancePath;
-			})
-			.addClass('broccoli--panel__selected')
-		;
-		callback();
+		var instancePath = broccoli.getSelectedInstance();
+		var instancePathRegion = broccoli.getSelectedInstanceRegion();
+		this.unselectInstance(function(){
+			$instanceTreeView.find('[data-broccoli-instance-path]')
+				.filter(function (index) {
+					var isPathSelected = $.inArray($(this).attr("data-broccoli-instance-path"), instancePathRegion);
+					if( isPathSelected === false || isPathSelected < 0 ){
+						return false;
+					}
+					return true;
+				})
+				.addClass('broccoli--panel__selected')
+			;
+			callback();
+		});
 		return this;
 	}
 

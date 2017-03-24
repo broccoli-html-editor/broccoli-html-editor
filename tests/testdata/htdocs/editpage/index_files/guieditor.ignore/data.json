@@ -45,7 +45,7 @@
                   "modId": "PlainHTMLElements:PlainHTML/MultiText",
                   "fields": {
                    "main": {
-                    "src": "child.",
+                    "src": "\n\nchild.",
                     "editor": "markdown"
                    }
                   },
@@ -1054,112 +1054,127 @@
       }
      },
      {
-      "modId": "testMod1:dev/lf",
+      "modId": "testMod1:units/cols2",
       "fields": {
-       "__error__": "",
-       "multitext-1": {
-        "src": "",
-        "editor": ""
-       },
-       "multitext-2": {
-        "src": "",
-        "editor": ""
-       },
-       "multitext-3": {
-        "src": "",
-        "editor": ""
-       },
-       "multitext-4": {
-        "src": "",
-        "editor": ""
-       },
-       "multitext-5": {
-        "src": "",
-        "editor": ""
-       },
-       "multitext-6": {
-        "src": "",
-        "editor": ""
-       },
-       "multitext-7": {
-        "src": "",
-        "editor": ""
-       },
-       "multitext-8": {
-        "src": "",
-        "editor": ""
-       },
-       "multitext-9": {
-        "src": "",
-        "editor": ""
-       },
-       "multitext-10": {
-        "src": "",
-        "editor": ""
-       },
-       "multitext-11": {
-        "src": "",
-        "editor": ""
-       },
-       "multitext-12": {
-        "src": "",
-        "editor": ""
-       },
-       "multitext-13": {
-        "src": "",
-        "editor": ""
-       },
-       "multitext-14": {
-        "src": "",
-        "editor": ""
-       },
-       "multitext-15": {
-        "src": "",
-        "editor": ""
-       },
-       "multitext-16": {
-        "src": "",
-        "editor": ""
-       },
-       "multitext-17": {
-        "src": "",
-        "editor": ""
-       },
-       "multitext-18": {
-        "src": "",
-        "editor": ""
-       },
-       "multitext-19": {
-        "src": "",
-        "editor": ""
-       },
-       "multitext-20": {
-        "src": "",
-        "editor": ""
-       },
-       "multitext-21": {
-        "src": "",
-        "editor": ""
-       },
-       "multitext-22": {
-        "src": "",
-        "editor": ""
-       },
-       "multitext-23": {
-        "src": "",
-        "editor": ""
-       },
-       "multitext-24": {
-        "src": "",
-        "editor": ""
-       },
-       "multitext-25": {
-        "src": "",
-        "editor": ""
-       }
-      },
-      "anchor": "",
-      "dec": ""
+       "column1": [
+        {
+         "modId": "testMod1:dev/lf",
+         "fields": {
+          "__error__": "",
+          "multitext-1": {
+           "src": "",
+           "editor": ""
+          },
+          "multitext-2": {
+           "src": "",
+           "editor": ""
+          },
+          "multitext-3": {
+           "src": "",
+           "editor": ""
+          },
+          "multitext-4": {
+           "src": "",
+           "editor": ""
+          },
+          "multitext-5": {
+           "src": "",
+           "editor": ""
+          },
+          "multitext-6": {
+           "src": "",
+           "editor": ""
+          },
+          "multitext-7": {
+           "src": "",
+           "editor": ""
+          },
+          "multitext-8": {
+           "src": "",
+           "editor": ""
+          },
+          "multitext-9": {
+           "src": "",
+           "editor": ""
+          },
+          "multitext-10": {
+           "src": "",
+           "editor": ""
+          },
+          "multitext-11": {
+           "src": "",
+           "editor": ""
+          },
+          "multitext-12": {
+           "src": "",
+           "editor": ""
+          },
+          "multitext-13": {
+           "src": "",
+           "editor": ""
+          },
+          "multitext-14": {
+           "src": "",
+           "editor": ""
+          },
+          "multitext-15": {
+           "src": "",
+           "editor": ""
+          },
+          "multitext-16": {
+           "src": "",
+           "editor": ""
+          },
+          "multitext-17": {
+           "src": "",
+           "editor": ""
+          },
+          "multitext-18": {
+           "src": "",
+           "editor": ""
+          },
+          "multitext-19": {
+           "src": "",
+           "editor": ""
+          },
+          "multitext-20": {
+           "src": "",
+           "editor": ""
+          },
+          "multitext-21": {
+           "src": "",
+           "editor": ""
+          },
+          "multitext-22": {
+           "src": "",
+           "editor": ""
+          },
+          "multitext-23": {
+           "src": "",
+           "editor": ""
+          },
+          "multitext-24": {
+           "src": "",
+           "editor": ""
+          },
+          "multitext-25": {
+           "src": "",
+           "editor": ""
+          }
+         },
+         "anchor": "",
+         "dec": ""
+        }
+       ],
+       "column2": [
+        {
+         "modId": "testMod1:dev/script_tag",
+         "fields": {},
+         "anchor": "",
+         "dec": ""
+        }
+       ]
+      }
      }
     ]
    },
