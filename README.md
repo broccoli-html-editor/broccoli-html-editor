@@ -257,6 +257,7 @@ $ npm test
 
 ### broccoli-html-editor@0.1.0-beta.12 (2017年??月??日)
 
+- Node.js 0.x , io.js のサポートを中止。
 - `broccoli.buildModuleCss()` が、SASSが使えない環境で異常終了する問題を修正。
 - モジュールにscriptタグが含まれる場合に、編集画面では無効にするようになった。
 - インスタンスのカット機能追加。
