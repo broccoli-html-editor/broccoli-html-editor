@@ -6,17 +6,8 @@ node_js:
   - "5.1"
   - "4.2"
 
-before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install python-software-properties -qq
-  - sudo add-apt-repository ppa:ondrej/php5-oldstable -y
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq php5 php5-sqlite
-  - php -v
-  - php -r "readfile('https://getcomposer.org/installer');" | php
-
 before_script:
-  - php composer.phar install
+  - git submodule update --init --recursive --force
   - npm install
 
 script:

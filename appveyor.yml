@@ -35,40 +35,7 @@ init:
 
 # Install scripts
 install:
-  ## Set PHP.
-  - ps: Set-Service wuauserv -StartupType Manual
-  - cinst php --version 7.1.3 -y
-  - SET PATH=C:\tools\php71\;%PATH%
-  - cd C:\tools\php71
-  - copy php.ini-production php.ini
-  - echo date.timezone="Asia/Tokyo" >> php.ini
-  - echo extension_dir=ext >> php.ini
-  - echo extension=php_openssl.dll >> php.ini
-  - echo extension=php_gd2.dll >> php.ini
-  - echo extension=php_mbstring.dll >> php.ini
-  - echo extension=php_curl.dll >> php.ini
-  - echo extension=php_xsl.dll >> php.ini
-  - echo extension=php_intl.dll >> php.ini
-  - echo extension=php_pdo_sqlite.dll >> php.ini
-  - echo output_buffering = Off >> php.ini
-  - echo default_charset = UTF-8 >> php.ini
-  - echo mbstring.language = Japanese >> php.ini
-  - echo mbstring.encoding_translation = On >> php.ini
-  - echo mbstring.http_input = UTF-8 >> php.ini
-  - echo mbstring.http_output = pass >> php.ini
-  - echo mbstring.internal_encoding = UTF-8 >> php.ini
-
-  - php -v
-  - where php
-
-
-  ## Set Composer.
   - cd C:\projects\myproject
-  - php -r "readfile('https://getcomposer.org/installer');" | php
-  - php composer.phar --version
-  - php composer.phar config -g github-oauth.github.com %oauthtoken%
-  - php composer.phar install
-
 
   # Get the latest stable version of Node.js or io.js
   - ps: Install-Product node $env:nodejs_version
