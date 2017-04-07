@@ -140,216 +140,221 @@ module.exports = function(broccoli){
 			// // console.log( data );
 			// var mod = initMod(data);
 
-			it79.ary(
-				mod.fields,
-				function(it1, field, fieldName){
-					if( typeof(field) != typeof({}) ){
-						// オブジェクトではない field → Skip
-						it1.next();
-						return;
-					}
+			broccoli.progress(function(){
 
-					switch( field.fieldType ){
-						case 'input':
+				it79.ary(
+					mod.fields,
+					function(it1, field, fieldName){
+						if( typeof(field) != typeof({}) ){
+							// オブジェクトではない field → Skip
 							it1.next();
-							break;
-						case 'module':
-						case 'loop':
-							var $ul = $('<ul>');
-							it79.ary(
-								data.fields[field.name],
-								function(it2, childData, idx2){
-									var childMod = broccoli.contentsSourceData.getModule(childData.modId, childData.subModName);
-									var childInstancePath = instancePath + '/fields.'+field.name+'@'+idx2+''
-									// console.log(childInstancePath);
-									// console.log(childData);
-									// console.log(childMod);
-									// console.log(mod);
-									var label = childData.modId;
-									if( childMod.info && childMod.info.name ){
-										label = childMod.info.name;
-									}
-									var $li = $('<li>');
-									var $a = $('<a>');
-									$li.append($a);
-									$a
-										.text(label)
-										.attr({
-											'href': 'javascript:;',
-											'data-broccoli-parent-instance-path': instancePath,
-											'data-broccoli-instance-path': childInstancePath,
-											'data-broccoli-mod-id': childMod.id,
-											'data-broccoli-sub-mod-name': childMod.subModName,
-											// 'data-broccoli-is-appender':'yes',
-											'data-broccoli-is-edit-window': 'yes',
-											'draggable': true
-										})
-										.append( $('<div>')
-											.addClass('broccoli--panel-drop-to-insert-here')
-										)
-									;
-									broccoli.panels.setPanelEventHandlers( $a );
-									$a
-										.unbind('drop')
-										.bind('drop', function(e){
-											_this.lock();//フォームをロック
-											broccoli.panels.onDrop(e, this, function(){
-												updateModuleAndLoopField( instancePath, function(){
-													_this.unlock();//フォームのロックを解除
-													console.log('drop event done.');
-												} );
-											});
-										})
-										.unbind('click')
-										.bind('click', function(e){
-											return false;
-										})
-										.unbind('dblclick')
-										.bind('dblclick', function(e){
-											var $this = $(this);
-											// インスタンス instancePath の変更を保存し、
-											// 一旦編集ウィンドウを閉じたあと、
-											// childInstancePath の編集画面を開く。
-											var instancePath = $this.attr('data-broccoli-parent-instance-path');
-											var childInstancePath = $this.attr('data-broccoli-instance-path');
+							return;
+						}
 
-											_this.lock();//フォームをロック
-											validateInstance(instancePath, mod, data, function(res){
-												if( !res ){
-													// エラーがあるため次へ進めない
-													_this.unlock();
-													return;
-												}
-												saveInstance(instancePath, mod, data, function(res){
-													// コンテンツデータを保存
-													broccoli.saveContents(function(){
-														broccoli.panels.onDblClick(e, $this.get(0), function(){
-															console.log('dblclick event done.');
+						switch( field.fieldType ){
+							case 'input':
+								it1.next();
+								break;
+							case 'module':
+							case 'loop':
+								var $ul = $('<ul>');
+								it79.ary(
+									data.fields[field.name],
+									function(it2, childData, idx2){
+										var childMod = broccoli.contentsSourceData.getModule(childData.modId, childData.subModName);
+										var childInstancePath = instancePath + '/fields.'+field.name+'@'+idx2+''
+										// console.log(childInstancePath);
+										// console.log(childData);
+										// console.log(childMod);
+										// console.log(mod);
+										var label = childData.modId;
+										if( childMod.info && childMod.info.name ){
+											label = childMod.info.name;
+										}
+										var $li = $('<li>');
+										var $a = $('<a>');
+										$li.append($a);
+										$a
+											.text(label)
+											.attr({
+												'href': 'javascript:;',
+												'data-broccoli-parent-instance-path': instancePath,
+												'data-broccoli-instance-path': childInstancePath,
+												'data-broccoli-mod-id': childMod.id,
+												'data-broccoli-sub-mod-name': childMod.subModName,
+												// 'data-broccoli-is-appender':'yes',
+												'data-broccoli-is-edit-window': 'yes',
+												'draggable': true
+											})
+											.append( $('<div>')
+												.addClass('broccoli--panel-drop-to-insert-here')
+											)
+										;
+										broccoli.panels.setPanelEventHandlers( $a );
+										$a
+											.unbind('drop')
+											.bind('drop', function(e){
+												_this.lock();//フォームをロック
+												broccoli.panels.onDrop(e, this, function(){
+													updateModuleAndLoopField( instancePath, function(){
+														_this.unlock();//フォームのロックを解除
+														console.log('drop event done.');
+													} );
+												});
+											})
+											.unbind('click')
+											.bind('click', function(e){
+												return false;
+											})
+											.unbind('dblclick')
+											.bind('dblclick', function(e){
+												var $this = $(this);
+												// インスタンス instancePath の変更を保存し、
+												// 一旦編集ウィンドウを閉じたあと、
+												// childInstancePath の編集画面を開く。
+												var instancePath = $this.attr('data-broccoli-parent-instance-path');
+												var childInstancePath = $this.attr('data-broccoli-instance-path');
+
+												_this.lock();//フォームをロック
+												validateInstance(instancePath, mod, data, function(res){
+													if( !res ){
+														// エラーがあるため次へ進めない
+														_this.unlock();
+														return;
+													}
+													saveInstance(instancePath, mod, data, function(res){
+														// コンテンツデータを保存
+														broccoli.saveContents(function(){
+															broccoli.panels.onDblClick(e, $this.get(0), function(){
+																console.log('dblclick event done.');
+															});
 														});
 													});
 												});
-											});
 
-										})
-									;
-									$ul
-										.append($li)
-									;
-									it2.next();
-								},
-								function(){
-									var appenderInstancePath = instancePath+'/fields.'+field.name+'@'+(data.fields[field.name].length);
-									var $li = $('<li>');
-									var $appender = $('<a>');
-									if( field.fieldType == 'module' ){
+											})
+										;
+										$ul
+											.append($li)
+										;
+										it2.next();
+									},
+									function(){
+										var appenderInstancePath = instancePath+'/fields.'+field.name+'@'+(data.fields[field.name].length);
+										var $li = $('<li>');
+										var $appender = $('<a>');
+										if( field.fieldType == 'module' ){
+											$appender
+												.text('(+) '+broccoli.lb.get('ui_label.drop_a_module_here'))
+												.attr({
+													'data-broccoli-instance-path':appenderInstancePath,
+													'data-broccoli-is-appender':'yes',
+													// 'data-broccoli-is-instance-tree-view': 'yes',
+													'draggable': false
+												})
+												.bind('mouseover', function(e){
+													e.stopPropagation();
+													$(this).addClass('broccoli--panel__hovered')
+												})
+												.bind('mouseout',function(e){
+													$(this).removeClass('broccoli--panel__hovered')
+												})
+												.append( $('<div>')
+													.addClass('broccoli--panel-drop-to-insert-here')
+												)
+											;
+										}else if( field.fieldType == 'loop' ){
+											$appender
+												.text(''+broccoli.lb.get('ui_label.dblclick_here_and_add_array_element'))
+												.attr({
+													'data-broccoli-instance-path':appenderInstancePath,
+													'data-broccoli-mod-id': mod.id,
+													'data-broccoli-sub-mod-name': field.name,
+													'data-broccoli-is-appender':'yes',
+													// 'data-broccoli-is-instance-tree-view': 'yes',
+													'draggable': false
+												})
+												.bind('click', function(e){
+													e.stopPropagation();
+													var $this = $(this);
+													var instancePath = $this.attr('data-broccoli-instance-path');
+													var selectInstancePath = instancePath;
+													// if( $this.attr('data-broccoli-is-appender') == 'yes' ){
+													// 	selectInstancePath = php.dirname(instancePath);
+													// }
+													broccoli.selectInstance( selectInstancePath, function(){
+														broccoli.focusInstance( instancePath );
+													} );
+												})
+												.bind('mouseover', function(e){
+													e.stopPropagation();
+													$(this).addClass('broccoli--panel__hovered')
+												})
+												.bind('mouseout',function(e){
+													$(this).removeClass('broccoli--panel__hovered')
+												})
+												.append( $('<div>')
+													.addClass('broccoli--panel-drop-to-insert-here')
+												)
+											;
+										}
+										broccoli.panels.setPanelEventHandlers( $appender );
 										$appender
-											.text('(+) '+broccoli.lb.get('ui_label.drop_a_module_here'))
-											.attr({
-												'data-broccoli-instance-path':appenderInstancePath,
-												'data-broccoli-is-appender':'yes',
-												// 'data-broccoli-is-instance-tree-view': 'yes',
-												'draggable': false
+											.unbind('drop')
+											.bind('drop', function(e){
+												_this.lock();//フォームをロック
+												broccoli.panels.onDrop(e, this, function(){
+													updateModuleAndLoopField( instancePath, function(){
+														_this.unlock();//フォームのロックを解除
+														console.log('drop event done.');
+													} );
+												});
 											})
-											.bind('mouseover', function(e){
-												e.stopPropagation();
-												$(this).addClass('broccoli--panel__hovered')
+											.unbind('dblclick')
+											.bind('dblclick', function(e){
+												_this.lock();//フォームをロック
+												broccoli.panels.onDblClick(e, this, function(){
+													updateModuleAndLoopField( instancePath, function(){
+														_this.unlock();//フォームのロックを解除
+														console.log('dblclick event done.');
+													} );
+												});
 											})
-											.bind('mouseout',function(e){
-												$(this).removeClass('broccoli--panel__hovered')
-											})
-											.append( $('<div>')
-												.addClass('broccoli--panel-drop-to-insert-here')
+										;
+										$ul.append( $li.append($appender) );
+
+										var $elmFieldContent = $fields.find('.broccoli--edit-window-module-fields[data-broccoli--editwindow-field-name='+field.name+']').eq(0);
+										$elmFieldContent.addClass('broccoli--edit-window-module-fields--fieldtype-'+field.fieldType);
+										$elmFieldContent.find('.broccoli--edit-window-module-fields__instances').html('')
+											.append(
+												$ul
 											)
 										;
-									}else if( field.fieldType == 'loop' ){
-										$appender
-											.text(''+broccoli.lb.get('ui_label.dblclick_here_and_add_array_element'))
-											.attr({
-												'data-broccoli-instance-path':appenderInstancePath,
-												'data-broccoli-mod-id': mod.id,
-												'data-broccoli-sub-mod-name': field.name,
-												'data-broccoli-is-appender':'yes',
-												// 'data-broccoli-is-instance-tree-view': 'yes',
-												'draggable': false
-											})
-											.bind('click', function(e){
-												e.stopPropagation();
-												var $this = $(this);
-												var instancePath = $this.attr('data-broccoli-instance-path');
-												var selectInstancePath = instancePath;
-												// if( $this.attr('data-broccoli-is-appender') == 'yes' ){
-												// 	selectInstancePath = php.dirname(instancePath);
-												// }
-												broccoli.selectInstance( selectInstancePath, function(){
-													broccoli.focusInstance( instancePath );
-												} );
-											})
-											.bind('mouseover', function(e){
-												e.stopPropagation();
-												$(this).addClass('broccoli--panel__hovered')
-											})
-											.bind('mouseout',function(e){
-												$(this).removeClass('broccoli--panel__hovered')
-											})
-											.append( $('<div>')
-												.addClass('broccoli--panel-drop-to-insert-here')
-											)
-										;
-									}
-									broccoli.panels.setPanelEventHandlers( $appender );
-									$appender
-										.unbind('drop')
-										.bind('drop', function(e){
-											_this.lock();//フォームをロック
-											broccoli.panels.onDrop(e, this, function(){
-												updateModuleAndLoopField( instancePath, function(){
-													_this.unlock();//フォームのロックを解除
-													console.log('drop event done.');
-												} );
-											});
-										})
-										.unbind('dblclick')
-										.bind('dblclick', function(e){
-											_this.lock();//フォームをロック
-											broccoli.panels.onDblClick(e, this, function(){
-												updateModuleAndLoopField( instancePath, function(){
-													_this.unlock();//フォームのロックを解除
-													console.log('dblclick event done.');
-												} );
-											});
-										})
-									;
-									$ul.append( $li.append($appender) );
-
-									var $elmFieldContent = $fields.find('.broccoli--edit-window-module-fields[data-broccoli--editwindow-field-name='+field.name+']').eq(0);
-									$elmFieldContent.addClass('broccoli--edit-window-module-fields--fieldtype-'+field.fieldType);
-									$elmFieldContent.find('.broccoli--edit-window-module-fields__instances').html('')
-										.append(
-											$ul
-										)
-									;
-									if(field.fieldType == 'module'){
-										// moduleフィールドには、モジュールパレットがつきます。
-										broccoli.drawModulePalette( $elmFieldContent.find('.broccoli--edit-window-module-fields__palette').get(0), function(){
+										if(field.fieldType == 'module'){
+											// moduleフィールドには、モジュールパレットがつきます。
+											broccoli.drawModulePalette( $elmFieldContent.find('.broccoli--edit-window-module-fields__palette').get(0), function(){
+												it1.next();
+											} );
+										}else{
 											it1.next();
-										} );
-									}else{
-										it1.next();
-									}
+										}
 
-								}
-							);
-							break;
-						default:
-							it1.next();
-							break;
+									}
+								);
+								break;
+							default:
+								it1.next();
+								break;
+						}
+						return;
+					},
+					function(){
+						broccoli.closeProgress(function(){
+							callbackOf_pdateModuleAndLoopField();
+						});
 					}
-					return;
-				},
-				function(){
-					callbackOf_pdateModuleAndLoopField();
-				}
-			);
+				);
+			});
 			return;
 		} // updateModuleAndLoopField()
 
