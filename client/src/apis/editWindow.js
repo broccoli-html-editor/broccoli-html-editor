@@ -307,14 +307,21 @@ module.exports = function(broccoli){
 									;
 									$ul.append( $appender );
 
-									var elmFieldContent = $fields.find('.broccoli--edit-window-module-fields[data-broccoli--editwindow-field-name='+field.name+']').get(0);
-									$(elmFieldContent).html('')
+									var $elmFieldContent = $fields.find('.broccoli--edit-window-module-fields[data-broccoli--editwindow-field-name='+field.name+']').eq(0);
+									$elmFieldContent.addClass('broccoli--edit-window-module-fields--fieldtype-'+field.fieldType);
+									$elmFieldContent.find('.broccoli--edit-window-module-fields__instances').html('')
 										.append(
 											$ul
 										)
 									;
+									if(field.fieldType == 'module'){
+										broccoli.drawModulePalette( $elmFieldContent.find('.broccoli--edit-window-module-fields__palette').get(0), function(){
+											it1.next();
+										} );
+									}else{
+										it1.next();
+									}
 
-									it1.next();
 								}
 							);
 							break;
@@ -391,6 +398,12 @@ module.exports = function(broccoli){
 									.attr({
 										"data-broccoli--editwindow-field-name": field.name
 									})
+									.append( $('<div>')
+										.addClass('broccoli--edit-window-module-fields__instances')
+									)
+									.append( $('<div>')
+										.addClass('broccoli--edit-window-module-fields__palette')
+									)
 							)
 						;
 						it1.next();

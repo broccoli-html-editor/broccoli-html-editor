@@ -210,7 +210,7 @@
 						});
 					} ,
 					function(it1, data){
-						_this.drawModulePalette(function(){
+						_this.drawModulePalette(_this.options.elmModulePalette, function(){
 							console.log('broccoli: module palette standby.');
 							it1.next(data);
 						});
@@ -983,11 +983,12 @@
 		/**
 		 * モジュールパレットを描画する
 		 * @param  {Object}   moduleList モジュール一覧。
+		 * @param  {Element}  targetElm  描画する対象の要素
 		 * @param  {Function} callback   callback function.
 		 * @return {Object}              this.
 		 */
-		this.drawModulePalette = function(callback){
-			require( './drawModulePalette.js' )(_this, callback);
+		this.drawModulePalette = function(targetElm, callback){
+			require( './drawModulePalette.js' )(_this, targetElm, callback);
 			return this;
 		}
 
