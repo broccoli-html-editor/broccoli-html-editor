@@ -64,6 +64,7 @@ function makeDefaultBroccoli(options, callback){
 				fin += '        </style>'+"\n";
 				fin += '    </head>'+"\n";
 				fin += '    <body>'+"\n";
+				fin += '        <div class="theme_wrap">'+"\n";
 				fin += '        <h1>sample page</h1>'+"\n";
 				fin += '        <h2>main</h2>'+"\n";
 				fin += '        <div class="contents" data-contents="main">'+"\n";
@@ -79,6 +80,7 @@ function makeDefaultBroccoli(options, callback){
 				fin += '                <input type="submit" value="submit!" />'+"\n";
 				fin += '            </form>'+"\n";
 				fin += '        </footer>'+"\n";
+				fin += '        </div>'+"\n";
 				fin += '    </body>'+"\n";
 				fin += '</html>'+"\n";
 				fin += '<script data-broccoli-receive-message="yes">'+"\n";
