@@ -78,6 +78,18 @@ module.exports = function(broccoli){
 				+ '</div>'
 	;
 
+	function initMod(data){
+		var mod = broccoli.contentsSourceData.getModule(data.modId, data.subModName);
+		if( mod === false ){
+			mod = {
+				'id': '_sys/unknown',
+				'info': {
+					'name': 'Unknown Module'
+				}
+			}
+		}
+		return mod;
+	}
 
 	/**
 	 * 初期化
@@ -87,6 +99,7 @@ module.exports = function(broccoli){
 	 * @return {Void}                 [description]
 	 */
 	this.init = function(instancePath, elmEditWindow, callback){
+		// console.log( '=-=-=-=-=-=-=-=-= Initialize EditWindow.' );
 		callback = callback || function(){};
 
 		var data = broccoli.contentsSourceData.get(instancePath);
@@ -97,7 +110,7 @@ module.exports = function(broccoli){
 
 		var $fields = $('<div>');
 		$editWindow = $(elmEditWindow);
-		$editWindow.append( broccoli.bindEjs(tplFrame, {'lb':broccoli.lb}) );
+		$editWindow.html('').append( broccoli.bindEjs(tplFrame, {'lb':broccoli.lb}) );
 		$editWindow.find('.broccoli--edit-window-module-name').text(mod.info.name||mod.id);
 		$editWindow.find('.broccoli--edit-window-fields').append($fields);
 
@@ -116,29 +129,16 @@ module.exports = function(broccoli){
 			});
 		});
 
-		function initMod(data){
-			var mod = broccoli.contentsSourceData.getModule(data.modId, data.subModName);
-			if( mod === false ){
-				mod = {
-					'id': '_sys/unknown',
-					'info': {
-						'name': 'Unknown Module'
-					}
-				}
-			}
-			return mod;
-		}
-
 		// moduleフィールド、loopフィールドの内容を更新する
-		function updateModuleAndLoopField( instancePath, callback ){
+		function updateModuleAndLoopField( instancePath, callbackOf_pdateModuleAndLoopField ){
 			console.log('updateModuleAndLoopField();');
-			callback = callback || function(res, callback){
+			callbackOf_pdateModuleAndLoopField = callbackOf_pdateModuleAndLoopField || function(res, callback){
 				callback = callback || function(){};
 				return;
 			};
-			var data = broccoli.contentsSourceData.get(instancePath);
-			// console.log( data );
-			var mod = initMod(data);
+			// var data = broccoli.contentsSourceData.get(instancePath);
+			// // console.log( data );
+			// var mod = initMod(data);
 
 			it79.ary(
 				mod.fields,
@@ -170,9 +170,13 @@ module.exports = function(broccoli){
 										label = childMod.info.name;
 									}
 									var $li = $('<li>');
-									$li
+									var $a = $('<a>');
+									$li.append($a);
+									$a
 										.text(label)
 										.attr({
+											'href': 'javascript:;',
+											'data-broccoli-parent-instance-path': instancePath,
 											'data-broccoli-instance-path': childInstancePath,
 											'data-broccoli-mod-id': childMod.id,
 											'data-broccoli-sub-mod-name': childMod.subModName,
@@ -180,34 +184,12 @@ module.exports = function(broccoli){
 											'data-broccoli-is-edit-window': 'yes',
 											'draggable': true
 										})
-										.bind('dblclick', function(e){
-											var $this = $(this);
-											_this.lock();//フォームをロック
-											validateInstance(instancePath, mod, data, function(res){
-												if( !res ){
-													// エラーがあるため次へ進めない
-													_this.unlock();
-													return;
-												}
-												saveInstance(instancePath, mod, data, function(res){
-													callback(res, function(){
-														// インスタンス instancePath の変更を保存し、
-														// 一旦編集ウィンドウを閉じたあと、
-														// childInstancePath の編集画面を開く。
-														var childInstancePath = $this.attr('data-broccoli-instance-path');
-														// alert(childInstancePath);
-														broccoli.editInstance(childInstancePath);
-													});
-												});
-											});
-
-										})
 										.append( $('<div>')
 											.addClass('broccoli--panel-drop-to-insert-here')
 										)
 									;
-									broccoli.panels.setPanelEventHandlers( $li );
-									$li
+									broccoli.panels.setPanelEventHandlers( $a );
+									$a
 										.unbind('drop')
 										.bind('drop', function(e){
 											_this.lock();//フォームをロック
@@ -218,6 +200,37 @@ module.exports = function(broccoli){
 												} );
 											});
 										})
+										.unbind('click')
+										.bind('click', function(e){
+											return false;
+										})
+										.unbind('dblclick')
+										.bind('dblclick', function(e){
+											var $this = $(this);
+											// インスタンス instancePath の変更を保存し、
+											// 一旦編集ウィンドウを閉じたあと、
+											// childInstancePath の編集画面を開く。
+											var instancePath = $this.attr('data-broccoli-parent-instance-path');
+											var childInstancePath = $this.attr('data-broccoli-instance-path');
+
+											_this.lock();//フォームをロック
+											validateInstance(instancePath, mod, data, function(res){
+												if( !res ){
+													// エラーがあるため次へ進めない
+													_this.unlock();
+													return;
+												}
+												saveInstance(instancePath, mod, data, function(res){
+													// コンテンツデータを保存
+													broccoli.saveContents(function(){
+														broccoli.panels.onDblClick(e, $this.get(0), function(){
+															console.log('dblclick event done.');
+														});
+													});
+												});
+											});
+
+										})
 									;
 									$ul
 										.append($li)
@@ -226,7 +239,8 @@ module.exports = function(broccoli){
 								},
 								function(){
 									var appenderInstancePath = instancePath+'/fields.'+field.name+'@'+(data.fields[field.name].length);
-									var $appender = $('<li>');
+									var $li = $('<li>');
+									var $appender = $('<a>');
 									if( field.fieldType == 'module' ){
 										$appender
 											.text('(+) '+broccoli.lb.get('ui_label.drop_a_module_here'))
@@ -305,7 +319,7 @@ module.exports = function(broccoli){
 											});
 										})
 									;
-									$ul.append( $appender );
+									$ul.append( $li.append($appender) );
 
 									var $elmFieldContent = $fields.find('.broccoli--edit-window-module-fields[data-broccoli--editwindow-field-name='+field.name+']').eq(0);
 									$elmFieldContent.addClass('broccoli--edit-window-module-fields--fieldtype-'+field.fieldType);
@@ -315,6 +329,7 @@ module.exports = function(broccoli){
 										)
 									;
 									if(field.fieldType == 'module'){
+										// moduleフィールドには、モジュールパレットがつきます。
 										broccoli.drawModulePalette( $elmFieldContent.find('.broccoli--edit-window-module-fields__palette').get(0), function(){
 											it1.next();
 										} );
@@ -332,7 +347,7 @@ module.exports = function(broccoli){
 					return;
 				},
 				function(){
-					callback();
+					callbackOf_pdateModuleAndLoopField();
 				}
 			);
 			return;
@@ -482,7 +497,6 @@ module.exports = function(broccoli){
 					;
 				});
 
-
 			}
 		);
 		return this;
@@ -531,6 +545,7 @@ module.exports = function(broccoli){
 	 * インスタンスの編集を保存する
 	 */
 	function saveInstance( instancePath, mod, data, callback ){
+		callback = callback || function(){};
 		it79.ary(
 			mod.fields,
 			function(it2, field2, fieldName2){
@@ -546,25 +561,25 @@ module.exports = function(broccoli){
 				return;
 			},
 			function(){
-				it79.fnc(data,
+				it79.fnc({},
 					[
-						function(it2, data){
+						function(it2, arg){
 							data.anchor = $editWindow.find('#broccoli--edit-window-builtin-anchor-field').val();
 							data.dec = $editWindow.find('#broccoli--edit-window-builtin-dec-field').val();
 
-							it2.next(data);
+							it2.next(arg);
 						} ,
-						function(it2, data){
+						function(it2, arg){
 							// クライアントサイドにあるメモリ上のcontentsSourceDataに反映する。
 							// この時点で、まだサーバー側には送られていない。
 							// サーバー側に送るのは、callback() の先の仕事。
 							broccoli.contentsSourceData.updateInstance(data, instancePath, function(){
-								it2.next(data);
+								it2.next(arg);
 							});
 						} ,
-						function(it2, data){
+						function(it2, arg){
 							callback(true);
-							it2.next(data);
+							it2.next(arg);
 						}
 					]
 				);

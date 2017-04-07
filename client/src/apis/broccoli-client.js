@@ -1009,8 +1009,6 @@
 
 		/**
 		 * 編集ウィンドウを描画する
-		 * @param  {Function} callback    callback function.
-		 * @return {Object}               this.
 		 */
 		this.drawEditWindow = function(instancePath, elmEditWindow, callback){
 			this.editWindow.init(instancePath, elmEditWindow, callback);
@@ -1022,6 +1020,11 @@
 		 */
 		this.lightbox = function( callback ){
 			callback = callback||function(){};
+
+			var $dom = $('<div>')
+				.addClass('broccoli--lightbox-inner')
+			;
+
 			$('body').find('.broccoli--lightbox').remove();//一旦削除
 			$('.broccoli *').attr({'tabindex':'-1'});
 			$('body')
@@ -1036,13 +1039,11 @@
 						e.preventDefault();
 						return;
 					})
-					.append( $('<div class="broccoli--lightbox-inner">')
-					)
+					.append( $dom )
 				)
 			;
 
-			var dom = $('body').find('.broccoli--lightbox-inner').get(0);
-			callback(dom);
+			callback( $dom.get(0) );
 			return this;
 		}
 

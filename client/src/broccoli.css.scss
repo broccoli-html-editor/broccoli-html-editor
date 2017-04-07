@@ -38,6 +38,7 @@
 	box-sizing:border-box;
 	clear:both;
 	white-space:nowrap;
+	outline: none;
 }
 
 // Canvas
@@ -422,16 +423,24 @@
 		ul{
 			padding: 0;
 			li{
-				position: relative;
 				border-bottom: 1px solid #bbb;
 				list-style-type: none;
 				margin: 0;
-				padding: 10px;
-				&:hover{
-					background: #eee;
-				}
-				&:last-child{
-					border-bottom: none;
+				padding: 0;
+
+				a{
+					display: block;
+					position: relative;
+					outline: none !important;
+					padding: 0.5em 1em;
+					margin: 0;
+
+					&:hover{
+						background: #eee;
+					}
+					&:last-child{
+						border-bottom: none;
+					}
 				}
 			}
 		}
