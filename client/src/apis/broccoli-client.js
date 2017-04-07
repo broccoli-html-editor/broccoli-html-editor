@@ -945,7 +945,12 @@
 			callback = callback||function(){};
 			_this.progress(function(){
 				_this.contentsSourceData.historyBack(function(result){
-					if(result === false){callback();return;}
+					if(result === false){
+						_this.closeProgress(function(){
+							callback();
+						});
+						return;
+					}
 					_this.saveContents(function(){
 						// 画面を再描画
 						_this.redraw(function(){
