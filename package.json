@@ -5,10 +5,9 @@
   "private": true,
   "main": "libs/main.js",
   "scripts": {
-    "preinstall": "git submodule update --init --recursive --force",
     "start": "gulp watch",
     "up": "node ./tests/biflora/server.js",
-    "submodules-update": "rm -rfv node_modules/px2style; npm install; gulp;",
+    "submodules-update": "npm install; gulp;",
     "test": "mocha --ui tdd ./tests/"
   },
   "repository": {
@@ -60,6 +59,6 @@
     "gulp-twig": "^0.3.0",
     "gulp-uglify": "^1.2.0",
     "mocha": "^2.1.0",
-    "px2style": "file:submodules/px2style"
+    "px2style": "^2.0.1"
   }
 }
