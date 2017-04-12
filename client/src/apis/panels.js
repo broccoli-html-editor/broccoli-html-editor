@@ -152,36 +152,39 @@ module.exports = function(broccoli){
 			broccoli.message('ダブルクリックしてください。ドロップできません。');
 			callback();
 			return;
-		}else{
-			if( method === 'moveTo' ){
-				if(subModName){
-					broccoli.message('loopフィールドへの移動はできません。');
-					$(elm).removeClass('broccoli--panel__drag-entered');
+		}
+		if( method === 'moveTo' ){
+			if(subModName){
+				broccoli.message('loopフィールドへの移動はできません。');
+				$(elm).removeClass('broccoli--panel__drag-entered');
+				callback();
+				return;
+			}
+			broccoli.contentsSourceData.moveInstanceTo( moveFrom, moveTo, function(){
+				// コンテンツを保存
+				broccoli.saveContents(function(){
+					// alert('インスタンスを移動しました。');
+					broccoli.redraw();
 					callback();
-					return;
-				}
-				broccoli.contentsSourceData.moveInstanceTo( moveFrom, moveTo, function(){
-					// コンテンツを保存
-					broccoli.saveContents(function(){
-						// alert('インスタンスを移動しました。');
-						broccoli.redraw();
-						callback();
-					});
-				} );
-				return;
-			}
-			if( subModName && method === 'add' ){
-				// loopフィールドのサブモジュールに新しいモジュールを追加しようとした場合の処理
-				broccoli.message('loopフィールドに新しいモジュールを追加することはできません。');
-				callback();
-				return;
-			}
-			if( method !== 'add' ){
-				// 移動(moveTo)でも追加(add)でもない場合の処理
-				broccoli.message('追加するモジュールをドラッグしてください。ここに移動することはできません。');
-				callback();
-				return;
-			}
+				});
+			} );
+			return;
+		}
+		if( subModName && method === 'add' ){
+			// loopフィールドのサブモジュールに新しいモジュールを追加しようとした場合の処理
+			broccoli.message('loopフィールドに新しいモジュールを追加することはできません。');
+			callback();
+			return;
+		}
+		if( method !== 'add' ){
+			// 移動(moveTo)でも追加(add)でもない場合の処理
+			broccoli.message('追加するモジュールをドラッグしてください。ここに移動することはできません。');
+			callback();
+			return;
+		}
+
+		broccoli.progress(function(){
+
 			var modId = event.dataTransfer.getData("modId");
 			var modClip = event.dataTransfer.getData("modClip");
 			try {
@@ -217,8 +220,11 @@ module.exports = function(broccoli){
 					function(){
 						broccoli.saveContents(function(){
 							broccoli.message('クリップを挿入しました。');
-							broccoli.redraw();
-							callback();
+							broccoli.redraw(function(){
+								broccoli.closeProgress(function(){
+									callback();
+								});
+							});
 						});
 					}
 				);
@@ -228,14 +234,17 @@ module.exports = function(broccoli){
 					// コンテンツを保存
 					broccoli.saveContents(function(){
 						// alert('インスタンスを追加しました。');
-						broccoli.redraw();
-						callback();
+						broccoli.redraw(function(){
+							broccoli.closeProgress(function(){
+								callback();
+							});
+						});
 					});
 				} );
 
 			}
 			return;
-		}
+		});
 		return;
 	} // onDrop()
 
