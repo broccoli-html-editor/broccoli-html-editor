@@ -211,7 +211,7 @@
 						});
 					} ,
 					function(it1, data){
-						_this.drawModulePalette(function(){
+						_this.drawModulePalette(_this.options.elmModulePalette, function(){
 							console.log('broccoli: module palette standby.');
 							it1.next(data);
 						});
@@ -946,7 +946,12 @@
 			callback = callback||function(){};
 			_this.progress(function(){
 				_this.contentsSourceData.historyBack(function(result){
-					if(result === false){callback();return;}
+					if(result === false){
+						_this.closeProgress(function(){
+							callback();
+						});
+						return;
+					}
 					_this.saveContents(function(){
 						// 画面を再描画
 						_this.redraw(function(){
@@ -984,11 +989,12 @@
 		/**
 		 * モジュールパレットを描画する
 		 * @param  {Object}   moduleList モジュール一覧。
+		 * @param  {Element}  targetElm  描画する対象の要素
 		 * @param  {Function} callback   callback function.
 		 * @return {Object}              this.
 		 */
-		this.drawModulePalette = function(callback){
-			require( './drawModulePalette.js' )(_this, callback);
+		this.drawModulePalette = function(targetElm, callback){
+			require( './drawModulePalette.js' )(_this, targetElm, callback);
 			return this;
 		}
 
@@ -1004,8 +1010,6 @@
 
 		/**
 		 * 編集ウィンドウを描画する
-		 * @param  {Function} callback    callback function.
-		 * @return {Object}               this.
 		 */
 		this.drawEditWindow = function(instancePath, elmEditWindow, callback){
 			this.editWindow.init(instancePath, elmEditWindow, callback);
@@ -1017,6 +1021,11 @@
 		 */
 		this.lightbox = function( callback ){
 			callback = callback||function(){};
+
+			var $dom = $('<div>')
+				.addClass('broccoli--lightbox-inner')
+			;
+
 			$('body').find('.broccoli--lightbox').remove();//一旦削除
 			$('.broccoli *').attr({'tabindex':'-1'});
 			$('body')
@@ -1031,13 +1040,11 @@
 						e.preventDefault();
 						return;
 					})
-					.append( $('<div class="broccoli--lightbox-inner">')
-					)
+					.append( $dom )
 				)
 			;
 
-			var dom = $('body').find('.broccoli--lightbox-inner').get(0);
-			callback(dom);
+			callback( $dom.get(0) );
 			return this;
 		}
 
@@ -2058,10 +2065,9 @@ module.exports = function(broccoli){
 /**
  * drawModulePalette.js
  */
-module.exports = function(broccoli, callback){
+module.exports = function(broccoli, targetElm, callback){
 	// delete(require.cache[require('path').resolve(__filename)]);
 	if(!window){ callback(); return false; } // client side only
-	var targetElm = broccoli.options.elmModulePalette;
 	// console.log(moduleList);
 	// console.log(targetElm);
 
@@ -2497,6 +2503,18 @@ module.exports = function(broccoli){
 				+ '</div>'
 	;
 
+	function initMod(data){
+		var mod = broccoli.contentsSourceData.getModule(data.modId, data.subModName);
+		if( mod === false ){
+			mod = {
+				'id': '_sys/unknown',
+				'info': {
+					'name': 'Unknown Module'
+				}
+			}
+		}
+		return mod;
+	}
 
 	/**
 	 * 初期化
@@ -2506,6 +2524,7 @@ module.exports = function(broccoli){
 	 * @return {Void}                 [description]
 	 */
 	this.init = function(instancePath, elmEditWindow, callback){
+		// console.log( '=-=-=-=-=-=-=-=-= Initialize EditWindow.' );
 		callback = callback || function(){};
 
 		var data = broccoli.contentsSourceData.get(instancePath);
@@ -2516,7 +2535,7 @@ module.exports = function(broccoli){
 
 		var $fields = $('<div>');
 		$editWindow = $(elmEditWindow);
-		$editWindow.append( broccoli.bindEjs(tplFrame, {'lb':broccoli.lb}) );
+		$editWindow.html('').append( broccoli.bindEjs(tplFrame, {'lb':broccoli.lb}) );
 		$editWindow.find('.broccoli--edit-window-module-name').text(mod.info.name||mod.id);
 		$editWindow.find('.broccoli--edit-window-fields').append($fields);
 
@@ -2535,218 +2554,232 @@ module.exports = function(broccoli){
 			});
 		});
 
-		function initMod(data){
-			var mod = broccoli.contentsSourceData.getModule(data.modId, data.subModName);
-			if( mod === false ){
-				mod = {
-					'id': '_sys/unknown',
-					'info': {
-						'name': 'Unknown Module'
-					}
-				}
-			}
-			return mod;
-		}
-
 		// moduleフィールド、loopフィールドの内容を更新する
-		function updateModuleAndLoopField( instancePath, callback ){
+		function updateModuleAndLoopField( instancePath, callbackOf_pdateModuleAndLoopField ){
 			console.log('updateModuleAndLoopField();');
-			callback = callback || function(res, callback){
+			callbackOf_pdateModuleAndLoopField = callbackOf_pdateModuleAndLoopField || function(res, callback){
 				callback = callback || function(){};
 				return;
 			};
-			var data = broccoli.contentsSourceData.get(instancePath);
-			// console.log( data );
-			var mod = initMod(data);
+			// var data = broccoli.contentsSourceData.get(instancePath);
+			// // console.log( data );
+			// var mod = initMod(data);
 
-			it79.ary(
-				mod.fields,
-				function(it1, field, fieldName){
-					if( typeof(field) != typeof({}) ){
-						// オブジェクトではない field → Skip
-						it1.next();
-						return;
-					}
+			broccoli.progress(function(){
 
-					switch( field.fieldType ){
-						case 'input':
+				it79.ary(
+					mod.fields,
+					function(it1, field, fieldName){
+						if( typeof(field) != typeof({}) ){
+							// オブジェクトではない field → Skip
 							it1.next();
-							break;
-						case 'module':
-						case 'loop':
-							var $ul = $('<ul>');
-							it79.ary(
-								data.fields[field.name],
-								function(it2, childData, idx2){
-									var childMod = broccoli.contentsSourceData.getModule(childData.modId, childData.subModName);
-									var childInstancePath = instancePath + '/fields.'+field.name+'@'+idx2+''
-									// console.log(childInstancePath);
-									// console.log(childData);
-									// console.log(childMod);
-									// console.log(mod);
-									var label = childData.modId;
-									if( childMod.info && childMod.info.name ){
-										label = childMod.info.name;
-									}
-									var $li = $('<li>');
-									$li
-										.text(label)
-										.attr({
-											'data-broccoli-instance-path': childInstancePath,
-											'data-broccoli-mod-id': childMod.id,
-											'data-broccoli-sub-mod-name': childMod.subModName,
-											// 'data-broccoli-is-appender':'yes',
-											'data-broccoli-is-edit-window': 'yes',
-											'draggable': true
-										})
-										.bind('dblclick', function(e){
-											var $this = $(this);
-											_this.lock();//フォームをロック
-											validateInstance(instancePath, mod, data, function(res){
-												if( !res ){
-													// エラーがあるため次へ進めない
-													_this.unlock();
-													return;
-												}
-												saveInstance(instancePath, mod, data, function(res){
-													callback(res, function(){
-														// インスタンス instancePath の変更を保存し、
-														// 一旦編集ウィンドウを閉じたあと、
-														// childInstancePath の編集画面を開く。
-														var childInstancePath = $this.attr('data-broccoli-instance-path');
-														// alert(childInstancePath);
-														broccoli.editInstance(childInstancePath);
+							return;
+						}
+
+						switch( field.fieldType ){
+							case 'input':
+								it1.next();
+								break;
+							case 'module':
+							case 'loop':
+								var $ul = $('<ul>');
+								it79.ary(
+									data.fields[field.name],
+									function(it2, childData, idx2){
+										var childMod = broccoli.contentsSourceData.getModule(childData.modId, childData.subModName);
+										var childInstancePath = instancePath + '/fields.'+field.name+'@'+idx2+''
+										// console.log(childInstancePath);
+										// console.log(childData);
+										// console.log(childMod);
+										// console.log(mod);
+										var label = childData.modId;
+										if( childMod.info && childMod.info.name ){
+											label = childMod.info.name;
+										}
+										var $li = $('<li>');
+										var $a = $('<a>');
+										$li.append($a);
+										$a
+											.text(label)
+											.attr({
+												'href': 'javascript:;',
+												'data-broccoli-parent-instance-path': instancePath,
+												'data-broccoli-instance-path': childInstancePath,
+												'data-broccoli-mod-id': childMod.id,
+												'data-broccoli-sub-mod-name': childMod.subModName,
+												// 'data-broccoli-is-appender':'yes',
+												'data-broccoli-is-edit-window': 'yes',
+												'draggable': true
+											})
+											.append( $('<div>')
+												.addClass('broccoli--panel-drop-to-insert-here')
+											)
+										;
+										broccoli.panels.setPanelEventHandlers( $a );
+										$a
+											.unbind('drop')
+											.bind('drop', function(e){
+												_this.lock();//フォームをロック
+												broccoli.panels.onDrop(e, this, function(){
+													updateModuleAndLoopField( instancePath, function(){
+														_this.unlock();//フォームのロックを解除
+														console.log('drop event done.');
+													} );
+												});
+											})
+											.unbind('click')
+											.bind('click', function(e){
+												return false;
+											})
+											.unbind('dblclick')
+											.bind('dblclick', function(e){
+												var $this = $(this);
+												// インスタンス instancePath の変更を保存し、
+												// 一旦編集ウィンドウを閉じたあと、
+												// childInstancePath の編集画面を開く。
+												var instancePath = $this.attr('data-broccoli-parent-instance-path');
+												var childInstancePath = $this.attr('data-broccoli-instance-path');
+
+												_this.lock();//フォームをロック
+												validateInstance(instancePath, mod, data, function(res){
+													if( !res ){
+														// エラーがあるため次へ進めない
+														_this.unlock();
+														return;
+													}
+													saveInstance(instancePath, mod, data, function(res){
+														// コンテンツデータを保存
+														broccoli.saveContents(function(){
+															broccoli.panels.onDblClick(e, $this.get(0), function(){
+																console.log('dblclick event done.');
+															});
+														});
 													});
 												});
-											});
 
-										})
-										.append( $('<div>')
-											.addClass('broccoli--panel-drop-to-insert-here')
-										)
-									;
-									broccoli.panels.setPanelEventHandlers( $li );
-									$li
-										.unbind('drop')
-										.bind('drop', function(e){
-											_this.lock();//フォームをロック
-											broccoli.panels.onDrop(e, this, function(){
-												updateModuleAndLoopField( instancePath, function(){
-													_this.unlock();//フォームのロックを解除
-													console.log('drop event done.');
-												} );
-											});
-										})
-									;
-									$ul
-										.append($li)
-									;
-									it2.next();
-								},
-								function(){
-									var appenderInstancePath = instancePath+'/fields.'+field.name+'@'+(data.fields[field.name].length);
-									var $appender = $('<li>');
-									if( field.fieldType == 'module' ){
+											})
+										;
+										$ul
+											.append($li)
+										;
+										it2.next();
+									},
+									function(){
+										var appenderInstancePath = instancePath+'/fields.'+field.name+'@'+(data.fields[field.name].length);
+										var $li = $('<li>');
+										var $appender = $('<a>');
+										if( field.fieldType == 'module' ){
+											$appender
+												.text('(+) '+broccoli.lb.get('ui_label.drop_a_module_here'))
+												.attr({
+													'data-broccoli-instance-path':appenderInstancePath,
+													'data-broccoli-is-appender':'yes',
+													// 'data-broccoli-is-instance-tree-view': 'yes',
+													'draggable': false
+												})
+												.bind('mouseover', function(e){
+													e.stopPropagation();
+													$(this).addClass('broccoli--panel__hovered')
+												})
+												.bind('mouseout',function(e){
+													$(this).removeClass('broccoli--panel__hovered')
+												})
+												.append( $('<div>')
+													.addClass('broccoli--panel-drop-to-insert-here')
+												)
+											;
+										}else if( field.fieldType == 'loop' ){
+											$appender
+												.text(''+broccoli.lb.get('ui_label.dblclick_here_and_add_array_element'))
+												.attr({
+													'data-broccoli-instance-path':appenderInstancePath,
+													'data-broccoli-mod-id': mod.id,
+													'data-broccoli-sub-mod-name': field.name,
+													'data-broccoli-is-appender':'yes',
+													// 'data-broccoli-is-instance-tree-view': 'yes',
+													'draggable': false
+												})
+												.bind('click', function(e){
+													e.stopPropagation();
+													var $this = $(this);
+													var instancePath = $this.attr('data-broccoli-instance-path');
+													var selectInstancePath = instancePath;
+													// if( $this.attr('data-broccoli-is-appender') == 'yes' ){
+													// 	selectInstancePath = php.dirname(instancePath);
+													// }
+													broccoli.selectInstance( selectInstancePath, function(){
+														broccoli.focusInstance( instancePath );
+													} );
+												})
+												.bind('mouseover', function(e){
+													e.stopPropagation();
+													$(this).addClass('broccoli--panel__hovered')
+												})
+												.bind('mouseout',function(e){
+													$(this).removeClass('broccoli--panel__hovered')
+												})
+												.append( $('<div>')
+													.addClass('broccoli--panel-drop-to-insert-here')
+												)
+											;
+										}
+										broccoli.panels.setPanelEventHandlers( $appender );
 										$appender
-											.text('(+) '+broccoli.lb.get('ui_label.drop_a_module_here'))
-											.attr({
-												'data-broccoli-instance-path':appenderInstancePath,
-												'data-broccoli-is-appender':'yes',
-												// 'data-broccoli-is-instance-tree-view': 'yes',
-												'draggable': false
+											.unbind('drop')
+											.bind('drop', function(e){
+												_this.lock();//フォームをロック
+												broccoli.panels.onDrop(e, this, function(){
+													updateModuleAndLoopField( instancePath, function(){
+														_this.unlock();//フォームのロックを解除
+														console.log('drop event done.');
+													} );
+												});
 											})
-											.bind('mouseover', function(e){
-												e.stopPropagation();
-												$(this).addClass('broccoli--panel__hovered')
+											.unbind('dblclick')
+											.bind('dblclick', function(e){
+												_this.lock();//フォームをロック
+												broccoli.panels.onDblClick(e, this, function(){
+													updateModuleAndLoopField( instancePath, function(){
+														_this.unlock();//フォームのロックを解除
+														console.log('dblclick event done.');
+													} );
+												});
 											})
-											.bind('mouseout',function(e){
-												$(this).removeClass('broccoli--panel__hovered')
-											})
-											.append( $('<div>')
-												.addClass('broccoli--panel-drop-to-insert-here')
+										;
+										$ul.append( $li.append($appender) );
+
+										var $elmFieldContent = $fields.find('.broccoli--edit-window-module-fields[data-broccoli--editwindow-field-name='+field.name+']').eq(0);
+										$elmFieldContent.addClass('broccoli--edit-window-module-fields--fieldtype-'+field.fieldType);
+										$elmFieldContent.find('.broccoli--edit-window-module-fields__instances').html('')
+											.append(
+												$ul
 											)
 										;
-									}else if( field.fieldType == 'loop' ){
-										$appender
-											.text(''+broccoli.lb.get('ui_label.dblclick_here_and_add_array_element'))
-											.attr({
-												'data-broccoli-instance-path':appenderInstancePath,
-												'data-broccoli-mod-id': mod.id,
-												'data-broccoli-sub-mod-name': field.name,
-												'data-broccoli-is-appender':'yes',
-												// 'data-broccoli-is-instance-tree-view': 'yes',
-												'draggable': false
-											})
-											.bind('click', function(e){
-												e.stopPropagation();
-												var $this = $(this);
-												var instancePath = $this.attr('data-broccoli-instance-path');
-												var selectInstancePath = instancePath;
-												// if( $this.attr('data-broccoli-is-appender') == 'yes' ){
-												// 	selectInstancePath = php.dirname(instancePath);
-												// }
-												broccoli.selectInstance( selectInstancePath, function(){
-													broccoli.focusInstance( instancePath );
-												} );
-											})
-											.bind('mouseover', function(e){
-												e.stopPropagation();
-												$(this).addClass('broccoli--panel__hovered')
-											})
-											.bind('mouseout',function(e){
-												$(this).removeClass('broccoli--panel__hovered')
-											})
-											.append( $('<div>')
-												.addClass('broccoli--panel-drop-to-insert-here')
-											)
-										;
+										if(field.fieldType == 'module'){
+											// moduleフィールドには、モジュールパレットがつきます。
+											broccoli.drawModulePalette( $elmFieldContent.find('.broccoli--edit-window-module-fields__palette').get(0), function(){
+												it1.next();
+											} );
+										}else{
+											it1.next();
+										}
+
 									}
-									broccoli.panels.setPanelEventHandlers( $appender );
-									$appender
-										.unbind('drop')
-										.bind('drop', function(e){
-											_this.lock();//フォームをロック
-											broccoli.panels.onDrop(e, this, function(){
-												updateModuleAndLoopField( instancePath, function(){
-													_this.unlock();//フォームのロックを解除
-													console.log('drop event done.');
-												} );
-											});
-										})
-										.unbind('dblclick')
-										.bind('dblclick', function(e){
-											_this.lock();//フォームをロック
-											broccoli.panels.onDblClick(e, this, function(){
-												updateModuleAndLoopField( instancePath, function(){
-													_this.unlock();//フォームのロックを解除
-													console.log('dblclick event done.');
-												} );
-											});
-										})
-									;
-									$ul.append( $appender );
-
-									var elmFieldContent = $fields.find('.broccoli--edit-window-module-fields[data-broccoli--editwindow-field-name='+field.name+']').get(0);
-									$(elmFieldContent).html('')
-										.append(
-											$ul
-										)
-									;
-
-									it1.next();
-								}
-							);
-							break;
-						default:
-							it1.next();
-							break;
+								);
+								break;
+							default:
+								it1.next();
+								break;
+						}
+						return;
+					},
+					function(){
+						broccoli.closeProgress(function(){
+							callbackOf_pdateModuleAndLoopField();
+						});
 					}
-					return;
-				},
-				function(){
-					callback();
-				}
-			);
+				);
+			});
 			return;
 		} // updateModuleAndLoopField()
 
@@ -2810,6 +2843,12 @@ module.exports = function(broccoli){
 									.attr({
 										"data-broccoli--editwindow-field-name": field.name
 									})
+									.append( $('<div>')
+										.addClass('broccoli--edit-window-module-fields__instances')
+									)
+									.append( $('<div>')
+										.addClass('broccoli--edit-window-module-fields__palette')
+									)
 							)
 						;
 						it1.next();
@@ -2888,7 +2927,6 @@ module.exports = function(broccoli){
 					;
 				});
 
-
 			}
 		);
 		return this;
@@ -2937,6 +2975,7 @@ module.exports = function(broccoli){
 	 * インスタンスの編集を保存する
 	 */
 	function saveInstance( instancePath, mod, data, callback ){
+		callback = callback || function(){};
 		it79.ary(
 			mod.fields,
 			function(it2, field2, fieldName2){
@@ -2952,25 +2991,25 @@ module.exports = function(broccoli){
 				return;
 			},
 			function(){
-				it79.fnc(data,
+				it79.fnc({},
 					[
-						function(it2, data){
+						function(it2, arg){
 							data.anchor = $editWindow.find('#broccoli--edit-window-builtin-anchor-field').val();
 							data.dec = $editWindow.find('#broccoli--edit-window-builtin-dec-field').val();
 
-							it2.next(data);
+							it2.next(arg);
 						} ,
-						function(it2, data){
+						function(it2, arg){
 							// クライアントサイドにあるメモリ上のcontentsSourceDataに反映する。
 							// この時点で、まだサーバー側には送られていない。
 							// サーバー側に送るのは、callback() の先の仕事。
 							broccoli.contentsSourceData.updateInstance(data, instancePath, function(){
-								it2.next(data);
+								it2.next(arg);
 							});
 						} ,
-						function(it2, data){
+						function(it2, arg){
 							callback(true);
-							it2.next(data);
+							it2.next(arg);
 						}
 					]
 				);
@@ -9123,7 +9162,7 @@ module.exports={
         "spec": ">=0.19.0 <0.20.0",
         "type": "range"
       },
-      "/mydoc_TomK/Dropbox/localhosts/pickles2projects/pickles2/broccoli-html-editor"
+      "/mydoc_TomK/Dropbox/localhosts/broccoliHtmlEditorProjects/broccoli-html-editor/broccoli-html-editor"
     ]
   ],
   "_from": "cheerio@>=0.19.0 <0.20.0",
@@ -9153,7 +9192,7 @@ module.exports={
   "_shasum": "772e7015f2ee29965096d71ea4175b75ab354925",
   "_shrinkwrap": null,
   "_spec": "cheerio@^0.19.0",
-  "_where": "/mydoc_TomK/Dropbox/localhosts/pickles2projects/pickles2/broccoli-html-editor",
+  "_where": "/mydoc_TomK/Dropbox/localhosts/broccoliHtmlEditorProjects/broccoli-html-editor/broccoli-html-editor",
   "author": {
     "name": "Matt Mueller",
     "email": "mattmuelle@gmail.com",
@@ -10617,6 +10656,9 @@ Parser = function(options) {
   if ((base = this.options).rowDelimiter == null) {
     base.rowDelimiter = null;
   }
+  if (typeof this.options.rowDelimiter === 'string') {
+    this.options.rowDelimiter = [this.options.rowDelimiter];
+  }
   if ((base1 = this.options).delimiter == null) {
     base1.delimiter = ',';
   }
@@ -10673,16 +10715,22 @@ Parser = function(options) {
   this.is_float = function(value) {
     return (value - parseFloat(value) + 1) >= 0;
   };
-  this.decoder = new StringDecoder();
-  this.buf = '';
-  this.quoting = false;
-  this.commenting = false;
-  this.field = '';
-  this.nextChar = null;
-  this.closingQuote = 0;
-  this.line = [];
-  this.chunks = [];
-  this.rawBuf = '';
+  this._ = {};
+  this._.decoder = new StringDecoder();
+  this._.quoting = false;
+  this._.commenting = false;
+  this._.field = null;
+  this._.nextChar = null;
+  this._.closingQuote = 0;
+  this._.line = [];
+  this._.chunks = [];
+  this._.rawBuf = '';
+  this._.buf = '';
+  if (this.options.rowDelimiter) {
+    this._.rowDelimiterLength = Math.max.apply(Math, this.options.rowDelimiter.map(function(v) {
+      return v.length;
+    }));
+  }
   return this;
 };
 
@@ -10693,7 +10741,7 @@ module.exports.Parser = Parser;
 Parser.prototype._transform = function(chunk, encoding, callback) {
   var err, error;
   if (chunk instanceof Buffer) {
-    chunk = this.decoder.write(chunk);
+    chunk = this._.decoder.write(chunk);
   }
   try {
     this.__write(chunk, false);
@@ -10707,13 +10755,13 @@ Parser.prototype._transform = function(chunk, encoding, callback) {
 Parser.prototype._flush = function(callback) {
   var err, error;
   try {
-    this.__write(this.decoder.end(), true);
-    if (this.quoting) {
+    this.__write(this._.decoder.end(), true);
+    if (this._.quoting) {
       this.emit('error', new Error("Quoted field not terminated at line " + (this.lines + 1)));
       return;
     }
-    if (this.line.length > 0) {
-      this.__push(this.line);
+    if (this._.line.length > 0) {
+      this.__push(this._.line);
     }
     return callback();
   } catch (error) {
@@ -10737,12 +10785,12 @@ Parser.prototype.__push = function(line) {
     rawBuf = '';
     return;
   }
-  if (!this.line_length && line.length > 0) {
-    this.line_length = this.options.columns ? this.options.columns.length : line.length;
+  if (!this._.line_length && line.length > 0) {
+    this._.line_length = this.options.columns ? this.options.columns.length : line.length;
   }
   if (line.length === 1 && line[0] === '') {
     this.empty_line_count++;
-  } else if (line.length !== this.line_length) {
+  } else if (line.length !== this._.line_length) {
     if (this.options.relax_column_count) {
       this.skipped_line_count++;
     } else if (this.options.columns != null) {
@@ -10770,19 +10818,25 @@ Parser.prototype.__push = function(line) {
   } else {
     row = line;
   }
+  if (this.count < this.options.from) {
+    return;
+  }
+  if (this.count > this.options.to) {
+    return;
+  }
   if (this.options.raw) {
     this.push({
-      raw: this.rawBuf,
+      raw: this._.rawBuf,
       row: row
     });
-    return this.rawBuf = '';
+    return this._.rawBuf = '';
   } else {
     return this.push(row);
   }
 };
 
-Parser.prototype.__write = function(chars, end, callback) {
-  var areNextCharsDelimiter, areNextCharsRowDelimiters, auto_parse, char, escapeIsQuote, i, isDelimiter, isEscape, isNextCharAComment, isQuote, isRowDelimiter, is_float, is_int, l, ltrim, nextCharPos, ref, remainingBuffer, results, rowDelimiter, rowDelimiterLength, rtrim, wasCommenting;
+Parser.prototype.__write = function(chars, end) {
+  var areNextCharsDelimiter, areNextCharsRowDelimiters, auto_parse, char, escapeIsQuote, i, isDelimiter, isEscape, isNextCharAComment, isQuote, isRowDelimiter, isRowDelimiterLength, is_float, is_int, l, ltrim, nextCharPos, ref, ref1, ref2, ref3, ref4, remainingBuffer, results, rowDelimiter, rtrim, wasCommenting;
   is_int = (function(_this) {
     return function(value) {
       if (typeof _this.is_int === 'function') {
@@ -10804,24 +10858,26 @@ Parser.prototype.__write = function(chars, end, callback) {
   auto_parse = (function(_this) {
     return function(value) {
       var m;
-      if (_this.options.auto_parse && is_int(_this.field)) {
-        _this.field = parseInt(_this.field);
-      } else if (_this.options.auto_parse && is_float(_this.field)) {
-        _this.field = parseFloat(_this.field);
-      } else if (_this.options.auto_parse && _this.options.auto_parse_date) {
-        m = Date.parse(_this.field);
+      if (!_this.options.auto_parse) {
+        return value;
+      }
+      if (is_int(value)) {
+        value = parseInt(value);
+      } else if (is_float(value)) {
+        value = parseFloat(value);
+      } else if (_this.options.auto_parse_date) {
+        m = Date.parse(value);
         if (!isNaN(m)) {
-          _this.field = new Date(m);
+          value = new Date(m);
         }
       }
-      return _this.field;
+      return value;
     };
   })(this);
   ltrim = this.options.trim || this.options.ltrim;
   rtrim = this.options.trim || this.options.rtrim;
-  chars = this.buf + chars;
+  chars = this._.buf + chars;
   l = chars.length;
-  rowDelimiterLength = this.options.rowDelimiter ? this.options.rowDelimiter.length : 0;
   i = 0;
   if (this.lines === 0 && 0xFEFF === chars.charCodeAt(0)) {
     i++;
@@ -10829,170 +10885,191 @@ Parser.prototype.__write = function(chars, end, callback) {
   while (i < l) {
     if (!end) {
       remainingBuffer = chars.substr(i, l - i);
-      if ((!this.commenting && l - i < this.options.comment.length && this.options.comment.substr(0, l - i) === remainingBuffer) || (this.options.rowDelimiter && l - i < rowDelimiterLength && this.options.rowDelimiter.substr(0, l - i) === remainingBuffer) || (this.options.rowDelimiter && this.quoting && l - i < (this.options.quote.length + rowDelimiterLength) && (this.options.quote + this.options.rowDelimiter).substr(0, l - i) === remainingBuffer) || (l - i <= this.options.delimiter.length && this.options.delimiter.substr(0, l - i) === remainingBuffer) || (l - i <= this.options.escape.length && this.options.escape.substr(0, l - i) === remainingBuffer)) {
+      if ((!this.options.rowDelimiter && i + 3 > l) || (!this._.commenting && l - i < this.options.comment.length && this.options.comment.substr(0, l - i) === remainingBuffer) || (this.options.rowDelimiter && l - i < this._.rowDelimiterLength && this.options.rowDelimiter.some(function(rd) {
+        return rd.substr(0, l - i) === remainingBuffer;
+      })) || (this.options.rowDelimiter && this._.quoting && l - i < (this.options.quote.length + this._.rowDelimiterLength) && this.options.rowDelimiter.some((function(_this) {
+        return function(rd) {
+          return (_this.options.quote + rd).substr(0, l - i) === remainingBuffer;
+        };
+      })(this))) || (l - i <= this.options.delimiter.length && this.options.delimiter.substr(0, l - i) === remainingBuffer) || (l - i <= this.options.escape.length && this.options.escape.substr(0, l - i) === remainingBuffer)) {
         break;
       }
     }
-    char = this.nextChar ? this.nextChar : chars.charAt(i);
-    this.nextChar = l > i + 1 ? chars.charAt(i + 1) : '';
+    char = this._.nextChar ? this._.nextChar : chars.charAt(i);
+    this._.nextChar = l > i + 1 ? chars.charAt(i + 1) : '';
     if (this.options.raw) {
-      this.rawBuf += char;
+      this._.rawBuf += char;
     }
     if (this.options.rowDelimiter == null) {
-      if ((!this.quoting) && (char === '\n' || char === '\r')) {
+      nextCharPos = i;
+      rowDelimiter = null;
+      if (!this._.quoting && (char === '\n' || char === '\r')) {
         rowDelimiter = char;
-        nextCharPos = i + 1;
-      } else if (this.nextChar === '\n' || this.nextChar === '\r') {
-        rowDelimiter = this.nextChar;
-        nextCharPos = i + 2;
+        nextCharPos += 1;
+      } else if (!(!this._.quoting && char === this.options.quote) && (this._.nextChar === '\n' || this._.nextChar === '\r')) {
+        rowDelimiter = this._.nextChar;
+        nextCharPos += 2;
         if (this.raw) {
-          rawBuf += this.nextChar;
+          rawBuf += this._.nextChar;
         }
       }
       if (rowDelimiter) {
         if (rowDelimiter === '\r' && chars.charAt(nextCharPos) === '\n') {
           rowDelimiter += '\n';
         }
-        this.options.rowDelimiter = rowDelimiter;
-        rowDelimiterLength = this.options.rowDelimiter.length;
+        this.options.rowDelimiter = [rowDelimiter];
+        this._.rowDelimiterLength = rowDelimiter.length;
       }
     }
-    if (!this.commenting && char === this.options.escape) {
+    if (!this._.commenting && char === this.options.escape) {
       escapeIsQuote = this.options.escape === this.options.quote;
-      isEscape = this.nextChar === this.options.escape;
-      isQuote = this.nextChar === this.options.quote;
-      if (!(escapeIsQuote && !this.field && !this.quoting) && (isEscape || isQuote)) {
+      isEscape = this._.nextChar === this.options.escape;
+      isQuote = this._.nextChar === this.options.quote;
+      if (!(escapeIsQuote && (this._.field == null) && !this._.quoting) && (isEscape || isQuote)) {
         i++;
-        char = this.nextChar;
-        this.nextChar = chars.charAt(i + 1);
-        this.field += char;
+        char = this._.nextChar;
+        this._.nextChar = chars.charAt(i + 1);
+        if (this._.field == null) {
+          this._.field = '';
+        }
+        this._.field += char;
         if (this.options.raw) {
-          this.rawBuf += char;
+          this._.rawBuf += char;
         }
         i++;
         continue;
       }
     }
-    if (!this.commenting && char === this.options.quote) {
-      if (this.quoting) {
-        areNextCharsRowDelimiters = this.options.rowDelimiter && chars.substr(i + 1, this.options.rowDelimiter.length) === this.options.rowDelimiter;
+    if (!this._.commenting && char === this.options.quote) {
+      if (this._.quoting) {
+        areNextCharsRowDelimiters = this.options.rowDelimiter && this.options.rowDelimiter.some(function(rd) {
+          return chars.substr(i + 1, rd.length) === rd;
+        });
         areNextCharsDelimiter = chars.substr(i + 1, this.options.delimiter.length) === this.options.delimiter;
-        isNextCharAComment = this.nextChar === this.options.comment;
-        if (this.nextChar && !areNextCharsRowDelimiters && !areNextCharsDelimiter && !isNextCharAComment) {
+        isNextCharAComment = this._.nextChar === this.options.comment;
+        if (this._.nextChar && !areNextCharsRowDelimiters && !areNextCharsDelimiter && !isNextCharAComment) {
           if (this.options.relax) {
-            this.quoting = false;
-            this.field = "" + this.options.quote + this.field;
+            this._.quoting = false;
+            this._.field = "" + this.options.quote + this._.field;
           } else {
-            throw Error("Invalid closing quote at line " + (this.lines + 1) + "; found " + (JSON.stringify(this.nextChar)) + " instead of delimiter " + (JSON.stringify(this.options.delimiter)));
+            throw Error("Invalid closing quote at line " + (this.lines + 1) + "; found " + (JSON.stringify(this._.nextChar)) + " instead of delimiter " + (JSON.stringify(this.options.delimiter)));
           }
         } else {
-          this.quoting = false;
-          this.closingQuote = this.options.quote.length;
+          this._.quoting = false;
+          this._.closingQuote = this.options.quote.length;
           i++;
           if (end && i === l) {
-            this.line.push(auto_parse(this.field));
-            this.field = '';
+            this._.line.push(auto_parse(this._.field || ''));
+            this._.field = null;
           }
           continue;
         }
-      } else if (!this.field) {
-        this.quoting = true;
+      } else if (!this._.field) {
+        this._.quoting = true;
         i++;
         continue;
-      } else if (this.field && !this.options.relax) {
+      } else if ((this._.field != null) && !this.options.relax) {
         throw Error("Invalid opening quote at line " + (this.lines + 1));
       }
     }
-    isRowDelimiter = this.options.rowDelimiter && chars.substr(i, this.options.rowDelimiter.length) === this.options.rowDelimiter;
+    isRowDelimiter = this.options.rowDelimiter && this.options.rowDelimiter.some(function(rd) {
+      return chars.substr(i, rd.length) === rd;
+    });
+    if (isRowDelimiter) {
+      isRowDelimiterLength = this.options.rowDelimiter.filter(function(rd) {
+        return chars.substr(i, rd.length) === rd;
+      })[0].length;
+    }
     if (isRowDelimiter || (end && i === l - 1)) {
       this.lines++;
     }
     wasCommenting = false;
-    if (!this.commenting && !this.quoting && this.options.comment && chars.substr(i, this.options.comment.length) === this.options.comment) {
-      this.commenting = true;
-    } else if (this.commenting && isRowDelimiter) {
+    if (!this._.commenting && !this._.quoting && this.options.comment && chars.substr(i, this.options.comment.length) === this.options.comment) {
+      this._.commenting = true;
+    } else if (this._.commenting && isRowDelimiter) {
       wasCommenting = true;
-      this.commenting = false;
+      this._.commenting = false;
     }
     isDelimiter = chars.substr(i, this.options.delimiter.length) === this.options.delimiter;
-    if (!this.commenting && !this.quoting && (isDelimiter || isRowDelimiter)) {
-      if (isRowDelimiter && this.line.length === 0 && this.field === '') {
+    if (!this._.commenting && !this._.quoting && (isDelimiter || isRowDelimiter)) {
+      if (isRowDelimiter && this._.line.length === 0 && (this._.field == null)) {
         if (wasCommenting || this.options.skip_empty_lines) {
-          i += this.options.rowDelimiter.length;
-          this.nextChar = chars.charAt(i);
+          i += isRowDelimiterLength;
+          this._.nextChar = chars.charAt(i);
           continue;
         }
       }
       if (rtrim) {
-        if (!this.closingQuote) {
-          this.field = this.field.trimRight();
+        if (!this._.closingQuote) {
+          this._.field = (ref = this._.field) != null ? ref.trimRight() : void 0;
         }
       }
-      this.line.push(auto_parse(this.field));
-      this.closingQuote = 0;
-      this.field = '';
+      this._.line.push(auto_parse(this._.field || ''));
+      this._.closingQuote = 0;
+      this._.field = null;
       if (isDelimiter) {
         i += this.options.delimiter.length;
-        this.nextChar = chars.charAt(i);
-        if (end && !this.nextChar) {
+        this._.nextChar = chars.charAt(i);
+        if (end && !this._.nextChar) {
           isRowDelimiter = true;
-          this.line.push('');
+          this._.line.push('');
         }
       }
       if (isRowDelimiter) {
-        this.__push(this.line);
-        this.line = [];
-        i += (ref = this.options.rowDelimiter) != null ? ref.length : void 0;
-        this.nextChar = chars.charAt(i);
+        this.__push(this._.line);
+        this._.line = [];
+        i += isRowDelimiterLength;
+        this._.nextChar = chars.charAt(i);
         continue;
       }
-    } else if (!this.commenting && !this.quoting && (char === ' ' || char === '\t')) {
-      if (!(ltrim && !this.field)) {
-        this.field += char;
+    } else if (!this._.commenting && !this._.quoting && (char === ' ' || char === '\t')) {
+      if (this._.field == null) {
+        this._.field = '';
       }
-      if (end && i + 1 === l) {
-        if (this.options.trim || this.options.rtrim) {
-          this.field = this.field.trimRight();
-        }
+      if (!(ltrim && !this._.field)) {
+        this._.field += char;
       }
       i++;
-    } else if (!this.commenting) {
-      this.field += char;
+    } else if (!this._.commenting) {
+      if (this._.field == null) {
+        this._.field = '';
+      }
+      this._.field += char;
       i++;
     } else {
       i++;
     }
-    if (!this.commenting && this.field.length > this.options.max_limit_on_data_read) {
+    if (!this._.commenting && ((ref1 = this._.field) != null ? ref1.length : void 0) > this.options.max_limit_on_data_read) {
       throw Error("Delimiter not found in the file " + (JSON.stringify(this.options.delimiter)));
     }
-    if (!this.commenting && this.line.length > this.options.max_limit_on_data_read) {
+    if (!this._.commenting && ((ref2 = this._.line) != null ? ref2.length : void 0) > this.options.max_limit_on_data_read) {
       throw Error("Row delimiter not found in the file " + (JSON.stringify(this.options.rowDelimiter)));
     }
   }
   if (end) {
-    if (rtrim) {
-      if (!this.closingQuote) {
-        this.field = this.field.trimRight();
+    if (this._.field != null) {
+      if (rtrim) {
+        if (!this._.closingQuote) {
+          this._.field = (ref3 = this._.field) != null ? ref3.trimRight() : void 0;
+        }
       }
+      this._.line.push(auto_parse(this._.field || ''));
+      this._.field = null;
     }
-    if (this.field !== '') {
-      this.line.push(auto_parse(this.field));
-      this.field = '';
-    }
-    if (this.field.length > this.options.max_limit_on_data_read) {
+    if (((ref4 = this._.field) != null ? ref4.length : void 0) > this.options.max_limit_on_data_read) {
       throw Error("Delimiter not found in the file " + (JSON.stringify(this.options.delimiter)));
     }
     if (l === 0) {
       this.lines++;
     }
-    if (this.line.length > this.options.max_limit_on_data_read) {
+    if (this._.line.length > this.options.max_limit_on_data_read) {
       throw Error("Row delimiter not found in the file " + (JSON.stringify(this.options.rowDelimiter)));
     }
   }
-  this.buf = '';
+  this._.buf = '';
   results = [];
   while (i < l) {
-    this.buf += chars.charAt(i);
+    this._.buf += chars.charAt(i);
     results.push(i++);
   }
   return results;
@@ -12251,7 +12328,7 @@ exports.getName = function(elem){
 'use strict';
 
 /**
- * @file Embedded JavaScript templating engine.
+ * @file Embedded JavaScript templating engine. {@link http://ejs.co}
  * @author Matthew Eernisse <mde@fleegix.org>
  * @author Tiancheng "Timothy" Gu <timothygu99@gmail.com>
  * @project EJS
@@ -12284,11 +12361,14 @@ var scopeOptionWarned = false;
 var _VERSION_STRING = require('../package.json').version;
 var _DEFAULT_DELIMITER = '%';
 var _DEFAULT_LOCALS_NAME = 'locals';
+var _NAME = 'ejs';
 var _REGEX_STRING = '(<%%|%%>|<%=|<%-|<%_|<%#|<%|%>|-%>|_%>)';
-var _OPTS = [ 'cache', 'filename', 'delimiter', 'scope', 'context',
-        'debug', 'compileDebug', 'client', '_with', 'root', 'rmWhitespace',
-        'strict', 'localsName'];
-var _TRAILING_SEMCOL = /;\s*$/;
+var _OPTS = ['delimiter', 'scope', 'context', 'debug', 'compileDebug',
+  'client', '_with', 'rmWhitespace', 'strict', 'filename'];
+// We don't allow 'cache' option to be passed in the data obj
+// for the normal `render` call, but this is where Express puts it
+// so we make an exception for `renderFile`
+var _OPTS_EXPRESS = _OPTS.concat('cache');
 var _BOM = /^\uFEFF/;
 
 /**
@@ -12302,9 +12382,18 @@ var _BOM = /^\uFEFF/;
 exports.cache = utils.cache;
 
 /**
+ * Custom file loader. Useful for template preprocessing or restricting access
+ * to a certain part of the filesystem.
+ *
+ * @type {fileLoader}
+ */
+
+exports.fileLoader = fs.readFileSync;
+
+/**
  * Name of the object containing the locals.
  *
- * This variable is overriden by {@link Options}`.localsName` if it is not
+ * This variable is overridden by {@link Options}`.localsName` if it is not
  * `undefined`.
  *
  * @type {String}
@@ -12336,7 +12425,7 @@ exports.resolveInclude = function(name, filename, isDir) {
 
 /**
  * Get the path to the included file by Options
- * 
+ *
  * @param  {String}  path    specified path
  * @param  {Options} options compilation options
  * @return {String}
@@ -12350,7 +12439,7 @@ function getIncludePath(path, options){
     if (!options.filename) {
       throw new Error('`include` use relative path requires the \'filename\' option.');
     }
-    includePath = exports.resolveInclude(path, options.filename);  
+    includePath = exports.resolveInclude(path, options.filename);
   }
   return includePath;
 }
@@ -12387,7 +12476,7 @@ function handleCache(options, template) {
       return func;
     }
     if (!hasTemplate) {
-      template = fs.readFileSync(filename).toString().replace(_BOM, '');
+      template = fileLoader(filename).toString().replace(_BOM, '');
     }
   }
   else if (!hasTemplate) {
@@ -12396,13 +12485,48 @@ function handleCache(options, template) {
       throw new Error('Internal EJS error: no file name or template '
                     + 'provided');
     }
-    template = fs.readFileSync(filename).toString().replace(_BOM, '');
+    template = fileLoader(filename).toString().replace(_BOM, '');
   }
   func = exports.compile(template, options);
   if (options.cache) {
     exports.cache.set(filename, func);
   }
   return func;
+}
+
+/**
+ * Try calling handleCache with the given options and data and call the
+ * callback with the result. If an error occurs, call the callback with
+ * the error. Used by renderFile().
+ *
+ * @memberof module:ejs-internal
+ * @param {Options} options    compilation options
+ * @param {Object} data        template data
+ * @param {RenderFileCallback} cb callback
+ * @static
+ */
+
+function tryHandleCache(options, data, cb) {
+  var result;
+  try {
+    result = handleCache(options)(data);
+  }
+  catch (err) {
+    return cb(err);
+  }
+  return cb(null, result);
+}
+
+/**
+ * fileLoader is independent
+ *
+ * @param {String} filePath ejs file path.
+ * @return {String} The contents of the specified file.
+ * @static
+ */
+
+function fileLoader(filePath){
+  return exports.fileLoader(filePath);
 }
 
 /**
@@ -12438,8 +12562,8 @@ function includeSource(path, options) {
   var opts = utils.shallowCopy({}, options);
   var includePath;
   var template;
-  includePath = getIncludePath(path,opts);
-  template = fs.readFileSync(includePath).toString().replace(_BOM, '');
+  includePath = getIncludePath(path, opts);
+  template = fileLoader(includePath).toString().replace(_BOM, '');
   opts.filename = includePath;
   var templ = new Template(template, opts);
   templ.generateSource();
@@ -12463,10 +12587,11 @@ function includeSource(path, options) {
  * @static
  */
 
-function rethrow(err, str, filename, lineno){
+function rethrow(err, str, flnm, lineno, esc){
   var lines = str.split('\n');
   var start = Math.max(lineno - 3, 0);
   var end = Math.min(lines.length, lineno + 3);
+  var filename = esc(flnm); // eslint-disable-line
   // Error context
   var context = lines.slice(start, end).map(function (line, i){
     var curr = i + start + 1;
@@ -12486,24 +12611,8 @@ function rethrow(err, str, filename, lineno){
   throw err;
 }
 
-/**
- * Copy properties in data object that are recognized as options to an
- * options object.
- *
- * This is used for compatibility with earlier versions of EJS and Express.js.
- *
- * @memberof module:ejs-internal
- * @param {Object}  data data object
- * @param {Options} opts options object
- * @static
- */
-
-function cpOptsInData(data, opts) {
-  _OPTS.forEach(function (p) {
-    if (typeof data[p] != 'undefined') {
-      opts[p] = data[p];
-    }
-  });
+function stripSemi(str){
+  return str.replace(/;(\s*$)/, '$1');
 }
 
 /**
@@ -12558,7 +12667,7 @@ exports.render = function (template, d, o) {
   // No options object -- if there are optiony names
   // in the data, copy them to options
   if (arguments.length == 2) {
-    cpOptsInData(data, opts);
+    utils.shallowCopyFromList(opts, data, _OPTS);
   }
 
   return handleCache(opts, template)(data);
@@ -12578,37 +12687,38 @@ exports.render = function (template, d, o) {
  */
 
 exports.renderFile = function () {
-  var args = Array.prototype.slice.call(arguments);
-  var filename = args.shift();
-  var cb = args.pop();
-  var data = args.shift() || {};
-  var opts = args.pop() || {};
-  var result;
+  var filename = arguments[0];
+  var cb = arguments[arguments.length - 1];
+  var opts = {filename: filename};
+  var data;
 
-  // Don't pollute passed in opts obj with new vals
-  opts = utils.shallowCopy({}, opts);
+  if (arguments.length > 2) {
+    data = arguments[1];
 
-  // No options object -- if there are optiony names
-  // in the data, copy them to options
-  if (arguments.length == 3) {
-    // Express 4
-    if (data.settings && data.settings['view options']) {
-      cpOptsInData(data.settings['view options'], opts);
+    // No options object -- if there are optiony names
+    // in the data, copy them to options
+    if (arguments.length === 3) {
+      // Express 4
+      if (data.settings && data.settings['view options']) {
+        utils.shallowCopyFromList(opts, data.settings['view options'], _OPTS_EXPRESS);
+      }
+      // Express 3 and lower
+      else {
+        utils.shallowCopyFromList(opts, data, _OPTS_EXPRESS);
+      }
     }
-    // Express 3 and lower
     else {
-      cpOptsInData(data, opts);
+      // Use shallowCopy so we don't pollute passed in opts obj with new vals
+      utils.shallowCopy(opts, arguments[2]);
     }
-  }
-  opts.filename = filename;
 
-  try {
-    result = handleCache(opts)(data);
+    opts.filename = filename;
   }
-  catch(err) {
-    return cb(err);
+  else {
+    data = {};
   }
-  return cb(null, result);
+
+  return tryHandleCache(opts, data, cb);
 };
 
 /**
@@ -12676,7 +12786,7 @@ Template.prototype = {
     var opts = this.opts;
     var prepended = '';
     var appended = '';
-    var escape = opts.escapeFunction;
+    var escapeFn = opts.escapeFunction;
 
     if (!this.source) {
       this.generateSource();
@@ -12697,7 +12807,7 @@ Template.prototype = {
           + 'try {' + '\n'
           + this.source
           + '} catch (e) {' + '\n'
-          + '  rethrow(e, __lines, __filename, __line);' + '\n'
+          + '  rethrow(e, __lines, __filename, __line, escapeFn);' + '\n'
           + '}' + '\n';
     }
     else {
@@ -12709,7 +12819,7 @@ Template.prototype = {
     }
 
     if (opts.client) {
-      src = 'escape = escape || ' + escape.toString() + ';' + '\n' + src;
+      src = 'escapeFn = escapeFn || ' + escapeFn.toString() + ';' + '\n' + src;
       if (opts.compileDebug) {
         src = 'rethrow = rethrow || ' + rethrow.toString() + ';' + '\n' + src;
       }
@@ -12720,7 +12830,7 @@ Template.prototype = {
     }
 
     try {
-      fn = new Function(opts.localsName + ', escape, include, rethrow', src);
+      fn = new Function(opts.localsName + ', escapeFn, include, rethrow', src);
     }
     catch(e) {
       // istanbul ignore else
@@ -12728,7 +12838,9 @@ Template.prototype = {
         if (opts.filename) {
           e.message += ' in ' + opts.filename;
         }
-        e.message += ' while compiling ejs';
+        e.message += ' while compiling ejs\n\n';
+        e.message += 'If the above error is not helpful, you may want to try EJS-Lint:\n';
+        e.message += 'https://github.com/RyanZim/EJS-Lint';
       }
       throw e;
     }
@@ -12749,7 +12861,7 @@ Template.prototype = {
         }
         return includeFile(path, opts)(d);
       };
-      return fn.apply(opts.context, [data || {}, escape, include, rethrow]);
+      return fn.apply(opts.context, [data || {}, escapeFn, include, rethrow]);
     };
     returnedFn.dependencies = this.dependencies;
     return returnedFn;
@@ -12870,9 +12982,8 @@ Template.prototype = {
         self.truncate = false;
       }
       else if (self.opts.rmWhitespace) {
-        // Gotta be more careful here.
-        // .replace(/^(\s*)\n/, '$1') might be more appropriate here but as
-        // rmWhitespace already removes trailing spaces anyway so meh.
+        // rmWhitespace has already removed trailing spaces, just need
+        // to remove linebreaks
         line = line.replace(/^\n/, '');
       }
       if (!line) {
@@ -12895,77 +13006,75 @@ Template.prototype = {
     newLineCount = (line.split('\n').length - 1);
 
     switch (line) {
-      case '<' + d:
-      case '<' + d + '_':
-        this.mode = Template.modes.EVAL;
-        break;
-      case '<' + d + '=':
-        this.mode = Template.modes.ESCAPED;
-        break;
-      case '<' + d + '-':
-        this.mode = Template.modes.RAW;
-        break;
-      case '<' + d + '#':
-        this.mode = Template.modes.COMMENT;
-        break;
-      case '<' + d + d:
-        this.mode = Template.modes.LITERAL;
-        this.source += '    ; __append("' + line.replace('<' + d + d, '<' + d) + '")' + '\n';
-        break;
-      case d + d + '>':
-        this.mode = Template.modes.LITERAL;
-        this.source += '    ; __append("' + line.replace(d + d + '>', d + '>') + '")' + '\n';
-        break;
-      case d + '>':
-      case '-' + d + '>':
-      case '_' + d + '>':
-        if (this.mode == Template.modes.LITERAL) {
-          _addOutput();
-        }
+    case '<' + d:
+    case '<' + d + '_':
+      this.mode = Template.modes.EVAL;
+      break;
+    case '<' + d + '=':
+      this.mode = Template.modes.ESCAPED;
+      break;
+    case '<' + d + '-':
+      this.mode = Template.modes.RAW;
+      break;
+    case '<' + d + '#':
+      this.mode = Template.modes.COMMENT;
+      break;
+    case '<' + d + d:
+      this.mode = Template.modes.LITERAL;
+      this.source += '    ; __append("' + line.replace('<' + d + d, '<' + d) + '")' + '\n';
+      break;
+    case d + d + '>':
+      this.mode = Template.modes.LITERAL;
+      this.source += '    ; __append("' + line.replace(d + d + '>', d + '>') + '")' + '\n';
+      break;
+    case d + '>':
+    case '-' + d + '>':
+    case '_' + d + '>':
+      if (this.mode == Template.modes.LITERAL) {
+        _addOutput();
+      }
 
-        this.mode = null;
-        this.truncate = line.indexOf('-') === 0 || line.indexOf('_') === 0;
-        break;
-      default:
+      this.mode = null;
+      this.truncate = line.indexOf('-') === 0 || line.indexOf('_') === 0;
+      break;
+    default:
         // In script mode, depends on type of tag
-        if (this.mode) {
+      if (this.mode) {
           // If '//' is found without a line break, add a line break.
-          switch (this.mode) {
-            case Template.modes.EVAL:
-            case Template.modes.ESCAPED:
-            case Template.modes.RAW:
-              if (line.lastIndexOf('//') > line.lastIndexOf('\n')) {
-                line += '\n';
-              }
+        switch (this.mode) {
+        case Template.modes.EVAL:
+        case Template.modes.ESCAPED:
+        case Template.modes.RAW:
+          if (line.lastIndexOf('//') > line.lastIndexOf('\n')) {
+            line += '\n';
           }
-          switch (this.mode) {
+        }
+        switch (this.mode) {
             // Just executing code
-            case Template.modes.EVAL:
-              this.source += '    ; ' + line + '\n';
-              break;
+        case Template.modes.EVAL:
+          this.source += '    ; ' + line + '\n';
+          break;
             // Exec, esc, and output
-            case Template.modes.ESCAPED:
-              this.source += '    ; __append(escape(' +
-                line.replace(_TRAILING_SEMCOL, '').trim() + '))' + '\n';
-              break;
+        case Template.modes.ESCAPED:
+          this.source += '    ; __append(escapeFn(' + stripSemi(line) + '))' + '\n';
+          break;
             // Exec and output
-            case Template.modes.RAW:
-              this.source += '    ; __append(' +
-                line.replace(_TRAILING_SEMCOL, '').trim() + ')' + '\n';
-              break;
-            case Template.modes.COMMENT:
+        case Template.modes.RAW:
+          this.source += '    ; __append(' + stripSemi(line) + ')' + '\n';
+          break;
+        case Template.modes.COMMENT:
               // Do nothing
-              break;
+          break;
             // Literal <%% mode, append as raw output
-            case Template.modes.LITERAL:
-              _addOutput();
-              break;
-          }
-        }
-        // In string mode, just add the output
-        else {
+        case Template.modes.LITERAL:
           _addOutput();
+          break;
         }
+      }
+        // In string mode, just add the output
+      else {
+        _addOutput();
+      }
     }
 
     if (self.opts.compileDebug && newLineCount) {
@@ -13006,10 +13115,10 @@ if (require.extensions) {
   require.extensions['.ejs'] = function (module, flnm) {
     var filename = flnm || /* istanbul ignore next */ module.filename;
     var options = {
-          filename: filename,
-          client: true
-        };
-    var template = fs.readFileSync(filename).toString();
+      filename: filename,
+      client: true
+    };
+    var template = fileLoader(filename).toString();
     var fn = exports.compile(template, options);
     module._compile('module.exports = ' + fn.toString() + ';', filename);
   };
@@ -13024,6 +13133,16 @@ if (require.extensions) {
  */
 
 exports.VERSION = _VERSION_STRING;
+
+/**
+ * Name for detection of EJS.
+ *
+ * @readonly
+ * @type {String}
+ * @public
+ */
+
+exports.name = _NAME;
 
 /* istanbul ignore if */
 if (typeof window != 'undefined') {
@@ -13078,17 +13197,17 @@ exports.escapeRegExpChars = function (string) {
 };
 
 var _ENCODE_HTML_RULES = {
-      '&': '&amp;'
-    , '<': '&lt;'
-    , '>': '&gt;'
-    , '"': '&#34;'
-    , "'": '&#39;'
-    }
-  , _MATCH_HTML = /[&<>\'"]/g;
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&#34;',
+  "'": '&#39;'
+};
+var _MATCH_HTML = /[&<>\'"]/g;
 
 function encode_char(c) {
   return _ENCODE_HTML_RULES[c] || c;
-};
+}
 
 /**
  * Stringified version of constants used by {@link module:utils.escapeXML}.
@@ -13131,11 +13250,13 @@ exports.escapeXML = function (markup) {
         .replace(_MATCH_HTML, encode_char);
 };
 exports.escapeXML.toString = function () {
-  return Function.prototype.toString.call(this) + ';\n' + escapeFuncStr
+  return Function.prototype.toString.call(this) + ';\n' + escapeFuncStr;
 };
 
 /**
- * Copy all properties from one object to another, in a shallow fashion.
+ * Naive copy of properties from one object to another.
+ * Does not recurse into non-scalar properties
+ * Does not check to see if the property has a value before copying
  *
  * @param  {Object} to   Destination object
  * @param  {Object} from Source object
@@ -13147,6 +13268,28 @@ exports.shallowCopy = function (to, from) {
   from = from || {};
   for (var p in from) {
     to[p] = from[p];
+  }
+  return to;
+};
+
+/**
+ * Naive copy of a list of key names, from one object to another.
+ * Only copies property if it is actually defined
+ * Does not recurse into non-scalar properties
+ *
+ * @param  {Object} to   Destination object
+ * @param  {Object} from Source object
+ * @param  {Array} list List of properties to copy
+ * @return {Object}      Destination object
+ * @static
+ * @private
+ */
+exports.shallowCopyFromList = function (to, from, list) {
+  for (var i = 0; i < list.length; i++) {
+    var p = list[i];
+    if (typeof from[p] != 'undefined') {
+      to[p] = from[p];
+    }
   }
   return to;
 };
@@ -13172,57 +13315,55 @@ exports.cache = {
   }
 };
 
-
 },{}],68:[function(require,module,exports){
 module.exports={
   "_args": [
     [
       {
-        "raw": "ejs",
+        "raw": "ejs@^2.5.2",
         "scope": null,
         "escapedName": "ejs",
         "name": "ejs",
-        "rawSpec": "",
-        "spec": "latest",
-        "type": "tag"
+        "rawSpec": "^2.5.2",
+        "spec": ">=2.5.2 <3.0.0",
+        "type": "range"
       },
-      "/mydoc_TomK/Dropbox/localhosts/pickles2projects/pickles2/broccoli-html-editor"
+      "/mydoc_TomK/Dropbox/localhosts/broccoliHtmlEditorProjects/broccoli-html-editor/broccoli-html-editor"
     ]
   ],
-  "_from": "ejs@latest",
-  "_id": "ejs@2.5.2",
+  "_from": "ejs@>=2.5.2 <3.0.0",
+  "_id": "ejs@2.5.6",
   "_inCache": true,
   "_location": "/ejs",
-  "_nodeVersion": "4.2.2",
+  "_nodeVersion": "6.9.1",
   "_npmOperationalInternal": {
     "host": "packages-12-west.internal.npmjs.com",
-    "tmp": "tmp/ejs-2.5.2.tgz_1473259584869_0.9678213631268591"
+    "tmp": "tmp/ejs-2.5.6.tgz_1487277787176_0.4875628533773124"
   },
   "_npmUser": {
     "name": "mde",
     "email": "mde@fleegix.org"
   },
-  "_npmVersion": "2.14.7",
+  "_npmVersion": "3.10.8",
   "_phantomChildren": {},
   "_requested": {
-    "raw": "ejs",
+    "raw": "ejs@^2.5.2",
     "scope": null,
     "escapedName": "ejs",
     "name": "ejs",
-    "rawSpec": "",
-    "spec": "latest",
-    "type": "tag"
+    "rawSpec": "^2.5.2",
+    "spec": ">=2.5.2 <3.0.0",
+    "type": "range"
   },
   "_requiredBy": [
-    "#USER",
     "/",
     "/langbank"
   ],
-  "_resolved": "https://registry.npmjs.org/ejs/-/ejs-2.5.2.tgz",
-  "_shasum": "21444ba09386f0c65b6eafb96a3d51bcb3be80d1",
+  "_resolved": "https://registry.npmjs.org/ejs/-/ejs-2.5.6.tgz",
+  "_shasum": "479636bfa3fe3b1debd52087f0acb204b4f19c88",
   "_shrinkwrap": null,
-  "_spec": "ejs",
-  "_where": "/mydoc_TomK/Dropbox/localhosts/pickles2projects/pickles2/broccoli-html-editor",
+  "_spec": "ejs@^2.5.2",
+  "_where": "/mydoc_TomK/Dropbox/localhosts/broccoliHtmlEditorProjects/broccoli-html-editor/broccoli-html-editor",
   "author": {
     "name": "Matthew Eernisse",
     "email": "mde@fleegix.org",
@@ -13243,18 +13384,18 @@ module.exports={
   "devDependencies": {
     "browserify": "^13.0.1",
     "eslint": "^3.0.0",
+    "git-directory-deploy": "^1.5.1",
     "istanbul": "~0.4.3",
     "jake": "^8.0.0",
     "jsdoc": "^3.4.0",
     "lru-cache": "^4.0.1",
     "mocha": "^3.0.2",
-    "rimraf": "^2.2.8",
     "uglify-js": "^2.6.2"
   },
   "directories": {},
   "dist": {
-    "shasum": "21444ba09386f0c65b6eafb96a3d51bcb3be80d1",
-    "tarball": "https://registry.npmjs.org/ejs/-/ejs-2.5.2.tgz"
+    "shasum": "479636bfa3fe3b1debd52087f0acb204b4f19c88",
+    "tarball": "https://registry.npmjs.org/ejs/-/ejs-2.5.6.tgz"
   },
   "engines": {
     "node": ">=0.10.0"
@@ -13269,10 +13410,6 @@ module.exports={
   "main": "./lib/ejs.js",
   "maintainers": [
     {
-      "name": "tjholowaychuk",
-      "email": "tj@vision-media.ca"
-    },
-    {
       "name": "mde",
       "email": "mde@fleegix.org"
     }
@@ -13286,11 +13423,12 @@ module.exports={
   },
   "scripts": {
     "coverage": "istanbul cover node_modules/mocha/bin/_mocha",
-    "devdoc": "rimraf out && jsdoc -p -c jsdoc.json lib/* docs/jsdoc/*",
-    "doc": "rimraf out && jsdoc -c jsdoc.json lib/* docs/jsdoc/*",
+    "devdoc": "jake doc[dev]",
+    "doc": "jake doc",
+    "lint": "eslint \"**/*.js\" Jakefile",
     "test": "mocha"
   },
-  "version": "2.5.2"
+  "version": "2.5.6"
 }
 
 },{}],69:[function(require,module,exports){
@@ -55801,9 +55939,9 @@ module.exports = function() {
   error = false;
   if (data) {
     process.nextTick(function() {
-      var l, len1, row;
-      for (l = 0, len1 = data.length; l < len1; l++) {
-        row = data[l];
+      var len1, m, row;
+      for (m = 0, len1 = data.length; m < len1; m++) {
+        row = data[m];
         if (error) {
           break;
         }
@@ -55818,7 +55956,11 @@ module.exports = function() {
       var r, results;
       results = [];
       while ((r = transform.read())) {
-        results.push(result.push(r));
+        if (callback) {
+          results.push(result.push(r));
+        } else {
+          results.push(void 0);
+        }
       }
       return results;
     });
@@ -55857,7 +55999,7 @@ util.inherits(Transformer, stream.Transform);
 module.exports.Transformer = Transformer;
 
 Transformer.prototype._transform = function(chunk, encoding, cb) {
-  var err;
+  var callback, err, l;
   this.started++;
   this.running++;
   if (this.running < this.options.parallel) {
@@ -55865,16 +56007,23 @@ Transformer.prototype._transform = function(chunk, encoding, cb) {
     cb = null;
   }
   try {
-    if (this.transform.length === 2) {
-      this.transform.call(null, chunk, (function(_this) {
+    l = this.transform.length;
+    if (this.options.params != null) {
+      l--;
+    }
+    if (l === 1) {
+      this._done(null, [this.transform.call(null, chunk, this.options.params)], cb);
+    } else if (l === 2) {
+      callback = (function(_this) {
         return function() {
           var chunks, err;
           err = arguments[0], chunks = 2 <= arguments.length ? slice.call(arguments, 1) : [];
           return _this._done(err, chunks, cb);
         };
-      })(this));
+      })(this);
+      this.transform.call(null, chunk, callback, this.options.params);
     } else {
-      this._done(null, [this.transform.call(null, chunk)], cb);
+      throw Error("Invalid handler arguments");
     }
     return false;
   } catch (_error) {
@@ -57646,7 +57795,7 @@ function URL(address, location, parser) {
           address = address.slice(0, index);
         }
       }
-    } else if (index = parse.exec(address)) {
+    } else if ((index = parse.exec(address))) {
       url[key] = index[1];
       address = address.slice(0, index.index);
     }
@@ -57724,7 +57873,7 @@ function URL(address, location, parser) {
  * @returns {URL}
  * @api public
  */
-URL.prototype.set = function set(part, value, fn) {
+function set(part, value, fn) {
   var url = this;
 
   switch (part) {
@@ -57805,7 +57954,7 @@ URL.prototype.set = function set(part, value, fn) {
  * @returns {String}
  * @api public
  */
-URL.prototype.toString = function toString(stringify) {
+function toString(stringify) {
   if (!stringify || 'function' !== typeof stringify) stringify = qs.stringify;
 
   var query
@@ -57830,7 +57979,9 @@ URL.prototype.toString = function toString(stringify) {
   if (url.hash) result += url.hash;
 
   return result;
-};
+}
+
+URL.prototype = { set: set, toString: toString };
 
 //
 // Expose the URL parser and some additional properties that might be useful for
