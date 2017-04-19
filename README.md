@@ -255,7 +255,7 @@ $ npm test
 
 ## 更新履歴 - Change log
 
-### broccoli-html-editor@0.1.0-beta.12 (2017年??月??日)
+### broccoli-html-editor@0.1.0 (2017年4月20日)
 
 - Node.js 0.x , io.js のサポートを中止。
 - `broccoli.buildModuleCss()` が、SASSが使えない環境で異常終了する問題を修正。
@@ -303,7 +303,7 @@ $ npm test
 - 編集保存中のアニメーション追加。
 
 
-### broccoli-html-editor@0.1.0-beta.8
+### broccoli-html-editor@0.1.0-beta.8 (2016年4月27日)
 
 - 埋め込み Ace Editor に対応。
 - 1行のフィールドを textarea ではなく input[type=text] に変更。
@@ -312,7 +312,7 @@ $ npm test
 - `postMessage()` に関する不具合を修正。
 
 
-### broccoli-html-editor@0.1.0-beta.7
+### broccoli-html-editor@0.1.0-beta.7 (2016年4月15日)
 
 - imageフィールドに、ローカルディスク上の画像ファイルをドラッグ＆ドロップで登録できるようになった。
 - imageフィールドが、画像のURL指定で登録できるようになった。
@@ -324,7 +324,7 @@ $ npm test
 - コンテンツで html,body が height:100%; になっているときにプレビュー画面の高さ設定に失敗する問題を修正
 - CSS調整: モジュールの README.md
 
-### broccoli-html-editor@0.1.0-beta.6
+### broccoli-html-editor@0.1.0-beta.6 (2016年3月23日)
 
 - 編集エリアが無駄に縦に長くなる問題を修正
 - instancePathView のレイアウト調整
@@ -334,7 +334,7 @@ $ npm test
 - bowl操作の制御調整
 - instanceTreeView の bowl のデザイン修正
 
-### broccoli-html-editor@0.1.0-beta.4
+### broccoli-html-editor@0.1.0-beta.4 (2016年3月8日)
 
 - リソース情報を含むコピー＆ペーストが可能になった。
 - クリップモジュール機能を追加。
