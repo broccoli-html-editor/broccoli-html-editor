@@ -153,6 +153,15 @@ broccoli.init(
 			});
 			return;
 		},
+		'clipboard': {
+			// クリップボード操作の機能を拡張できます。
+			'set': function( data, type ){
+				// クリップボードにコピーする機能を実装してください。
+			},
+			'get': function( type ){
+				// クリップボードからデータを取得する機能を実装してください。
+			}
+		},
 		'onClickContentsLink': function( uri, data ){
 			alert(uri + ' へ移動');
 			console.log(data);
@@ -257,7 +266,7 @@ $ npm test
 
 ### broccoli-html-editor@0.1.1 (2017年??月??日)
 
-- ???????????????????????????
+- クライアントサイドに `clipboard.set()`, `clipboard.get()` オプションを追加。
 
 ### broccoli-html-editor@0.1.0 (2017年4月20日)
 

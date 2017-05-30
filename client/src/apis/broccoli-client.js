@@ -64,6 +64,9 @@
 			options.onClickContentsLink = options.onClickContentsLink || function(){};
 			options.onMessage = options.onMessage || function(){};
 			options.lang = options.lang || 'en';
+			options.clipboard = options.clipboard || {};
+			options.clipboard.set = options.clipboard.set || null;
+			options.clipboard.get = options.clipboard.get || null;
 
 			this.options = options;
 
