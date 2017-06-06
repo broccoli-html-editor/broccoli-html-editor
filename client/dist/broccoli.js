@@ -65,6 +65,9 @@
 			options.onClickContentsLink = options.onClickContentsLink || function(){};
 			options.onMessage = options.onMessage || function(){};
 			options.lang = options.lang || 'en';
+			options.clipboard = options.clipboard || {};
+			options.clipboard.set = options.clipboard.set || null;
+			options.clipboard.get = options.clipboard.get || null;
 
 			this.options = options;
 
@@ -1206,8 +1209,15 @@ module.exports = function(broccoli){
 	var clipboard = '';
 
 	// clipboardに値をセットする
-	this.set = function( text ){
+	this.set = function( text, type ){
 		clipboard = text;
+
+		try {
+			if( broccoli.options.clipboard.set ){
+				return broccoli.options.clipboard.set( text, type );
+			}
+		} catch (e) {
+		}
 
 		var copyArea = $("<textarea/>");
 		copyArea.text(text);
@@ -1221,7 +1231,14 @@ module.exports = function(broccoli){
 	}// broccoli.clipboard.set();
 
 	// clipboardから値を取得する
-	this.get = function(){
+	this.get = function( type ){
+		try {
+			if( broccoli.options.clipboard.get ){
+				return broccoli.options.clipboard.get( type );
+			}
+		} catch (e) {
+		}
+
 		var copyArea = $("<textarea/>");
 		$("body").append(copyArea);
 		copyArea.select();
