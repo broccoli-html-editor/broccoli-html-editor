@@ -1082,6 +1082,7 @@
 					.append( $('<div class="broccoli broccoli--progress-inner">')
 						.append( $('<div class="broccoli broccoli--progress-inner2">')
 							.append( $('<div class="px2-loading">') )
+							.append( $('<div class="broccoli--progress-comment">') )
 						)
 					)
 				)
@@ -1089,6 +1090,16 @@
 			var dom = $('body').find('.px2-loading').get(0);
 			callback(dom);
 			return this;
+		}
+
+		/**
+		 * プログレス表示中にメッセージを表示する
+		 * プログレス表示中でなければ無視する。
+		 */
+		this.progressMessage = function(str){
+			console.log(str);
+			var $userMessage = $('.broccoli--progress-comment');
+			$userMessage.text(str);
 		}
 
 		/**
@@ -1145,18 +1156,21 @@
 			it79.fnc({},[
 				function(it1, data){
 					// コンテンツを保存
+					_this.progressMessage('コンテンツデータを保存しています...');
 					_this.contentsSourceData.save(function(){
 						it1.next(data);
 					});
 				} ,
 				function(it1, data){
 					// リソースを保存
+					_this.progressMessage('リソースデータを保存しています...');
 					_this.resourceMgr.save(function(){
 						it1.next(data);
 					});
 				} ,
 				function(it1, data){
 					// コンテンツを更新
+					_this.progressMessage('コンテンツを更新しています...');
 					_this.gpi(
 						'updateContents',
 						{} ,
@@ -1168,6 +1182,7 @@
 				} ,
 				function(it1, data){
 					// console.log('editInstance done.');
+					_this.progressMessage('コンテンツを保存しました。');
 					_this.message('コンテンツを保存しました。');
 					callback(true);
 					it1.next(data);
@@ -2506,6 +2521,7 @@ module.exports = function(broccoli){
 				+ '				</div>'
 				+ '			</div>'
 				+ '		</div>'
+				+ '		<div class="broccoli--edit-window-message-field"></div>'
 				+ '	</form>'
 				+ '</div>'
 	;
@@ -2532,6 +2548,7 @@ module.exports = function(broccoli){
 		}
 		return mod;
 	}
+
 
 	/**
 	 * 初期化
@@ -2666,8 +2683,10 @@ module.exports = function(broccoli){
 													}
 													saveInstance(instancePath, mod, data, function(res){
 														// コンテンツデータを保存
+														broccoli.progressMessage('コンテンツを保存しています');
 														broccoli.saveContents(function(){
 															broccoli.panels.onDblClick(e, $this.get(0), function(){
+																broccoli.progressMessage('');
 																console.log('dblclick event done.');
 															});
 														});
@@ -2910,6 +2929,7 @@ module.exports = function(broccoli){
 									return;
 								}
 								saveInstance(instancePath, mod, data, function(res){
+									broccoli.progressMessage('');
 									broccoli.closeProgress();
 									callback(res);
 								});
@@ -3001,13 +3021,19 @@ module.exports = function(broccoli){
 					it2.next();return;
 				}
 				var fieldDefinition = broccoli.getFieldDefinition(field2.type);
+				broccoli.progressMessage('フィールド "'+fieldName2+'" を処理しています...');
 				fieldDefinition.saveEditorContent($dom.get(0), data.fields[fieldName2], mod.fields[fieldName2], function(result){
 					data.fields[fieldName2] = result;
 					it2.next();
+				}, {
+					'message': function(msg){
+						broccoli.progressMessage(fieldName2+': '+msg);
+					}
 				});
 				return;
 			},
 			function(){
+				broccoli.progressMessage('データを送信しています...');
 				it79.fnc({},
 					[
 						function(it2, arg){
@@ -3020,11 +3046,13 @@ module.exports = function(broccoli){
 							// クライアントサイドにあるメモリ上のcontentsSourceDataに反映する。
 							// この時点で、まだサーバー側には送られていない。
 							// サーバー側に送るのは、callback() の先の仕事。
+							broccoli.progressMessage('インスタンス情報を更新しています...');
 							broccoli.contentsSourceData.updateInstance(data, instancePath, function(){
 								it2.next(arg);
 							});
 						} ,
 						function(it2, arg){
+							broccoli.progressMessage('完了');
 							callback(true);
 							it2.next(arg);
 						}
@@ -3258,7 +3286,9 @@ module.exports = function(broccoli){
 	/**
 	 * エディタUIで編集した内容を保存 (Client Side)
 	 */
-	this.saveEditorContent = function( elm, data, mod, callback ){
+	this.saveEditorContent = function( elm, data, mod, callback, options ){
+		options = options || {};
+		options.message = options.message || function(msg){};//ユーザーへのメッセージテキストを送信
 		var $dom = $(elm);
 		var src;
 		if( $dom.find('input[type=text]').size() ){
@@ -5426,7 +5456,10 @@ module.exports = function(broccoli){
 	/**
 	 * エディタUIで編集した内容を保存
 	 */
-	this.saveEditorContent = function( elm, data, mod, callback ){
+	this.saveEditorContent = function( elm, data, mod, callback, options ){
+		options = options || {};
+		options.message = options.message || function(msg){};//ユーザーへのメッセージテキストを送信
+
 		var resInfo;
 		var $dom = $(elm);
 		if( typeof(data) !== typeof({}) ){
@@ -5447,6 +5480,7 @@ module.exports = function(broccoli){
 				} ,
 				function(it1, data){
 					// console.log('saving image field data.');
+					options.message('リソース領域を初期化中...');
 					_resMgr.getResource(data.resKey, function(result){
 						// console.log(result);
 						if( result === false ){
@@ -5464,6 +5498,7 @@ module.exports = function(broccoli){
 					});
 				} ,
 				function(it1, data){
+					options.message('リソース領域を初期化中... '+data.resKey);
 					_resMgr.getResource(data.resKey, function(res){
 						// console.log(res);
 						resInfo = res;
@@ -5488,7 +5523,9 @@ module.exports = function(broccoli){
 					resInfo.isPrivateMaterial = (data.resType == 'web' ? true : false);
 					resInfo.publicFilename = $dom.find('input[name='+mod.name+'-publicFilename]').val();
 
+					options.message('リソースを更新中...');
 					_resMgr.updateResource( data.resKey, resInfo, function(result){
+						options.message('リソースの公開パスを取得中...');
 						_resMgr.getResourcePublicPath( data.resKey, function(publicPath){
 							data.path = publicPath;
 							it1.next(data);
@@ -5498,6 +5535,7 @@ module.exports = function(broccoli){
 
 				} ,
 				function(it1, data){
+					options.message('リソースの処理を完了しました。');
 					callback(data);
 					it1.next(data);
 				}
