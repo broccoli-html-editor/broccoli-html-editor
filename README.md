@@ -231,7 +231,7 @@ coming soon.
 	- duplicateData(data, callback) - データを複製する
 	- extractResourceId(data, callback) - データから使用するリソースのリソースIDを抽出する
 	- validateEditorContent(elm, data, mod, callback) - エディタUIで編集した内容を検証する
-	- saveEditorContent(elm, data, mod, callback) - エディタUIで編集した内容を保存
+	- saveEditorContent(elm, data, mod, callback, options) - エディタUIで編集した内容を保存
 	- callGpi(options, callback) - GPIを呼び出す
 
 
@@ -267,6 +267,7 @@ $ npm test
 ### broccoli-html-editor@0.1.1 (2017年??月??日)
 
 - クライアントサイドに `clipboard.set()`, `clipboard.get()` オプションを追加。
+- インスタンス編集後の保存時に、処理の進捗状況を伝えるようになった。
 
 ### broccoli-html-editor@0.1.0 (2017年4月20日)
 

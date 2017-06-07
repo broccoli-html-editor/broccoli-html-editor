@@ -194,7 +194,9 @@ module.exports = function(broccoli){
 	/**
 	 * エディタUIで編集した内容を保存 (Client Side)
 	 */
-	this.saveEditorContent = function( elm, data, mod, callback ){
+	this.saveEditorContent = function( elm, data, mod, callback, options ){
+		options = options || {};
+		options.message = options.message || function(msg){};//ユーザーへのメッセージテキストを送信
 		var $dom = $(elm);
 		var src;
 		if( $dom.find('input[type=text]').size() ){

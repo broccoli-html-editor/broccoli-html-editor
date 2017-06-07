@@ -64,6 +64,7 @@ module.exports = function(broccoli){
 				+ '				</div>'
 				+ '			</div>'
 				+ '		</div>'
+				+ '		<div class="broccoli--edit-window-message-field"></div>'
 				+ '	</form>'
 				+ '</div>'
 	;
@@ -90,6 +91,7 @@ module.exports = function(broccoli){
 		}
 		return mod;
 	}
+
 
 	/**
 	 * 初期化
@@ -224,8 +226,10 @@ module.exports = function(broccoli){
 													}
 													saveInstance(instancePath, mod, data, function(res){
 														// コンテンツデータを保存
+														broccoli.progressMessage('コンテンツを保存しています');
 														broccoli.saveContents(function(){
 															broccoli.panels.onDblClick(e, $this.get(0), function(){
+																broccoli.progressMessage('');
 																console.log('dblclick event done.');
 															});
 														});
@@ -468,6 +472,7 @@ module.exports = function(broccoli){
 									return;
 								}
 								saveInstance(instancePath, mod, data, function(res){
+									broccoli.progressMessage('');
 									broccoli.closeProgress();
 									callback(res);
 								});
@@ -559,13 +564,19 @@ module.exports = function(broccoli){
 					it2.next();return;
 				}
 				var fieldDefinition = broccoli.getFieldDefinition(field2.type);
+				broccoli.progressMessage('フィールド "'+fieldName2+'" を処理しています...');
 				fieldDefinition.saveEditorContent($dom.get(0), data.fields[fieldName2], mod.fields[fieldName2], function(result){
 					data.fields[fieldName2] = result;
 					it2.next();
+				}, {
+					'message': function(msg){
+						broccoli.progressMessage(fieldName2+': '+msg);
+					}
 				});
 				return;
 			},
 			function(){
+				broccoli.progressMessage('データを送信しています...');
 				it79.fnc({},
 					[
 						function(it2, arg){
@@ -578,11 +589,13 @@ module.exports = function(broccoli){
 							// クライアントサイドにあるメモリ上のcontentsSourceDataに反映する。
 							// この時点で、まだサーバー側には送られていない。
 							// サーバー側に送るのは、callback() の先の仕事。
+							broccoli.progressMessage('インスタンス情報を更新しています...');
 							broccoli.contentsSourceData.updateInstance(data, instancePath, function(){
 								it2.next(arg);
 							});
 						} ,
 						function(it2, arg){
+							broccoli.progressMessage('完了');
 							callback(true);
 							it2.next(arg);
 						}

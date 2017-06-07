@@ -1081,6 +1081,7 @@
 					.append( $('<div class="broccoli broccoli--progress-inner">')
 						.append( $('<div class="broccoli broccoli--progress-inner2">')
 							.append( $('<div class="px2-loading">') )
+							.append( $('<div class="broccoli--progress-comment">') )
 						)
 					)
 				)
@@ -1088,6 +1089,16 @@
 			var dom = $('body').find('.px2-loading').get(0);
 			callback(dom);
 			return this;
+		}
+
+		/**
+		 * プログレス表示中にメッセージを表示する
+		 * プログレス表示中でなければ無視する。
+		 */
+		this.progressMessage = function(str){
+			console.log(str);
+			var $userMessage = $('.broccoli--progress-comment');
+			$userMessage.text(str);
 		}
 
 		/**
@@ -1144,18 +1155,21 @@
 			it79.fnc({},[
 				function(it1, data){
 					// コンテンツを保存
+					_this.progressMessage('コンテンツデータを保存しています...');
 					_this.contentsSourceData.save(function(){
 						it1.next(data);
 					});
 				} ,
 				function(it1, data){
 					// リソースを保存
+					_this.progressMessage('リソースデータを保存しています...');
 					_this.resourceMgr.save(function(){
 						it1.next(data);
 					});
 				} ,
 				function(it1, data){
 					// コンテンツを更新
+					_this.progressMessage('コンテンツを更新しています...');
 					_this.gpi(
 						'updateContents',
 						{} ,
@@ -1167,6 +1181,7 @@
 				} ,
 				function(it1, data){
 					// console.log('editInstance done.');
+					_this.progressMessage('コンテンツを保存しました。');
 					_this.message('コンテンツを保存しました。');
 					callback(true);
 					it1.next(data);
