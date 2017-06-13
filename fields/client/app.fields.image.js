@@ -477,7 +477,10 @@ module.exports = function(broccoli){
 	/**
 	 * エディタUIで編集した内容を保存
 	 */
-	this.saveEditorContent = function( elm, data, mod, callback ){
+	this.saveEditorContent = function( elm, data, mod, callback, options ){
+		options = options || {};
+		options.message = options.message || function(msg){};//ユーザーへのメッセージテキストを送信
+
 		var resInfo;
 		var $dom = $(elm);
 		if( typeof(data) !== typeof({}) ){
@@ -498,6 +501,7 @@ module.exports = function(broccoli){
 				} ,
 				function(it1, data){
 					// console.log('saving image field data.');
+					options.message('リソース領域を初期化中...');
 					_resMgr.getResource(data.resKey, function(result){
 						// console.log(result);
 						if( result === false ){
@@ -515,6 +519,7 @@ module.exports = function(broccoli){
 					});
 				} ,
 				function(it1, data){
+					options.message('リソース領域を初期化中... '+data.resKey);
 					_resMgr.getResource(data.resKey, function(res){
 						// console.log(res);
 						resInfo = res;
@@ -539,7 +544,9 @@ module.exports = function(broccoli){
 					resInfo.isPrivateMaterial = (data.resType == 'web' ? true : false);
 					resInfo.publicFilename = $dom.find('input[name='+mod.name+'-publicFilename]').val();
 
+					options.message('リソースを更新中...');
 					_resMgr.updateResource( data.resKey, resInfo, function(result){
+						options.message('リソースの公開パスを取得中...');
 						_resMgr.getResourcePublicPath( data.resKey, function(publicPath){
 							data.path = publicPath;
 							it1.next(data);
@@ -549,6 +556,7 @@ module.exports = function(broccoli){
 
 				} ,
 				function(it1, data){
+					options.message('リソースの処理を完了しました。');
 					callback(data);
 					it1.next(data);
 				}

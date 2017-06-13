@@ -141,6 +141,7 @@ module.exports = function(broccoli){
 							case 'jpg':
 							case 'jpeg':
 							case 'jpe':
+								console.info('Running imagemin JPEG...');
 								new imagemin()
 									.src( [path_public] )
 									.dest( utils79.dirname(path_public) )
@@ -149,6 +150,7 @@ module.exports = function(broccoli){
 										// console.log('Images optimized (JPEG)');
 										// console.log(err);
 										// console.log(files);
+										console.info('imagemin JPEG done.');
 										it1.next(data);
 										return;
 									})
@@ -156,6 +158,7 @@ module.exports = function(broccoli){
 								break;
 
 							case 'png':
+								console.info('Running imagemin PNG...');
 								new imagemin()
 									.src( [path_public] )
 									.dest( utils79.dirname(path_public) )
@@ -166,6 +169,7 @@ module.exports = function(broccoli){
 										// console.log('Images optimized (PNG)');
 										// console.log(err);
 										// console.log(files);
+										console.info('imagemin PNG done.');
 										it1.next(data);
 										return;
 									})
