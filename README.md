@@ -189,7 +189,7 @@ broccoli.init(
 ### プレビュー用ウェブサーバー - Web Server for preview
 
 編集画面上のプレビューHTMLの最後に、次のスクリプトコードを埋め込んでください。
-`'http://127.0.0.1:8080'` には、broccoli-html-editor の編集画面が置かれるサーバーの origin を設定してください。
+`'http://127.0.0.1:8080'` には、`broccoli-html-editor` の編集画面が置かれるサーバーの `origin` を設定してください。
 
 ```html
 <script data-broccoli-receive-message="yes">
@@ -233,6 +233,38 @@ coming soon.
 	- validateEditorContent(elm, data, mod, callback) - エディタUIで編集した内容を検証する
 	- saveEditorContent(elm, data, mod, callback, options) - エディタUIで編集した内容を保存
 	- callGpi(options, callback) - GPIを呼び出す
+
+
+## プラグインの種類と `broccoli.json`
+
+`broccoli-html-editor` のプラグインには、 _モジュール_ と _フィールド_ があります。
+アプリケーションがこれらのパッケージを効率的に利用するため、 各パッケージのルートディレクトリに `broccoli.json` を配置し、パッケージに関する情報を記述します。
+
+### モジュール の例
+
+```json
+{
+    "name": "Plain HTML Elements",
+    "type": "module",
+    "path": "modules/"
+}
+```
+
+### フィールド の例
+
+```json
+{
+    "name": "Table Field",
+    "type": "field",
+    "backend": {
+        "require": "libs/main.js"
+    },
+    "frontend": {
+        "file" : "dist/broccoli-field-table.min.js",
+        "function" : "window.BroccoliFieldTable"
+    }
+}
+```
 
 
 ## for developer
