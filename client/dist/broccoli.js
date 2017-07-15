@@ -2490,6 +2490,7 @@ module.exports = function(broccoli){
 				+ '				<textarea class="form-control" id="broccoli--edit-window-builtin-dec-field" placeholder=""></textarea>'
 				+ '			</div>'
 				+ '		</div>'
+				+ '		<div class="broccoli--edit-window-message-field"></div>'
 				+ '		<div class="broccoli--edit-window-form-buttons">'
 				+ '			<div class="container-fluid">'
 				+ '				<div class="row">'
@@ -2521,7 +2522,6 @@ module.exports = function(broccoli){
 				+ '				</div>'
 				+ '			</div>'
 				+ '		</div>'
-				+ '		<div class="broccoli--edit-window-message-field"></div>'
 				+ '	</form>'
 				+ '</div>'
 	;
@@ -2532,6 +2532,8 @@ module.exports = function(broccoli){
 				+ '	<div class="broccoli--edit-window-field-description">'
 				+ '	</div>'
 				+ '	<div class="broccoli--edit-window-field-content">'
+				+ '	</div>'
+				+ '	<div class="broccoli--edit-window-field-error-message">'
 				+ '	</div>'
 				+ '</div>'
 	;
@@ -2549,6 +2551,30 @@ module.exports = function(broccoli){
 		return mod;
 	}
 
+	function formErrorMessage(msgs){
+		var $elm = $editWindow.find('.broccoli--edit-window-message-field');
+		$editWindow.find('.broccoli--edit-window-field-error-message').hide().html('');
+		$elm.hide().html('');
+		for( var idx in msgs ){
+			var $err = $('<div class="broccoli__error-message">');
+			var $errUl = $('<ul>');
+			var errCount = 0;
+			for( var idx2 in msgs[idx] ){
+				errCount ++;
+				$errUl.append( $('<li>')
+					.text( msgs[idx][idx2] )
+				);
+			}
+			$('[data-broccoli-edit-window-field-name='+idx+'] .broccoli--edit-window-field-error-message').show().append( $err.append($errUl) );
+		}
+		if(errCount){
+			var $err = $('<div class="broccoli__error-message">');
+			$elm.show().append(
+				$err.text( '入力エラーがあります。確認してください。' )
+			);
+		}
+		return;
+	}
 
 	/**
 	 * 初期化
@@ -2673,6 +2699,7 @@ module.exports = function(broccoli){
 												// childInstancePath の編集画面を開く。
 												var instancePath = $this.attr('data-broccoli-parent-instance-path');
 												var childInstancePath = $this.attr('data-broccoli-instance-path');
+												formErrorMessage([]);
 
 												_this.lock();//フォームをロック
 												validateInstance(instancePath, mod, data, function(res){
@@ -2918,6 +2945,7 @@ module.exports = function(broccoli){
 							// 編集内容を保存する
 							// console.log( data );
 							// console.log( mod );
+							formErrorMessage([]);
 
 							_this.lock();//フォームをロック
 							broccoli.progress();
@@ -2998,6 +3026,7 @@ module.exports = function(broccoli){
 			function(){
 				if( isError ){
 					console.info('ERROR:', errors);
+					formErrorMessage(errors);
 					broccoli.message('入力エラーがあります。確認してください。');
 				}
 				callback( !isError );

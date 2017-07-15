@@ -297,6 +297,10 @@
   padding: 0.5em 0;
   background-color: #fff; }
 
+.broccoli--edit-window-message-field {
+  display: none;
+  margin: 10px; }
+
 .broccoli--edit-window-builtin-fields {
   border: 1px solid #99e;
   padding: 1em;
@@ -369,6 +373,10 @@
       width: 30%;
       overflow: auto;
       display: block; }
+
+.broccoli--edit-window-field-error-message {
+  margin: 10px;
+  display: none; }
 
 .broccoli--lightbox {
   position: fixed;
@@ -581,3 +589,13 @@
     text-overflow: ellipsis;
     overflow: hidden;
     padding-left: 8px; }
+
+.broccoli__error-message {
+  border: 1px solid #f00;
+  color: #f00;
+  background-color: #fdd;
+  padding: 10px 20px;
+  border-radius: 10px; }
+  .broccoli__error-message ul {
+    margin-top: 0;
+    margin-bottom: 0; }
