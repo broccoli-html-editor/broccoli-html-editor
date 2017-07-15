@@ -526,7 +526,7 @@ module.exports = function(broccoli){
 					it2.next();return;
 				}
 				var fieldDefinition = broccoli.getFieldDefinition(field2.type);
-				fieldDefinition.validateEditorContent($dom.get(0), data.fields[fieldName2], mod.fields[fieldName2], function(errorMsgs){
+				fieldDefinition.validateEditorContent($dom.get(0), mod.fields[fieldName2], function(errorMsgs){
 					if( typeof(errorMsgs)==typeof([]) && errorMsgs.length ){
 						isError = true;
 						errors[fieldName2] = errorMsgs;

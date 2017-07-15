@@ -2983,7 +2983,7 @@ module.exports = function(broccoli){
 					it2.next();return;
 				}
 				var fieldDefinition = broccoli.getFieldDefinition(field2.type);
-				fieldDefinition.validateEditorContent($dom.get(0), data.fields[fieldName2], mod.fields[fieldName2], function(errorMsgs){
+				fieldDefinition.validateEditorContent($dom.get(0), mod.fields[fieldName2], function(errorMsgs){
 					if( typeof(errorMsgs)==typeof([]) && errorMsgs.length ){
 						isError = true;
 						errors[fieldName2] = errorMsgs;
@@ -3274,7 +3274,7 @@ module.exports = function(broccoli){
 	/**
 	 * エディタUIで編集した内容を検証する (Client Side)
 	 */
-	this.validateEditorContent = function( elm, data, mod, callback ){
+	this.validateEditorContent = function( elm, mod, callback ){
 		var errorMsgs = [];
 		// errorMsgs.push('エラーがあります。');
 		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
@@ -5395,6 +5395,13 @@ module.exports = function(broccoli){
 			);
 
 			rtn.append($uiImageResource).append($uiWebResource);
+			rtn.append( $('<input>')
+				.attr({
+					'type': 'hidden',
+					'name': mod.name+'-resKey',
+					'value': data.resKey
+				})
+			);
 			$(elm).html(rtn);
 			selectResourceType();
 
@@ -5448,6 +5455,47 @@ module.exports = function(broccoli){
 		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 			callback(resourceIdList);
 		}); });
+		return this;
+	}
+
+	/**
+	 * エディタUIで編集した内容を検証する (Client Side)
+	 */
+	this.validateEditorContent = function( elm, mod, callback ){
+		var errorMsgs = [];
+		var resourceDb = null;
+		var resType = $(elm).find('[name='+mod.name+'-resourceType]:checked').val();
+		var resKey = $(elm).find('[name='+mod.name+'-resKey]').val();
+		var filename = $(elm).find('[name='+mod.name+'-publicFilename]').val();
+
+		new Promise(function(rlv){rlv();})
+			.then(function(){ return new Promise(function(rlv, rjt){
+				_resMgr.getResourceDb(function(res){
+					resourceDb = res;
+					rlv();
+				});
+			}); })
+			.then(function(){ return new Promise(function(rlv, rjt){
+				for( var idx in resourceDb ){
+					if( resourceDb[idx].isPrivateMaterial ){
+						// 非公開リソースにファイル名は与えられない
+						continue;
+					}
+					if( idx == resKey ){
+						// 自分
+						continue;
+					}
+					if( resType === '' && filename !== '' && resourceDb[idx].publicFilename == filename ){
+						errorMsgs.push('イメージのファイル名が重複しています。');
+						continue;
+					}
+				}
+				rlv();
+			}); })
+			.then(function(){ return new Promise(function(rlv, rjt){
+				callback( errorMsgs );
+			}); })
+		;
 		return this;
 	}
 
