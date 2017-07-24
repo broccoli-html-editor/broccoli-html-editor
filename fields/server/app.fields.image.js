@@ -116,71 +116,11 @@ module.exports = function(broccoli){
 				{},
 				[
 					function(it1, data){
-						// 一旦複製
+						// 公開ディレクトリに複製
 						var fsEx = require('fs-extra');
 						fsEx.copy( path_orig, path_public, function(err){
 							it1.next(data);
 						} );
-						return;
-					},
-					function(it1, data){
-						// 公開ファイルを加工
-						// ロスレス圧縮処理
-						const imagemin = require(''+'imagemin');
-						const imageminOptipng = require(''+'imagemin-optipng');
-						const imageminJpegtran = require(''+'imagemin-jpegtran');
-						const imageminPngcrush = require(''+'imagemin-pngcrush');
-						const imageminPngquant = require(''+'imagemin-pngquant');
-
-						path_public.match( new RegExp('\\.([a-zA-Z0-9\\_\\-]+?)$') );
-						var ext = (RegExp.$1).toLowerCase();
-						// console.log(path_public);
-						// console.log(utils79.dirname(path_public));
-						// console.log(ext);
-						switch(ext){
-							case 'jpg':
-							case 'jpeg':
-							case 'jpe':
-								console.info('Running imagemin JPEG...');
-								new imagemin()
-									.src( [path_public] )
-									.dest( utils79.dirname(path_public) )
-									.use( imageminJpegtran({progressive: true}) )
-									.run(function (err, files) {
-										// console.log('Images optimized (JPEG)');
-										// console.log(err);
-										// console.log(files);
-										console.info('imagemin JPEG done.');
-										it1.next(data);
-										return;
-									})
-								;
-								break;
-
-							case 'png':
-								console.info('Running imagemin PNG...');
-								new imagemin()
-									.src( [path_public] )
-									.dest( utils79.dirname(path_public) )
-									.use( imageminOptipng({optimizationLevel: 7}) ) // 圧縮
-									.use( imageminPngcrush() ) // PNGからメタデータを削除
-									.use( imageminPngquant() ) // 圧縮
-									.run(function (err, files) {
-										// console.log('Images optimized (PNG)');
-										// console.log(err);
-										// console.log(files);
-										console.info('imagemin PNG done.');
-										it1.next(data);
-										return;
-									})
-								;
-								break;
-
-							default:
-								it1.next(data);
-								break;
-
-						}
 						return;
 					},
 					function(it1, data){

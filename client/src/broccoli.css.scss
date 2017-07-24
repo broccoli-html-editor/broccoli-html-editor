@@ -395,6 +395,10 @@
 		background-color: #fff;
 	}
 }
+.broccoli--edit-window-message-field{
+	display: none;
+	margin: 10px;
+}
 .broccoli--edit-window-builtin-fields{
 	border: 1px solid #99e;
 	padding: 1em;
@@ -480,7 +484,11 @@
 	}
 
 }
-
+.broccoli--edit-window-field{}
+.broccoli--edit-window-field-error-message{
+	margin: 10px;
+	display: none;
+}
 
 // lightbox
 .broccoli--lightbox{
@@ -736,4 +744,16 @@
 	}
 
 	button.broccoli--module-palette__shown-module{}
+}
+
+.broccoli__error-message{
+	border: 1px solid #f00;
+	color: #f00;
+	background-color: #fdd;
+	padding: 10px 20px;
+	border-radius: 10px;
+	ul{
+		margin-top: 0;
+		margin-bottom: 0;
+	}
 }
