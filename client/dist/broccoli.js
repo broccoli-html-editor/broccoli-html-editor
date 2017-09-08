@@ -1161,13 +1161,16 @@
 						it1.next(data);
 					});
 				} ,
-				function(it1, data){
-					// リソースを保存
-					_this.progressMessage('リソースデータを保存しています...');
-					_this.resourceMgr.save(function(){
-						it1.next(data);
-					});
-				} ,
+				// // ↓画像等のリソースはその都度アップして更新されているので、最後に一括保存は不要。
+				// // 　この処理のため、画像点数が増えるほどに挙動が重くなる問題が起きていたので、
+				// // 　処理をスキップするように修正した。
+				// function(it1, data){
+				// 	// リソースを保存
+				// 	_this.progressMessage('リソースデータを保存しています...');
+				// 	_this.resourceMgr.save(function(){
+				// 		it1.next(data);
+				// 	});
+				// } ,
 				function(it1, data){
 					// コンテンツを更新
 					_this.progressMessage('コンテンツを更新しています...');
