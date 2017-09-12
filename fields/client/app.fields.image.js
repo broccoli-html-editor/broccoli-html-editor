@@ -301,6 +301,7 @@ module.exports = function(broccoli){
 					)
 					.append( $('<button>')
 						.text('URLから取得する')
+						.attr({'type': 'button'})
 						.addClass('px2-btn')
 						.on('click', function(){
 							var url = prompt('指定のURLから画像ファイルを取得して保存します。'+"\n"+'画像ファイルのURLを入力してください。');
