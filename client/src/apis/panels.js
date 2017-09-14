@@ -143,8 +143,9 @@ module.exports = function(broccoli){
 					// コンテンツを保存
 					broccoli.saveContents(function(){
 						// alert('インスタンスを移動しました。');
-						broccoli.redraw();
-						callback();
+						broccoli.redraw(function(){
+							callback();
+						});
 					});
 				} );
 				return;
@@ -164,8 +165,9 @@ module.exports = function(broccoli){
 				// コンテンツを保存
 				broccoli.saveContents(function(){
 					// alert('インスタンスを移動しました。');
-					broccoli.redraw();
-					callback();
+					broccoli.redraw(function(){
+						callback();
+					});
 				});
 			} );
 			return;
@@ -266,8 +268,9 @@ module.exports = function(broccoli){
 			var subModName = $this.attr("data-broccoli-sub-mod-name");
 			broccoli.contentsSourceData.addInstance( modId, instancePath, function(){
 				broccoli.saveContents(function(){
-					broccoli.redraw();
-					callback();
+					broccoli.redraw(function(){
+						callback();
+					});
 				});
 			}, subModName );
 			e.preventDefault();

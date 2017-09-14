@@ -30,6 +30,7 @@ module.exports = function(broccoli){
 
 		var data = broccoli.contentsSourceData.get();
 		// console.log(data);
+		var resDb;
 
 		function buildInstance(data, parentInstancePath, subModName, callback){
 			callback = callback||function(){};
@@ -65,6 +66,16 @@ module.exports = function(broccoli){
 					if(row.fieldType == 'input'){
 						var fieldDef = broccoli.getFieldDefinition( row.type ); // フィールドタイプ定義を呼び出す
 						fieldDef.mkPreviewHtml( data.fields[row.name], mod, function(html){
+							html = (function(src){
+								for(var resKey in resDb){
+									try {
+										src = src.replace('{broccoli-html-editor-resource-baser64:{'+resKey+'}}', resDb[resKey].base64);
+									} catch (e) {
+									}
+								}
+								return src;
+							})(html);
+
 							$li.append(
 								$('<span class="broccoli--instance-tree-view-fieldpreview">')
 									.html('<span>'+html+'</span>')
@@ -211,33 +222,36 @@ module.exports = function(broccoli){
 			return;
 		}
 
-		it79.ary(
-			data.bowl,
-			function(it1, row, idx){
-				// console.log(idx);
-				var $bowl = $('<li>')
-					.append(
-						$('<span>')
-							.text('bowl.'+idx) // ← bowl name
-							.addClass('broccoli--instance-tree-view-bowlname')
-					)
-				;
-				buildInstance(
-					row,
-					'/bowl.'+idx,
-					null,
-					function($elm){
-						$bowl.append($elm);
-						$ul.append($bowl);
-						it1.next();
-					}
-				);
-			},
-			function(){
-				$instanceTreeView.html('').append($ul);
-				callback();
-			}
-		);
+		broccoli.resourceMgr.getResourceDb(function(_resDb){
+			resDb = _resDb;
+			it79.ary(
+				data.bowl,
+				function(it1, row, idx){
+					// console.log(idx);
+					var $bowl = $('<li>')
+						.append(
+							$('<span>')
+								.text('bowl.'+idx) // ← bowl name
+								.addClass('broccoli--instance-tree-view-bowlname')
+						)
+					;
+					buildInstance(
+						row,
+						'/bowl.'+idx,
+						null,
+						function($elm){
+							$bowl.append($elm);
+							$ul.append($bowl);
+							it1.next();
+						}
+					);
+				},
+				function(){
+					$instanceTreeView.html('').append($ul);
+					callback();
+				}
+			);
+		});
 
 		return this;
 	}

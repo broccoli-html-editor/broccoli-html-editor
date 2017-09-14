@@ -307,6 +307,7 @@
 		 */
 		this.redraw = function(callback){
 			callback = callback || function(){};
+			var resDb;
 
 			it79.fnc(
 				{},
@@ -322,6 +323,14 @@
 					function( it1, data ){
 						// 編集パネルを一旦消去
 						_this.panels.clearPanels(function(){
+							it1.next(data);
+						});
+					} ,
+					function( it1, data ){
+						// リソースを呼び出し
+						_this.resourceMgr.getResourceDb(function(rDb){
+							resDb = rDb;
+							// console.log(resDb);
 							it1.next(data);
 						});
 					} ,
@@ -350,6 +359,20 @@
 									{'bowlList': bowlList},
 									function(htmls){
 										// console.log('htmls - - - - - - - -', htmls);
+
+										for(var idx in htmls){
+											htmls[idx] = (function(src){
+												for(var resKey in resDb){
+													try {
+														src = src.replace('{broccoli-html-editor-resource-baser64:{'+resKey+'}}', resDb[resKey].base64);
+													} catch (e) {
+													}
+												}
+												return src;
+											})(htmls[idx]);
+										}
+										// console.log(htmls);
+
 										_this.postMessenger.send(
 											'updateHtml',
 											{
@@ -3658,6 +3681,7 @@ module.exports = function(broccoli){
 
 		var data = broccoli.contentsSourceData.get();
 		// console.log(data);
+		var resDb;
 
 		function buildInstance(data, parentInstancePath, subModName, callback){
 			callback = callback||function(){};
@@ -3693,6 +3717,16 @@ module.exports = function(broccoli){
 					if(row.fieldType == 'input'){
 						var fieldDef = broccoli.getFieldDefinition( row.type ); // フィールドタイプ定義を呼び出す
 						fieldDef.mkPreviewHtml( data.fields[row.name], mod, function(html){
+							html = (function(src){
+								for(var resKey in resDb){
+									try {
+										src = src.replace('{broccoli-html-editor-resource-baser64:{'+resKey+'}}', resDb[resKey].base64);
+									} catch (e) {
+									}
+								}
+								return src;
+							})(html);
+
 							$li.append(
 								$('<span class="broccoli--instance-tree-view-fieldpreview">')
 									.html('<span>'+html+'</span>')
@@ -3839,33 +3873,36 @@ module.exports = function(broccoli){
 			return;
 		}
 
-		it79.ary(
-			data.bowl,
-			function(it1, row, idx){
-				// console.log(idx);
-				var $bowl = $('<li>')
-					.append(
-						$('<span>')
-							.text('bowl.'+idx) // ← bowl name
-							.addClass('broccoli--instance-tree-view-bowlname')
-					)
-				;
-				buildInstance(
-					row,
-					'/bowl.'+idx,
-					null,
-					function($elm){
-						$bowl.append($elm);
-						$ul.append($bowl);
-						it1.next();
-					}
-				);
-			},
-			function(){
-				$instanceTreeView.html('').append($ul);
-				callback();
-			}
-		);
+		broccoli.resourceMgr.getResourceDb(function(_resDb){
+			resDb = _resDb;
+			it79.ary(
+				data.bowl,
+				function(it1, row, idx){
+					// console.log(idx);
+					var $bowl = $('<li>')
+						.append(
+							$('<span>')
+								.text('bowl.'+idx) // ← bowl name
+								.addClass('broccoli--instance-tree-view-bowlname')
+						)
+					;
+					buildInstance(
+						row,
+						'/bowl.'+idx,
+						null,
+						function($elm){
+							$bowl.append($elm);
+							$ul.append($bowl);
+							it1.next();
+						}
+					);
+				},
+				function(){
+					$instanceTreeView.html('').append($ul);
+					callback();
+				}
+			);
+		});
 
 		return this;
 	}
@@ -4114,8 +4151,9 @@ module.exports = function(broccoli){
 					// コンテンツを保存
 					broccoli.saveContents(function(){
 						// alert('インスタンスを移動しました。');
-						broccoli.redraw();
-						callback();
+						broccoli.redraw(function(){
+							callback();
+						});
 					});
 				} );
 				return;
@@ -4135,8 +4173,9 @@ module.exports = function(broccoli){
 				// コンテンツを保存
 				broccoli.saveContents(function(){
 					// alert('インスタンスを移動しました。');
-					broccoli.redraw();
-					callback();
+					broccoli.redraw(function(){
+						callback();
+					});
 				});
 			} );
 			return;
@@ -4237,8 +4276,9 @@ module.exports = function(broccoli){
 			var subModName = $this.attr("data-broccoli-sub-mod-name");
 			broccoli.contentsSourceData.addInstance( modId, instancePath, function(){
 				broccoli.saveContents(function(){
-					broccoli.redraw();
-					callback();
+					broccoli.redraw(function(){
+						callback();
+					});
 				});
 			}, subModName );
 			e.preventDefault();
@@ -4661,16 +4701,17 @@ module.exports = function(broccoli){
 	 * initialize resource Manager
 	 */
 	this.init = function( callback ){
-		loadResourceList( function(){
+		loadResourceDb( function(){
 			callback();
 		} );
 		return this;
 	}
 
 	/**
-	 * Loading resource list
+	 * Loading resource DB
 	 */
-	function loadResourceList( callback ){
+	function loadResourceDb( callback ){
+		console.log('Loading All Resources...');
 		_resourceDb = {};
 		it79.fnc({},
 			[
@@ -4679,7 +4720,7 @@ module.exports = function(broccoli){
 						'resourceMgr.getResourceDb',
 						{} ,
 						function(resourceDb){
-							// console.log('Getting resourceDb.');
+							// console.log('Getting Resource DB done.');
 							// console.log(resourceDb);
 							_resourceDb = resourceDb;
 							callback();
@@ -4692,7 +4733,7 @@ module.exports = function(broccoli){
 	}
 
 	/**
-	 * save resources
+	 * Save resources DB
 	 * @param  {Function} cb Callback function.
 	 * @return {boolean}     Always true.
 	 */
@@ -4706,7 +4747,7 @@ module.exports = function(broccoli){
 					{'resourceDb': _resourceDb} ,
 					function(rtn){
 						// console.log('resourceDb save method: done.');
-						loadResourceList(function(){
+						loadResourceDb(function(){
 							callback(rtn);
 						});
 					}
@@ -4807,6 +4848,7 @@ module.exports = function(broccoli){
 	 * @return {boolean}        always true.
 	 */
 	this.updateResource = function( resKey, resInfo, callback ){
+		console.log('updateResource();', resKey, resInfo);
 		callback = callback || function(){};
 		it79.fnc({},
 			[
@@ -4820,6 +4862,7 @@ module.exports = function(broccoli){
 						function(rtn){
 							// console.log(rtn);
 							if(_resourceDb[resKey]){
+								_resourceDb[resKey] = resInfo;
 								callback(true);
 								return;
 							}
@@ -4888,7 +4931,6 @@ module.exports = function(broccoli){
 	 */
 	this.getResourcePublicPath = function( resKey, callback ){
 		callback = callback || function(){};
-		// _resourceDb = {};
 		it79.fnc({},
 			[
 				function(it1, data){
@@ -4896,7 +4938,6 @@ module.exports = function(broccoli){
 						'resourceMgr.getResourcePublicPath',
 						{'resKey': resKey} ,
 						function(rtn){
-							// console.log('Getting resourceDb.');
 							callback(rtn);
 						}
 					);
@@ -4911,7 +4952,6 @@ module.exports = function(broccoli){
 	 */
 	this.getResourceOriginalRealpath = function( resKey, callback ){
 		callback = callback || function(){};
-		// _resourceDb = {};
 		it79.fnc({},
 			[
 				function(it1, data){
@@ -4919,7 +4959,6 @@ module.exports = function(broccoli){
 						'resourceMgr.getResourceOriginalRealpath',
 						{'resKey': resKey} ,
 						function(rtn){
-							// console.log('Getting resourceDb.');
 							callback(rtn);
 						}
 					);
@@ -4934,7 +4973,6 @@ module.exports = function(broccoli){
 	 */
 	this.removeResource = function( resKey, callback ){
 		callback = callback || function(){};
-		// _resourceDb = {};
 		it79.fnc({},
 			[
 				function(it1, data){
@@ -4942,7 +4980,6 @@ module.exports = function(broccoli){
 						'resourceMgr.removeResource',
 						{'resKey': resKey} ,
 						function(rtn){
-							// console.log('Getting resourceDb.');
 							callback(rtn);
 						}
 					);
@@ -5072,9 +5109,15 @@ module.exports = function(broccoli){
 				callback( $.html() );
 				return;
 			}else{
-				_resMgr.getResource( rtn.resKey, function(res){
-					var imagePath = 'data:'+res.type+';base64,' + res.base64;
-					if( !res.base64 ){
+				_resMgr.getResourceDb( function(resDb){
+					var res, imagePath;
+					try {
+						res = resDb[rtn.resKey];
+						imagePath = 'data:'+res.type+';base64,' + '{broccoli-html-editor-resource-baser64:{'+rtn.resKey+'}}';
+						// var imagePath = 'data:'+res.type+';base64,' + res.base64;
+					} catch (e) {
+					}
+					if( !imagePath || !res.base64 ){
 						// ↓ ダミーの Sample Image
 						imagePath = _imgDummy;
 					}

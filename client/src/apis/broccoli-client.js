@@ -306,6 +306,7 @@
 		 */
 		this.redraw = function(callback){
 			callback = callback || function(){};
+			var resDb;
 
 			it79.fnc(
 				{},
@@ -321,6 +322,14 @@
 					function( it1, data ){
 						// 編集パネルを一旦消去
 						_this.panels.clearPanels(function(){
+							it1.next(data);
+						});
+					} ,
+					function( it1, data ){
+						// リソースを呼び出し
+						_this.resourceMgr.getResourceDb(function(rDb){
+							resDb = rDb;
+							// console.log(resDb);
 							it1.next(data);
 						});
 					} ,
@@ -349,6 +358,20 @@
 									{'bowlList': bowlList},
 									function(htmls){
 										// console.log('htmls - - - - - - - -', htmls);
+
+										for(var idx in htmls){
+											htmls[idx] = (function(src){
+												for(var resKey in resDb){
+													try {
+														src = src.replace('{broccoli-html-editor-resource-baser64:{'+resKey+'}}', resDb[resKey].base64);
+													} catch (e) {
+													}
+												}
+												return src;
+											})(htmls[idx]);
+										}
+										// console.log(htmls);
+
 										_this.postMessenger.send(
 											'updateHtml',
 											{

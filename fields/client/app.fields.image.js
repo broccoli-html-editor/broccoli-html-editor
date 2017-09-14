@@ -63,9 +63,15 @@ module.exports = function(broccoli){
 				callback( $.html() );
 				return;
 			}else{
-				_resMgr.getResource( rtn.resKey, function(res){
-					var imagePath = 'data:'+res.type+';base64,' + res.base64;
-					if( !res.base64 ){
+				_resMgr.getResourceDb( function(resDb){
+					var res, imagePath;
+					try {
+						res = resDb[rtn.resKey];
+						imagePath = 'data:'+res.type+';base64,' + '{broccoli-html-editor-resource-baser64:{'+rtn.resKey+'}}';
+						// var imagePath = 'data:'+res.type+';base64,' + res.base64;
+					} catch (e) {
+					}
+					if( !imagePath || !res.base64 ){
 						// ↓ ダミーの Sample Image
 						imagePath = _imgDummy;
 					}

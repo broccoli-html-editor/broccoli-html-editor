@@ -14,16 +14,17 @@ module.exports = function(broccoli){
 	 * initialize resource Manager
 	 */
 	this.init = function( callback ){
-		loadResourceList( function(){
+		loadResourceDb( function(){
 			callback();
 		} );
 		return this;
 	}
 
 	/**
-	 * Loading resource list
+	 * Loading resource DB
 	 */
-	function loadResourceList( callback ){
+	function loadResourceDb( callback ){
+		console.log('Loading All Resources...');
 		_resourceDb = {};
 		it79.fnc({},
 			[
@@ -32,7 +33,7 @@ module.exports = function(broccoli){
 						'resourceMgr.getResourceDb',
 						{} ,
 						function(resourceDb){
-							// console.log('Getting resourceDb.');
+							// console.log('Getting Resource DB done.');
 							// console.log(resourceDb);
 							_resourceDb = resourceDb;
 							callback();
@@ -45,7 +46,7 @@ module.exports = function(broccoli){
 	}
 
 	/**
-	 * save resources
+	 * Save resources DB
 	 * @param  {Function} cb Callback function.
 	 * @return {boolean}     Always true.
 	 */
@@ -59,7 +60,7 @@ module.exports = function(broccoli){
 					{'resourceDb': _resourceDb} ,
 					function(rtn){
 						// console.log('resourceDb save method: done.');
-						loadResourceList(function(){
+						loadResourceDb(function(){
 							callback(rtn);
 						});
 					}
@@ -160,6 +161,7 @@ module.exports = function(broccoli){
 	 * @return {boolean}        always true.
 	 */
 	this.updateResource = function( resKey, resInfo, callback ){
+		console.log('updateResource();', resKey, resInfo);
 		callback = callback || function(){};
 		it79.fnc({},
 			[
@@ -173,6 +175,7 @@ module.exports = function(broccoli){
 						function(rtn){
 							// console.log(rtn);
 							if(_resourceDb[resKey]){
+								_resourceDb[resKey] = resInfo;
 								callback(true);
 								return;
 							}
@@ -241,7 +244,6 @@ module.exports = function(broccoli){
 	 */
 	this.getResourcePublicPath = function( resKey, callback ){
 		callback = callback || function(){};
-		// _resourceDb = {};
 		it79.fnc({},
 			[
 				function(it1, data){
@@ -249,7 +251,6 @@ module.exports = function(broccoli){
 						'resourceMgr.getResourcePublicPath',
 						{'resKey': resKey} ,
 						function(rtn){
-							// console.log('Getting resourceDb.');
 							callback(rtn);
 						}
 					);
@@ -264,7 +265,6 @@ module.exports = function(broccoli){
 	 */
 	this.getResourceOriginalRealpath = function( resKey, callback ){
 		callback = callback || function(){};
-		// _resourceDb = {};
 		it79.fnc({},
 			[
 				function(it1, data){
@@ -272,7 +272,6 @@ module.exports = function(broccoli){
 						'resourceMgr.getResourceOriginalRealpath',
 						{'resKey': resKey} ,
 						function(rtn){
-							// console.log('Getting resourceDb.');
 							callback(rtn);
 						}
 					);
@@ -287,7 +286,6 @@ module.exports = function(broccoli){
 	 */
 	this.removeResource = function( resKey, callback ){
 		callback = callback || function(){};
-		// _resourceDb = {};
 		it79.fnc({},
 			[
 				function(it1, data){
@@ -295,7 +293,6 @@ module.exports = function(broccoli){
 						'resourceMgr.removeResource',
 						{'resKey': resKey} ,
 						function(rtn){
-							// console.log('Getting resourceDb.');
 							callback(rtn);
 						}
 					);
