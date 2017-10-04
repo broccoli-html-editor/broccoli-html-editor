@@ -108,9 +108,12 @@ module.exports = function(broccoli, targetElm, callback){
 						// console.log(e);
 						var event = e.originalEvent;
 						// px.message( $(this).data('id') );
-						event.dataTransfer.setData('method', 'add' );
-						event.dataTransfer.setData('modId', $(this).attr('data-id') );
-						event.dataTransfer.setData('modClip', $(this).attr('data-clip') );
+						var transferData = {
+							'method': 'add',
+							'modId': $(this).attr('data-id'),
+							'modClip': $(this).attr('data-clip')
+						};
+						event.dataTransfer.setData('text/json', JSON.stringify(transferData) );
 						updateModuleInfoPreview(null, {'elm': this}, function(){});
 					})
 					.on('mouseover', function(e){
