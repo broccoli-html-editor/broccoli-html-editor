@@ -2230,9 +2230,12 @@ module.exports = function(broccoli, targetElm, callback){
 						// console.log(e);
 						var event = e.originalEvent;
 						// px.message( $(this).data('id') );
-						event.dataTransfer.setData('method', 'add' );
-						event.dataTransfer.setData('modId', $(this).attr('data-id') );
-						event.dataTransfer.setData('modClip', $(this).attr('data-clip') );
+						var transferData = {
+							'method': 'add',
+							'modId': $(this).attr('data-id'),
+							'modClip': $(this).attr('data-clip')
+						};
+						event.dataTransfer.setData('text/json', JSON.stringify(transferData) );
 						updateModuleInfoPreview(null, {'elm': this}, function(){});
 					})
 					.on('mouseover', function(e){
@@ -4114,14 +4117,18 @@ module.exports = function(broccoli){
 		e.preventDefault();
 		var event = e.originalEvent;
 		$(elm).removeClass('broccoli--panel__drag-entered');
-		var method = event.dataTransfer.getData("method");
+		var transferData = event.dataTransfer.getData("text/json");
+		try {
+			transferData = JSON.parse(transferData);
+		} catch (e) {}
+		var method = transferData.method;
 		// options.drop($(elm).attr('data-broccoli-instance-path'), method);
 		// console.log(method);
-		var subModNameFrom = event.dataTransfer.getData("data-broccoli-sub-mod-name");
+		var subModNameFrom = transferData["data-broccoli-sub-mod-name"] || '';
 		var subModName = $(elm).attr('data-broccoli-sub-mod-name');
-		var isAppenderFrom = (event.dataTransfer.getData("data-broccoli-is-appender") == 'yes');
+		var isAppenderFrom = (transferData["data-broccoli-is-appender"] == 'yes');
 		var isAppender = ($(elm).attr('data-broccoli-is-appender') == 'yes');
-		var moveFrom = event.dataTransfer.getData("data-broccoli-instance-path");
+		var moveFrom = transferData["data-broccoli-instance-path"] || '';
 		var moveTo = $(elm).attr('data-broccoli-instance-path');
 		var isInstanceTreeView = $(elm).attr('data-broccoli-is-instance-tree-view') == 'yes';
 		var isEditWindow = $(elm).attr('data-broccoli-is-edit-window') == 'yes';
@@ -4196,8 +4203,12 @@ module.exports = function(broccoli){
 
 		broccoli.progress(function(){
 
-			var modId = event.dataTransfer.getData("modId");
-			var modClip = event.dataTransfer.getData("modClip");
+			var transferData = event.dataTransfer.getData("text/json");
+			try {
+				transferData = JSON.parse(transferData);
+			} catch (e) {}
+			var modId = transferData["modId"];
+			var modClip = transferData["modClip"];
 			try {
 				modClip = JSON.parse(modClip);
 			} catch (e) {
@@ -4386,13 +4397,16 @@ module.exports = function(broccoli){
 			.on('dragstart', function(e){
 				e.stopPropagation();
 				var event = e.originalEvent;
-				event.dataTransfer.setData("method", 'moveTo' );
-				event.dataTransfer.setData("data-broccoli-instance-path", $(this).attr('data-broccoli-instance-path') );
+				var transferData = {
+					'method': 'moveTo',
+					'data-broccoli-instance-path': $(this).attr('data-broccoli-instance-path'),
+					'data-broccoli-is-appender': $(this).attr('data-broccoli-is-appender')
+				};
 				var subModName = $(this).attr('data-broccoli-sub-mod-name');
 				if( typeof(subModName) === typeof('') && subModName.length ){
-					event.dataTransfer.setData("data-broccoli-sub-mod-name", subModName );
+					transferData['data-broccoli-sub-mod-name'] = subModName;
 				}
-				event.dataTransfer.setData("data-broccoli-is-appender", $(this).attr('data-broccoli-is-appender') );
+				event.dataTransfer.setData("text/json", JSON.stringify(transferData) );
 			})
 			.on('drop', function(e){
 				_this.onDrop(e, this, function(){
