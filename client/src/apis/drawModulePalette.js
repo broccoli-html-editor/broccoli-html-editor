@@ -101,7 +101,8 @@ module.exports = function(broccoli, targetElm, callback){
 						'data-readme': mod.readme,
 						'data-clip': JSON.stringify(mod.clip),
 						'data-pics': JSON.stringify(mod.pics),
-						'draggable': true //←HTML5のAPI http://www.htmq.com/dnd/
+						'draggable': true, //←HTML5のAPI http://www.htmq.com/dnd/
+						'href': 'javascript:;'
 					})
 					.on('dragstart', function(e){
 						// console.log(e);
