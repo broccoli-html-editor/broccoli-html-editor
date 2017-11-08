@@ -551,6 +551,7 @@ module.exports = function(broccoli, data, options, callback){
 					it1.next(d);
 				}, {
 					// supplying libs and resources to "finalize.js".
+					'data': data,
 					'cheerio': require('cheerio')
 				} );
 				return;
