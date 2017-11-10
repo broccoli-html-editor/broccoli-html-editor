@@ -9,6 +9,24 @@
 		"additionalElements==1"
 	]
 ]}}&}
-<div class="if--additional-elements">{&{"module":{"name":"additionals"}}&}</div>
+<div class="if__additional-elements">{&{"module":{"name":"additionals"}}&}</div>
 {&"endif"&}
+
+{&{"input":{"type":"multitext", "name":"baseText", "label":"Text Element","hidden":true}}&}
+{&{"if":{"cond":[
+	[
+		"is_set:baseText"
+	]
+]}}&}
+<div class="if__base-text">{&{"echo":{"ref":"baseText"}}&}</div>
+{&"endif"&}
+
+{&{"if":{"cond":[
+	[
+		"baseText=="
+	]
+]}}&}
+<div class="if__base-text">baseText は入力されていません。</div>
+{&"endif"&}
+
 </div>

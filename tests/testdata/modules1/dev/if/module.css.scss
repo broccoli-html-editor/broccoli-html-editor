@@ -2,8 +2,12 @@
 	border: 1px solid #0ff;
 	padding: 20px;
 	margin:1em 10%;
-	&--additional-elements{
+	&__additional-elements{
 		border: 1px solid #000;
+		padding: 20px;
+	}
+	&__base-text{
+		border: 1px solid #00f;
 		padding: 20px;
 	}
 }
