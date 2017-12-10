@@ -453,62 +453,8 @@ module.exports = function(broccoli, data, options, callback){
 							// もうちょっとマシな条件の書き方がありそうな気がするが、あとで考える。
 							// → 2015-04-25: cond のルールを追加。
 							var tmpSearchResult = mod.searchEndTag( src, 'if' );
-							var boolResult = false;
 							src = '';
-							if( field.if.cond && typeof(field.if.cond) == typeof([]) ){
-								// cond の評価
-								// cond に、2次元配列を受け取った場合。
-								// 1次元目は or 条件、2次元目は and 条件で評価する。
-								for( var condIdx in field.if.cond ){
-									var condBool = true;
-									for( var condIdx2 in field.if.cond[condIdx] ){
-										var tmpCond = field.if.cond[condIdx][condIdx2];
-										if( tmpCond.match( new RegExp('^([\\s\\S]*?)\\:([\\s\\S]*)$') ) ){
-											var tmpMethod = php.trim(RegExp.$1);
-											var tmpValue = php.trim(RegExp.$2);
-
-											if( tmpMethod == 'is_set' ){
-												if( !_this.nameSpace.vars[tmpValue] || !php.trim(_this.nameSpace.vars[tmpValue].val).length ){
-													condBool = false;
-													break;
-												}
-											}else if( tmpMethod == 'is_mode' ){
-												if( tmpValue != options.mode ){
-													condBool = false;
-													break;
-												}
-											}
-										}else if( tmpCond.match( new RegExp('^([\\s\\S]*?)(\\!\\=|\\=\\=)([\\s\\S]*)$') ) ){
-											var tmpValue = php.trim(RegExp.$1);
-											var tmpOpe = php.trim(RegExp.$2);
-											var tmpDiff = php.trim(RegExp.$3);
-											if( tmpOpe == '==' ){
-												condBool = false;
-												if( _this.nameSpace.vars[tmpValue] && _this.nameSpace.vars[tmpValue].val == tmpDiff ){
-													condBool = true;
-													break;
-												}
-											}else if( tmpOpe == '!=' ){
-												if( _this.nameSpace.vars[tmpValue] && _this.nameSpace.vars[tmpValue].val == tmpDiff ){
-													condBool = false;
-													break;
-												}
-											}
-										}
-
-									}
-									if( condBool ){
-										boolResult = true;
-										break;
-									}
-								}
-							}
-
-							if( _this.nameSpace.vars[field.if.is_set] && php.trim(_this.nameSpace.vars[field.if.is_set].val).length ){
-								// is_set の評価
-								boolResult = true;
-							}
-
+							var boolResult = evaluateIfFieldCond(field.if);
 							if( boolResult ){
 								src += tmpSearchResult.content;
 							}
@@ -672,6 +618,67 @@ module.exports = function(broccoli, data, options, callback){
 			}
 		]
 	);
+
+	/**
+	 * ifフィールドの条件式を評価する
+	 */
+	function evaluateIfFieldCond(ifField){
+		var boolResult = false;
+		if( ifField.cond && typeof(ifField.cond) == typeof([]) ){
+			// cond の評価
+			// cond に、2次元配列を受け取った場合。
+			// 1次元目は or 条件、2次元目は and 条件で評価する。
+			for( var condIdx in ifField.cond ){
+				var condBool = true;
+				for( var condIdx2 in ifField.cond[condIdx] ){
+					var tmpCond = ifField.cond[condIdx][condIdx2];
+					if( tmpCond.match( new RegExp('^([\\s\\S]*?)\\:([\\s\\S]*)$') ) ){
+						var tmpMethod = php.trim(RegExp.$1);
+						var tmpValue = php.trim(RegExp.$2);
+
+						if( tmpMethod == 'is_set' ){
+							if( !_this.nameSpace.vars[tmpValue] || !php.trim(_this.nameSpace.vars[tmpValue].val).length ){
+								condBool = false;
+								break;
+							}
+						}else if( tmpMethod == 'is_mode' ){
+							if( tmpValue != options.mode ){
+								condBool = false;
+								break;
+							}
+						}
+					}else if( tmpCond.match( new RegExp('^([\\s\\S]*?)(\\!\\=|\\=\\=)([\\s\\S]*)$') ) ){
+						var tmpValue = php.trim(RegExp.$1);
+						var tmpOpe = php.trim(RegExp.$2);
+						var tmpDiff = php.trim(RegExp.$3);
+						if( tmpOpe == '==' ){
+							condBool = false;
+							if( _this.nameSpace.vars[tmpValue] && _this.nameSpace.vars[tmpValue].val == tmpDiff ){
+								condBool = true;
+								break;
+							}
+						}else if( tmpOpe == '!=' ){
+							if( _this.nameSpace.vars[tmpValue] && _this.nameSpace.vars[tmpValue].val == tmpDiff ){
+								condBool = false;
+								break;
+							}
+						}
+					}
+
+				}
+				if( condBool ){
+					boolResult = true;
+					break;
+				}
+			}
+		}
+
+		if( _this.nameSpace.vars[ifField.is_set] && php.trim(_this.nameSpace.vars[ifField.is_set].val).length ){
+			// is_set の評価
+			boolResult = true;
+		}
+		return boolResult;
+	} // evaluateIfFieldCond()
 
 	return;
 }

@@ -923,7 +923,11 @@
          "anchor": "",
          "dec": ""
         }
-       ]
+       ],
+       "baseText": {
+        "src": "",
+        "editor": "markdown"
+       }
       },
       "anchor": "",
       "dec": ""
