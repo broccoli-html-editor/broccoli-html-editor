@@ -126,6 +126,19 @@ module.exports = function(broccoli, api, options, callback){
 				);
 				break;
 
+			case "resourceMgr.getResourceList":
+				broccoli.resourceMgr.getResourceDb(
+					function(resourceDb){
+						// console.log(resourceDb);
+						var resourceList = [];
+						for(var resKey in resourceDb){
+							resourceList.push(resKey);
+						}
+						callback(resourceList);
+					}
+				);
+				break;
+
 			case "resourceMgr.addResource":
 				broccoli.resourceMgr.addResource(
 					function(newResKey){
