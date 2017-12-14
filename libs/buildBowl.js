@@ -453,10 +453,91 @@ module.exports = function(broccoli, data, options, callback){
 							// もうちょっとマシな条件の書き方がありそうな気がするが、あとで考える。
 							// → 2015-04-25: cond のルールを追加。
 							var tmpSearchResult = mod.searchEndTag( src, 'if' );
+							var tmpIfContentList = (function(field, src){
+                                // ifフィールド内の構造(elseif, else) を解析する
+								var contentList = [];
+								var currentFieldName = 'if';
+								var currentSrc = '';
+								var currentField = field.if;
+								var subFieldStr, subField;
+								while(1){
+									if( !src.match( new RegExp('^((?:.|\r|\n)*?)\\{\\&((?:.|\r|\n)*?)\\&\\}((?:.|\r|\n)*)$') ) ){
+										currentSrc += src;
+										contentList.push({
+											fieldName : currentFieldName,
+											field : currentField,
+											content : currentSrc
+										});
+										break;
+									}
+									currentSrc += RegExp.$1;
+									subFieldStr = RegExp.$2;
+									try{
+										subField = JSON.parse( subFieldStr );
+									}catch(e){
+										subField = {'input':{
+											'type':'html',
+											'name':'__error__'
+										}};
+									}
+									src = RegExp.$3;
+
+									if( subField === "else" ){
+										// elseフィールド
+										src = src.replace(/^(?:\r\n|\r|\n)/g, '');
+										contentList.push({
+											fieldName : currentFieldName,
+											field : currentField,
+											content : currentSrc
+										});
+										currentFieldName = 'else';
+										currentField = undefined;
+										currentSrc = '';
+
+									}else if( typeof(subField) === typeof("") ){
+										// end系: 無視
+
+									}else if( subField.elseif ){
+										// elseifフィールド
+										src = src.replace(/^(?:\r\n|\r|\n)/g, '');
+										contentList.push({
+											fieldName : currentFieldName,
+											field : currentField,
+											content : currentSrc
+										});
+										currentFieldName = 'elseif';
+										currentField = subField.elseif;
+										currentSrc = '';
+
+									}else if( subField.if ){
+										// ネストされた ifフィールド
+										currentSrc += '{&'+subFieldStr+'&}';
+										var tmpSearchResult = mod.searchEndTag( src, 'if' );
+										currentSrc += tmpSearchResult.content;
+										currentSrc += '{&"endif"&}';
+										src = tmpSearchResult.nextSrc;
+
+									}else{
+                                        // その他すべて
+										currentSrc += '{&'+subFieldStr+'&}';
+									}
+									continue;
+								}
+								return contentList;
+							})(field, tmpSearchResult.content);
+							// console.log(tmpIfContentList);
+
 							src = '';
-							var boolResult = evaluateIfFieldCond(field.if);
-							if( boolResult ){
-								src += tmpSearchResult.content;
+							for(var idx in tmpIfContentList){
+								if(tmpIfContentList[idx].fieldName == 'else'){
+									src += tmpIfContentList[idx].content;
+									break;
+								}
+								var boolResult = evaluateIfFieldCond(tmpIfContentList[idx].field);
+								if( boolResult ){
+									src += tmpIfContentList[idx].content;
+									break;
+								}
 							}
 							src += tmpSearchResult.nextSrc;
 
