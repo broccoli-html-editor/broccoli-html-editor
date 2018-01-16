@@ -12,6 +12,17 @@
          "modId": "PlainHTMLElements:PlainHTML/MultiText",
          "fields": {
           "main": {
+           "src": "モジュール。",
+           "editor": "markdown"
+          }
+         },
+         "anchor": "",
+         "dec": ""
+        },
+        {
+         "modId": "PlainHTMLElements:PlainHTML/MultiText",
+         "fields": {
+          "main": {
            "src": "",
            "editor": "markdown"
           }

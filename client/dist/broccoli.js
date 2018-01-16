@@ -1460,7 +1460,7 @@ module.exports = function(broccoli){
 	 * インスタンスを追加する (非同期)
 	 */
 	this.addInstance = function( modId, containerInstancePath, cb, subModName ){
-		// console.log( '開発中: '+modId+': '+containerInstancePath );
+		// console.log( '----- addInstance: '+modId+': '+containerInstancePath );
 		cb = cb||function(){};
 
 		if( containerInstancePath.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
@@ -1538,9 +1538,17 @@ module.exports = function(broccoli){
 					data.fields[fieldName] = newData;
 				}else if( modTpl.fields[fieldName].fieldType == 'module'){
 					data.fields[fieldName] = data.fields[fieldName]||[];
+					if( modTpl.fields[fieldName]['max-length'] && data.fields[fieldName].length >= modTpl.fields[fieldName]['max-length'] ){
+						// 最大件数に達していたら、追加できない
+						return false;
+					}
 					data.fields[fieldName].splice( idx, 0, newData);
 				}else if( modTpl.fields[fieldName].fieldType == 'loop'){
 					data.fields[fieldName] = data.fields[fieldName]||[];
+					if( modTpl.fields[fieldName]['max-length'] && data.fields[fieldName].length >= modTpl.fields[fieldName]['max-length'] ){
+						// 最大件数に達していたら、追加できない
+						return false;
+					}
 					data.fields[fieldName].splice( idx, 0, newData);
 				}else if( modTpl.fields[fieldName].fieldType == 'if'){
 				}else if( modTpl.fields[fieldName].fieldType == 'echo'){
@@ -1572,7 +1580,7 @@ module.exports = function(broccoli){
 	 * インスタンスを更新する
 	 */
 	this.updateInstance = function( newData, containerInstancePath, cb ){
-		// console.log( '開発中: '+containerInstancePath );
+		// console.log( '----- updateInstance: '+containerInstancePath );
 		cb = cb||function(){};
 
 		var containerInstancePath = this.parseInstancePath( containerInstancePath );
