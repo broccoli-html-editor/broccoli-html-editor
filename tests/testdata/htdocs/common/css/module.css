@@ -49,6 +49,13 @@
     padding: 20px; }
 
 /**
+ * module: testMod1:dev/module_maxlength
+ */
+.module-maxlength {
+  border: 1px solid #3e9;
+  padding: 1em 2em; }
+
+/**
  * module: testMod1:dev/resource_build
  */
 .resource-build {

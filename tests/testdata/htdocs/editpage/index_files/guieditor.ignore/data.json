@@ -5,6 +5,39 @@
    "fields": {
     "main": [
      {
+      "modId": "testMod1:dev/module_maxlength",
+      "fields": {
+       "main_module": [
+        {
+         "modId": "PlainHTMLElements:PlainHTML/MultiText",
+         "fields": {
+          "main": {
+           "src": "",
+           "editor": "markdown"
+          }
+         }
+        }
+       ],
+       "main_loop": [
+        {
+         "modId": "testMod1:dev/module_maxlength",
+         "fields": {},
+         "subModName": "main_loop"
+        },
+        {
+         "modId": "testMod1:dev/module_maxlength",
+         "fields": {},
+         "subModName": "main_loop"
+        },
+        {
+         "modId": "testMod1:dev/module_maxlength",
+         "fields": {},
+         "subModName": "main_loop"
+        }
+       ]
+      }
+     },
+     {
       "modId": "testMod1:dev/resource_build",
       "fields": {},
       "anchor": "",
