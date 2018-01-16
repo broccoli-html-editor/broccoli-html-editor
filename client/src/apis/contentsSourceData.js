@@ -242,6 +242,7 @@ module.exports = function(broccoli){
 					data.fields[fieldName] = data.fields[fieldName]||[];
 					if( modTpl.fields[fieldName]['max-length'] && data.fields[fieldName].length >= modTpl.fields[fieldName]['max-length'] ){
 						// 最大件数に達していたら、追加できない
+						broccoli.message('モジュールの数が最大件数 '+modTpl.fields[fieldName]['max-length']+' に達しています。');
 						return false;
 					}
 					data.fields[fieldName].splice( idx, 0, newData);
@@ -249,6 +250,7 @@ module.exports = function(broccoli){
 					data.fields[fieldName] = data.fields[fieldName]||[];
 					if( modTpl.fields[fieldName]['max-length'] && data.fields[fieldName].length >= modTpl.fields[fieldName]['max-length'] ){
 						// 最大件数に達していたら、追加できない
+						broccoli.message('モジュールの数が最大件数 '+modTpl.fields[fieldName]['max-length']+' に達しています。');
 						return false;
 					}
 					data.fields[fieldName].splice( idx, 0, newData);
@@ -269,11 +271,12 @@ module.exports = function(broccoli){
 				}
 			}
 
+			return false;
 		} // set_r()
 
-		set_r( containerInstancePath, _contentsSourceData, newData );
+		var result = set_r( containerInstancePath, _contentsSourceData, newData );
 
-		cb();
+		cb(result);
 
 		return this;
 	}// addInstance()
@@ -332,7 +335,7 @@ module.exports = function(broccoli){
 				}else if( modTpl.fields[fieldName].fieldType == 'if'){
 				}else if( modTpl.fields[fieldName].fieldType == 'echo'){
 				}
-				return;
+				return true;
 			}else{
 				// もっと深かったら
 				if( modTpl.fields[fieldName].fieldType == 'input'){
@@ -344,15 +347,15 @@ module.exports = function(broccoli){
 				}else if( modTpl.fields[fieldName].fieldType == 'if'){
 				}else if( modTpl.fields[fieldName].fieldType == 'echo'){
 				}
-				return;
+				return true;
 			}
 
-			return;
+			return true;
 		}
 
-		set_r( containerInstancePath, _contentsSourceData, newData );
+		var result = set_r( containerInstancePath, _contentsSourceData, newData );
 
-		cb();
+		cb(result);
 
 		return this;
 	}// updateInstance()
@@ -371,15 +374,14 @@ module.exports = function(broccoli){
 		}
 		if( isBowlRoot(fromContainerInstancePath) ){
 			broccoli.message('bowl を移動することはできません。');
-			cb();
+			cb(false);
 			return this;
 		}
 		if( isBowlRoot(toContainerInstancePath) ){
 			broccoli.message('bowl への移動はできません。アペンダーへドロップしてください。');
-			cb();
+			cb(false);
 			return this;
 		}
-
 
 		function parseInstancePath(path){
 			function parsePath( path ){
@@ -413,35 +415,57 @@ module.exports = function(broccoli){
 			// 同じ箱の中での並び替え
 			if( fromParsed.num == toParsed.num ){
 				// to と from が一緒だったら何もしない。
-				cb();
+				cb(false);
 				return this;
 			}
 			if( fromParsed.num < toParsed.num ){
 				// 上から1つ以上下へ
 				toContainerInstancePath = toParsed.container + '@' + ( toParsed.num-1 );
 			}
-			this.removeInstance(fromContainerInstancePath);
-			this.addInstance( dataFrom.modId, toContainerInstancePath );
-			this.updateInstance( dataFrom, toContainerInstancePath );
-			cb();
+			_this.removeInstance(fromContainerInstancePath, function(result){
+				_this.addInstance( dataFrom.modId, toContainerInstancePath, function(result){
+					_this.updateInstance( dataFrom, toContainerInstancePath, function(result){
+						cb(true);
+					} );
+				} );
+			});
 		}else if( toParsed.path.indexOf(fromParsed.path) === 0 ){
+			// 自分の子階層への移動
 			broccoli.message('自分の子階層へ移動することはできません。');
-			cb();
+			cb(false);
 		}else if( fromParsed.path.indexOf(toParsed.container) === 0 ){
-			this.removeInstance(fromParsed.path);
-			this.addInstance( dataFrom.modId, toContainerInstancePath );
-			this.updateInstance( dataFrom, toContainerInstancePath );
-			cb();
+			// 自分の親階層への移動
+			var bak_contentsSourceData = JSON.parse( JSON.stringify(_contentsSourceData) ); // バックアップデータ作成
+			_this.removeInstance(fromParsed.path, function(result){
+				_this.addInstance( dataFrom.modId, toContainerInstancePath, function(result){
+					if(!result){
+						// ロールバック
+						_contentsSourceData = JSON.parse( JSON.stringify(bak_contentsSourceData) );
+						cb(false);
+						return;
+					}
+					_this.updateInstance( dataFrom, toContainerInstancePath, function(result){
+						cb(true);
+					} );
+				} );
+			});
 		}else{
 			// まったく関連しない箱への移動
-			this.addInstance( dataFrom.modId, toContainerInstancePath );
-			this.updateInstance( dataFrom, toContainerInstancePath );
-			this.removeInstance(fromContainerInstancePath);
-			cb();
+			_this.addInstance( dataFrom.modId, toContainerInstancePath, function(result){
+				if(!result){
+					cb(false);
+					return _this;
+				}
+				_this.updateInstance( dataFrom, toContainerInstancePath, function(result){
+					_this.removeInstance(fromContainerInstancePath, function(result){
+						cb(true);
+					});
+				} );
+			} );
 		}
 
 		return this;
-	}
+	} // moveInstanceTo()
 
 	/**
 	 * インスタンスを複製する(非同期)

@@ -884,7 +884,7 @@
 						_this.contentsSourceData.duplicateInstance(data.data[idx1], data.resources, {}, function(newData){
 							// console.log(newData);
 
-							_this.contentsSourceData.addInstance( newData, selectedInstance, function(){
+							_this.contentsSourceData.addInstance( newData, selectedInstance, function(result){
 								// 上から順番に挿入していくので、
 								// moveTo を1つインクリメントしなければいけない。
 								// (そうしないと、天地逆さまに積み上げられることになる。)
