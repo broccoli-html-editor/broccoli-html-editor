@@ -4187,7 +4187,11 @@ module.exports = function(broccoli){
 					return;
 				}
 
-				broccoli.contentsSourceData.moveInstanceTo( moveFrom, moveTo, function(){
+				broccoli.contentsSourceData.moveInstanceTo( moveFrom, moveTo, function(result){
+					if(!result){
+						callback();
+						return;
+					}
 					// コンテンツを保存
 					broccoli.saveContents(function(){
 						// alert('インスタンスを移動しました。');
@@ -4209,7 +4213,11 @@ module.exports = function(broccoli){
 				callback();
 				return;
 			}
-			broccoli.contentsSourceData.moveInstanceTo( moveFrom, moveTo, function(){
+			broccoli.contentsSourceData.moveInstanceTo( moveFrom, moveTo, function(result){
+				if(!result){
+					callback();
+					return;
+				}
 				// コンテンツを保存
 				broccoli.saveContents(function(){
 					// alert('インスタンスを移動しました。');
@@ -4261,7 +4269,7 @@ module.exports = function(broccoli){
 						broccoli.contentsSourceData.duplicateInstance(modClip.data[idx1], modClip.resources, {'supplementModPackage': parsedModId.package}, function(newData){
 							// console.log(newData);
 
-							broccoli.contentsSourceData.addInstance( newData, moveTo, function(){
+							broccoli.contentsSourceData.addInstance( newData, moveTo, function(result){
 								// 上から順番に挿入していくので、
 								// moveTo を1つインクリメントしなければいけない。
 								// (そうしないと、天地逆さまに積み上げられることになる。)
@@ -4284,7 +4292,14 @@ module.exports = function(broccoli){
 				);
 
 			}else{
-				broccoli.contentsSourceData.addInstance( modId, $(elm).attr('data-broccoli-instance-path'), function(){
+				broccoli.contentsSourceData.addInstance( modId, $(elm).attr('data-broccoli-instance-path'), function(result){
+					if(!result){
+						broccoli.closeProgress(function(){
+							callback();
+						});
+						return;
+					}
+
 					// コンテンツを保存
 					broccoli.saveContents(function(){
 						// alert('インスタンスを追加しました。');
@@ -4318,7 +4333,11 @@ module.exports = function(broccoli){
 			// loopモジュールの繰り返し要素を増やします。
 			var modId = $this.attr("data-broccoli-mod-id");
 			var subModName = $this.attr("data-broccoli-sub-mod-name");
-			broccoli.contentsSourceData.addInstance( modId, instancePath, function(){
+			broccoli.contentsSourceData.addInstance( modId, instancePath, function(result){
+				if(!result){
+					callback();
+					return;
+				}
 				broccoli.saveContents(function(){
 					broccoli.redraw(function(){
 						callback();
