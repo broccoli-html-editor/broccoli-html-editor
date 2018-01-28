@@ -1538,12 +1538,39 @@ module.exports = function(broccoli){
 					data.fields[fieldName] = newData;
 				}else if( modTpl.fields[fieldName].fieldType == 'module'){
 					data.fields[fieldName] = data.fields[fieldName]||[];
-					// var newDataModTpl = _this.getModule( newData.modId );
-					// console.log(data, modTpl, newData, newDataModTpl);
+					var newDataModTpl = _this.getModule( newData.modId );
 					if( modTpl.fields[fieldName]['maxLength'] && data.fields[fieldName].length >= modTpl.fields[fieldName]['maxLength'] ){
 						// 最大件数に達していたら、追加できない
 						broccoli.message('モジュールの数が最大件数 '+modTpl.fields[fieldName]['maxLength']+' に達しています。');
 						return false;
+					}
+					if(newDataModTpl.info.enabledParents.length){
+						var tmpIsEnabledParent = false;
+						for(var idx in newDataModTpl.info.enabledParents){
+							if(newDataModTpl.info.enabledParents[idx] == modTpl.id){
+								tmpIsEnabledParent = true;
+								break;
+							}
+						}
+						if(!tmpIsEnabledParent){
+							// 挿入可能な親指定の条件に合致しないため、追加できない
+							broccoli.message('このモジュールは、指定されたモジュールの中には追加できません。');
+							return false;
+						}
+					}
+					if(modTpl.fields[fieldName].enabledChildren.length){
+						var tmpIsEnabledChild = false;
+						for(var idx in modTpl.fields[fieldName].enabledChildren){
+							if(modTpl.fields[fieldName].enabledChildren[idx] == newDataModTpl.id){
+								tmpIsEnabledChild = true;
+								break;
+							}
+						}
+						if(!tmpIsEnabledChild){
+							// 挿入可能な子指定の条件に合致しないため、追加できない
+							broccoli.message('このモジュールは追加できません。');
+							return false;
+						}
 					}
 					data.fields[fieldName].splice( idx, 0, newData);
 				}else if( modTpl.fields[fieldName].fieldType == 'loop'){
