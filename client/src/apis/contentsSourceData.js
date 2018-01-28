@@ -240,17 +240,19 @@ module.exports = function(broccoli){
 					data.fields[fieldName] = newData;
 				}else if( modTpl.fields[fieldName].fieldType == 'module'){
 					data.fields[fieldName] = data.fields[fieldName]||[];
-					if( modTpl.fields[fieldName]['max-length'] && data.fields[fieldName].length >= modTpl.fields[fieldName]['max-length'] ){
+					// var newDataModTpl = _this.getModule( newData.modId );
+					// console.log(data, modTpl, newData, newDataModTpl);
+					if( modTpl.fields[fieldName]['maxLength'] && data.fields[fieldName].length >= modTpl.fields[fieldName]['maxLength'] ){
 						// 最大件数に達していたら、追加できない
-						broccoli.message('モジュールの数が最大件数 '+modTpl.fields[fieldName]['max-length']+' に達しています。');
+						broccoli.message('モジュールの数が最大件数 '+modTpl.fields[fieldName]['maxLength']+' に達しています。');
 						return false;
 					}
 					data.fields[fieldName].splice( idx, 0, newData);
 				}else if( modTpl.fields[fieldName].fieldType == 'loop'){
 					data.fields[fieldName] = data.fields[fieldName]||[];
-					if( modTpl.fields[fieldName]['max-length'] && data.fields[fieldName].length >= modTpl.fields[fieldName]['max-length'] ){
+					if( modTpl.fields[fieldName]['maxLength'] && data.fields[fieldName].length >= modTpl.fields[fieldName]['maxLength'] ){
 						// 最大件数に達していたら、追加できない
-						broccoli.message('モジュールの数が最大件数 '+modTpl.fields[fieldName]['max-length']+' に達しています。');
+						broccoli.message('モジュールの数が最大件数 '+modTpl.fields[fieldName]['maxLength']+' に達しています。');
 						return false;
 					}
 					data.fields[fieldName].splice( idx, 0, newData);
