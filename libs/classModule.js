@@ -111,7 +111,7 @@ module.exports = function(broccoli, moduleId, options){
 		var pkgName = RegExp.$1;
 		var catName = RegExp.$2;
 		var mogName = RegExp.$3;
-		for( let idx in enabledParentsOrChildren ){
+		for( var idx in enabledParentsOrChildren ){
 			if(!enabledParentsOrChildren[idx].match(/^[\S]+\:/)){
 				enabledParentsOrChildren[idx] = pkgName+':'+enabledParentsOrChildren[idx];
 				continue;
