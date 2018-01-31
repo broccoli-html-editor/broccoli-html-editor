@@ -308,8 +308,7 @@ $ npm test
 - imageフィールドがファイル名の重複をチェックするようになった。
 - imageフィールドの JPEG, PNG 画像の自動ロスレス圧縮機能を削除。圧縮に著しく時間がかかり、作業効率を下げるため。
 - moduleフィールド、 loopフィールドに `maxLength` を追加。
-- moduleフィールドに `enabledChildren` を追加。
-- モジュールの `info.json` 仕様に `enabledParents` を追加。
+- moduleフィールドに `enabledChildren` を、モジュールの `info.json` 仕様に `enabledParents` を追加。親子関係の定義ができるようになった。
 - 画像等のリソースが増えるとUIが重くなるパフォーマンス上の問題を改善。
 - finalize.js の第3引数 `supply` に `data` を追加。モジュールに入力されたデータ構造にアクセスできるようになった。
 - `elseif`、 `else` フィールドを追加。

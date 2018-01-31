@@ -2266,7 +2266,6 @@ module.exports = function(broccoli, targetElm, callback){
 					return;
 				}
 				var $liMod = $('<li>');
-				var $button = $('<a class="broccoli--module-palette--draggablebutton">');
 				$liMod.append( generateModuleButton(mod) );
 				$ul.append( $liMod );
 
@@ -2360,16 +2359,25 @@ module.exports = function(broccoli, targetElm, callback){
 	/**
 	 * モジュールに、子の関係に当たるモジュール群を追記する
 	 */
-	function appendModuleChildren($ul, mod, depth){
+	function appendModuleChildren($ul, mod, depth, previouslies){
+		previouslies = previouslies || {};
 		if(!childrenIndex[mod.moduleId]){
+			// 子の関係に当たるモジュールが1つもない
 			return;
 		}
+		if(previouslies[mod.moduleId]){
+			// 既出
+			return;
+		}
+		previouslies[mod.moduleId] = true;
 		depth = depth || 0;
 		for(var modId in childrenIndex[mod.moduleId]){
 			var $liMod = $('<li>');
-			var $button = $('<a class="broccoli--module-palette--draggablebutton">');
 			$liMod.append( generateModuleButton(childrenIndex[mod.moduleId][modId], depth + 1) );
 			$ul.append( $liMod );
+
+			// 再帰処理
+			appendModuleChildren($ul, childrenIndex[mod.moduleId][modId], depth + 1, previouslies);
 		}
 		return;
 	}
@@ -2474,7 +2482,14 @@ module.exports = function(broccoli, targetElm, callback){
 							var mod = cat.modules[modId];
 							try{
 								if(mod.moduleInfo.enabledParents.length){
+									// 親の制約がある場合
 									hasParents[mod.moduleId] = true;
+									for( var idx in mod.moduleInfo.enabledParents ){
+										var parentModId = mod.moduleInfo.enabledParents[idx];
+										var parsedParentModuleId = broccoli.parseModuleId(parentModId);
+										childrenIndex[parentModId] = childrenIndex[parentModId] || {};
+										childrenIndex[parentModId][mod.moduleId] = mod;
+									}
 								}
 							}catch(e){
 							}
@@ -2484,6 +2499,7 @@ module.exports = function(broccoli, targetElm, callback){
 								if(field.fieldType == 'module'){
 									try{
 										if(field.enabledChildren.length){
+											// 子の制約がある場合
 											childrenIndex[mod.moduleId] = childrenIndex[mod.moduleId] || {};
 											for(var idx in field.enabledChildren){
 												var parsedModuleId = broccoli.parseModuleId(field.enabledChildren[idx]);

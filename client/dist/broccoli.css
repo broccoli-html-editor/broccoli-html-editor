@@ -589,6 +589,13 @@
     text-overflow: ellipsis;
     overflow: hidden;
     padding-left: 8px; }
+  .broccoli--module-palette a.broccoli--module-palette--draggablebutton-children {
+    padding-left: 24px; }
+    .broccoli--module-palette a.broccoli--module-palette--draggablebutton-children span.broccoli--module-palette--draggablebutton-thumb {
+      width: 27px;
+      min-width: 27px;
+      height: 27px;
+      min-height: 27px; }
 
 .broccoli__error-message {
   border: 1px solid #f00;
