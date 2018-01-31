@@ -138,6 +138,7 @@ module.exports = function(broccoli, packageId, callback){
 									// info.json
 									try {
 										rtn.categories[idx].modules[row2].moduleInfo = JSON.parse(fs.readFileSync( path.resolve( realpath, 'info.json' ) ));
+										rtn.categories[idx].modules[row2].moduleInfo.enabledParents = broccoli.normalizeEnabledParentsOrChildren(rtn.categories[idx].modules[row2].moduleInfo.enabledParents, rtn.categories[idx].modules[row2].moduleId);
 									} catch (e) {
 										rtn.categories[idx].modules[row2].moduleInfo = {};
 									}

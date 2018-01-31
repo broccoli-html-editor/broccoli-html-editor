@@ -97,30 +97,6 @@ module.exports = function(broccoli, moduleId, options){
 	}
 
 	/**
-	 * enabledParents または enabledChildren を正規化する
-	 * @param {*} enabledParentsOrChildren 
-	 * @param {*} currentModuleId 
-	 */
-	function normalizeEnabledParentsOrChildren(enabledParentsOrChildren, currentModuleId){
-		enabledParentsOrChildren = enabledParentsOrChildren || [];
-		currentModuleId = currentModuleId || '';
-		if(typeof(enabledParentsOrChildren) == typeof('')){
-			enabledParentsOrChildren = [enabledParentsOrChildren];
-		}
-		currentModuleId.match(/^([\s\S]+)\:([\s\S]+)\/([\s\S]+?)$/);
-		var pkgName = RegExp.$1;
-		var catName = RegExp.$2;
-		var mogName = RegExp.$3;
-		for( var idx in enabledParentsOrChildren ){
-			if(!enabledParentsOrChildren[idx].match(/^[\S]+\:/)){
-				enabledParentsOrChildren[idx] = pkgName+':'+enabledParentsOrChildren[idx];
-				continue;
-			}
-		}
-		return enabledParentsOrChildren;
-	}
-
-	/**
 	 * description を正規化する
 	 * @param {*} description 
 	 */
@@ -198,7 +174,7 @@ module.exports = function(broccoli, moduleId, options){
 					if( tmpJson.areaSizeDetection ){
 						_this.info.areaSizeDetection = tmpJson.areaSizeDetection;
 					}
-					_this.info.enabledParents = normalizeEnabledParentsOrChildren(tmpJson.enabledParents, moduleId);
+					_this.info.enabledParents = broccoli.normalizeEnabledParentsOrChildren(tmpJson.enabledParents, moduleId);
 
 					if( tmpJson.interface ){
 						if( tmpJson.interface.fields ){
@@ -283,7 +259,7 @@ module.exports = function(broccoli, moduleId, options){
 					function( it2, row, tmpFieldName ){
 						row.description = normalizeDescription(row.description);
 						if( _this.fields[tmpFieldName].fieldType == 'module' ){
-							_this.fields[tmpFieldName].enabledChildren = normalizeEnabledParentsOrChildren(_this.fields[tmpFieldName].enabledChildren, moduleId);
+							_this.fields[tmpFieldName].enabledChildren = broccoli.normalizeEnabledParentsOrChildren(_this.fields[tmpFieldName].enabledChildren, moduleId);
 						}
 
 						if( _this.fields[tmpFieldName].fieldType == 'loop' ){
@@ -351,7 +327,7 @@ module.exports = function(broccoli, moduleId, options){
 						_this.fields[field.module.name] = field.module;
 						_this.fields[field.module.name].fieldType = 'module';
 
-						_this.fields[field.module.name].enabledChildren = normalizeEnabledParentsOrChildren(_this.fields[field.module.name].enabledChildren, moduleId);
+						_this.fields[field.module.name].enabledChildren = broccoli.normalizeEnabledParentsOrChildren(_this.fields[field.module.name].enabledChildren, moduleId);
 	
 						parseBroccoliTemplate( src, function(){
 							callback();
