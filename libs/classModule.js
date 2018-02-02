@@ -75,6 +75,7 @@ module.exports = function(broccoli, moduleId, options){
 		name: null,
 		areaSizeDetection: 'shallow',
 		enabledParents: [],
+		enabledBowls: [],
 		interface: {},
 		deprecated: false
 	};
@@ -175,6 +176,12 @@ module.exports = function(broccoli, moduleId, options){
 						_this.info.areaSizeDetection = tmpJson.areaSizeDetection;
 					}
 					_this.info.enabledParents = broccoli.normalizeEnabledParentsOrChildren(tmpJson.enabledParents, moduleId);
+					if( typeof(tmpJson.enabledBowls) == typeof('') ){
+						_this.info.enabledBowls = [tmpJson.enabledBowls];
+					}else if( typeof(tmpJson.enabledBowls) == typeof([]) ){
+						_this.info.enabledBowls = tmpJson.enabledBowls;
+					}
+
 
 					if( tmpJson.interface ){
 						if( tmpJson.interface.fields ){

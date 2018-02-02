@@ -144,6 +144,9 @@ module.exports = function(broccoli, packageId, callback){
 								try {
 									rtn.categories[idx].modules[row2].moduleInfo = JSON.parse(fs.readFileSync( path.resolve( realpath, 'info.json' ) ));
 									rtn.categories[idx].modules[row2].moduleInfo.enabledParents = broccoli.normalizeEnabledParentsOrChildren(rtn.categories[idx].modules[row2].moduleInfo.enabledParents, moduleId);
+									if( typeof(rtn.categories[idx].modules[row2].moduleInfo.enabledBowls) == typeof('') ){
+										rtn.categories[idx].modules[row2].moduleInfo.enabledBowls = [rtn.categories[idx].modules[row2].moduleInfo.enabledBowls];
+									}
 								} catch (e) {
 									rtn.categories[idx].modules[row2].moduleInfo = {};
 								}

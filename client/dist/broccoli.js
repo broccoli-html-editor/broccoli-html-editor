@@ -1503,8 +1503,8 @@ module.exports = function(broccoli){
 			newData = JSON.parse( JSON.stringify(modId) );
 		}
 
-		var containerInstancePath = this.parseInstancePath( containerInstancePath );
-		// console.log( containerInstancePath );
+		var aryPath = this.parseInstancePath( containerInstancePath );
+		// console.log( aryPath );
 
 		function set_r( aryPath, data, newData ){
 			// console.log( data );
@@ -1572,6 +1572,20 @@ module.exports = function(broccoli){
 							return false;
 						}
 					}
+					if(newDataModTpl.info.enabledBowls.length){
+						var tmpIsEnabledBowl = false;
+						for(var idx in newDataModTpl.info.enabledBowls){
+							if( containerInstancePath.match( new RegExp('^\\/bowl\\.' + (newDataModTpl.info.enabledBowls[idx]) + '\\/') ) ){
+								tmpIsEnabledBowl = true;
+								break;
+							}
+						}
+						if(!tmpIsEnabledBowl){
+							// 挿入可能なbowl指定の条件に合致しないため、追加できない
+							broccoli.message('このモジュールは、指定されたBowlの中には追加できません。');
+							return false;
+						}
+					}
 					data.fields[fieldName].splice( idx, 0, newData);
 				}else if( modTpl.fields[fieldName].fieldType == 'loop'){
 					data.fields[fieldName] = data.fields[fieldName]||[];
@@ -1601,7 +1615,7 @@ module.exports = function(broccoli){
 			return false;
 		} // set_r()
 
-		var result = set_r( containerInstancePath, _contentsSourceData, newData );
+		var result = set_r( aryPath, _contentsSourceData, newData );
 
 		cb(result);
 

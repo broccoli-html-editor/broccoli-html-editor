@@ -1,0 +1,6 @@
+{
+    "name": "親子制約つきモジュール(bowl \"main\")",
+    "enabledBowls": [
+        "main"
+    ]
+}
