@@ -2204,6 +2204,7 @@ module.exports = function(broccoli, targetElm, callback){
 	var btIconOpened = '<span class="glyphicon glyphicon-menu-down"></span> ';
 
 	var hasParents = {};
+	var hasSystemParents = {};
 	var childrenIndex = {};
 
 	// カテゴリの階層を描画
@@ -2260,7 +2261,7 @@ module.exports = function(broccoli, targetElm, callback){
 					it1.next();
 					return;
 				}
-				if( hasParents[mod.moduleId] ){
+				if( hasParents[mod.moduleId] && !hasSystemParents[mod.moduleId] ){
 					// 親指定を持っている場合は非表示
 					it1.next();
 					return;
@@ -2489,6 +2490,10 @@ module.exports = function(broccoli, targetElm, callback){
 										var parsedParentModuleId = broccoli.parseModuleId(parentModId);
 										childrenIndex[parentModId] = childrenIndex[parentModId] || {};
 										childrenIndex[parentModId][mod.moduleId] = mod;
+
+										if( parentModId.match(/^_sys\//) ){
+											hasSystemParents[mod.moduleId] = true;
+										}
 									}
 								}
 							}catch(e){
