@@ -1546,8 +1546,8 @@ module.exports = function(broccoli){
 					}
 					if(newDataModTpl.info.enabledParents.length){
 						var tmpIsEnabledParent = false;
-						for(var idx in newDataModTpl.info.enabledParents){
-							if(newDataModTpl.info.enabledParents[idx] == modTpl.id){
+						for(var tmpIdx in newDataModTpl.info.enabledParents){
+							if(newDataModTpl.info.enabledParents[tmpIdx] == modTpl.id){
 								tmpIsEnabledParent = true;
 								break;
 							}
@@ -1560,8 +1560,8 @@ module.exports = function(broccoli){
 					}
 					if(modTpl.fields[fieldName].enabledChildren.length){
 						var tmpIsEnabledChild = false;
-						for(var idx in modTpl.fields[fieldName].enabledChildren){
-							if(modTpl.fields[fieldName].enabledChildren[idx] == newDataModTpl.id){
+						for(var tmpIdx in modTpl.fields[fieldName].enabledChildren){
+							if(modTpl.fields[fieldName].enabledChildren[tmpIdx] == newDataModTpl.id){
 								tmpIsEnabledChild = true;
 								break;
 							}
@@ -1574,8 +1574,8 @@ module.exports = function(broccoli){
 					}
 					if(newDataModTpl.info.enabledBowls.length){
 						var tmpIsEnabledBowl = false;
-						for(var idx in newDataModTpl.info.enabledBowls){
-							if( containerInstancePath.match( new RegExp('^\\/bowl\\.' + (newDataModTpl.info.enabledBowls[idx]) + '\\/') ) ){
+						for(var tmpIdx in newDataModTpl.info.enabledBowls){
+							if( containerInstancePath.match( new RegExp('^\\/bowl\\.' + (newDataModTpl.info.enabledBowls[tmpIdx]) + '\\/') ) ){
 								tmpIsEnabledBowl = true;
 								break;
 							}
