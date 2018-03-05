@@ -301,7 +301,7 @@ $ npm test
 
 ## 更新履歴 - Change log
 
-### broccoli-html-editor@0.1.1 (2017年??月??日)
+### broccoli-html-editor@0.2.0 (2018年3月5日)
 
 - クライアントサイドに `clipboard.set()`, `clipboard.get()` オプションを追加。
 - インスタンス編集後の保存時に、処理の進捗状況を伝えるようになった。
