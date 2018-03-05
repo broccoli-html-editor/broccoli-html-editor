@@ -301,6 +301,10 @@ $ npm test
 
 ## 更新履歴 - Change log
 
+### broccoli-html-editor@0.2.1 (未定)
+
+- ???????????????????????
+
 ### broccoli-html-editor@0.2.0 (2018年3月5日)
 
 - クライアントサイドに `clipboard.set()`, `clipboard.get()` オプションを追加。
