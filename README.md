@@ -267,6 +267,11 @@ coming soon.
 ```
 
 
+## データフォーマット
+
+[Data Format](docs/data_format.md) を参照してください。
+
+
 ## for developer
 
 ### build
@@ -296,12 +301,18 @@ $ npm test
 
 ## 更新履歴 - Change log
 
-### broccoli-html-editor@0.1.1 (2017年??月??日)
+### broccoli-html-editor@0.2.0 (2018年3月5日)
 
 - クライアントサイドに `clipboard.set()`, `clipboard.get()` オプションを追加。
 - インスタンス編集後の保存時に、処理の進捗状況を伝えるようになった。
 - imageフィールドがファイル名の重複をチェックするようになった。
 - imageフィールドの JPEG, PNG 画像の自動ロスレス圧縮機能を削除。圧縮に著しく時間がかかり、作業効率を下げるため。
+- moduleフィールド、 loopフィールドに `maxLength` を追加。
+- moduleフィールドに `enabledChildren` を、モジュールの `info.json` 仕様に `enabledParents`, `enabledBowls` を追加。親子関係の定義ができるようになった。
+- 画像等のリソースが増えるとUIが重くなるパフォーマンス上の問題を改善。
+- finalize.js の第3引数 `supply` に `data` を追加。モジュールに入力されたデータ構造にアクセスできるようになった。
+- `elseif`、 `else` フィールドを追加。
+- その他幾つかの細かい修正。
 
 ### broccoli-html-editor@0.1.0 (2017年4月20日)
 

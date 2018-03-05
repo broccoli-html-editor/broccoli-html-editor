@@ -41,9 +41,19 @@
   border: 1px solid #0ff;
   padding: 20px;
   margin: 1em 10%; }
-  .if--additional-elements {
+  .if__additional-elements {
     border: 1px solid #000;
     padding: 20px; }
+  .if__base-text {
+    border: 1px solid #00f;
+    padding: 20px; }
+
+/**
+ * module: testMod1:dev/module_maxlength
+ */
+.module-maxlength {
+  border: 1px solid #3e9;
+  padding: 1em 2em; }
 
 /**
  * module: testMod1:dev/resource_build

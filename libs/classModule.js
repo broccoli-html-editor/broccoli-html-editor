@@ -74,6 +74,8 @@ module.exports = function(broccoli, moduleId, options){
 	this.info = {
 		name: null,
 		areaSizeDetection: 'shallow',
+		enabledParents: [],
+		enabledBowls: [],
 		interface: {},
 		deprecated: false
 	};
@@ -93,6 +95,16 @@ module.exports = function(broccoli, moduleId, options){
 	}else{
 		this.topThis = this;
 		// this.nameSpace = {"vars": {}};
+	}
+
+	/**
+	 * description を正規化する
+	 * @param {*} description 
+	 */
+	function normalizeDescription(description){
+		description = description || '';
+		description = markdownSync( description );
+		return description;
 	}
 
 	/* 閉じタグを探す */
@@ -163,6 +175,14 @@ module.exports = function(broccoli, moduleId, options){
 					if( tmpJson.areaSizeDetection ){
 						_this.info.areaSizeDetection = tmpJson.areaSizeDetection;
 					}
+					_this.info.enabledParents = broccoli.normalizeEnabledParentsOrChildren(tmpJson.enabledParents, moduleId);
+					if( typeof(tmpJson.enabledBowls) == typeof('') ){
+						_this.info.enabledBowls = [tmpJson.enabledBowls];
+					}else if( typeof(tmpJson.enabledBowls) == typeof([]) ){
+						_this.info.enabledBowls = tmpJson.enabledBowls;
+					}
+
+
 					if( tmpJson.interface ){
 						if( tmpJson.interface.fields ){
 							_this.fields = tmpJson.interface.fields;
@@ -244,8 +264,9 @@ module.exports = function(broccoli, moduleId, options){
 				it79.ary(
 					_this.fields ,
 					function( it2, row, tmpFieldName ){
-						if( row.description ){
-							row.description = markdownSync( row.description );
+						row.description = normalizeDescription(row.description);
+						if( _this.fields[tmpFieldName].fieldType == 'module' ){
+							_this.fields[tmpFieldName].enabledChildren = broccoli.normalizeEnabledParentsOrChildren(_this.fields[tmpFieldName].enabledChildren, moduleId);
 						}
 
 						if( _this.fields[tmpFieldName].fieldType == 'loop' ){
@@ -289,6 +310,10 @@ module.exports = function(broccoli, moduleId, options){
 							'name':'__error__'
 						}};
 					}
+					try{
+						_this.fields[field.input.name].description = normalizeDescription(_this.fields[field.input.name].description);
+					}catch(e){
+					}
 
 					if( typeof(field) == typeof('') ){
 						// end系：無視
@@ -301,10 +326,6 @@ module.exports = function(broccoli, moduleId, options){
 						_this.fields[field.input.name] = field.input;
 						_this.fields[field.input.name].fieldType = 'input';
 
-						if( _this.fields[field.input.name].description ){
-							_this.fields[field.input.name].description = markdownSync( _this.fields[field.input.name].description );
-						}
-
 						parseBroccoliTemplate( src, function(){
 							callback();
 						} );
@@ -313,10 +334,8 @@ module.exports = function(broccoli, moduleId, options){
 						_this.fields[field.module.name] = field.module;
 						_this.fields[field.module.name].fieldType = 'module';
 
-						if( _this.fields[field.module.name].description ){
-							_this.fields[field.module.name].description = markdownSync( _this.fields[field.module.name].description );
-						}
-
+						_this.fields[field.module.name].enabledChildren = broccoli.normalizeEnabledParentsOrChildren(_this.fields[field.module.name].enabledChildren, moduleId);
+	
 						parseBroccoliTemplate( src, function(){
 							callback();
 						} );
@@ -324,10 +343,6 @@ module.exports = function(broccoli, moduleId, options){
 					}else if( field.loop ){
 						_this.fields[field.loop.name] = field.loop;
 						_this.fields[field.loop.name].fieldType = 'loop';
-
-						if( _this.fields[field.loop.name].description ){
-							_this.fields[field.loop.name].description = markdownSync( _this.fields[field.loop.name].description );
-						}
 
 						var tmpSearchResult = _this.searchEndTag( src, 'loop' );
 						src = tmpSearchResult.nextSrc;

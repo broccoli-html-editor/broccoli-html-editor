@@ -923,7 +923,13 @@
          "anchor": "",
          "dec": ""
         }
-       ]
+       ],
+       "baseText": {
+        "src": "",
+        "editor": "markdown"
+       },
+       "else_if_test_1": "option_1_3",
+       "else_if_test_2": "option_2_2"
       },
       "anchor": "",
       "dec": ""

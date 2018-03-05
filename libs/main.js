@@ -246,6 +246,44 @@ module.exports = function(){
 	}
 
 	/**
+	 * enabledParents または enabledChildren を正規化する
+	 * @param {*} enabledParentsOrChildren
+	 * @param {*} currentModuleId
+	 */
+	this.normalizeEnabledParentsOrChildren = function(enabledParentsOrChildren, currentModuleId){
+		enabledParentsOrChildren = enabledParentsOrChildren || [];
+		if(typeof(enabledParentsOrChildren) == typeof('')){
+			enabledParentsOrChildren = [enabledParentsOrChildren];
+		}
+		for( var idx in enabledParentsOrChildren ){
+			enabledParentsOrChildren[idx] = this.completeModuleId( enabledParentsOrChildren[idx], currentModuleId );
+		}
+		return enabledParentsOrChildren;
+	}
+
+	/**
+	 * モジュールIDを補完して完成させる
+	 * @param {*} targetModuleId
+	 * @param {*} currentModuleId
+	 */
+	this.completeModuleId = function(targetModuleId, currentModuleId){
+		currentModuleId = currentModuleId || '';
+		currentModuleId.match(/^([\s\S]+)\:([\s\S]+)\/([\s\S]+?)$/);
+		var pkgName = RegExp.$1;
+		var catName = RegExp.$2;
+		var mogName = RegExp.$3;
+		if(targetModuleId.match(/^_sys\//)){
+			// システムフィールドはそのまま
+			return targetModuleId;
+		}
+		if(!targetModuleId.match(/^[\S]+\:/)){
+			targetModuleId = pkgName+':'+targetModuleId;
+			return targetModuleId;
+		}
+		return targetModuleId;
+}
+
+	/**
 	 * 全モジュールの一覧を取得する
 	 * @param  {Function} callback  callback function.
 	 * @return {Object}             this

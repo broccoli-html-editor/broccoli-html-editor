@@ -162,7 +162,7 @@ module.exports = function(broccoli){
 	 * インスタンスを追加する (非同期)
 	 */
 	this.addInstance = function( modId, containerInstancePath, cb, subModName ){
-		// console.log( '開発中: '+modId+': '+containerInstancePath );
+		// console.log( '----- addInstance: '+modId+': '+containerInstancePath );
 		cb = cb||function(){};
 
 		if( containerInstancePath.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
@@ -205,8 +205,8 @@ module.exports = function(broccoli){
 			newData = JSON.parse( JSON.stringify(modId) );
 		}
 
-		var containerInstancePath = this.parseInstancePath( containerInstancePath );
-		// console.log( containerInstancePath );
+		var aryPath = this.parseInstancePath( containerInstancePath );
+		// console.log( aryPath );
 
 		function set_r( aryPath, data, newData ){
 			// console.log( data );
@@ -240,9 +240,62 @@ module.exports = function(broccoli){
 					data.fields[fieldName] = newData;
 				}else if( modTpl.fields[fieldName].fieldType == 'module'){
 					data.fields[fieldName] = data.fields[fieldName]||[];
+					var newDataModTpl = _this.getModule( newData.modId );
+					if( modTpl.fields[fieldName]['maxLength'] && data.fields[fieldName].length >= modTpl.fields[fieldName]['maxLength'] ){
+						// 最大件数に達していたら、追加できない
+						broccoli.message('モジュールの数が最大件数 '+modTpl.fields[fieldName]['maxLength']+' に達しています。');
+						return false;
+					}
+					if(newDataModTpl.info.enabledParents.length){
+						var tmpIsEnabledParent = false;
+						for(var tmpIdx in newDataModTpl.info.enabledParents){
+							if(newDataModTpl.info.enabledParents[tmpIdx] == modTpl.id){
+								tmpIsEnabledParent = true;
+								break;
+							}
+						}
+						if(!tmpIsEnabledParent){
+							// 挿入可能な親指定の条件に合致しないため、追加できない
+							broccoli.message('このモジュールは、指定されたモジュールの中には追加できません。');
+							return false;
+						}
+					}
+					if(modTpl.fields[fieldName].enabledChildren.length){
+						var tmpIsEnabledChild = false;
+						for(var tmpIdx in modTpl.fields[fieldName].enabledChildren){
+							if(modTpl.fields[fieldName].enabledChildren[tmpIdx] == newDataModTpl.id){
+								tmpIsEnabledChild = true;
+								break;
+							}
+						}
+						if(!tmpIsEnabledChild){
+							// 挿入可能な子指定の条件に合致しないため、追加できない
+							broccoli.message('このモジュールは追加できません。');
+							return false;
+						}
+					}
+					if(newDataModTpl.info.enabledBowls.length){
+						var tmpIsEnabledBowl = false;
+						for(var tmpIdx in newDataModTpl.info.enabledBowls){
+							if( containerInstancePath.match( new RegExp('^\\/bowl\\.' + (newDataModTpl.info.enabledBowls[tmpIdx]) + '\\/') ) ){
+								tmpIsEnabledBowl = true;
+								break;
+							}
+						}
+						if(!tmpIsEnabledBowl){
+							// 挿入可能なbowl指定の条件に合致しないため、追加できない
+							broccoli.message('このモジュールは、指定されたBowlの中には追加できません。');
+							return false;
+						}
+					}
 					data.fields[fieldName].splice( idx, 0, newData);
 				}else if( modTpl.fields[fieldName].fieldType == 'loop'){
 					data.fields[fieldName] = data.fields[fieldName]||[];
+					if( modTpl.fields[fieldName]['maxLength'] && data.fields[fieldName].length >= modTpl.fields[fieldName]['maxLength'] ){
+						// 最大件数に達していたら、追加できない
+						broccoli.message('モジュールの数が最大件数 '+modTpl.fields[fieldName]['maxLength']+' に達しています。');
+						return false;
+					}
 					data.fields[fieldName].splice( idx, 0, newData);
 				}else if( modTpl.fields[fieldName].fieldType == 'if'){
 				}else if( modTpl.fields[fieldName].fieldType == 'echo'){
@@ -261,11 +314,12 @@ module.exports = function(broccoli){
 				}
 			}
 
+			return false;
 		} // set_r()
 
-		set_r( containerInstancePath, _contentsSourceData, newData );
+		var result = set_r( aryPath, _contentsSourceData, newData );
 
-		cb();
+		cb(result);
 
 		return this;
 	}// addInstance()
@@ -274,7 +328,7 @@ module.exports = function(broccoli){
 	 * インスタンスを更新する
 	 */
 	this.updateInstance = function( newData, containerInstancePath, cb ){
-		// console.log( '開発中: '+containerInstancePath );
+		// console.log( '----- updateInstance: '+containerInstancePath );
 		cb = cb||function(){};
 
 		var containerInstancePath = this.parseInstancePath( containerInstancePath );
@@ -324,7 +378,7 @@ module.exports = function(broccoli){
 				}else if( modTpl.fields[fieldName].fieldType == 'if'){
 				}else if( modTpl.fields[fieldName].fieldType == 'echo'){
 				}
-				return;
+				return true;
 			}else{
 				// もっと深かったら
 				if( modTpl.fields[fieldName].fieldType == 'input'){
@@ -336,15 +390,15 @@ module.exports = function(broccoli){
 				}else if( modTpl.fields[fieldName].fieldType == 'if'){
 				}else if( modTpl.fields[fieldName].fieldType == 'echo'){
 				}
-				return;
+				return true;
 			}
 
-			return;
+			return true;
 		}
 
-		set_r( containerInstancePath, _contentsSourceData, newData );
+		var result = set_r( containerInstancePath, _contentsSourceData, newData );
 
-		cb();
+		cb(result);
 
 		return this;
 	}// updateInstance()
@@ -363,15 +417,14 @@ module.exports = function(broccoli){
 		}
 		if( isBowlRoot(fromContainerInstancePath) ){
 			broccoli.message('bowl を移動することはできません。');
-			cb();
+			cb(false);
 			return this;
 		}
 		if( isBowlRoot(toContainerInstancePath) ){
 			broccoli.message('bowl への移動はできません。アペンダーへドロップしてください。');
-			cb();
+			cb(false);
 			return this;
 		}
-
 
 		function parseInstancePath(path){
 			function parsePath( path ){
@@ -405,35 +458,57 @@ module.exports = function(broccoli){
 			// 同じ箱の中での並び替え
 			if( fromParsed.num == toParsed.num ){
 				// to と from が一緒だったら何もしない。
-				cb();
+				cb(false);
 				return this;
 			}
 			if( fromParsed.num < toParsed.num ){
 				// 上から1つ以上下へ
 				toContainerInstancePath = toParsed.container + '@' + ( toParsed.num-1 );
 			}
-			this.removeInstance(fromContainerInstancePath);
-			this.addInstance( dataFrom.modId, toContainerInstancePath );
-			this.updateInstance( dataFrom, toContainerInstancePath );
-			cb();
+			_this.removeInstance(fromContainerInstancePath, function(result){
+				_this.addInstance( dataFrom.modId, toContainerInstancePath, function(result){
+					_this.updateInstance( dataFrom, toContainerInstancePath, function(result){
+						cb(true);
+					} );
+				} );
+			});
 		}else if( toParsed.path.indexOf(fromParsed.path) === 0 ){
+			// 自分の子階層への移動
 			broccoli.message('自分の子階層へ移動することはできません。');
-			cb();
+			cb(false);
 		}else if( fromParsed.path.indexOf(toParsed.container) === 0 ){
-			this.removeInstance(fromParsed.path);
-			this.addInstance( dataFrom.modId, toContainerInstancePath );
-			this.updateInstance( dataFrom, toContainerInstancePath );
-			cb();
+			// 自分の親階層への移動
+			var bak_contentsSourceData = JSON.parse( JSON.stringify(_contentsSourceData) ); // バックアップデータ作成
+			_this.removeInstance(fromParsed.path, function(result){
+				_this.addInstance( dataFrom.modId, toContainerInstancePath, function(result){
+					if(!result){
+						// ロールバック
+						_contentsSourceData = JSON.parse( JSON.stringify(bak_contentsSourceData) );
+						cb(false);
+						return;
+					}
+					_this.updateInstance( dataFrom, toContainerInstancePath, function(result){
+						cb(true);
+					} );
+				} );
+			});
 		}else{
 			// まったく関連しない箱への移動
-			this.addInstance( dataFrom.modId, toContainerInstancePath );
-			this.updateInstance( dataFrom, toContainerInstancePath );
-			this.removeInstance(fromContainerInstancePath);
-			cb();
+			_this.addInstance( dataFrom.modId, toContainerInstancePath, function(result){
+				if(!result){
+					cb(false);
+					return _this;
+				}
+				_this.updateInstance( dataFrom, toContainerInstancePath, function(result){
+					_this.removeInstance(fromContainerInstancePath, function(result){
+						cb(true);
+					});
+				} );
+			} );
 		}
 
 		return this;
-	}
+	} // moveInstanceTo()
 
 	/**
 	 * インスタンスを複製する(非同期)

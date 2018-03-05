@@ -1,0 +1,4 @@
+{
+    "name": "親子制約つきモジュール(孫)",
+    "enabledParents": "dev/module_parent__child"
+}

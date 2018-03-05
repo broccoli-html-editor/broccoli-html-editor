@@ -306,6 +306,7 @@
 		 */
 		this.redraw = function(callback){
 			callback = callback || function(){};
+			var resDb;
 
 			it79.fnc(
 				{},
@@ -321,6 +322,14 @@
 					function( it1, data ){
 						// 編集パネルを一旦消去
 						_this.panels.clearPanels(function(){
+							it1.next(data);
+						});
+					} ,
+					function( it1, data ){
+						// リソースを呼び出し
+						_this.resourceMgr.getResourceDb(function(rDb){
+							resDb = rDb;
+							// console.log(resDb);
 							it1.next(data);
 						});
 					} ,
@@ -349,6 +358,20 @@
 									{'bowlList': bowlList},
 									function(htmls){
 										// console.log('htmls - - - - - - - -', htmls);
+
+										for(var idx in htmls){
+											htmls[idx] = (function(src){
+												for(var resKey in resDb){
+													try {
+														src = src.replace('{broccoli-html-editor-resource-baser64:{'+resKey+'}}', resDb[resKey].base64);
+													} catch (e) {
+													}
+												}
+												return src;
+											})(htmls[idx]);
+										}
+										// console.log(htmls);
+
 										_this.postMessenger.send(
 											'updateHtml',
 											{
@@ -861,7 +884,7 @@
 						_this.contentsSourceData.duplicateInstance(data.data[idx1], data.resources, {}, function(newData){
 							// console.log(newData);
 
-							_this.contentsSourceData.addInstance( newData, selectedInstance, function(){
+							_this.contentsSourceData.addInstance( newData, selectedInstance, function(result){
 								// 上から順番に挿入していくので、
 								// moveTo を1つインクリメントしなければいけない。
 								// (そうしないと、天地逆さまに積み上げられることになる。)
@@ -1160,13 +1183,16 @@
 						it1.next(data);
 					});
 				} ,
-				function(it1, data){
-					// リソースを保存
-					_this.progressMessage('リソースデータを保存しています...');
-					_this.resourceMgr.save(function(){
-						it1.next(data);
-					});
-				} ,
+				// // ↓画像等のリソースはその都度アップして更新されているので、最後に一括保存は不要。
+				// // 　この処理のため、画像点数が増えるほどに挙動が重くなる問題が起きていたので、
+				// // 　処理をスキップするように修正した。
+				// function(it1, data){
+				// 	// リソースを保存
+				// 	_this.progressMessage('リソースデータを保存しています...');
+				// 	_this.resourceMgr.save(function(){
+				// 		it1.next(data);
+				// 	});
+				// } ,
 				function(it1, data){
 					// コンテンツを更新
 					_this.progressMessage('コンテンツを更新しています...');

@@ -744,6 +744,17 @@
 	}
 
 	button.broccoli--module-palette__shown-module{}
+
+	a.broccoli--module-palette--draggablebutton-children{
+		padding-left: 24px;
+
+		span.broccoli--module-palette--draggablebutton-thumb{
+			width: 27px;
+			min-width: 27px;
+			height: 27px;
+			min-height: 27px;
+		}
+	}
 }
 
 .broccoli__error-message{

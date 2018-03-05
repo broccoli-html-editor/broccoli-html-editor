@@ -19,6 +19,8 @@ environment:
     - nodejs_version: "5.12"
     - nodejs_version: "6.9"
     - nodejs_version: "7.8"
+    # - nodejs_version: "8.9"
+    # - nodejs_version: "9.4"
 
 # branches
 branches:

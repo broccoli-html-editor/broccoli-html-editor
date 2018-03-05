@@ -57,8 +57,9 @@ module.exports = function(broccoli){
 									data.path = _imgDummy;
 								}else{
 									try {
-										var imageBin = fs.readFileSync(data.publicRealpath);
-										data.path = 'data:'+data.resourceInfo.type+';base64,' + utils79.base64_encode( imageBin );
+										data.path = 'data:'+data.resourceInfo.type+';base64,' + '{broccoli-html-editor-resource-baser64:{'+rtn.resKey+'}}';
+										// var imageBin = fs.readFileSync(data.publicRealpath);
+										// data.path = 'data:'+data.resourceInfo.type+';base64,' + utils79.base64_encode( imageBin );
 									} catch (e) {
 										data.path = false;
 									}
@@ -70,6 +71,7 @@ module.exports = function(broccoli){
 							it1.next(data);
 						},
 						function(it1, data){
+							// console.log(data.path);
 							callback(data.path);
 							it1.next();
 						}

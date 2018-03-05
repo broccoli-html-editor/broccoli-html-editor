@@ -128,97 +128,111 @@ module.exports = function(broccoli, packageId, callback){
 							fileList,
 							function( it2, row2, idx2 ){
 								var realpath = path.resolve(rtn.categories[idx].realpath, row2);
-								if( fs.statSync(realpath).isDirectory() ){
-									realpath += '/';
-									rtn.categories[idx].modules[row2] = {};
+								if( !fs.statSync(realpath).isDirectory() ){
+									it2.next();
+									return;
+								}
 
-									// moduleId
-									rtn.categories[idx].modules[row2].moduleId = rtn.packageId+':'+rtn.categories[idx].categoryId+'/'+row2;
+								realpath += '/';
+								rtn.categories[idx].modules[row2] = {};
 
-									// info.json
-									try {
-										rtn.categories[idx].modules[row2].moduleInfo = JSON.parse(fs.readFileSync( path.resolve( realpath, 'info.json' ) ));
-									} catch (e) {
-										rtn.categories[idx].modules[row2].moduleInfo = {};
+								// moduleId
+								var moduleId = rtn.packageId+':'+rtn.categories[idx].categoryId+'/'+row2;
+								rtn.categories[idx].modules[row2].moduleId = moduleId;
+
+								// info.json
+								try {
+									rtn.categories[idx].modules[row2].moduleInfo = JSON.parse(fs.readFileSync( path.resolve( realpath, 'info.json' ) ));
+									rtn.categories[idx].modules[row2].moduleInfo.enabledParents = broccoli.normalizeEnabledParentsOrChildren(rtn.categories[idx].modules[row2].moduleInfo.enabledParents, moduleId);
+									if( typeof(rtn.categories[idx].modules[row2].moduleInfo.enabledBowls) == typeof('') ){
+										rtn.categories[idx].modules[row2].moduleInfo.enabledBowls = [rtn.categories[idx].modules[row2].moduleInfo.enabledBowls];
 									}
-									rtn.categories[idx].modules[row2].deprecated = (rtn.categories[idx].modules[row2].moduleInfo.deprecated||false);
+								} catch (e) {
+									rtn.categories[idx].modules[row2].moduleInfo = {};
+								}
+								rtn.categories[idx].modules[row2].deprecated = (rtn.categories[idx].modules[row2].moduleInfo.deprecated||false);
 
-									// clip.json
-									try {
-										rtn.categories[idx].modules[row2].clip = JSON.parse(fs.readFileSync( path.resolve( realpath, 'clip.json' ) ));
-									} catch (e) {
-										rtn.categories[idx].modules[row2].clip = false;
+								// clip.json
+								try {
+									rtn.categories[idx].modules[row2].clip = JSON.parse(fs.readFileSync( path.resolve( realpath, 'clip.json' ) ));
+								} catch (e) {
+									rtn.categories[idx].modules[row2].clip = false;
+								}
+
+								// moduleName
+								rtn.categories[idx].modules[row2].moduleName = rtn.categories[idx].modules[row2].moduleInfo.name||moduleId;
+
+								// realpath
+								rtn.categories[idx].modules[row2].realpath = realpath;
+
+								// thumb.png
+								var realpathThumb = path.resolve( realpath, 'thumb.png' );
+								rtn.categories[idx].modules[row2].thumb = null;
+								try{
+									if( isFile(realpathThumb) ){
+										rtn.categories[idx].modules[row2].thumb = 'data:image/png;base64,'+base64_encode( fs.readFileSync( realpathThumb ) );
 									}
-
-									// moduleName
-									rtn.categories[idx].modules[row2].moduleName = rtn.categories[idx].modules[row2].moduleInfo.name||rtn.categories[idx].modules[row2].moduleId;
-
-									// realpath
-									rtn.categories[idx].modules[row2].realpath = realpath;
-
-									// thumb.png
-									var realpathThumb = path.resolve( realpath, 'thumb.png' );
+								} catch (e) {
 									rtn.categories[idx].modules[row2].thumb = null;
-									try{
-										if( isFile(realpathThumb) ){
-											rtn.categories[idx].modules[row2].thumb = 'data:image/png;base64,'+base64_encode( fs.readFileSync( realpathThumb ) );
-										}
-									} catch (e) {
-										rtn.categories[idx].modules[row2].thumb = null;
-									}
+								}
 
-									// README.md (html)
-									var realpathReadme = path.resolve( realpath, 'README' );
-									var readme = '';
-									try{
-										readme = '';
-										if( isFile(realpathReadme+'.html') ){
-											readme = fs.readFileSync( realpathReadme+'.html' ).toString();
-										}else if( isFile(realpathReadme+'.md') ){
-											readme = fs.readFileSync( realpathReadme+'.md' ).toString();
-											var marked = require('marked');
-											marked.setOptions({
-												renderer: new marked.Renderer(),
-												gfm: true,
-												tables: true,
-												breaks: false,
-												pedantic: false,
-												sanitize: false,
-												smartLists: true,
-												smartypants: false
-											});
-											readme = marked(readme);
-										}
-									} catch (e) {
-										readme = '';
-									}
-									rtn.categories[idx].modules[row2].readme = readme;
-
-									// pics/
-									var realpathPics = path.resolve( realpath, 'pics/' );
-									rtn.categories[idx].modules[row2].pics = [];
-									if( isDir(realpathPics) ){
-										var piclist = fs.readdirSync(realpathPics);
-										piclist.sort(function(a,b){
-											if( a < b ) return -1;
-											if( a > b ) return 1;
-											return 0;
+								// README.md (html)
+								var realpathReadme = path.resolve( realpath, 'README' );
+								var readme = '';
+								try{
+									readme = '';
+									if( isFile(realpathReadme+'.html') ){
+										readme = fs.readFileSync( realpathReadme+'.html' ).toString();
+									}else if( isFile(realpathReadme+'.md') ){
+										readme = fs.readFileSync( realpathReadme+'.md' ).toString();
+										var marked = require('marked');
+										marked.setOptions({
+											renderer: new marked.Renderer(),
+											gfm: true,
+											tables: true,
+											breaks: false,
+											pedantic: false,
+											sanitize: false,
+											smartLists: true,
+											smartypants: false
 										});
-										for( var picIdx in piclist ){
-											var imgPath = '';
-											try{
-												if( isFile(realpathPics+'/'+piclist[picIdx]) ){
-													imgPath = fs.readFileSync( realpathPics+'/'+piclist[picIdx] ).toString('base64');
-												}
-											} catch (e) {
-												imgPath = '';
+										readme = marked(readme);
+									}
+								} catch (e) {
+									readme = '';
+								}
+								rtn.categories[idx].modules[row2].readme = readme;
+
+								// pics/
+								var realpathPics = path.resolve( realpath, 'pics/' );
+								rtn.categories[idx].modules[row2].pics = [];
+								if( isDir(realpathPics) ){
+									var piclist = fs.readdirSync(realpathPics);
+									piclist.sort(function(a,b){
+										if( a < b ) return -1;
+										if( a > b ) return 1;
+										return 0;
+									});
+									for( var picIdx in piclist ){
+										var imgPath = '';
+										try{
+											if( isFile(realpathPics+'/'+piclist[picIdx]) ){
+												imgPath = fs.readFileSync( realpathPics+'/'+piclist[picIdx] ).toString('base64');
 											}
-											// console.log( imgPath );
-											rtn.categories[idx].modules[row2].pics.push( 'data:image/png;base64,'+imgPath );
+										} catch (e) {
+											imgPath = '';
 										}
+										// console.log( imgPath );
+										rtn.categories[idx].modules[row2].pics.push( 'data:image/png;base64,'+imgPath );
 									}
 								}
-								it2.next();
+
+								broccoli.getModule(moduleId, null, function(modInstance){
+									rtn.categories[idx].modules[row2].moduleInfo.interface = rtn.categories[idx].modules[row2].moduleInfo.interface || modInstance.fields;
+									it2.next();
+								});
+								// it2.next();
+								return;
 							} ,
 							function(){
 								it1.next();
