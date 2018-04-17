@@ -21,7 +21,7 @@ module.exports = function(broccoli, data, options, callback){
 
 	var mod;
 
-	this.nameSpace = {"vars": {}};
+	this.nameSpace = {"vars": {}, "varsFinalized": {}};
 	if( options.nameSpace ){
 		this.nameSpace = options.nameSpace;
 	}
@@ -310,6 +310,7 @@ module.exports = function(broccoli, data, options, callback){
 						}else if( field.input ){
 							// input field
 							var tmpVal = '';
+							var tmpValFin = '';
 							it79.fnc(
 								{},
 								[
@@ -324,7 +325,10 @@ module.exports = function(broccoli, data, options, callback){
 										}
 										fieldDef.bind( fieldData[field.input.name], options.mode, field.input, function(html){
 											tmpVal += html;
-											it2.next(data2);
+											fieldDef.bind( fieldData[field.input.name], 'finalize', field.input, function(html){
+												tmpValFin += html;
+												it2.next(data2);
+											} );
 										} );
 									} ,
 									function(it2, data2){
@@ -333,6 +337,9 @@ module.exports = function(broccoli, data, options, callback){
 										}
 										_this.nameSpace.vars[field.input.name] = {
 											fieldType: "input", type: field.input.type, val: tmpVal
+										}
+										_this.nameSpace.varsFinalized[field.input.name] = {
+											fieldType: "input", type: field.input.type, val: tmpValFin
 										}
 
 										it2.next(data2);
@@ -387,6 +394,9 @@ module.exports = function(broccoli, data, options, callback){
 									_this.nameSpace.vars[field.module.name] = {
 										fieldType: "module", val: tmpVal
 									}
+									_this.nameSpace.varsFinalized[field.module.name] = {
+										fieldType: "module", val: tmpVal
+									}
 
 									buildBroccoliHtml( src, rtn, function(html){
 										callback(html);
@@ -439,6 +449,9 @@ module.exports = function(broccoli, data, options, callback){
 									_this.nameSpace.vars[field.loop.name] = {
 										fieldType: "loop", val: tmpVal
 									}
+									_this.nameSpace.varsFinalized[field.loop.name] = {
+										fieldType: "loop", val: tmpVal
+									}
 
 									buildBroccoliHtml( src, rtn, function(html){
 										callback(html);
@@ -454,7 +467,7 @@ module.exports = function(broccoli, data, options, callback){
 							// → 2015-04-25: cond のルールを追加。
 							var tmpSearchResult = mod.searchEndTag( src, 'if' );
 							var tmpIfContentList = (function(field, src){
-                                // ifフィールド内の構造(elseif, else) を解析する
+								// ifフィールド内の構造(elseif, else) を解析する
 								var contentList = [];
 								var currentFieldName = 'if';
 								var currentSrc = '';
@@ -518,7 +531,7 @@ module.exports = function(broccoli, data, options, callback){
 										src = tmpSearchResult.nextSrc;
 
 									}else{
-                                        // その他すべて
+										// その他すべて
 										currentSrc += '{&'+subFieldStr+'&}';
 									}
 									continue;
@@ -718,7 +731,7 @@ module.exports = function(broccoli, data, options, callback){
 						var tmpValue = php.trim(RegExp.$2);
 
 						if( tmpMethod == 'is_set' ){
-							if( !_this.nameSpace.vars[tmpValue] || !php.trim(_this.nameSpace.vars[tmpValue].val).length ){
+							if( !_this.nameSpace.varsFinalized[tmpValue] || !php.trim(_this.nameSpace.varsFinalized[tmpValue].val).length ){
 								condBool = false;
 								break;
 							}
@@ -734,12 +747,12 @@ module.exports = function(broccoli, data, options, callback){
 						var tmpDiff = php.trim(RegExp.$3);
 						if( tmpOpe == '==' ){
 							condBool = false;
-							if( _this.nameSpace.vars[tmpValue] && _this.nameSpace.vars[tmpValue].val == tmpDiff ){
+							if( _this.nameSpace.varsFinalized[tmpValue] && _this.nameSpace.varsFinalized[tmpValue].val == tmpDiff ){
 								condBool = true;
 								break;
 							}
 						}else if( tmpOpe == '!=' ){
-							if( _this.nameSpace.vars[tmpValue] && _this.nameSpace.vars[tmpValue].val == tmpDiff ){
+							if( _this.nameSpace.varsFinalized[tmpValue] && _this.nameSpace.varsFinalized[tmpValue].val == tmpDiff ){
 								condBool = false;
 								break;
 							}
@@ -754,7 +767,7 @@ module.exports = function(broccoli, data, options, callback){
 			}
 		}
 
-		if( _this.nameSpace.vars[ifField.is_set] && php.trim(_this.nameSpace.vars[ifField.is_set].val).length ){
+		if( _this.nameSpace.varsFinalized[ifField.is_set] && php.trim(_this.nameSpace.varsFinalized[ifField.is_set].val).length ){
 			// is_set の評価
 			boolResult = true;
 		}
