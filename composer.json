@@ -27,7 +27,17 @@
     },
     "autoload": {
         "files": [
-            "php/main.php"
+            "php/main.php",
+            "php/fieldBase.php",
+            "php/resourceMgr.php",
+            "fields/php/href.php",
+            "fields/php/html_attr_text.php",
+            "fields/php/html.php",
+            "fields/php/image.php",
+            "fields/php/markdown.php",
+            "fields/php/multitext.php",
+            "fields/php/select.php",
+            "fields/php/text.php"
         ]
     }
 }

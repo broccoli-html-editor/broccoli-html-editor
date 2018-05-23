@@ -11,17 +11,37 @@ namespace broccoliHtmlEditor;
  */
 class broccoliHtmlEditor{
 
-	/** モジュールのパス一覧 */
-	private $paths_module_template;
+	/** 設定情報 */
+	public	$paths_module_template,
+			$realpathHtml,
+			$realpathResourceDir,
+			$realpathDataDir,
+			$options;
 
 	/** FileSystem Utility */
 	private $fs;
+
+	/** Resource Manager */
+	private $resourceMgr;
+
+	/** BaseClass of Fields */
+	private $fieldBase;
+
+	/** Field Definitions */
+	private $fieldDefinitions;
 
 	/**
 	 * Constructor
 	 */
 	public function __construct(){
 		$this->fs = new \tomk79\filesystem();
+	}
+
+	/**
+	 * $fs
+	 */
+	public function fs(){
+		return $this->fs;
 	}
 
 	/**
@@ -61,38 +81,44 @@ class broccoliHtmlEditor{
 		$options['pathResourceDir'] = $this->fs->normalize_path( $this->fs->get_realpath($options['pathResourceDir']) );
 
 		$this->paths_module_template = $options['paths_module_template'];
-		// $this->realpathHtml = $this->fs->get_realpath( $options.documentRoot, './'+$options.pathHtml );
-		// $this->realpathResourceDir = $this->fs->get_realpath( $options.documentRoot, './'+$options.pathResourceDir )+'/';
-		// $this->realpathDataDir = $this->fs->get_realpath( $options.realpathDataDir )+'/';
-		// $this->options = $options;
+		$this->realpathHtml = $this->fs->normalize_path($this->fs->get_realpath( $options['documentRoot'].'/'.$options['pathHtml'] ));
+		$this->realpathResourceDir = $this->fs->normalize_path($this->fs->get_realpath( $options['documentRoot'].'/'.$options['pathResourceDir'].'/' ));
+		$this->realpathDataDir = $this->fs->normalize_path($this->fs->get_realpath( $options['realpathDataDir'].'/' ));
+		$this->options = $options;
 
-		// this.resourceMgr = new (require('./resourceMgr.js'))(this);
-		// this.fieldBase = new (require('./fieldBase.js'))(this);
-		// this.fieldDefinitions = {};
+		$this->resourceMgr = new resourceMgr($this);
+		$this->fieldBase = new fieldBase($this);
+		$this->fieldDefinitions = array();
 
-		// it79.fnc({},
-		// 	[
-		// 		function(it1, data){
-		// 			_this.lb = new LangBank(__dirname+'/../data/language.csv', function(){
-		// 				// _this.lb.setLang( 'ja' ); // <- 言語設定はクライアントからオプションで投げられるので、 gpi がセットし直します。
-		// 				it1.next(data);
-		// 			});
-		// 		} ,
-		// 		function(it1, data){
-		// 			_this.resourceMgr.init( function(){
-		// 				it1.next(data);
-		// 			} );
-		// 		} ,
-		// 		function(it1, data){
-		// 			loadFieldDefinition();
-		// 			it1.next(data);
-		// 		} ,
-		// 		function(it1, data){
-		// 			callback();
-		// 			it1.next(data);
-		// 		}
-		// 	]
-		// );
+		// $this->lb = new LangBank(__DIR__.'/../data/language.csv'); // TODO: 代替手段を用意する
+
+		$this->resourceMgr->init();
+
+		$loadFieldDefinition = function($fieldId, $mod = null){
+			if(is_null($mod) || !class_exists($mod)){
+				$mod = 'broccoliHtmlEditor\\fields\\'.$fieldId;
+			}
+			if(!class_exists($mod)){
+				return null;
+			}
+			$rtn = new $mod( $this );
+			$rtn->__fieldId__ = $fieldId;
+			return $rtn;
+		};
+		$this->fieldDefinitions['href'] = $loadFieldDefinition('href');
+		$this->fieldDefinitions['html'] = $loadFieldDefinition('html');
+		$this->fieldDefinitions['html_attr_text'] = $loadFieldDefinition('html_attr_text');
+		$this->fieldDefinitions['image'] = $loadFieldDefinition('image');
+		$this->fieldDefinitions['markdown'] = $loadFieldDefinition('markdown');
+		$this->fieldDefinitions['multitext'] = $loadFieldDefinition('multitext');
+		$this->fieldDefinitions['select'] = $loadFieldDefinition('select');
+		$this->fieldDefinitions['text'] = $loadFieldDefinition('text');
+
+		if( $this->options['customFields'] ){
+			foreach( $this->options['customFields'] as $idx=>$className ){
+				$this->fieldDefinitions[$idx] = $loadFieldDefinition( $idx, $this->options['customFields'][$idx] );
+			}
+		}
 	}
 
 	/**
@@ -147,6 +173,54 @@ class broccoliHtmlEditor{
 	 * パッケージ一覧の取得
 	 */
 	public function getPackageList(){
+		// delete(require.cache[require('path').resolve(__filename)]);
+
+		// var _this = this;
+		// callback = callback || function(){};
+
+		// var it79 = require('iterate79');
+		// var path = require('path');
+		// var php = require('phpjs');
+		// var fs = require('fs');
+		// var $modules = broccoli.paths_module_template;
+		// var rtn = {};
+
+		// it79.fnc(
+		// 	{},
+		// 	[
+		// 		function(it0, data){
+		// 			it79.ary(
+		// 				$modules,
+		// 				function(it1, row, idx){
+		// 					var realpath = row;
+		// 					var infoJson = {};
+		// 					try {
+		// 						infoJson = JSON.parse(fs.readFileSync( realpath+'info.json' ));
+		// 					} catch (e) {
+		// 						infoJson = {};
+		// 					}
+		// 					rtn[idx] = {
+		// 						'packageId': idx,
+		// 						'packageName': (infoJson.name || idx),
+		// 						'realpath': realpath,
+		// 						'infoJson': infoJson,
+		// 						'deprecated': (infoJson.deprecated || false)
+		// 					};
+		// 					broccoli.getModuleListByPackageId(idx, function(modList){
+		// 						rtn[idx].categories = modList.categories;
+		// 						it1.next();
+		// 					});
+		// 				} ,
+		// 				function(){
+		// 					it0.next();
+		// 				}
+		// 			);
+		// 		} ,
+		// 		function(it0, data){
+		// 			callback(rtn);
+		// 		}
+		// 	]
+		// );
 
 	}
 

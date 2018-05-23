@@ -1,4 +1,6 @@
 <?php
+class test_php_field_custom1 extends \broccoliHtmlEditor\fieldBase{
+}
 class testHelper{
 
 	/**
@@ -21,11 +23,7 @@ class testHelper{
 			'pathResourceDir' => '/'.$content_id.'_files/resources/',
 			'realpathDataDir' => __DIR__.'/../testdata/htdocs/'.$content_id.'_files/guieditor.ignore/',
 			'customFields' => array(
-				'custom1' => function($broccoli){
-					// カスタムフィールドを実装します。
-					// この関数は、fieldBase.js を基底クラスとして継承します。
-					// customFields オブジェクトのキー(ここでは custom1)が、フィールドの名称になります。
-				}
+				'custom1' => 'test_php_field_custom1'
 			) ,
 			'bindTemplate' => function($htmls){
 				$fin = '';
