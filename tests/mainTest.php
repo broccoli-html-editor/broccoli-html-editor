@@ -135,7 +135,7 @@ class mainTest extends PHPUnit_Framework_TestCase{
 	/**
 	 * モジュールインスタンスを生成する
 	 */
-	public function testResourceMgr(){
+	public function testCreateModuleInstance(){
 		$broccoli = testHelper::makeDefaultBroccoli();
 
 		// testMod1:units/cols2
@@ -149,7 +149,7 @@ class mainTest extends PHPUnit_Framework_TestCase{
 		$this->assertTrue($mod->isSingleRootElement);
 
 		// testMod1:dev/twig
-		$mod = $broccoli->createModuleInstance('testMod1:dev/twig', {});
+		$mod = $broccoli->createModuleInstance('testMod1:dev/twig', array());
 		$result = $mod->init();
 		// var_dump( $result );
 		$this->assertSame($result, true);
@@ -159,7 +159,7 @@ class mainTest extends PHPUnit_Framework_TestCase{
 		$this->assertTrue($mod->isSingleRootElement);
 	
 		// testMod1:units/thumb_list
-		$mod = $broccoli->createModuleInstance('testMod1:units/thumb_list', {});
+		$mod = $broccoli->createModuleInstance('testMod1:units/thumb_list', array());
 		$result = $mod->init();
 		// var_dump( $result );
 		$this->assertSame($result, true);
@@ -170,7 +170,7 @@ class mainTest extends PHPUnit_Framework_TestCase{
 	
 
 		// testMod1:dev/multitext
-		$mod = $broccoli->createModuleInstance('testMod1:dev/multitext', {});
+		$mod = $broccoli->createModuleInstance('testMod1:dev/multitext', array());
 		$result = $mod->init();
 		// var_dump( $result );
 		$this->assertTrue($result);
