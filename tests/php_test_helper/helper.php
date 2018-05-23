@@ -5,12 +5,12 @@ class testHelper{
 	 * $broccoli を生成する
 	 */
 	static public function makeDefaultBroccoli($options = array()){
-		$content_id = @$options['content_id'] || 'test1/test1';
-		$paths_module_template = @$options['paths_module_template'] || array(
+		$content_id = (@$options['content_id'] ? $options['content_id'] : 'test1/test1');
+		$paths_module_template = (@$options['paths_module_template'] ? $options['paths_module_template'] : array(
 			'PlainHTMLElements' => '../PlainHTMLElements',
 			'testMod1' => '../modules1',
 			'testMod2' => '../modules2'
-		);
+		));
 
 		$broccoli = new broccoliHtmlEditor\broccoliHtmlEditor();
 		$broccoli->init(array(

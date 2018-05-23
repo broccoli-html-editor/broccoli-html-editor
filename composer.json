@@ -19,7 +19,8 @@
     "repositories": [
     ],
     "require": {
-        "php": ">=5.4.0"
+        "php": ">=5.4.0",
+        "tomk79/filesystem": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.1.0"
