@@ -21,6 +21,9 @@ class broccoliHtmlEditor{
 	/** FileSystem Utility */
 	private $fs;
 
+	/** LangBank object */
+	private $lb;
+
 	/** Resource Manager */
 	private $resourceMgr;
 
@@ -39,9 +42,18 @@ class broccoliHtmlEditor{
 
 	/**
 	 * $fs
+	 * @return object FileSystem Utility Object.
 	 */
 	public function fs(){
 		return $this->fs;
+	}
+
+	/**
+	 * $lb
+	 * @return object LangBank Object.
+	 */
+	public function lb(){
+		return $this->lb;
 	}
 
 	/**
@@ -90,7 +102,7 @@ class broccoliHtmlEditor{
 		$this->fieldBase = new fieldBase($this);
 		$this->fieldDefinitions = array();
 
-		// $this->lb = new LangBank(__DIR__.'/../data/language.csv'); // TODO: 代替手段を用意する
+		$this->lb = new \tomk79\LangBank(__DIR__.'/../data/language.csv');
 
 		$this->resourceMgr->init();
 
@@ -173,56 +185,247 @@ class broccoliHtmlEditor{
 	 * パッケージ一覧の取得
 	 */
 	public function getPackageList(){
-		// delete(require.cache[require('path').resolve(__filename)]);
 
-		// var _this = this;
-		// callback = callback || function(){};
+		$modules = $this->paths_module_template;
+		$rtn = array();
 
-		// var it79 = require('iterate79');
-		// var path = require('path');
-		// var php = require('phpjs');
-		// var fs = require('fs');
-		// var $modules = broccoli.paths_module_template;
-		// var rtn = {};
+		foreach( $modules as $idx=>$row ){
+			$realpath = $row;
+			$infoJson = json_decode(file_get_contents( $realpath.'/info.json' ));
 
-		// it79.fnc(
-		// 	{},
-		// 	[
-		// 		function(it0, data){
-		// 			it79.ary(
-		// 				$modules,
-		// 				function(it1, row, idx){
-		// 					var realpath = row;
-		// 					var infoJson = {};
-		// 					try {
-		// 						infoJson = JSON.parse(fs.readFileSync( realpath+'info.json' ));
-		// 					} catch (e) {
-		// 						infoJson = {};
-		// 					}
-		// 					rtn[idx] = {
-		// 						'packageId': idx,
-		// 						'packageName': (infoJson.name || idx),
-		// 						'realpath': realpath,
-		// 						'infoJson': infoJson,
-		// 						'deprecated': (infoJson.deprecated || false)
-		// 					};
-		// 					broccoli.getModuleListByPackageId(idx, function(modList){
-		// 						rtn[idx].categories = modList.categories;
-		// 						it1.next();
-		// 					});
-		// 				} ,
-		// 				function(){
-		// 					it0.next();
-		// 				}
-		// 			);
-		// 		} ,
-		// 		function(it0, data){
-		// 			callback(rtn);
-		// 		}
-		// 	]
-		// );
-
+			$rtn[$idx] = array(
+				'packageId' => $idx,
+				'packageName' => ($infoJson->name ? $infoJson->name : $idx),
+				'realpath' => $realpath,
+				'infoJson' => $infoJson,
+				'deprecated' => (@$infoJson->deprecated ? true : false),
+			);
+			$modList = $this->getModuleListByPackageId($idx);
+			$rtn[$idx]['categories'] = $modList['categories'];
+		}
+		return $rtn;
 	}
 
+	/**
+	 * モジュール一覧を取得する
+	 * @param  string $packageId package ID
+	 * @return array モジュール一覧
+	 */
+	public function getModuleListByPackageId($packageId){
+
+		$rtn = array();
+
+		// function sortModuleDirectoryNames(dirNames, sortBy){
+		// 	if( typeof(sortBy) != typeof([]) ){ return dirNames; }
+		// 	dirNames.sort();
+		// 	function deleteArrayElm(ary, val){
+		// 		for( var i in ary ){
+		// 			if( ary[i] === val ){
+		// 				ary.splice( i , 1 );
+		// 				return true;
+		// 			}
+		// 		}
+		// 		return false;
+		// 	}
+		// 	function arrayFind(ary, val){
+		// 		for( var i in ary ){
+		// 			if( ary[i] === val ){return true;}
+		// 		}
+		// 		return false;
+		// 	}
+
+		// 	var rtn = [];
+		// 	for( var i in sortBy ){
+		// 		if( !arrayFind(dirNames, sortBy[i]) ){continue;}
+		// 		rtn.push(sortBy[i]);
+		// 		deleteArrayElm(dirNames, sortBy[i]);
+		// 	}
+		// 	for( var i in dirNames ){
+		// 		rtn.push(dirNames[i]);
+		// 	}
+		// 	return rtn;
+		// }
+
+		// パッケージ情報を取得
+		$rtn['packageId'] = $packageId;
+		$rtn['realpath'] = $this->paths_module_template[$packageId];
+		if(is_null($rtn['realpath'])){
+			$rtn['packageId'] = false;
+			$rtn['realpath'] = false;
+			return $rtn;
+		}
+		$rtn['packageInfo'] = json_decode(file_get_contents( $rtn['realpath'].'/info.json' ));
+		if(is_null($rtn['packageInfo'])){
+			$rtn['packageInfo'] = array();
+		}
+
+
+		// モジュールカテゴリをリスト化
+		$fileList = $this->fs->ls($rtn['realpath']);
+		// var_dump($fileList);
+		// var_dump($rtn['packageInfo']->sort);
+		$rtn['categories'] = array();
+		$fileList = sortModuleDirectoryNames($fileList, $rtn['packageInfo']->sort);
+		foreach($fileList as $idx=>$row){
+			$realpath = $this->fs->get_realpath($rtn['realpath'].'/'.$row);
+			if( is_dir($realpath) ){
+				$realpath .= '/';
+				$rtn['categories'][$row] = array();
+				$rtn['categories'][$row]['categoryId'] = $row;
+				$rtn['categories'][$row]['categoryInfo'] = json_decode(file_get_contents( $realpath.'/info.json' ));
+				if( is_null($rtn['categories'][$row]['categoryInfo']) ){
+					$rtn['categories'][$row]['categoryInfo'] = array();
+				}
+				$rtn['categories'][$row]['categoryName'] = ($rtn['categories'][$row]['categoryInfo']->name ? $rtn['categories'][$row]['categoryInfo']->name : $row);
+				$rtn['categories'][$row]['realpath'] = $realpath;
+				$rtn['categories'][$row]['deprecated'] = ($rtn['categories'][$row]['categoryInfo']->deprecated ? true : false);
+				$rtn['categories'][$row]['modules'] = array();
+			}
+		}
+
+		// new Promise(function(rlv){rlv();})
+		// 	.then(function(){ return new Promise(function(rlv, rjt){
+		// 		// 各カテゴリのモジュールをリスト化
+
+		// 		it79.ary(
+		// 			$rtn['categories'],
+		// 			function( it1, row, idx ){
+		// 				// var_dump(row);
+
+		// 				fs.readdir( $rtn['categories'][idx].realpath, function(err, fileList){
+		// 					// var_dump(fileList);
+		// 					// var_dump(row.categoryInfo.sort);
+		// 					fileList = sortModuleDirectoryNames(fileList, row.categoryInfo.sort);
+		// 					it79.ary(
+		// 						fileList,
+		// 						function( it2, row2, idx2 ){
+		// 							var realpath = path.resolve($rtn['categories'][idx].realpath, row2);
+		// 							if( !fs.statSync(realpath).isDirectory() ){
+		// 								it2.next();
+		// 								return;
+		// 							}
+
+		// 							realpath += '/';
+		// 							$rtn['categories'][idx].modules[row2] = {};
+
+		// 							// moduleId
+		// 							var moduleId = $rtn['packageId']+':'+$rtn['categories'][idx].categoryId+'/'+row2;
+		// 							$rtn['categories'][idx].modules[row2].moduleId = moduleId;
+
+		// 							// info.json
+		// 							try {
+		// 								$rtn['categories'][idx].modules[row2].moduleInfo = json_decode(file_get_contents( path.resolve( realpath, 'info.json' ) ));
+		// 								$rtn['categories'][idx].modules[row2].moduleInfo.enabledParents = broccoli.normalizeEnabledParentsOrChildren($rtn['categories'][idx].modules[row2].moduleInfo.enabledParents, moduleId);
+		// 								if( typeof($rtn['categories'][idx].modules[row2].moduleInfo.enabledBowls) == typeof('') ){
+		// 									$rtn['categories'][idx].modules[row2].moduleInfo.enabledBowls = [$rtn['categories'][idx].modules[row2].moduleInfo.enabledBowls];
+		// 								}
+		// 							} catch (e) {
+		// 								$rtn['categories'][idx].modules[row2].moduleInfo = {};
+		// 							}
+		// 							$rtn['categories'][idx].modules[row2].deprecated = ($rtn['categories'][idx].modules[row2].moduleInfo.deprecated||false);
+
+		// 							// clip.json
+		// 							try {
+		// 								$rtn['categories'][idx].modules[row2].clip = json_decode(file_get_contents( path.resolve( realpath, 'clip.json' ) ));
+		// 							} catch (e) {
+		// 								$rtn['categories'][idx].modules[row2].clip = false;
+		// 							}
+
+		// 							// moduleName
+		// 							$rtn['categories'][idx].modules[row2].moduleName = $rtn['categories'][idx].modules[row2].moduleInfo.name||moduleId;
+
+		// 							// realpath
+		// 							$rtn['categories'][idx].modules[row2].realpath = realpath;
+
+		// 							// thumb.png
+		// 							var realpathThumb = path.resolve( realpath, 'thumb.png' );
+		// 							$rtn['categories'][idx].modules[row2].thumb = null;
+		// 							try{
+		// 								if( isFile(realpathThumb) ){
+		// 									$rtn['categories'][idx].modules[row2].thumb = 'data:image/png;base64,'+base64_encode( fs.readFileSync( realpathThumb ) );
+		// 								}
+		// 							} catch (e) {
+		// 								$rtn['categories'][idx].modules[row2].thumb = null;
+		// 							}
+
+		// 							// README.md (html)
+		// 							var realpathReadme = path.resolve( realpath, 'README' );
+		// 							var readme = '';
+		// 							try{
+		// 								readme = '';
+		// 								if( isFile(realpathReadme+'.html') ){
+		// 									readme = fs.readFileSync( realpathReadme+'.html' ).toString();
+		// 								}else if( isFile(realpathReadme+'.md') ){
+		// 									readme = fs.readFileSync( realpathReadme+'.md' ).toString();
+		// 									var marked = require('marked');
+		// 									marked.setOptions({
+		// 										renderer: new marked.Renderer(),
+		// 										gfm: true,
+		// 										tables: true,
+		// 										breaks: false,
+		// 										pedantic: false,
+		// 										sanitize: false,
+		// 										smartLists: true,
+		// 										smartypants: false
+		// 									});
+		// 									readme = marked(readme);
+		// 								}
+		// 							} catch (e) {
+		// 								readme = '';
+		// 							}
+		// 							$rtn['categories'][idx].modules[row2].readme = readme;
+
+		// 							// pics/
+		// 							var realpathPics = path.resolve( realpath, 'pics/' );
+		// 							$rtn['categories'][idx].modules[row2].pics = [];
+		// 							if( isDir(realpathPics) ){
+		// 								var piclist = fs.readdirSync(realpathPics);
+		// 								piclist.sort(function(a,b){
+		// 									if( a < b ) return -1;
+		// 									if( a > b ) return 1;
+		// 									return 0;
+		// 								});
+		// 								for( var picIdx in piclist ){
+		// 									var imgPath = '';
+		// 									try{
+		// 										if( isFile(realpathPics+'/'+piclist[picIdx]) ){
+		// 											imgPath = fs.readFileSync( realpathPics+'/'+piclist[picIdx] ).toString('base64');
+		// 										}
+		// 									} catch (e) {
+		// 										imgPath = '';
+		// 									}
+		// 									// var_dump( imgPath );
+		// 									$rtn['categories'][idx].modules[row2].pics.push( 'data:image/png;base64,'+imgPath );
+		// 								}
+		// 							}
+
+		// 							broccoli.getModule(moduleId, null, function(modInstance){
+		// 								$rtn['categories'][idx].modules[row2].moduleInfo.interface = $rtn['categories'][idx].modules[row2].moduleInfo.interface || modInstance.fields;
+		// 								it2.next();
+		// 							});
+		// 							// it2.next();
+		// 							return;
+		// 						} ,
+		// 						function(){
+		// 							it1.next();
+		// 						}
+		// 					);
+		// 				} );
+		// 			} ,
+		// 			function(){
+		// 				rlv();
+		// 			}
+		// 		);
+
+		// 	}); })
+		// 	.then(function(){ return new Promise(function(rlv, rjt){
+		// 		// 返却
+		// 		callback(rtn);
+		// 		rlv();
+		// 	}); })
+		// ;
+
+		return $rtn;
+	}
 
 }
