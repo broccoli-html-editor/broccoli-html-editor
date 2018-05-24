@@ -33,6 +33,9 @@ class broccoliHtmlEditor{
 	/** Field Definitions */
 	private $fieldDefinitions;
 
+	/** cache */
+	private $_moduleCollection;
+
 	/**
 	 * Constructor
 	 */
@@ -182,6 +185,21 @@ class broccoliHtmlEditor{
 	}
 
 	/**
+	 * システムテンプレートかどうか判断する
+	 * @param  {String}  moduleId モジュールID
+	 * @return {Boolean}          システムテンプレートであれば true, 違えば false
+	 */
+	public function isSystemMod( $moduleId ){
+		if(!is_string($moduleId)){
+			return false;
+		}
+		if( !preg_match('/^_sys\\//s', $moduleId) ){
+			return false;
+		}
+		return true;
+	}
+
+	/**
 	 * パッケージ一覧の取得
 	 */
 	public function getPackageList(){
@@ -215,36 +233,36 @@ class broccoliHtmlEditor{
 
 		$rtn = array();
 
-		// function sortModuleDirectoryNames(dirNames, sortBy){
-		// 	if( typeof(sortBy) != typeof([]) ){ return dirNames; }
-		// 	dirNames.sort();
-		// 	function deleteArrayElm(ary, val){
-		// 		for( var i in ary ){
-		// 			if( ary[i] === val ){
-		// 				ary.splice( i , 1 );
-		// 				return true;
-		// 			}
-		// 		}
-		// 		return false;
-		// 	}
-		// 	function arrayFind(ary, val){
-		// 		for( var i in ary ){
-		// 			if( ary[i] === val ){return true;}
-		// 		}
-		// 		return false;
-		// 	}
+		$sortModuleDirectoryNames = function($dirNames, $sortBy){
+			if( !is_array($sortBy) ){ return $dirNames; }
+			sort($dirNames);
+			$deleteArrayElm = function($ary, $val){
+				foreach( $ary as $i=>$row ){
+					if( $ary[$i] === $val ){
+						array_splice($ary, $i , 1);
+						return true;
+					}
+				}
+				return false;
+			};
+			$arrayFind = function($ary, $val){
+				foreach( $ary as $i=>$row ){
+					if( $ary[$i] === $val ){return true;}
+				}
+				return false;
+			};
 
-		// 	var rtn = [];
-		// 	for( var i in sortBy ){
-		// 		if( !arrayFind(dirNames, sortBy[i]) ){continue;}
-		// 		rtn.push(sortBy[i]);
-		// 		deleteArrayElm(dirNames, sortBy[i]);
-		// 	}
-		// 	for( var i in dirNames ){
-		// 		rtn.push(dirNames[i]);
-		// 	}
-		// 	return rtn;
-		// }
+			$rtn = array();
+			foreach( $sortBy as $i=>$row ){
+				if( !$arrayFind($dirNames, $row) ){continue;}
+				array_push($rtn, $row);
+				$deleteArrayElm($dirNames, $row);
+			}
+			foreach( $dirNames as $i=>$row ){
+				array_push($rtn, $row);
+			}
+			return $rtn;
+		};
 
 		// パッケージ情報を取得
 		$rtn['packageId'] = $packageId;
@@ -265,166 +283,217 @@ class broccoliHtmlEditor{
 		// var_dump($fileList);
 		// var_dump($rtn['packageInfo']->sort);
 		$rtn['categories'] = array();
-		$fileList = sortModuleDirectoryNames($fileList, $rtn['packageInfo']->sort);
+		$fileList = $sortModuleDirectoryNames($fileList, @$rtn['packageInfo']->sort);
 		foreach($fileList as $idx=>$row){
 			$realpath = $this->fs->get_realpath($rtn['realpath'].'/'.$row);
 			if( is_dir($realpath) ){
 				$realpath .= '/';
 				$rtn['categories'][$row] = array();
 				$rtn['categories'][$row]['categoryId'] = $row;
-				$rtn['categories'][$row]['categoryInfo'] = json_decode(file_get_contents( $realpath.'/info.json' ));
+				$rtn['categories'][$row]['categoryInfo'] = @json_decode(file_get_contents( $realpath.'/info.json' ));
 				if( is_null($rtn['categories'][$row]['categoryInfo']) ){
 					$rtn['categories'][$row]['categoryInfo'] = array();
 				}
-				$rtn['categories'][$row]['categoryName'] = ($rtn['categories'][$row]['categoryInfo']->name ? $rtn['categories'][$row]['categoryInfo']->name : $row);
+				$rtn['categories'][$row]['categoryName'] = (@$rtn['categories'][$row]['categoryInfo']->name ? $rtn['categories'][$row]['categoryInfo']->name : $row);
 				$rtn['categories'][$row]['realpath'] = $realpath;
-				$rtn['categories'][$row]['deprecated'] = ($rtn['categories'][$row]['categoryInfo']->deprecated ? true : false);
+				$rtn['categories'][$row]['deprecated'] = (@$rtn['categories'][$row]['categoryInfo']->deprecated ? true : false);
 				$rtn['categories'][$row]['modules'] = array();
 			}
 		}
 
-		// new Promise(function(rlv){rlv();})
-		// 	.then(function(){ return new Promise(function(rlv, rjt){
-		// 		// 各カテゴリのモジュールをリスト化
 
-		// 		it79.ary(
-		// 			$rtn['categories'],
-		// 			function( it1, row, idx ){
-		// 				// var_dump(row);
+		foreach($rtn['categories'] as $idx=>$row){
+			$fileList = $this->fs->ls( $rtn['categories'][$idx]['realpath'] );
+			// var_dump($fileList);
+			// var_dump($row['categoryInfo']->sort);
 
-		// 				fs.readdir( $rtn['categories'][idx].realpath, function(err, fileList){
-		// 					// var_dump(fileList);
-		// 					// var_dump(row.categoryInfo.sort);
-		// 					fileList = sortModuleDirectoryNames(fileList, row.categoryInfo.sort);
-		// 					it79.ary(
-		// 						fileList,
-		// 						function( it2, row2, idx2 ){
-		// 							var realpath = path.resolve($rtn['categories'][idx].realpath, row2);
-		// 							if( !fs.statSync(realpath).isDirectory() ){
-		// 								it2.next();
-		// 								return;
-		// 							}
+			$fileList = $sortModuleDirectoryNames($fileList, @$row['categoryInfo']->sort);
 
-		// 							realpath += '/';
-		// 							$rtn['categories'][idx].modules[row2] = {};
+			foreach($fileList as $idx2=>$row2){
+				$realpath = $this->fs->get_realpath($rtn['categories'][$idx]['realpath'].'/'.$row2.'/');
+				if( !is_dir($realpath) ){
+					continue;
+				}
 
-		// 							// moduleId
-		// 							var moduleId = $rtn['packageId']+':'+$rtn['categories'][idx].categoryId+'/'+row2;
-		// 							$rtn['categories'][idx].modules[row2].moduleId = moduleId;
+				$rtn['categories'][$idx]['modules'][$row2] = array();
 
-		// 							// info.json
-		// 							try {
-		// 								$rtn['categories'][idx].modules[row2].moduleInfo = json_decode(file_get_contents( path.resolve( realpath, 'info.json' ) ));
-		// 								$rtn['categories'][idx].modules[row2].moduleInfo.enabledParents = broccoli.normalizeEnabledParentsOrChildren($rtn['categories'][idx].modules[row2].moduleInfo.enabledParents, moduleId);
-		// 								if( typeof($rtn['categories'][idx].modules[row2].moduleInfo.enabledBowls) == typeof('') ){
-		// 									$rtn['categories'][idx].modules[row2].moduleInfo.enabledBowls = [$rtn['categories'][idx].modules[row2].moduleInfo.enabledBowls];
-		// 								}
-		// 							} catch (e) {
-		// 								$rtn['categories'][idx].modules[row2].moduleInfo = {};
-		// 							}
-		// 							$rtn['categories'][idx].modules[row2].deprecated = ($rtn['categories'][idx].modules[row2].moduleInfo.deprecated||false);
+				// moduleId
+				$moduleId = $rtn['packageId'].':'.$rtn['categories'][$idx]['categoryId'].'/'.$row2;
+				$rtn['categories'][$idx]['modules'][$row2]['moduleId'] = $moduleId;
 
-		// 							// clip.json
-		// 							try {
-		// 								$rtn['categories'][idx].modules[row2].clip = json_decode(file_get_contents( path.resolve( realpath, 'clip.json' ) ));
-		// 							} catch (e) {
-		// 								$rtn['categories'][idx].modules[row2].clip = false;
-		// 							}
+				// info.json
+				$rtn['categories'][$idx]['modules'][$row2]['moduleInfo'] = json_decode('{}');
+				if( is_file( $realpath.'/info.json' ) ){
+					$rtn['categories'][$idx]['modules'][$row2]['moduleInfo'] = json_decode(file_get_contents( $realpath.'/info.json' ));
+				}
+				$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->enabledParents = $this->normalizeEnabledParentsOrChildren(@$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->enabledParents, $moduleId);
+				if( is_string(@$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->enabledBowls)  ){
+					$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->enabledBowls = array($rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->enabledBowls);
+				}
+				$rtn['categories'][$idx]['modules'][$row2]['deprecated'] = (@$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->deprecated ? $rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->deprecated : false);
 
-		// 							// moduleName
-		// 							$rtn['categories'][idx].modules[row2].moduleName = $rtn['categories'][idx].modules[row2].moduleInfo.name||moduleId;
+				// clip.json
+				$rtn['categories'][$idx]['modules'][$row2]['clip'] = false;
+				if( is_file( $realpath.'/clip.json' ) ){
+					$rtn['categories'][$idx]['modules'][$row2]['clip'] = json_decode(file_get_contents( $realpath.'/clip.json' ));
+				}
 
-		// 							// realpath
-		// 							$rtn['categories'][idx].modules[row2].realpath = realpath;
+				// moduleName
+				$rtn['categories'][$idx]['modules'][$row2]['moduleName'] = (@$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->name ? $rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->name : $moduleId);
 
-		// 							// thumb.png
-		// 							var realpathThumb = path.resolve( realpath, 'thumb.png' );
-		// 							$rtn['categories'][idx].modules[row2].thumb = null;
-		// 							try{
-		// 								if( isFile(realpathThumb) ){
-		// 									$rtn['categories'][idx].modules[row2].thumb = 'data:image/png;base64,'+base64_encode( fs.readFileSync( realpathThumb ) );
-		// 								}
-		// 							} catch (e) {
-		// 								$rtn['categories'][idx].modules[row2].thumb = null;
-		// 							}
+				// realpath
+				$rtn['categories'][$idx]['modules'][$row2]['realpath'] = $realpath;
 
-		// 							// README.md (html)
-		// 							var realpathReadme = path.resolve( realpath, 'README' );
-		// 							var readme = '';
-		// 							try{
-		// 								readme = '';
-		// 								if( isFile(realpathReadme+'.html') ){
-		// 									readme = fs.readFileSync( realpathReadme+'.html' ).toString();
-		// 								}else if( isFile(realpathReadme+'.md') ){
-		// 									readme = fs.readFileSync( realpathReadme+'.md' ).toString();
-		// 									var marked = require('marked');
-		// 									marked.setOptions({
-		// 										renderer: new marked.Renderer(),
-		// 										gfm: true,
-		// 										tables: true,
-		// 										breaks: false,
-		// 										pedantic: false,
-		// 										sanitize: false,
-		// 										smartLists: true,
-		// 										smartypants: false
-		// 									});
-		// 									readme = marked(readme);
-		// 								}
-		// 							} catch (e) {
-		// 								readme = '';
-		// 							}
-		// 							$rtn['categories'][idx].modules[row2].readme = readme;
+				// thumb.png
+				$realpathThumb = $this->fs->get_realpath( $realpath.'/thumb.png' );
+				$rtn['categories'][$idx]['modules'][$row2]['thumb'] = null;
+				if( is_file($realpathThumb) ){
+					$rtn['categories'][$idx]['modules'][$row2]['thumb'] = 'data:image/png;base64,'+base64_encode( file_get_contents( $realpathThumb ) );
+				}
 
-		// 							// pics/
-		// 							var realpathPics = path.resolve( realpath, 'pics/' );
-		// 							$rtn['categories'][idx].modules[row2].pics = [];
-		// 							if( isDir(realpathPics) ){
-		// 								var piclist = fs.readdirSync(realpathPics);
-		// 								piclist.sort(function(a,b){
-		// 									if( a < b ) return -1;
-		// 									if( a > b ) return 1;
-		// 									return 0;
-		// 								});
-		// 								for( var picIdx in piclist ){
-		// 									var imgPath = '';
-		// 									try{
-		// 										if( isFile(realpathPics+'/'+piclist[picIdx]) ){
-		// 											imgPath = fs.readFileSync( realpathPics+'/'+piclist[picIdx] ).toString('base64');
-		// 										}
-		// 									} catch (e) {
-		// 										imgPath = '';
-		// 									}
-		// 									// var_dump( imgPath );
-		// 									$rtn['categories'][idx].modules[row2].pics.push( 'data:image/png;base64,'+imgPath );
-		// 								}
-		// 							}
+				// README.md (html)
+				$realpathReadme = $this->fs->get_realpath( $realpath.'/README' );
+				$readme = '';
+				if( is_file($realpathReadme.'.html') ){
+					$readme = file_get_contents( $realpathReadme.'.html' );
+				}elseif( is_file($realpathReadme.'.md') ){
+					$readme = file_get_contents( $realpathReadme.'.md' );
+					// TODO: require markdown libs
+					// $marked = require('marked');
+					// $marked->setOptions({
+					// 	renderer: new marked.Renderer(),
+					// 	gfm: true,
+					// 	tables: true,
+					// 	breaks: false,
+					// 	pedantic: false,
+					// 	sanitize: false,
+					// 	smartLists: true,
+					// 	smartypants: false
+					// });
+					// $readme = $marked($readme);
+				}
 
-		// 							broccoli.getModule(moduleId, null, function(modInstance){
-		// 								$rtn['categories'][idx].modules[row2].moduleInfo.interface = $rtn['categories'][idx].modules[row2].moduleInfo.interface || modInstance.fields;
-		// 								it2.next();
-		// 							});
-		// 							// it2.next();
-		// 							return;
-		// 						} ,
-		// 						function(){
-		// 							it1.next();
-		// 						}
-		// 					);
-		// 				} );
-		// 			} ,
-		// 			function(){
-		// 				rlv();
-		// 			}
-		// 		);
+				$rtn['categories'][$idx]['modules'][$row2]['readme'] = $readme;
 
-		// 	}); })
-		// 	.then(function(){ return new Promise(function(rlv, rjt){
-		// 		// 返却
-		// 		callback(rtn);
-		// 		rlv();
-		// 	}); })
-		// ;
+				// pics/
+				$realpathPics = $this->fs->get_realpath( $realpath.'/pics/' );
+				$rtn['categories'][$idx]['modules'][$row2]['pics'] = array();
+				if( is_dir($realpathPics) ){
+					$piclist = $this->fs->ls($realpathPics);
+					uasort($piclist, function($a,$b){
+						if( $a < $b ) return -1;
+						if( $a > $b ) return 1;
+						return 0;
+					});
+					foreach( $piclist as $picIdx=>$row ){
+						$imgPath = '';
+						if( is_file($realpathPics.'/'.$piclist[$picIdx]) ){
+							$imgPath = base64_encode(file_get_contents( $realpathPics.'/'.$piclist[$picIdx] ));
+						}
+						// var_dump( $imgPath );
+						array_push($rtn['categories'][$idx]['modules'][$row2]['pics'], 'data:image/png;base64,'.$imgPath);
+					}
+				}
 
+				$modInstance = $this->getModule($moduleId, null);
+				$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->interface = (@$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->interface ? $rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->interface : $modInstance->fields);
+
+			}
+
+		}
+
+		return $rtn;
+	}
+
+	/**
+	 * enabledParents または enabledChildren を正規化する
+	 * @param {*} enabledParentsOrChildren
+	 * @param {*} currentModuleId
+	 */
+	private function normalizeEnabledParentsOrChildren($enabledParentsOrChildren, $currentModuleId){
+		$enabledParentsOrChildren = ($enabledParentsOrChildren ? $enabledParentsOrChildren : array());
+		if(is_string($enabledParentsOrChildren)){
+			$enabledParentsOrChildren = array($enabledParentsOrChildren);
+		}
+		foreach( $enabledParentsOrChildren as $idx=>$row ){
+			$enabledParentsOrChildren[$idx] = $this->completeModuleId( $enabledParentsOrChildren[$idx], $currentModuleId );
+		}
+		return $enabledParentsOrChildren;
+	}
+
+	/**
+	 * モジュールIDを補完して完成させる
+	 * @param {*} targetModuleId
+	 * @param {*} currentModuleId
+	 */
+	private function completeModuleId($targetModuleId, $currentModuleId){
+		$currentModuleId = ($currentModuleId ? $currentModuleId : '');
+		preg_match('/^([\s\S]+)\:([\s\S]+)\/([\s\S]+?)$/', $currentModuleId, $matched);
+		$pkgName = $matched[1];
+		$catName = $matched[2];
+		$mogName = $matched[3];
+		if(preg_match('/^_sys\//', $targetModuleId)){
+			// システムフィールドはそのまま
+			return $targetModuleId;
+		}
+		if(!preg_match('/^[\S]+\:/', $targetModuleId)){
+			$targetModuleId = $pkgName.':'.$targetModuleId;
+			return $targetModuleId;
+		}
+		return $targetModuleId;
+	}
+
+	/**
+	 * モジュールオブジェクトを取得する
+	 * @param  {String}   moduleId モジュールID
+	 * @param  {String}   subModName サブモジュール名
+	 * @param  {Function} callback  callback function.
+	 * @return {Object}            this
+	 */
+	private function getModule($moduleId, $subModName){
+		$rtn = @$this->_moduleCollection[$moduleId];
+		if( $rtn === false ){
+			// 過去に生成を試みて、falseになっていた場合
+			return false;
+		}
+		if( is_null($rtn) ){
+			$mod = $this->createModuleInstance($moduleId);
+			$this->_moduleCollection[$moduleId] = $mod;
+			if( $this->_moduleCollection[$moduleId] === false ){
+				// falseの場合、該当するモジュールが定義されていない。
+				// 結果を記憶して、falseを返す。
+				return false;
+			}
+			$this->_moduleCollection[$moduleId]->init();
+			$rtn = $this->_moduleCollection[$moduleId];
+			if( is_string($subModName) ){
+				return $rtn['subModule'][$subModName];
+			}
+			return $rtn;
+		}
+		if( is_string($subModName) ){
+			if( !$rtn['subModule'] || !$rtn['subModule'][$subModName] ){
+				var_dump('Undefined subModule "'.$subModName.'" was called.');
+				return false;
+			}
+
+			return $rtn['subModule'][$subModName];
+		}
+
+		return $rtn;
+	}
+
+	/**
+	 * class: モジュール
+	 * @param  {String}   moduleId モジュールID
+	 * @param  {Object}   options  Options
+	 * @return {Object}            this
+	 */
+	private function createModuleInstance($moduleId, $options = array()){
+		// var_dump($moduleId);
+		// var_dump($options);
+		require_once(__DIR__.'/classModule.php');//TODO: 後で消す
+		$rtn = new classModule($this, $moduleId, $options);
 		return $rtn;
 	}
 

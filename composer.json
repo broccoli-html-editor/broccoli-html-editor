@@ -31,6 +31,7 @@
             "php/main.php",
             "php/fieldBase.php",
             "php/resourceMgr.php",
+            "php/classModule.php",
             "fields/php/href.php",
             "fields/php/html_attr_text.php",
             "fields/php/html.php",
