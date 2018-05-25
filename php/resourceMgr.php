@@ -278,23 +278,18 @@ class resourceMgr{
 	// 	return this;
 	// }
 
-	// /**
-	//  * get resource
-	//  */
-	// this.getResource = function( resKey, callback ){
-	// 	callback = callback || function(){};
-	// 	if( typeof($this->resourceDb[resKey]) !== typeof({}) ){
-	// 		// 未登録の resKey
-	// 		callback(false);
-	// 		return this;
-	// 	}
-	// 	new Promise(function(rlv){rlv();})
-	// 		.then(function(){ return new Promise(function(rlv, rjt){
-	// 			callback($this->resourceDb[resKey]);
-	// 		}); })
-	// 	;
-	// 	return this;
-	// }
+	/**
+	 * get resource
+	 */
+	public function getResource( $resKey ){
+
+		if( !is_object($this->resourceDb[$resKey]) ){
+			// 未登録の resKey
+			return false;
+		}
+
+		return $this->resourceDb[$resKey];
+	}
 
 	// /**
 	//  * duplicate resource
@@ -387,54 +382,46 @@ class resourceMgr{
 	// 	return this;
 	// }
 
-	// /**
-	//  * Reset bin from base64
-	//  */
-	// this.resetBinFromBase64 = function( resKey, callback ){
-	// 	callback = callback || function(){};
-	// 	if( typeof($this->resourceDb[resKey]) !== typeof({}) ){
-	// 		// 未登録の resKey
-	// 		callback(false);
-	// 		return this;
-	// 	}
-	// 	this.getResourceOriginalRealpath( resKey, function(realpath){
-	// 		// console.log($this->resourceDb[resKey].base64);
-	// 		// var bin = php.base64_decode( $this->resourceDb[resKey].base64 );
-	// 		var bin = (new Buffer($this->resourceDb[resKey].base64, 'base64'));
-	// 		fs.writeFileSync( realpath, bin, {} );
-	// 		callback(true);
-	// 	} );
+	/**
+	 * Reset bin from base64
+	 */
+	public function resetBinFromBase64( $resKey ){
 
-	// 	return this;
-	// }
+		if( !is_object(@$this->resourceDb[$resKey]) ){
+			// 未登録の resKey
+			return false;
+		}
+		$realpath = $this->getResourceOriginalRealpath( $resKey );
+		$bin = base64_decode($this->resourceDb[$resKey]->base64);
+		file_put_contents( $realpath, $bin );
 
-	// /**
-	//  * Reset base64 from bin
-	//  */
-	// this.resetBase64FromBin = function( resKey, callback ){
-	// 	callback = callback || function(){};
-	// 	if( typeof($this->resourceDb[resKey]) !== typeof({}) ){
-	// 		// 未登録の resKey
-	// 		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
-	// 			callback(false);
-	// 		}); });
-	// 		return this;
-	// 	}
-	// 	this.getResourceOriginalRealpath( resKey, function(realpath){
-	// 		var bin = fs.readFileSync( realpath, {} );
-	// 		$this->resourceDb[resKey].base64 = (new Buffer(bin)).toString('base64');
-	// 		$this->resourceDb[resKey].size = bin.length;
+		return true;
+	}
 
-	// 		fs.writeFileSync(
-	// 			$this->resourcesDirPath+'/'+resKey+'/res.json',
-	// 			JSON.stringify( $this->resourceDb[resKey], null, 1 )
-	// 		);
+	/**
+	 * Reset base64 from bin
+	 */
+	public function resetBase64FromBin( $resKey ){
 
-	// 		callback(true);
-	// 	} );
+		if( !is_object(@$this->resourceDb[$resKey]) ){
+			// 未登録の resKey
+			return false;
+		}
+		$realpath = $this->getResourceOriginalRealpath( $resKey );
 
-	// 	return this;
-	// }
+		$bin = file_get_contents( $realpath );
+		$this->resourceDb[$resKey]->base64 = base64_encode($bin);
+		$this->resourceDb[$resKey]->size = strlen($bin);
+
+		$json_str = json_encode( $this->resourceDb[$resKey], JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES );
+		$json_str = preg_replace('/^(    )+/m', ' ', $json_str);
+		file_put_contents(
+			$this->resourcesDirPath.'/'.$resKey.'/res.json',
+			$json_str
+		);
+
+		return true;
+	}
 
 	// /**
 	//  * get resource public path
@@ -487,23 +474,20 @@ class resourceMgr{
 	// 	return this;
 	// }
 
-	// /**
-	//  * get resource public path
-	//  */
-	// this.getResourceOriginalRealpath = function( resKey, callback ){
-	// 	callback = callback || function(){};
-	// 	this.getResource( resKey, function(res){
-	// 		if(!res){
-	// 			callback(false);
-	// 			return;
-	// 		}
-	// 		var rtn = path.resolve($this->resourcesDirPath+'/'+resKey+'/bin.'+res.ext);
-	// 		callback(rtn);
-	// 		return;
-	// 	} );
+	/**
+	 * get resource public path
+	 */
+	public function getResourceOriginalRealpath( $resKey ){
+		$rtn = false;
 
-	// 	return this;
-	// }
+		$res = $this->getResource( $resKey );
+		if(!$res){
+			return false;
+		}
+		$rtn = $this->broccoli->fs()->get_realpath($this->resourcesDirPath.'/'.$resKey.'/bin.'.$res->ext);
+
+		return $rtn;
+	}
 
 	// /**
 	//  * remove resource
