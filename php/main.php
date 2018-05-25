@@ -358,19 +358,7 @@ class broccoliHtmlEditor{
 					$readme = file_get_contents( $realpathReadme.'.html' );
 				}elseif( is_file($realpathReadme.'.md') ){
 					$readme = file_get_contents( $realpathReadme.'.md' );
-					// TODO: require markdown libs
-					// $marked = require('marked');
-					// $marked->setOptions({
-					// 	renderer: new marked.Renderer(),
-					// 	gfm: true,
-					// 	tables: true,
-					// 	breaks: false,
-					// 	pedantic: false,
-					// 	sanitize: false,
-					// 	smartLists: true,
-					// 	smartypants: false
-					// });
-					// $readme = $marked($readme);
+					$readme = \Michelf\MarkdownExtra::defaultTransform($readme);
 				}
 
 				$rtn['categories'][$idx]['modules'][$row2]['readme'] = $readme;

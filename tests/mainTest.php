@@ -103,17 +103,17 @@ class mainTest extends PHPUnit_Framework_TestCase{
 
 	}
 
-	// /**
-	//  * モジュール一覧の取得
-	//  */
-	// public function testGettingModuleListByPackageId(){
-	// 	$broccoli = testHelper::makeDefaultBroccoli();
+	/**
+	 * モジュール一覧の取得
+	 */
+	public function testGettingModuleListByPackageId(){
+		$broccoli = testHelper::makeDefaultBroccoli();
 
-	// 	// パッケージIDからモジュール一覧を取得する
-	// 	$modules = $broccoli->getModuleListByPackageId('testMod1');
-	// 	$this->assertEquals($modules['categories']['units']['modules']['cols2']['moduleId'], 'testMod1:units/cols2');
-	// 	$this->assertEquals($modules['categories']['units']['modules']['cols2']['realpath'], __DIR__.'/testdata/modules1/units/cols2/');
-	// }
+		// パッケージIDからモジュール一覧を取得する
+		$modules = $broccoli->getModuleListByPackageId('testMod1');
+		$this->assertEquals($modules['categories']['units']['modules']['cols2']['moduleId'], 'testMod1:units/cols2');
+		$this->assertEquals($modules['categories']['units']['modules']['cols2']['realpath'], __DIR__.'/testdata/modules1/units/cols2/');
+	}
 
 	// /**
 	//  * resourceMgr を操作する

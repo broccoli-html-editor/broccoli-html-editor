@@ -138,19 +138,7 @@ class classModule{
 	 */
 	private function markdownSync($str){
 		if( !is_string($str) ){return $str;}
-		// TODO: markdown変換を実装する
-		// $marked = require('marked');
-		// $marked.setOptions({
-		// 	renderer: new marked.Renderer(),
-		// 	gfm: true,
-		// 	tables: true,
-		// 	breaks: false,
-		// 	pedantic: false,
-		// 	sanitize: false,
-		// 	smartLists: true,
-		// 	smartypants: false
-		// });
-		// $str = $marked($str);
+		$str = \Michelf\MarkdownExtra::defaultTransform($str);
 		return $str;
 	}
 
