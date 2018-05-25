@@ -83,7 +83,7 @@ class classModule{
 			// $this->nameSpace = $this->options['topThis']->nameSpace;
 			if( $options['subModName'] ){
 				$this->subModName = $options['subModName'];
-				if( $this->topThis->subModule[$this->subModName] ){
+				if( @$this->topThis->subModule[$this->subModName] ){
 					// var_dump($this->topThis->subModule[$this->subModName]);
 					$this->fields = $this->topThis->subModule[$this->subModName]->fields;
 				}
@@ -165,46 +165,111 @@ class classModule{
 		return $description;
 	}
 
+	/**
+	 * broccoliテンプレートを解析する
+	 */
+	private function parseBroccoliTemplate( $src, $_topThis ){
+		if( !preg_match( '/^((?:.|\r|\n)*?)\\{\\&((?:.|\r|\n)*?)\\&\\}((?:.|\r|\n)*)$/', $src, $matched ) ){
+			return $src;
+		}
+		$field = $matched[2];
+		$src = $matched[3];
+
+		$field = json_decode( $field );
+		if( is_null($field) ){
+			$this->broccoli->log( 'module template parse error: ' . $this->templateFilename );
+			$field = json_decode(json_encode(array(
+				'input' => array(
+					'type' => 'html',
+					'name' => '__error__',
+				)
+			)));
+		}
+
+		if( is_string($field) ){
+			// end系：無視
+			return $this->parseBroccoliTemplate( $src, $_topThis );
+
+		}elseif( @$field->input ){
+			$this->fields[$field->input->name] = $field->input;
+			$this->fields[$field->input->name]->fieldType = 'input';
+			$this->fields[$field->input->name]->description = $this->normalizeDescription(@$this->fields[$field->input->name]->description);
+
+			return $this->parseBroccoliTemplate( $src, $_topThis );
+		}elseif( @$field->module ){
+			$this->fields[$field->module->name] = $field->module;
+			$this->fields[$field->module->name]->fieldType = 'module';
+			$this->fields[$field->module->name]->description = $this->normalizeDescription(@$this->fields[$field->module->name]->description);
+
+			$this->fields[$field->module->name]->enabledChildren = $this->broccoli->normalizeEnabledParentsOrChildren(@$this->fields[$field->module->name]->enabledChildren, $this->id);
+
+			return $this->parseBroccoliTemplate( $src, $_topThis );
+		}elseif( @$field->loop ){
+			$this->fields[$field->loop->name] = $field->loop;
+			$this->fields[$field->loop->name]->fieldType = 'loop';
+			$this->fields[$field->loop->name]->description = $this->normalizeDescription(@$this->fields[$field->loop->name]->description);
+
+			$tmpSearchResult = $this->searchEndTag( $src, 'loop' );
+			$src = $tmpSearchResult['nextSrc'];
+			if( !is_object($this->subModule) ){
+				$this->subModule = array();
+			}
+			// var_dump(' <------- ');
+			// var_dump($field->loop->name);
+			// var_dump('on '.$_topThis->moduleId);
+			// var_dump($tmpSearchResult['content']);
+			// var_dump(' =======> ');
+			$_topThis->subModule[$field->loop->name] = $this->broccoli->createModuleInstance( $this->id, array(
+				"src" => $tmpSearchResult['content'],
+				"subModName" => $field->loop->name,
+				"topThis" => $_topThis
+			));
+			$_topThis->subModule[$field->loop->name]->init();
+
+			return $this->parseBroccoliTemplate( $src, $_topThis );
+
+		}else{
+			return $this->parseBroccoliTemplate( $src, $_topThis );
+		}
+	} // parseBroccoliTemplate()
+
 	/** 閉じタグを探す */
 	private function searchEndTag($src, $fieldType){
 
-		// var rtn = {
-		// 	content: '',
-		// 	nextSrc: src
-		// };
-		// var depth = 0;
-		// while( 1 ){
-		// 	if( !rtn.nextSrc.match(new RegExp('^((?:.|\r|\n)*?)\\{\\&((?:.|\r|\n)*?)\\&\\}((?:.|\r|\n)*)$') ) ){
-		// 		break;
-		// 	}
-		// 	rtn.content += RegExp.$1;
-		// 	var fieldSrc = RegExp.$2;
-		// 	var field = {};
-		// 	try {
-		// 		field = json_decode( fieldSrc );
-		// 	} catch (e) {
-		// 		var_dump('ERROR: Failed to parse field.', fieldSrc);
-		// 		$this->broccoli->log('ERROR: Failed to parse field. '+fieldSrc);
-		// 	}
-		// 	rtn.nextSrc = RegExp.$3;
+		$rtn = array(
+			'content' => '',
+			'nextSrc' => $src
+		);
+		$depth = 0;
+		while( 1 ){
+			if( !preg_match('/^((?:.|\r|\n)*?)\\{\\&((?:.|\r|\n)*?)\\&\\}((?:.|\r|\n)*)$/', $rtn['nextSrc'], $matched) ){
+				break;
+			}
+			$rtn['content'] .= $matched[1];
+			$fieldSrc = $matched[2];
+			$field = json_decode( $fieldSrc );
+			if( is_null($field) ){
+				$this->broccoli->log('ERROR: Failed to parse field. '.$fieldSrc);
+			}
+			$rtn['nextSrc'] = $matched[3];
 
-		// 	if( field == 'end'+fieldType ){
-		// 		if( depth ){
-		// 			depth --;
-		// 			rtn.content += '{&'+fieldSrc+'&}';
-		// 			continue;
-		// 		}
-		// 		return rtn;
-		// 	}elseif( field[fieldType] ){
-		// 		depth ++;
-		// 		rtn.content += '{&'+fieldSrc+'&}';
-		// 		continue;
-		// 	}else{
-		// 		rtn.content += '{&'+fieldSrc+'&}';
-		// 		continue;
-		// 	}
-		// }
-		// return rtn;
+			if( $field == 'end'.$fieldType ){
+				if( $depth ){
+					$depth --;
+					$rtn['content'] .= '{&'.$fieldSrc.'&}';
+					continue;
+				}
+				return $rtn;
+			}elseif( @$field->{$fieldType} ){
+				$depth ++;
+				$rtn['content'] .= '{&'.$fieldSrc.'&}';
+				continue;
+			}else{
+				$rtn['content'] .= '{&'.$fieldSrc.'&}';
+				continue;
+			}
+		}
+		return $rtn;
 
 	}
 
@@ -335,97 +400,11 @@ class classModule{
 			return true;
 
 		}else{
-			// // Broccoliエンジン利用の処理
-			// function parseBroccoliTemplate(src, callback){
-			// 	if( !src.match(new RegExp('^((?:.|\r|\n)*?)\\{\\&((?:.|\r|\n)*?)\\&\\}((?:.|\r|\n)*)$') ) ){
-			// 		callback();
-			// 		return;
-			// 	}
-			// 	field = RegExp.$2;
-			// 	src = RegExp.$3;
-
-			// 	try{
-			// 		field = json_decode( field );
-			// 	}catch(e){
-			// 		var_dump( 'module template parse error: ' + $this->templateFilename );
-			// 		$this->broccoli->log( 'module template parse error: ' + $this->templateFilename );
-			// 		field = {'input':{
-			// 			'type':'html',
-			// 			'name':'__error__'
-			// 		}};
-			// 	}
-			// 	try{
-			// 		$this->fields[field.input.name].description = $this->normalizeDescription($this->fields[field.input.name].description);
-			// 	}catch(e){
-			// 	}
-
-			// 	if( typeof(field) == typeof('') ){
-			// 		// end系：無視
-			// 		parseBroccoliTemplate( src, function(){
-			// 			callback();
-			// 		} );
-			// 		return;
-
-			// 	}elseif( field.input ){
-			// 		$this->fields[field.input.name] = field.input;
-			// 		$this->fields[field.input.name].fieldType = 'input';
-
-			// 		parseBroccoliTemplate( src, function(){
-			// 			callback();
-			// 		} );
-			// 		return;
-			// 	}elseif( field.module ){
-			// 		$this->fields[field.module.name] = field.module;
-			// 		$this->fields[field.module.name].fieldType = 'module';
-
-			// 		$this->fields[field.module.name].enabledChildren = $this->broccoli->normalizeEnabledParentsOrChildren($this->fields[field.module.name].enabledChildren, moduleId);
-
-			// 		parseBroccoliTemplate( src, function(){
-			// 			callback();
-			// 		} );
-			// 		return;
-			// 	}elseif( field.loop ){
-			// 		$this->fields[field.loop.name] = field.loop;
-			// 		$this->fields[field.loop.name].fieldType = 'loop';
-
-			// 		var tmpSearchResult = $this->searchEndTag( src, 'loop' );
-			// 		src = tmpSearchResult.nextSrc;
-			// 		if( typeof($this->subModule) !== typeof({}) ){
-			// 			$this->subModule = {};
-			// 		}
-			// 		// var_dump(' <------- ');
-			// 		// var_dump(field.loop.name);
-			// 		// var_dump('on '+$_topThis->moduleId);
-			// 		// var_dump(tmpSearchResult.content);
-			// 		// var_dump(' =======> ');
-			// 		$_topThis->subModule[field.loop.name] = $this->broccoli->createModuleInstance( $this->id, {
-			// 			"src": tmpSearchResult.content,
-			// 			"subModName": field.loop.name,
-			// 			"topThis":_topThis
-			// 		});
-			// 		$_topThis->subModule[field.loop.name].init(function(){
-			// 			parseBroccoliTemplate( src, function(){
-			// 				callback();
-			// 			} );
-			// 		});
-
-			// 		return;
-
-			// 	}else{
-			// 		parseBroccoliTemplate( src, function(){
-			// 			callback();
-			// 		} );
-			// 		return;
-			// 	}
-			// }//parseBroccoliTemplate()
-
-			// parseBroccoliTemplate( src, function(){
-			// 	callback(true);
-			// } );
-			// return;
+			// Broccoliエンジン利用の処理
+			$src = $this->parseBroccoliTemplate($src, $_topThis);
+			return $src;
 		}
 
 	} // parseTpl()
-
 
 }
