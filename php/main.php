@@ -60,6 +60,14 @@ class broccoliHtmlEditor{
 	}
 
 	/**
+	 * $resourceMgr
+	 * @return object Resource Manager Object.
+	 */
+	public function resourceMgr(){
+		return $this->resourceMgr;
+	}
+
+	/**
 	 * Initialize
 	 * @param array $options オプション
 	 */

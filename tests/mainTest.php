@@ -115,22 +115,22 @@ class mainTest extends PHPUnit_Framework_TestCase{
 		$this->assertEquals($modules['categories']['units']['modules']['cols2']['realpath'], __DIR__.'/testdata/modules1/units/cols2/');
 	}
 
-	// /**
-	//  * resourceMgr を操作する
-	//  */
-	// public function testResourceMgr(){
-	// 	$broccoli = testHelper::makeDefaultBroccoli();
+	/**
+	 * resourceMgr を操作する
+	 */
+	public function testResourceMgr(){
+		$broccoli = testHelper::makeDefaultBroccoli();
 
-	// 	// resMgr.resetBase64FromBin()
-	// 	$resMgr = $broccoli->resourceMgr;
-	// 	$result = $resMgr->resetBase64FromBin('06f830991ad501926013ab2f9a52621b');
-	// 	$this->assertTrue($result);
+		// resMgr.resetBase64FromBin()
+		$resMgr = $broccoli->resourceMgr();
+		$result = $resMgr->resetBase64FromBin('06f830991ad501926013ab2f9a52621b');
+		$this->assertTrue($result);
 
-	// 	// resMgr.resetBinFromBase64()
-	// 	$resMgr = $broccoli->resourceMgr;
-	// 	$result = $resMgr->resetBinFromBase64('06f830991ad501926013ab2f9a52621b');
-	// 	$this->assertTrue($result);
-	// }
+		// resMgr.resetBinFromBase64()
+		$resMgr = $broccoli->resourceMgr();
+		$result = $resMgr->resetBinFromBase64('06f830991ad501926013ab2f9a52621b');
+		$this->assertTrue($result);
+	}
 
 	/**
 	 * モジュールインスタンスを生成する
