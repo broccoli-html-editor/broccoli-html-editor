@@ -24,11 +24,17 @@ class classModule{
 	private $realpath;
 
 	/** values */
-	private	$moduleId,
-			$subModName,
+	private	$subModName,
 			$isSingleRootElement,
+			$isSystemModule,
 			$templateFilename,
 			$templateType,
+			$path,
+			$info,
+			$id,
+			$fields,
+			$subModule,
+			$topThis,
 			$finalize;
 
 	/**
@@ -57,6 +63,7 @@ class classModule{
 		}
 		$this->id = $moduleId;
 		$this->fields = array();
+		$this->subModule = array();
 		$this->templateType = 'broccoli';
 		$this->finalize = function($html){ return $html; };
 
@@ -72,7 +79,7 @@ class classModule{
 		if( @$this->options['topThis'] ){
 			$this->topThis = $this->options['topThis'];
 			$this->templateType = $this->topThis->templateType;
-			$this->info->name = '- ' . $this->topThis->info->name . ' -';
+			$this->info['name'] = '- ' . $this->topThis->info['name'] . ' -';
 			// $this->nameSpace = $this->options['topThis']->nameSpace;
 			if( $options['subModName'] ){
 				$this->subModName = $options['subModName'];
@@ -96,17 +103,17 @@ class classModule{
 			return false;
 		}
 
-		if( $this->moduleId == '_sys/root' ){
-			return $this->parseTpl( '{&{"module":{"name":"main"}}&}', $this, $this );
-		}else if( $this->moduleId == '_sys/unknown' ){
-			return $this->parseTpl( '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;">[ERROR] 未知のモジュールテンプレートです。<!-- .error --></div>'+"\n", $this, $this );
-		}else if( $this->moduleId == '_sys/html' ){
-			return $this->parseTpl( '{&{"input":{"type":"html","name":"main"}}&}', $this, $this );
-		}else if( is_string(@$this->options['src']) ){
-			return $this->parseTpl( $this->options['src'], $this, $this->options['topThis'] );
-		}else if( $this->topThis->templateType != 'broccoli' && is_string($this->subModName) ){
-			return $this->parseTpl( null, $this, $this->options['topThis'] );
-		}else if( $this->path ){
+		if( $this->id == '_sys/root' ){
+			return $this->parseTpl( '{&{"module":{"name":"main"}}&}', $this );
+		}elseif( $this->id == '_sys/unknown' ){
+			return $this->parseTpl( '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;">[ERROR] 未知のモジュールテンプレートです。<!-- .error --></div>'+"\n", $this );
+		}elseif( $this->id == '_sys/html' ){
+			return $this->parseTpl( '{&{"input":{"type":"html","name":"main"}}&}', $this );
+		}elseif( is_string(@$this->options['src']) ){
+			return $this->parseTpl( $this->options['src'], $this->options['topThis'] );
+		}elseif( $this->topThis->templateType != 'broccoli' && is_string($this->subModName) ){
+			return $this->parseTpl( null, $this->options['topThis'] );
+		}elseif( $this->path ){
 			$tmpTplSrc = null;
 			if( is_file( $this->path.'/finalize.php' ) ){
 				$tmpRealathFinalizePhp = $this->broccoli->fs()->get_realpath($this->path.'/finalize.php');
@@ -116,7 +123,7 @@ class classModule{
 				$this->templateFilename = $this->path.'/template.html';
 				$this->templateType = 'broccoli';
 				$tmpTplSrc = file_get_contents( $this->templateFilename );
-			}else if( is_file( $this->path.'/template.html.twig' ) ){
+			}elseif( is_file( $this->path.'/template.html.twig' ) ){
 				$this->templateFilename = $this->path.'/template.html.twig';
 				$this->templateType = 'twig';
 				$tmpTplSrc = file_get_contents( $this->templateFilename );
@@ -125,13 +132,19 @@ class classModule{
 				$tmpTplSrc = '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;">[ERROR] モジュールテンプレートの読み込みエラーです。<!-- .error --></div>'+"\n";
 			}
 			$tmpTplSrc = json_decode( json_encode( $tmpTplSrc ) );
-			return $this->parseTpl( $tmpTplSrc, $this, $this );
+			return $this->parseTpl( $tmpTplSrc, $this );
 		}
 
 		return true;
 	}
 
 
+	/**
+	 * $fields
+	 */
+	public function fields(){
+		return $this->fields;
+	}
 
 	/**
 	 * Markdown 文法を処理する
@@ -168,10 +181,10 @@ class classModule{
 		// 	var fieldSrc = RegExp.$2;
 		// 	var field = {};
 		// 	try {
-		// 		field = JSON.parse( fieldSrc );
+		// 		field = json_decode( fieldSrc );
 		// 	} catch (e) {
-		// 		console.error('ERROR: Failed to parse field.', fieldSrc);
-		// 		broccoli.log('ERROR: Failed to parse field. '+fieldSrc);
+		// 		var_dump('ERROR: Failed to parse field.', fieldSrc);
+		// 		$this->broccoli->log('ERROR: Failed to parse field. '+fieldSrc);
 		// 	}
 		// 	rtn.nextSrc = RegExp.$3;
 
@@ -182,7 +195,7 @@ class classModule{
 		// 			continue;
 		// 		}
 		// 		return rtn;
-		// 	}else if( field[fieldType] ){
+		// 	}elseif( field[fieldType] ){
 		// 		depth ++;
 		// 		rtn.content += '{&'+fieldSrc+'&}';
 		// 		continue;
@@ -198,239 +211,220 @@ class classModule{
 	/**
 	 * テンプレートを解析する
 	 */
-	private function parseTpl($src, $_this, $_topThis){
-		// new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+	private function parseTpl($src, $_topThis = null){
+		if( is_null($_topThis) ){
+			$_topThis = $this;
+		}
+		if( !is_null($src) ){
+			$src = json_decode( json_encode( $src ) );
+		}
+		$this->template = $src;
+
+		if( $this->path && is_dir( $this->path ) ){
+			if( is_file( $this->path.'/info.json' ) ){
+				$tmpJson = json_decode( file_get_contents( $this->path.'/info.json' ) );
+				if(is_null($tmpJson)){
+					$this->broccoli->log( 'module info.json parse error: '.$this->path.'/info.json' );
+					$tmpJson = json_decode('{}');
+				}
+
+				if( @$tmpJson->name ){
+					$this->info['name'] = $tmpJson->name;
+				}
+				if( @$tmpJson->areaSizeDetection ){
+					$this->info['areaSizeDetection'] = $tmpJson->areaSizeDetection;
+				}
+				$this->info['enabledParents'] = $this->broccoli->normalizeEnabledParentsOrChildren(@$tmpJson->enabledParents, $this->id);
+				if( is_string(@$tmpJson->enabledBowls) ){
+					$this->info['enabledBowls'] = [$tmpJson->enabledBowls];
+				}elseif( is_object(@$tmpJson->enabledBowls) || is_array(@$tmpJson->enabledBowls) ){
+					$this->info['enabledBowls'] = $tmpJson->enabledBowls;
+				}
 
 
-		// 	if(src !== null){
-		// 		src = JSON.parse( JSON.stringify( src ) );
-		// 	}
-		// 	_this.template = src;
+				if( @$tmpJson->interface ){
+					if( @$tmpJson->interface->fields ){
+						foreach( $tmpJson->interface->fields as $tmpIdx=>$tmpRow  ){
+							$this->fields[$tmpIdx] = $tmpRow;
+							// name属性を自動補完
+							$this->fields[$tmpIdx]->name = $tmpIdx;
+						}
+					}
+					if( @$tmpJson->interface->subModule ){
+						foreach( $tmpJson->interface->subModule as $tmpIdx=>$tmpRow  ){
+							$this->subModule[$tmpIdx] = json_decode( json_encode( array(
+								'fields'=>array()
+							) ) );
+							foreach( $tmpRow->fields as $tmpIdx2=>$tmpRow2 ){
+								$this->subModule[$tmpIdx]->fields[$tmpIdx2] = json_decode('{}');
+								// name属性を自動補完
+								$this->subModule[$tmpIdx]->fields[$tmpIdx2]->name = $tmpIdx2;
+							}
+						}
+					}
+				}
+				if( @$tmpJson->deprecated ){
+					$this->info['deprecated'] = $tmpJson->deprecated;
+				}
+			}
+			$this->deprecated = ($this->info['deprecated'] ? true : false);
+			$this->thumb = null;
+			if( is_file( $this->path.'/thumb.png' ) ){
+				$tmpBin = file_get_contents( $this->path.'/thumb.png' );
+				$tmpBase64 = base64_encode( $tmpBin );
+				$this->thumb = 'data:image/png;base64,'.$tmpBase64;
+			}
+		}
 
-		// 	if( _this.path && isDirectory( _this.path ) ){
-		// 		if( is_file( _this.path+'/info.json' ) ){
-		// 			var tmpJson = {};
-		// 			try{
-		// 				tmpJson = JSON.parse( fs.readFileSync( _this.path+'/info.json' ) );
-		// 			}catch(e){
-		// 				console.error( 'module info.json parse error: ' + _this.path+'/info.json' );
-		// 				broccoli.log( 'module info.json parse error: ' + _this.path+'/info.json' );
-		// 			}
-		// 			if( tmpJson.name ){
-		// 				_this.info.name = tmpJson.name;
-		// 			}
-		// 			if( tmpJson.areaSizeDetection ){
-		// 				_this.info.areaSizeDetection = tmpJson.areaSizeDetection;
-		// 			}
-		// 			_this.info.enabledParents = broccoli.normalizeEnabledParentsOrChildren(tmpJson.enabledParents, moduleId);
-		// 			if( typeof(tmpJson.enabledBowls) == typeof('') ){
-		// 				_this.info.enabledBowls = [tmpJson.enabledBowls];
-		// 			}else if( typeof(tmpJson.enabledBowls) == typeof([]) ){
-		// 				_this.info.enabledBowls = tmpJson.enabledBowls;
-		// 			}
+		if( $src ){
+			// 単一のルート要素を持っているかどうか判定。
+			$this->isSingleRootElement = false;
+			$tplSrc = $src;
+			$tplSrc = json_decode( json_encode($tplSrc) );
+			$tplSrc = preg_replace( '/\\<\\!\\-\\-[\\s\\S]*?\\-\\-\\>/s', $tplSrc, '' );
+			$tplSrc = preg_replace( '/\\{\\&[\\s\\S]*?\\&\\}/s', $tplSrc, '' );
+			$tplSrc = preg_replace( '/\\r\\n|\\r|\\n/s', $tplSrc, '' );
+			$tplSrc = preg_replace( '/\\t/s', $tplSrc, '' );
+			$tplSrc = preg_replace( '/^[\\s\\r\\n]*/', $tplSrc, '' );
+			$tplSrc = preg_replace( '/[\\s\\r\\n]*$/', $tplSrc, '' );
+			if( strlen($tplSrc) && strpos($tplSrc, '<') === 0 && preg_match('/\\>$/s', $tplSrc) ){
+				// TODO: RootElementsの数を数える
+				// var htmlparser = require('htmlparser');
+				// var handler = new htmlparser.DefaultHandler(function (error, dom) {
+				// 	// var_dump('htmlparser callback');
+				// 	if (error){
+				// 		// var_dump(error);
+				// 	}
+				// });
+				// // var_dump('htmlparser after');
+				// var parser = new htmlparser.Parser(handler);
+				// parser.parseComplete(tplSrc);
+				// // var_dump(handler.dom);
 
+				// if( handler.dom.length == 1 ){
+				// 	$this->isSingleRootElement = true;
+				// }
+			}
+		}
 
-		// 			if( tmpJson.interface ){
-		// 				if( tmpJson.interface.fields ){
-		// 					_this.fields = tmpJson.interface.fields;
-		// 					for( var tmpIdx in _this.fields ){
-		// 						// name属性を自動補完
-		// 						_this.fields[tmpIdx].name = tmpIdx;
-		// 					}
-		// 				}
-		// 				if( tmpJson.interface.subModule ){
-		// 					_this.subModule = tmpJson.interface.subModule;
-		// 					for( var tmpIdx in _this.subModule ){
-		// 						for( var tmpIdx2 in _this.subModule[tmpIdx].fields ){
-		// 							// name属性を自動補完
-		// 							_this.subModule[tmpIdx].fields[tmpIdx2].name = tmpIdx2;
-		// 						}
-		// 					}
-		// 				}
-		// 			}
-		// 			if( tmpJson.deprecated ){
-		// 				_this.info.deprecated = tmpJson.deprecated;
-		// 			}
-		// 		}
-		// 		_this.deprecated = (_this.info.deprecated||false);
-		// 		_this.thumb = null;
-		// 		if( is_file( _this.path+'/thumb.png' ) ){
-		// 			_this.thumb = (function(){
-		// 				var tmpBin = fs.readFileSync( _this.path+'/thumb.png' ).toString();
-		// 				var tmpBase64;
-		// 				try {
-		// 					tmpBase64 = base64_encode( tmpBin );
-		// 				} catch (e) {
-		// 					var_dump('ERROR: base64_encode() FAILED; -> '+_this.path+'/thumb.png');
-		// 					return null;
-		// 				}
-		// 				return 'data:image/png;base64,'+tmpBase64;
-		// 			})();
-		// 		}
-		// 	}
+		$field = null;
 
-		// 	if( src ){
-		// 		_this.isSingleRootElement = (function(tplSrc){
-		// 			// 単一のルート要素を持っているかどうか判定。
-		// 			tplSrc = JSON.parse( JSON.stringify(tplSrc) );
-		// 			tplSrc = tplSrc.replace( new RegExp('\\<\\!\\-\\-[\\s\\S]*?\\-\\-\\>','g'), '' );
-		// 			tplSrc = tplSrc.replace( new RegExp('\\{\\&[\\s\\S]*?\\&\\}','g'), '' );
-		// 			tplSrc = tplSrc.replace( new RegExp('\\r\\n|\\r|\\n','g'), '' );
-		// 			tplSrc = tplSrc.replace( new RegExp('\\t','g'), '' );
-		// 			tplSrc = tplSrc.replace( new RegExp('^[\\s\\r\\n]*'), '' );
-		// 			tplSrc = tplSrc.replace( new RegExp('[\\s\\r\\n]*$'), '' );
-		// 			if( tplSrc.length && tplSrc.indexOf('<') === 0 && tplSrc.match(new RegExp('\\>$')) ){
-		// 				var htmlparser = require('htmlparser');
-		// 				var handler = new htmlparser.DefaultHandler(function (error, dom) {
-		// 					// var_dump('htmlparser callback');
-		// 					if (error){
-		// 						// var_dump(error);
-		// 					}
-		// 				});
-		// 				// var_dump('htmlparser after');
-		// 				var parser = new htmlparser.Parser(handler);
-		// 				parser.parseComplete(tplSrc);
-		// 				// var_dump(handler.dom);
+		if( $_topThis->templateType != 'broccoli' ){
+			// テンプレートエンジン(Twigなど)利用の場合の処理
+			if( $this->subModName ){
+				$this->fields = $_topThis->subModule[$this->subModName]->fields;
+			}
 
-		// 				if( handler.dom.length == 1 ){
-		// 					return true;
-		// 				}
-		// 			}
-		// 			return false;
-		// 		})(src);
-		// 	}
+			foreach( $this->fields as $tmpFieldName=>$row ){
+				$row->description = $this->normalizeDescription(@$row->description);
+				if( @$this->fields[$tmpFieldName]->fieldType == 'module' ){
+					$this->fields[$tmpFieldName]->enabledChildren = $this->broccoli->normalizeEnabledParentsOrChildren(@$this->fields[$tmpFieldName]->enabledChildren, $this->id);
+				}
 
-		// 	var field = null;
+				if( @$this->fields[$tmpFieldName]->fieldType == 'loop' ){
+					$this->subModule = ($this->subModule ? $this->subModule : array());
 
-		// 	if( _topThis.templateType != 'broccoli' ){
-		// 		// テンプレートエンジン(Twigなど)利用の場合の処理
-		// 		if( _this.subModName ){
-		// 			_this.fields = _topThis.subModule[_this.subModName].fields;
-		// 		}
+					$_topThis->subModule[$tmpFieldName] = $this->broccoli->createModuleInstance( $this->id, array(
+						"src" => '',
+						"subModName" => $tmpFieldName,
+						"topThis" => $_topThis
+					) );
+					$_topThis->subModule[$tmpFieldName]->init();
+				}
+			}
+			return true;
 
-		// 		it79.ary(
-		// 			_this.fields ,
-		// 			function( it2, row, tmpFieldName ){
-		// 				row.description = normalizeDescription(row.description);
-		// 				if( _this.fields[tmpFieldName].fieldType == 'module' ){
-		// 					_this.fields[tmpFieldName].enabledChildren = broccoli.normalizeEnabledParentsOrChildren(_this.fields[tmpFieldName].enabledChildren, moduleId);
-		// 				}
+		}else{
+			// // Broccoliエンジン利用の処理
+			// function parseBroccoliTemplate(src, callback){
+			// 	if( !src.match(new RegExp('^((?:.|\r|\n)*?)\\{\\&((?:.|\r|\n)*?)\\&\\}((?:.|\r|\n)*)$') ) ){
+			// 		callback();
+			// 		return;
+			// 	}
+			// 	field = RegExp.$2;
+			// 	src = RegExp.$3;
 
-		// 				if( _this.fields[tmpFieldName].fieldType == 'loop' ){
-		// 					_this.subModule = _this.subModule || {};
+			// 	try{
+			// 		field = json_decode( field );
+			// 	}catch(e){
+			// 		var_dump( 'module template parse error: ' + $this->templateFilename );
+			// 		$this->broccoli->log( 'module template parse error: ' + $this->templateFilename );
+			// 		field = {'input':{
+			// 			'type':'html',
+			// 			'name':'__error__'
+			// 		}};
+			// 	}
+			// 	try{
+			// 		$this->fields[field.input.name].description = $this->normalizeDescription($this->fields[field.input.name].description);
+			// 	}catch(e){
+			// 	}
 
-		// 					_topThis.subModule[tmpFieldName] = broccoli.createModuleInstance( _this.id, {
-		// 						"src": '',
-		// 						"subModName": tmpFieldName,
-		// 						"topThis":_topThis
-		// 					} );
-		// 					_topThis.subModule[tmpFieldName].init(function(){
-		// 						it2.next();
-		// 					});
-		// 					return;
-		// 				}
-		// 				it2.next();return;
-		// 			} ,
-		// 			function(){
-		// 				callback(true);
-		// 			}
-		// 		);
-		// 		return;
+			// 	if( typeof(field) == typeof('') ){
+			// 		// end系：無視
+			// 		parseBroccoliTemplate( src, function(){
+			// 			callback();
+			// 		} );
+			// 		return;
 
-		// 	}else{
-		// 		// Broccoliエンジン利用の処理
-		// 		function parseBroccoliTemplate(src, callback){
-		// 			if( !src.match(new RegExp('^((?:.|\r|\n)*?)\\{\\&((?:.|\r|\n)*?)\\&\\}((?:.|\r|\n)*)$') ) ){
-		// 				callback();
-		// 				return;
-		// 			}
-		// 			field = RegExp.$2;
-		// 			src = RegExp.$3;
+			// 	}elseif( field.input ){
+			// 		$this->fields[field.input.name] = field.input;
+			// 		$this->fields[field.input.name].fieldType = 'input';
 
-		// 			try{
-		// 				field = JSON.parse( field );
-		// 			}catch(e){
-		// 				console.error( 'module template parse error: ' + _this.templateFilename );
-		// 				broccoli.log( 'module template parse error: ' + _this.templateFilename );
-		// 				field = {'input':{
-		// 					'type':'html',
-		// 					'name':'__error__'
-		// 				}};
-		// 			}
-		// 			try{
-		// 				_this.fields[field.input.name].description = normalizeDescription(_this.fields[field.input.name].description);
-		// 			}catch(e){
-		// 			}
+			// 		parseBroccoliTemplate( src, function(){
+			// 			callback();
+			// 		} );
+			// 		return;
+			// 	}elseif( field.module ){
+			// 		$this->fields[field.module.name] = field.module;
+			// 		$this->fields[field.module.name].fieldType = 'module';
 
-		// 			if( typeof(field) == typeof('') ){
-		// 				// end系：無視
-		// 				parseBroccoliTemplate( src, function(){
-		// 					callback();
-		// 				} );
-		// 				return;
+			// 		$this->fields[field.module.name].enabledChildren = $this->broccoli->normalizeEnabledParentsOrChildren($this->fields[field.module.name].enabledChildren, moduleId);
 
-		// 			}else if( field.input ){
-		// 				_this.fields[field.input.name] = field.input;
-		// 				_this.fields[field.input.name].fieldType = 'input';
+			// 		parseBroccoliTemplate( src, function(){
+			// 			callback();
+			// 		} );
+			// 		return;
+			// 	}elseif( field.loop ){
+			// 		$this->fields[field.loop.name] = field.loop;
+			// 		$this->fields[field.loop.name].fieldType = 'loop';
 
-		// 				parseBroccoliTemplate( src, function(){
-		// 					callback();
-		// 				} );
-		// 				return;
-		// 			}else if( field.module ){
-		// 				_this.fields[field.module.name] = field.module;
-		// 				_this.fields[field.module.name].fieldType = 'module';
+			// 		var tmpSearchResult = $this->searchEndTag( src, 'loop' );
+			// 		src = tmpSearchResult.nextSrc;
+			// 		if( typeof($this->subModule) !== typeof({}) ){
+			// 			$this->subModule = {};
+			// 		}
+			// 		// var_dump(' <------- ');
+			// 		// var_dump(field.loop.name);
+			// 		// var_dump('on '+$_topThis->moduleId);
+			// 		// var_dump(tmpSearchResult.content);
+			// 		// var_dump(' =======> ');
+			// 		$_topThis->subModule[field.loop.name] = $this->broccoli->createModuleInstance( $this->id, {
+			// 			"src": tmpSearchResult.content,
+			// 			"subModName": field.loop.name,
+			// 			"topThis":_topThis
+			// 		});
+			// 		$_topThis->subModule[field.loop.name].init(function(){
+			// 			parseBroccoliTemplate( src, function(){
+			// 				callback();
+			// 			} );
+			// 		});
 
-		// 				_this.fields[field.module.name].enabledChildren = broccoli.normalizeEnabledParentsOrChildren(_this.fields[field.module.name].enabledChildren, moduleId);
-	
-		// 				parseBroccoliTemplate( src, function(){
-		// 					callback();
-		// 				} );
-		// 				return;
-		// 			}else if( field.loop ){
-		// 				_this.fields[field.loop.name] = field.loop;
-		// 				_this.fields[field.loop.name].fieldType = 'loop';
+			// 		return;
 
-		// 				var tmpSearchResult = _this.searchEndTag( src, 'loop' );
-		// 				src = tmpSearchResult.nextSrc;
-		// 				if( typeof(_this.subModule) !== typeof({}) ){
-		// 					_this.subModule = {};
-		// 				}
-		// 				// var_dump(' <------- ');
-		// 				// var_dump(field.loop.name);
-		// 				// var_dump('on '+_topThis.moduleId);
-		// 				// var_dump(tmpSearchResult.content);
-		// 				// var_dump(' =======> ');
-		// 				_topThis.subModule[field.loop.name] = broccoli.createModuleInstance( _this.id, {
-		// 					"src": tmpSearchResult.content,
-		// 					"subModName": field.loop.name,
-		// 					"topThis":_topThis
-		// 				});
-		// 				_topThis.subModule[field.loop.name].init(function(){
-		// 					parseBroccoliTemplate( src, function(){
-		// 						callback();
-		// 					} );
-		// 				});
+			// 	}else{
+			// 		parseBroccoliTemplate( src, function(){
+			// 			callback();
+			// 		} );
+			// 		return;
+			// 	}
+			// }//parseBroccoliTemplate()
 
-		// 				return;
+			// parseBroccoliTemplate( src, function(){
+			// 	callback(true);
+			// } );
+			// return;
+		}
 
-		// 			}else{
-		// 				parseBroccoliTemplate( src, function(){
-		// 					callback();
-		// 				} );
-		// 				return;
-		// 			}
-		// 		}//parseBroccoliTemplate()
-
-		// 		parseBroccoliTemplate( src, function(){
-		// 			callback(true);
-		// 		} );
-		// 		return;
-		// 	}
-		// 	// var_dump(_this.fields);
-		// 	// callback(true);
-		// }); }); // Promise
-		// return;
 	} // parseTpl()
 
 

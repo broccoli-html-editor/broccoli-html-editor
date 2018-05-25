@@ -384,7 +384,7 @@ class broccoliHtmlEditor{
 				}
 
 				$modInstance = $this->getModule($moduleId, null);
-				$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->interface = (@$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->interface ? $rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->interface : $modInstance->fields);
+				$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->interface = (@$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->interface ? $rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->interface : $modInstance->fields());
 
 			}
 
@@ -398,7 +398,7 @@ class broccoliHtmlEditor{
 	 * @param {*} enabledParentsOrChildren
 	 * @param {*} currentModuleId
 	 */
-	private function normalizeEnabledParentsOrChildren($enabledParentsOrChildren, $currentModuleId){
+	public function normalizeEnabledParentsOrChildren($enabledParentsOrChildren, $currentModuleId){
 		$enabledParentsOrChildren = ($enabledParentsOrChildren ? $enabledParentsOrChildren : array());
 		if(is_string($enabledParentsOrChildren)){
 			$enabledParentsOrChildren = array($enabledParentsOrChildren);
@@ -477,10 +477,9 @@ class broccoliHtmlEditor{
 	 * @param  {Object}   options  Options
 	 * @return {Object}            this
 	 */
-	private function createModuleInstance($moduleId, $options = array()){
+	public function createModuleInstance($moduleId, $options = array()){
 		// var_dump($moduleId);
 		// var_dump($options);
-		require_once(__DIR__.'/classModule.php');//TODO: 後で消す
 		$rtn = new classModule($this, $moduleId, $options);
 		return $rtn;
 	}
