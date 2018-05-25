@@ -40,7 +40,8 @@
             "fields/php/markdown.php",
             "fields/php/multitext.php",
             "fields/php/select.php",
-            "fields/php/text.php"
+            "fields/php/text.php",
+            "php/simple_html_dom.php"
         ]
     }
 }

@@ -132,54 +132,54 @@ class mainTest extends PHPUnit_Framework_TestCase{
 	// 	$this->assertTrue($result);
 	// }
 
-	// /**
-	//  * モジュールインスタンスを生成する
-	//  */
-	// public function testCreateModuleInstance(){
-	// 	$broccoli = testHelper::makeDefaultBroccoli();
+	/**
+	 * モジュールインスタンスを生成する
+	 */
+	public function testCreateModuleInstance(){
+		$broccoli = testHelper::makeDefaultBroccoli();
 
-	// 	// testMod1:units/cols2
-	// 	$mod = $broccoli->createModuleInstance('testMod1:units/cols2', array());
-	// 	$result = $mod->init();
-	// 	// var_dump( $result );
-	// 	$this->assertTrue($result);
-	// 	// var_dump( $mod );
-	// 	$this->assertSame(is_object($mod), true);
-	// 	$this->assertSame($mod->templateType, 'broccoli');
-	// 	$this->assertTrue($mod->isSingleRootElement);
+		// testMod1:units/cols2
+		$mod = $broccoli->createModuleInstance('testMod1:units/cols2', array());
+		$result = $mod->init();
+		// var_dump( $result );
+		$this->assertTrue($result);
+		// var_dump( $mod );
+		$this->assertSame(is_object($mod), true);
+		$this->assertSame($mod->getTemplateType(), 'broccoli');
+		$this->assertTrue($mod->isSingleRootElement());
 
-	// 	// testMod1:dev/twig
-	// 	$mod = $broccoli->createModuleInstance('testMod1:dev/twig', array());
-	// 	$result = $mod->init();
-	// 	// var_dump( $result );
-	// 	$this->assertSame($result, true);
-	// 	// var_dump( $mod );
-	// 	$this->assertTrue(is_object($mod));
-	// 	$this->assertSame($mod->templateType, 'twig');
-	// 	$this->assertTrue($mod->isSingleRootElement);
+		// testMod1:dev/twig
+		$mod = $broccoli->createModuleInstance('testMod1:dev/twig', array());
+		$result = $mod->init();
+		// var_dump( $result );
+		$this->assertSame($result, true);
+		// var_dump( $mod );
+		$this->assertTrue(is_object($mod));
+		$this->assertSame($mod->getTemplateType(), 'twig');
+		$this->assertTrue($mod->isSingleRootElement());
 	
-	// 	// testMod1:units/thumb_list
-	// 	$mod = $broccoli->createModuleInstance('testMod1:units/thumb_list', array());
-	// 	$result = $mod->init();
-	// 	// var_dump( $result );
-	// 	$this->assertSame($result, true);
-	// 	// var_dump( $mod );
-	// 	$this->assertTrue(is_object($mod));
-	// 	$this->assertSame($mod->templateType, 'broccoli');
-	// 	$this->assertTrue($mod->isSingleRootElement);
+		// testMod1:units/thumb_list
+		$mod = $broccoli->createModuleInstance('testMod1:units/thumb_list', array());
+		$result = $mod->init();
+		// var_dump( $result );
+		$this->assertSame($result, true);
+		// var_dump( $mod );
+		$this->assertTrue(is_object($mod));
+		$this->assertSame($mod->getTemplateType(), 'broccoli');
+		$this->assertTrue($mod->isSingleRootElement());
 	
 
-	// 	// testMod1:dev/multitext
-	// 	$mod = $broccoli->createModuleInstance('testMod1:dev/multitext', array());
-	// 	$result = $mod->init();
-	// 	// var_dump( $result );
-	// 	$this->assertTrue($result);
-	// 	// var_dump( $mod );
-	// 	$this->assertTrue(is_object($mod));
-	// 	$this->assertSame($mod->templateType, 'broccoli');
-	// 	$this->assertFalse($mod->isSingleRootElement);
+		// testMod1:dev/multitext
+		$mod = $broccoli->createModuleInstance('testMod1:dev/multitext', array());
+		$result = $mod->init();
+		// var_dump( $result );
+		$this->assertTrue($result);
+		// var_dump( $mod );
+		$this->assertTrue(is_object($mod));
+		$this->assertSame($mod->getTemplateType(), 'broccoli');
+		$this->assertFalse($mod->isSingleRootElement());
 	
-	// }
+	}
 
 	
 	// /**

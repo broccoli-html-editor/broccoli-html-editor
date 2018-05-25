@@ -147,6 +147,20 @@ class classModule{
 	}
 
 	/**
+	 * $templateType
+	 */
+	public function getTemplateType(){
+		return $this->templateType;
+	}
+
+	/**
+	 * $isSingleRootElement
+	 */
+	public function isSingleRootElement(){
+		return $this->isSingleRootElement;
+	}
+
+	/**
 	 * Markdown 文法を処理する
 	 */
 	private function markdownSync($str){
@@ -275,6 +289,7 @@ class classModule{
 
 	/**
 	 * テンプレートを解析する
+	 * @return boolean 成否
 	 */
 	private function parseTpl($src, $_topThis = null){
 		if( is_null($_topThis) ){
@@ -346,29 +361,32 @@ class classModule{
 			$this->isSingleRootElement = false;
 			$tplSrc = $src;
 			$tplSrc = json_decode( json_encode($tplSrc) );
-			$tplSrc = preg_replace( '/\\<\\!\\-\\-[\\s\\S]*?\\-\\-\\>/s', $tplSrc, '' );
-			$tplSrc = preg_replace( '/\\{\\&[\\s\\S]*?\\&\\}/s', $tplSrc, '' );
-			$tplSrc = preg_replace( '/\\r\\n|\\r|\\n/s', $tplSrc, '' );
-			$tplSrc = preg_replace( '/\\t/s', $tplSrc, '' );
-			$tplSrc = preg_replace( '/^[\\s\\r\\n]*/', $tplSrc, '' );
-			$tplSrc = preg_replace( '/[\\s\\r\\n]*$/', $tplSrc, '' );
+			$tplSrc = preg_replace( '/'.preg_quote('<!--','/').'.*?'.preg_quote('-->','/').'/s', '', $tplSrc );
+			$tplSrc = preg_replace( '/\{\&.*?\&\}/s', '', $tplSrc );
+			$tplSrc = preg_replace( '/\r\n|\r|\n/s', '', $tplSrc );
+			$tplSrc = preg_replace( '/\t/s', '', $tplSrc );
+			$tplSrc = preg_replace( '/^[\s\r\n]*/', '', $tplSrc );
+			$tplSrc = preg_replace( '/[\s\r\n]*$/', '', $tplSrc );
 			if( strlen($tplSrc) && strpos($tplSrc, '<') === 0 && preg_match('/\\>$/s', $tplSrc) ){
-				// TODO: RootElementsの数を数える
-				// var htmlparser = require('htmlparser');
-				// var handler = new htmlparser.DefaultHandler(function (error, dom) {
-				// 	// var_dump('htmlparser callback');
-				// 	if (error){
-				// 		// var_dump(error);
-				// 	}
-				// });
-				// // var_dump('htmlparser after');
-				// var parser = new htmlparser.Parser(handler);
-				// parser.parseComplete(tplSrc);
-				// // var_dump(handler.dom);
+				// HTMLをパース
+				$simple_html_dom = str_get_html(
+					$tplSrc ,
+					false, // $lowercase
+					false, // $forceTagsClosed
+					DEFAULT_TARGET_CHARSET, // $target_charset
+					false, // $stripRN
+					DEFAULT_BR_TEXT, // $defaultBRText
+					DEFAULT_SPAN_TEXT // $defaultSpanText
+				);
 
-				// if( handler.dom.length == 1 ){
-				// 	$this->isSingleRootElement = true;
-				// }
+				if($simple_html_dom === false){
+					// HTMLパースに失敗
+				}else{
+					$simple_html_dom_ret = $simple_html_dom->find('>*');
+					if( count($simple_html_dom_ret) === 1 ){
+						$this->isSingleRootElement = true;
+					}
+				}
 			}
 		}
 
@@ -401,8 +419,8 @@ class classModule{
 
 		}else{
 			// Broccoliエンジン利用の処理
-			$src = $this->parseBroccoliTemplate($src, $_topThis);
-			return $src;
+			$this->parseBroccoliTemplate($src, $_topThis);
+			return true;
 		}
 
 	} // parseTpl()
