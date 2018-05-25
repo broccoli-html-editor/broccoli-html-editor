@@ -24,7 +24,7 @@ class classModule{
 	private $realpath;
 
 	/** values */
-	private	$subModName,
+	public	$subModName,
 			$isSingleRootElement,
 			$isSystemModule,
 			$templateFilename,

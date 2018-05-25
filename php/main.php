@@ -480,6 +480,64 @@ class broccoliHtmlEditor{
 	}
 
 	/**
+	 * 全モジュールの一覧を取得する
+	 * @param  {Function} callback  callback function.
+	 * @return {Object}             this
+	 */
+	public function getAllModuleList(){
+		static $_allModuleList = null;
+		if( $_allModuleList ){
+			return $_allModuleList;
+		}
+
+		$modules = $this->paths_module_template;
+		$data = array('tmp'=>array(), 'rtn'=>array());
+
+		$list = $this->getPackageList();
+		$data['tmp']['_sys/root'] = $this->createModuleInstance('_sys/root');
+		$data['tmp']['_sys/unknown'] = $this->createModuleInstance('_sys/unknown');
+		$data['tmp']['_sys/html'] = $this->createModuleInstance('_sys/html');
+
+		foreach( $list as $pkgId=>$pkg ){
+			foreach( $list[$pkgId]['categories'] as $catId=>$cat ){
+				foreach( $list[$pkgId]['categories'][$catId]['modules'] as $modId=>$mod ){
+					$data['tmp'][$mod['moduleId']] = $this->createModuleInstance($mod['moduleId']);
+				}
+			}
+		}
+
+		foreach( $data['tmp'] as $modId=>$obj ){
+			$obj->init();
+			$data['rtn'][$modId] = json_decode('{}');
+			$data['rtn'][$modId]->id = $obj->id;
+			$data['rtn'][$modId]->fields = $obj->fields;
+			$data['rtn'][$modId]->isSystemModule = $obj->isSystemModule;
+			$data['rtn'][$modId]->isSingleRootElement = $obj->isSingleRootElement;
+			$data['rtn'][$modId]->templateType = $obj->templateType;
+			$data['rtn'][$modId]->template = $obj->template;
+			$data['rtn'][$modId]->info = $obj->info;
+			if($obj->subModule){
+				$data['rtn'][$modId]->subModule = array();
+				foreach( $obj->subModule as $idx=>$row ){
+					$data['rtn'][$modId]->subModule[$idx] = json_decode('{}');
+					// var_dump($data['rtn'][$modId]->subModule[$idx]);
+					// var_dump($obj->subModule[$idx]);
+					$data['rtn'][$modId]->subModule[$idx]->id = $obj->subModule[$idx]->id;
+					$data['rtn'][$modId]->subModule[$idx]->subModName = $obj->subModule[$idx]->subModName;
+					$data['rtn'][$modId]->subModule[$idx]->fields = $obj->subModule[$idx]->fields;
+					$data['rtn'][$modId]->subModule[$idx]->isSystemModule = $obj->subModule[$idx]->isSystemModule;
+					$data['rtn'][$modId]->subModule[$idx]->isSingleRootElement = $obj->subModule[$idx]->isSingleRootElement;
+					$data['rtn'][$modId]->subModule[$idx]->templateType = $obj->subModule[$idx]->templateType;
+					$data['rtn'][$modId]->subModule[$idx]->template = $obj->subModule[$idx]->template;
+					$data['rtn'][$modId]->subModule[$idx]->info = $obj->subModule[$idx]->info;
+				}
+			}
+		}
+	
+		return $data['rtn'];
+	}
+
+	/**
 	 * class: モジュール
 	 * @param  {String}   moduleId モジュールID
 	 * @param  {Object}   options  Options
@@ -492,4 +550,27 @@ class broccoliHtmlEditor{
 		return $rtn;
 	}
 
+	/**
+	 * モジュールのCSSをビルドする
+	 */
+	public function buildModuleCss(){
+		$builder = new buildModuleResources( $this );
+		return $builder->buildCss();
+	}
+
+	/**
+	 * モジュールのJavaScriptをビルドする
+	 */
+	public function buildModuleJs(){
+		$builder = new buildModuleResources( $this );
+		return $builder->buildJs();
+	}
+
+	/**
+	 * ログファイルにメッセージを出力する
+	 */
+	public function log($msg){
+		$this->options['log']($msg);
+		return;
+	}
 }

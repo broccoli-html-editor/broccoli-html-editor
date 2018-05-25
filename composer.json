@@ -22,7 +22,9 @@
         "php": ">=5.4.0",
         "tomk79/filesystem": "^1.0",
         "tomk79/langbank": "^0.0.3",
-        "michelf/php-markdown": "^1.8"
+        "michelf/php-markdown": "^1.8",
+        "twig/twig": "^1.35",
+        "leafo/scssphp": "^0.7.6"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.1.0"
@@ -33,6 +35,7 @@
             "php/fieldBase.php",
             "php/resourceMgr.php",
             "php/classModule.php",
+            "php/buildModuleResources.php",
             "fields/php/href.php",
             "fields/php/html_attr_text.php",
             "fields/php/html.php",
