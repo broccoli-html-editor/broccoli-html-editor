@@ -215,21 +215,21 @@ class mainTest extends PHPUnit_Framework_TestCase{
 		// var_dump( $src );
 
 
-		// // editpageをfinalizeモードでビルドする
-		// $broccoli = testHelper::makeDefaultBroccoli(array(
-		// 	'contents_id' => 'editpage/index',
-		// ));
-		// $data = json_decode( file_get_contents(__DIR__.'/testdata/htdocs/editpage/index_files/guieditor.ignore/data.json') );
-		// // var_dump($data);
-		// $dataBowlMain = @$data->bowl->main;
-		// list( $html, $err ) = $broccoli->buildBowl(
-		// 	$dataBowlMain ,
-		// 	array(
-		// 		'mode' => 'finalize'
-		// 	)
-		// );
-		// file_put_contents(__DIR__.'/testdata/htdocs/test2/index.html', $html);
-		// // var_dump( $html );
+		// editpageをfinalizeモードでビルドする
+		$broccoli = testHelper::makeDefaultBroccoli(array(
+			'contents_id' => 'editpage/index',
+		));
+		$data = json_decode( file_get_contents(__DIR__.'/testdata/htdocs/editpage/index_files/guieditor.ignore/data.json') );
+		// var_dump($data);
+		$dataBowlMain = @$data->bowl->main;
+		list( $html, $err ) = $broccoli->buildBowl(
+			$dataBowlMain ,
+			array(
+				'mode' => 'finalize'
+			)
+		);
+		file_put_contents(__DIR__.'/testdata/htdocs/test2/index.html', $html);
+		// var_dump( $html );
 
 
 		// // editpageをcanvasモードでビルドする

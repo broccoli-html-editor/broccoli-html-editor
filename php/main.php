@@ -144,6 +144,60 @@ class broccoliHtmlEditor{
 		}
 	}
 
+	// /**
+	//  * 汎用API
+	//  * @param  {[type]}   api      [description]
+	//  * @param  {[type]}   options  [description]
+	//  * @param  {Function} callback [description]
+	//  * @return {[type]}            [description]
+	//  */
+	// this.gpi = function(api, options, callback){
+	// 	var gpi = require( __dirname+'/gpi.js' );
+	// 	gpi(
+	// 		this,
+	// 		api,
+	// 		options,
+	// 		function(rtn){
+	// 			callback(rtn);
+	// 		}
+	// 	);
+	// 	return this;
+	// }
+
+	// /**
+	//  * アプリケーションの実行モード設定を取得する (同期)
+	//  * @return string 'web'|'desktop'
+	//  */
+	// this.getAppMode = function(){
+	// 	var rtn = this.options.appMode;
+	// 	switch(rtn){
+	// 		case 'web':
+	// 		case 'desktop':
+	// 			break;
+	// 		default:
+	// 			rtn = 'web';
+	// 			break;
+	// 	}
+	// 	return rtn;
+	// }
+
+	// /**
+	//  * field定義を取得する
+	//  * @param  {String} fieldType フィールドの種類(text, html, markdown, multitext, etc...)
+	//  * @return {Object}           inputフィールドの定義オブジェクト
+	//  */
+	// this.getFieldDefinition = function(fieldType){
+	// 	var fieldDefinition = this.fieldDefinitions[fieldType];
+	// 	if( this.fieldDefinitions[fieldType] ){
+	// 		// 定義済みのフィールドを返す
+	// 		fieldDefinition = this.fieldDefinitions[fieldType];
+	// 	}else{
+	// 		// 定義がない場合は、デフォルトのfield定義を返す
+	// 		fieldDefinition = this.fieldBase;
+	// 	}
+	// 	return fieldDefinition;
+	// }
+
 	/**
 	 * モジュールIDを分解する
 	 */
@@ -168,6 +222,11 @@ class broccoliHtmlEditor{
 		}
 		return $rtn;
 	}
+
+	// /**
+	//  * インスタンスパスの末尾の連番を1つ進める
+	//  */
+	// this.incrementInstancePath = require('./fncs/incrementInstancePath.js');
 
 	/**
 	 * モジュールの絶対パスを取得する
@@ -440,46 +499,6 @@ class broccoliHtmlEditor{
 	}
 
 	/**
-	 * モジュールオブジェクトを取得する
-	 * @param  {String}   moduleId モジュールID
-	 * @param  {String}   subModName サブモジュール名
-	 * @param  {Function} callback  callback function.
-	 * @return {Object}            this
-	 */
-	private function getModule($moduleId, $subModName){
-		$rtn = @$this->_moduleCollection[$moduleId];
-		if( $rtn === false ){
-			// 過去に生成を試みて、falseになっていた場合
-			return false;
-		}
-		if( is_null($rtn) ){
-			$mod = $this->createModuleInstance($moduleId);
-			$this->_moduleCollection[$moduleId] = $mod;
-			if( $this->_moduleCollection[$moduleId] === false ){
-				// falseの場合、該当するモジュールが定義されていない。
-				// 結果を記憶して、falseを返す。
-				return false;
-			}
-			$this->_moduleCollection[$moduleId]->init();
-			$rtn = $this->_moduleCollection[$moduleId];
-			if( is_string($subModName) ){
-				return $rtn['subModule'][$subModName];
-			}
-			return $rtn;
-		}
-		if( is_string($subModName) ){
-			if( !$rtn['subModule'] || !$rtn['subModule'][$subModName] ){
-				var_dump('Undefined subModule "'.$subModName.'" was called.');
-				return false;
-			}
-
-			return $rtn['subModule'][$subModName];
-		}
-
-		return $rtn;
-	}
-
-	/**
 	 * 全モジュールの一覧を取得する
 	 * @param  {Function} callback  callback function.
 	 * @return {Object}             this
@@ -549,6 +568,181 @@ class broccoliHtmlEditor{
 		$rtn = new classModule($this, $moduleId, $options);
 		return $rtn;
 	}
+
+	/**
+	 * モジュールオブジェクトを取得する
+	 * @param  {String}   moduleId モジュールID
+	 * @param  {String}   subModName サブモジュール名
+	 * @param  {Function} callback  callback function.
+	 * @return {Object}            this
+	 */
+	private function getModule($moduleId, $subModName){
+		$rtn = @$this->_moduleCollection[$moduleId];
+		if( $rtn === false ){
+			// 過去に生成を試みて、falseになっていた場合
+			return false;
+		}
+		if( is_null($rtn) ){
+			$mod = $this->createModuleInstance($moduleId);
+			$this->_moduleCollection[$moduleId] = $mod;
+			if( $this->_moduleCollection[$moduleId] === false ){
+				// falseの場合、該当するモジュールが定義されていない。
+				// 結果を記憶して、falseを返す。
+				return false;
+			}
+			$this->_moduleCollection[$moduleId]->init();
+			$rtn = $this->_moduleCollection[$moduleId];
+			if( is_string($subModName) ){
+				return $rtn['subModule'][$subModName];
+			}
+			return $rtn;
+		}
+		if( is_string($subModName) ){
+			if( !$rtn['subModule'] || !$rtn['subModule'][$subModName] ){
+				var_dump('Undefined subModule "'.$subModName.'" was called.');
+				return false;
+			}
+
+			return $rtn['subModule'][$subModName];
+		}
+
+		return $rtn;
+	}
+
+	// /**
+	//  * マークダウン処理
+	//  */
+	// this.markdown = function(md, options, callback){
+	// 	callback = callback||function(){};
+	// 	var marked = require('marked');
+	// 	marked.setOptions({
+	// 		renderer: new marked.Renderer(),
+	// 		gfm: true,
+	// 		tables: true,
+	// 		breaks: false,
+	// 		pedantic: false,
+	// 		sanitize: false,
+	// 		smartLists: true,
+	// 		smartypants: false
+	// 	});
+
+	// 	if(typeof(md)===typeof('')){
+	// 		md = marked(md);
+	// 	}
+	// 	new Promise(function(rlv){rlv();})
+	// 		.then(function(){ return new Promise(function(rlv, rjt){
+	// 			callback(md);
+	// 		}); })
+	// 	;
+	// 	return this;
+	// }
+
+	/**
+	 * HTMLをビルドする
+	 * ビルドしたHTMLは、callback() に文字列として渡されます。
+	 * realpathに指定したファイルは自動的に上書きされません。
+	 *
+	 * @param  {Object}   data     コンテンツデータ
+	 * @param  {Object}   options  オプション
+	 *                             - options.mode = ビルドモード(finalize=製品版ビルド, canvas=編集画面用ビルド)
+	 *                             - options.instancePath = インスタンスパス
+	 * @param  {Function} callback callback function.
+	 * @return {Object}            this
+	 */
+	public function buildBowl( $data, $options ){
+		$buildBowl = new buildBowl($this, $data, $options);
+		return $buildBowl->build();
+	}
+
+	// /**
+	//  * HTMLをすべてビルドする
+	//  * ビルドしたHTMLは、callback() に文字列として渡されます。
+	//  * realpathに指定したファイルは自動的に上書きされません。
+	//  *
+	//  * @param  {Object}   options  オプション
+	//  *                             - options.mode = ビルドモード(finalize=製品版ビルド, canvas=編集画面用ビルド)
+	//  *                             - options.bowlList = ボウル名の一覧。data.jsonに含まれていないbowlがある場合、空白の領域としてあわせてビルドされる。
+	//  * @param  {Function} callback callback function.
+	//  * @return {Object}            this
+	//  */
+	// this.buildHtml = function( options, callback ){
+	// 	var dataJson = fs.readFileSync(this.realpathDataDir+'/data.json');
+	// 	try {
+	// 		dataJson = JSON.parse( dataJson );
+	// 	} catch (e) {
+	// 		console.error('ERROR: Failed to parse data.json.', this.realpathDataDir+'/data.json');
+	// 		this.log('ERROR: Failed to parse data.json. '+this.realpathDataDir+'/data.json');
+	// 		dataJson = {};
+	// 	}
+	// 	dataJson.bowl = dataJson.bowl||{};
+	// 	options.bowlList = options.bowlList||[];
+	// 	if( options.bowlList.length ){
+	// 		for( var idx in options.bowlList ){
+	// 			dataJson.bowl[options.bowlList[idx]] = dataJson.bowl[options.bowlList[idx]]||{
+	// 				"modId": "_sys/root",
+	// 				"fields": {
+	// 					"main": []
+	// 				}
+	// 			};
+	// 		}
+	// 	}
+
+	// 	var htmls = {};
+	// 	it79.ary(
+	// 		dataJson.bowl,
+	// 		function(it1, row, idx){
+	// 			options.instancePath = '/bowl.'+idx;
+	// 			_this.buildBowl(row, options, function(html){
+	// 				htmls[idx] = html;
+	// 				it1.next();
+	// 			});
+	// 		},
+	// 		function(){
+	// 			callback(htmls);
+	// 		}
+	// 	);
+	// 	return this;
+	// }
+
+	// /**
+	//  * コンテンツをビルドし、更新する
+	//  *
+	//  * ビルドしたHTMLは、`pathHtml` のファイルに上書き保存されます。
+	//  * リソースも合わせて処理されます。
+	//  *
+	//  * @param  {Function} callback callback function.
+	//  * @return {Object}            this
+	//  */
+	// this.updateContents = function( callback ){
+	// 	callback = callback || function(){};
+	// 	var broccoli = this;
+	// 	broccoli.resourceMgr.getResourceDb(
+	// 		function(resourceDb){
+	// 			broccoli.resourceMgr.save(
+	// 				resourceDb ,
+	// 				function(result){
+	// 					broccoli.buildHtml(
+	// 						{
+	// 							'mode': 'finalize'
+	// 						},
+	// 						function(htmls){
+	// 							broccoli.options.bindTemplate(htmls, function(fin){
+	// 								fs.writeFile(
+	// 									broccoli.realpathHtml ,
+	// 									fin ,
+	// 									function(){
+	// 										callback(true);
+	// 									}
+	// 								);
+	// 							});
+	// 						}
+	// 					);
+	// 				}
+	// 			);
+	// 		}
+	// 	);
+	// 	return this;
+	// }
 
 	/**
 	 * モジュールのCSSをビルドする
