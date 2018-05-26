@@ -66,23 +66,23 @@ class buildBowl{
 			$tplDataObj = array();
 
 			foreach($mod->fields as $fieldName=>$field){
-				if( $field->fieldType == 'input' ){
+				if( @$field->fieldType == 'input' ){
 					// input field
 					$fieldDef = $this->broccoli->getFieldDefinition( $field->type ); // フィールドタイプ定義を呼び出す
 					$tmpVal = '';
 					$tplDataObj[$field->name] = '';
 					$html = $fieldDef->bind( $fieldData[$field->name], $this->options['mode'], $field );
 					$tmpVal .= $html;
-					if( !$field->hidden ){//← "hidden": true だったら、非表示(=出力しない)
+					if( !@$field->hidden ){//← "hidden": true だったら、非表示(=出力しない)
 						$tplDataObj[$field->name] = $tmpVal;
 					}
-					$this->nameSpace->vars[$field->name] = array(
+					@$this->nameSpace->vars[$field->name] = array(
 						"fieldType" => "input",
 						"type" => $field->type,
 						"val" => $tmpVal
 					);
 
-				}elseif( $field->fieldType == 'module' ){
+				}elseif( @$field->fieldType == 'module' ){
 					// module field
 					$opt = json_decode( json_encode($this->options) );
 					$opt->instancePath .= '/fields.'.$field->name;
@@ -110,15 +110,15 @@ class buildBowl{
 						);
 					}
 
-					if( !$field->hidden ){//← "hidden": true だったら、非表示(=出力しない)
+					if( !@$field->hidden ){//← "hidden": true だったら、非表示(=出力しない)
 						$tplDataObj[$field->name] = $tmp_tplDataObj;
 					}
-					$this->nameSpace->vars[$field->name] = array(
+					@$this->nameSpace->vars[$field->name] = array(
 						"fieldType" => "module",
 						"val" => $tmp_tplDataObj
 					);
 
-				}elseif( $field->fieldType == 'loop' ){
+				}elseif( @$field->fieldType == 'loop' ){
 					// loop field
 					$tmpSearchResult = $mod->searchEndTag( $src, 'loop' );
 					$src = $tmpSearchResult['nextSrc'];
@@ -135,7 +135,7 @@ class buildBowl{
 						$html = $this->broccoli->buildBowl($row, $tmpopt );
 						array_push($tplDataObj[$field->name], $html);
 					}
-					if( $options['mode'] == 'canvas' ){
+					if( $this->options['mode'] == 'canvas' ){
 						$tmpopt = json_decode( json_encode($opt) );
 						if(is_array($fieldData[$field['name']])){ $fieldData[$field->name] = array(); }
 						$tmpopt->instancePath .= '@'.(count($fieldData[$field->name]));
@@ -149,15 +149,16 @@ class buildBowl{
 				$d->html = $tplDataObj;
 			}else{
 				// 環境変数登録
-				$tplDataObj->_ENV = array(
-					"mode" => $options['mode']
+				$tplDataObj['_ENV'] = array(
+					"mode" => $this->options['mode']
 				);
 
 				// PHP版は、ejs ではなく twig に対応
 				$loader = new \Twig_Loader_Array(array(
 					'index' => $src,
 				));
-				$twig = new \Twig_Environment($loader);
+				$twig = new \Twig_Environment($loader, array('debug'=>true));
+				$twig->addExtension(new \Twig_Extension_Debug());
 				$rtn = $twig->render('index', $tplDataObj);
 
 				if( !is_string($rtn) ){
@@ -199,9 +200,9 @@ class buildBowl{
 					$tmpValFin = '';
 
 					$fieldDef;
-					if( $this->broccoli->fieldDefinitions($field->input->type) ){
+					if( $this->broccoli->getFieldDefinition($field->input->type) ){
 						// フィールドタイプ定義を呼び出す
-						$fieldDef = $this->broccoli->fieldDefinitions($field->input->type);
+						$fieldDef = $this->broccoli->getFieldDefinition($field->input->type);
 					}else{
 						// ↓未定義のフィールドタイプの場合のデフォルトの挙動
 						$fieldDef = $this->broccoli->fieldBase();
@@ -316,7 +317,7 @@ class buildBowl{
 					// もうちょっとマシな条件の書き方がありそうな気がするが、あとで考える。
 					// → 2015-04-25: cond のルールを追加。
 					$tmpSearchResult = $mod->searchEndTag( $src, 'if' );
-					$tmpFncIfContentList = function($field, $src){
+					$tmpFncIfContentList = function($field, $src)use($mod){
 						// ifフィールド内の構造(elseif, else) を解析する
 						$contentList = array();
 						$currentFieldName = 'if';
@@ -324,83 +325,82 @@ class buildBowl{
 						$currentField = $field->if;
 						$subFieldStr = null;
 						$subField = null;
-						// while(1){
-						// 	if( !src.match( new RegExp('^((?:.|\r|\n)*?)\\{\\&((?:.|\r|\n)*?)\\&\\}((?:.|\r|\n)*)$') ) ){
-						// 		currentSrc += src;
-						// 		contentList.push({
-						// 			fieldName : currentFieldName,
-						// 			field : currentField,
-						// 			content : currentSrc
-						// 		});
-						// 		break;
-						// 	}
-						// 	currentSrc += RegExp.$1;
-						// 	subFieldStr = RegExp.$2;
-						// 	try{
-						// 		subField = json_decode( subFieldStr );
-						// 	}catch(e){
-						// 		subField = {'input':{
-						// 			'type':'html',
-						// 			'name':'__error__'
-						// 		}};
-						// 	}
-						// 	src = RegExp.$3;
+						while(1){
+							if( !preg_match( '/^((?:.|\r|\n)*?)\\{\\&((?:.|\r|\n)*?)\\&\\}((?:.|\r|\n)*)$/', $src, $matched ) ){
+								$currentSrc .= $src;
+								array_push($contentList, array(
+									"fieldName" => $currentFieldName,
+									"field" => $currentField,
+									"content" => $currentSrc
+								));
+								break;
+							}
+							$currentSrc .= $matched[1];
+							$subFieldStr = $matched[2];
+							$subField = json_decode( $subFieldStr );
+							if( is_null($subField) ){
+								$subField = json_decode(json_encode(array('input'=>array(
+									'type'=>'html',
+									'name'=>'__error__'
+								))));
+							}
+							$src = $matched[3];
 
-						// 	if( subField === "else" ){
-						// 		// elseフィールド
-						// 		src = src.replace(/^(?:\r\n|\r|\n)/g, '');
-						// 		contentList.push({
-						// 			fieldName : currentFieldName,
-						// 			field : currentField,
-						// 			content : currentSrc
-						// 		});
-						// 		currentFieldName = 'else';
-						// 		currentField = undefined;
-						// 		currentSrc = '';
+							if( $subField === "else" ){
+								// elseフィールド
+								$src = preg_replace('/^(?:\r\n|\r|\n)/s', '', $src);
+								array_push($contentList, array(
+									'fieldName' => $currentFieldName,
+									'field' => $currentField,
+									'content' => $currentSrc
+								));
+								$currentFieldName = 'else';
+								$currentField = null;
+								$currentSrc = '';
 
-						// 	}elseif( typeof(subField) === typeof("") ){
-						// 		// end系: 無視
+							}elseif( is_string($subField) ){
+								// end系: 無視
 
-						// 	}elseif( subField.elseif ){
-						// 		// elseifフィールド
-						// 		src = src.replace(/^(?:\r\n|\r|\n)/g, '');
-						// 		contentList.push({
-						// 			fieldName : currentFieldName,
-						// 			field : currentField,
-						// 			content : currentSrc
-						// 		});
-						// 		currentFieldName = 'elseif';
-						// 		currentField = subField.elseif;
-						// 		currentSrc = '';
+							}elseif( @$subField->elseif ){
+								// elseifフィールド
+								$src = preg_replace('/^(?:\r\n|\r|\n)/s', '', $src);
+								array_push($contentList, array(
+									'fieldName' => $currentFieldName,
+									'field' => $currentField,
+									'content' => $currentSrc
+								));
+								$currentFieldName = 'elseif';
+								$currentField = $subField->elseif;
+								$currentSrc = '';
 
-						// 	}elseif( subField.if ){
-						// 		// ネストされた ifフィールド
-						// 		currentSrc += '{&'+subFieldStr+'&}';
-						// 		var tmpSearchResult = mod.searchEndTag( src, 'if' );
-						// 		currentSrc += tmpSearchResult.content;
-						// 		currentSrc += '{&"endif"&}';
-						// 		src = tmpSearchResult.nextSrc;
+							}elseif( @$subField->if ){
+								// ネストされた ifフィールド
+								$currentSrc .= '{&'.$subFieldStr.'&}';
+								$tmpSearchResult = $mod->searchEndTag( $src, 'if' );
+								$currentSrc .= $tmpSearchResult['content'];
+								$currentSrc .= '{&"endif"&}';
+								$src = $tmpSearchResult['nextSrc'];
 
-						// 	}else{
-						// 		// その他すべて
-						// 		currentSrc += '{&'+subFieldStr+'&}';
-						// 	}
-						// 	continue;
-						// }
+							}else{
+								// その他すべて
+								$currentSrc .= '{&'.$subFieldStr.'&}';
+							}
+							continue;
+						}
 						return $contentList;
 					};
 					$tmpIfContentList = $tmpFncIfContentList($field, $tmpSearchResult['content']);
-					// var_dump(tmpIfContentList);
+					// var_dump($tmpIfContentList);
 
 					$src = '';
 					foreach($tmpIfContentList as $idx=>$row){
-						if($tmpIfContentList[$idx]->fieldName == 'else'){
-							$src .= $tmpIfContentList[$idx]->content;
+						if($tmpIfContentList[$idx]['fieldName'] == 'else'){
+							$src .= $tmpIfContentList[$idx]['content'];
 							break;
 						}
-						$boolResult = $this->evaluateIfFieldCond($tmpIfContentList[$idx]->field);
+						$boolResult = $this->evaluateIfFieldCond($tmpIfContentList[$idx]['field']);
 						if( $boolResult ){
-							$src .= $tmpIfContentList[$idx]->content;
+							$src .= $tmpIfContentList[$idx]['content'];
 							break;
 						}
 					}

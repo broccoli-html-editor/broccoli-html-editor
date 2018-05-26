@@ -30,7 +30,10 @@ class fieldBase{
 	 * データをバインドする (Server Side)
 	 */
 	public function bind( $fieldData, $mode, $mod ){
-		$rtn = ''.$fieldData;
+		$rtn = '';
+		if( is_string($fieldData) || is_null($fieldData) || is_int($fieldData) || is_float($fieldData) ){
+			$rtn = ''.$fieldData;
+		}
 		if( $mode == 'canvas' && !strlen($rtn) ){
 			$rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてHTMLコードを編集してください)</span>';
 		}

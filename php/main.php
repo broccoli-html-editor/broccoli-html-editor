@@ -68,14 +68,6 @@ class broccoliHtmlEditor{
 	}
 
 	/**
-	 * $fieldDefinitions
-	 * @return object fieldDefinitions Object.
-	 */
-	public function fieldDefinitions($fieldId){
-		return $this->fieldDefinitions[$fieldId];
-	}
-
-	/**
 	 * $resourceMgr
 	 * @return object Resource Manager Object.
 	 */
@@ -197,22 +189,22 @@ class broccoliHtmlEditor{
 	// 	return rtn;
 	// }
 
-	// /**
-	//  * field定義を取得する
-	//  * @param  {String} fieldType フィールドの種類(text, html, markdown, multitext, etc...)
-	//  * @return {Object}           inputフィールドの定義オブジェクト
-	//  */
-	// this.getFieldDefinition = function(fieldType){
-	// 	var fieldDefinition = this.fieldDefinitions[fieldType];
-	// 	if( this.fieldDefinitions[fieldType] ){
-	// 		// 定義済みのフィールドを返す
-	// 		fieldDefinition = this.fieldDefinitions[fieldType];
-	// 	}else{
-	// 		// 定義がない場合は、デフォルトのfield定義を返す
-	// 		fieldDefinition = this.fieldBase;
-	// 	}
-	// 	return fieldDefinition;
-	// }
+	/**
+	 * field定義を取得する
+	 * @param  {String} fieldType フィールドの種類(text, html, markdown, multitext, etc...)
+	 * @return {Object}           inputフィールドの定義オブジェクト
+	 */
+	public function getFieldDefinition($fieldType){
+		$fieldDefinition = $this->fieldDefinitions[$fieldType];
+		if( $this->fieldDefinitions[$fieldType] ){
+			// 定義済みのフィールドを返す
+			$fieldDefinition = $this->fieldDefinitions[$fieldType];
+		}else{
+			// 定義がない場合は、デフォルトのfield定義を返す
+			$fieldDefinition = $this->fieldBase;
+		}
+		return $fieldDefinition;
+	}
 
 	/**
 	 * モジュールIDを分解する
