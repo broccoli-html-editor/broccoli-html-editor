@@ -65,7 +65,7 @@ class classModule{
 		$this->fields = array();
 		$this->subModule = array();
 		$this->templateType = 'broccoli';
-		$this->finalize = function($html){ return $html; };
+		$this->finalize = function($html, $data){ return $html; };
 
 		$this->info = array(
 			'name' => null,
@@ -248,7 +248,7 @@ class classModule{
 	} // parseBroccoliTemplate()
 
 	/** 閉じタグを探す */
-	private function searchEndTag($src, $fieldType){
+	public function searchEndTag($src, $fieldType){
 
 		$rtn = array(
 			'content' => '',

@@ -60,6 +60,22 @@ class broccoliHtmlEditor{
 	}
 
 	/**
+	 * $fieldBase
+	 * @return object fieldBase Object.
+	 */
+	public function fieldBase(){
+		return $this->fieldBase;
+	}
+
+	/**
+	 * $fieldDefinitions
+	 * @return object fieldDefinitions Object.
+	 */
+	public function fieldDefinitions($fieldId){
+		return $this->fieldDefinitions[$fieldId];
+	}
+
+	/**
 	 * $resourceMgr
 	 * @return object Resource Manager Object.
 	 */
@@ -576,7 +592,7 @@ class broccoliHtmlEditor{
 	 * @param  {Function} callback  callback function.
 	 * @return {Object}            this
 	 */
-	private function getModule($moduleId, $subModName){
+	public function getModule($moduleId, $subModName){
 		$rtn = @$this->_moduleCollection[$moduleId];
 		if( $rtn === false ){
 			// 過去に生成を試みて、falseになっていた場合
@@ -593,17 +609,17 @@ class broccoliHtmlEditor{
 			$this->_moduleCollection[$moduleId]->init();
 			$rtn = $this->_moduleCollection[$moduleId];
 			if( is_string($subModName) ){
-				return $rtn['subModule'][$subModName];
+				return $rtn->subModule[$subModName];
 			}
 			return $rtn;
 		}
 		if( is_string($subModName) ){
-			if( !$rtn['subModule'] || !$rtn['subModule'][$subModName] ){
-				var_dump('Undefined subModule "'.$subModName.'" was called.');
+			if( !$rtn->subModule || !$rtn->subModule[$subModName] ){
+				// var_dump('Undefined subModule "'.$subModName.'" was called.');
 				return false;
 			}
 
-			return $rtn['subModule'][$subModName];
+			return $rtn->subModule[$subModName];
 		}
 
 		return $rtn;

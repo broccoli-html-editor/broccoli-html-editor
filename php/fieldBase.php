@@ -14,6 +14,9 @@ class fieldBase{
 	/** $broccoli */
 	private $broccoli;
 
+	/** Field ID */
+	public $__fieldId__;
+
 	/**
 	 * Constructor
 	 */
@@ -22,39 +25,17 @@ class fieldBase{
 	}
 
 
-	// // delete(require.cache[require('path').resolve(__filename)]);
-	// this.__fieldId__ = null;
-	// var Promise = require('es6-promise').Promise;
-	// var _this = this;
-	// var $ = require('jquery');
-	// var utils79 = require('utils79');
-	// var editorLib = null;
-	// try {
-	// 	if(window.ace){
-	// 		editorLib = 'ace';
-	// 	}
-	// } catch (e) {
-	// }
 
-	// /**
-	//  * データをバインドする (Server Side)
-	//  */
-	// this.bind = function( fieldData, mode, mod, callback ){
-	// 	var rtn = '';
-	// 	try {
-	// 		rtn = utils79.toStr(fieldData);
-	// 	} catch (e) {
-	// 		rtn = '[error]'
-	// 	}
-	// 	if( mode == 'canvas' && !rtn.length ){
-	// 		rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてHTMLコードを編集してください)</span>';
-	// 	}
-
-	// 	new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
-	// 		callback(rtn);
-	// 	}); });
-	// 	return this;
-	// }
+	/**
+	 * データをバインドする (Server Side)
+	 */
+	public function bind( $fieldData, $mode, $mod ){
+		$rtn = ''.$fieldData;
+		if( $mode == 'canvas' && !strlen($rtn) ){
+			$rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてHTMLコードを編集してください)</span>';
+		}
+		return $rtn;
+	}
 
 	// /**
 	//  * リソースを加工する (Server Side)
