@@ -409,16 +409,12 @@ class buildBowl{
 					continue;
 
 				}elseif( @$field->echo ){
-					// // echo field
-					// if( $this->nameSpace->vars[field.echo.ref] && $this->nameSpace->vars[field.echo.ref].val ){
-					// 	rtn .= $this->nameSpace->vars[field.echo.ref].val;
-					// }
+					// echo field
+					if( @$this->nameSpace->vars[$field->echo->ref] && @$this->nameSpace->vars[$field->echo->ref]->val ){
+						$rtn .= $this->nameSpace->vars[$field->echo->ref]->val;
+					}
 
-					// buildBroccoliHtml( src, rtn, function(html){
-					// 	callback(html);
-					// } );
-					// return;
-
+					continue;
 				}
 
 			}
@@ -432,127 +428,152 @@ class buildBowl{
 		$html = $finalize( $d->html, $this->data );
 
 
+		// canvasモードのとき、scriptタグは削除する。
+		// scriptの挙動がGUI編集画面を破壊する可能性があるため。
+		if( $this->options['mode'] == 'canvas' ){
+			// HTMLをパース
+			$simple_html_dom = str_get_html(
+				$d->html ,
+				false, // $lowercase
+				false, // $forceTagsClosed
+				DEFAULT_TARGET_CHARSET, // $target_charset
+				false, // $stripRN
+				DEFAULT_BR_TEXT, // $defaultBRText
+				DEFAULT_SPAN_TEXT // $defaultSpanText
+			);
+
+			if($simple_html_dom === false){
+				// HTMLパースに失敗
+			}else{
+				$simple_html_dom_ret = $simple_html_dom->find('script');
+				foreach( $simple_html_dom_ret as $simple_html_dom_ret_node ){
+					$simple_html_dom_ret_node->outertext = '<div style="color:#eee; background-color: #f00; border: 3px solid #f00; text-align: center;">script element</div>';
+				}
+				$d->html = $simple_html_dom->outertext;
+			}
+		}
 
 
-		// it79.fnc(
-		// 	{},
-		// 	[
-		// 		function(it1, d){
-		// 			// canvasモードのとき、scriptタグは削除する。
-		// 			// scriptの挙動がGUI編集画面を破壊する可能性があるため。
-		// 			if( options.mode == 'canvas' ){
-		// 				var $ = cheerio.load(d.html, {decodeEntities: false});
-		// 				var $script = $('script');
-		// 				$script.each(function(idx, elm){
-		// 					$(this).replaceWith( $('<div style="color:#eee; background-color: #f00; border: 3px solid #f00; text-align: center;">script element</div>') );
-		// 				});
-		// 				d.html = $.html();
-		// 			}
-		// 			it1.next(d);
-		// 			return;
-		// 		} ,
-		// 		function(it1, d){
-		// 			if(typeof(d.html) !== typeof('')){
-		// 				// var_dump(d.html);
-		// 				it1.next(d);
-		// 				return;
-		// 			}
-		// 			if( options.mode == 'canvas' ){
-		// 				// var_dump( d.html );
+		if(is_string($d->html)){
+			// if( $this->options['mode'] == 'canvas' ){
+			// 	// var_dump( $d->html );
 
-		// 				var isSingleRootElement = (function(tplSrc){
-		// 					if( options['instancePath'].match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
-		// 						return false;
-		// 					}
-		// 					tplSrc = tplSrc.replace( new RegExp('\\<\\!\\-\\-[\\s\\S]*?\\-\\-\\>','g'), '' );
-		// 					tplSrc = tplSrc.replace( new RegExp('\\{\\&[\\s\\S]*?\\&\\}','g'), '' );
-		// 					tplSrc = tplSrc.replace( new RegExp('\\r\\n|\\r|\\n','g'), '' );
-		// 					tplSrc = tplSrc.replace( new RegExp('\\t','g'), '' );
-		// 					tplSrc = tplSrc.replace( new RegExp('^[\\s\\r\\n]*'), '' );
-		// 					tplSrc = tplSrc.replace( new RegExp('[\\s\\r\\n]*$'), '' );
+			// 	$isSingleRootElement = function($tplSrc){
+			// 		if( $this->options['instancePath'].match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
+			// 			return false;
+			// 		}
+			// 		$tplSrc .= $tplSrc.replace( new RegExp('\\<\\!\\-\\-[\\s\\S]*?\\-\\-\\>','g'), '' );
+			// 		$tplSrc .= $tplSrc.replace( new RegExp('\\{\\&[\\s\\S]*?\\&\\}','g'), '' );
+			// 		$tplSrc .= $tplSrc.replace( new RegExp('\\r\\n|\\r|\\n','g'), '' );
+			// 		$tplSrc .= $tplSrc.replace( new RegExp('\\t','g'), '' );
+			// 		$tplSrc .= $tplSrc.replace( new RegExp('^[\\s\\r\\n]*'), '' );
+			// 		$tplSrc .= $tplSrc.replace( new RegExp('[\\s\\r\\n]*$'), '' );
 
-		// 					if( tplSrc.length && tplSrc.indexOf('<') === 0 && tplSrc.match(new RegExp('\\>$')) ){
-		// 						var htmlparser = require('htmlparser');
-		// 						var handler = new htmlparser.DefaultHandler(function (error, dom) {
-		// 							// var_dump('htmlparser callback');
-		// 							if (error){
-		// 								// var_dump(error);
-		// 							}
-		// 						});
-		// 						// var_dump('htmlparser after');
-		// 						var parser = new htmlparser.Parser(handler);
-		// 						parser.parseComplete(tplSrc);
-		// 						// var_dump(tplSrc);
-		// 						// var_dump(handler.dom);
+			// 		if( tplSrc.length && tplSrc.indexOf('<') === 0 && tplSrc.match(new RegExp('\\>$')) ){
+			// 			var htmlparser = require('htmlparser');
+			// 			var handler = new htmlparser.DefaultHandler(function (error, dom) {
+			// 				// var_dump('htmlparser callback');
+			// 				if (error){
+			// 					// var_dump(error);
+			// 				}
+			// 			});
+			// 			// var_dump('htmlparser after');
+			// 			var parser = new htmlparser.Parser(handler);
+			// 			parser.parseComplete(tplSrc);
+			// 			// var_dump(tplSrc);
+			// 			// var_dump(handler.dom);
 
-		// 						if( handler.dom.length == 1 ){
-		// 							// var_dump('------------------------------------------------------');
-		// 							// var_dump(tplSrc);
-		// 							return true;
-		// 						}
-		// 					}
-		// 					return false;
+			// 			if( handler.dom.length == 1 ){
+			// 				// var_dump('------------------------------------------------------');
+			// 				// var_dump(tplSrc);
+			// 				return true;
+			// 			}
+			// 		}
+			// 		return false;
 
-		// 				})(d.html);
+			// 	};
+			// 	$isSingleRootElement = $isSingleRootElement($d->html);
 
-		// 				if( isSingleRootElement ){
-		// 					var $ = cheerio.load(d.html, {decodeEntities: false});
-		// 					var $1stElm = $('*').eq(0);
-		// 					$1stElm.attr({ 'data-broccoli-instance-path': options['instancePath'] });
-		// 					if( options.subModName ){
-		// 						$1stElm.attr({ 'data-broccoli-sub-mod-name': options.subModName });
-		// 					}
-		// 					$1stElm.attr({ 'data-broccoli-area-size-detection': (mod.info.areaSizeDetection||'shallow') });
-		// 					$1stElm.attr({ 'data-broccoli-module-name': (mod.info.name||$mod->id) });
-		// 					d.html = $.html();
-		// 				}else{
-		// 					var html = '';
-		// 					html += '<div';
-		// 					html += ' data-broccoli-instance-path="'+htmlspecialchars(options['instancePath'])+'"';
-		// 					if( options.subModName ){
-		// 						html += ' data-broccoli-sub-mod-name="'+htmlspecialchars(options.subModName)+'"';
-		// 					}
-		// 					html += ' data-broccoli-area-size-detection="'+htmlspecialchars((mod.info.areaSizeDetection||'shallow'))+'"';
-		// 					// html += ' data-broccoli-is-single-root-element="'+(isSingleRootElement?'yes':'no')+'"';
-		// 					html += ' data-broccoli-module-name="'+htmlspecialchars((mod.info.name||$mod->id))+'"';
-		// 					html += '>';
-		// 					html += d.html;
-		// 					html += '</div>';
-		// 					d.html = html;
-		// 				}
-		// 			}
-		// 			it1.next(d);
-		// 		} ,
-		// 		function(it1, d){
-		// 			if(typeof(d.html) !== typeof('')){
-		// 				// var_dump(d.html);
-		// 				it1.next(d);
-		// 				return;
-		// 			}
+			// 	if( $isSingleRootElement ){
+			// 		var $ = cheerio.load($d->html, {decodeEntities: false});
+			// 		var $1stElm = $('*').eq(0);
+			// 		$1stElm.attr({ 'data-broccoli-instance-path': options['instancePath'] });
+			// 		if( $this->options['subModName'] ){
+			// 			$1stElm.attr({ 'data-broccoli-sub-mod-name': $this->options['subModName'] });
+			// 		}
+			// 		$1stElm.attr({ 'data-broccoli-area-size-detection': (mod.info.areaSizeDetection||'shallow') });
+			// 		$1stElm.attr({ 'data-broccoli-module-name': (mod.info.name||$mod->id) });
+			// 		$d->html = $.html();
+			// 	}else{
+			// 		$tmp_html = '';
+			// 		$tmp_html .= '<div';
+			// 		$tmp_html .= ' data-broccoli-instance-path="'.htmlspecialchars($this->options['instancePath']).'"';
+			// 		if( $this->options['subModName'] ){
+			// 			$tmp_html .= ' data-broccoli-sub-mod-name="'.htmlspecialchars($this->options['subModName']).'"';
+			// 		}
+			// 		$tmp_html .= ' data-broccoli-area-size-detection="'.htmlspecialchars((mod.info.areaSizeDetection||'shallow')).'"';
+			// 		// $tmp_html .= ' data-broccoli-is-single-root-element="'+(isSingleRootElement?'yes':'no').'"';
+			// 		$tmp_html .= ' data-broccoli-module-name="'.htmlspecialchars((mod.info.name||$mod->id)).'"';
+			// 		$tmp_html .= '>';
+			// 		$tmp_html .= $d->html;
+			// 		$tmp_html .= '</div>';
+			// 		$d->html = $tmp_html;
+			// 	}
+			// }
+		}
 
-		// 			if( data.dec ){
-		// 				var $ = cheerio.load(d.html, {decodeEntities: false});
-		// 				var $1stElm = $('*').eq(0);
-		// 				$1stElm.attr({ 'data-dec': data.dec });
-		// 				d.html = $.html();
-		// 			}
-		// 			if( data.anchor ){
-		// 				var $ = cheerio.load(d.html, {decodeEntities: false});
-		// 				var $1stElm = $('*').eq(0);
-		// 				$1stElm.attr({ 'id': data.anchor });
-		// 				d.html = $.html();
-		// 			}
 
-		// 			it1.next(d);
-		// 		} ,
-		// 		function(it1, d){
-		// 			// var_dump('--------------');
-		// 			// var_dump(d);
-		// 			callback(d.html);
-		// 			it1.next(d);
-		// 		}
-		// 	]
-		// );
+
+		if(is_string($d->html)){
+			if( @$this->data->dec ){
+				// HTMLをパース
+				$simple_html_dom = str_get_html(
+					$d->html ,
+					false, // $lowercase
+					false, // $forceTagsClosed
+					DEFAULT_TARGET_CHARSET, // $target_charset
+					false, // $stripRN
+					DEFAULT_BR_TEXT, // $defaultBRText
+					DEFAULT_SPAN_TEXT // $defaultSpanText
+				);
+
+				if($simple_html_dom === false){
+					// HTMLパースに失敗
+				}else{
+					$attr = 'data-dec';
+					$simple_html_dom_ret = $simple_html_dom->find('*');
+					foreach( $simple_html_dom_ret as $simple_html_dom_ret_node ){
+						$simple_html_dom_ret_node->$attr = $this->data->dec;
+						break;
+					}
+					$d->html = $simple_html_dom->outertext;
+				}
+			}
+			if( @$this->data->anchor ){
+				// HTMLをパース
+				$simple_html_dom = str_get_html(
+					$d->html ,
+					false, // $lowercase
+					false, // $forceTagsClosed
+					DEFAULT_TARGET_CHARSET, // $target_charset
+					false, // $stripRN
+					DEFAULT_BR_TEXT, // $defaultBRText
+					DEFAULT_SPAN_TEXT // $defaultSpanText
+				);
+
+				if($simple_html_dom === false){
+					// HTMLパースに失敗
+				}else{
+					$attr = 'id';
+					$simple_html_dom_ret = $simple_html_dom->find('*');
+					foreach( $simple_html_dom_ret as $simple_html_dom_ret_node ){
+						$simple_html_dom_ret_node->$attr = $this->data->anchor;
+						break;
+					}
+					$d->html = $simple_html_dom->outertext;
+				}
+			}
+		}
 
 		return $d->html;
 	}
@@ -586,8 +607,8 @@ class buildBowl{
 				}
 
 				$rtn .= '<div';
-				$rtn .= ' data-broccoli-instance-path="'+htmlspecialchars($param->instancePath)+'"';
-				$rtn .= ' data-broccoli-mod-id="'+htmlspecialchars($param->modId)+'"';
+				$rtn .= ' data-broccoli-instance-path="'.htmlspecialchars($param->instancePath).'"';
+				$rtn .= ' data-broccoli-mod-id="'.htmlspecialchars($param->modId).'"';
 				$rtn .= ' data-broccoli-is-appender="yes"';
 				$rtn .= ' style="';
 				$rtn .=     'height:auto;';
@@ -612,9 +633,9 @@ class buildBowl{
 
 			case 'loop':
 				$rtn .= '<div';
-				$rtn .= ' data-broccoli-instance-path="'+htmlspecialchars($param->instancePath)+'"';
-				$rtn .= ' data-broccoli-mod-id="'+htmlspecialchars($param->modId)+'"';
-				$rtn .= ' data-broccoli-sub-mod-name="'+htmlspecialchars($param->subModName)+'"';
+				$rtn .= ' data-broccoli-instance-path="'.htmlspecialchars($param->instancePath).'"';
+				$rtn .= ' data-broccoli-mod-id="'.htmlspecialchars($param->modId).'"';
+				$rtn .= ' data-broccoli-sub-mod-name="'.htmlspecialchars($param->subModName).'"';
 				$rtn .= ' data-broccoli-is-appender="yes"';
 				$rtn .= ' style="';
 				$rtn .=     'overflow:hidden;';
@@ -664,7 +685,7 @@ class buildBowl{
 		// 						break;
 		// 					}
 		// 				}elseif( tmpMethod == 'is_mode' ){
-		// 					if( tmpValue != options.mode ){
+		// 					if( tmpValue != $this->options['mode'] ){
 		// 						condBool = false;
 		// 						break;
 		// 					}
