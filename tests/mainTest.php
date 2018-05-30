@@ -232,49 +232,49 @@ class mainTest extends PHPUnit_Framework_TestCase{
 		// var_dump( $html );
 
 
-		// // editpageをcanvasモードでビルドする
-		// $broccoli = testHelper::makeDefaultBroccoli(array(
-		// 	'contents_id' => 'editpage/index',
-		// ));
-		// $data = json_decode(file_get_contents(__DIR__.'/testdata/htdocs/editpage/index_files/guieditor.ignore/data.json'));
-		// // var_dump($data);
-		// $dataBowlMain = @$data->bowl->main;
-		// $html = $broccoli->buildBowl(
-		// 	$dataBowlMain ,
-		// 	array(
-		// 		'mode' => 'canvas'
-		// 	)
-		// );
-		// file_put_contents(__DIR__.'/testdata/htdocs/test2/index.canvas.html', $html);
-		// // var_dump( $html );
+		// editpageをcanvasモードでビルドする
+		$broccoli = testHelper::makeDefaultBroccoli(array(
+			'contents_id' => 'editpage/index',
+		));
+		$data = json_decode(file_get_contents(__DIR__.'/testdata/htdocs/editpage/index_files/guieditor.ignore/data.json'));
+		// var_dump($data);
+		$dataBowlMain = @$data->bowl->main;
+		$html = $broccoli->buildBowl(
+			$dataBowlMain ,
+			array(
+				'mode' => 'canvas'
+			)
+		);
+		file_put_contents(__DIR__.'/testdata/htdocs/test2/index.canvas.html', $html);
+		// var_dump( $html );
 
 
-		// // テストデータ1をfinalizeモードでビルドする
-		// $broccoli = testHelper::makeDefaultBroccoli();
-		// $data = json_decode(file_get_contents(__DIR__.'/testdata/htdocs/test1/test1_files/guieditor.ignore/data.json'));
-		// // var_dump($data);
-		// $html = $broccoli->buildBowl(
-		// 	$data->bowl->main ,
-		// 	array(
-		// 		'mode' => 'finalize'
-		// 	)
-		// );
-		// file_put_contents(__DIR__.'/testdata/htdocs/test1/test1.html', $html);
-		// // var_dump( $html );
+		// テストデータ1をfinalizeモードでビルドする
+		$broccoli = testHelper::makeDefaultBroccoli();
+		$data = json_decode(file_get_contents(__DIR__.'/testdata/htdocs/test1/test1_files/guieditor.ignore/data.json'));
+		// var_dump($data);
+		$html = $broccoli->buildBowl(
+			$data->bowl->main ,
+			array(
+				'mode' => 'finalize'
+			)
+		);
+		file_put_contents(__DIR__.'/testdata/htdocs/test1/test1.html', $html);
+		// var_dump( $html );
 
 
-		// // テストデータ1をcanvasモードでビルドする
-		// $broccoli = testHelper::makeDefaultBroccoli();
-		// $data = json_decode(file_get_contents(__DIR__.'/testdata/htdocs/test1/test1_files/guieditor.ignore/data.json'));
-		// // var_dump($data);
-		// $html = $broccoli->buildBowl(
-		// 	$data->bowl->main ,
-		// 	array(
-		// 		'mode' => 'canvas'
-		// 	)
-		// );
-		// file_put_contents(__DIR__.'/testdata/htdocs/test1/test1.canvas.html', $html);
-		// // var_dump( $html );
+		// テストデータ1をcanvasモードでビルドする
+		$broccoli = testHelper::makeDefaultBroccoli();
+		$data = json_decode(file_get_contents(__DIR__.'/testdata/htdocs/test1/test1_files/guieditor.ignore/data.json'));
+		// var_dump($data);
+		$html = $broccoli->buildBowl(
+			$data->bowl->main ,
+			array(
+				'mode' => 'canvas'
+			)
+		);
+		file_put_contents(__DIR__.'/testdata/htdocs/test1/test1.canvas.html', $html);
+		// var_dump( $html );
 
 
 
@@ -307,30 +307,30 @@ class mainTest extends PHPUnit_Framework_TestCase{
 		// file_put_contents(__DIR__.'/testdata/htdocs/test3/1.secondly.canvas.html', $htmls['secondly'] );
 
 
-		// // 未定義のモジュールを含む場合のビルド
-		// $broccoli = testHelper::makeDefaultBroccoli();
-		// $data = json_decode(file_get_contents(__DIR__.'/testdata/htdocs/unknown_module/unknown_files/guieditor.ignore/data.json'));
-		// // var_dump($data);
-		// $html = $broccoli->buildBowl(
-		// 	$data->bowl->main ,
-		// 	array(
-		// 		'mode' => 'finalize'
-		// 	)
-		// );
-		// file_put_contents(__DIR__.'/testdata/htdocs/unknown_module/unknown.html', $html);
+		// 未定義のモジュールを含む場合のビルド
+		$broccoli = testHelper::makeDefaultBroccoli();
+		$data = json_decode(file_get_contents(__DIR__.'/testdata/htdocs/unknown_module/unknown_files/guieditor.ignore/data.json'));
+		// var_dump($data);
+		$html = $broccoli->buildBowl(
+			$data->bowl->main ,
+			array(
+				'mode' => 'finalize'
+			)
+		);
+		file_put_contents(__DIR__.'/testdata/htdocs/unknown_module/unknown.html', $html);
 
 
-		// // 空のdata.jsonでビルド
-		// $broccoli = testHelper::makeDefaultBroccoli();
-		// $data = json_decode(file_get_contents(__DIR__.'/testdata/htdocs/unknown_module/empty_data_json_files/guieditor.ignore/data.json'));
-		// // var_dump($data);
-		// $html = $broccoli->buildBowl(
-		// 	null ,
-		// 	array(
-		// 		'mode' => 'finalize'
-		// 	)
-		// );
-		// file_put_contents(__DIR__.'/testdata/htdocs/unknown_module/empty_data_json.html', $html);
+		// 空のdata.jsonでビルド
+		$broccoli = testHelper::makeDefaultBroccoli();
+		$data = json_decode(file_get_contents(__DIR__.'/testdata/htdocs/unknown_module/empty_data_json_files/guieditor.ignore/data.json'));
+		// var_dump($data);
+		$html = $broccoli->buildBowl(
+			null ,
+			array(
+				'mode' => 'finalize'
+			)
+		);
+		file_put_contents(__DIR__.'/testdata/htdocs/unknown_module/empty_data_json.html', $html);
 
 
 

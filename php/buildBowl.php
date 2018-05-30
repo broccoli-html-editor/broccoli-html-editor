@@ -50,13 +50,13 @@ class buildBowl{
 	public function build(){
 		$d = json_decode('{"html": ""}');
 
-		$mod = $this->broccoli->getModule( $this->data->modId, @$this->options['subModName'] );
+		$mod = $this->broccoli->getModule( @$this->data->modId, @$this->options['subModName'] );
 		if($mod === false){
 			$mod = $this->broccoli->getModule( '_sys/unknown', null );
 		}
 
 		$src = $mod->template;
-		$fieldData = json_decode(json_encode($this->data->fields), true);
+		$fieldData = json_decode(json_encode(@$this->data->fields), true);
 		// var_dump($mod->topThis->templateType);
 
 		if( $mod->topThis->templateType != 'broccoli' ){
@@ -97,14 +97,14 @@ class buildBowl{
 					}
 
 					if( $this->options['mode'] == 'canvas' ){
-						$tmpopt = json_decode( json_encode($opt) );
+						$tmpopt = json_decode( json_encode($opt), true );
 						if(!is_array($fieldData[$field->name])){ $fieldData[$field->name] = array(); }
-						$tmpopt->instancePath .= '@'.(count($fieldData[$field->name]));
+						$tmpopt['instancePath'] .= '@'.(count($fieldData[$field->name]));
 						$tmp_tplDataObj .= $this->mkAppender(
 							'module',
 							array(
 								'modId' => $mod->id,
-								'instancePath' => $tmpopt->instancePath
+								'instancePath' => $tmpopt['instancePath']
 							)
 						);
 					}
@@ -135,9 +135,9 @@ class buildBowl{
 						array_push($tplDataObj[$field->name], $html);
 					}
 					if( $this->options['mode'] == 'canvas' ){
-						$tmpopt = json_decode( json_encode($opt) );
-						if(is_array($fieldData[$field['name']])){ $fieldData[$field->name] = array(); }
-						$tmpopt->instancePath .= '@'.(count($fieldData[$field->name]));
+						$tmpopt = json_decode( json_encode($opt), true );
+						if(is_array($fieldData[$field->name])){ $fieldData[$field->name] = array(); }
+						$tmpopt['instancePath'] .= '@'.(count($fieldData[$field->name]));
 					}
 
 				}
@@ -229,26 +229,28 @@ class buildBowl{
 					$opt = json_decode( json_encode($this->options) );
 					$opt->instancePath .= '/fields.'.$field->module->name;
 					$tmpVal = '';
-					foreach( $fieldData[$field->module->name] as $idx=>$row ){
-						// ネストされたモジュールの再帰処理
-						$tmpopt = json_decode( json_encode($opt), true );
-						$tmpopt['instancePath'] .= '@'.$idx;
-						$tmpopt['subModName'] = null;
-						unset($tmpopt['subModName']);
-						// var_dump($tmpopt);
-						$html = $this->broccoli->buildBowl($row, $tmpopt);
-						$tmpVal .= $html;
+					if(is_array(@$fieldData[$field->module->name])){
+						foreach( $fieldData[$field->module->name] as $idx=>$row ){
+							// ネストされたモジュールの再帰処理
+							$tmpopt = json_decode( json_encode($opt), true );
+							$tmpopt['instancePath'] .= '@'.$idx;
+							$tmpopt['subModName'] = null;
+							unset($tmpopt['subModName']);
+							// var_dump($tmpopt);
+							$html = $this->broccoli->buildBowl($row, $tmpopt);
+							$tmpVal .= $html;
+						}
 					}
 
 					if( $this->options['mode'] == 'canvas' ){
-						$tmpopt = json_decode( json_encode($opt) );
-						if(!is_array($fieldData[$field->module->name])){ $fieldData[$field->module->name] = array(); }
-						$tmpopt->instancePath .= '@'.(count($fieldData[$field->module->name]));
+						$tmpopt = json_decode( json_encode($opt), true );
+						if(!is_array(@$fieldData[$field->module->name])){ $fieldData[$field->module->name] = array(); }
+						$tmpopt['instancePath'] .= '@'.(count($fieldData[$field->module->name]));
 						$tmpVal .= $this->mkAppender(
 							'module',
 							array(
 								'modId' => $mod->id,
-								'instancePath' => $tmpopt->instancePath
+								'instancePath' => $tmpopt['instancePath']
 							)
 						);
 					}
@@ -294,7 +296,7 @@ class buildBowl{
 							array(
 								'modId' => $mod->id,
 								'subModName' => $field->loop->name,
-								'instancePath' => $tmpopt->instancePath
+								'instancePath' => $tmpopt['instancePath']
 							)
 						);
 					}
@@ -578,6 +580,9 @@ class buildBowl{
 	}
 
 
+	/**
+	 * Appenderを生成する
+	 */
 	private function mkAppender($fieldType, $param){
 		$rtn = '';
 
@@ -606,8 +611,8 @@ class buildBowl{
 				}
 
 				$rtn .= '<div';
-				$rtn .= ' data-broccoli-instance-path="'.htmlspecialchars($param->instancePath).'"';
-				$rtn .= ' data-broccoli-mod-id="'.htmlspecialchars($param->modId).'"';
+				$rtn .= ' data-broccoli-instance-path="'.htmlspecialchars($param['instancePath']).'"';
+				$rtn .= ' data-broccoli-mod-id="'.htmlspecialchars($param['modId']).'"';
 				$rtn .= ' data-broccoli-is-appender="yes"';
 				$rtn .= ' style="';
 				$rtn .=     'height:auto;';
@@ -632,9 +637,9 @@ class buildBowl{
 
 			case 'loop':
 				$rtn .= '<div';
-				$rtn .= ' data-broccoli-instance-path="'.htmlspecialchars($param->instancePath).'"';
-				$rtn .= ' data-broccoli-mod-id="'.htmlspecialchars($param->modId).'"';
-				$rtn .= ' data-broccoli-sub-mod-name="'.htmlspecialchars($param->subModName).'"';
+				$rtn .= ' data-broccoli-instance-path="'.htmlspecialchars($param['instancePath']).'"';
+				$rtn .= ' data-broccoli-mod-id="'.htmlspecialchars($param['modId']).'"';
+				$rtn .= ' data-broccoli-sub-mod-name="'.htmlspecialchars($param['subModName']).'"';
 				$rtn .= ' data-broccoli-is-appender="yes"';
 				$rtn .= ' style="';
 				$rtn .=     'overflow:hidden;';
