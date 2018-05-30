@@ -48,8 +48,7 @@ class buildBowl{
 	 * build
 	 */
 	public function build(){
-		$rtn = '';
-		$d = json_decode('{}');
+		$d = json_decode('{"html": ""}');
 
 		$mod = $this->broccoli->getModule( $this->data->modId, @$this->options['subModName'] );
 		if($mod === false){
@@ -159,13 +158,14 @@ class buildBowl{
 				));
 				$twig = new \Twig_Environment($loader, array('debug'=>true));
 				$twig->addExtension(new \Twig_Extension_Debug());
-				$rtn = $twig->render('index', $tplDataObj);
+				$tmp_twig_rtn = $twig->render('index', $tplDataObj);
 
-				if( !is_string($rtn) ){
+				if( !is_string($tmp_twig_rtn) ){
 					// var_dump( 'TemplateEngine Rendering ERROR.' );
-					$rtn = '<div class="error">TemplateEngine Rendering ERROR.</div>';
+					$tmp_twig_rtn = '<div class="error">TemplateEngine Rendering ERROR.</div>';
 				}
-				$d->html = $rtn;
+				$d->html = $tmp_twig_rtn;
+				unset($tmp_twig_rtn);
 			}
 
 		}else{
@@ -421,11 +421,12 @@ class buildBowl{
 
 			$d->html = $rtn;
 		}
+		unset($rtn);
 
 
 		// finalize.php の処理をかける
 		$finalize = $mod->finalize;
-		$html = $finalize( $d->html, $this->data );
+		$d->html = $finalize( $d->html, $this->data );
 
 
 		// canvasモードのとき、scriptタグは削除する。
@@ -454,71 +455,69 @@ class buildBowl{
 		}
 
 
-		if(is_string($d->html)){
-			// if( $this->options['mode'] == 'canvas' ){
-			// 	// var_dump( $d->html );
+		if( is_string($d->html) && $this->options['mode'] == 'canvas' ){
+			// var_dump( $d->html );
 
-			// 	$isSingleRootElement = function($tplSrc){
-			// 		if( $this->options['instancePath'].match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
-			// 			return false;
-			// 		}
-			// 		$tplSrc .= $tplSrc.replace( new RegExp('\\<\\!\\-\\-[\\s\\S]*?\\-\\-\\>','g'), '' );
-			// 		$tplSrc .= $tplSrc.replace( new RegExp('\\{\\&[\\s\\S]*?\\&\\}','g'), '' );
-			// 		$tplSrc .= $tplSrc.replace( new RegExp('\\r\\n|\\r|\\n','g'), '' );
-			// 		$tplSrc .= $tplSrc.replace( new RegExp('\\t','g'), '' );
-			// 		$tplSrc .= $tplSrc.replace( new RegExp('^[\\s\\r\\n]*'), '' );
-			// 		$tplSrc .= $tplSrc.replace( new RegExp('[\\s\\r\\n]*$'), '' );
-
-			// 		if( tplSrc.length && tplSrc.indexOf('<') === 0 && tplSrc.match(new RegExp('\\>$')) ){
-			// 			var htmlparser = require('htmlparser');
-			// 			var handler = new htmlparser.DefaultHandler(function (error, dom) {
-			// 				// var_dump('htmlparser callback');
-			// 				if (error){
-			// 					// var_dump(error);
-			// 				}
-			// 			});
-			// 			// var_dump('htmlparser after');
-			// 			var parser = new htmlparser.Parser(handler);
-			// 			parser.parseComplete(tplSrc);
-			// 			// var_dump(tplSrc);
-			// 			// var_dump(handler.dom);
-
-			// 			if( handler.dom.length == 1 ){
-			// 				// var_dump('------------------------------------------------------');
-			// 				// var_dump(tplSrc);
-			// 				return true;
-			// 			}
-			// 		}
+			// $isSingleRootElement = function($tplSrc){
+			// 	if( $this->options['instancePath'].match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
 			// 		return false;
-
-			// 	};
-			// 	$isSingleRootElement = $isSingleRootElement($d->html);
-
-			// 	if( $isSingleRootElement ){
-			// 		var $ = cheerio.load($d->html, {decodeEntities: false});
-			// 		var $1stElm = $('*').eq(0);
-			// 		$1stElm.attr({ 'data-broccoli-instance-path': options['instancePath'] });
-			// 		if( $this->options['subModName'] ){
-			// 			$1stElm.attr({ 'data-broccoli-sub-mod-name': $this->options['subModName'] });
-			// 		}
-			// 		$1stElm.attr({ 'data-broccoli-area-size-detection': (mod.info.areaSizeDetection||'shallow') });
-			// 		$1stElm.attr({ 'data-broccoli-module-name': (mod.info.name||$mod->id) });
-			// 		$d->html = $.html();
-			// 	}else{
-			// 		$tmp_html = '';
-			// 		$tmp_html .= '<div';
-			// 		$tmp_html .= ' data-broccoli-instance-path="'.htmlspecialchars($this->options['instancePath']).'"';
-			// 		if( $this->options['subModName'] ){
-			// 			$tmp_html .= ' data-broccoli-sub-mod-name="'.htmlspecialchars($this->options['subModName']).'"';
-			// 		}
-			// 		$tmp_html .= ' data-broccoli-area-size-detection="'.htmlspecialchars((mod.info.areaSizeDetection||'shallow')).'"';
-			// 		// $tmp_html .= ' data-broccoli-is-single-root-element="'+(isSingleRootElement?'yes':'no').'"';
-			// 		$tmp_html .= ' data-broccoli-module-name="'.htmlspecialchars((mod.info.name||$mod->id)).'"';
-			// 		$tmp_html .= '>';
-			// 		$tmp_html .= $d->html;
-			// 		$tmp_html .= '</div>';
-			// 		$d->html = $tmp_html;
 			// 	}
+			// 	$tplSrc .= $tplSrc.replace( new RegExp('\\<\\!\\-\\-[\\s\\S]*?\\-\\-\\>','g'), '' );
+			// 	$tplSrc .= $tplSrc.replace( new RegExp('\\{\\&[\\s\\S]*?\\&\\}','g'), '' );
+			// 	$tplSrc .= $tplSrc.replace( new RegExp('\\r\\n|\\r|\\n','g'), '' );
+			// 	$tplSrc .= $tplSrc.replace( new RegExp('\\t','g'), '' );
+			// 	$tplSrc .= $tplSrc.replace( new RegExp('^[\\s\\r\\n]*'), '' );
+			// 	$tplSrc .= $tplSrc.replace( new RegExp('[\\s\\r\\n]*$'), '' );
+
+			// 	if( tplSrc.length && tplSrc.indexOf('<') === 0 && tplSrc.match(new RegExp('\\>$')) ){
+			// 		var htmlparser = require('htmlparser');
+			// 		var handler = new htmlparser.DefaultHandler(function (error, dom) {
+			// 			// var_dump('htmlparser callback');
+			// 			if (error){
+			// 				// var_dump(error);
+			// 			}
+			// 		});
+			// 		// var_dump('htmlparser after');
+			// 		var parser = new htmlparser.Parser(handler);
+			// 		parser.parseComplete(tplSrc);
+			// 		// var_dump(tplSrc);
+			// 		// var_dump(handler.dom);
+
+			// 		if( handler.dom.length == 1 ){
+			// 			// var_dump('------------------------------------------------------');
+			// 			// var_dump(tplSrc);
+			// 			return true;
+			// 		}
+			// 	}
+			// 	return false;
+
+			// };
+			// $isSingleRootElement = $isSingleRootElement($d->html);
+
+			// if( $isSingleRootElement ){
+			// 	var $ = cheerio.load($d->html, {decodeEntities: false});
+			// 	var $1stElm = $('*').eq(0);
+			// 	$1stElm.attr({ 'data-broccoli-instance-path': options['instancePath'] });
+			// 	if( $this->options['subModName'] ){
+			// 		$1stElm.attr({ 'data-broccoli-sub-mod-name': $this->options['subModName'] });
+			// 	}
+			// 	$1stElm.attr({ 'data-broccoli-area-size-detection': (mod.info.areaSizeDetection||'shallow') });
+			// 	$1stElm.attr({ 'data-broccoli-module-name': (mod.info.name||$mod->id) });
+			// 	$d->html = $.html();
+			// }else{
+			// 	$tmp_html = '';
+			// 	$tmp_html .= '<div';
+			// 	$tmp_html .= ' data-broccoli-instance-path="'.htmlspecialchars($this->options['instancePath']).'"';
+			// 	if( $this->options['subModName'] ){
+			// 		$tmp_html .= ' data-broccoli-sub-mod-name="'.htmlspecialchars($this->options['subModName']).'"';
+			// 	}
+			// 	$tmp_html .= ' data-broccoli-area-size-detection="'.htmlspecialchars((mod.info.areaSizeDetection||'shallow')).'"';
+			// 	// $tmp_html .= ' data-broccoli-is-single-root-element="'+(isSingleRootElement?'yes':'no').'"';
+			// 	$tmp_html .= ' data-broccoli-module-name="'.htmlspecialchars((mod.info.name||$mod->id)).'"';
+			// 	$tmp_html .= '>';
+			// 	$tmp_html .= $d->html;
+			// 	$tmp_html .= '</div>';
+			// 	$d->html = $tmp_html;
 			// }
 		}
 

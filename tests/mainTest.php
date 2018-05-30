@@ -222,7 +222,7 @@ class mainTest extends PHPUnit_Framework_TestCase{
 		$data = json_decode( file_get_contents(__DIR__.'/testdata/htdocs/editpage/index_files/guieditor.ignore/data.json') );
 		// var_dump($data);
 		$dataBowlMain = @$data->bowl->main;
-		list( $html, $err ) = $broccoli->buildBowl(
+		$html = $broccoli->buildBowl(
 			$dataBowlMain ,
 			array(
 				'mode' => 'finalize'
@@ -239,7 +239,7 @@ class mainTest extends PHPUnit_Framework_TestCase{
 		// $data = json_decode(file_get_contents(__DIR__.'/testdata/htdocs/editpage/index_files/guieditor.ignore/data.json'));
 		// // var_dump($data);
 		// $dataBowlMain = @$data->bowl->main;
-		// list($html, $err) = $broccoli->buildBowl(
+		// $html = $broccoli->buildBowl(
 		// 	$dataBowlMain ,
 		// 	array(
 		// 		'mode' => 'canvas'
@@ -253,7 +253,7 @@ class mainTest extends PHPUnit_Framework_TestCase{
 		// $broccoli = testHelper::makeDefaultBroccoli();
 		// $data = json_decode(file_get_contents(__DIR__.'/testdata/htdocs/test1/test1_files/guieditor.ignore/data.json'));
 		// // var_dump($data);
-		// list($html, $err) = $broccoli->buildBowl(
+		// $html = $broccoli->buildBowl(
 		// 	$data->bowl->main ,
 		// 	array(
 		// 		'mode' => 'finalize'
@@ -267,7 +267,7 @@ class mainTest extends PHPUnit_Framework_TestCase{
 		// $broccoli = testHelper::makeDefaultBroccoli();
 		// $data = json_decode(file_get_contents(__DIR__.'/testdata/htdocs/test1/test1_files/guieditor.ignore/data.json'));
 		// // var_dump($data);
-		// list($html, $err) = $broccoli->buildBowl(
+		// $html = $broccoli->buildBowl(
 		// 	$data->bowl->main ,
 		// 	array(
 		// 		'mode' => 'canvas'
@@ -311,7 +311,7 @@ class mainTest extends PHPUnit_Framework_TestCase{
 		// $broccoli = testHelper::makeDefaultBroccoli();
 		// $data = json_decode(file_get_contents(__DIR__.'/testdata/htdocs/unknown_module/unknown_files/guieditor.ignore/data.json'));
 		// // var_dump($data);
-		// list($html, $err) = $broccoli->buildBowl(
+		// $html = $broccoli->buildBowl(
 		// 	$data->bowl->main ,
 		// 	array(
 		// 		'mode' => 'finalize'
@@ -324,7 +324,7 @@ class mainTest extends PHPUnit_Framework_TestCase{
 		// $broccoli = testHelper::makeDefaultBroccoli();
 		// $data = json_decode(file_get_contents(__DIR__.'/testdata/htdocs/unknown_module/empty_data_json_files/guieditor.ignore/data.json'));
 		// // var_dump($data);
-		// list($html, $err) = $broccoli->buildBowl(
+		// $html = $broccoli->buildBowl(
 		// 	null ,
 		// 	array(
 		// 		'mode' => 'finalize'
