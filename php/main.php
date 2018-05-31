@@ -662,55 +662,46 @@ class broccoliHtmlEditor{
 		return $buildBowl->build();
 	}
 
-	// /**
-	//  * HTMLをすべてビルドする
-	//  * ビルドしたHTMLは、callback() に文字列として渡されます。
-	//  * realpathに指定したファイルは自動的に上書きされません。
-	//  *
-	//  * @param  {Object}   options  オプション
-	//  *                             - options.mode = ビルドモード(finalize=製品版ビルド, canvas=編集画面用ビルド)
-	//  *                             - options.bowlList = ボウル名の一覧。data.jsonに含まれていないbowlがある場合、空白の領域としてあわせてビルドされる。
-	//  * @param  {Function} callback callback function.
-	//  * @return {Object}            this
-	//  */
-	// this.buildHtml = function( options, callback ){
-	// 	var dataJson = fs.readFileSync(this.realpathDataDir+'/data.json');
-	// 	try {
-	// 		dataJson = JSON.parse( dataJson );
-	// 	} catch (e) {
-	// 		console.error('ERROR: Failed to parse data.json.', this.realpathDataDir+'/data.json');
-	// 		this.log('ERROR: Failed to parse data.json. '+this.realpathDataDir+'/data.json');
-	// 		dataJson = {};
-	// 	}
-	// 	dataJson.bowl = dataJson.bowl||{};
-	// 	options.bowlList = options.bowlList||[];
-	// 	if( options.bowlList.length ){
-	// 		for( var idx in options.bowlList ){
-	// 			dataJson.bowl[options.bowlList[idx]] = dataJson.bowl[options.bowlList[idx]]||{
-	// 				"modId": "_sys/root",
-	// 				"fields": {
-	// 					"main": []
-	// 				}
-	// 			};
-	// 		}
-	// 	}
+	/**
+	 * HTMLをすべてビルドする
+	 * ビルドしたHTMLは、callback() に文字列として渡されます。
+	 * realpathに指定したファイルは自動的に上書きされません。
+	 *
+	 * @param  {Object}   options  オプション
+	 *                             - options.mode = ビルドモード(finalize=製品版ビルド, canvas=編集画面用ビルド)
+	 *                             - options.bowlList = ボウル名の一覧。data.jsonに含まれていないbowlがある場合、空白の領域としてあわせてビルドされる。
+	 * @param  {Function} callback callback function.
+	 * @return {Object}            this
+	 */
+	public function buildHtml( $options = array() ){
+		$dataJson = file_get_contents($this->realpathDataDir.'/data.json');
+		$dataJson = json_decode($dataJson, true);
 
-	// 	var htmls = {};
-	// 	it79.ary(
-	// 		dataJson.bowl,
-	// 		function(it1, row, idx){
-	// 			options.instancePath = '/bowl.'+idx;
-	// 			_this.buildBowl(row, options, function(html){
-	// 				htmls[idx] = html;
-	// 				it1.next();
-	// 			});
-	// 		},
-	// 		function(){
-	// 			callback(htmls);
-	// 		}
-	// 	);
-	// 	return this;
-	// }
+		$dataJson['bowl'] = (@$dataJson['bowl'] ? $dataJson['bowl'] : array());
+		if(!$options['bowlList']){
+			$options['bowlList'] = array();
+		}
+		if( count($options['bowlList']) ){
+			foreach( $options['bowlList'] as $idx=>$row  ){
+				if( !@$dataJson['bowl'][$options['bowlList'][$idx]] ){
+					$dataJson['bowl'][$options['bowlList'][$idx]] = array(
+						"modId" => "_sys/root",
+						"fields" => array(
+							"main" => array()
+						)
+					);
+				}
+			}
+		}
+
+		$htmls = array();
+		foreach($dataJson['bowl'] as $idx=>$row){
+			$options['instancePath'] = '/bowl.'.$idx;
+			$html = $this->buildBowl($row, $options );
+			$htmls[$idx] = $html;
+		}
+		return $htmls;
+	}
 
 	// /**
 	//  * コンテンツをビルドし、更新する

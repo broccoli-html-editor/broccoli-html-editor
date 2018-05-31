@@ -278,33 +278,33 @@ class mainTest extends PHPUnit_Framework_TestCase{
 
 
 
-		// // テストデータ3-1 新規ブランクdata.json をfinalizeモードでビルドする
-		// $broccoli = testHelper::makeDefaultBroccoli(array(
-		// 	'contents_id' => 'test3/1',
-		// ));
-		// $htmls = $broccoli->buildHtml(
-		// 	array(
-		// 		'mode' => 'finalize',
-		// 		'bowlList' => array('main','secondly')
-		// 	)
-		// );
-		// // var_dump( $htmls );
-		// file_put_contents(__DIR__.'/testdata/htdocs/test3/1.main.html', $htmls['main'] );
-		// file_put_contents(__DIR__.'/testdata/htdocs/test3/1.secondly.html', $htmls['secondly'] );
+		// テストデータ3-1 新規ブランクdata.json をfinalizeモードでビルドする
+		$broccoli = testHelper::makeDefaultBroccoli(array(
+			'contents_id' => 'test3/1',
+		));
+		$htmls = $broccoli->buildHtml(
+			array(
+				'mode' => 'finalize',
+				'bowlList' => array('main','secondly')
+			)
+		);
+		// var_dump( $htmls );
+		file_put_contents(__DIR__.'/testdata/htdocs/test3/1.main.html', $htmls['main'] );
+		file_put_contents(__DIR__.'/testdata/htdocs/test3/1.secondly.html', $htmls['secondly'] );
 
 
-		// // テストデータ3-1 新規ブランクdata.json をcanvasモードでビルドする
-		// $broccoli = testHelper::makeDefaultBroccoli(array(
-		// 	'contents_id' => 'test3/1',
-		// ));
-		// $htmls = $broccoli->buildHtml(
-		// 	array(
-		// 		'mode' => 'canvas',
-		// 		'bowlList' => array('main','secondly')
-		// 	)
-		// );
-		// file_put_contents(__DIR__.'/testdata/htdocs/test3/1.main.canvas.html', $htmls['main'] );
-		// file_put_contents(__DIR__.'/testdata/htdocs/test3/1.secondly.canvas.html', $htmls['secondly'] );
+		// テストデータ3-1 新規ブランクdata.json をcanvasモードでビルドする
+		$broccoli = testHelper::makeDefaultBroccoli(array(
+			'contents_id' => 'test3/1',
+		));
+		$htmls = $broccoli->buildHtml(
+			array(
+				'mode' => 'canvas',
+				'bowlList' => array('main','secondly')
+			)
+		);
+		file_put_contents(__DIR__.'/testdata/htdocs/test3/1.main.canvas.html', $htmls['main'] );
+		file_put_contents(__DIR__.'/testdata/htdocs/test3/1.secondly.canvas.html', $htmls['secondly'] );
 
 
 		// 未定義のモジュールを含む場合のビルド
