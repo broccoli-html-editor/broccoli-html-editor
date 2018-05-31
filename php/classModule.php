@@ -79,7 +79,7 @@ class classModule{
 		if( @$this->options['topThis'] ){
 			$this->topThis = $this->options['topThis'];
 			$this->templateType = $this->topThis->templateType;
-			$this->info['name'] = '- ' . $this->topThis->info['name'] . ' -';
+			$this->info['name'] = '- ' . ($this->topThis->info['name'] ? $this->topThis->info['name'] : 'null') . ' -';
 			// $this->nameSpace = $this->options['topThis']->nameSpace;
 			if( $options['subModName'] ){
 				$this->subModName = $options['subModName'];

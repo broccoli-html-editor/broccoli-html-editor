@@ -460,67 +460,89 @@ class buildBowl{
 		if( is_string($d->html) && $this->options['mode'] == 'canvas' ){
 			// var_dump( $d->html );
 
-			// $isSingleRootElement = function($tplSrc){
-			// 	if( $this->options['instancePath'].match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
-			// 		return false;
-			// 	}
-			// 	$tplSrc .= $tplSrc.replace( new RegExp('\\<\\!\\-\\-[\\s\\S]*?\\-\\-\\>','g'), '' );
-			// 	$tplSrc .= $tplSrc.replace( new RegExp('\\{\\&[\\s\\S]*?\\&\\}','g'), '' );
-			// 	$tplSrc .= $tplSrc.replace( new RegExp('\\r\\n|\\r|\\n','g'), '' );
-			// 	$tplSrc .= $tplSrc.replace( new RegExp('\\t','g'), '' );
-			// 	$tplSrc .= $tplSrc.replace( new RegExp('^[\\s\\r\\n]*'), '' );
-			// 	$tplSrc .= $tplSrc.replace( new RegExp('[\\s\\r\\n]*$'), '' );
+			$isSingleRootElement = function($tplSrc){
+				if( preg_match('/^\/bowl\.[^\/]+$/s', $this->options['instancePath']) ){
+					return false;
+				}
+				$tplSrc = preg_replace( '/\<\!\-\-[\s\S]*?\-\-\>/s', '', $tplSrc );
+				$tplSrc = preg_replace( '/\{\&[\s\S]*?\&\}/s', '', $tplSrc );
+				$tplSrc = preg_replace( '/\r\n|\r|\n/s', '', $tplSrc );
+				$tplSrc = preg_replace( '/\t/s', '', $tplSrc );
+				$tplSrc = preg_replace( '/^[\s\r\n]*/s', '', $tplSrc );
+				$tplSrc = preg_replace( '/[\s\r\n]*$/s', '', $tplSrc );
 
-			// 	if( tplSrc.length && tplSrc.indexOf('<') === 0 && tplSrc.match(new RegExp('\\>$')) ){
-			// 		var htmlparser = require('htmlparser');
-			// 		var handler = new htmlparser.DefaultHandler(function (error, dom) {
-			// 			// var_dump('htmlparser callback');
-			// 			if (error){
-			// 				// var_dump(error);
-			// 			}
-			// 		});
-			// 		// var_dump('htmlparser after');
-			// 		var parser = new htmlparser.Parser(handler);
-			// 		parser.parseComplete(tplSrc);
-			// 		// var_dump(tplSrc);
-			// 		// var_dump(handler.dom);
+				if( strlen($tplSrc) && strpos($tplSrc, '<') === 0 && preg_match('/\>$/s', $tplSrc) ){
+					// HTMLをパース
+					$simple_html_dom = str_get_html(
+						$tplSrc ,
+						false, // $lowercase
+						false, // $forceTagsClosed
+						DEFAULT_TARGET_CHARSET, // $target_charset
+						false, // $stripRN
+						DEFAULT_BR_TEXT, // $defaultBRText
+						DEFAULT_SPAN_TEXT // $defaultSpanText
+					);
 
-			// 		if( handler.dom.length == 1 ){
-			// 			// var_dump('------------------------------------------------------');
-			// 			// var_dump(tplSrc);
-			// 			return true;
-			// 		}
-			// 	}
-			// 	return false;
+					if($simple_html_dom === false){
+						// HTMLパースに失敗
+					}else{
+						$attr = 'data-dec';
+						$simple_html_dom_ret = $simple_html_dom->find('>*');
+						if( count($simple_html_dom_ret) == 1 ){
+							// var_dump('------------------------------------------------------');
+							// var_dump($tplSrc);
+							return true;
+						}
+					}
 
-			// };
-			// $isSingleRootElement = $isSingleRootElement($d->html);
+				}
+				return false;
 
-			// if( $isSingleRootElement ){
-			// 	var $ = cheerio.load($d->html, {decodeEntities: false});
-			// 	var $1stElm = $('*').eq(0);
-			// 	$1stElm.attr({ 'data-broccoli-instance-path': options['instancePath'] });
-			// 	if( $this->options['subModName'] ){
-			// 		$1stElm.attr({ 'data-broccoli-sub-mod-name': $this->options['subModName'] });
-			// 	}
-			// 	$1stElm.attr({ 'data-broccoli-area-size-detection': (mod.info.areaSizeDetection||'shallow') });
-			// 	$1stElm.attr({ 'data-broccoli-module-name': (mod.info.name||$mod->id) });
-			// 	$d->html = $.html();
-			// }else{
-			// 	$tmp_html = '';
-			// 	$tmp_html .= '<div';
-			// 	$tmp_html .= ' data-broccoli-instance-path="'.htmlspecialchars($this->options['instancePath']).'"';
-			// 	if( $this->options['subModName'] ){
-			// 		$tmp_html .= ' data-broccoli-sub-mod-name="'.htmlspecialchars($this->options['subModName']).'"';
-			// 	}
-			// 	$tmp_html .= ' data-broccoli-area-size-detection="'.htmlspecialchars((mod.info.areaSizeDetection||'shallow')).'"';
-			// 	// $tmp_html .= ' data-broccoli-is-single-root-element="'+(isSingleRootElement?'yes':'no').'"';
-			// 	$tmp_html .= ' data-broccoli-module-name="'.htmlspecialchars((mod.info.name||$mod->id)).'"';
-			// 	$tmp_html .= '>';
-			// 	$tmp_html .= $d->html;
-			// 	$tmp_html .= '</div>';
-			// 	$d->html = $tmp_html;
-			// }
+			};
+			$isSingleRootElement = $isSingleRootElement($d->html);
+
+			if( $isSingleRootElement ){
+				// HTMLをパース
+				$simple_html_dom = str_get_html(
+					$d->html ,
+					false, // $lowercase
+					false, // $forceTagsClosed
+					DEFAULT_TARGET_CHARSET, // $target_charset
+					false, // $stripRN
+					DEFAULT_BR_TEXT, // $defaultBRText
+					DEFAULT_SPAN_TEXT // $defaultSpanText
+				);
+
+				if($simple_html_dom === false){
+					// HTMLパースに失敗
+				}else{
+					$attr = 'data-dec';
+					$simple_html_dom_ret = $simple_html_dom->find('>*');
+
+					$simple_html_dom_ret[0]->{'data-broccoli-instance-path'} = $this->options['instancePath'];
+					if( @$this->options['subModName'] ){
+						$simple_html_dom_ret[0]->{'data-broccoli-sub-mod-name'} = $this->options['subModName'];
+					}
+					$simple_html_dom_ret[0]->{'data-broccoli-area-size-detection'} = (@$mod->info['areaSizeDetection'] ? $mod->info['areaSizeDetection'] : 'shallow');
+					$simple_html_dom_ret[0]->{'data-broccoli-module-name'} = (@$mod->info['name'] ? $mod->info['name'] : $mod->id);
+					$d->html = $simple_html_dom->outertext;
+				}
+
+			}else{
+				$tmp_html = '';
+				$tmp_html .= '<div';
+				$tmp_html .= ' data-broccoli-instance-path="'.htmlspecialchars($this->options['instancePath']).'"';
+				if( @$this->options['subModName'] ){
+					$tmp_html .= ' data-broccoli-sub-mod-name="'.htmlspecialchars($this->options['subModName']).'"';
+				}
+				$tmp_html .= ' data-broccoli-area-size-detection="'.htmlspecialchars((@$mod->info['areaSizeDetection'] ? $mod->info['areaSizeDetection'] : 'shallow')).'"';
+				// $tmp_html .= ' data-broccoli-is-single-root-element="'+(isSingleRootElement?'yes':'no').'"';
+				$tmp_html .= ' data-broccoli-module-name="'.htmlspecialchars((@$mod->info['name'] ? $mod->info['name'] : $mod->id)).'"';
+				$tmp_html .= '>';
+				$tmp_html .= $d->html;
+				$tmp_html .= '</div>';
+				$d->html = $tmp_html;
+			}
 		}
 
 
@@ -631,7 +653,7 @@ class buildBowl{
 				$rtn .=     'margin:10px 0;';
 				$rtn .= '"';
 				$rtn .= '>';
-				$rtn .= '(+) '+$this->broccoli->lb()->get('ui_label.drop_a_module_here');
+				$rtn .= '(+) '.$this->broccoli->lb()->get('ui_label.drop_a_module_here');
 				$rtn .= '</div>';
 				break;
 
@@ -657,7 +679,7 @@ class buildBowl{
 				$rtn .=     'margin:10px 0;';
 				$rtn .= '"';
 				$rtn .= '>';
-				$rtn .= ''+$this->broccoli->lb()->get('ui_label.dblclick_here_and_add_array_element');
+				$rtn .= ''.$this->broccoli->lb()->get('ui_label.dblclick_here_and_add_array_element');
 				$rtn .= '</div>';
 				break;
 		}
