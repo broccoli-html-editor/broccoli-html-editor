@@ -428,20 +428,18 @@ class resourceMgr{
 	public function getResourcePublicPath( $resKey ){
 		$filename = $resKey;
 		$res = $this->getResource( $resKey );
-		if($res === false){return false;}
 
-		if( is_string($res->publicFilename) && strlen($res->publicFilename) ){
+		if( is_string(@$res->publicFilename) && strlen(@$res->publicFilename) ){
 			$filename = $res->publicFilename;
 		}
 		$contentsPath = $this->broccoli->options['pathHtml'];
 		$resourcesPublishDirPath = $this->broccoli->options['pathResourceDir'];
 
 		if(!strlen($filename)){$filename = 'noname';}
-		$ext = $res->ext;
+		$ext = @$res->ext;
 		if(!strlen($ext)){$ext = 'unknown';}
 		$rtn = $this->broccoli->fs()->get_relatedpath('/'.$resourcesPublishDirPath.'/'.$filename.'.'.$ext, dirname($contentsPath));
 		$rtn = $this->broccoli->fs()->normalize_path($rtn);
-var_dump($rtn);
 		$rtn = preg_replace('/\\\\/s', '/', $rtn); // <= convert Windows path to Linux path
 
 		return $rtn;

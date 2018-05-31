@@ -40,9 +40,6 @@ class image extends \broccoliHtmlEditor\fieldBase{
 			$data = json_decode('{}');
 			$resMgr = $this->broccoli->resourceMgr();
 			$data->resourceInfo = $resMgr->getResource( $rtn['resKey'] );
-			if($data->resourceInfo === false){
-				return false; // リソースが存在しない
-			}
 
 			$realpath = $resMgr->getResourcePublicRealpath( $rtn['resKey'] );
 			$data->publicRealpath = $realpath;

@@ -75,7 +75,7 @@ class buildBowl{
 					if( !@$field->hidden ){//← "hidden": true だったら、非表示(=出力しない)
 						$tplDataObj[$field->name] = $tmpVal;
 					}
-					@$this->nameSpace->vars[$field->name] = array(
+					@$this->nameSpace['vars'][$field->name] = array(
 						"fieldType" => "input",
 						"type" => $field->type,
 						"val" => $tmpVal
@@ -112,7 +112,7 @@ class buildBowl{
 					if( !@$field->hidden ){//← "hidden": true だったら、非表示(=出力しない)
 						$tplDataObj[$field->name] = $tmp_tplDataObj;
 					}
-					@$this->nameSpace->vars[$field->name] = array(
+					@$this->nameSpace['vars'][$field->name] = array(
 						"fieldType" => "module",
 						"val" => $tmp_tplDataObj
 					);
@@ -215,10 +215,10 @@ class buildBowl{
 					if( !@$field->input->hidden ){//← "hidden": true だったら、非表示(=出力しない)
 						$rtn .= $tmpVal;
 					}
-					@$this->nameSpace->vars[$field->input->name] = array(
+					@$this->nameSpace['vars'][$field->input->name] = array(
 						'fieldType' => "input", 'type' => $field->input->type, 'val' => $tmpVal
 					);
-					@$this->nameSpace->varsFinalized[$field->input->name] = array(
+					@$this->nameSpace['varsFinalized'][$field->input->name] = array(
 						'fieldType' => "input", 'type' => $field->input->type, 'val' => $tmpValFin
 					);
 
@@ -258,10 +258,10 @@ class buildBowl{
 					if( !@$field->module->hidden ){//← "hidden": true だったら、非表示(=出力しない)
 						$rtn .= $tmpVal;
 					}
-					@$this->nameSpace->vars[$field->module->name] = array(
+					@$this->nameSpace['vars'][$field->module->name] = array(
 						"fieldType" => "module", "val" => $tmpVal
 					);
-					@$this->nameSpace->varsFinalized[$field->module->name] = array(
+					@$this->nameSpace['varsFinalized'][$field->module->name] = array(
 						"fieldType" => "module", "val" => $tmpVal
 					);
 
@@ -304,10 +304,10 @@ class buildBowl{
 					if( !@$field->loop->hidden ){//← "hidden": true だったら、非表示(=出力しない)
 						$rtn .= $tmpVal;
 					}
-					@$this->nameSpace->vars[$field->loop->name] = array(
+					@$this->nameSpace['vars'][$field->loop->name] = array(
 						'fieldType' => "loop", 'val' => $tmpVal
 					);
-					@$this->nameSpace->varsFinalized[$field->loop->name] = array(
+					@$this->nameSpace['varsFinalized'][$field->loop->name] = array(
 						'fieldType' => "loop", 'val' => $tmpVal
 					);
 
@@ -412,8 +412,8 @@ class buildBowl{
 
 				}elseif( @$field->echo ){
 					// echo field
-					if( @$this->nameSpace->vars[$field->echo->ref] && @$this->nameSpace->vars[$field->echo->ref]->val ){
-						$rtn .= $this->nameSpace->vars[$field->echo->ref]->val;
+					if( @$this->nameSpace['vars'][$field->echo->ref] && @$this->nameSpace['vars'][$field->echo->ref]['val'] ){
+						$rtn .= $this->nameSpace['vars'][$field->echo->ref]['val'];
 					}
 
 					continue;
@@ -671,62 +671,60 @@ class buildBowl{
 	 */
 	private function evaluateIfFieldCond( $ifField ){
 		$boolResult = false;
-		// if( ifField.cond && typeof(ifField.cond) == typeof([]) ){
-		// 	// cond の評価
-		// 	// cond に、2次元配列を受け取った場合。
-		// 	// 1次元目は or 条件、2次元目は and 条件で評価する。
-		// 	for( var condIdx in ifField.cond ){
-		// 		var condBool = true;
-		// 		for( var condIdx2 in ifField.cond[condIdx] ){
-		// 			var tmpCond = ifField.cond[condIdx][condIdx2];
-		// 			if( tmpCond.match( new RegExp('^([\\s\\S]*?)\\:([\\s\\S]*)$') ) ){
-		// 				var tmpMethod = php.trim(RegExp.$1);
-		// 				var tmpValue = php.trim(RegExp.$2);
+		if( @$ifField->cond && is_array($ifField->cond) ){
+			// cond の評価
+			// cond に、2次元配列を受け取った場合。
+			// 1次元目は or 条件、2次元目は and 条件で評価する。
+			foreach( $ifField->cond as $condIdx=>$cond){
+				$condBool = true;
+				foreach( $ifField->cond[$condIdx] as $condIdx2=>$cond2 ){
+					$tmpCond = $ifField->cond[$condIdx][$condIdx2];
+					if( preg_match( '/^([\s\S]*?)\:([\s\S]*)$/s', $tmpCond, $matched ) ){
+						$tmpMethod = trim($matched[1]);
+						$tmpValue = trim($matched[2]);
 
-		// 				if( tmpMethod == 'is_set' ){
-		// 					if( !$this->nameSpace->varsFinalized[tmpValue] || !php.trim($this->nameSpace->varsFinalized[tmpValue].val).length ){
-		// 						condBool = false;
-		// 						break;
-		// 					}
-		// 				}elseif( tmpMethod == 'is_mode' ){
-		// 					if( tmpValue != $this->options['mode'] ){
-		// 						condBool = false;
-		// 						break;
-		// 					}
-		// 				}
-		// 			}elseif( tmpCond.match( new RegExp('^([\\s\\S]*?)(\\!\\=|\\=\\=)([\\s\\S]*)$') ) ){
-		// 				var tmpValue = php.trim(RegExp.$1);
-		// 				var tmpOpe = php.trim(RegExp.$2);
-		// 				var tmpDiff = php.trim(RegExp.$3);
-		// 				if( tmpOpe == '==' ){
-		// 					condBool = false;
-		// 					if( $this->nameSpace->varsFinalized[tmpValue] && $this->nameSpace->varsFinalized[tmpValue].val == tmpDiff ){
-		// 						condBool = true;
-		// 						break;
-		// 					}
-		// 				}elseif( tmpOpe == '!=' ){
-		// 					if( $this->nameSpace->varsFinalized[tmpValue] && $this->nameSpace->varsFinalized[tmpValue].val == tmpDiff ){
-		// 						condBool = false;
-		// 						break;
-		// 					}
-		// 				}
-		// 			}
+						if( $tmpMethod == 'is_set' ){
+							if( !@$this->nameSpace['varsFinalized'][$tmpValue] || !strlen(trim(@$this->nameSpace['varsFinalized'][$tmpValue]['val'])) ){
+								$condBool = false;
+								break;
+							}
+						}elseif( $tmpMethod == 'is_mode' ){
+							if( $tmpValue != $this->options['mode'] ){
+								$condBool = false;
+								break;
+							}
+						}
+					}elseif( preg_match( '/^([\s\S]*?)(\!\=|\=\=)([\s\S]*)$/s', $tmpCond, $matched ) ){
+						$tmpValue = trim($matched[1]);
+						$tmpOpe = trim($matched[2]);
+						$tmpDiff = trim($matched[3]);
+						if( $tmpOpe == '==' ){
+							$condBool = false;
+							if( @$this->nameSpace['varsFinalized'][$tmpValue] && @$this->nameSpace['varsFinalized'][$tmpValue]['val'] == $tmpDiff ){
+								$condBool = true;
+								break;
+							}
+						}elseif( $tmpOpe == '!=' ){
+							if( @$this->nameSpace['varsFinalized'][$tmpValue] && @$this->nameSpace['varsFinalized'][$tmpValue]['val'] == $tmpDiff ){
+								$condBool = false;
+								break;
+							}
+						}
+					}
 
-		// 		}
-		// 		if( condBool ){
-		// 			boolResult = true;
-		// 			break;
-		// 		}
-		// 	}
-		// }
+				}
+				if( $condBool ){
+					$boolResult = true;
+					break;
+				}
+			}
+		}
 
-		// if( $this->nameSpace->varsFinalized[ifField.is_set] && php.trim($this->nameSpace->varsFinalized[ifField.is_set].val).length ){
-		// 	// is_set の評価
-		// 	boolResult = true;
-		// }
+		if( @$this->nameSpace['varsFinalized'][$ifField->is_set] && strlen(trim(@$this->nameSpace['varsFinalized'][$ifField->is_set]['val'])) ){
+			// is_set の評価
+			$boolResult = true;
+		}
 		return $boolResult;
 	} // evaluateIfFieldCond()
-
-
 
 }
