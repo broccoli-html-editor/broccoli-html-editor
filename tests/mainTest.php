@@ -334,20 +334,20 @@ class mainTest extends PHPUnit_Framework_TestCase{
 
 
 
-		// // editpageをビルドして更新する
-		// $broccoli = testHelper::makeDefaultBroccoli(array('contents_id' => 'editpage/index'));
-		// $result = $broccoli->updateContents();
-		// $this->assertTrue($result);
+		// editpageをビルドして更新する
+		$broccoli = testHelper::makeDefaultBroccoli(array('contents_id' => 'editpage/index'));
+		$result = $broccoli->updateContents();
+		$this->assertTrue($result);
 
 
 
-		// // editpageのリソースを保存しなおす(imageフィールドの加工処理を含む)
-		// $broccoli = testHelper::makeDefaultBroccoli(array('contents_id' => 'editpage/index'));
-		// $resourceDb = $broccoli->resourceMgr.getResourceDb();
-		// $result = $broccoli->resourceMgr->save( $resourceDb );
-		// $this->assertSame(is_file( __DIR__.'/testdata/htdocs/editpage/index_files/guieditor.ignore/resources/1e970f28b68cf1c3318431e73040c492/bin.svg'), true);
-		// $this->assertSame(is_file( __DIR__.'/testdata/htdocs/editpage/index_files/guieditor.ignore/resources/1e970f28b68cf1c3318431e73040c492/res.json'), true);
-		// $this->assertSame($result, true);
+		// editpageのリソースを保存しなおす(imageフィールドの加工処理を含む)
+		$broccoli = testHelper::makeDefaultBroccoli(array('contents_id' => 'editpage/index'));
+		$resourceDb = $broccoli->resourceMgr()->getResourceDb();
+		$result = $broccoli->resourceMgr()->save( $resourceDb );
+		$this->assertSame(is_file( __DIR__.'/testdata/htdocs/editpage/index_files/guieditor.ignore/resources/1e970f28b68cf1c3318431e73040c492/bin.svg'), true);
+		$this->assertSame(is_file( __DIR__.'/testdata/htdocs/editpage/index_files/guieditor.ignore/resources/1e970f28b68cf1c3318431e73040c492/res.json'), true);
+		$this->assertSame($result, true);
 
 	}
 

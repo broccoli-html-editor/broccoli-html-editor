@@ -59,163 +59,96 @@ class resourceMgr{
 		return;
 	}
 
-	// /**
-	//  * save resources
-	//  * @param  {Object} newResourceDb resource Database
-	//  * @param  {Function} callback Callback function.
-	//  * @return {boolean}	 Always true.
-	//  */
-	// this.save = function( newResourceDb, callback ){
-	// 	// var logStartTime = Date.now(); // debug code
-	// 	callback = callback || function(){};
-	// 	$this->resourceDb = newResourceDb;
+	/**
+	 * save resources
+	 * @param  {Object} newResourceDb resource Database
+	 * @param  {Function} callback Callback function.
+	 * @return {boolean}	 Always true.
+	 */
+	public function save( $newResourceDb ){
+		// var logStartTime = Date.now(); // debug code
+		$this->resourceDb = $newResourceDb;
 
-	// 	function md5(bin){
-	// 		var md5 = require('crypto').createHash('md5');
-	// 		md5.update(bin);
-	// 		return md5.digest('hex');
-	// 	}
-	// 	function md5file(path){
-	// 		if(!utils79.is_file(path)){return false;}
-	// 		var content = require('fs').readFileSync( path );
-	// 		return md5(content);
-	// 	}
+		// 公開リソースディレクトリ 一旦削除して作成
+		$this->broccoli->fs()->rm($this->resourcesPublishDirPath);
+		$this->broccoli->fs()->mkdir_r($this->resourcesPublishDirPath);
+		// var_dump($this->resourcesPublishDirPath);
 
+		// 使われていないリソースを削除
+		$jsonSrc = file_get_contents( $this->dataJsonPath );
+		foreach( $this->resourceDb as $resKey=>$res ){
+			if( strpos($jsonSrc, $resKey) === false ){// TODO: JSONファイルを文字列として検索しているが、この方法は完全ではない。
+				$this->removeResource($resKey);
+			}
+		}
 
-	// 	function resetDirectory(dir){
-	// 		if( is_dir( dir ) ){ // 一旦削除
-	// 			rmdir_r( dir );
-	// 		}
-	// 		if( !is_dir( dir ) ){ // 作成
-	// 			mkdir( dir );
-	// 		}
-	// 		return;
-	// 	}
-	// 	resetDirectory($this->resourcesPublishDirPath);// 公開リソースディレクトリ 一旦削除して作成
-	// 	// console.log($this->resourcesPublishDirPath);
+		// リソースデータの保存と公開領域への設置
+		foreach($this->resourceDb as $resKey=>$res){
+			$this->broccoli->fs()->mkdir( $this->resourcesDirPath.'/'.$resKey );
 
-	// 	// 使われていないリソースを削除
-	// 	var jsonSrc = fs.readFileSync( $this->dataJsonPath );
-	// 	jsonSrc = JSON.parse( JSON.stringify(jsonSrc.toString()) );
-	// 	for( var resKey in $this->resourceDb ){
-	// 		if( !jsonSrc.match(resKey) ){// TODO: JSONファイルを文字列として検索しているが、この方法は完全ではない。
-	// 			this.removeResource(resKey);
-	// 		}
-	// 	}
+			if( !strlen($this->resourceDb[$resKey]->base64) ){
+				// base64がセットされていなかったら終わり
+				continue;
+			}
 
-	// 	// リソースデータの保存と公開領域への設置
-	// 	it79.ary(
-	// 		$this->resourceDb,
-	// 		function(it1, res, resKey){
+			$bin = base64_decode($this->resourceDb[$resKey]->base64);
 
-	// 			it79.fnc(
-	// 				res,
-	// 				[
-	// 					function(it2, res){
-	// 						mkdir( $this->resourcesDirPath+'/'+resKey );
-	// 						it2.next(res);
-	// 						return;
-	// 					},
-	// 					function(it2, res){
-	// 						if($this->resourceDb[resKey].base64 === undefined){
-	// 							// base64がセットされていなかったら終わり
-	// 							it2.next();
-	// 							return;
-	// 						}
+			// 違う拡張子のファイルが存在していたら削除
+			$filelist = $this->broccoli->fs()->ls( $this->resourcesDirPath . '/' . $resKey );
+			foreach( $filelist as $idx=>$row ){
+				if($filelist[$idx] === 'bin.'.$this->resourceDb[$resKey]->ext){continue;}
+				if($filelist[$idx] === 'res.json'){continue;}
+				$this->broccoli->fs()->rm( $this->resourcesDirPath . '/' . $resKey . '/' . $filelist[$idx] );
+			}
 
-	// 						var bin = '';
-	// 						try {
-	// 							bin = new Buffer($this->resourceDb[resKey].base64, 'base64');
-	// 						} catch (e) {
-	// 							bin = '';
-	// 						}
+			$this->resourceDb[$resKey]->md5 = md5($bin);
 
-	// 						(function(){
-	// 							// 違う拡張子のファイルが存在していたら削除
-	// 							var filelist = fs.readdirSync( $this->resourcesDirPath + '/' + resKey );
-	// 							for( var idx in filelist ){
-	// 								if(filelist[idx] === 'bin.'+$this->resourceDb[resKey].ext){continue;}
-	// 								if(filelist[idx] === 'res.json'){continue;}
-	// 								fs.unlinkSync( $this->resourcesDirPath + '/' + resKey + '/' + filelist[idx] );
-	// 							}
-	// 						})();
+			// オリジナルファイルを保存
+			$this->broccoli->fs()->save_file(
+				$this->resourcesDirPath.'/'.$resKey.'/bin.'.$this->resourceDb[$resKey]->ext,
+				$bin
+			);
 
-	// 						$this->resourceDb[resKey].md5 = md5(bin);
+			// 公開ファイル
+			if( $this->resourceDb[$resKey]->isPrivateMaterial ){
+				// 非公開ファイルなら終わり
+				continue;
+			}
 
-	// 						// オリジナルファイルを保存
-	// 						fs.writeFileSync(
-	// 							$this->resourcesDirPath+'/'+resKey+'/bin.'+$this->resourceDb[resKey].ext,
-	// 							bin
-	// 						);
+			$filename = $resKey;
+			if( is_string(@$this->resourceDb[$resKey]->publicFilename) && strlen($this->resourceDb[$resKey]->publicFilename) ){
+				$filename = $this->resourceDb[$resKey]->publicFilename;
+			}
 
-	// 						// 公開ファイル
-	// 						if( $this->resourceDb[resKey].isPrivateMaterial ){
-	// 							// 非公開ファイルなら終わり
-	// 							it2.next(res);
-	// 							return;
-	// 						}
+			if( $this->resourceDb[$resKey]->field ){
+				$fieldDefinition = $this->broccoli->getFieldDefinition( $this->resourceDb[$resKey]->field );
+				if( $fieldDefinition !== false ){
+					$fieldDefinition->resourceProcessor(
+						$this->resourcesDirPath.'/'.$resKey.'/bin.'.$this->resourceDb[$resKey]->ext ,
+						$this->resourcesPublishDirPath.'/'.$filename.'.'.$this->resourceDb[$resKey]->ext ,
+						$this->resourceDb[$resKey]
+					);
+					continue;
+				}
+			}
 
-	// 						var filename = resKey;
-	// 						if( typeof($this->resourceDb[resKey].publicFilename) == typeof('') && $this->resourceDb[resKey].publicFilename.length ){
-	// 							filename = $this->resourceDb[resKey].publicFilename;
-	// 						}
-	// 						if( $this->resourceDb[resKey].field ){
-	// 							var fieldDefinition = broccoli.getFieldDefinition( $this->resourceDb[resKey].field );
-	// 							if( fieldDefinition !== false ){
-	// 								fieldDefinition.resourceProcessor(
-	// 									$this->resourcesDirPath+'/'+resKey+'/bin.'+$this->resourceDb[resKey].ext ,
-	// 									$this->resourcesPublishDirPath+'/'+filename+'.'+$this->resourceDb[resKey].ext ,
-	// 									$this->resourceDb[resKey],
-	// 									function(){
-	// 										it2.next(res);
-	// 									}
-	// 								);
-	// 								return;
-	// 							}
-	// 						}
+			// フィールド名が記録されていない場合のデフォルトの処理
+			copy(
+				$this->resourcesDirPath.'/'.$resKey.'/bin.'.$this->resourceDb[$resKey]->ext,
+				$this->resourcesPublishDirPath.'/'.$filename.'.'.$this->resourceDb[$resKey]->ext
+			);
 
-	// 						// フィールド名が記録されていない場合のデフォルトの処理
-	// 						fsEx.copy(
-	// 							$this->resourcesDirPath+'/'+resKey+'/bin.'+$this->resourceDb[resKey].ext,
-	// 							$this->resourcesPublishDirPath+'/'+filename+'.'+$this->resourceDb[resKey].ext,
-	// 							function(err){
-	// 								it2.next(res);
-	// 							}
-	// 						);
-	// 						return;
-	// 					},
-	// 					function(it2, res){
-	// 						// res.json を保存する
-	// 						fs.writeFileSync(
-	// 							$this->resourcesDirPath+'/'+resKey+'/res.json',
-	// 							JSON.stringify( $this->resourceDb[resKey], null, 1 )
-	// 						);
-	// 						it2.next(res);
-	// 						return;
-	// 					},
-	// 					function(it2, res){
-	// 						it1.next();
-	// 						return;
-	// 					}
-	// 				]
-	// 			);
+			// res.json を保存する
+			$json_str = json_encode( $this->resourceDb[$resKey], JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES );
+			$json_str = preg_replace('/^(    )+/m', ' ', $json_str);
+			$this->broccoli->fs()->save_file(
+				$this->resourcesDirPath.'/'.$resKey.'/res.json',
+				$json_str
+			);
+		}
 
-	// 			return;
-	// 		},
-	// 		function(){
-	// 			// console.log('resourceMgr.save() done.');
-	// 			// console.log( (Date.now() - logStartTime)/1000 ); // debug code
-	// 			new Promise(function(rlv){rlv();})
-	// 				.then(function(){ return new Promise(function(rlv, rjt){
-	// 					callback(true);
-	// 				}); })
-	// 			;
-	// 			return;
-	// 		}
-	// 	);
-
-	// 	return this;
-	// } // save()
+		return true;
+	} // save()
 
 	// /**
 	//  * add resource
@@ -265,18 +198,12 @@ class resourceMgr{
 	// 	return this;
 	// }
 
-	// /**
-	//  * get resource DB
-	//  */
-	// this.getResourceDb = function( callback ){
-	// 	callback = callback || function(){};
-	// 	new Promise(function(rlv){rlv();})
-	// 		.then(function(){ return new Promise(function(rlv, rjt){
-	// 			callback($this->resourceDb);
-	// 		}); })
-	// 	;
-	// 	return this;
-	// }
+	/**
+	 * get resource DB
+	 */
+	public function getResourceDb(){
+		return $this->resourceDb;
+	}
 
 	/**
 	 * get resource

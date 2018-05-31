@@ -678,7 +678,7 @@ class broccoliHtmlEditor{
 		$dataJson = json_decode($dataJson, true);
 
 		$dataJson['bowl'] = (@$dataJson['bowl'] ? $dataJson['bowl'] : array());
-		if(!$options['bowlList']){
+		if(!@$options['bowlList']){
 			$options['bowlList'] = array();
 		}
 		if( count($options['bowlList']) ){
@@ -703,45 +703,26 @@ class broccoliHtmlEditor{
 		return $htmls;
 	}
 
-	// /**
-	//  * コンテンツをビルドし、更新する
-	//  *
-	//  * ビルドしたHTMLは、`pathHtml` のファイルに上書き保存されます。
-	//  * リソースも合わせて処理されます。
-	//  *
-	//  * @param  {Function} callback callback function.
-	//  * @return {Object}            this
-	//  */
-	// this.updateContents = function( callback ){
-	// 	callback = callback || function(){};
-	// 	var broccoli = this;
-	// 	broccoli.resourceMgr.getResourceDb(
-	// 		function(resourceDb){
-	// 			broccoli.resourceMgr.save(
-	// 				resourceDb ,
-	// 				function(result){
-	// 					broccoli.buildHtml(
-	// 						{
-	// 							'mode': 'finalize'
-	// 						},
-	// 						function(htmls){
-	// 							broccoli.options.bindTemplate(htmls, function(fin){
-	// 								fs.writeFile(
-	// 									broccoli.realpathHtml ,
-	// 									fin ,
-	// 									function(){
-	// 										callback(true);
-	// 									}
-	// 								);
-	// 							});
-	// 						}
-	// 					);
-	// 				}
-	// 			);
-	// 		}
-	// 	);
-	// 	return this;
-	// }
+	/**
+	 * コンテンツをビルドし、更新する
+	 *
+	 * ビルドしたHTMLは、`pathHtml` のファイルに上書き保存されます。
+	 * リソースも合わせて処理されます。
+	 *
+	 * @param  {Function} callback callback function.
+	 * @return {Object}            this
+	 */
+	public function updateContents(){
+		$broccoli = $this;
+		$resourceDb = $broccoli->resourceMgr()->getResourceDb();
+		$result = $broccoli->resourceMgr()->save( $resourceDb );
+
+		$htmls = $broccoli->buildHtml( array( 'mode' => 'finalize' ) );
+
+		$fin = $broccoli->options['bindTemplate']($htmls);
+		$result = $this->fs->save_file($broccoli->realpathHtml, $fin);
+		return $result;
+	}
 
 	/**
 	 * モジュールのCSSをビルドする
