@@ -40,28 +40,21 @@ class fieldBase{
 		return $rtn;
 	}
 
-	// /**
-	//  * リソースを加工する (Server Side)
-	//  */
-	// this.resourceProcessor = function( path_orig, path_public, resInfo, callback ){
-	// 	// ↓デフォルトの処理。オリジナルファイルをそのまま公開パスへ複製する。
-	// 	var fsEx = require('fs-extra');
-	// 	fsEx.copy( path_orig, path_public, function(err){
-	// 		callback(true);
-	// 	} );
-	// 	return this;
-	// }
+	/**
+	 * リソースを加工する (Server Side)
+	 */
+	public function resourceProcessor( $path_orig, $path_public, $resInfo ){
+		// ↓デフォルトの処理。オリジナルファイルをそのまま公開パスへ複製する。
+		$result = copy( $path_orig, $path_public );
+		return $result;
+	}
 
-	// /**
-	//  * GPI (Server Side)
-	//  */
-	// this.gpi = function(options, callback){
-	// 	callback = callback || function(){};
-	// 	new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
-	// 		callback(options);
-	// 	}); });
-	// 	return this;
-	// }
+	/**
+	 * GPI (Server Side)
+	 */
+	public function gpi($options){
+		return $options;
+	}
 
 
 }

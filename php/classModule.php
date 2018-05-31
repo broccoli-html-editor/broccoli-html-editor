@@ -106,7 +106,7 @@ class classModule{
 		if( $this->id == '_sys/root' ){
 			return $this->parseTpl( '{&{"module":{"name":"main"}}&}', $this );
 		}elseif( $this->id == '_sys/unknown' ){
-			return $this->parseTpl( '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;">[ERROR] 未知のモジュールテンプレートです。<!-- .error --></div>'+"\n", $this );
+			return $this->parseTpl( '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;">[ERROR] 未知のモジュールテンプレートです。<!-- .error --></div>'."\n", $this );
 		}elseif( $this->id == '_sys/html' ){
 			return $this->parseTpl( '{&{"input":{"type":"html","name":"main"}}&}', $this );
 		}elseif( is_string(@$this->options['src']) ){
@@ -129,7 +129,7 @@ class classModule{
 				$tmpTplSrc = file_get_contents( $this->templateFilename );
 			}
 			if( !is_string($tmpTplSrc) ){
-				$tmpTplSrc = '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;">[ERROR] モジュールテンプレートの読み込みエラーです。<!-- .error --></div>'+"\n";
+				$tmpTplSrc = '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;">[ERROR] モジュールテンプレートの読み込みエラーです。<!-- .error --></div>'."\n";
 			}
 			$tmpTplSrc = json_decode( json_encode( $tmpTplSrc ) );
 			return $this->parseTpl( $tmpTplSrc, $this );

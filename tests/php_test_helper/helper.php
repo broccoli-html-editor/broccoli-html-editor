@@ -7,7 +7,7 @@ class testHelper{
 	 * $broccoli を生成する
 	 */
 	static public function makeDefaultBroccoli($options = array()){
-		$content_id = (@$options['content_id'] ? $options['content_id'] : 'test1/test1');
+		$contents_id = (@$options['contents_id'] ? $options['contents_id'] : 'test1/test1');
 		$paths_module_template = (@$options['paths_module_template'] ? $options['paths_module_template'] : array(
 			'PlainHTMLElements' => '../PlainHTMLElements',
 			'testMod1' => '../modules1',
@@ -19,9 +19,9 @@ class testHelper{
 			'appMode' => 'web', // 'web' or 'desktop'. default to 'web'
 			'paths_module_template' => $paths_module_template ,
 			'documentRoot' => __DIR__.'/../testdata/htdocs/', // realpath
-			'pathHtml' => '/'.$content_id.'.html',
-			'pathResourceDir' => '/'.$content_id.'_files/resources/',
-			'realpathDataDir' => __DIR__.'/../testdata/htdocs/'.$content_id.'_files/guieditor.ignore/',
+			'pathHtml' => '/'.$contents_id.'.html',
+			'pathResourceDir' => '/'.$contents_id.'_files/resources/',
+			'realpathDataDir' => __DIR__.'/../testdata/htdocs/'.$contents_id.'_files/guieditor.ignore/',
 			'customFields' => array(
 				'custom1' => 'test_php_field_custom1'
 			) ,

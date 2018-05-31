@@ -282,8 +282,7 @@ class resourceMgr{
 	 * get resource
 	 */
 	public function getResource( $resKey ){
-
-		if( !is_object($this->resourceDb[$resKey]) ){
+		if( !is_object(@$this->resourceDb[$resKey]) ){
 			// 未登録の resKey
 			return false;
 		}
@@ -423,59 +422,53 @@ class resourceMgr{
 		return true;
 	}
 
-	// /**
-	//  * get resource public path
-	//  */
-	// this.getResourcePublicPath = function( resKey, callback ){
-	// 	callback = callback || function(){};
-	// 	var filename = resKey;
-	// 	this.getResource( resKey, function(res){
-	// 		// console.log(res);
-	// 		if( typeof(res.publicFilename) == typeof('') && res.publicFilename.length ){
-	// 			filename = res.publicFilename;
-	// 		}
-	// 		// console.log(filename);
-	// 		var contentsPath = broccoli.options.pathHtml;
-	// 		var resourcesPublishDirPath = broccoli.options.pathResourceDir;
-
-	// 		filename = utils79.toStr(filename);
-	// 		if(!filename.length){filename = 'noname';}
-	// 		var ext = utils79.toStr(res.ext);
-	// 		if(!ext.length){ext = 'unknown';}
-	// 		var rtn = './' + path.relative(path.dirname(contentsPath), resourcesPublishDirPath+'/'+filename+'.'+ext);
-	// 		rtn = rtn.replace(/\\/g, '/'); // <= convert Windows path to Linux path
-
-	// 		callback(rtn);
-	// 	} );
-	// 	return this;
-	// }
-
-	// /**
-	//  * get resource public realpath
-	//  */
-	// this.getResourcePublicRealpath = function( resKey, callback ){
-	// 	callback = callback || function(){};
-	// 	var filename = resKey;
-	// 	this.getResource( resKey, function(res){
-	// 		// console.log(res);
-	// 		if( typeof(res.publicFilename) == typeof('') && res.publicFilename.length ){
-	// 			filename = res.publicFilename;
-	// 		}
-	// 		// console.log(filename);
-
-	// 		filename = utils79.toStr(filename);
-	// 		if(!filename.length){filename = 'noname';}
-	// 		var ext = utils79.toStr(res.ext);
-	// 		if(!ext.length){ext = 'unknown';}
-	// 		var rtn = path.resolve($this->resourcesPublishDirPath+'/'+filename+'.'+ext);
-
-	// 		callback(rtn);
-	// 	} );
-	// 	return this;
-	// }
-
 	/**
 	 * get resource public path
+	 */
+	public function getResourcePublicPath( $resKey ){
+		$filename = $resKey;
+		$res = $this->getResource( $resKey );
+		if($res === false){return false;}
+
+		if( is_string($res->publicFilename) && strlen($res->publicFilename) ){
+			$filename = $res->publicFilename;
+		}
+		$contentsPath = $this->broccoli->options['pathHtml'];
+		$resourcesPublishDirPath = $this->broccoli->options['pathResourceDir'];
+
+		if(!strlen($filename)){$filename = 'noname';}
+		$ext = $res->ext;
+		if(!strlen($ext)){$ext = 'unknown';}
+		$rtn = $this->broccoli->fs()->get_relatedpath('/'.$resourcesPublishDirPath.'/'.$filename.'.'.$ext, dirname($contentsPath));
+		$rtn = $this->broccoli->fs()->normalize_path($rtn);
+var_dump($rtn);
+		$rtn = preg_replace('/\\\\/s', '/', $rtn); // <= convert Windows path to Linux path
+
+		return $rtn;
+	}
+
+	/**
+	 * get resource public realpath
+	 */
+	public function getResourcePublicRealpath( $resKey ){
+		$filename = $resKey;
+		$res = $this->getResource( $resKey );
+		if($res === false){return false;}
+
+		if( is_string($res->publicFilename) && strlen($res->publicFilename) ){
+			$filename = $res->publicFilename;
+		}
+
+		if(!strlen($filename)){$filename = 'noname';}
+		$ext = $res->ext;
+		if(!strlen($ext)){$ext = 'unknown';}
+		$rtn = $this->broccoli->fs()->get_realpath($this->resourcesPublishDirPath.'/'.$filename.'.'.$ext);
+
+		return $rtn;
+	}
+
+	/**
+	 * get resource original realpath
 	 */
 	public function getResourceOriginalRealpath( $resKey ){
 		$rtn = false;
@@ -489,22 +482,17 @@ class resourceMgr{
 		return $rtn;
 	}
 
-	// /**
-	//  * remove resource
-	//  */
-	// this.removeResource = function( resKey, callback ){
-	// 	callback = callback || function(){};
-	// 	$this->resourceDb[resKey] = undefined;
-	// 	delete( $this->resourceDb[resKey] );
-	// 	if( is_dir($this->resourcesDirPath+'/'+resKey+'/') ){
-	// 		rmdir_r( $this->resourcesDirPath+'/'+resKey+'/' );
-	// 	}
-
-	// 	new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
-	// 		callback(true);
-	// 	}); });
-	// 	return this;
-	// }
-
+	/**
+	 * remove resource
+	 */
+	public function removeResource( $resKey ){
+		$this->resourceDb[$resKey] = null;
+		unset( $this->resourceDb[$resKey] );
+		$result = false;
+		if( is_dir($this->resourcesDirPath.'/'.$resKey.'/') ){
+			$result = $this->broccoli-fs()->rm( $this->resourcesDirPath.'/'.$resKey.'/' );
+		}
+		return $result;
+	}
 
 }
