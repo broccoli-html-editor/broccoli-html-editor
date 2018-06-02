@@ -1,12 +1,12 @@
 <?php
-class test_php_field_custom1 extends \broccoliHtmlEditor\fieldBase{
-}
 class testHelper{
 
 	/**
 	 * $broccoli を生成する
 	 */
 	static public function makeDefaultBroccoli($options = array()){
+		require_once(__DIR__.'/test_php_field_custom1.php');
+
 		$contents_id = (@$options['contents_id'] ? $options['contents_id'] : 'test1/test1');
 		$paths_module_template = (@$options['paths_module_template'] ? $options['paths_module_template'] : array(
 			'PlainHTMLElements' => '../PlainHTMLElements',

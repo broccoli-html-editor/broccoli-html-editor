@@ -11,6 +11,17 @@ namespace broccoliHtmlEditor\fields;
  */
 class multitext extends \broccoliHtmlEditor\fieldBase{
 
+	/** $broccoli */
+	private $broccoli;
+
+	/**
+	 * Constructor
+	 */
+	public function __construct($broccoli){
+		$this->broccoli = $broccoli;
+		parent::__construct($broccoli);
+	}
+
 	/**
 	 * データをバインドする
 	 */
@@ -25,7 +36,7 @@ class multitext extends \broccoliHtmlEditor\fieldBase{
 					$rtn = preg_replace('/\r\n|\r|\n/s', '<br />', $rtn); // ← 改行コードは改行タグに変換
 					break;
 				case 'markdown':
-					$rtn = \Michelf\MarkdownExtra::defaultTransform($rtn);
+					$rtn = $this->broccoli->markdown($rtn);
 					break;
 				case 'html':
 				default:

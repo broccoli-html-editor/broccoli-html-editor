@@ -617,33 +617,14 @@ class broccoliHtmlEditor{
 		return $rtn;
 	}
 
-	// /**
-	//  * マークダウン処理
-	//  */
-	// this.markdown = function(md, options, callback){
-	// 	callback = callback||function(){};
-	// 	var marked = require('marked');
-	// 	marked.setOptions({
-	// 		renderer: new marked.Renderer(),
-	// 		gfm: true,
-	// 		tables: true,
-	// 		breaks: false,
-	// 		pedantic: false,
-	// 		sanitize: false,
-	// 		smartLists: true,
-	// 		smartypants: false
-	// 	});
-
-	// 	if(typeof(md)===typeof('')){
-	// 		md = marked(md);
-	// 	}
-	// 	new Promise(function(rlv){rlv();})
-	// 		.then(function(){ return new Promise(function(rlv, rjt){
-	// 			callback(md);
-	// 		}); })
-	// 	;
-	// 	return this;
-	// }
+	/**
+	 * マークダウン処理
+	 */
+	public function markdown($md, $options = array()){
+		$rtn = \Michelf\MarkdownExtra::defaultTransform($md);
+		$rtn = preg_replace('/(\r\n|\r|\n)+/s', "\n", $rtn);
+		return $rtn;
+	}
 
 	/**
 	 * HTMLをビルドする

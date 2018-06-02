@@ -426,7 +426,7 @@ class buildBowl{
 
 		// finalize.php の処理をかける
 		$finalize = $mod->finalize;
-		$d->html = $finalize( $d->html, $this->data );
+		$d->html = $finalize( $d->html, array('data'=>$this->data) );
 
 
 		// canvasモードのとき、scriptタグは削除する。
