@@ -16,10 +16,10 @@ class multitext extends \broccoliHtmlEditor\fieldBase{
 	 */
 	public function bind( $fieldData, $mode, $mod ){
 		$rtn = '';
-		if(is_object($fieldData) && is_string(@$fieldData->src)){
-			$rtn = ''.$fieldData->src;
+		if(is_array($fieldData) && is_string(@$fieldData['src'])){
+			$rtn = ''.$fieldData['src'];
 
-			switch( $fieldData->editor ){
+			switch( $fieldData['editor'] ){
 				case 'text':
 					$rtn = htmlspecialchars( $rtn ); // ←HTML特殊文字変換
 					$rtn = preg_replace('/\r\n|\r|\n/s', '<br />', $rtn); // ← 改行コードは改行タグに変換

@@ -199,11 +199,9 @@ class buildBowl{
 					$tmpVal = '';
 					$tmpValFin = '';
 
-					$fieldDef;
-					if( $this->broccoli->getFieldDefinition($field->input->type) ){
-						// フィールドタイプ定義を呼び出す
-						$fieldDef = $this->broccoli->getFieldDefinition($field->input->type);
-					}else{
+					// フィールドタイプ定義を呼び出す
+					$fieldDef = $this->broccoli->getFieldDefinition($field->input->type);
+					if( !$fieldDef ){
 						// ↓未定義のフィールドタイプの場合のデフォルトの挙動
 						$fieldDef = $this->broccoli->fieldBase();
 					}
