@@ -326,7 +326,7 @@ class buildBowl{
 						$subFieldStr = null;
 						$subField = null;
 						while(1){
-							if( !preg_match( '/^((?:.|\r|\n)*?)\\{\\&((?:.|\r|\n)*?)\\&\\}((?:.|\r|\n)*)$/', $src, $matched ) ){
+							if( !preg_match( '/^((?:.|\r|\n)*?)\{\&((?:.|\r|\n)*?)\&\}((?:.|\r|\n)*)$/', $src, $matched ) ){
 								$currentSrc .= $src;
 								array_push($contentList, array(
 									"fieldName" => $currentFieldName,
@@ -720,12 +720,12 @@ class buildBowl{
 						$tmpDiff = trim($matched[3]);
 						if( $tmpOpe == '==' ){
 							$condBool = false;
-							if( @$this->nameSpace['varsFinalized'][$tmpValue] && @$this->nameSpace['varsFinalized'][$tmpValue]['val'] == $tmpDiff ){
+							if( @$this->nameSpace['varsFinalized'][$tmpValue] && @trim($this->nameSpace['varsFinalized'][$tmpValue]['val']) == trim($tmpDiff) ){
 								$condBool = true;
 								break;
 							}
 						}elseif( $tmpOpe == '!=' ){
-							if( @$this->nameSpace['varsFinalized'][$tmpValue] && @$this->nameSpace['varsFinalized'][$tmpValue]['val'] == $tmpDiff ){
+							if( @$this->nameSpace['varsFinalized'][$tmpValue] && @trim($this->nameSpace['varsFinalized'][$tmpValue]['val']) == trim($tmpDiff) ){
 								$condBool = false;
 								break;
 							}
