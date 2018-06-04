@@ -10,6 +10,9 @@
         }
     ],
     "scripts":{
+        "start": [
+            "php -S localhost:3000 -t tests/testdata/htdocs/ tests/php_test_helper/router.php"
+        ],
         "test": [
             "php ./vendor/phpunit/phpunit/phpunit"
         ]

@@ -28,12 +28,6 @@
 		<!-- Ace Editor (Optional) -->
 		<script src="./index_files/libs/ace-builds/src-noconflict/ace.js"></script>
 
-		<!-- socket.io -->
-		<script src="/socket.io/socket.io.js" type="text/javascript"></script>
-
-		<!-- biflora -->
-		<script src="/biflora/biflora.js" type="text/javascript"></script>
-
 		<!-- broccoli -->
 		<script src="./libs/broccoli.js"></script>
 
@@ -41,7 +35,7 @@
 		<script src="./index_files/main.js" type="text/javascript"></script>
 		<script type="text/javascript">
 			main.init({
-				'serverType': 'biflora'
+				'serverType': 'php'
 			});
 		</script>
 	</body>

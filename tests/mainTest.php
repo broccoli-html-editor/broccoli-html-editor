@@ -6,6 +6,7 @@ class mainTest extends PHPUnit_Framework_TestCase{
 	public function setup(){
 		mb_internal_encoding('UTF-8');
 		require_once(__DIR__.'/php_test_helper/helper.php');
+		testHelper::start_built_in_server();
 	}
 
 

@@ -14588,28 +14588,36 @@ process.chdir = function (dir) {
 window.main = new (function(){
 	var _this = this;
 	var it79 = require('iterate79');
-	var socket = this.socket = window.biflora
-		.createSocket(
-			this,
-			io,
-			{
-				'showSocketTest': function( data, callback, main, socket ){
-					// console.log(data);
-					// alert(data.message);
-					// console.log(callback);
-					callback(data);
-					return;
+	var socket;
+	if(window.biflora){
+		socket = this.socket = window.biflora
+			.createSocket(
+				this,
+				io,
+				{
+					'showSocketTest': function( data, callback, main, socket ){
+						// console.log(data);
+						// alert(data.message);
+						// console.log(callback);
+						callback(data);
+						return;
+					}
 				}
-			}
-		)
-	;
+			)
+		;
+	}
+	var serverType = 'biflora';
 
 	// broccoli をインスタンス化
 	var broccoli = new Broccoli();
 	this.broccoli = broccoli;
 
-	this.init = function(callback){
+	this.init = function(options, callback){
 		callback = callback||function(){};
+		options = options||{};
+		if(options.serverType){
+			serverType = options.serverType;
+		}
 		// this.socketTest();
 		// broccoli を初期化
 		broccoli.init(
@@ -14647,20 +14655,25 @@ window.main = new (function(){
 				},
 				'gpiBridge': function(api, options, callback){
 					// General Purpose Interface Bridge
-					socket.send(
-						'broccoli',
-						{
-							'api': 'gpiBridge' ,
-							'bridge': {
-								'api': api ,
-								'options': options
+					if(serverType == 'biflora'){
+						socket.send(
+							'broccoli',
+							{
+								'api': 'gpiBridge' ,
+								'bridge': {
+									'api': api ,
+									'options': options
+								}
+							} ,
+							function(rtn){
+								// console.log(rtn);
+								callback(rtn);
 							}
-						} ,
-						function(rtn){
-							// console.log(rtn);
-							callback(rtn);
-						}
-					);
+						);
+					}else if(serverType == 'php'){
+						alert(123);
+						callback(null);
+					}
 					return;
 				},
 				'onClickContentsLink': function( uri, data ){
