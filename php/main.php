@@ -81,13 +81,13 @@ class broccoliHtmlEditor{
 	 */
 	public function init( $options = array() ){
 		$options = (is_array($options) ? $options : array());
-		$options['appMode'] = ($options['appMode'] ? $options['appMode'] : 'web'); // web | desktop
-		$options['paths_module_template'] = ($options['paths_module_template'] ? $options['paths_module_template'] : array());
-		$options['documentRoot'] = ($options['documentRoot'] ? $options['documentRoot'] : '.'); // current directory.
-		$options['pathHtml'] = ($options['pathHtml'] ? $options['pathHtml'] : null);
-		$options['pathResourceDir'] = ($options['pathResourceDir'] ? $options['pathResourceDir'] : null);
-		$options['realpathDataDir'] = ($options['realpathDataDir'] ? $options['realpathDataDir'] : null);
-		$options['bindTemplate'] = ($options['bindTemplate'] ? $options['bindTemplate'] : function($htmls){
+		$options['appMode'] = (@$options['appMode'] ? $options['appMode'] : 'web'); // web | desktop
+		$options['paths_module_template'] = (@$options['paths_module_template'] ? $options['paths_module_template'] : array());
+		$options['documentRoot'] = (@$options['documentRoot'] ? $options['documentRoot'] : '.'); // current directory.
+		$options['pathHtml'] = (@$options['pathHtml'] ? $options['pathHtml'] : null);
+		$options['pathResourceDir'] = (@$options['pathResourceDir'] ? $options['pathResourceDir'] : null);
+		$options['realpathDataDir'] = (@$options['realpathDataDir'] ? $options['realpathDataDir'] : null);
+		$options['bindTemplate'] = (@$options['bindTemplate'] ? $options['bindTemplate'] : function($htmls){
 			$fin = '';
 			foreach($htmls as $i=>$row){
 				$fin .= $htmls[$i];
@@ -152,42 +152,38 @@ class broccoliHtmlEditor{
 		}
 	}
 
-	// /**
-	//  * 汎用API
-	//  * @param  {[type]}   api      [description]
-	//  * @param  {[type]}   options  [description]
-	//  * @param  {Function} callback [description]
-	//  * @return {[type]}            [description]
-	//  */
-	// this.gpi = function(api, options, callback){
-	// 	var gpi = require( __dirname+'/gpi.js' );
-	// 	gpi(
-	// 		this,
-	// 		api,
-	// 		options,
-	// 		function(rtn){
-	// 			callback(rtn);
-	// 		}
-	// 	);
-	// 	return this;
-	// }
+	/**
+	 * 汎用API
+	 * @param  {[type]}   api      [description]
+	 * @param  {[type]}   options  [description]
+	 * @param  {Function} callback [description]
+	 * @return {[type]}            [description]
+	 */
+	public function gpi($api, $options){
+		$gpi = new gpi($this);
+		$rtn = $gpi->gpi(
+			$api,
+			$options
+		);
+		return $rtn;
+	}
 
-	// /**
-	//  * アプリケーションの実行モード設定を取得する (同期)
-	//  * @return string 'web'|'desktop'
-	//  */
-	// this.getAppMode = function(){
-	// 	var rtn = this.options.appMode;
-	// 	switch(rtn){
-	// 		case 'web':
-	// 		case 'desktop':
-	// 			break;
-	// 		default:
-	// 			rtn = 'web';
-	// 			break;
-	// 	}
-	// 	return rtn;
-	// }
+	/**
+	 * アプリケーションの実行モード設定を取得する (同期)
+	 * @return string 'web'|'desktop'
+	 */
+	public function getAppMode(){
+		$rtn = @$this->options['appMode'];
+		switch($rtn){
+			case 'web':
+			case 'desktop':
+				break;
+			default:
+				$rtn = 'web';
+				break;
+		}
+		return $rtn;
+	}
 
 	/**
 	 * field定義を取得する

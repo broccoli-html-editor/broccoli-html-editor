@@ -14671,8 +14671,26 @@ window.main = new (function(){
 							}
 						);
 					}else if(serverType == 'php'){
-						alert(123);
-						callback(null);
+						console.info(api, options);
+						var res;
+						$.ajax({
+							"url": "./_api.php",
+							"method": "get",
+							"data":{
+								'api': api ,
+								'options': options
+							},
+							"success": function(data){
+								res = JSON.parse(data);
+								console.log(res);
+							},
+							"error": function(error){
+								console.error(error);
+							},
+							"complete": function(){
+								callback(res);
+							}
+						});
 					}
 					return;
 				},

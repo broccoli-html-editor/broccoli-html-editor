@@ -11,7 +11,7 @@
     ],
     "scripts":{
         "start": [
-            "php -S localhost:3000 -t tests/testdata/htdocs/ tests/php_test_helper/router.php"
+            "php -S 127.0.0.1:8088 -t ./"
         ],
         "test": [
             "php ./vendor/phpunit/phpunit/phpunit"
@@ -40,6 +40,7 @@
             "php/classModule.php",
             "php/buildModuleResources.php",
             "php/buildBowl.php",
+            "php/gpi.php",
             "fields/php/href.php",
             "fields/php/html_attr_text.php",
             "fields/php/html.php",

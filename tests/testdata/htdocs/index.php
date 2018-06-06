@@ -7,7 +7,7 @@
 	</head>
 	<body>
 		<div class="instanceTreeView">...</div>
-		<div class="canvas" data-broccoli-preview="http://127.0.0.1:8088/editpage/index.html"></div>
+		<div class="canvas" data-broccoli-preview="http://127.0.0.1:8088/tests/testdata/htdocs/editpage/index.html"></div>
 		<div class="palette">...</div>
 		<div class="instancePathView">...</div>
 		<div class="test_funcs">
@@ -29,7 +29,7 @@
 		<script src="./index_files/libs/ace-builds/src-noconflict/ace.js"></script>
 
 		<!-- broccoli -->
-		<script src="./libs/broccoli.js"></script>
+		<script src="./../../../client/dist/broccoli.js"></script>
 
 		<!-- main.js -->
 		<script src="./index_files/main.js" type="text/javascript"></script>
