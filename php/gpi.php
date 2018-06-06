@@ -36,46 +36,38 @@ class gpi{
 				$conf = array();
 				$conf['appMode'] = $this->broccoli->getAppMode();
 				return $conf;
+
 			case "getLanguageCsv":
 				// 言語ファイル(CSV)を取得
 				$csv = file_get_contents( __DIR__.'/../data/language.csv' );
 				return $csv;
+
 			case "getModulePackageList":
 				// モジュールパッケージ一覧を取得する
 				$list = $this->broccoli->getPackageList();
 				return $list;
+
 			case "getAllModuleList":
 				// 全モジュールの一覧を取得する
 				$list = $this->broccoli->getAllModuleList();
 				return $list;
+
 			case "getContentsDataJson":
 				$dataJson = json_decode( file_get_contents($this->broccoli->realpathDataDir.'/data.json'), true );
 				if(!is_array($dataJson)){
 					$dataJson = array();
 				}
 				return $dataJson;
-			// case "saveContentsData":
-			// 	var jsonString = JSON.stringify( options.data, null, 1 );
-			// 	// var_dump(jsonString);
-			// 	it79.fnc(
-			// 		{},
-			// 		[
-			// 			function(it1, data){
-			// 				// contentsSourceData を保存する
-			// 				fs.writeFile(
-			// 					$this->broccoli->realpathDataDir+'/data.json' ,
-			// 					jsonString ,
-			// 					function(){
-			// 						it1.next(data);
-			// 					}
-			// 				);
-			// 			} ,
-			// 			function(it1, data){
-			// 				callback(true);
-			// 			}
-			// 		]
-			// 	);
-			// 	break;
+
+			case "saveContentsData":
+				$jsonString = json_encode( $options['data'], JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES );
+				// var_dump($jsonString);
+				$result = $this->broccoli->fs()->save_file(
+					$this->broccoli->realpathDataDir.'/data.json',
+					$jsonString
+				);
+				return $result;
+
 			case "buildHtml":
 				$htmls = $this->broccoli->buildHtml( array(
 					'mode' => 'canvas',
@@ -92,15 +84,9 @@ class gpi{
 				// var_dump($resInfo);
 				return $resInfo;
 
-			// case "resourceMgr.duplicateResource":
-			// 	$this->broccoli->resourceMgr()->duplicateResource(
-			// 		options.resKey ,
-			// 		function(newResKey){
-			// 			// var_dump(newResKey);
-			// 			callback(newResKey);
-			// 		}
-			// 	);
-			// 	break;
+			case "resourceMgr.duplicateResource":
+				$newResKey = $this->broccoli->resourceMgr()->duplicateResource( $options['resKey'] );
+				return $newResKey;
 
 			case "resourceMgr.getResourceDb":
 				$resourceDb = $this->broccoli->resourceMgr()->getResourceDb();
@@ -114,14 +100,9 @@ class gpi{
 				}
 				return $resourceList;
 
-			// case "resourceMgr.addResource":
-			// 	$this->broccoli->resourceMgr()->addResource(
-			// 		function(newResKey){
-			// 			// var_dump(newResKey);
-			// 			callback(newResKey);
-			// 		}
-			// 	);
-			// 	break;
+			case "resourceMgr.addResource":
+				$newResKey = $this->broccoli->resourceMgr()->addResource();
+				return $newResKey;
 
 			case "resourceMgr.getResourcePublicPath":
 				$publicPath = $this->broccoli->resourceMgr()->getResourcePublicPath( $options['resKey'] );
@@ -131,66 +112,35 @@ class gpi{
 				$publicPath = $this->broccoli->resourceMgr()->getResourceOriginalRealpath( $options['resKey'] );
 				return $publicPath;
 
-			// case "resourceMgr.updateResource":
-			// 	// var_dump('GPI resourceMgr.updateResource');
-			// 	// var_dump(options);
-			// 	$this->broccoli->resourceMgr()->updateResource(
-			// 		$options['resKey'] ,
-			// 		options.resInfo ,
-			// 		function(result){
-			// 			// var_dump(result);
-			// 			callback(result);
-			// 		}
-			// 	);
-			// 	break;
+			case "resourceMgr.updateResource":
+				// var_dump('GPI resourceMgr.updateResource');
+				// var_dump(options);
+				$result = $this->broccoli->resourceMgr()->updateResource( $options['resKey'] , $options['resInfo'] );
+				return $result;
 
-			// case "resourceMgr.resetBinFromBase64":
-			// 	// var_dump('GPI resourceMgr.resetBinFromBase64');
-			// 	// var_dump(options);
-			// 	$this->broccoli->resourceMgr()->resetBinFromBase64(
-			// 		$options['resKey'] ,
-			// 		function(result){
-			// 			// var_dump(result);
-			// 			callback(result);
-			// 		}
-			// 	);
-			// 	break;
+			case "resourceMgr.resetBinFromBase64":
+				// var_dump('GPI resourceMgr.resetBinFromBase64');
+				// var_dump(options);
+				$result = $this->broccoli->resourceMgr()->resetBinFromBase64( $options['resKey'] );
+				return $result;
 
-			// case "resourceMgr.resetBase64FromBin":
-			// 	// var_dump('GPI resourceMgr.resetBase64FromBin');
-			// 	// var_dump(options);
-			// 	$this->broccoli->resourceMgr()->resetBase64FromBin(
-			// 		$options['resKey'] ,
-			// 		function(result){
-			// 			// var_dump(result);
-			// 			callback(result);
-			// 		}
-			// 	);
-			// 	break;
+			case "resourceMgr.resetBase64FromBin":
+				// var_dump('GPI resourceMgr.resetBase64FromBin');
+				// var_dump(options);
+				$result = $this->broccoli->resourceMgr()->resetBase64FromBin( $options['resKey'] );
+				return $result;
 
-			// case "resourceMgr.save":
-			// 	// var_dump('GPI resourceMgr.save');
-			// 	// var_dump(options);
-			// 	$this->broccoli->resourceMgr()->save(
-			// 		options.resourceDb ,
-			// 		function(result){
-			// 			// var_dump(result);
-			// 			callback(result);
-			// 		}
-			// 	);
-			// 	break;
+			case "resourceMgr.save":
+				// var_dump('GPI resourceMgr.save');
+				// var_dump(options);
+				$result = $this->broccoli->resourceMgr()->save( $options['resourceDb'] );
+				return $result;
 
-			// case "resourceMgr.removeResource":
-			// 	// var_dump('GPI resourceMgr.save');
-			// 	// var_dump(options);
-			// 	$this->broccoli->resourceMgr()->removeResource(
-			// 		$options['resKey'] ,
-			// 		function(result){
-			// 			// var_dump(result);
-			// 			callback(result);
-			// 		}
-			// 	);
-			// 	break;
+			case "resourceMgr.removeResource":
+				// var_dump('GPI resourceMgr.save');
+				// var_dump(options);
+				$result = $this->broccoli->resourceMgr()->removeResource( $options['resKey'] );
+				return $result;
 
 			case "fieldGpi":
 				$result = $this->broccoli->fieldDefinitions[$options['__fieldId__']]->gpi( $options['options'] );

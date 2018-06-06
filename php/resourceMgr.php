@@ -150,53 +150,47 @@ class resourceMgr{
 		return true;
 	} // save()
 
-	// /**
-	//  * add resource
-	//  * リソースの登録を行い、resKeyを生成して返す。
-	//  */
-	// this.addResource = function(callback){
-	// 	callback = callback || function(){};
-	// 	var newResKey;
-	// 	while(1){
-	// 		newResKey = php.md5( (new Date).getTime() );
-	// 		if( typeof($this->resourceDb[newResKey]) === typeof({}) ){
-	// 			// 登録済みの resKey
-	// 			continue;
-	// 		}
-	// 		$this->resourceDb[newResKey] = { //予約
-	// 			'ext': 'txt',
-	// 			'size': 0,
-	// 			'base64': '',
-	// 			'md5': '',
-	// 			'isPrivateMaterial': false,
-	// 			'publicFilename': '',
-	// 			'field': '', // <= フィールド名 (ex: image, multitext)
-	// 			'fieldNote': {} // <= フィールドが記録する欄
-	// 		};
-	// 		break;
-	// 	}
+	/**
+	 * add resource
+	 * リソースの登録を行い、resKeyを生成して返す。
+	 */
+	public function addResource(){
+		$newResKey;
+		while(1){
+			$newResKey = md5( microtime() );
+			if( is_object($this->resourceDb[$newResKey]) ){
+				// 登録済みの resKey
+				continue;
+			}
+			$this->resourceDb[$newResKey] = json_decode( json_encode( array( //予約
+				'ext' => 'txt',
+				'size' => 0,
+				'base64' => '',
+				'md5' => '',
+				'isPrivateMaterial' => false,
+				'publicFilename' => '',
+				'field' => '', // <= フィールド名 (ex: image, multitext)
+				'fieldNote' => array() // <= フィールドが記録する欄
+			) ) );
+			break;
+		}
 
-	// 	var resKey = newResKey;
-	// 	if( !is_dir( $this->resourcesDirPath ) ){ // 作成
-	// 		mkdir( $this->resourcesDirPath );
-	// 	}
-	// 	mkdir( $this->resourcesDirPath+'/'+resKey );
-	// 	fs.writeFileSync(
-	// 		$this->resourcesDirPath+'/'+resKey+'/res.json',
-	// 		JSON.stringify( $this->resourceDb[resKey], null, 1 )
-	// 	);
-	// 	fs.writeFileSync(
-	// 		$this->resourcesDirPath+'/'+resKey+'/bin.'+$this->resourceDb[resKey].ext,
-	// 		''
-	// 	);
+		$resKey = $newResKey;
+		if( !is_dir( $this->resourcesDirPath ) ){ // 作成
+			mkdir( $this->resourcesDirPath );
+		}
+		mkdir( $this->resourcesDirPath.'/'.$resKey );
+		$this->broccoli->fs()->save_file(
+			$this->resourcesDirPath.'/'.$resKey.'/res.json',
+			json_encode( $this->resourceDb[$resKey], JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES )
+		);
+		$this->broccoli->fs()->save_file(
+			$this->resourcesDirPath.'/'.$resKey.'/bin.'.$this->resourceDb[$resKey]->ext,
+			''
+		);
 
-	// 	new Promise(function(rlv){rlv();})
-	// 		.then(function(){ return new Promise(function(rlv, rjt){
-	// 			callback( newResKey );
-	// 		}); })
-	// 	;
-	// 	return this;
-	// }
+		return $newResKey;
+	}
 
 	/**
 	 * get resource DB
@@ -217,96 +211,63 @@ class resourceMgr{
 		return $this->resourceDb[$resKey];
 	}
 
-	// /**
-	//  * duplicate resource
-	//  * @return 複製された新しいリソースのキー
-	//  */
-	// this.duplicateResource = function( resKey, callback ){
-	// 	callback = callback || function(){};
-	// 	// console.log( resKey );
-	// 	if( typeof($this->resourceDb[resKey]) !== typeof({}) ){
-	// 		// 未登録の resKey
-	// 		new Promise(function(rlv){rlv();})
-	// 			.then(function(){ return new Promise(function(rlv, rjt){
-	// 				callback(false);
-	// 			}); })
-	// 		;
-	// 		return this;
-	// 	}
-	// 	this.addResource(function(newResKey){
-	// 		$this->resourceDb[newResKey] = JSON.parse( JSON.stringify( $this->resourceDb[resKey] ) );
-	// 		// console.log( $this->resourcesDirPath+resKey+'/' + ' => ' + $this->resourcesDirPath+newResKey+'/' );
-	// 		fs.mkdir( $this->resourcesDirPath+newResKey+'/', {}, function(err){
-	// 			fsEx.copy(
-	// 				$this->resourcesDirPath+resKey+'/' ,
-	// 				$this->resourcesDirPath+newResKey+'/' ,
-	// 				function(err){
-	// 					if(err){
-	// 						// console.log( '++ ERROR ++' );
-	// 						console.error(err);
-	// 					}
-	// 					// console.log( newResKey );
-	// 					callback( newResKey );
-	// 				}
-	// 			);
-	// 		} );
-	// 	});
-	// 	return this;
-	// }
+	/**
+	 * duplicate resource
+	 * @return 複製された新しいリソースのキー
+	 */
+	public function duplicateResource( $resKey ){
+		// console.log( resKey );
+		if( !is_object($this->resourceDb[$resKey]) ){
+			// 未登録の resKey
+			return false;
+		}
+		$newResKey = $this->addResource();
+		$this->resourceDb[$newResKey] = json_decode( json_encode( $this->resourceDb[$resKey] ) );
+		// console.log( $this->resourcesDirPath+resKey+'/' + ' => ' + $this->resourcesDirPath+newResKey+'/' );
+		mkdir($this->resourcesDirPath.$newResKey.'/');
+		copy(
+			$this->resourcesDirPath.$resKey.'/' ,
+			$this->resourcesDirPath.$newResKey.'/'
+		);
+		return $newResKey;
+	}
 
-	// /**
-	//  * update resource
-	//  *
-	//  * このメソッドは、resKey が指すリソースの新しい情報を受け取り、更新します。
-	//  * 保存されたファイル本体とJSONを上書き保存します。
-	//  *
-	//  * @param  {string} resKey  Resource Key
-	//  * @param  {object} resInfo Resource Information.
-	//  * <dl>
-	//  * <dt>ext</dt><dd>ファイル拡張子名。</dd>
-	//  * <dt>type</dt><dd>mimeタイプ。</dd>
-	//  * <dt>base64</dt><dd>ファイルのBase64エンコードされた値</dd>
-	//  * <dt>publicFilename</dt><dd>公開時のファイル名</dd>
-	//  * <dt>isPrivateMaterial</dt><dd>非公開ファイル。</dd>
-	//  * </dl>
-	//  * @return {boolean}		always true.
-	//  */
-	// this.updateResource = function( resKey, resInfo, callback ){
-	// 	callback = callback || function(){};
-	// 	if( typeof($this->resourceDb[resKey]) !== typeof({}) ){
-	// 		// 未登録の resKey
-	// 		new Promise(function(rlv){rlv();})
-	// 			.then(function(){ return new Promise(function(rlv, rjt){
-	// 				callback(false);
-	// 			}); })
-	// 		;
-	// 		return this;
-	// 	}
-	// 	$this->resourceDb[resKey] = resInfo;
+	/**
+	 * update resource
+	 *
+	 * このメソッドは、resKey が指すリソースの新しい情報を受け取り、更新します。
+	 * 保存されたファイル本体とJSONを上書き保存します。
+	 *
+	 * @param  {string} resKey  Resource Key
+	 * @param  {object} resInfo Resource Information.
+	 * <dl>
+	 * <dt>ext</dt><dd>ファイル拡張子名。</dd>
+	 * <dt>type</dt><dd>mimeタイプ。</dd>
+	 * <dt>base64</dt><dd>ファイルのBase64エンコードされた値</dd>
+	 * <dt>publicFilename</dt><dd>公開時のファイル名</dd>
+	 * <dt>isPrivateMaterial</dt><dd>非公開ファイル。</dd>
+	 * </dl>
+	 * @return {boolean}		always true.
+	 */
+	public function updateResource( $resKey, $resInfo ){
+		if( !is_object($this->resourceDb[$resKey]) ){
+			// 未登録の resKey
+			return false;
+		}
+		$this->resourceDb[$resKey] = $resInfo;
 
-	// 	mkdir( $this->resourcesDirPath+'/'+resKey );
-	// 	fs.writeFileSync(
-	// 		$this->resourcesDirPath+'/'+resKey+'/res.json',
-	// 		JSON.stringify( $this->resourceDb[resKey], null, 1 )
-	// 	);
-	// 	var bin = '';
-	// 	try {
-	// 		bin = (new Buffer($this->resourceDb[resKey].base64, 'base64'));
-	// 	} catch (e) {
-	// 		bin = '';
-	// 	}
-	// 	fs.writeFileSync(
-	// 		$this->resourcesDirPath+'/'+resKey+'/bin.'+$this->resourceDb[resKey].ext,
-	// 		bin
-	// 	);
-
-	// 	new Promise(function(rlv){rlv();})
-	// 		.then(function(){ return new Promise(function(rlv, rjt){
-	// 			callback(true);
-	// 		}); })
-	// 	;
-	// 	return this;
-	// }
+		mkdir( $this->resourcesDirPath.'/'.$resKey );
+		$this->broccoli->fs()->save_file(
+			$this->resourcesDirPath+'/'.$resKey.'/res.json',
+			json_encode( $this->resourceDb[$resKey], JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES )
+		);
+		$bin = base64_decode($this->resourceDb[$resKey]->base64);
+		$this->broccoli->fs()->save_file(
+			$this->resourcesDirPath.'/'.$resKey.'/bin.'.$this->resourceDb[$resKey]->ext,
+			$bin
+		);
+		return true;
+	}
 
 	/**
 	 * Reset bin from base64
@@ -415,7 +376,7 @@ class resourceMgr{
 		unset( $this->resourceDb[$resKey] );
 		$result = false;
 		if( is_dir($this->resourcesDirPath.'/'.$resKey.'/') ){
-			$result = $this->broccoli-fs()->rm( $this->resourcesDirPath.'/'.$resKey.'/' );
+			$result = $this->broccoli->fs()->rm( $this->resourcesDirPath.'/'.$resKey.'/' );
 		}
 		return $result;
 	}

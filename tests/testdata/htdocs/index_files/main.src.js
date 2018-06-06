@@ -89,18 +89,18 @@ window.main = new (function(){
 							}
 						);
 					}else if(serverType == 'php'){
-						console.info(api, options);
+						// console.info(api, options);
 						var res;
 						$.ajax({
 							"url": "./_api.php",
-							"method": "get",
+							"method": "post",
 							"data":{
 								'api': api ,
 								'options': options
 							},
 							"success": function(data){
 								res = JSON.parse(data);
-								console.log(res);
+								// console.log(res);
 							},
 							"error": function(error){
 								console.error(error);

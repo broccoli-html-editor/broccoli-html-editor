@@ -26,9 +26,9 @@ $broccoli->init(
 			$fin .= '    <head>'."\n";
 			$fin .= '        <meta charset="utf-8" />'."\n";
 			$fin .= '        <title>sample page</title>'."\n";
-			$fin .= '        <link rel="stylesheet" href="/common/css/common.css" />'."\n";
-			$fin .= '        <link rel="stylesheet" href="/common/css/module.css" />'."\n";
-			$fin .= '        <script src="/common/js/module.js"></script>'."\n";
+			$fin .= '        <link rel="stylesheet" href="../common/css/common.css" />'."\n";
+			$fin .= '        <link rel="stylesheet" href="../common/css/module.css" />'."\n";
+			$fin .= '        <script src="../common/js/module.js"></script>'."\n";
 			$fin .= '        <style media="screen">'."\n";
 			$fin .= '            img{max-width:100%;}'."\n";
 			$fin .= '        </style>'."\n";
@@ -45,7 +45,7 @@ $broccoli->init(
 			$fin .= $htmls['secondly']."\n";
 			$fin .= '        </div><!-- /secondly -->'."\n";
 			$fin .= '        <footer>'."\n";
-			$fin .= '            <a href="/editpage/">top</a>, <a href="http://www.pxt.jp/" target="_blank">pxt</a>'."\n";
+			$fin .= '            <a href="../editpage/">top</a>, <a href="http://www.pxt.jp/" target="_blank">pxt</a>'."\n";
 			$fin .= '            <form action="javascript:alert(\'form submit done.\');">'."\n";
 			$fin .= '                <input type="submit" value="submit!" />'."\n";
 			$fin .= '            </form>'."\n";

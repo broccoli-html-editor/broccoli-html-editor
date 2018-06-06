@@ -227,10 +227,19 @@ class broccoliHtmlEditor{
 		return $rtn;
 	}
 
-	// /**
-	//  * インスタンスパスの末尾の連番を1つ進める
-	//  */
-	// this.incrementInstancePath = require('./fncs/incrementInstancePath.js');
+	/**
+	 * インスタンスパスの末尾の連番を1つ進める
+	 */
+	public function incrementInstancePath($instancePath){
+		if(preg_match( '/^(.*)\@([0-9]+)$/', $instancePath, $matched )){
+			$tmpPath = $matched[1];
+			$tmpNum = $matched[2];
+			$tmpNum = Number($tmpNum);
+			$tmpNum ++;
+			$instancePath = $tmpPath . '@' . $tmpNum;
+		}
+		return $instancePath;
+	}
 
 	/**
 	 * モジュールの絶対パスを取得する
