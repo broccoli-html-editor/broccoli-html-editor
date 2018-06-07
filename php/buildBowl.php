@@ -136,7 +136,7 @@ class buildBowl{
 					}
 					if( $this->options['mode'] == 'canvas' ){
 						$tmpopt = json_decode( json_encode($opt), true );
-						if(is_array($fieldData[$field->name])){ $fieldData[$field->name] = array(); }
+						if(!is_array($fieldData[$field->name])){ $fieldData[$field->name] = array(); }
 						$tmpopt['instancePath'] .= '@'.(count($fieldData[$field->name]));
 					}
 
@@ -152,11 +152,10 @@ class buildBowl{
 					"mode" => $this->options['mode']
 				);
 
-				// PHP版は、ejs ではなく twig に対応
 				$loader = new \Twig_Loader_Array(array(
 					'index' => $src,
 				));
-				$twig = new \Twig_Environment($loader, array('debug'=>true));
+				$twig = new \Twig_Environment($loader, array('debug'=>true, 'autoescape'=>false));
 				$twig->addExtension(new \Twig_Extension_Debug());
 				$tmp_twig_rtn = $twig->render('index', $tplDataObj);
 
