@@ -1,6 +1,10 @@
 <?php
 require_once(__DIR__.'/../../../vendor/autoload.php');
 require_once(__DIR__.'/../../php_test_helper/test_php_field_custom1.php');
+mb_internal_encoding('UTF-8');
+@ini_set( 'mbstring.internal_encoding' , 'UTF-8' );
+@ini_set( 'mbstring.http_input' , 'UTF-8' );
+@ini_set( 'mbstring.http_output' , 'UTF-8' );
 
 $broccoli = new broccoliHtmlEditor\broccoliHtmlEditor();
 
