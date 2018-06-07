@@ -66,154 +66,68 @@ class image extends \broccoliHtmlEditor\fieldBase{
 		return;
 	}
 
-	// /**
-	//  * リソースを加工する (Server Side)
-	//  */
-	// this.resourceProcessor = function( path_orig, path_public, resInfo, callback ){
-	// 	// console.log(resInfo);
-	// 	function md5(content){
-	// 		var md5 = require('crypto').createHash('md5');
-	// 		md5.update(content);
-	// 		return md5.digest('hex');
-	// 	}
-	// 	function md5file(path){
-	// 		if(!utils79.is_file(path)){return false;}
-	// 		var content = require('fs').readFileSync( path );
-	// 		return md5(content);
-	// 	}
+	/**
+	 * リソースを加工する (Server Side)
+	 */
+	public function resourceProcessor( $path_orig, $path_public, $resInfo ){
 
-	// 	resInfo.fieldNote = resInfo.fieldNote || {};
+		$resInfo->fieldNote = (@$resInfo->fieldNote ? $resInfo->fieldNote : json_decode('{}'));
 
-	// 	new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+		if( $resInfo->fieldNote->origMd5 == $resInfo->md5 && $resInfo->fieldNote->base64 ){
+			// console.log('変更されていないファイル =-=-=-=-=-=-=-=-=-=-=-=-=');
+			$result = $this->broccoli->fs()->save_file(
+				$path_public,
+				base64_decode($resInfo->fieldNote->base64)
+			);
+			return $result;
+		}
 
-	// 		if( resInfo.fieldNote.origMd5 == resInfo.md5 && resInfo.fieldNote.base64 ){
-	// 			// console.log('変更されていないファイル =-=-=-=-=-=-=-=-=-=-=-=-=');
-	// 			require('fs').writeFileSync(
-	// 				path_public,
-	// 				(new Buffer(resInfo.fieldNote.base64, 'base64'))
-	// 			);
-	// 			callback(true);
-	// 			return;
-	// 		}
+		// 公開ディレクトリに複製
+		copy( $path_orig, $path_public );
 
-	// 		it79.fnc(
-	// 			{},
-	// 			[
-	// 				function(it1, data){
-	// 					// 公開ディレクトリに複製
-	// 					var fsEx = require('fs-extra');
-	// 					fsEx.copy( path_orig, path_public, function(err){
-	// 						it1.next(data);
-	// 					} );
-	// 					return;
-	// 				},
-	// 				function(it1, data){
-	// 					// オリジナルのMD5ハッシュを記録
-	// 					if( resInfo.md5 ){
-	// 						resInfo.fieldNote.origMd5 = resInfo.md5;
-	// 					}else{
-	// 						resInfo.fieldNote.origMd5 = md5file(path_orig);
-	// 					}
 
-	// 					// 加工後のファイルの情報を記録
-	// 					var bin = require('fs').readFileSync( path_public );
-	// 					// base64
-	// 					resInfo.fieldNote.base64 = (new Buffer(bin)).toString('base64');
-	// 					// MD5
-	// 					resInfo.fieldNote.md5 = md5(bin);
-	// 					// size
-	// 					resInfo.fieldNote.size = bin.length;
+		// オリジナルのMD5ハッシュを記録
+		if( $resInfo->md5 ){
+			$resInfo->fieldNote->origMd5 = $resInfo->md5;
+		}else{
+			$resInfo->fieldNote->origMd5 = md5_file($path_orig);
+		}
 
-	// 					it1.next(data);
-	// 					return;
-	// 				},
-	// 				function(it1, data){
-	// 					callback(true);
-	// 					return;
-	// 				}
-	// 			]
-	// 		);
-	// 	}); });
+		// 加工後のファイルの情報を記録
+		$bin = file_get_contents( $path_public );
+		// base64
+		$resInfo->fieldNote->base64 = base64_encode($bin);
+		// MD5
+		$resInfo->fieldNote->md5 = md5($bin);
+		// size
+		$resInfo->fieldNote->size = strlen($bin);
 
-	// 	return this;
-	// }
 
-	// /**
-	//  * GPI (Server Side)
-	//  */
-	// this.gpi = function(options, callback){
-	// 	callback = callback || function(){};
+		return true;
+	}
 
-	// 	/**
-	// 	 * HTTPSリクエストを送信する
-	// 	 */
-	// 	function httpRequest(url, options, callback){
-	// 		callback = callback || function(){};
-	// 		var urlParsed = new urlParse(url);
-	// 		// console.log(urlParsed);
+	/**
+	 * GPI (Server Side)
+	 */
+	public function gpi($options){
 
-	// 		var http = require('http');
-	// 		if(urlParsed.protocol=='https'){
-	// 			http = require('https');
-	// 		}
+		switch($options['api']){
+			case 'getImageByUrl':
+				$result = array();
+				$result['base64'] = @base64_encode(file_get_contents($options['data']['url']));
+				$result['responseHeaders'] = $http_response_header;
+				foreach($http_response_header as $row){
+					if(preg_match('/^HTTP\/[0-9\.]+\s+([1-9][0-9]*)/', $row, $matched)){
+						$result['status'] = intval( $matched[1] );
+					}
+				}
+				return $result;
 
-	// 		options = options || {};
-	// 		options.hostname = options.hostname || urlParsed.host;
-	// 		options.port = options.port || (urlParsed.protocol=='https' ? 443 : 80); // default: 80 for http, 443 for https
-	// 		options.path = options.path || urlParsed.pathname;
+			default:
+				return 'ERROR: Unknown API';
+		}
 
-	// 		var status = 0;
-	// 		var responseHeaders = {};
-	// 		var data = [];
-	// 		var req = http.request(options, function(res){
-	// 			status = res.statusCode;
-	// 			responseHeaders = res.headers;
-	// 			res.setEncoding('binary');
-	// 			res.on('data', function(chunk){
-	// 				data.push( new Buffer( chunk, 'binary' ) );
-	// 				return;
-	// 			});
-	// 			res.on('end', function(){
-	// 				data = Buffer.concat( data );
-	// 				callback(data, status, responseHeaders);
-	// 				return;
-	// 			})
-	// 		});
-
-	// 		req.on('error', function(e){
-	// 			callback('problem with request: '+ e.message, 0, {});
-	// 		});
-
-	// 		// write data to request body
-	// 		// req.write();
-	// 		req.end();
-
-	// 		return;
-	// 	}
-
-	// 	new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
-
-	// 		switch(options.api){
-	// 			case 'getImageByUrl':
-	// 				// console.log(options.data);
-	// 				var result = {};
-	// 				httpRequest( options.data.url, {}, function(data, status, responseHeaders){
-	// 					result.base64 = utils79.base64_encode(data);
-	// 					result.status = status;
-	// 					result.responseHeaders = responseHeaders;
-	// 					// console.log(result);
-	// 					callback(result);
-	// 				} );
-	// 				break;
-
-	// 			default:
-	// 				callback('ERROR: Unknown API');
-	// 				break;
-	// 		}
-
-	// 	}); });
-
-	// 	return this;
-	// }
+		return false;
+	}
 
 }

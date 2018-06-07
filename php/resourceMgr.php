@@ -216,14 +216,12 @@ class resourceMgr{
 	 * @return 複製された新しいリソースのキー
 	 */
 	public function duplicateResource( $resKey ){
-		// console.log( resKey );
 		if( !is_object($this->resourceDb[$resKey]) ){
 			// 未登録の resKey
 			return false;
 		}
 		$newResKey = $this->addResource();
 		$this->resourceDb[$newResKey] = json_decode( json_encode( $this->resourceDb[$resKey] ) );
-		// console.log( $this->resourcesDirPath+resKey+'/' + ' => ' + $this->resourcesDirPath+newResKey+'/' );
 		mkdir($this->resourcesDirPath.$newResKey.'/');
 		copy(
 			$this->resourcesDirPath.$resKey.'/' ,
@@ -254,11 +252,11 @@ class resourceMgr{
 			// 未登録の resKey
 			return false;
 		}
-		$this->resourceDb[$resKey] = $resInfo;
+		$this->resourceDb[$resKey] = json_decode(json_encode($resInfo));
 
 		mkdir( $this->resourcesDirPath.'/'.$resKey );
 		$this->broccoli->fs()->save_file(
-			$this->resourcesDirPath+'/'.$resKey.'/res.json',
+			$this->resourcesDirPath.'/'.$resKey.'/res.json',
 			json_encode( $this->resourceDb[$resKey], JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES )
 		);
 		$bin = base64_decode($this->resourceDb[$resKey]->base64);
