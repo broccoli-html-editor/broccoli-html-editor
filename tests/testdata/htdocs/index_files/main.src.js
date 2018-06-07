@@ -96,7 +96,7 @@ window.main = new (function(){
 							"method": "post",
 							"data":{
 								'api': api ,
-								'options': options
+								'options': JSON.stringify(options)
 							},
 							"success": function(data){
 								res = JSON.parse(data);

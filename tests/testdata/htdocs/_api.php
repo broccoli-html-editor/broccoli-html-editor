@@ -75,7 +75,7 @@ $broccoli->init(
 
 $rtn = $broccoli->gpi(
 	$_REQUEST['api'],
-	$_REQUEST['options']
+	json_decode($_REQUEST['options'], true)
 );
 echo json_encode($rtn);
 exit;
