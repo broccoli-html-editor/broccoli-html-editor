@@ -225,7 +225,7 @@ class classModule{
 
 			$tmpSearchResult = $this->searchEndTag( $src, 'loop' );
 			$src = $tmpSearchResult['nextSrc'];
-			if( !is_object($this->subModule) ){
+			if( !is_array($this->subModule) ){
 				$this->subModule = array();
 			}
 			// var_dump(' <------- ');
@@ -324,6 +324,7 @@ class classModule{
 
 				if( @$tmpJson->interface ){
 					if( @$tmpJson->interface->fields ){
+						// $this->fields = $tmpJson->interface->fields;
 						foreach( $tmpJson->interface->fields as $tmpIdx=>$tmpRow  ){
 							$this->fields[$tmpIdx] = $tmpRow;
 							// name属性を自動補完
@@ -331,12 +332,12 @@ class classModule{
 						}
 					}
 					if( @$tmpJson->interface->subModule ){
+						// $this->subModule = $tmpJson->interface->subModule;
 						foreach( $tmpJson->interface->subModule as $tmpIdx=>$tmpRow  ){
-							$this->subModule[$tmpIdx] = json_decode( json_encode( array(
-								'fields'=>array()
-							) ) );
+							$this->subModule[$tmpIdx] = json_decode(json_encode($tmpRow));
+							$this->subModule[$tmpIdx]->fields = array();
 							foreach( $tmpRow->fields as $tmpIdx2=>$tmpRow2 ){
-								$this->subModule[$tmpIdx]->fields[$tmpIdx2] = json_decode('{}');
+								$this->subModule[$tmpIdx]->fields[$tmpIdx2] = $tmpRow2;
 								// name属性を自動補完
 								$this->subModule[$tmpIdx]->fields[$tmpIdx2]->name = $tmpIdx2;
 							}

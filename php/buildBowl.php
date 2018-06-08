@@ -423,33 +423,35 @@ class buildBowl{
 		unset($rtn);
 
 
-		// finalize.php の処理をかける
-		$finalize = $mod->finalize;
-		$d->html = $finalize( $d->html, array('data'=>$this->data) );
+		if( is_string($d->html) ){
+			// finalize.php の処理をかける
+			$finalize = $mod->finalize;
+			$d->html = $finalize( $d->html, array('data'=>$this->data) );
 
 
-		// canvasモードのとき、scriptタグは削除する。
-		// scriptの挙動がGUI編集画面を破壊する可能性があるため。
-		if( $this->options['mode'] == 'canvas' ){
-			// HTMLをパース
-			$simple_html_dom = str_get_html(
-				$d->html ,
-				false, // $lowercase
-				false, // $forceTagsClosed
-				DEFAULT_TARGET_CHARSET, // $target_charset
-				false, // $stripRN
-				DEFAULT_BR_TEXT, // $defaultBRText
-				DEFAULT_SPAN_TEXT // $defaultSpanText
-			);
+			// canvasモードのとき、scriptタグは削除する。
+			// scriptの挙動がGUI編集画面を破壊する可能性があるため。
+			if( $this->options['mode'] == 'canvas' ){
+				// HTMLをパース
+				$simple_html_dom = str_get_html(
+					$d->html ,
+					false, // $lowercase
+					false, // $forceTagsClosed
+					DEFAULT_TARGET_CHARSET, // $target_charset
+					false, // $stripRN
+					DEFAULT_BR_TEXT, // $defaultBRText
+					DEFAULT_SPAN_TEXT // $defaultSpanText
+				);
 
-			if($simple_html_dom === false){
-				// HTMLパースに失敗
-			}else{
-				$simple_html_dom_ret = $simple_html_dom->find('script');
-				foreach( $simple_html_dom_ret as $simple_html_dom_ret_node ){
-					$simple_html_dom_ret_node->outertext = '<div style="color:#eee; background-color: #f00; border: 3px solid #f00; text-align: center;">script element</div>';
+				if($simple_html_dom === false){
+					// HTMLパースに失敗
+				}else{
+					$simple_html_dom_ret = $simple_html_dom->find('script');
+					foreach( $simple_html_dom_ret as $simple_html_dom_ret_node ){
+						$simple_html_dom_ret_node->outertext = '<div style="color:#eee; background-color: #f00; border: 3px solid #f00; text-align: center;">script element</div>';
+					}
+					$d->html = $simple_html_dom->outertext;
 				}
-				$d->html = $simple_html_dom->outertext;
 			}
 		}
 
