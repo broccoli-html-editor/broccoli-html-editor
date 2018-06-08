@@ -301,9 +301,10 @@ $ npm test
 
 ## 更新履歴 - Change log
 
-### broccoli-html-editor@0.2.1 (未定)
+### broccoli-html-editor@0.3.0 (未定)
 
 - if フィールドが、 canvas モード描画時でも常に finalize モードで出力された値を評価するように変更した。
+- バックエンド処理をPHPに移行した。これに伴い、 `finalize.js` は `finalize.php` へ変更され、フィールドプラグインのバックエンド処理もPHPへ移行する。
 
 ### broccoli-html-editor@0.2.0 (2018年3月5日)
 

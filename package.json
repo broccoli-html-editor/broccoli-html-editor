@@ -1,6 +1,6 @@
 {
   "name": "broccoli-html-editor",
-  "version": "0.2.1-alpha.1+nb",
+  "version": "0.3.0-alpha.1+nb",
   "description": "GUI HTML Editor Library.",
   "private": true,
   "main": "libs/main.js",
