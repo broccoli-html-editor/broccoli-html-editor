@@ -119,7 +119,7 @@ broccoli.init(
 				"url": "/path/to/broccoli_api.php",
 				"type": 'post',
 				'data': {
-					'api': JSON.stringify(api) ,
+					'api': api ,
 					'options': JSON.stringify(options)
 				},
 				"success": function(data){
