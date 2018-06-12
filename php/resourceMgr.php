@@ -82,12 +82,23 @@ class resourceMgr{
 			}
 		}
 
+		/** res.json を保存する */
+		$save_res_json = function($resKey){
+			$json_str = json_encode( $this->resourceDb[$resKey], JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES );
+			$result = $this->broccoli->fs()->save_file(
+				$this->resourcesDirPath.'/'.$resKey.'/res.json',
+				$json_str
+			);
+			return $result;
+		};
+
 		// リソースデータの保存と公開領域への設置
 		foreach($this->resourceDb as $resKey=>$res){
 			$this->broccoli->fs()->mkdir( $this->resourcesDirPath.'/'.$resKey );
 
 			if( !strlen($this->resourceDb[$resKey]->base64) ){
 				// base64がセットされていなかったら終わり
+				$save_res_json($resKey);
 				continue;
 			}
 
@@ -112,6 +123,7 @@ class resourceMgr{
 			// 公開ファイル
 			if( $this->resourceDb[$resKey]->isPrivateMaterial ){
 				// 非公開ファイルなら終わり
+				$save_res_json($resKey);
 				continue;
 			}
 
@@ -128,6 +140,7 @@ class resourceMgr{
 						$this->resourcesPublishDirPath.'/'.$filename.'.'.$this->resourceDb[$resKey]->ext ,
 						$this->resourceDb[$resKey]
 					);
+					$save_res_json($resKey);
 					continue;
 				}
 			}
@@ -138,13 +151,8 @@ class resourceMgr{
 				$this->resourcesPublishDirPath.'/'.$filename.'.'.$this->resourceDb[$resKey]->ext
 			);
 
-			// res.json を保存する
-			$json_str = json_encode( $this->resourceDb[$resKey], JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES );
-			$json_str = preg_replace('/^(    )+/m', ' ', $json_str);
-			$this->broccoli->fs()->save_file(
-				$this->resourcesDirPath.'/'.$resKey.'/res.json',
-				$json_str
-			);
+			$save_res_json($resKey);
+			continue;
 		}
 
 		return true;
