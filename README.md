@@ -276,6 +276,10 @@ $ npm test
 
 ## 更新履歴 - Change log
 
+### broccoli-html-editor v0.3.1 (リリース日未定)
+
+- ????????????????????
+
 ### broccoli-html-editor v0.3.0 (2018年6月15日)
 
 - if フィールドが、 canvas モード描画時でも常に finalize モードで出力された値を評価するように変更した。
