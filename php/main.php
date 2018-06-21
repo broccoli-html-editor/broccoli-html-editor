@@ -105,7 +105,10 @@ class broccoliHtmlEditor{
 		}
 
 		foreach( $options['paths_module_template'] as $i=>$row ){
-			$options['paths_module_template'][$i] = $this->fs->get_realpath( $options['documentRoot'].'/'.$this->fs->normalize_path( $options['paths_module_template'][$i] ).'/' );
+			if( !preg_match('/^(\/|\\\\|[a-zA-Z]\:\\\\)/', $options['paths_module_template'][$i]) ){
+				$options['paths_module_template'][$i] = $options['documentRoot'].'/'.$this->fs->normalize_path( $options['paths_module_template'][$i] );
+			}
+			$options['paths_module_template'][$i] = $this->fs->normalize_path( $this->fs->get_realpath( $options['paths_module_template'][$i].'/' ) );
 		}
 
 		$options['pathHtml'] = $this->fs->normalize_path( $this->fs->get_realpath($options['pathHtml']) );
