@@ -73,7 +73,7 @@ class image extends \broccoliHtmlEditor\fieldBase{
 
 		$resInfo->fieldNote = (@$resInfo->fieldNote ? $resInfo->fieldNote : json_decode('{}'));
 
-		if( $resInfo->fieldNote->origMd5 == $resInfo->md5 && $resInfo->fieldNote->base64 ){
+		if( @$resInfo->fieldNote->origMd5 == @$resInfo->md5 && $resInfo->fieldNote->base64 ){
 			// console.log('変更されていないファイル =-=-=-=-=-=-=-=-=-=-=-=-=');
 			$result = $this->broccoli->fs()->save_file(
 				$path_public,
