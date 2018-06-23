@@ -431,7 +431,7 @@ class broccoliHtmlEditor{
 				$realpathThumb = $this->fs->get_realpath( $realpath.'/thumb.png' );
 				$rtn['categories'][$idx]['modules'][$row2]['thumb'] = null;
 				if( is_file($realpathThumb) ){
-					$rtn['categories'][$idx]['modules'][$row2]['thumb'] = 'data:image/png;base64,'+base64_encode( file_get_contents( $realpathThumb ) );
+					$rtn['categories'][$idx]['modules'][$row2]['thumb'] = 'data:image/png;base64,'.base64_encode( file_get_contents( $realpathThumb ) );
 				}
 
 				// README.md (html)
