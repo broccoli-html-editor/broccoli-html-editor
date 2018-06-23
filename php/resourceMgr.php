@@ -166,7 +166,7 @@ class resourceMgr{
 		$newResKey;
 		while(1){
 			$newResKey = md5( microtime() );
-			if( is_object($this->resourceDb[$newResKey]) ){
+			if( is_object(@$this->resourceDb[$newResKey]) ){
 				// 登録済みの resKey
 				continue;
 			}
