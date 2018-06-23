@@ -185,9 +185,9 @@ class resourceMgr{
 
 		$resKey = $newResKey;
 		if( !is_dir( $this->resourcesDirPath ) ){ // 作成
-			mkdir( $this->resourcesDirPath );
+			@mkdir( $this->resourcesDirPath );
 		}
-		mkdir( $this->resourcesDirPath.'/'.$resKey );
+		@mkdir( $this->resourcesDirPath.'/'.$resKey );
 		$this->broccoli->fs()->save_file(
 			$this->resourcesDirPath.'/'.$resKey.'/res.json',
 			json_encode( $this->resourceDb[$resKey], JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES )
@@ -230,7 +230,7 @@ class resourceMgr{
 		}
 		$newResKey = $this->addResource();
 		$this->resourceDb[$newResKey] = json_decode( json_encode( $this->resourceDb[$resKey] ) );
-		mkdir($this->resourcesDirPath.$newResKey.'/');
+		@mkdir($this->resourcesDirPath.$newResKey.'/');
 		copy(
 			$this->resourcesDirPath.$resKey.'/' ,
 			$this->resourcesDirPath.$newResKey.'/'
@@ -262,7 +262,7 @@ class resourceMgr{
 		}
 		$this->resourceDb[$resKey] = json_decode(json_encode($resInfo));
 
-		mkdir( $this->resourcesDirPath.'/'.$resKey );
+		@mkdir( $this->resourcesDirPath.'/'.$resKey );
 		$this->broccoli->fs()->save_file(
 			$this->resourcesDirPath.'/'.$resKey.'/res.json',
 			json_encode( $this->resourceDb[$resKey], JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES )

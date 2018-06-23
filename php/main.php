@@ -194,8 +194,7 @@ class broccoliHtmlEditor{
 	 * @return {Object}           inputフィールドの定義オブジェクト
 	 */
 	public function getFieldDefinition($fieldType){
-		$fieldDefinition = $this->fieldDefinitions[$fieldType];
-		if( $this->fieldDefinitions[$fieldType] ){
+		if( @$this->fieldDefinitions[$fieldType] ){
 			// 定義済みのフィールドを返す
 			$fieldDefinition = $this->fieldDefinitions[$fieldType];
 		}else{
