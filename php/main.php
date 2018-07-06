@@ -288,11 +288,14 @@ class broccoliHtmlEditor{
 
 		foreach( $modules as $idx=>$row ){
 			$realpath = $row;
-			$infoJson = json_decode(file_get_contents( $realpath.'/info.json' ));
+			$infoJson = json_decode('{}');
+			if( is_file($realpath.'/info.json') ){
+				$infoJson = json_decode(file_get_contents( $realpath.'/info.json' ));
+			}
 
 			$rtn[$idx] = array(
 				'packageId' => $idx,
-				'packageName' => ($infoJson->name ? $infoJson->name : $idx),
+				'packageName' => (@$infoJson->name ? $infoJson->name : $idx),
 				'realpath' => $realpath,
 				'infoJson' => $infoJson,
 				'deprecated' => (@$infoJson->deprecated ? true : false),
