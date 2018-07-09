@@ -354,7 +354,7 @@ class broccoliHtmlEditor{
 			$rtn['realpath'] = false;
 			return $rtn;
 		}
-		$rtn['packageInfo'] = json_decode(file_get_contents( $rtn['realpath'].'/info.json' ));
+		$rtn['packageInfo'] = @json_decode(file_get_contents( $rtn['realpath'].'/info.json' ));
 		if(is_null($rtn['packageInfo'])){
 			$rtn['packageInfo'] = array();
 		}
