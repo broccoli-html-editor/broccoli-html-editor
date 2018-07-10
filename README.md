@@ -276,11 +276,9 @@ $ npm test
 
 ## 更新履歴 - Change log
 
-### broccoli-html-editor v0.3.1 (リリース日未定)
+### broccoli-html-editor v0.3.1 (2018年7月11日)
 
-- PHP版
-	- モジュールパッケージのパスが絶対パスで指定された場合に正しいパスを参照できない不具合を修正。
-	- その他の不具合の修正。
+- PHP版に関するいくつかの不具合の修正。
 
 ### broccoli-html-editor v0.3.0 (2018年6月15日)
 
