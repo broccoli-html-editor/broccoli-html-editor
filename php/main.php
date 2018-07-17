@@ -638,12 +638,11 @@ class broccoliHtmlEditor{
 	 * ビルドしたHTMLは、callback() に文字列として渡されます。
 	 * realpathに指定したファイルは自動的に上書きされません。
 	 *
-	 * @param  {Object}   data     コンテンツデータ
-	 * @param  {Object}   options  オプション
+	 * @param  object   $data     コンテンツデータ
+	 * @param  array   $options  オプション
 	 *                             - options.mode = ビルドモード(finalize=製品版ビルド, canvas=編集画面用ビルド)
 	 *                             - options.instancePath = インスタンスパス
-	 * @param  {Function} callback callback function.
-	 * @return {Object}            this
+	 * @return string            source codes
 	 */
 	public function buildBowl( $data, $options ){
 		$buildBowl = new buildBowl($this, $data, $options);
@@ -655,35 +654,35 @@ class broccoliHtmlEditor{
 	 * ビルドしたHTMLは、callback() に文字列として渡されます。
 	 * realpathに指定したファイルは自動的に上書きされません。
 	 *
-	 * @param  {Object}   options  オプション
-	 *                             - options.mode = ビルドモード(finalize=製品版ビルド, canvas=編集画面用ビルド)
-	 *                             - options.bowlList = ボウル名の一覧。data.jsonに含まれていないbowlがある場合、空白の領域としてあわせてビルドされる。
-	 * @param  {Function} callback callback function.
-	 * @return {Object}            this
+	 * @param  array   $options  オプション
+	 *                             - $options['mode'] = ビルドモード(finalize=製品版ビルド, canvas=編集画面用ビルド)
+	 *                             - $options['bowlList'] = ボウル名の一覧。data.jsonに含まれていないbowlがある場合、空白の領域としてあわせてビルドされる。
+	 * @return array            HTMLs
 	 */
 	public function buildHtml( $options = array() ){
 		$dataJson = file_get_contents($this->realpathDataDir.'/data.json');
-		$dataJson = json_decode($dataJson, true);
+		$dataJson = json_decode($dataJson);
 
-		$dataJson['bowl'] = (@$dataJson['bowl'] ? $dataJson['bowl'] : array());
+		$dataJson->bowl = (@$dataJson->bowl ? $dataJson->bowl : json_decode('{}'));
 		if(!@$options['bowlList']){
 			$options['bowlList'] = array();
 		}
 		if( count($options['bowlList']) ){
 			foreach( $options['bowlList'] as $idx=>$row  ){
-				if( !@$dataJson['bowl'][$options['bowlList'][$idx]] ){
-					$dataJson['bowl'][$options['bowlList'][$idx]] = array(
+				if( !@$dataJson->bowl->{$options['bowlList'][$idx]} ){
+					$tmpBowlVal = array(
 						"modId" => "_sys/root",
 						"fields" => array(
-							"main" => array()
+							"main" => json_decode('{}')
 						)
 					);
+					$dataJson->bowl->{$options['bowlList'][$idx]} = json_decode( json_encode($tmpBowlVal) );
 				}
 			}
 		}
 
 		$htmls = array();
-		foreach($dataJson['bowl'] as $idx=>$row){
+		foreach($dataJson->bowl as $idx=>$row){
 			$options['instancePath'] = '/bowl.'.$idx;
 			$html = $this->buildBowl($row, $options );
 			$htmls[$idx] = $html;
@@ -697,8 +696,7 @@ class broccoliHtmlEditor{
 	 * ビルドしたHTMLは、`pathHtml` のファイルに上書き保存されます。
 	 * リソースも合わせて処理されます。
 	 *
-	 * @param  {Function} callback callback function.
-	 * @return {Object}            this
+	 * @return bool result
 	 */
 	public function updateContents(){
 		$broccoli = $this;

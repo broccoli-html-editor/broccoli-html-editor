@@ -53,9 +53,9 @@ class gpi{
 				return $list;
 
 			case "getContentsDataJson":
-				$dataJson = json_decode( file_get_contents($this->broccoli->realpathDataDir.'/data.json'), true );
-				if(!is_array($dataJson)){
-					$dataJson = array();
+				$dataJson = json_decode( file_get_contents($this->broccoli->realpathDataDir.'/data.json') );
+				if(!is_object($dataJson)){
+					$dataJson = json_decode('{}');
 				}
 				return $dataJson;
 
