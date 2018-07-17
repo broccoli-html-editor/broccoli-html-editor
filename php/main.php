@@ -551,19 +551,19 @@ class broccoliHtmlEditor{
 			$data['rtn'][$modId]->template = $obj->template;
 			$data['rtn'][$modId]->info = $obj->info;
 			if($obj->subModule){
-				$data['rtn'][$modId]->subModule = array();
+				$data['rtn'][$modId]->subModule = json_decode('{}');
 				foreach( $obj->subModule as $idx=>$row ){
-					$data['rtn'][$modId]->subModule[$idx] = json_decode('{}');
-					// var_dump($data['rtn'][$modId]->subModule[$idx]);
-					// var_dump($obj->subModule[$idx]);
-					$data['rtn'][$modId]->subModule[$idx]->id = $obj->subModule[$idx]->id;
-					$data['rtn'][$modId]->subModule[$idx]->subModName = $obj->subModule[$idx]->subModName;
-					$data['rtn'][$modId]->subModule[$idx]->fields = $obj->subModule[$idx]->fields;
-					$data['rtn'][$modId]->subModule[$idx]->isSystemModule = $obj->subModule[$idx]->isSystemModule;
-					$data['rtn'][$modId]->subModule[$idx]->isSingleRootElement = $obj->subModule[$idx]->isSingleRootElement;
-					$data['rtn'][$modId]->subModule[$idx]->templateType = $obj->subModule[$idx]->templateType;
-					$data['rtn'][$modId]->subModule[$idx]->template = $obj->subModule[$idx]->template;
-					$data['rtn'][$modId]->subModule[$idx]->info = $obj->subModule[$idx]->info;
+					$data['rtn'][$modId]->subModule->{$idx} = json_decode('{}');
+					// var_dump($data['rtn'][$modId]->subModule->{$idx});
+					// var_dump($obj->subModule->{$idx});
+					$data['rtn'][$modId]->subModule->{$idx}->id = $obj->subModule->{$idx}->id;
+					$data['rtn'][$modId]->subModule->{$idx}->subModName = $obj->subModule->{$idx}->subModName;
+					$data['rtn'][$modId]->subModule->{$idx}->fields = $obj->subModule->{$idx}->fields;
+					$data['rtn'][$modId]->subModule->{$idx}->isSystemModule = $obj->subModule->{$idx}->isSystemModule;
+					$data['rtn'][$modId]->subModule->{$idx}->isSingleRootElement = $obj->subModule->{$idx}->isSingleRootElement;
+					$data['rtn'][$modId]->subModule->{$idx}->templateType = $obj->subModule->{$idx}->templateType;
+					$data['rtn'][$modId]->subModule->{$idx}->template = $obj->subModule->{$idx}->template;
+					$data['rtn'][$modId]->subModule->{$idx}->info = $obj->subModule->{$idx}->info;
 				}
 			}
 		}
@@ -573,9 +573,9 @@ class broccoliHtmlEditor{
 
 	/**
 	 * class: モジュール
-	 * @param  {String}   moduleId モジュールID
-	 * @param  {Object}   options  Options
-	 * @return {Object}            this
+	 * @param  string   $moduleId モジュールID
+	 * @param  array   $options  Options
+	 * @return object            module object
 	 */
 	public function createModuleInstance($moduleId, $options = array()){
 		// var_dump($moduleId);
@@ -608,17 +608,17 @@ class broccoliHtmlEditor{
 			$this->_moduleCollection[$moduleId]->init();
 			$rtn = $this->_moduleCollection[$moduleId];
 			if( is_string($subModName) ){
-				return $rtn->subModule[$subModName];
+				return $rtn->subModule->{$subModName};
 			}
 			return $rtn;
 		}
 		if( is_string($subModName) ){
-			if( !$rtn->subModule || !$rtn->subModule[$subModName] ){
+			if( !$rtn->subModule || !$rtn->subModule->{$subModName} ){
 				// var_dump('Undefined subModule "'.$subModName.'" was called.');
 				return false;
 			}
 
-			return $rtn->subModule[$subModName];
+			return $rtn->subModule->{$subModName};
 		}
 
 		return $rtn;

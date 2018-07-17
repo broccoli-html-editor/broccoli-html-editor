@@ -194,7 +194,7 @@ class mainTest extends PHPUnit_Framework_TestCase{
 		// var_dump( $modules );
 		// var_dump( $modules['testMod1:units/unit'] );
 		$this->assertSame($modules['testMod1:units/unit']->isSystemModule, false);
-		$this->assertSame($modules['testMod1:units/unit']->fields['main']->name, 'main');
+		$this->assertSame($modules['testMod1:units/unit']->fields->{'main'}->name, 'main');
 
 	}
 

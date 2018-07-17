@@ -83,9 +83,9 @@ class classModule{
 			// $this->nameSpace = $this->options['topThis']->nameSpace;
 			if( $options['subModName'] ){
 				$this->subModName = $options['subModName'];
-				if( @$this->topThis->subModule[$this->subModName] ){
-					// var_dump($this->topThis->subModule[$this->subModName]);
-					$this->fields = $this->topThis->subModule[$this->subModName]->fields;
+				if( @$this->topThis->subModule->{$this->subModName} ){
+					// var_dump($this->topThis->subModule->{$this->subModName});
+					$this->fields = $this->topThis->subModule->{$this->subModName}->fields;
 				}
 			}
 		}else{
@@ -205,23 +205,23 @@ class classModule{
 			return $this->parseBroccoliTemplate( $src, $_topThis );
 
 		}elseif( @$field->input ){
-			$this->fields->{$field->input->name} = $field->input;
-			$this->fields->{$field->input->name}->fieldType = 'input';
-			$this->fields->{$field->input->name}->description = $this->normalizeDescription(@$this->fields->{$field->input->name}->description);
+			@$this->fields->{$field->input->name} = $field->input;
+			@$this->fields->{$field->input->name}->fieldType = 'input';
+			@$this->fields->{$field->input->name}->description = $this->normalizeDescription(@$this->fields->{$field->input->name}->description);
 
 			return $this->parseBroccoliTemplate( $src, $_topThis );
 		}elseif( @$field->module ){
-			$this->fields->{$field->module->name} = $field->module;
-			$this->fields->{$field->module->name}->fieldType = 'module';
-			$this->fields->{$field->module->name}->description = $this->normalizeDescription(@$this->fields->{$field->module->name}->description);
+			@$this->fields->{$field->module->name} = $field->module;
+			@$this->fields->{$field->module->name}->fieldType = 'module';
+			@$this->fields->{$field->module->name}->description = $this->normalizeDescription(@$this->fields->{$field->module->name}->description);
 
-			$this->fields->{$field->module->name}->enabledChildren = $this->broccoli->normalizeEnabledParentsOrChildren(@$this->fields->{$field->module->name}->enabledChildren, $this->id);
+			@$this->fields->{$field->module->name}->enabledChildren = $this->broccoli->normalizeEnabledParentsOrChildren(@$this->fields->{$field->module->name}->enabledChildren, $this->id);
 
 			return $this->parseBroccoliTemplate( $src, $_topThis );
 		}elseif( @$field->loop ){
-			$this->fields->{$field->loop->name} = $field->loop;
-			$this->fields->{$field->loop->name}->fieldType = 'loop';
-			$this->fields->{$field->loop->name}->description = $this->normalizeDescription(@$this->fields->{$field->loop->name}->description);
+			@$this->fields->{$field->loop->name} = $field->loop;
+			@$this->fields->{$field->loop->name}->fieldType = 'loop';
+			@$this->fields->{$field->loop->name}->description = $this->normalizeDescription(@$this->fields->{$field->loop->name}->description);
 
 			$tmpSearchResult = $this->searchEndTag( $src, 'loop' );
 			$src = $tmpSearchResult['nextSrc'];
@@ -233,12 +233,12 @@ class classModule{
 			// var_dump('on '.$_topThis->moduleId);
 			// var_dump($tmpSearchResult['content']);
 			// var_dump(' =======> ');
-			$_topThis->subModule[$field->loop->name] = $this->broccoli->createModuleInstance( $this->id, array(
+			@$_topThis->subModule->{$field->loop->name} = $this->broccoli->createModuleInstance( $this->id, array(
 				"src" => $tmpSearchResult['content'],
 				"subModName" => $field->loop->name,
 				"topThis" => $_topThis
 			));
-			$_topThis->subModule[$field->loop->name]->init();
+			$_topThis->subModule->{$field->loop->name}->init();
 
 			return $this->parseBroccoliTemplate( $src, $_topThis );
 
@@ -326,20 +326,20 @@ class classModule{
 					if( @$tmpJson->interface->fields ){
 						// $this->fields = $tmpJson->interface->fields;
 						foreach( $tmpJson->interface->fields as $tmpIdx=>$tmpRow  ){
-							$this->fields->{$tmpIdx} = $tmpRow;
+							@$this->fields->{$tmpIdx} = $tmpRow;
 							// name属性を自動補完
-							$this->fields->{$tmpIdx}->name = $tmpIdx;
+							@$this->fields->{$tmpIdx}->name = $tmpIdx;
 						}
 					}
 					if( @$tmpJson->interface->subModule ){
 						// $this->subModule = $tmpJson->interface->subModule;
 						foreach( $tmpJson->interface->subModule as $tmpIdx=>$tmpRow  ){
-							$this->subModule->{$tmpIdx} = json_decode(json_encode($tmpRow));
-							$this->subModule->{$tmpIdx}->fields = array();
+							@$this->subModule->{$tmpIdx} = json_decode(json_encode($tmpRow));
+							@$this->subModule->{$tmpIdx}->fields = array();
 							foreach( $tmpRow->fields as $tmpIdx2=>$tmpRow2 ){
-								$this->subModule->{$tmpIdx}->fields[$tmpIdx2] = $tmpRow2;
+								@$this->subModule->{$tmpIdx}->fields[$tmpIdx2] = $tmpRow2;
 								// name属性を自動補完
-								$this->subModule->{$tmpIdx}->fields[$tmpIdx2]->name = $tmpIdx2;
+								@$this->subModule->{$tmpIdx}->fields[$tmpIdx2]->name = $tmpIdx2;
 							}
 						}
 					}
@@ -396,24 +396,24 @@ class classModule{
 		if( $_topThis->templateType != 'broccoli' ){
 			// テンプレートエンジン(Twigなど)利用の場合の処理
 			if( $this->subModName ){
-				$this->fields = $_topThis->subModule[$this->subModName]->fields;
+				$this->fields = $_topThis->subModule->{$this->subModName}->fields;
 			}
 
 			foreach( $this->fields as $tmpFieldName=>$row ){
 				$row->description = $this->normalizeDescription(@$row->description);
 				if( @$this->fields->{$tmpFieldName}->fieldType == 'module' ){
-					$this->fields->{$tmpFieldName}->enabledChildren = $this->broccoli->normalizeEnabledParentsOrChildren(@$this->fields->{$tmpFieldName}->enabledChildren, $this->id);
+					@$this->fields->{$tmpFieldName}->enabledChildren = $this->broccoli->normalizeEnabledParentsOrChildren(@$this->fields->{$tmpFieldName}->enabledChildren, $this->id);
 				}
 
 				if( @$this->fields->{$tmpFieldName}->fieldType == 'loop' ){
-					$this->subModule = ($this->subModule ? $this->subModule : json_decode('{}'));
+					@$this->subModule = ($this->subModule ? $this->subModule : json_decode('{}'));
 
-					$_topThis->subModule[$tmpFieldName] = $this->broccoli->createModuleInstance( $this->id, array(
+					@$_topThis->subModule->{$tmpFieldName} = $this->broccoli->createModuleInstance( $this->id, array(
 						"src" => '',
 						"subModName" => $tmpFieldName,
 						"topThis" => $_topThis
 					) );
-					$_topThis->subModule[$tmpFieldName]->init();
+					$_topThis->subModule->{$tmpFieldName}->init();
 				}
 			}
 			return true;
