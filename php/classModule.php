@@ -62,8 +62,8 @@ class classModule{
 
 		}
 		$this->id = $moduleId;
-		$this->fields = array();
-		$this->subModule = array();
+		$this->fields = json_decode('{}');
+		$this->subModule = json_decode('{}');
 		$this->templateType = 'broccoli';
 		$this->finalize = function($html, $data){ return $html; };
 
@@ -205,28 +205,28 @@ class classModule{
 			return $this->parseBroccoliTemplate( $src, $_topThis );
 
 		}elseif( @$field->input ){
-			$this->fields[$field->input->name] = $field->input;
-			$this->fields[$field->input->name]->fieldType = 'input';
-			$this->fields[$field->input->name]->description = $this->normalizeDescription(@$this->fields[$field->input->name]->description);
+			$this->fields->{$field->input->name} = $field->input;
+			$this->fields->{$field->input->name}->fieldType = 'input';
+			$this->fields->{$field->input->name}->description = $this->normalizeDescription(@$this->fields->{$field->input->name}->description);
 
 			return $this->parseBroccoliTemplate( $src, $_topThis );
 		}elseif( @$field->module ){
-			$this->fields[$field->module->name] = $field->module;
-			$this->fields[$field->module->name]->fieldType = 'module';
-			$this->fields[$field->module->name]->description = $this->normalizeDescription(@$this->fields[$field->module->name]->description);
+			$this->fields->{$field->module->name} = $field->module;
+			$this->fields->{$field->module->name}->fieldType = 'module';
+			$this->fields->{$field->module->name}->description = $this->normalizeDescription(@$this->fields->{$field->module->name}->description);
 
-			$this->fields[$field->module->name]->enabledChildren = $this->broccoli->normalizeEnabledParentsOrChildren(@$this->fields[$field->module->name]->enabledChildren, $this->id);
+			$this->fields->{$field->module->name}->enabledChildren = $this->broccoli->normalizeEnabledParentsOrChildren(@$this->fields->{$field->module->name}->enabledChildren, $this->id);
 
 			return $this->parseBroccoliTemplate( $src, $_topThis );
 		}elseif( @$field->loop ){
-			$this->fields[$field->loop->name] = $field->loop;
-			$this->fields[$field->loop->name]->fieldType = 'loop';
-			$this->fields[$field->loop->name]->description = $this->normalizeDescription(@$this->fields[$field->loop->name]->description);
+			$this->fields->{$field->loop->name} = $field->loop;
+			$this->fields->{$field->loop->name}->fieldType = 'loop';
+			$this->fields->{$field->loop->name}->description = $this->normalizeDescription(@$this->fields->{$field->loop->name}->description);
 
 			$tmpSearchResult = $this->searchEndTag( $src, 'loop' );
 			$src = $tmpSearchResult['nextSrc'];
 			if( !is_array($this->subModule) ){
-				$this->subModule = array();
+				$this->subModule = json_decode('{}');
 			}
 			// var_dump(' <------- ');
 			// var_dump($field->loop->name);
@@ -326,20 +326,20 @@ class classModule{
 					if( @$tmpJson->interface->fields ){
 						// $this->fields = $tmpJson->interface->fields;
 						foreach( $tmpJson->interface->fields as $tmpIdx=>$tmpRow  ){
-							$this->fields[$tmpIdx] = $tmpRow;
+							$this->fields->{$tmpIdx} = $tmpRow;
 							// name属性を自動補完
-							$this->fields[$tmpIdx]->name = $tmpIdx;
+							$this->fields->{$tmpIdx}->name = $tmpIdx;
 						}
 					}
 					if( @$tmpJson->interface->subModule ){
 						// $this->subModule = $tmpJson->interface->subModule;
 						foreach( $tmpJson->interface->subModule as $tmpIdx=>$tmpRow  ){
-							$this->subModule[$tmpIdx] = json_decode(json_encode($tmpRow));
-							$this->subModule[$tmpIdx]->fields = array();
+							$this->subModule->{$tmpIdx} = json_decode(json_encode($tmpRow));
+							$this->subModule->{$tmpIdx}->fields = array();
 							foreach( $tmpRow->fields as $tmpIdx2=>$tmpRow2 ){
-								$this->subModule[$tmpIdx]->fields[$tmpIdx2] = $tmpRow2;
+								$this->subModule->{$tmpIdx}->fields[$tmpIdx2] = $tmpRow2;
 								// name属性を自動補完
-								$this->subModule[$tmpIdx]->fields[$tmpIdx2]->name = $tmpIdx2;
+								$this->subModule->{$tmpIdx}->fields[$tmpIdx2]->name = $tmpIdx2;
 							}
 						}
 					}
@@ -401,12 +401,12 @@ class classModule{
 
 			foreach( $this->fields as $tmpFieldName=>$row ){
 				$row->description = $this->normalizeDescription(@$row->description);
-				if( @$this->fields[$tmpFieldName]->fieldType == 'module' ){
-					$this->fields[$tmpFieldName]->enabledChildren = $this->broccoli->normalizeEnabledParentsOrChildren(@$this->fields[$tmpFieldName]->enabledChildren, $this->id);
+				if( @$this->fields->{$tmpFieldName}->fieldType == 'module' ){
+					$this->fields->{$tmpFieldName}->enabledChildren = $this->broccoli->normalizeEnabledParentsOrChildren(@$this->fields->{$tmpFieldName}->enabledChildren, $this->id);
 				}
 
-				if( @$this->fields[$tmpFieldName]->fieldType == 'loop' ){
-					$this->subModule = ($this->subModule ? $this->subModule : array());
+				if( @$this->fields->{$tmpFieldName}->fieldType == 'loop' ){
+					$this->subModule = ($this->subModule ? $this->subModule : json_decode('{}'));
 
 					$_topThis->subModule[$tmpFieldName] = $this->broccoli->createModuleInstance( $this->id, array(
 						"src" => '',
