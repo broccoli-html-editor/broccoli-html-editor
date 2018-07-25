@@ -4794,7 +4794,7 @@ module.exports = function(broccoli, iframe){
 		return "uuid-"+((new Date).getTime().toString(16)+Math.floor(1E7*Math.random()).toString(16));
 	}
 	function getTargetOrigin(iframe){
-		if(window.location.origin=='file://'){
+		if(window.location.origin=='file://' || window.location.origin.match(/^chrome\-extension\:\/\//)){
 			return '*';
 		}
 
