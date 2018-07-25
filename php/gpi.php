@@ -143,7 +143,7 @@ class gpi{
 				return $result;
 
 			case "fieldGpi":
-				$result = $this->broccoli->fieldDefinitions[$options['__fieldId__']]->gpi( $options['options'] );
+				$result = $this->broccoli->getFieldDefinition( $options['__fieldId__'] )->gpi( $options['options'] );
 				return $result;
 
 			default:
