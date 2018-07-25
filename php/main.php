@@ -94,7 +94,7 @@ class broccoliHtmlEditor{
 			}
 			return $fin;
 		});
-		$options['log'] = ($options['log'] ? $options['log'] : function($msg){
+		$options['log'] = (@$options['log'] ? $options['log'] : function($msg){
 			var_dump($msg);
 		});
 		if( !$options['pathHtml'] || !$options['pathResourceDir'] || !$options['realpathDataDir'] ){
