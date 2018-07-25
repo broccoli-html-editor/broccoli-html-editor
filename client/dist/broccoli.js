@@ -15,20 +15,6 @@
 		}
 	})().replace(/\\/g, '/').replace(/\/[^\/]*\/?$/, '');
 
-	// bootstrap をロード
-	document.write('<link rel="stylesheet" href="'+__dirname+'/libs/bootstrap/dist/css/bootstrap.css" />');
-	// document.write('<script src="'+__dirname+'/libs/bootstrap/dist/js/bootstrap.js"></script>');
-		// ↑ bootstrap.js は、 window.jQuery が存在していないと利用できない。
-		// 　 = bootstrap.js を利用するためには、jQueryをグローバルに宣言しなければならない(隠蔽できない)
-		// 　 ということのようなので、差し迫って必要がない限りは bootstrap.js をロードしないことにする。
-
-	// px2style をロード
-	document.write('<link rel="stylesheet" href="'+__dirname+'/libs/px2style/dist/styles.css" />');
-
-	// broccoli-html-editor をロード
-	document.write('<link rel="stylesheet" href="'+__dirname+'/broccoli.css" />');
-
-
 	module.exports = function(){
 		// if(!window){delete(require.cache[require('path').resolve(__filename)]);}
 		// console.log(__dirname);
@@ -175,6 +161,28 @@
 			it79.fnc(
 				{},
 				[
+					function(it1, data){
+						var css = [
+							__dirname+'/libs/bootstrap/dist/css/bootstrap.css',
+							__dirname+'/libs/px2style/dist/styles.css',
+							__dirname+'/broccoli.css',
+						];
+						it79.ary(
+							css,
+							function(it2, row, idx){
+								var link = document.createElement('link');
+								link.addEventListener('load', function(){
+									it2.next();
+								});
+								$('head').append(link);
+								link.rel = 'stylesheet';
+								link.href = row;
+							},
+							function(){
+								it1.next(data);
+							}
+						);
+					} ,
 					function(it1, data){
 						_this.gpi(
 							'getConfig',
