@@ -91,7 +91,7 @@ class buildBowl{
 						// ネストされたモジュールの再帰処理
 						$tmpopt = json_decode( json_encode($opt), true );
 						unset($tmpopt['subModName']);// サブモジュールから外部のモジュールを参照する場合に、subModName を渡さないように配慮する必要がある。
-						$tmpopt['instancePath'] .= '@'+$idx;
+						$tmpopt['instancePath'] .= '@'.$idx;
 						$html = $this->broccoli->buildBowl($row, $tmpopt);
 						$tmp_tplDataObj .= $html;
 					}
