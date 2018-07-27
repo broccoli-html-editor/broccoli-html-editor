@@ -118,7 +118,7 @@ class testHelper{
 			'log' => function($msg){
 				// エラー発生時にコールされます。
 				// msg を受け取り、適切なファイルへ出力するように実装してください。
-				file_put_contents(__DIR__.'/path/to/error.log', $msg, FILE_APPEND);
+				error_log($msg."\n", 3, __DIR__.'/error.log');
 			}
 		));
 

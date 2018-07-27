@@ -352,4 +352,12 @@ class mainTest extends PHPUnit_Framework_TestCase{
 
 	}
 
+	/**
+	 * 後処理
+	 */
+	public function testCleaning(){
+		unlink(__DIR__.'/php_test_helper/error.log');
+		$this->assertFalse( is_file( __DIR__.'/php_test_helper/error.log' ) );
+	}
+
 }

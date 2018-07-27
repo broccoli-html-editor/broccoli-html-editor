@@ -276,6 +276,10 @@ $ npm test
 
 ## 更新履歴 - Change log
 
+### broccoli-html-editor v0.3.3 (リリース日未定)
+
+- info.json が破損している場合に起きるエラーを修正。
+
 ### broccoli-html-editor v0.3.2 (2018年7月27日)
 
 - PHP版に関するいくつかの不具合の修正。

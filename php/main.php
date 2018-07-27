@@ -407,6 +407,9 @@ class broccoliHtmlEditor{
 				$rtn['categories'][$idx]['modules'][$row2]['moduleInfo'] = json_decode('{}');
 				if( is_file( $realpath.'/info.json' ) ){
 					$rtn['categories'][$idx]['modules'][$row2]['moduleInfo'] = json_decode(file_get_contents( $realpath.'/info.json' ));
+					if(!is_object($rtn['categories'][$idx]['modules'][$row2]['moduleInfo'])){
+						$rtn['categories'][$idx]['modules'][$row2]['moduleInfo'] = json_decode('{}');
+					}
 				}
 				$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->enabledParents = $this->normalizeEnabledParentsOrChildren(@$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->enabledParents, $moduleId);
 				if( is_string(@$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->enabledBowls)  ){
