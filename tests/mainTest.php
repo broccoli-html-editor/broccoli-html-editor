@@ -3,10 +3,13 @@
  * test for broccoli-html-editor/broccoli-html-editor
  */
 class mainTest extends PHPUnit_Framework_TestCase{
+	private $fs;
+
 	public function setup(){
 		mb_internal_encoding('UTF-8');
 		require_once(__DIR__.'/php_test_helper/helper.php');
 		testHelper::start_built_in_server();
+		$this->fs = new \tomk79\filesystem();
 	}
 
 
@@ -75,7 +78,7 @@ class mainTest extends PHPUnit_Framework_TestCase{
 
 		// モジュールの絶対パスを取得する
 		$realpath = $broccoli->getModuleRealpath('testMod1:units/cols2');
-		$this->assertEquals($realpath, __DIR__.'/testdata/modules1/units/cols2/');
+		$this->assertEquals($realpath, $this->fs->normalize_path(__DIR__.'/testdata/modules1/units/cols2/'));
 
 		// 実在しないモジュールの絶対パスを取得する
 		$realpath = $broccoli->getModuleRealpath('testMod1:units/cols2/');
@@ -100,7 +103,7 @@ class mainTest extends PHPUnit_Framework_TestCase{
 		$this->assertEquals($list['testMod1']['packageId'], 'testMod1');
 		$this->assertEquals($list['testMod1']['packageName'], 'テストモジュール1');
 		$this->assertEquals($list['testMod1']['categories']['units']['modules']['cols2']['moduleId'], 'testMod1:units/cols2');
-		$this->assertEquals($list['testMod1']['categories']['units']['modules']['cols2']['realpath'], __DIR__.'/testdata/modules1/units/cols2/');
+		$this->assertEquals($list['testMod1']['categories']['units']['modules']['cols2']['realpath'], $this->fs->normalize_path(__DIR__.'/testdata/modules1/units/cols2/'));
 
 	}
 
@@ -113,7 +116,7 @@ class mainTest extends PHPUnit_Framework_TestCase{
 		// パッケージIDからモジュール一覧を取得する
 		$modules = $broccoli->getModuleListByPackageId('testMod1');
 		$this->assertEquals($modules['categories']['units']['modules']['cols2']['moduleId'], 'testMod1:units/cols2');
-		$this->assertEquals($modules['categories']['units']['modules']['cols2']['realpath'], __DIR__.'/testdata/modules1/units/cols2/');
+		$this->assertEquals($modules['categories']['units']['modules']['cols2']['realpath'], $this->fs->normalize_path(__DIR__.'/testdata/modules1/units/cols2/'));
 	}
 
 	/**

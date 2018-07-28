@@ -367,7 +367,7 @@ class broccoliHtmlEditor{
 		$rtn['categories'] = array();
 		$fileList = $sortModuleDirectoryNames($fileList, @$rtn['packageInfo']->sort);
 		foreach($fileList as $idx=>$row){
-			$realpath = $this->fs->get_realpath($rtn['realpath'].'/'.$row);
+			$realpath = $this->fs->normalize_path($this->fs->get_realpath($rtn['realpath'].'/'.$row));
 			if( is_dir($realpath) ){
 				$realpath .= '/';
 				$rtn['categories'][$row] = array();
@@ -392,7 +392,7 @@ class broccoliHtmlEditor{
 			$fileList = $sortModuleDirectoryNames($fileList, @$row['categoryInfo']->sort);
 
 			foreach($fileList as $idx2=>$row2){
-				$realpath = $this->fs->get_realpath($rtn['categories'][$idx]['realpath'].'/'.$row2.'/');
+				$realpath = $this->fs->normalize_path($this->fs->get_realpath($rtn['categories'][$idx]['realpath'].'/'.$row2.'/'));
 				if( !is_dir($realpath) ){
 					continue;
 				}
@@ -430,14 +430,14 @@ class broccoliHtmlEditor{
 				$rtn['categories'][$idx]['modules'][$row2]['realpath'] = $realpath;
 
 				// thumb.png
-				$realpathThumb = $this->fs->get_realpath( $realpath.'/thumb.png' );
+				$realpathThumb = $this->fs->normalize_path($this->fs->get_realpath( $realpath.'/thumb.png' ));
 				$rtn['categories'][$idx]['modules'][$row2]['thumb'] = null;
 				if( is_file($realpathThumb) ){
 					$rtn['categories'][$idx]['modules'][$row2]['thumb'] = 'data:image/png;base64,'.base64_encode( file_get_contents( $realpathThumb ) );
 				}
 
 				// README.md (html)
-				$realpathReadme = $this->fs->get_realpath( $realpath.'/README' );
+				$realpathReadme = $this->fs->normalize_path($this->fs->get_realpath( $realpath.'/README' ));
 				$readme = '';
 				if( is_file($realpathReadme.'.html') ){
 					$readme = file_get_contents( $realpathReadme.'.html' );
@@ -449,7 +449,7 @@ class broccoliHtmlEditor{
 				$rtn['categories'][$idx]['modules'][$row2]['readme'] = $readme;
 
 				// pics/
-				$realpathPics = $this->fs->get_realpath( $realpath.'/pics/' );
+				$realpathPics = $this->fs->normalize_path($this->fs->get_realpath( $realpath.'/pics/' ));
 				$rtn['categories'][$idx]['modules'][$row2]['pics'] = array();
 				if( is_dir($realpathPics) ){
 					$piclist = $this->fs->ls($realpathPics);

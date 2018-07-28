@@ -39,7 +39,7 @@ class buildModuleResources{
 		foreach($array_files as $packageId=>$array_files_row){
 			foreach($array_files_row as $idx=>$path){
 
-				preg_match('/\/([a-zA-Z0-9\.\-\_]+?)\/([a-zA-Z0-9\.\-\_]+?)\/[a-zA-Z0-9\.\-\_]+?$/i', $path, $matched);
+				preg_match('/\/([a-zA-Z0-9\.\-\_]+?)\/([a-zA-Z0-9\.\-\_]+?)\/[a-zA-Z0-9\.\-\_]+?$/i', $this->broccoli->fs()->normalize_path($path), $matched);
 
 				// var_dump($path);
 				// var_dump($matched);
@@ -138,7 +138,7 @@ class buildModuleResources{
 				$bin = trim( file_get_contents( $path ) );
 				if( !strlen($bin) ){continue;}
 
-				preg_match( '/\/([a-zA-Z0-9\.\-\_]+?)\/([a-zA-Z0-9\.\-\_]+?)\/[a-zA-Z0-9\.\-\_]+?$/i', $path, $matched);
+				preg_match( '/\/([a-zA-Z0-9\.\-\_]+?)\/([a-zA-Z0-9\.\-\_]+?)\/[a-zA-Z0-9\.\-\_]+?$/i', $this->broccoli->fs()->normalize_path($path), $matched);
 
 				// var_dump($path);
 				// var_dump($matched);
