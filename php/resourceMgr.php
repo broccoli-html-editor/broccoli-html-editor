@@ -96,7 +96,7 @@ class resourceMgr{
 		foreach($this->resourceDb as $resKey=>$res){
 			$this->broccoli->fs()->mkdir( $this->resourcesDirPath.'/'.$resKey );
 
-			if( !strlen($this->resourceDb[$resKey]->base64) ){
+			if( !strlen(@$this->resourceDb[$resKey]->base64) ){
 				// base64がセットされていなかったら終わり
 				$save_res_json($resKey);
 				continue;
@@ -121,7 +121,7 @@ class resourceMgr{
 			);
 
 			// 公開ファイル
-			if( $this->resourceDb[$resKey]->isPrivateMaterial ){
+			if( @$this->resourceDb[$resKey]->isPrivateMaterial ){
 				// 非公開ファイルなら終わり
 				$save_res_json($resKey);
 				continue;
@@ -132,7 +132,7 @@ class resourceMgr{
 				$filename = $this->resourceDb[$resKey]->publicFilename;
 			}
 
-			if( $this->resourceDb[$resKey]->field ){
+			if( @$this->resourceDb[$resKey]->field ){
 				$fieldDefinition = $this->broccoli->getFieldDefinition( $this->resourceDb[$resKey]->field );
 				if( $fieldDefinition !== false ){
 					$fieldDefinition->resourceProcessor(
