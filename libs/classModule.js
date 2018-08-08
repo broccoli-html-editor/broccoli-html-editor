@@ -169,6 +169,11 @@ module.exports = function(broccoli, moduleId, options){
 						console.error( 'module info.json parse error: ' + _this.path+'/info.json' );
 						broccoli.log( 'module info.json parse error: ' + _this.path+'/info.json' );
 					}
+					if( typeof(tmpJson) != typeof({}) || tmpJson === null ){
+						console.error( 'module info.json contains a non object or null: ' + _this.path+'/info.json' );
+						broccoli.log( 'module info.json contains a non object or null: ' + _this.path+'/info.json' );
+						tmpJson = {};
+					}
 					if( tmpJson.name ){
 						_this.info.name = tmpJson.name;
 					}

@@ -276,6 +276,10 @@ $ npm test
 
 ## 更新履歴 - Change log
 
+### broccoli-html-editor v0.3.5 (リリース日未定)
+
+- NodeJS版で、モジュールの info.json の内容が null だった場合に異常終了する不具合を修正
+
 ### broccoli-html-editor v0.3.4 (2018年8月8日)
 
 - 細かい不具合の修正。
