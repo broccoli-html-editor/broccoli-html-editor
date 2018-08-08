@@ -276,9 +276,9 @@ $ npm test
 
 ## 更新履歴 - Change log
 
-### broccoli-html-editor v0.3.4 (リリース日未定)
+### broccoli-html-editor v0.3.4 (2018年8月8日)
 
-- その他の細かい不具合の修正。
+- 細かい不具合の修正。
 
 ### broccoli-html-editor v0.3.3 (2018年7月30日)
 
