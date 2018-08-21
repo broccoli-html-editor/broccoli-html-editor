@@ -30,6 +30,13 @@ window.main = new (function(){
 	var broccoli = new Broccoli();
 	this.broccoli = broccoli;
 
+	(function(){
+		var h = $(window).height() - 70;
+		$('.instanceTreeView').css({'height':h});
+		$('.canvas').css({'height':h});
+		$('.palette').css({'height':h});
+	})();
+
 	this.init = function(options, callback){
 		callback = callback||function(){};
 		options = options||{};
@@ -73,6 +80,8 @@ window.main = new (function(){
 				},
 				'gpiBridge': function(api, options, callback){
 					// General Purpose Interface Bridge
+					// console.info('=----=----=', api, options);
+					// var millitime = (new Date()).getTime();
 					if(serverType == 'biflora'){
 						socket.send(
 							'broccoli',
@@ -84,12 +93,11 @@ window.main = new (function(){
 								}
 							} ,
 							function(rtn){
-								// console.log(rtn);
+								// console.info('--result', (new Date()).getTime() - millitime);
 								callback(rtn);
 							}
 						);
 					}else if(serverType == 'php'){
-						// console.info(api, options);
 						var res;
 						$.ajax({
 							"url": "./_api.php",
@@ -106,6 +114,7 @@ window.main = new (function(){
 								console.error(error);
 							},
 							"complete": function(){
+								// console.info('--result', (new Date()).getTime() - millitime);
 								callback(res);
 							}
 						});
@@ -129,7 +138,7 @@ window.main = new (function(){
 					$('.canvas').css({'height':h});
 					$('.palette').css({'height':h});
 					broccoli.redraw();
-				}).resize();
+				});
 				callback();
 			}
 		);

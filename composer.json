@@ -13,6 +13,9 @@
         "start": [
             "php -S 127.0.0.1:8088 -t ./"
         ],
+        "preview": [
+            "open http://127.0.0.1:8088/tests/testdata/htdocs/index.php"
+        ],
         "test": [
             "php ./vendor/phpunit/phpunit/phpunit"
         ]
