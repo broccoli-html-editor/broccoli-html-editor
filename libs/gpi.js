@@ -18,30 +18,73 @@ module.exports = function(broccoli, api, options, callback){
 
 	new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 		switch(api){
+			case "getBootupInfomations":
+				// broccoli の初期起動時に必要なすべての情報を取得する
+				var $bootup = {};
+				$bootup.conf = {};
+				$bootup.conf.appMode = broccoli.getAppMode();
+				$bootup['languageCsv'] = fs.readFileSync( __dirname+'/../data/language.csv' ).toString();
+
+				broccoli.getAllModuleList(function(allModuleList){
+					$bootup.allModuleList = allModuleList;
+
+
+					$bootup.contentsDataJson = {};
+					try {
+						$bootup.contentsDataJson = fs.readFileSync(broccoli.realpathDataDir+'/data.json');
+						$bootup.contentsDataJson = JSON.parse( $bootup.contentsDataJson );
+					} catch (e) {
+						broccoli.log('[ERROR] FAILED to load data.json - '+broccoli.realpathDataDir+'/data.json');
+						$bootup.contentsDataJson = {};
+					}
+
+					broccoli.resourceMgr.getResourceDb(
+						function(resourceDb){
+							// console.log(resourceDb);
+							var resourceList = [];
+							for(var resKey in resourceDb){
+								resourceList.push(resKey);
+							}
+							$bootup.resourceList = resourceList;
+
+							broccoli.getPackageList(function(modulePackageList){
+								$bootup.modulePackageList = modulePackageList;
+								callback($bootup);
+							});
+
+						}
+					);
+
+				});
+				break;
+
 			case "getConfig":
 				// broccoli の設定を取得する
 				var conf = {};
 				conf.appMode = broccoli.getAppMode();
 				callback(conf);
 				break;
+
 			case "getLanguageCsv":
 				// 言語ファイル(CSV)を取得
-				var conf = {};
 				var csv = fs.readFileSync( __dirname+'/../data/language.csv' ).toString();
 				callback(csv);
 				break;
+
 			case "getModulePackageList":
 				// モジュールパッケージ一覧を取得する
 				broccoli.getPackageList(function(list){
 					callback(list);
 				});
 				break;
+
 			case "getAllModuleList":
 				// 全モジュールの一覧を取得する
 				broccoli.getAllModuleList(function(list){
 					callback(list);
 				});
 				break;
+
 			case "getContentsDataJson":
 				var dataJson = {};
 				try {
@@ -53,6 +96,7 @@ module.exports = function(broccoli, api, options, callback){
 				}
 				callback(dataJson);
 				break;
+
 			case "saveContentsData":
 				var jsonString = JSON.stringify( options.data, null, 1 );
 				// console.log(jsonString);
@@ -75,6 +119,7 @@ module.exports = function(broccoli, api, options, callback){
 					]
 				);
 				break;
+
 			case "buildHtml":
 				broccoli.buildHtml(
 					{

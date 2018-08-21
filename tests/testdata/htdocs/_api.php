@@ -71,7 +71,7 @@ $broccoli->init(
 			return $fin;
 		},
 		'log' => function($msg){
-			var_dump('[ERROR HANDLED]'.$msg);
+			// var_dump('[ERROR HANDLED]'.$msg);
 		}
 	)
 );

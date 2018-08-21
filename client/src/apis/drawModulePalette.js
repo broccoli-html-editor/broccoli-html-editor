@@ -285,10 +285,8 @@ module.exports = function(broccoli, targetElm, callback){
 		[
 			function(it1, data){
 				// モジュールパッケージの一覧を取得
-				broccoli.gpi('getModulePackageList',{},function(list){
-					moduleList = list;
-					it1.next(data);
-				});
+				moduleList = broccoli.getBootupInfomations().modulePackageList;
+				it1.next(data);
 			} ,
 			function(it1, data){
 				// モジュールパッケージの親子関係を抽出

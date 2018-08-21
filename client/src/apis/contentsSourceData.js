@@ -12,8 +12,8 @@ module.exports = function(broccoli){
 	var path = require('path');
 	var php = require('phpjs');
 
-	var _contentsSourceData; // <= data.jsonの中身
-	var _modTpls; // <- module の一覧
+	var _contentsSourceData = broccoli.getBootupInfomations().contentsDataJson; // <= data.jsonの中身
+	var _modTpls = broccoli.getBootupInfomations().allModuleList; // <- module の一覧
 
 	/**
 	 * 初期化
@@ -24,26 +24,11 @@ module.exports = function(broccoli){
 			{},
 			[
 				function(it1, data){
-					// モジュール一覧を取得
-					broccoli.gpi('getAllModuleList',{},function(list){
-						_modTpls = list;
-						it1.next(data);
-					});
-				} ,
-				function(it1, data){
-					// コンテンツデータを取得
-					broccoli.gpi(
-						'getContentsDataJson',
-						{},
-						function(contentsData){
-							_contentsSourceData = contentsData;
-							// console.log(_contentsSourceData);
-							_contentsSourceData.bowl = _contentsSourceData.bowl||{};
-							_this.initBowlData('main');
-							// console.log(_contentsSourceData);
-							it1.next(data);
-						}
-					);
+					// コンテンツデータを整理
+					_contentsSourceData.bowl = _contentsSourceData.bowl||{};
+					_this.initBowlData('main');
+					// console.log(_contentsSourceData);
+					it1.next(data);
 				} ,
 				function(it1, data){
 					// ヒストリーマネージャーの初期化

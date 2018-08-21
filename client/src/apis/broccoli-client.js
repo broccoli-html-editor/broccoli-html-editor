@@ -30,6 +30,7 @@
 		var redrawTimer;
 		var serverConfig; // サーバー側から取得した設定情報
 		this.__dirname = __dirname;
+		var bootupInfomations;
 
 		/**
 		 * broccoli-client を初期化する
@@ -184,30 +185,26 @@
 					} ,
 					function(it1, data){
 						_this.gpi(
-							'getConfig',
+							'getBootupInfomations',
 							{} ,
-							function(config){
-								// console.log(config);
-								serverConfig = config;
+							function(_bootupInfomations){
+								bootupInfomations = _bootupInfomations;
+								// console.log('=----=----=', bootupInfomations);
+								serverConfig = bootupInfomations.conf;
+
 								it1.next(data);
 							}
 						);
-					} ,
+					},
 					function(it1, data){
-						_this.gpi(
-							'getLanguageCsv',
-							{} ,
-							function(csv){
-								// console.log(csv);
-								_this.lb = new LangBank(csv, function(){
-									console.log('broccoli: set language "'+options.lang+'"');
-									_this.lb.setLang( options.lang );
-									// console.log( _this.lb.get('ui_label.close') );
-									it1.next(data);
-								});
-							}
-						);
-					} ,
+						// language bank
+						_this.lb = new LangBank(bootupInfomations.languageCsv, function(){
+							console.log('broccoli: set language "'+options.lang+'"');
+							_this.lb.setLang( options.lang );
+							// console.log( _this.lb.get('ui_label.close') );
+							it1.next(data);
+						});
+					},
 					function(it1, data){
 						_this.contentsSourceData = new (require('./contentsSourceData.js'))(_this).init(
 							function(){
@@ -499,6 +496,13 @@
 			this.options.gpiBridge(api, options, callback);
 			return this;
 		} // gpi()
+
+		/**
+		 * 初期起動時にロードした情報を取得する
+		 */
+		this.getBootupInfomations = function(){
+			return bootupInfomations;
+		}
 
 		/**
 		 * インスタンスを編集する

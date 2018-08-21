@@ -31,6 +31,7 @@
 		var redrawTimer;
 		var serverConfig; // サーバー側から取得した設定情報
 		this.__dirname = __dirname;
+		var bootupInfomations;
 
 		/**
 		 * broccoli-client を初期化する
@@ -185,30 +186,26 @@
 					} ,
 					function(it1, data){
 						_this.gpi(
-							'getConfig',
+							'getBootupInfomations',
 							{} ,
-							function(config){
-								// console.log(config);
-								serverConfig = config;
+							function(_bootupInfomations){
+								bootupInfomations = _bootupInfomations;
+								// console.log('=----=----=', bootupInfomations);
+								serverConfig = bootupInfomations.conf;
+
 								it1.next(data);
 							}
 						);
-					} ,
+					},
 					function(it1, data){
-						_this.gpi(
-							'getLanguageCsv',
-							{} ,
-							function(csv){
-								// console.log(csv);
-								_this.lb = new LangBank(csv, function(){
-									console.log('broccoli: set language "'+options.lang+'"');
-									_this.lb.setLang( options.lang );
-									// console.log( _this.lb.get('ui_label.close') );
-									it1.next(data);
-								});
-							}
-						);
-					} ,
+						// language bank
+						_this.lb = new LangBank(bootupInfomations.languageCsv, function(){
+							console.log('broccoli: set language "'+options.lang+'"');
+							_this.lb.setLang( options.lang );
+							// console.log( _this.lb.get('ui_label.close') );
+							it1.next(data);
+						});
+					},
 					function(it1, data){
 						_this.contentsSourceData = new (require('./contentsSourceData.js'))(_this).init(
 							function(){
@@ -500,6 +497,13 @@
 			this.options.gpiBridge(api, options, callback);
 			return this;
 		} // gpi()
+
+		/**
+		 * 初期起動時にロードした情報を取得する
+		 */
+		this.getBootupInfomations = function(){
+			return bootupInfomations;
+		}
 
 		/**
 		 * インスタンスを編集する
@@ -1318,8 +1322,8 @@ module.exports = function(broccoli){
 	var path = require('path');
 	var php = require('phpjs');
 
-	var _contentsSourceData; // <= data.jsonの中身
-	var _modTpls; // <- module の一覧
+	var _contentsSourceData = broccoli.getBootupInfomations().contentsDataJson; // <= data.jsonの中身
+	var _modTpls = broccoli.getBootupInfomations().allModuleList; // <- module の一覧
 
 	/**
 	 * 初期化
@@ -1330,26 +1334,11 @@ module.exports = function(broccoli){
 			{},
 			[
 				function(it1, data){
-					// モジュール一覧を取得
-					broccoli.gpi('getAllModuleList',{},function(list){
-						_modTpls = list;
-						it1.next(data);
-					});
-				} ,
-				function(it1, data){
-					// コンテンツデータを取得
-					broccoli.gpi(
-						'getContentsDataJson',
-						{},
-						function(contentsData){
-							_contentsSourceData = contentsData;
-							// console.log(_contentsSourceData);
-							_contentsSourceData.bowl = _contentsSourceData.bowl||{};
-							_this.initBowlData('main');
-							// console.log(_contentsSourceData);
-							it1.next(data);
-						}
-					);
+					// コンテンツデータを整理
+					_contentsSourceData.bowl = _contentsSourceData.bowl||{};
+					_this.initBowlData('main');
+					// console.log(_contentsSourceData);
+					it1.next(data);
 				} ,
 				function(it1, data){
 					// ヒストリーマネージャーの初期化
@@ -2490,10 +2479,8 @@ module.exports = function(broccoli, targetElm, callback){
 		[
 			function(it1, data){
 				// モジュールパッケージの一覧を取得
-				broccoli.gpi('getModulePackageList',{},function(list){
-					moduleList = list;
-					it1.next(data);
-				});
+				moduleList = broccoli.getBootupInfomations().modulePackageList;
+				it1.next(data);
 			} ,
 			function(it1, data){
 				// モジュールパッケージの親子関係を抽出
@@ -4932,15 +4919,9 @@ module.exports = function(broccoli){
 		it79.fnc({},
 			[
 				function(it1, data){
-					broccoli.gpi(
-						'resourceMgr.getResourceList',
-						{} ,
-						function(resourceList){
-							data.resourceList = resourceList;
-							console.log('broccoli: Resource List:', resourceList);
-							it1.next(data);
-						}
-					);
+					data.resourceList = broccoli.getBootupInfomations().resourceList;
+					console.log('broccoli: Resource List:', data.resourceList);
+					it1.next(data);
 				},
 				function(it1, data){
 					it79.ary(

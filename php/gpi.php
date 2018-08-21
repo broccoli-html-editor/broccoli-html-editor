@@ -31,6 +31,25 @@ class gpi{
 		// var_dump( $this->broccoli->lb()->get('ui_label.close') );
 
 		switch($api){
+			case "getBootupInfomations":
+				// broccoli の初期起動時に必要なすべての情報を取得する
+				$bootup = array();
+				$bootup['conf'] = array();
+				$bootup['conf']['appMode'] = $this->broccoli->getAppMode();
+				$bootup['languageCsv'] = file_get_contents( __DIR__.'/../data/language.csv' );
+				$bootup['allModuleList'] = $this->broccoli->getAllModuleList();
+				$bootup['contentsDataJson'] = json_decode( file_get_contents($this->broccoli->realpathDataDir.'/data.json') );
+				if(!is_object($bootup['contentsDataJson'])){
+					$bootup['contentsDataJson'] = json_decode('{}');
+				}
+				$resourceDb = $this->broccoli->resourceMgr()->getResourceDb();
+				$bootup['resourceList'] = array();
+				foreach($resourceDb as $resKey=>$res ){
+					array_push($bootup['resourceList'], $resKey);
+				}
+				$bootup['modulePackageList'] = $this->broccoli->getPackageList();
+				return $bootup;
+
 			case "getConfig":
 				// broccoli の設定を取得する
 				$conf = array();

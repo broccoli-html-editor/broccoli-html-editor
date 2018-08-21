@@ -96,12 +96,11 @@ gulp.task("test/main.js", function() {
 // src 中のすべての拡張子を監視して処理
 gulp.task("watch", function() {
 	gulp.watch(["client/src/**/*","fields/client/**/*","libs/**/*","tests/testdata/htdocs/index_files/main.src.js"], _tasks);
+});
 
-	var svrCtrl = require( './tests/biflora/serverCtrl.js' );
-	svrCtrl.boot(function(){
-		require('child_process').spawn('open',[svrCtrl.getUrl()]);
-	});
-
+// ブラウザを立ち上げてプレビューする
+gulp.task("preview", function() {
+	require('child_process').spawn('open',['http://127.0.0.1:8088/']);
 });
 
 // src 中のすべての拡張子を処理(default)

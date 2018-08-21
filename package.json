@@ -8,6 +8,7 @@
     "start": "gulp watch",
     "up": "node ./tests/biflora/server.js",
     "submodules-update": "npm install; gulp;",
+    "preview": "gulp preview;",
     "test": "mocha --ui tdd ./tests/"
   },
   "repository": {

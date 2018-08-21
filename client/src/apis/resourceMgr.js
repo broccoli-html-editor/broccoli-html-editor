@@ -29,15 +29,9 @@ module.exports = function(broccoli){
 		it79.fnc({},
 			[
 				function(it1, data){
-					broccoli.gpi(
-						'resourceMgr.getResourceList',
-						{} ,
-						function(resourceList){
-							data.resourceList = resourceList;
-							console.log('broccoli: Resource List:', resourceList);
-							it1.next(data);
-						}
-					);
+					data.resourceList = broccoli.getBootupInfomations().resourceList;
+					console.log('broccoli: Resource List:', data.resourceList);
+					it1.next(data);
 				},
 				function(it1, data){
 					it79.ary(
