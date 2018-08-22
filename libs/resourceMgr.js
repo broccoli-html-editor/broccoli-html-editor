@@ -274,7 +274,7 @@ module.exports = function(broccoli){
 							// res.json を保存する
 							fs.writeFileSync(
 								_resourcesDirPath+'/'+resKey+'/res.json',
-								JSON.stringify( _resourceDb[resKey], null, 1 )
+								JSON.stringify( _resourceDb[resKey], null, 4 )
 							);
 							it2.next(res);
 							return;
@@ -336,7 +336,7 @@ module.exports = function(broccoli){
 		mkdir( _resourcesDirPath+'/'+resKey );
 		fs.writeFileSync(
 			_resourcesDirPath+'/'+resKey+'/res.json',
-			JSON.stringify( _resourceDb[resKey], null, 1 )
+			JSON.stringify( _resourceDb[resKey], null, 4 )
 		);
 		fs.writeFileSync(
 			_resourcesDirPath+'/'+resKey+'/bin.'+_resourceDb[resKey].ext,
@@ -452,7 +452,7 @@ module.exports = function(broccoli){
 		mkdir( _resourcesDirPath+'/'+resKey );
 		fs.writeFileSync(
 			_resourcesDirPath+'/'+resKey+'/res.json',
-			JSON.stringify( _resourceDb[resKey], null, 1 )
+			JSON.stringify( _resourceDb[resKey], null, 4 )
 		);
 		var bin = '';
 		try {
@@ -513,7 +513,7 @@ module.exports = function(broccoli){
 
 			fs.writeFileSync(
 				_resourcesDirPath+'/'+resKey+'/res.json',
-				JSON.stringify( _resourceDb[resKey], null, 1 )
+				JSON.stringify( _resourceDb[resKey], null, 4 )
 			);
 
 			callback(true);

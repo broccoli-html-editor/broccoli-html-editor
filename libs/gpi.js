@@ -98,7 +98,7 @@ module.exports = function(broccoli, api, options, callback){
 				break;
 
 			case "saveContentsData":
-				var jsonString = JSON.stringify( options.data, null, 1 );
+				var jsonString = JSON.stringify( options.data, null, 4 );
 				// console.log(jsonString);
 				it79.fnc(
 					{},
