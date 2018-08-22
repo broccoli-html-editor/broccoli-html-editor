@@ -516,6 +516,7 @@
 	width: 100%;
 	height: 100%;
 	z-index: 11000;
+	text-align: center;
 	&-inner{
 		position: absolute;
 		left: 0; top: 50%;
@@ -531,6 +532,10 @@
 }
 .broccoli--progress-comment{
 	color: #999;
+	background-color: #eee;
+	padding: 0.5em 1em;
+	margin: 0 auto;
+	display: inline-block;
 	font-size: 70%;
 	text-align: center;
 	overflow: hidden;

@@ -37,6 +37,7 @@ module.exports = function(broccoli){
 					it79.ary(
 						data.resourceList,
 						function(it2, resKey, idx){
+							broccoli.progressMessage('リソースを読み込んでいます...。('+(Number(idx)+1)+'/'+(data.resourceList.length)+')');
 							console.log("broccoli: Loading Resource:", resKey);
 							broccoli.gpi(
 								'resourceMgr.getResource',

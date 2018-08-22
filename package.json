@@ -5,7 +5,7 @@
   "private": true,
   "main": "libs/main.js",
   "scripts": {
-    "start": "gulp watch",
+    "start": "node ./tests/biflora/server.js",
     "up": "node ./tests/biflora/server.js",
     "submodules-update": "npm install; gulp;",
     "preview": "gulp preview;",

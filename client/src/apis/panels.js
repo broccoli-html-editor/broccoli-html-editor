@@ -143,19 +143,25 @@ module.exports = function(broccoli){
 					return;
 				}
 
-				broccoli.contentsSourceData.moveInstanceTo( moveFrom, moveTo, function(result){
-					if(!result){
-						callback();
-						return;
-					}
-					// コンテンツを保存
-					broccoli.saveContents(function(){
-						// alert('インスタンスを移動しました。');
-						broccoli.redraw(function(){
-							callback();
+				broccoli.progress(function(){
+					broccoli.contentsSourceData.moveInstanceTo( moveFrom, moveTo, function(result){
+						if(!result){
+							broccoli.closeProgress(function(){
+								callback();
+							});
+							return;
+						}
+						// コンテンツを保存
+						broccoli.saveContents(function(){
+							// alert('インスタンスを移動しました。');
+							broccoli.redraw(function(){
+								broccoli.closeProgress(function(){
+									callback();
+								});
+							});
 						});
-					});
-				} );
+					} );
+				});
 				return;
 			}
 			broccoli.message('ダブルクリックしてください。ドロップできません。');
@@ -169,19 +175,25 @@ module.exports = function(broccoli){
 				callback();
 				return;
 			}
-			broccoli.contentsSourceData.moveInstanceTo( moveFrom, moveTo, function(result){
-				if(!result){
-					callback();
-					return;
-				}
-				// コンテンツを保存
-				broccoli.saveContents(function(){
-					// alert('インスタンスを移動しました。');
-					broccoli.redraw(function(){
-						callback();
+			broccoli.progress(function(){
+				broccoli.contentsSourceData.moveInstanceTo( moveFrom, moveTo, function(result){
+					if(!result){
+						broccoli.closeProgress(function(){
+							callback();
+						});
+						return;
+					}
+					// コンテンツを保存
+					broccoli.saveContents(function(){
+						// alert('インスタンスを移動しました。');
+						broccoli.redraw(function(){
+							broccoli.closeProgress(function(){
+								callback();
+							});
+						});
 					});
-				});
-			} );
+				} );
+			});
 			return;
 		}
 		if( subModName && method === 'add' ){
