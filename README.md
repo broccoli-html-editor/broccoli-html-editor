@@ -232,7 +232,7 @@ coming soon.
     "name": "Foo Bar Field",
     "type": "field",
     "backend": {
-        "require": "myNamespace\\myClassName"
+        "class": "myNamespace\\myClassName"
     },
     "frontend": {
         "file" : "path/to/dist/broccoli-field-foobar.js",
