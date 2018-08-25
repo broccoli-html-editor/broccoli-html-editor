@@ -276,7 +276,7 @@ $ npm test
 
 ## 更新履歴 - Change log
 
-### broccoli-html-editor v0.3.5 (リリース日未定)
+### broccoli-html-editor v0.3.5 (2018年8月25日)
 
 - 初期起動時のパフォーマンスを向上した。
 - NodeJS版で、モジュールの info.json の内容が null だった場合に異常終了する不具合を修正。
