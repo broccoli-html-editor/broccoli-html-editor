@@ -41,6 +41,7 @@ module.exports = function(broccoli, api, options, callback){
 					broccoli.resourceMgr.getResourceDb(
 						function(resourceDb){
 							// console.log(resourceDb);
+							$bootup.resourceDb = resourceDb;
 							var resourceList = [];
 							for(var resKey in resourceDb){
 								resourceList.push(resKey);

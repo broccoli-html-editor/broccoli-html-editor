@@ -43,6 +43,7 @@ class gpi{
 					$bootup['contentsDataJson'] = json_decode('{}');
 				}
 				$resourceDb = $this->broccoli->resourceMgr()->getResourceDb();
+				$bootup['resourceDb'] = $resourceDb;
 				$bootup['resourceList'] = array();
 				foreach($resourceDb as $resKey=>$res ){
 					array_push($bootup['resourceList'], $resKey);

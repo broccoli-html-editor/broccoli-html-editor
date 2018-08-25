@@ -4,10 +4,8 @@
 module.exports = function(broccoli){
 	// delete(require.cache[require('path').resolve(__filename)]);
 
-	var it79 = require('iterate79');
-	var path = require('path');
-	var php = require('phpjs');
 	var _this = this;
+	var it79 = require('iterate79');
 	var _resourceDb = {};
 
 	/**
@@ -29,44 +27,9 @@ module.exports = function(broccoli){
 		it79.fnc({},
 			[
 				function(it1, data){
-					data.resourceList = broccoli.getBootupInfomations().resourceList;
-					console.log('broccoli: Resource List:', data.resourceList);
+					_resourceDb = broccoli.getBootupInfomations().resourceDb;
 					it1.next(data);
 				},
-				function(it1, data){
-					it79.ary(
-						data.resourceList,
-						function(it2, resKey, idx){
-							broccoli.progressMessage('リソースを読み込んでいます...。('+(Number(idx)+1)+'/'+(data.resourceList.length)+')');
-							console.log("broccoli: Loading Resource:", resKey);
-							broccoli.gpi(
-								'resourceMgr.getResource',
-								{
-									resKey: resKey
-								} ,
-								function(resource){
-									console.log('broccoli: done:', resKey);
-									// console.log(resource);
-									_resourceDb[resKey] = resource;
-									it2.next();
-								}
-							);
-						},
-						function(){
-							it1.next(data);
-						}
-					);
-				},
-				// function(it1, data){
-				// 	broccoli.gpi(
-				// 		'resourceMgr.getResourceDb',
-				// 		{} ,
-				// 		function(resourceDb){
-				// 			_resourceDb = resourceDb;
-				// 			it1.next(data);
-				// 		}
-				// 	);
-				// },
 				function(it1, data){
 					console.log('broccoli: Loading all resources: Done.');
 					// console.log(_resourceDb);
