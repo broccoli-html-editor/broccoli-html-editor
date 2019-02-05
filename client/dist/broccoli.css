@@ -621,7 +621,8 @@
   max-width: 300px;
   min-height: 30px;
   background-color: #f9f9f9;
-  border: 1px solid #999; }
+  border: 1px solid #999;
+  font-size: 14px; }
   .broccoli--contextmenu ul {
     padding: 0;
     margin: 0; }
@@ -631,7 +632,6 @@
       list-style-type: none; }
       .broccoli--contextmenu ul li a, .broccoli--contextmenu ul li span {
         display: block;
-        font-size: 1rem;
-        padding: 0.3rem 1rem; }
+        padding: 4px 18px; }
       .broccoli--contextmenu ul li a:hover {
         background-color: #f0f0f0; }
