@@ -986,7 +986,9 @@
 		 */
 		this.esc = function(callback){
 			callback = callback||function(){};
-			if( this.isLightboxOpened() ){
+			if( this.contextmenu.isShow() ){
+				this.contextmenu.close();
+			}else if( this.isLightboxOpened() ){
 				this.closeLightbox();
 			}else{
 				this.unfocusInstance();
@@ -2336,6 +2338,16 @@ module.exports = function(broccoli){
 		});
 		return;
 	} // show()
+
+	/**
+	 * context menu を表示しているか調べる
+	 */
+	this.isShow = function(){
+		if( $('.broccoli--contextmenu').size() ){
+			return true;
+		}
+		return false;
+	}
 
 	/**
 	 * context menu を閉じる

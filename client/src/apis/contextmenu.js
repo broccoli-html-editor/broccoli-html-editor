@@ -65,6 +65,16 @@ module.exports = function(broccoli){
 	} // show()
 
 	/**
+	 * context menu を表示しているか調べる
+	 */
+	this.isShow = function(){
+		if( $('.broccoli--contextmenu').size() ){
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * context menu を閉じる
 	 */
 	this.close = function(callback){

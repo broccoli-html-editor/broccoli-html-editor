@@ -985,7 +985,9 @@
 		 */
 		this.esc = function(callback){
 			callback = callback||function(){};
-			if( this.isLightboxOpened() ){
+			if( this.contextmenu.isShow() ){
+				this.contextmenu.close();
+			}else if( this.isLightboxOpened() ){
 				this.closeLightbox();
 			}else{
 				this.unfocusInstance();
