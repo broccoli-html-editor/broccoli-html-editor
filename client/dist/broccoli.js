@@ -269,6 +269,15 @@
 						});
 					} ,
 					function(it1, data){
+						// キーイベント
+						$(window).on('keydown', function(e){
+							if( e.keyCode == 27 ){ // ESC
+								_this.esc();
+							}
+						});
+						it1.next(data);
+					} ,
+					function(it1, data){
 						console.log('broccoli: init done.');
 						// callback(); // <- onPreviewLoad() がコールするので、ここでは呼ばない。
 						it1.next();
@@ -280,7 +289,6 @@
 
 		/**
 		 * プレビューがロードされたら実行
-		 * @return {[type]} [description]
 		 */
 		function onPreviewLoad( callback ){
 			callback = callback || function(){};
@@ -520,8 +528,6 @@
 
 		/**
 		 * field定義を取得する
-		 * @param  {[type]} fieldType [description]
-		 * @return {[type]}           [description]
 		 */
 		this.getFieldDefinition = function(fieldType){
 			var fieldDefinition = this.fieldDefinitions[fieldType];
@@ -554,8 +560,6 @@
 
 		/**
 		 * インスタンスを編集する
-		 * @param  {[type]} instancePath [description]
-		 * @return {[type]}              [description]
 		 */
 		this.editInstance = function( instancePath ){
 			console.log("Edit: "+instancePath);
@@ -976,6 +980,22 @@
 			return;
 		}
 
+
+		/**
+		 * ESC
+		 */
+		this.esc = function(callback){
+			callback = callback||function(){};
+			if( this.isLightboxOpened() ){
+				this.closeLightbox();
+			}else{
+				this.unfocusInstance();
+				this.unselectInstance();
+			}
+			callback(true);
+			return;
+		}
+
 		/**
 		 * 選択したインスタンスを削除する
 		 */
@@ -1133,6 +1153,16 @@
 
 			callback( $dom.get(0) );
 			return this;
+		}
+
+		/**
+		 * ライトボックスが開いているか確認する
+		 */
+		this.isLightboxOpened = function(){
+			if( $('body').find('.broccoli--lightbox').size() ){
+				return true;
+			}
+			return false;
 		}
 
 		/**
@@ -2848,7 +2878,6 @@ module.exports = function(broccoli){
 	var _this = this;
 
 	var it79 = require('iterate79');
-	var path = require('path');
 	var php = require('phpjs');
 	var $ = require('jquery');
 
@@ -3501,7 +3530,7 @@ module.exports = function(broccoli){
 	return;
 }
 
-},{"iterate79":102,"jquery":103,"path":110,"phpjs":112}],7:[function(require,module,exports){
+},{"iterate79":102,"jquery":103,"phpjs":112}],7:[function(require,module,exports){
 /**
  * fieldBase.js
  */
