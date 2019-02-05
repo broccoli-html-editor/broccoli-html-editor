@@ -328,6 +328,53 @@ module.exports = function(broccoli){
 	} // onDblClick()
 
 	/**
+	 * パネルの oncontextmenu イベントハンドラ
+	 * このメソッドは、 this.setPanelEventHandlers() からコールされています。
+	 */
+	function onContextMenu(e, elm, callback){
+		console.log(e);
+		callback = callback || function(){};
+		var $this = $(elm);
+		var instancePath = $this.attr('data-broccoli-instance-path');
+		var menu = [
+			{
+				"label": "コピー",
+				"function": function(){
+					broccoli.copy(function(){
+						// nothing to do.
+					});
+				}
+			},
+			{
+				"label": "この直前にペースト",
+				"function": function(){
+					broccoli.paste(function(){
+						// nothing to do.
+					});
+				}
+			},
+			{
+				"type": "hr"
+			},
+			{
+				"label": "削除する",
+				"function": function(){
+					broccoli.remove(function(){
+						// nothing to do.
+					});
+				}
+			}
+		];
+		broccoli.contextmenu.show(
+			menu,
+			e.clientX,
+			e.clientY,
+			callback
+		);
+		return;
+	} // onDblClick()
+
+	/**
 	 * パネルにイベントハンドラをセットする
 	 */
 	this.setPanelEventHandlers = function($panel){
@@ -360,6 +407,13 @@ module.exports = function(broccoli){
 					// プレビューカンヴァス上での処理
 					broccoli.instanceTreeView.focusInstance( instancePath, function(){} );
 				} );
+			})
+			.on('contextmenu', function(e){
+				e.preventDefault();
+				e.stopPropagation();
+				onContextMenu(e, this, function(){
+					// nothing to do.
+				});
 			})
 			.on('focus', function(e){
 				e.preventDefault();

@@ -80,6 +80,7 @@
 			this.postMessenger = new (require('./postMessenger.js'))(this, $canvas.find('iframe').get(0));
 			this.resourceMgr = new (require('./resourceMgr.js'))(this);
 			this.panels = new (require( './panels.js' ))(this);
+			this.contextmenu = new (require( './contextmenu.js' ))(this);
 			this.instancePathView = new (require( './instancePathView.js' ))(this);
 			this.instanceTreeView = new (require( './instanceTreeView.js' ))(this);
 			this.editWindow = new (require( './editWindow.js' ))(this);
@@ -698,10 +699,12 @@
 			selectedInstance = null;
 			selectedInstanceRegion = [];
 			var broccoli = this;
-			broccoli.panels.unselectInstance(function(){
-				broccoli.instanceTreeView.unselectInstance(function(){
-					broccoli.instancePathView.update(function(){
-						callback();
+			broccoli.contextmenu.close(function(){
+				broccoli.panels.unselectInstance(function(){
+					broccoli.instanceTreeView.unselectInstance(function(){
+						broccoli.instancePathView.update(function(){
+							callback();
+						});
 					});
 				});
 			});

@@ -611,3 +611,27 @@
   .broccoli__error-message ul {
     margin-top: 0;
     margin-bottom: 0; }
+
+.broccoli--contextmenu {
+  z-index: 20000;
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 300px;
+  min-height: 30px;
+  background-color: #f9f9f9;
+  border: 1px solid #999; }
+  .broccoli--contextmenu ul {
+    padding: 0;
+    margin: 0; }
+    .broccoli--contextmenu ul li {
+      padding: 0;
+      margin: 0;
+      list-style-type: none; }
+      .broccoli--contextmenu ul li a, .broccoli--contextmenu ul li span {
+        display: block;
+        font-size: 1rem;
+        padding: 0.3rem 1rem; }
+      .broccoli--contextmenu ul li a:hover {
+        background-color: #f0f0f0; }

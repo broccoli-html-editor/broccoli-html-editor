@@ -773,3 +773,33 @@
 		margin-bottom: 0;
 	}
 }
+
+
+// Context Menu
+.broccoli--contextmenu{
+	z-index: 20000;
+	display: block;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 300px;
+	min-height: 30px;
+	background-color: #f9f9f9;
+	border: 1px solid #999;
+
+	ul{
+		padding: 0; margin: 0;
+		li{
+			padding: 0; margin: 0;
+			list-style-type: none;
+			a, span{
+				display: block;
+				font-size: 1rem;
+				padding: 0.3rem 1rem;
+			}
+			a:hover{
+				background-color: #f0f0f0;
+			}
+		}
+	}
+}
