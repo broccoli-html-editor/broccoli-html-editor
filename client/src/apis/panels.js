@@ -332,41 +332,10 @@ module.exports = function(broccoli){
 	 * このメソッドは、 this.setPanelEventHandlers() からコールされています。
 	 */
 	function onContextMenu(e, elm, callback){
-		console.log(e);
+		// console.log(e);
 		callback = callback || function(){};
-		var $this = $(elm);
-		var instancePath = $this.attr('data-broccoli-instance-path');
-		var menu = [
-			{
-				"label": "コピー",
-				"function": function(){
-					broccoli.copy(function(){
-						// nothing to do.
-					});
-				}
-			},
-			{
-				"label": "この直前にペースト",
-				"function": function(){
-					broccoli.paste(function(){
-						// nothing to do.
-					});
-				}
-			},
-			{
-				"type": "hr"
-			},
-			{
-				"label": "削除する",
-				"function": function(){
-					broccoli.remove(function(){
-						// nothing to do.
-					});
-				}
-			}
-		];
 		broccoli.contextmenu.show(
-			menu,
+			false,
 			e.clientX,
 			e.clientY,
 			callback
