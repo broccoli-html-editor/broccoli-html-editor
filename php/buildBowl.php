@@ -277,6 +277,7 @@ class buildBowl{
 						$tmpopt = json_decode( json_encode($opt), true );
 						$tmpopt['instancePath'] .= '@'.$idx;
 						$tmpopt['subModName'] = $field->loop->name;
+						$tmpopt['nameSpace'] = $this->nameSpace;
 						// var_dump($tmpopt);
 						$html = $this->broccoli->buildBowl($row, $tmpopt);
 						// $tmpVal .= '<!-- ---- LOOP ---- -->';
