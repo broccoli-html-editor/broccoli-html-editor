@@ -5,6 +5,21 @@
             "fields": {
                 "main": [
                     {
+                        "modId": "testMod1:dev/loop_and_echo",
+                        "fields": {
+                            "sample_txt": "Echo Sample String",
+                            "hoge_loop": [
+                                {
+                                    "modId": "testMod1:dev/loop_and_echo",
+                                    "fields": [],
+                                    "subModName": "hoge_loop"
+                                }
+                            ]
+                        },
+                        "anchor": "",
+                        "dec": ""
+                    },
+                    {
                         "modId": "testMod1:dev/resource_build",
                         "fields": [],
                         "anchor": "",
