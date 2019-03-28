@@ -77,6 +77,9 @@ module.exports = function(broccoli){
 			if( data.lang == 'javascript' ){
 				mod.aceEditor.setTheme("ace/theme/monokai");
 				mod.aceEditor.getSession().setMode("ace/mode/javascript");
+			}else if( data.lang == 'css' ){
+				mod.aceEditor.setTheme("ace/theme/github");
+				mod.aceEditor.getSession().setMode("ace/mode/css");
 			}else if( data.lang == 'php' ){
 				mod.aceEditor.setTheme("ace/theme/github");
 				mod.aceEditor.getSession().setMode("ace/mode/php");
@@ -104,6 +107,7 @@ module.exports = function(broccoli){
 		$rtn
 			.append( $('<p>')
 				.append($('<span style="margin-right: 10px;"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="javascript" /> JavaScript</label></span>'))
+				.append($('<span style="margin-right: 10px;"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="css" /> CSS</label></span>'))
 				.append($('<span style="margin-right: 10px;"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="php" /> PHP</label></span>'))
 				.append($('<span style="margin-right: 10px;"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="" /> その他</label></span>'))
 			)
@@ -117,6 +121,9 @@ module.exports = function(broccoli){
 				if( val == 'javascript' ){
 					mod.aceEditor.setTheme("ace/theme/monokai");
 					mod.aceEditor.getSession().setMode("ace/mode/javascript");
+				}else if( val == 'css' ){
+					mod.aceEditor.setTheme("ace/theme/github");
+					mod.aceEditor.getSession().setMode("ace/mode/css");
 				}else if( val == 'php' ){
 					mod.aceEditor.setTheme("ace/theme/github");
 					mod.aceEditor.getSession().setMode("ace/mode/php");

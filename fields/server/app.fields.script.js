@@ -18,7 +18,7 @@ module.exports = function(broccoli){
 			rtn = utils79.toStr(fieldData.src);
 		}
 		if( mode == 'canvas' ){
-			rtn = '<span style="display:inline-block;color:#969800;background-color:#cccd8a;border:1px solid #969800;font-size:10px;padding:0.2em 1em;max-width:100%;overflow:hidden;white-space:nowrap;">SCRIPT (ダブルクリックしてスクリプトを記述してください)</span>';
+			rtn = '<span style="display:inline-block;color:#969800;background-color:#f0f1b3;border:1px solid #969800;font-size:10px;padding:0.2em 1em;max-width:100%;overflow:hidden;white-space:nowrap;">SCRIPT (ダブルクリックしてスクリプトを記述してください)</span>';
 		}
 
 		// setTimeout(function(){
