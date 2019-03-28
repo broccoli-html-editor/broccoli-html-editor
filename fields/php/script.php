@@ -9,7 +9,7 @@ namespace broccoliHtmlEditor\fields;
  *
  * @author Tomoya Koyanagi <tomk79@gmail.com>
  */
-class multitext extends \broccoliHtmlEditor\fieldBase{
+class script extends \broccoliHtmlEditor\fieldBase{
 
 	/** $broccoli */
 	private $broccoli;
