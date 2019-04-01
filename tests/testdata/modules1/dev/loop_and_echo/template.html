@@ -1,0 +1,10 @@
+<div class="loop-and-echo">
+<p>
+    このモジュールは、 loopフィールドの外側にあるinputフィールドの値を、 loopフィールド内のechoフィールドで参照するテストです。<br />
+</p>
+<p class="loop-and-echo__input-value">{&{"input":{"type":"text","name":"sample_txt","label":"Sample Text"}}&}</p>
+
+{&{"loop":{"name":"hoge_loop","label":"Loop Test"}}&}
+    <p class="loop-and-echo__echo-value">{&{"echo":{"ref":"sample_txt"}}&}</p>
+{&"endloop"&}
+</div>
