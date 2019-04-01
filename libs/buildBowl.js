@@ -420,6 +420,14 @@ module.exports = function(broccoli, data, options, callback){
 									var tmpopt = JSON.parse( JSON.stringify(opt) );
 									tmpopt.instancePath += '@'+idx;
 									tmpopt.subModName = field.loop.name;
+									if(field.loop.index){
+										_this.nameSpace.vars[field.loop.index] = {
+											"fieldType": 'input',
+											"type": 'html',
+											"val": (idx + 1)
+										};
+										_this.nameSpace.varsFinalized[field.loop.index] = _this.nameSpace.vars[field.loop.index];
+									}
 									tmpopt.nameSpace = _this.nameSpace;
 									// console.log(tmpopt);
 									broccoli.buildBowl(row, tmpopt, function(html){

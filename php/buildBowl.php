@@ -277,6 +277,14 @@ class buildBowl{
 						$tmpopt = json_decode( json_encode($opt), true );
 						$tmpopt['instancePath'] .= '@'.$idx;
 						$tmpopt['subModName'] = $field->loop->name;
+						if(property_exists($field->loop, 'index') && $field->loop->index){
+							$this->nameSpace['vars'][$field->loop->index] = array(
+								"fieldType"=>'input',
+								"type"=>'html',
+								"val"=>($idx + 1),
+							);
+							$this->nameSpace['varsFinalized'][$field->loop->index] = $this->nameSpace['vars'][$field->loop->index];
+						}
 						$tmpopt['nameSpace'] = $this->nameSpace;
 						// var_dump($tmpopt);
 						$html = $this->broccoli->buildBowl($row, $tmpopt);
