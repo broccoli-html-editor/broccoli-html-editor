@@ -31,7 +31,14 @@ module.exports = function(broccoli){
 	 */
 	this.mkEditor = function( mod, data, elm, callback ){
 		var _this = this;
-		if(typeof(data) !== typeof({})){ data = {'src':''+data,'lang':'javascript'}; }
+		var fixedLang = mod.lang || null;
+
+		if(typeof(data) !== typeof({})){
+			data = {'src':''+data,'lang':(fixedLang ? fixedLang : 'javascript')};
+		}
+		if( fixedLang ){
+			data.lang = fixedLang;
+		}
 		var rows = 12;
 		if( mod.rows ){
 			rows = mod.rows;
@@ -104,15 +111,17 @@ module.exports = function(broccoli){
 
 		}
 
-		$rtn
-			.append( $('<p>')
-				.append($('<span style="margin-right: 10px;"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="javascript" /> JavaScript</label></span>'))
-				.append($('<span style="margin-right: 10px;"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="css" /> CSS</label></span>'))
-				.append($('<span style="margin-right: 10px;"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="php" /> PHP</label></span>'))
-				.append($('<span style="margin-right: 10px;"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="" /> その他</label></span>'))
-			)
-		;
-		$rtn.find('input[type=radio][name=editor-'+mod.name+'][value="'+data.lang+'"]').attr({'checked':'checked'});
+		if( !fixedLang ){
+			$rtn
+				.append( $('<p>')
+					.append($('<span style="margin-right: 10px;"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="javascript" /> JavaScript</label></span>'))
+					.append($('<span style="margin-right: 10px;"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="css" /> CSS</label></span>'))
+					.append($('<span style="margin-right: 10px;"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="php" /> PHP</label></span>'))
+					.append($('<span style="margin-right: 10px;"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="" /> その他</label></span>'))
+				)
+			;
+			$rtn.find('input[type=radio][name=editor-'+mod.name+'][value="'+data.lang+'"]').attr({'checked':'checked'});
+		}
 
 		if( editorLib == 'ace' && mod.aceEditor ){
 			$rtn.find('input[type=radio][name=editor-'+mod.name+']').change(function(){
@@ -159,7 +168,11 @@ module.exports = function(broccoli){
 			data.src = $dom.find('textarea').val();
 		}
 		data.src = JSON.parse( JSON.stringify(data.src) );
-		data.lang = $dom.find('input[type=radio][name=editor-'+mod.name+']:checked').val();
+		if(mod.lang){
+			data.lang = mod.lang;
+		}else{
+			data.lang = $dom.find('input[type=radio][name=editor-'+mod.name+']:checked').val();
+		}
 
 		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 			callback(data);

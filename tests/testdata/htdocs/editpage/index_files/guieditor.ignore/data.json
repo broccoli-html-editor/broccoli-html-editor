@@ -86,6 +86,14 @@
                             "sample_php": {
                                 "src": "<?php\necho \"<p>ここはPHPコードが出力した文字列です。</p>\";\n?>\n",
                                 "lang": "php"
+                            },
+                            "sample_css": {
+                                "src": "/* css sample */\n",
+                                "lang": "css"
+                            },
+                            "sample_selectable": {
+                                "src": "// Language Selectable\n",
+                                "lang": ""
                             }
                         },
                         "anchor": "",
