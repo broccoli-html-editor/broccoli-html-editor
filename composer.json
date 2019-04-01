@@ -50,6 +50,7 @@
             "fields/php/image.php",
             "fields/php/markdown.php",
             "fields/php/multitext.php",
+            "fields/php/script.php",
             "fields/php/select.php",
             "fields/php/text.php",
             "php/simple_html_dom.php"

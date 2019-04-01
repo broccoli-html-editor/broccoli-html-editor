@@ -142,6 +142,7 @@ class broccoliHtmlEditor{
 		$this->fieldDefinitions['image'] = $loadFieldDefinition('image');
 		$this->fieldDefinitions['markdown'] = $loadFieldDefinition('markdown');
 		$this->fieldDefinitions['multitext'] = $loadFieldDefinition('multitext');
+		$this->fieldDefinitions['script'] = $loadFieldDefinition('script');
 		$this->fieldDefinitions['select'] = $loadFieldDefinition('select');
 		$this->fieldDefinitions['text'] = $loadFieldDefinition('text');
 
