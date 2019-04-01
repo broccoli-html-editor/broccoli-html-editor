@@ -424,7 +424,7 @@ module.exports = function(broccoli, data, options, callback){
 										_this.nameSpace.vars[field.loop.index] = {
 											"fieldType": 'input',
 											"type": 'html',
-											"val": (idx + 1)
+											"val": (Number(idx) + 1)
 										};
 										_this.nameSpace.varsFinalized[field.loop.index] = _this.nameSpace.vars[field.loop.index];
 									}
