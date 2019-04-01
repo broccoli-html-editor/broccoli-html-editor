@@ -1,13 +1,13 @@
 <p>loopフィールドの中にmoduleフィールド</p>
 <ul>
-{&{"loop":{"name":"sample_loop1"}}&}
-	<li>loop1
+{&{"loop":{"name":"sample_loop1","index":"idx1"}}&}
+	<li>loop1-{&{"echo":{"ref":"idx1"}}&}
 	<ul>
-{&{"loop":{"name":"sample_loop2"}}&}
-		<li>loop2
+{&{"loop":{"name":"sample_loop2","index":"idx2"}}&}
+		<li>loop2-{&{"echo":{"ref":"idx2"}}&}
 		<ul>
-{&{"loop":{"name":"sample_loop3"}}&}
-		<li>loop3:
+{&{"loop":{"name":"sample_loop3","index":"idx3"}}&}
+		<li>loop3-{&{"echo":{"ref":"idx3"}}&}
 			<div>{&{"input":{"type":"multitext","name":"multitext_src3"}}&}</div>
 			<div>{&{"module":{"name":"main"}}&}</div>
 		</li>
