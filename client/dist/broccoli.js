@@ -127,39 +127,43 @@
 						e.preventDefault();
 						return;
 					})
-					.bind('copy', function(e){
-						switch(e.target.tagName.toLowerCase()){
-							case 'textarea': case 'input': return;break;
-						}
-						e.stopPropagation();
-						e.preventDefault();
-						_this.copy();
-						return;
-					})
-					.bind('cut', function(e){
-						switch(e.target.tagName.toLowerCase()){
-							case 'textarea': case 'input': return;break;
-						}
-						e.stopPropagation();
-						e.preventDefault();
-						_this.cut();
-						return;
-					})
-					.bind('paste', function(e){
-						switch(e.target.tagName.toLowerCase()){
-							case 'textarea': case 'input': return;break;
-						}
-						e.stopPropagation();
-						e.preventDefault();
-						_this.paste();
-						return;
-					})
 				;
 			}
 			bindDropCancel($canvas);
 			bindDropCancel(options.elmInstancePathView);
 			bindDropCancel(options.elmInstanceTreeView);
 			bindDropCancel(options.elmModulePalette);
+
+			$(window)
+				.bind('copy', function(e){
+					switch(e.target.tagName.toLowerCase()){
+						case 'textarea': case 'input': return;break;
+					}
+					e.stopPropagation();
+					e.preventDefault();
+					_this.copy();
+					return;
+				})
+				.bind('cut', function(e){
+					switch(e.target.tagName.toLowerCase()){
+						case 'textarea': case 'input': return;break;
+					}
+					e.stopPropagation();
+					e.preventDefault();
+					_this.cut();
+					return;
+				})
+				.bind('paste', function(e){
+					switch(e.target.tagName.toLowerCase()){
+						case 'textarea': case 'input': return;break;
+					}
+					e.stopPropagation();
+					e.preventDefault();
+					_this.paste();
+					return;
+				})
+			;
+
 
 			it79.fnc(
 				{},
@@ -4860,33 +4864,6 @@ module.exports = function(broccoli){
 			.on('drop', function(e){
 				_this.onDrop(e, this, function(){
 					console.log('drop event done.');
-				});
-				return;
-			})
-			.on('copy', function(e){
-				e.preventDefault();
-				e.stopPropagation();
-				var $this = $(this);
-				broccoli.copy(function(){
-					// $this.focus();
-				});
-				return;
-			})
-			.on('cut', function(e){
-				e.preventDefault();
-				e.stopPropagation();
-				var $this = $(this);
-				broccoli.cut(function(){
-					// $this.focus();
-				});
-				return;
-			})
-			.on('paste', function(e){
-				e.preventDefault();
-				e.stopPropagation();
-				var $this = $(this);
-				broccoli.paste(function(){
-					// $this.focus();
 				});
 				return;
 			})

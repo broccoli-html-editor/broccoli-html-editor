@@ -456,33 +456,6 @@ module.exports = function(broccoli){
 				});
 				return;
 			})
-			.on('copy', function(e){
-				e.preventDefault();
-				e.stopPropagation();
-				var $this = $(this);
-				broccoli.copy(function(){
-					// $this.focus();
-				});
-				return;
-			})
-			.on('cut', function(e){
-				e.preventDefault();
-				e.stopPropagation();
-				var $this = $(this);
-				broccoli.cut(function(){
-					// $this.focus();
-				});
-				return;
-			})
-			.on('paste', function(e){
-				e.preventDefault();
-				e.stopPropagation();
-				var $this = $(this);
-				broccoli.paste(function(){
-					// $this.focus();
-				});
-				return;
-			})
 		;
 		return $panel;
 	}

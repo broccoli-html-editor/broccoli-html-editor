@@ -126,39 +126,43 @@
 						e.preventDefault();
 						return;
 					})
-					.bind('copy', function(e){
-						switch(e.target.tagName.toLowerCase()){
-							case 'textarea': case 'input': return;break;
-						}
-						e.stopPropagation();
-						e.preventDefault();
-						_this.copy();
-						return;
-					})
-					.bind('cut', function(e){
-						switch(e.target.tagName.toLowerCase()){
-							case 'textarea': case 'input': return;break;
-						}
-						e.stopPropagation();
-						e.preventDefault();
-						_this.cut();
-						return;
-					})
-					.bind('paste', function(e){
-						switch(e.target.tagName.toLowerCase()){
-							case 'textarea': case 'input': return;break;
-						}
-						e.stopPropagation();
-						e.preventDefault();
-						_this.paste();
-						return;
-					})
 				;
 			}
 			bindDropCancel($canvas);
 			bindDropCancel(options.elmInstancePathView);
 			bindDropCancel(options.elmInstanceTreeView);
 			bindDropCancel(options.elmModulePalette);
+
+			$(window)
+				.bind('copy', function(e){
+					switch(e.target.tagName.toLowerCase()){
+						case 'textarea': case 'input': return;break;
+					}
+					e.stopPropagation();
+					e.preventDefault();
+					_this.copy();
+					return;
+				})
+				.bind('cut', function(e){
+					switch(e.target.tagName.toLowerCase()){
+						case 'textarea': case 'input': return;break;
+					}
+					e.stopPropagation();
+					e.preventDefault();
+					_this.cut();
+					return;
+				})
+				.bind('paste', function(e){
+					switch(e.target.tagName.toLowerCase()){
+						case 'textarea': case 'input': return;break;
+					}
+					e.stopPropagation();
+					e.preventDefault();
+					_this.paste();
+					return;
+				})
+			;
+
 
 			it79.fnc(
 				{},
