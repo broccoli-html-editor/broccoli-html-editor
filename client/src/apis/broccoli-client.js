@@ -424,6 +424,11 @@
 													} catch (e) {
 													}
 												}
+
+												// PHP文法を無害化
+												src = src.replace(/\<\?\=([\s\S]*?)\?\>/g, '<span style="display:inline-block;color:#969800;background-color:#f0f1b3;border:1px solid #969800;font-size:10px;padding:0.2em 1em;max-width:100%;overflow:hidden;white-space:nowrap;">&lt;?= $1 ?&gt;</span>');
+												src = src.replace(/\<\?(?:php)?([\s\S]*?)\?\>/g, '<span style="display:inline-block;color:#969800;background-color:#f0f1b3;border:1px solid #969800;font-size:10px;padding:0.2em 1em;max-width:100%;overflow:hidden;white-space:nowrap;">&lt;?php PHP Script ?&gt;</span>');
+
 												return src;
 											})(htmls[idx]);
 										}

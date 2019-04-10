@@ -29,7 +29,7 @@
                         "modId": "testMod1:dev/multitext",
                         "fields": {
                             "main": {
-                                "src": "## デフォルトの値\n\nここを編集してください。",
+                                "src": "## デフォルトの値\n\nここを編集してください。\n\n<p><?= $test1 ?></p>\n\n<p><?= $test2 ?></p>\n\n<p><?= $test3 ?></p>\n\n<?php\necho \"<p>これは、PHPスクリプトによる出力です。</p>\";\n?>\n",
                                 "editor": "markdown"
                             }
                         },

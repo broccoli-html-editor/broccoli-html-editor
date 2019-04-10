@@ -5,7 +5,7 @@
 <p class="loop-and-echo__input-value">Echo Sample String</p>
 
 
-    <p class="loop-and-echo__echo-value" data-broccoli-instance-path="/fields.main@0/fields.hoge_loop@0" data-broccoli-sub-mod-name="hoge_loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- loopフィールドの外にある値を、内にある echoフィールドから参照するテスト -">Echo Sample String</p>
+    <p class="loop-and-echo__echo-value" data-broccoli-instance-path="/fields.main@0/fields.hoge_loop@0" data-broccoli-sub-mod-name="hoge_loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- Loop Test">Echo Sample String</p>
 <div data-broccoli-instance-path="/fields.main@0/fields.hoge_loop@1" data-broccoli-mod-id="testMod1:dev/loop_and_echo" data-broccoli-sub-mod-name="hoge_loop" data-broccoli-is-appender="yes" style="overflow:hidden;padding:5px 15px;background-color:#dfe;border:3px solid transparent;border-radius:5px;font-family: &quot;YuGothic&quot;, &quot;Yu Gothic&quot;, Meiryo, &quot;Hiragino Kaku Gothic ProN&quot;, Verdana, sans-serif;font-size:9px;color:#000;text-align:center;box-sizing:border-box;clear:both;white-space:nowrap;margin:10px 0;">Double click here to add array element</div>
 </div>
 <div class="resource-build" data-broccoli-instance-path="/fields.main@1" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="testMod1:dev/resource_build">
@@ -15,14 +15,20 @@
 </div>
 <div data-broccoli-instance-path="/fields.main@2" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="testMod1:dev/multitext"><h2>デフォルトの値</h2>
 <p>ここを編集してください。</p>
+<p><?= $test1 ?></p>
+<p><?= $test2 ?></p>
+<p><?= $test3 ?></p>
+<?php
+echo "<p>これは、PHPスクリプトによる出力です。</p>";
+?>
 </div><div data-broccoli-instance-path="/fields.main@3" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="loopフィールドの中にmoduleフィールド"><p>loopフィールドの中にmoduleフィールド</p>
 <ul>
 
-	<li data-broccoli-instance-path="/fields.main@3/fields.sample_loop1@0" data-broccoli-sub-mod-name="sample_loop1" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- loopフィールドの中にmoduleフィールド -">loop1-1	<ul>
+	<li data-broccoli-instance-path="/fields.main@3/fields.sample_loop1@0" data-broccoli-sub-mod-name="sample_loop1" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- sample_loop1">loop1-1	<ul>
 
-		<li data-broccoli-instance-path="/fields.main@3/fields.sample_loop1@0/fields.sample_loop2@0" data-broccoli-sub-mod-name="sample_loop2" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- loopフィールドの中にmoduleフィールド -">loop2-1		<ul>
+		<li data-broccoli-instance-path="/fields.main@3/fields.sample_loop1@0/fields.sample_loop2@0" data-broccoli-sub-mod-name="sample_loop2" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- sample_loop2">loop2-1		<ul>
 
-		<li data-broccoli-instance-path="/fields.main@3/fields.sample_loop1@0/fields.sample_loop2@0/fields.sample_loop3@0" data-broccoli-sub-mod-name="sample_loop3" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- loopフィールドの中にmoduleフィールド -">loop3-1			<div><h2>multitext field.</h2>
+		<li data-broccoli-instance-path="/fields.main@3/fields.sample_loop1@0/fields.sample_loop2@0/fields.sample_loop3@0" data-broccoli-sub-mod-name="sample_loop3" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- sample_loop3">loop3-1			<div><h2>multitext field.</h2>
 <p>multitext. -</p>
 </div>
 			<div><p data-broccoli-instance-path="/fields.main@3/fields.sample_loop1@0/fields.sample_loop2@0/fields.sample_loop3@0/fields.main@0" data-broccoli-area-size-detection="deep" data-broccoli-module-name="Multi Text">child.</p>
@@ -72,9 +78,9 @@
 <div class="unit thumb_list" data-broccoli-instance-path="/fields.main@6" data-broccoli-area-size-detection="shallow" data-broccoli-module-name=".unit - 汎用ユニット">
 	<ul>
 
-		<li data-broccoli-instance-path="/fields.main@6/fields.thumb_loop@0" data-broccoli-sub-mod-name="thumb_loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- .unit - 汎用ユニット -"><div class="thumb_list-pad"><a href="http://www.pxt.jp/"><img src="data:image/png;base64,{broccoli-html-editor-resource-baser64:{fe97281abfb0badd97668226cb50b6f3}}" alt="pxt" /><span class="thumb_list-caption">pxt</span></a></div></li>
+		<li data-broccoli-instance-path="/fields.main@6/fields.thumb_loop@0" data-broccoli-sub-mod-name="thumb_loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- thumb_loop"><div class="thumb_list-pad"><a href="http://www.pxt.jp/"><img src="data:image/png;base64,{broccoli-html-editor-resource-baser64:{fe97281abfb0badd97668226cb50b6f3}}" alt="pxt" /><span class="thumb_list-caption">pxt</span></a></div></li>
 
-		<li data-broccoli-instance-path="/fields.main@6/fields.thumb_loop@1" data-broccoli-sub-mod-name="thumb_loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- .unit - 汎用ユニット -"><div class="thumb_list-pad"><a href="http://pickles.pxt.jp/"><img src="data:image/png;base64,{broccoli-html-editor-resource-baser64:{060cc839a391baf81779188e7dfa553d}}" alt="pxt" /><span class="thumb_list-caption">こまった。</span></a></div></li>
+		<li data-broccoli-instance-path="/fields.main@6/fields.thumb_loop@1" data-broccoli-sub-mod-name="thumb_loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- thumb_loop"><div class="thumb_list-pad"><a href="http://pickles.pxt.jp/"><img src="data:image/png;base64,{broccoli-html-editor-resource-baser64:{060cc839a391baf81779188e7dfa553d}}" alt="pxt" /><span class="thumb_list-caption">こまった。</span></a></div></li>
 <div data-broccoli-instance-path="/fields.main@6/fields.thumb_loop@2" data-broccoli-mod-id="testMod1:units/thumb_list" data-broccoli-sub-mod-name="thumb_loop" data-broccoli-is-appender="yes" style="overflow:hidden;padding:5px 15px;background-color:#dfe;border:3px solid transparent;border-radius:5px;font-family: &quot;YuGothic&quot;, &quot;Yu Gothic&quot;, Meiryo, &quot;Hiragino Kaku Gothic ProN&quot;, Verdana, sans-serif;font-size:9px;color:#000;text-align:center;box-sizing:border-box;clear:both;white-space:nowrap;margin:10px 0;">Double click here to add array element</div>
 	</ul>
 </div><!-- /.thumb_list -->
@@ -103,21 +109,21 @@ moduleフィールドを追加。<code>input type:module</code> は廃止。</p>
 <div data-broccoli-instance-path="/fields.main@8/fields.main@0" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="testMod1:parts/deeploop"><p>loopフィールドの多階層処理のテスト用モジュール</p>
 <ul>
 
-	<li data-broccoli-instance-path="/fields.main@8/fields.main@0/fields.sample_loop1@0" data-broccoli-sub-mod-name="sample_loop1" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- null -">loop1: <p>テストテキストモジュールー！</p>
+	<li data-broccoli-instance-path="/fields.main@8/fields.main@0/fields.sample_loop1@0" data-broccoli-sub-mod-name="sample_loop1" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- sample_loop1">loop1: <p>テストテキストモジュールー！</p>
 	<ul>
 
-		<li data-broccoli-instance-path="/fields.main@8/fields.main@0/fields.sample_loop1@0/fields.sample_loop2@0" data-broccoli-sub-mod-name="sample_loop2" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- null -">loop2: <p>テスト2
+		<li data-broccoli-instance-path="/fields.main@8/fields.main@0/fields.sample_loop1@0/fields.sample_loop2@0" data-broccoli-sub-mod-name="sample_loop2" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- sample_loop2">loop2: <p>テスト2
 うふろぉぉぉぉ</p>
 		<ul>
 
-		<li data-broccoli-instance-path="/fields.main@8/fields.main@0/fields.sample_loop1@0/fields.sample_loop2@0/fields.sample_loop3@0" data-broccoli-sub-mod-name="sample_loop3" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- null -">loop3:
+		<li data-broccoli-instance-path="/fields.main@8/fields.main@0/fields.sample_loop1@0/fields.sample_loop2@0/fields.sample_loop3@0" data-broccoli-sub-mod-name="sample_loop3" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- sample_loop3">loop3:
 			<div><p>だはぁぁぁぁぁ</p>
 </div>
 			<div><p>マルチテキスト3</p>
 </div>
 		</li>
 
-		<li data-broccoli-instance-path="/fields.main@8/fields.main@0/fields.sample_loop1@0/fields.sample_loop2@0/fields.sample_loop3@1" data-broccoli-sub-mod-name="sample_loop3" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- null -">loop3:
+		<li data-broccoli-instance-path="/fields.main@8/fields.main@0/fields.sample_loop1@0/fields.sample_loop2@0/fields.sample_loop3@1" data-broccoli-sub-mod-name="sample_loop3" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- sample_loop3">loop3:
 			<div><p>どぉぉぉ</p>
 </div>
 			<div><span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてテキストを編集してください)</span></div>
@@ -126,10 +132,10 @@ moduleフィールドを追加。<code>input type:module</code> は廃止。</p>
 		</ul>
 		</li>
 
-		<li data-broccoli-instance-path="/fields.main@8/fields.main@0/fields.sample_loop1@0/fields.sample_loop2@1" data-broccoli-sub-mod-name="sample_loop2" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- null -">loop2: <p>テスト2いいいおおおお</p>
+		<li data-broccoli-instance-path="/fields.main@8/fields.main@0/fields.sample_loop1@0/fields.sample_loop2@1" data-broccoli-sub-mod-name="sample_loop2" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- sample_loop2">loop2: <p>テスト2いいいおおおお</p>
 		<ul>
 
-		<li data-broccoli-instance-path="/fields.main@8/fields.main@0/fields.sample_loop1@0/fields.sample_loop2@1/fields.sample_loop3@0" data-broccoli-sub-mod-name="sample_loop3" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- null -">loop3:
+		<li data-broccoli-instance-path="/fields.main@8/fields.main@0/fields.sample_loop1@0/fields.sample_loop2@1/fields.sample_loop3@0" data-broccoli-sub-mod-name="sample_loop3" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- sample_loop3">loop3:
 			<div><h2>なかなかいいと思います。</h2>
 <p>マークダウンコード。そのままHTMLに変換されます。</p>
 </div>
@@ -138,13 +144,13 @@ moduleフィールドを追加。<code>input type:module</code> は廃止。</p>
 </div>
 		</li>
 
-		<li data-broccoli-instance-path="/fields.main@8/fields.main@0/fields.sample_loop1@0/fields.sample_loop2@1/fields.sample_loop3@1" data-broccoli-sub-mod-name="sample_loop3" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- null -">loop3:
+		<li data-broccoli-instance-path="/fields.main@8/fields.main@0/fields.sample_loop1@0/fields.sample_loop2@1/fields.sample_loop3@1" data-broccoli-sub-mod-name="sample_loop3" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- sample_loop3">loop3:
 			<div><p>テスト3ああああ</p>
 </div>
 			<div><span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてテキストを編集してください)</span></div>
 		</li>
 
-		<li data-broccoli-instance-path="/fields.main@8/fields.main@0/fields.sample_loop1@0/fields.sample_loop2@1/fields.sample_loop3@2" data-broccoli-sub-mod-name="sample_loop3" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- null -">loop3:
+		<li data-broccoli-instance-path="/fields.main@8/fields.main@0/fields.sample_loop1@0/fields.sample_loop2@1/fields.sample_loop3@2" data-broccoli-sub-mod-name="sample_loop3" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- sample_loop3">loop3:
 			<div><p>ループして</p>
 </div>
 			<div><span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてテキストを編集してください)</span></div>
@@ -156,13 +162,13 @@ moduleフィールドを追加。<code>input type:module</code> は廃止。</p>
 	</ul>
 	</li>
 
-	<li data-broccoli-instance-path="/fields.main@8/fields.main@0/fields.sample_loop1@1" data-broccoli-sub-mod-name="sample_loop1" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- null -">loop1: <p>もじれつ書いてみますよ。</p>
+	<li data-broccoli-instance-path="/fields.main@8/fields.main@0/fields.sample_loop1@1" data-broccoli-sub-mod-name="sample_loop1" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- sample_loop1">loop1: <p>もじれつ書いてみますよ。</p>
 	<ul>
 <div data-broccoli-instance-path="/fields.main@8/fields.main@0/fields.sample_loop1@1/fields.sample_loop2@0" data-broccoli-mod-id="testMod1:parts/deeploop" data-broccoli-sub-mod-name="sample_loop2" data-broccoli-is-appender="yes" style="overflow:hidden;padding:5px 15px;background-color:#dfe;border:3px solid transparent;border-radius:5px;font-family: &quot;YuGothic&quot;, &quot;Yu Gothic&quot;, Meiryo, &quot;Hiragino Kaku Gothic ProN&quot;, Verdana, sans-serif;font-size:9px;color:#000;text-align:center;box-sizing:border-box;clear:both;white-space:nowrap;margin:10px 0;">Double click here to add array element</div>
 	</ul>
 	</li>
 
-	<li data-broccoli-instance-path="/fields.main@8/fields.main@0/fields.sample_loop1@2" data-broccoli-sub-mod-name="sample_loop1" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- null -">loop1: <p>テキストテキストー！</p>
+	<li data-broccoli-instance-path="/fields.main@8/fields.main@0/fields.sample_loop1@2" data-broccoli-sub-mod-name="sample_loop1" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- sample_loop1">loop1: <p>テキストテキストー！</p>
 	<ul>
 <div data-broccoli-instance-path="/fields.main@8/fields.main@0/fields.sample_loop1@2/fields.sample_loop2@0" data-broccoli-mod-id="testMod1:parts/deeploop" data-broccoli-sub-mod-name="sample_loop2" data-broccoli-is-appender="yes" style="overflow:hidden;padding:5px 15px;background-color:#dfe;border:3px solid transparent;border-radius:5px;font-family: &quot;YuGothic&quot;, &quot;Yu Gothic&quot;, Meiryo, &quot;Hiragino Kaku Gothic ProN&quot;, Verdana, sans-serif;font-size:9px;color:#000;text-align:center;box-sizing:border-box;clear:both;white-space:nowrap;margin:10px 0;">Double click here to add array element</div>
 	</ul>
@@ -176,16 +182,16 @@ moduleフィールドを追加。<code>input type:module</code> は廃止。</p>
 <p>いいじゃんかよーーーー！</p>
 </div><ul data-broccoli-instance-path="/fields.main@8/fields.main@2" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="testMod1:parts/ul">
 
-<li data-broccoli-instance-path="/fields.main@8/fields.main@2/fields.sample_loop@0" data-broccoli-sub-mod-name="sample_loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- null -"><p>きたーーーー！</p>
+<li data-broccoli-instance-path="/fields.main@8/fields.main@2/fields.sample_loop@0" data-broccoli-sub-mod-name="sample_loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- sample_loop"><p>きたーーーー！</p>
 </li>
 
-<li data-broccoli-instance-path="/fields.main@8/fields.main@2/fields.sample_loop@1" data-broccoli-sub-mod-name="sample_loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- null -"><p>うぉーーーすばらしいー！！∑(ﾟДﾟ)</p>
+<li data-broccoli-instance-path="/fields.main@8/fields.main@2/fields.sample_loop@1" data-broccoli-sub-mod-name="sample_loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- sample_loop"><p>うぉーーーすばらしいー！！∑(ﾟДﾟ)</p>
 <ul>
 <li>markdown書くけどね。</li>
 </ul>
 </li>
 
-<li data-broccoli-instance-path="/fields.main@8/fields.main@2/fields.sample_loop@2" data-broccoli-sub-mod-name="sample_loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- null -"><p><span>こうしたら？</span></p>
+<li data-broccoli-instance-path="/fields.main@8/fields.main@2/fields.sample_loop@2" data-broccoli-sub-mod-name="sample_loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- sample_loop"><p><span>こうしたら？</span></p>
 </li>
 <div data-broccoli-instance-path="/fields.main@8/fields.main@2/fields.sample_loop@3" data-broccoli-mod-id="testMod1:parts/ul" data-broccoli-sub-mod-name="sample_loop" data-broccoli-is-appender="yes" style="overflow:hidden;padding:5px 15px;background-color:#dfe;border:3px solid transparent;border-radius:5px;font-family: &quot;YuGothic&quot;, &quot;Yu Gothic&quot;, Meiryo, &quot;Hiragino Kaku Gothic ProN&quot;, Verdana, sans-serif;font-size:9px;color:#000;text-align:center;box-sizing:border-box;clear:both;white-space:nowrap;margin:10px 0;">Double click here to add array element</div>
 </ul>
@@ -230,25 +236,25 @@ moduleフィールドを追加。<code>input type:module</code> は廃止。</p>
 </div><div class="dev-float-loop" data-broccoli-instance-path="/fields.main@14" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="testMod1:dev/float_loop">
 	<ul>
 
-		<li data-broccoli-instance-path="/fields.main@14/fields.loop@0" data-broccoli-sub-mod-name="loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- null -"><p>選択できなければ、編集できません。</p>
+		<li data-broccoli-instance-path="/fields.main@14/fields.loop@0" data-broccoli-sub-mod-name="loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- loop"><p>選択できなければ、編集できません。</p>
 </li><!--
 		-->
-		<li data-broccoli-instance-path="/fields.main@14/fields.loop@1" data-broccoli-sub-mod-name="loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- null -"><p>リストの順番をドラッグ＆ドロップで入れ替えられます。</p>
+		<li data-broccoli-instance-path="/fields.main@14/fields.loop@1" data-broccoli-sub-mod-name="loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- loop"><p>リストの順番をドラッグ＆ドロップで入れ替えられます。</p>
 </li><!--
 		-->
-		<li data-broccoli-instance-path="/fields.main@14/fields.loop@2" data-broccoli-sub-mod-name="loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- null -"><p>ドラッグ＆ドロップで移動させる操作もできるべきです。</p>
+		<li data-broccoli-instance-path="/fields.main@14/fields.loop@2" data-broccoli-sub-mod-name="loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- loop"><p>ドラッグ＆ドロップで移動させる操作もできるべきです。</p>
 </li><!--
 		-->
-		<li data-broccoli-instance-path="/fields.main@14/fields.loop@3" data-broccoli-sub-mod-name="loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- null -"><p>領域が重なって表示されるなどの問題があるならば、修正が必要です。</p>
+		<li data-broccoli-instance-path="/fields.main@14/fields.loop@3" data-broccoli-sub-mod-name="loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- loop"><p>領域が重なって表示されるなどの問題があるならば、修正が必要です。</p>
 </li><!--
 		-->
-		<li data-broccoli-instance-path="/fields.main@14/fields.loop@4" data-broccoli-sub-mod-name="loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- null -"><p>floatされた要素をloopするテストです。</p>
+		<li data-broccoli-instance-path="/fields.main@14/fields.loop@4" data-broccoli-sub-mod-name="loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- loop"><p>floatされた要素をloopするテストです。</p>
 </li><!--
 		-->
-		<li data-broccoli-instance-path="/fields.main@14/fields.loop@5" data-broccoli-sub-mod-name="loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- null -"><p>それぞれの要素を編集できるでしょうか？</p>
+		<li data-broccoli-instance-path="/fields.main@14/fields.loop@5" data-broccoli-sub-mod-name="loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- loop"><p>それぞれの要素を編集できるでしょうか？</p>
 </li><!--
 		-->
-		<li data-broccoli-instance-path="/fields.main@14/fields.loop@6" data-broccoli-sub-mod-name="loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- null -"><p>要素を増やすには、loopフィールドのappenderをダブルクリックします。</p>
+		<li data-broccoli-instance-path="/fields.main@14/fields.loop@6" data-broccoli-sub-mod-name="loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- loop"><p>要素を増やすには、loopフィールドのappenderをダブルクリックします。</p>
 </li><!--
 		--><div data-broccoli-instance-path="/fields.main@14/fields.loop@7" data-broccoli-mod-id="testMod1:dev/float_loop" data-broccoli-sub-mod-name="loop" data-broccoli-is-appender="yes" style="overflow:hidden;padding:5px 15px;background-color:#dfe;border:3px solid transparent;border-radius:5px;font-family: &quot;YuGothic&quot;, &quot;Yu Gothic&quot;, Meiryo, &quot;Hiragino Kaku Gothic ProN&quot;, Verdana, sans-serif;font-size:9px;color:#000;text-align:center;box-sizing:border-box;clear:both;white-space:nowrap;margin:10px 0;">Double click here to add array element</div>
 	</ul>
@@ -282,10 +288,10 @@ moduleフィールドを追加。<code>input type:module</code> は廃止。</p>
 </code></pre>
 </div><ul data-broccoli-instance-path="/fields.main@16/fields.column3@1" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="testMod1:parts/ul">
 
-<li data-broccoli-instance-path="/fields.main@16/fields.column3@1/fields.sample_loop@0" data-broccoli-sub-mod-name="sample_loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- null -"><p>増えたっていいじゃない？</p>
+<li data-broccoli-instance-path="/fields.main@16/fields.column3@1/fields.sample_loop@0" data-broccoli-sub-mod-name="sample_loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- sample_loop"><p>増えたっていいじゃない？</p>
 </li>
 
-<li data-broccoli-instance-path="/fields.main@16/fields.column3@1/fields.sample_loop@1" data-broccoli-sub-mod-name="sample_loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- null -"><p>PHP必要？</p>
+<li data-broccoli-instance-path="/fields.main@16/fields.column3@1/fields.sample_loop@1" data-broccoli-sub-mod-name="sample_loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- sample_loop"><p>PHP必要？</p>
 <ul>
 <li>マークダウンをリスト編集する。</li>
 <li>リストモジュールなのに、さらにリストをネストして編集してるんだからっ。</li>
@@ -303,19 +309,19 @@ moduleフィールドを追加。<code>input type:module</code> は廃止。</p>
 <div data-broccoli-instance-path="/fields.main@19" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="testMod1:parts/deeploop"><p>loopフィールドの多階層処理のテスト用モジュール</p>
 <ul>
 
-	<li data-broccoli-instance-path="/fields.main@19/fields.sample_loop1@0" data-broccoli-sub-mod-name="sample_loop1" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- null -">loop1: <p>まーくだうーん</p>
+	<li data-broccoli-instance-path="/fields.main@19/fields.sample_loop1@0" data-broccoli-sub-mod-name="sample_loop1" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- sample_loop1">loop1: <p>まーくだうーん</p>
 	<ul>
 <div data-broccoli-instance-path="/fields.main@19/fields.sample_loop1@0/fields.sample_loop2@0" data-broccoli-mod-id="testMod1:parts/deeploop" data-broccoli-sub-mod-name="sample_loop2" data-broccoli-is-appender="yes" style="overflow:hidden;padding:5px 15px;background-color:#dfe;border:3px solid transparent;border-radius:5px;font-family: &quot;YuGothic&quot;, &quot;Yu Gothic&quot;, Meiryo, &quot;Hiragino Kaku Gothic ProN&quot;, Verdana, sans-serif;font-size:9px;color:#000;text-align:center;box-sizing:border-box;clear:both;white-space:nowrap;margin:10px 0;">Double click here to add array element</div>
 	</ul>
 	</li>
 
-	<li data-broccoli-instance-path="/fields.main@19/fields.sample_loop1@1" data-broccoli-sub-mod-name="sample_loop1" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- null -">loop1: <h2>md</h2>
+	<li data-broccoli-instance-path="/fields.main@19/fields.sample_loop1@1" data-broccoli-sub-mod-name="sample_loop1" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- sample_loop1">loop1: <h2>md</h2>
 	<ul>
 
-		<li data-broccoli-instance-path="/fields.main@19/fields.sample_loop1@1/fields.sample_loop2@0" data-broccoli-sub-mod-name="sample_loop2" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- null -">loop2: <h2>md layer 2</h2>
+		<li data-broccoli-instance-path="/fields.main@19/fields.sample_loop1@1/fields.sample_loop2@0" data-broccoli-sub-mod-name="sample_loop2" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- sample_loop2">loop2: <h2>md layer 2</h2>
 		<ul>
 
-		<li data-broccoli-instance-path="/fields.main@19/fields.sample_loop1@1/fields.sample_loop2@0/fields.sample_loop3@0" data-broccoli-sub-mod-name="sample_loop3" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- null -">loop3:
+		<li data-broccoli-instance-path="/fields.main@19/fields.sample_loop1@1/fields.sample_loop2@0/fields.sample_loop3@0" data-broccoli-sub-mod-name="sample_loop3" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- sample_loop3">loop3:
 			<div><h2>md layer 3</h2>
 </div>
 			<div>multi text layer 3</div>
@@ -336,21 +342,21 @@ moduleフィールドを追加。<code>input type:module</code> は廃止。</p>
 
 
 
-<div class="single-root-element--element" data-broccoli-instance-path="/fields.main@21/fields.thumb_loop@0" data-broccoli-sub-mod-name="thumb_loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- null -">
+<div class="single-root-element--element" data-broccoli-instance-path="/fields.main@21/fields.thumb_loop@0" data-broccoli-sub-mod-name="thumb_loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- thumb_loop">
 <p>isSingleRootElement が false になってはいけないパターン</p>
 <p>markdown</p>
 </div>
 
 
 
-<div class="single-root-element--element" data-broccoli-instance-path="/fields.main@21/fields.thumb_loop@1" data-broccoli-sub-mod-name="thumb_loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- null -">
+<div class="single-root-element--element" data-broccoli-instance-path="/fields.main@21/fields.thumb_loop@1" data-broccoli-sub-mod-name="thumb_loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- thumb_loop">
 <p>isSingleRootElement が false になってはいけないパターン</p>
 <p>markdown</p>
 </div>
 
 
 
-<div class="single-root-element--element" data-broccoli-instance-path="/fields.main@21/fields.thumb_loop@2" data-broccoli-sub-mod-name="thumb_loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- null -">
+<div class="single-root-element--element" data-broccoli-instance-path="/fields.main@21/fields.thumb_loop@2" data-broccoli-sub-mod-name="thumb_loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- thumb_loop">
 <p>isSingleRootElement が false になってはいけないパターン</p>
 <p>md</p>
 </div>
@@ -492,7 +498,7 @@ array(0) {
 <ul style="border: 1px solid #f00;">
     <li>test</li>
 
-    <li data-broccoli-instance-path="/fields.main@29/fields.main@0/fields.loop@0" data-broccoli-sub-mod-name="loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- moduleフィールド、loopフィールド を hidden して if して echo する -">リスト</li>
+    <li data-broccoli-instance-path="/fields.main@29/fields.main@0/fields.loop@0" data-broccoli-sub-mod-name="loop" data-broccoli-area-size-detection="shallow" data-broccoli-module-name="- Loop Area">リスト</li>
 <div data-broccoli-instance-path="/fields.main@29/fields.main@0/fields.loop@1" data-broccoli-mod-id="testMod1:dev/module_hidden" data-broccoli-sub-mod-name="loop" data-broccoli-is-appender="yes" style="overflow:hidden;padding:5px 15px;background-color:#dfe;border:3px solid transparent;border-radius:5px;font-family: &quot;YuGothic&quot;, &quot;Yu Gothic&quot;, Meiryo, &quot;Hiragino Kaku Gothic ProN&quot;, Verdana, sans-serif;font-size:9px;color:#000;text-align:center;box-sizing:border-box;clear:both;white-space:nowrap;margin:10px 0;">Double click here to add array element</div></ul>
 
 </div><div data-broccoli-instance-path="/fields.main@29/fields.main@1" data-broccoli-mod-id="testMod1:dev/module_hidden" data-broccoli-is-appender="yes" style="height:auto;overflow:hidden;padding:15px;background-color:#eef;border:3px solid transparent;border-radius:5px;font-family: &quot;YuGothic&quot;, &quot;Yu Gothic&quot;, Meiryo, &quot;Hiragino Kaku Gothic ProN&quot;, Verdana, sans-serif;font-size:16px;color:#000;text-align:center;box-sizing:border-box;clear:both;white-space:nowrap;margin:10px 0;">(+) Drop a module here</div><!-- /.unit --></div>
