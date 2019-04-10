@@ -9842,16 +9842,20 @@ module.exports = function(Px2style){
 			options.title = options.title||'';
 			options.body = options.body||$('<div>');
 			options.buttons = options.buttons||[
-				$('<button class="px2-btn px2-btn--primary">')
+				$('<button type="submit" class="px2-btn px2-btn--primary">')
 					.text('OK')
 					.on('click', function(e){
 						_this.closeModal();
 					})
 			];
 			options.target = options.target||$('body');
+			options.form = options.form||false;
 
 			var tpl = '';
 			tpl += '<div class="px2-modal">';
+			if(options.form){
+				tpl += '<form>';
+			}
 			tpl += ' <div class="px2-modal__dialog">';
 			tpl += '  <div class="px2-modal__header">';
 			tpl += '      <div class="px2-modal__title"></div>';
@@ -9859,9 +9863,21 @@ module.exports = function(Px2style){
 			tpl += '  <div class="px2-modal__body"><div class="px2-modal__body-inner"></div></div>';
 			tpl += '  <div class="px2-modal__footer"></div>';
 			tpl += ' </div>';
+			if(options.form){
+				tpl += '</form>';
+			}
 			tpl += '</div>';
 
 			$modal = $(tpl);
+
+			if(options.form){
+				$modal.find('form').attr({
+					'action': options.form.action || 'javascript:;',
+					'method': options.form.method || 'post'
+				}).on('submit', options.form.submit || function(){
+					_this.closeModal();
+				});
+			}
 
 			var $title = $modal.find('.px2-modal__title');
 			$title.append( options.title );
@@ -9897,6 +9913,11 @@ module.exports = function(Px2style){
 				});
 			}
 
+			$(window).on('resize.px2-modal', function(){
+				onWindowResize();
+			});
+			onWindowResize();
+
 			callback();
 		});
 
@@ -9911,6 +9932,7 @@ module.exports = function(Px2style){
 		try {
 			$modal.remove();
 		} catch (e) {}
+		$(window).off('resize.px2-modal');
 		callback();
 		return;
 	}
@@ -9918,7 +9940,8 @@ module.exports = function(Px2style){
 	/**
 	 * Window Resize Event
 	 */
-	$(window).on('resize', function(){
+	function onWindowResize(){
+		console.log('---- resize.px2-modal ----');
 		try {
 			if( $target.get(0).tagName.toLowerCase() != 'body' ){
 				$modal.css({
@@ -9931,7 +9954,8 @@ module.exports = function(Px2style){
 				"height": $modal.outerHeight() - $header.outerHeight() - $footer.outerHeight()
 			});
 		} catch (e) {}
-	});
+	}
+
 }
 
 },{"jquery":1}]},{},[2])

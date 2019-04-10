@@ -23,7 +23,7 @@
   "homepage": "https://github.com/broccoli-html-editor/broccoli-html-editor#readme",
   "dependencies": {
     "cheerio": "^0.19.0",
-    "ejs": "^2.5.2",
+    "ejs": "^2.6.1",
     "es6-promise": "^3.0.2",
     "fs-extra": "^0.24.0",
     "glob": "^5.0.14",
@@ -32,29 +32,29 @@
     "jquery": "^2.2.3",
     "langbank": "0.0.2",
     "markdown": "^0.5.0",
-    "marked": "0.3.*",
+    "marked": "^0.3.19",
     "mkdirp": "^0.5.1",
-    "node-sass": "^4.3.0",
+    "node-sass": "^4.11.0",
     "phpjs": "^1.3.2",
     "twig": "^0.8.2",
-    "underscore": "^1.8.3",
-    "url-parse": "^1.1.1",
+    "underscore": "^1.9.1",
+    "url-parse": "^1.4.4",
     "utils79": "^0.0.1"
   },
   "devDependencies": {
     "biflora": "0.0.1-alpha.1",
-    "bootstrap": "^3.3.5",
+    "bootstrap": "^3.4.1",
     "gulp": "^3.8.10",
     "gulp-autoprefixer": "^2.3.1",
     "gulp-browserify": "^0.5.1",
     "gulp-concat": "^2.6.0",
     "gulp-minify-css": "^1.2.1",
-    "gulp-plumber": "^1.0.1",
-    "gulp-rename": "^1.2.2",
-    "gulp-sass": "^2.0.1",
+    "gulp-plumber": "^1.2.1",
+    "gulp-rename": "^1.4.0",
+    "gulp-sass": "^4.0.2",
     "gulp-twig": "^0.3.0",
     "gulp-uglify": "^1.2.0",
     "mocha": "^2.1.0",
-    "px2style": "^2.0.1"
+    "px2style": "^2.0.3"
   }
 }
