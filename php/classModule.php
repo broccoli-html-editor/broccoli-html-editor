@@ -79,7 +79,10 @@ class classModule{
 		if( @$this->options['topThis'] ){
 			$this->topThis = $this->options['topThis'];
 			$this->templateType = $this->topThis->templateType;
-			$this->info['name'] = '- ' . ($this->topThis->info['name'] ? $this->topThis->info['name'] : 'null') . ' -';
+			$this->info['name'] = '- ' . ($this->topThis->info['name'] ? $this->topThis->info['name'] : 'null');
+			if( $options['modName'] ){
+				$this->info['name'] = '- ' . $options['modName'];
+			}
 			// $this->nameSpace = $this->options['topThis']->nameSpace;
 			if( $options['subModName'] ){
 				$this->subModName = $options['subModName'];
@@ -236,6 +239,7 @@ class classModule{
 			@$_topThis->subModule->{$field->loop->name} = $this->broccoli->createModuleInstance( $this->id, array(
 				"src" => $tmpSearchResult['content'],
 				"subModName" => $field->loop->name,
+				"modName" => ($field->loop->label ? $field->loop->label : $field->loop->name),
 				"topThis" => $_topThis
 			));
 			$_topThis->subModule->{$field->loop->name}->init();

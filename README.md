@@ -283,6 +283,7 @@ $ npm test
 - loopフィールドの外側に宣言されたinputフィールドの値を、 loopフィールド内の echoフィールドで参照できるようになった。
 - loopフィールドに indexオプションを追加。
 - inputフィールドに scriptフィールドを追加。
+- その他、細かい不具合の修正とUI改善。
 
 ### broccoli-html-editor v0.3.5 (2018年8月25日)
 

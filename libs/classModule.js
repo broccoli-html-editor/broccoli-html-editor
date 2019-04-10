@@ -83,7 +83,10 @@ module.exports = function(broccoli, moduleId, options){
 	if( options.topThis ){
 		this.topThis = options.topThis;
 		this.templateType = this.topThis.templateType;
-		this.info.name = '- ' + this.topThis.info.name + ' -';
+		this.info.name = '- ' + this.topThis.info.name;
+		if( options.modName ){
+			this.info.name = '- ' + options.modName;
+		}
 		// this.nameSpace = options.topThis.nameSpace;
 		if( options.subModName ){
 			this.subModName = options.subModName;
@@ -362,6 +365,7 @@ module.exports = function(broccoli, moduleId, options){
 						_topThis.subModule[field.loop.name] = broccoli.createModuleInstance( _this.id, {
 							"src": tmpSearchResult.content,
 							"subModName": field.loop.name,
+							"modName": (field.loop.label || field.loop.name),
 							"topThis":_topThis
 						});
 						_topThis.subModule[field.loop.name].init(function(){
