@@ -4439,6 +4439,9 @@ module.exports = function(broccoli){
 	 * 各パネルを描画する
 	 */
 	function drawPanel(idx, domElm){
+		if( !domElm.visible ){
+			return;
+		}
 		function calcHeight($me, idx){//パネルの高さを計算する
 			var $nextElm = (function(){
 				var instancePath = domElm.instancePath;
@@ -4507,7 +4510,7 @@ module.exports = function(broccoli){
 				})
 			;
 		}
-
+		return;
 	}
 
 	/**

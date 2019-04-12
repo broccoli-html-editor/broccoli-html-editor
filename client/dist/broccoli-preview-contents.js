@@ -87,6 +87,9 @@
 				if( elm.areaSizeDetection == 'deep' ){
 					$this.find('*').each(function(){
 						var $this = $(this);
+						if( $this.is(":hidden") ){
+							return;
+						}
 						var oL = $this.offset().left;
 						var oT = $this.offset().top;
 						var oW = oL + $this.outerWidth();
@@ -107,6 +110,10 @@
 				}
 				elm.outerWidth = elm.outerWidth - elm.offsetLeft;
 				elm.outerHeight = elm.outerHeight - elm.offsetTop;
+				elm.visible = true;
+				if( $this.is(":hidden") ){
+					elm.visible = false;
+				}
 				rtn[elm.instancePath] = elm;
 			});
 			callbackMessage(data.callback, rtn);

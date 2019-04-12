@@ -14,6 +14,12 @@
   padding: 0.5em; }
 
 /**
+ * module: testMod1:dev/display_none
+ */
+.display-none {
+  display: none; }
+
+/**
  * module: testMod1:dev/float_loop
  */
 .dev-float-loop:before, .dev-float-loop:after {

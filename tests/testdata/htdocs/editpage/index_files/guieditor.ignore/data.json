@@ -20,6 +20,10 @@
                         "dec": ""
                     },
                     {
+                        "modId": "testMod1:dev/display_none",
+                        "fields": []
+                    },
+                    {
                         "modId": "testMod1:dev/resource_build",
                         "fields": [],
                         "anchor": "",
