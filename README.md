@@ -276,7 +276,7 @@ $ npm test
 
 ## 更新履歴 - Change log
 
-### broccoli-html-editor v0.3.6 (リリース日未定)
+### broccoli-html-editor v0.3.6 (2019年4月19日)
 
 - コンテキストメニューからコピーや削除などの操作をできるようになった。
 - ESCキーでモーダルウィンドウを閉じるようになった。
