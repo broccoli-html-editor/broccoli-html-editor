@@ -387,123 +387,144 @@
 
 // edit window
 .broccoli--edit-window{
+	h2{
+		font-weight: bold;
+		text-align: center;
+		margin: 1em;
+	}
+
 	&-fields{
-		margin: 0.5em 0 3em 0;
+		margin: 0.5em 0 3em 30px;
+	}
+	&-field{
+		margin: 1em 0 2em;
 	}
 	h3{
-		padding: 0.5em 0;
+		padding: 0 0 0 10px;
+		border-left: 3px solid #999;
+		margin: 0.5em 0 0.5em -30px;
 		background-color: #fff;
+		font-weight: bold;
 	}
-}
-.broccoli--edit-window-message-field{
-	display: none;
-	margin: 10px;
-}
-.broccoli--edit-window-builtin-fields{
-	border: 1px solid #99e;
-	padding: 1em;
-	margin: 1em 5%;
-	background: #eef;
-}
-
-.broccoli--edit-window-module-fields{
-	padding: 10px;
-	overflow: auto;
-	height: 320px;
-	border: 1px solid #bbb;
-	border-radius: 5px;
-	background: #fafafa;
-	display: flex;
-
-	&__instances{
-		width: 100%;
+	.has-error h3{
+		color: #a94442;
+	}
+	&-window-message-field{
+		display: none;
+		margin: 10px;
+	}
+	&-builtin-fields{
+		border: 1px solid #99e;
+		padding: 1em;
+		margin: 1em 5%;
+		background: #eef;
+	}
+	&-module-fields{
+		padding: 10px;
 		overflow: auto;
-		.broccoli--edit-window-module-fields--fieldtype-module &{
-			padding-right: 5px;
-			margin-right: 5px;
-			width: 70%;
-		}
+		height: 320px;
+		border: 1px solid #bbb;
+		border-radius: 5px;
+		background: #fafafa;
+		display: flex;
 
-		ul{
-			padding: 0;
-			li{
-				border-bottom: 1px solid #bbb;
-				list-style-type: none;
-				margin: 0;
+		&__instances{
+			width: 100%;
+			overflow: auto;
+			.broccoli--edit-window-module-fields--fieldtype-module &{
+				padding-right: 5px;
+				margin-right: 5px;
+				width: 70%;
+			}
+
+			ul{
 				padding: 0;
-
-				a{
-					display: block;
-					position: relative;
-					outline: none !important;
-					padding: 0.5em 1em;
+				li{
+					border-bottom: 1px solid #bbb;
+					list-style-type: none;
 					margin: 0;
+					padding: 0;
 
-					&:hover{
-						background: #eee;
-					}
-					&:last-child{
-						border-bottom: none;
+					a{
+						display: block;
+						position: relative;
+						outline: none !important;
+						padding: 0.5em 1em;
+						margin: 0;
+
+						&:hover{
+							background: #eee;
+						}
+						&:last-child{
+							border-bottom: none;
+						}
 					}
 				}
 			}
-		}
 
-		[data-broccoli-is-appender]{
-			// moduleフィールド の appender
-			@include broccoli--appender();
-			font-size: 11px;
-			box-sizing:border-box;
-			clear:both;
-			white-space:nowrap;
-
-			&[data-broccoli-sub-mod-name]{
-				// loopフィールド の appender
-				padding:5px 15px;
-				background-color:#dfe;
-				border-color:#6dcd9d;
-				font-family: "YuGothic", "Yu Gothic", Meiryo, "Hiragino Kaku Gothic ProN", Verdana, sans-serif;
-				font-size:9px;
-				text-align:center;
+			[data-broccoli-is-appender]{
+				// moduleフィールド の appender
+				@include broccoli--appender();
+				font-size: 11px;
 				box-sizing:border-box;
 				clear:both;
 				white-space:nowrap;
 
+				&[data-broccoli-sub-mod-name]{
+					// loopフィールド の appender
+					padding:5px 15px;
+					background-color:#dfe;
+					border-color:#6dcd9d;
+					font-family: "YuGothic", "Yu Gothic", Meiryo, "Hiragino Kaku Gothic ProN", Verdana, sans-serif;
+					font-size:9px;
+					text-align:center;
+					box-sizing:border-box;
+					clear:both;
+					white-space:nowrap;
+
+				}
 			}
 		}
-	}
 
-	&__palette{
-		display: none;
+		&__palette{
+			display: none;
 
-		.broccoli--edit-window-module-fields--fieldtype-module &{
-			width: 30%;
-			overflow: auto;
-			display: block;
+			.broccoli--edit-window-module-fields--fieldtype-module &{
+				width: 30%;
+				overflow: auto;
+				display: block;
+			}
 		}
+
+	}
+
+	&-form-buttons{
+		margin-top: 1em;
+	}
+
+	&-field-error-message{
+		display: none;
 	}
 
 }
-.broccoli--edit-window-field{}
-.broccoli--edit-window-field-error-message{
-	margin: 10px;
-	display: none;
-}
+
 
 // lightbox
 .broccoli--lightbox{
 	position: fixed;
 	top: 0; left: 0;
 	overflow: auto;
-	background-color: rgba(0, 0, 0, 0.7);
+	background-color: rgba(0, 0, 0, 0.5);
 	width: 100%;
 	height: 100%;
 	z-index: 10000;
 	&-inner{
 		width: 90%;
 		background-color:#fff;
-		padding: 20px;
-		margin: 100px auto;
+		padding: 1em;
+		margin: 30px auto 100px;
+		border-radius: 5px;
+		box-shadow: 0 10px 40px 20px rgba(0,0,0,0.3);
 	}
 }
 
@@ -762,15 +783,32 @@
 	}
 }
 
-.broccoli__error-message{
-	border: 1px solid #f00;
-	color: #f00;
-	background-color: #fdd;
-	padding: 10px 20px;
-	border-radius: 10px;
+.broccoli__inline-error-message{
+	border: none;
+	color: #a94442;
 	ul{
 		margin-top: 0;
 		margin-bottom: 0;
+		padding: 0;
+		li{
+			list-style-type: none;
+		}
+	}
+}
+.broccoli__error-message-box{
+	border: 1px solid #ebccd1;
+	color: #a94442;
+	background-color: #f2dede;
+	padding: 15px;
+	border-radius: 4px;
+	margin: 2em 2em;
+	ul{
+		margin-top: 0;
+		margin-bottom: 0;
+		padding: 0;
+		li{
+			list-style-type: none;
+		}
 	}
 }
 

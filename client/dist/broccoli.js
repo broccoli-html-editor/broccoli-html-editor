@@ -2908,6 +2908,7 @@ module.exports = function(broccoli){
 				+ '<div class="broccoli--edit-window">'
 				+ '	<form action="javascript:;">'
 				+ '		<h2 class="broccoli--edit-window-module-name">---</h2>'
+				+ '		<div class="broccoli--edit-window-message-field"></div>'
 				+ '		<div class="broccoli--edit-window-fields">'
 				+ '		</div>'
 				+ '		<div><a href="javascript:;" class="broccoli--edit-window-builtin-fields-switch"><span class="glyphicon glyphicon-menu-right"></span> <%= lb.get(\'ui_label.show_advanced_setting\') %></a></div>'
@@ -2924,7 +2925,6 @@ module.exports = function(broccoli){
 				+ '				<textarea class="form-control" id="broccoli--edit-window-builtin-dec-field" placeholder=""></textarea>'
 				+ '			</div>'
 				+ '		</div>'
-				+ '		<div class="broccoli--edit-window-message-field"></div>'
 				+ '		<div class="broccoli--edit-window-form-buttons">'
 				+ '			<div class="container-fluid">'
 				+ '				<div class="row">'
@@ -2987,10 +2987,11 @@ module.exports = function(broccoli){
 
 	function formErrorMessage(msgs){
 		var $elm = $editWindow.find('.broccoli--edit-window-message-field');
+		$editWindow.find('[data-broccoli-edit-window-field-name]').removeClass('has-error');
 		$editWindow.find('.broccoli--edit-window-field-error-message').hide().html('');
 		$elm.hide().html('');
 		for( var idx in msgs ){
-			var $err = $('<div class="broccoli__error-message">');
+			var $err = $('<div class="broccoli__inline-error-message">');
 			var $errUl = $('<ul>');
 			var errCount = 0;
 			for( var idx2 in msgs[idx] ){
@@ -2999,13 +3000,15 @@ module.exports = function(broccoli){
 					.text( msgs[idx][idx2] )
 				);
 			}
-			$('[data-broccoli-edit-window-field-name='+idx+'] .broccoli--edit-window-field-error-message').show().append( $err.append($errUl) );
+			$editWindow.find('[data-broccoli-edit-window-field-name='+idx+']').addClass('has-error');
+			$editWindow.find('[data-broccoli-edit-window-field-name='+idx+'] .broccoli--edit-window-field-error-message').show().append( $err.append($errUl) );
 		}
 		if(errCount){
-			var $err = $('<div class="broccoli__error-message">');
+			var $err = $('<div class="broccoli__error-message-box">');
 			$elm.show().append(
 				$err.text( '入力エラーがあります。確認してください。' )
 			);
+			$('.broccoli--lightbox').scrollTop(0);
 		}
 		return;
 	}

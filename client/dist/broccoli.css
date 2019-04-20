@@ -290,14 +290,28 @@
   .broccoli--panel__drag-entered > .broccoli--panel-drop-to-insert-here {
     display: block !important; }
 
+.broccoli--edit-window h2 {
+  font-weight: bold;
+  text-align: center;
+  margin: 1em; }
+
 .broccoli--edit-window-fields {
-  margin: 0.5em 0 3em 0; }
+  margin: 0.5em 0 3em 30px; }
+
+.broccoli--edit-window-field {
+  margin: 1em 0 2em; }
 
 .broccoli--edit-window h3 {
-  padding: 0.5em 0;
-  background-color: #fff; }
+  padding: 0 0 0 10px;
+  border-left: 3px solid #999;
+  margin: 0.5em 0 0.5em -30px;
+  background-color: #fff;
+  font-weight: bold; }
 
-.broccoli--edit-window-message-field {
+.broccoli--edit-window .has-error h3 {
+  color: #a94442; }
+
+.broccoli--edit-window-window-message-field {
   display: none;
   margin: 10px; }
 
@@ -373,8 +387,10 @@
       overflow: auto;
       display: block; }
 
+.broccoli--edit-window-form-buttons {
+  margin-top: 1em; }
+
 .broccoli--edit-window-field-error-message {
-  margin: 10px;
   display: none; }
 
 .broccoli--lightbox {
@@ -382,15 +398,17 @@
   top: 0;
   left: 0;
   overflow: auto;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.5);
   width: 100%;
   height: 100%;
   z-index: 10000; }
   .broccoli--lightbox-inner {
     width: 90%;
     background-color: #fff;
-    padding: 20px;
-    margin: 100px auto; }
+    padding: 1em;
+    margin: 30px auto 100px;
+    border-radius: 5px;
+    box-shadow: 0 10px 40px 20px rgba(0, 0, 0, 0.3); }
 
 .broccoli--progress {
   position: fixed;
@@ -597,15 +615,29 @@
       height: 27px;
       min-height: 27px; }
 
-.broccoli__error-message {
-  border: 1px solid #f00;
-  color: #f00;
-  background-color: #fdd;
-  padding: 10px 20px;
-  border-radius: 10px; }
-  .broccoli__error-message ul {
+.broccoli__inline-error-message {
+  border: none;
+  color: #a94442; }
+  .broccoli__inline-error-message ul {
     margin-top: 0;
-    margin-bottom: 0; }
+    margin-bottom: 0;
+    padding: 0; }
+    .broccoli__inline-error-message ul li {
+      list-style-type: none; }
+
+.broccoli__error-message-box {
+  border: 1px solid #ebccd1;
+  color: #a94442;
+  background-color: #f2dede;
+  padding: 15px;
+  border-radius: 4px;
+  margin: 2em 2em; }
+  .broccoli__error-message-box ul {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 0; }
+    .broccoli__error-message-box ul li {
+      list-style-type: none; }
 
 .broccoli--contextmenu {
   z-index: 20000;
