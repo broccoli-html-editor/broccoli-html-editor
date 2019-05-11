@@ -44,6 +44,9 @@ module.exports = function(broccoli){
 						},
 						function(it1, data){
 							_resMgr.getResourcePublicPath( rtn.resKey, function(publicPath){
+								if( !data.resourceInfo ){
+									publicPath = '';
+								}
 								rtn.path = publicPath;
 								data.path = publicPath;
 								it1.next(data);
@@ -65,7 +68,7 @@ module.exports = function(broccoli){
 									}
 								}
 							}
-							if( data.path == false && data.resourceInfo.base64 ){
+							if( data.path == false && data.resourceInfo && data.resourceInfo.base64 ){
 								data.path = 'data:'+data.resourceInfo.type+';base64,' + data.resourceInfo.base64;
 							}
 							it1.next(data);

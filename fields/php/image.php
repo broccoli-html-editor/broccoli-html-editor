@@ -45,6 +45,9 @@ class image extends \broccoliHtmlEditor\fieldBase{
 			$data->publicRealpath = $realpath;
 
 			$publicPath = $resMgr->getResourcePublicPath( $rtn['resKey'] );
+			if( !$data->resourceInfo ){
+				$publicPath = '';
+			}
 			$rtn['path'] = $publicPath;
 			$data->path = $publicPath;
 
@@ -56,7 +59,7 @@ class image extends \broccoliHtmlEditor\fieldBase{
 					$data->path = 'data:'.$data->resourceInfo->type.';base64,'.'{broccoli-html-editor-resource-baser64:{'.$rtn['resKey'].'}}';
 				}
 			}
-			if( !$data->path && $data->resourceInfo->base64 ){
+			if( !$data->path && $data->resourceInfo && $data->resourceInfo->base64 ){
 				$data->path = 'data:'.$data->resourceInfo->type.';base64,'.$data->resourceInfo->base64;
 			}
 

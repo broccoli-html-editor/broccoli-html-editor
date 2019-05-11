@@ -263,14 +263,30 @@ $ gulp watch
 
 ### server up
 
+#### node.js
+
 ```
-$ npm run up
+$ npm start
+```
+
+#### PHP
+
+```
+$ composer start
 ```
 
 ### test
 
+#### node.js
+
 ```
 $ npm test
+```
+
+#### PHP
+
+```
+$ composer test
 ```
 
 
@@ -279,6 +295,7 @@ $ npm test
 ### broccoli-html-editor v0.3.7 (リリース日未定)
 
 - 編集ウィンドウで、入力エラーがある場合のエラーメッセージ表示を改善。
+- imageフィールドで、画像を選択していない場合に、画像ではないパスが出力される問題を修正し、空白文字列となるようになった。
 
 ### broccoli-html-editor v0.3.6 (2019年4月19日)
 
@@ -424,5 +441,5 @@ MIT License
 ## 作者 - Author
 
 - Tomoya Koyanagi <tomk79@gmail.com>
-- website: <http://www.pxt.jp/>
-- Twitter: @tomk79 <http://twitter.com/tomk79/>
+- website: <https://www.pxt.jp/>
+- Twitter: @tomk79 <https://twitter.com/tomk79/>

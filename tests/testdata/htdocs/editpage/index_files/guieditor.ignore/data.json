@@ -1223,6 +1223,17 @@
                                 }
                             ]
                         }
+                    },
+                    {
+                        "modId": "testMod1:dev/is_image",
+                        "fields": {
+                            "image": {
+                                "resKey": "",
+                                "path": "about:blank",
+                                "resType": "",
+                                "webUrl": ""
+                            }
+                        }
                     }
                 ]
             },
