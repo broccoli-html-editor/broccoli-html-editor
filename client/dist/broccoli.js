@@ -2907,6 +2907,7 @@ module.exports = function(broccoli){
 	var tplFrame = ''
 				+ '<div class="broccoli--edit-window">'
 				+ '	<form action="javascript:;">'
+				+ '		<div class="broccoli--edit-window-logical-path">---</div>'
 				+ '		<h2 class="broccoli--edit-window-module-name">---</h2>'
 				+ '		<div class="broccoli--edit-window-message-field"></div>'
 				+ '		<div class="broccoli--edit-window-fields">'
@@ -3035,6 +3036,10 @@ module.exports = function(broccoli){
 		$editWindow.html('').append( broccoli.bindEjs(tplFrame, {'lb':broccoli.lb}) );
 		$editWindow.find('.broccoli--edit-window-module-name').text(mod.info.name||mod.id);
 		$editWindow.find('.broccoli--edit-window-fields').append($fields);
+
+		$editWindow.find('.broccoli--edit-window-logical-path').html('').append(
+			drawLogicalPath(instancePath)
+		);
 
 		$editWindow.find('.broccoli--edit-window-builtin-fields').hide();
 		$editWindow.find('.broccoli--edit-window-builtin-fields-switch').click(function(){
@@ -3432,6 +3437,53 @@ module.exports = function(broccoli){
 			}
 		);
 		return this;
+	}
+
+	/**
+	 * パンくずを表示する
+	 */
+	function drawLogicalPath(instancePath){
+		// パンくずを表示
+		var instPath = instancePath.split('/');
+		var timer;
+
+		// console.log(instPath);
+
+		var $ul = $('<ul>');
+		var instPathMemo = [];
+		for( var idx in instPath ){
+			instPathMemo.push(instPath[idx]);
+			if( instPathMemo.length <= 1 ){ continue; }
+			var contData = broccoli.contentsSourceData.get(instPathMemo.join('/'));
+			if( !contData ){
+				// appender を選択した場合に、
+				// 存在しない instance が末尾に含まれた状態で送られてくる。
+				// その場合、contData は undefined になる。
+				// 処理できないので、スキップする。
+				continue;
+			}
+			var mod = broccoli.contentsSourceData.getModule(contData.modId, contData.subModName);
+			var label = mod && mod.info.name||mod.id;
+			if(instPathMemo.length==2){
+				// bowl自体だったら
+				label = instPathMemo[instPathMemo.length-1];
+			}
+			$ul.append( $('<li>')
+				.append( $('<a href="javascript:;">')
+					.attr({
+						'data-broccoli-instance-path': instPathMemo.join('/')
+					})
+					.bind('click', function(e){
+						clearTimeout(timer);
+						var instancePath = $(this).attr('data-broccoli-instance-path');
+						broccoli.editInstance( instancePath );
+					} )
+					.text(label)
+				)
+			);
+		}
+		return $ul;
+
 	}
 
 	/**
@@ -3928,10 +3980,6 @@ module.exports = function(broccoli){
 			if(instPathMemo.length==2){
 				// bowl自体だったら
 				label = instPathMemo[instPathMemo.length-1];
-			}
-			if( mod.subModName ){
-				// サブモジュールだったら
-				label = '@'+mod.subModName;
 			}
 			$ul.append( $('<li>')
 				.append( $('<a href="javascript:;">')

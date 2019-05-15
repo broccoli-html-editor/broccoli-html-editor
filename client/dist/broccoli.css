@@ -387,6 +387,20 @@
       overflow: auto;
       display: block; }
 
+.broccoli--edit-window-logical-path {
+  font-size: 74%; }
+  .broccoli--edit-window-logical-path ul {
+    margin: 0;
+    padding: 0; }
+    .broccoli--edit-window-logical-path ul li {
+      margin: 0;
+      padding: 0;
+      list-style-type: none;
+      display: inline; }
+      .broccoli--edit-window-logical-path ul li::before {
+        content: ">";
+        margin: 0 0.5em; }
+
 .broccoli--edit-window-form-buttons {
   margin-top: 1em; }
 

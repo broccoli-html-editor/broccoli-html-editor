@@ -51,10 +51,6 @@ module.exports = function(broccoli){
 				// bowl自体だったら
 				label = instPathMemo[instPathMemo.length-1];
 			}
-			if( mod.subModName ){
-				// サブモジュールだったら
-				label = '@'+mod.subModName;
-			}
 			$ul.append( $('<li>')
 				.append( $('<a href="javascript:;">')
 					.attr({

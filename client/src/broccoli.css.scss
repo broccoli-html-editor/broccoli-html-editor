@@ -497,6 +497,21 @@
 		}
 
 	}
+	&-logical-path{
+		font-size: 74%;
+		ul{
+			margin: 0; padding: 0;
+			li{
+				margin: 0; padding: 0;
+				list-style-type: none;
+				display: inline;
+				&::before{
+					content: ">";
+					margin: 0 0.5em;
+				}
+			}
+		}
+	}
 
 	&-form-buttons{
 		margin-top: 1em;
