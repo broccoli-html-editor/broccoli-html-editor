@@ -85,10 +85,6 @@ module.exports = function(broccoli){
 					var contData = broccoli.contentsSourceData.get(children[child]);
 					var mod = broccoli.contentsSourceData.getModule(contData.modId, contData.subModName);
 					var label = mod && mod.info.name||mod.id;
-					if( mod.subModName ){
-						// サブモジュールだったら
-						label = '@'+mod.subModName;
-					}
 					$ulChildren.append( $('<li>')
 						.append( $('<a href="javascript:;">')
 							.attr({
