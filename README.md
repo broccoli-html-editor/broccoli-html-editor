@@ -219,6 +219,7 @@ coming soon.
 
 ```json
 {
+	"id": "foo-bar-elements",
     "name": "Foo Bar Elements",
     "type": "module",
     "path": "path/to/modules/"
@@ -229,6 +230,7 @@ coming soon.
 
 ```json
 {
+	"id": "foo-bar-field",
     "name": "Foo Bar Field",
     "type": "field",
     "backend": {
