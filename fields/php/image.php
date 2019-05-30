@@ -33,8 +33,17 @@ class image extends \broccoliHtmlEditor\fieldBase{
 		if( is_array($fieldData) ){
 			$rtn = $fieldData;
 		}
+		if( !array_key_exists('resKey', $rtn) ){
+			$rtn['resKey'] = null;
+		}
+		if( !array_key_exists('path', $rtn) ){
+			$rtn['path'] = null;
+		}
+		if( !array_key_exists('resType', $rtn) ){
+			$rtn['resType'] = null;
+		}
 
-		if( @$rtn['resType'] == 'web' ){
+		if( $rtn['resType'] == 'web' ){
 			return $rtn['webUrl'];
 		}else{
 			$data = json_decode('{}');

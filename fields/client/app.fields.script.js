@@ -33,8 +33,11 @@ module.exports = function(broccoli){
 		var _this = this;
 		var fixedLang = mod.lang || null;
 
-		if(typeof(data) !== typeof({})){
-			data = {'src':''+data,'lang':(fixedLang ? fixedLang : 'javascript')};
+		if( typeof(data) !== typeof({}) ){
+			data = {
+				'src': ''+(typeof(data) === typeof('') ? data : ''),
+				'lang': (fixedLang ? fixedLang : 'javascript')
+			};
 		}
 		if( fixedLang ){
 			data.lang = fixedLang;
