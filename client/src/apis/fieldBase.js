@@ -159,7 +159,9 @@ module.exports = function(broccoli){
 	 */
 	this.duplicateData = function( data, callback, resources ){
 		callback = callback||function(){};
-		data = JSON.parse( JSON.stringify( data ) );
+		try{
+			data = JSON.parse( JSON.stringify( data ) );
+		}catch(e){}
 		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 			callback(data);
 		}); });
