@@ -3038,7 +3038,7 @@ module.exports = function(broccoli){
 		$editWindow.find('.broccoli--edit-window-fields').append($fields);
 
 		$editWindow.find('.broccoli--edit-window-logical-path').html('').append(
-			drawLogicalPath(instancePath)
+			drawLogicalPath(instancePath, data)
 		);
 
 		$editWindow.find('.broccoli--edit-window-builtin-fields').hide();
@@ -3442,7 +3442,7 @@ module.exports = function(broccoli){
 	/**
 	 * パンくずを表示する
 	 */
-	function drawLogicalPath(instancePath){
+	function drawLogicalPath(instancePath, data){
 		// パンくずを表示
 		var instPath = instancePath.split('/');
 		var timer;
@@ -3468,15 +3468,35 @@ module.exports = function(broccoli){
 				// bowl自体だったら
 				label = instPathMemo[instPathMemo.length-1];
 			}
+			var isLastOne = false;
+			if( idx >= instPath.length-1 ){ isLastOne = true; }
 			$ul.append( $('<li>')
-				.append( $('<a href="javascript:;">')
+				.append( $('<'+(isLastOne?'span':'a href="javascript:;"')+'>')
 					.attr({
 						'data-broccoli-instance-path': instPathMemo.join('/')
 					})
 					.bind('click', function(e){
+						if( this.tagName.toLowerCase() != 'a' ){
+							return;
+						}
 						clearTimeout(timer);
-						var instancePath = $(this).attr('data-broccoli-instance-path');
-						broccoli.editInstance( instancePath );
+						var instancePathTo = $(this).attr('data-broccoli-instance-path');
+
+						_this.lock();//フォームをロック
+						validateInstance(instancePath, mod, data, function(res){
+							if( !res ){
+								// エラーがあるため次へ進めない
+								_this.unlock();
+								return;
+							}
+							saveInstance(instancePath, mod, data, function(res){
+								// コンテンツデータを保存
+								broccoli.progressMessage('コンテンツを保存しています');
+								broccoli.saveContents(function(){
+									broccoli.editInstance( instancePathTo );
+								});
+							});
+						});
 					} )
 					.text(label)
 				)
