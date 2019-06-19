@@ -294,6 +294,10 @@ $ composer test
 
 ## 更新履歴 - Change log
 
+### broccoli-html-editor v0.3.8 (リリース日未定)
+
+- `default` が設定されている `loop` フィールド内のフィールドの変更内容が同期してしまうことがある不具合を修正。
+
 ### broccoli-html-editor v0.3.7 (2019年6月8日)
 
 - 編集ウィンドウで、入力エラーがある場合のエラーメッセージ表示を改善。

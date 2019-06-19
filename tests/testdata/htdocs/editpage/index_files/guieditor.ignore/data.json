@@ -1234,6 +1234,50 @@
                                 "webUrl": ""
                             }
                         }
+                    },
+                    {
+                        "modId": "testMod1:dev/ul",
+                        "fields": {
+                            "class": "",
+                            "loop": [
+                                {
+                                    "modId": "testMod1:dev/ul",
+                                    "fields": {
+                                        "text": {
+                                            "editor": "text",
+                                            "src": "List Item 1"
+                                        }
+                                    },
+                                    "subModName": "loop",
+                                    "anchor": "",
+                                    "dec": ""
+                                },
+                                {
+                                    "modId": "testMod1:dev/ul",
+                                    "fields": {
+                                        "text": {
+                                            "editor": "text",
+                                            "src": "List Item 2"
+                                        }
+                                    },
+                                    "subModName": "loop",
+                                    "anchor": "",
+                                    "dec": ""
+                                },
+                                {
+                                    "modId": "testMod1:dev/ul",
+                                    "fields": {
+                                        "text": {
+                                            "editor": "text",
+                                            "src": "List Item 3"
+                                        }
+                                    },
+                                    "subModName": "loop",
+                                    "anchor": "",
+                                    "dec": ""
+                                }
+                            ]
+                        }
                     }
                 ]
             },

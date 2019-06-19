@@ -1,0 +1,51 @@
+// 通常のリスト
+ul{
+	>li{
+		>ul,
+		>ol,
+		>p{
+			margin-top: 0;
+			margin-bottom: 0;
+		}
+	}
+}
+
+// 水平リスト
+.px2-horizontal-list,
+.px2-horizontal-list>ul{
+	display: flex;
+	margin-top: 1em;
+	margin-bottom: 1em;
+	padding-left: 0;
+
+	>ul>li ,
+	>li {
+		list-style-type: none;
+		padding-left: 0;
+		padding-right: 1em;
+		>p{
+			margin: 0;
+		}
+	}
+}
+
+// 注釈リスト
+.px2-note-list,
+.px2-note-list>ul{
+	margin-top: 1em;
+	margin-bottom: 1em;
+	padding-left: 1.5em;
+
+	>ul>li,
+	>li {
+		list-style-type: none;
+		color: #999;
+		font-size: 86%;
+		position: relative;
+		&::before{
+			content: "※";
+			position: absolute;
+			left: -1.5em;
+		}
+	}
+}

@@ -107,6 +107,39 @@
     text-align: center; }
 
 /**
+ * module: testMod1:dev/ul
+ */
+ul > li > ul, ul > li > ol, ul > li > p {
+  margin-top: 0;
+  margin-bottom: 0; }
+
+.px2-horizontal-list, .px2-horizontal-list > ul {
+  display: flex;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  padding-left: 0; }
+  .px2-horizontal-list > ul > li, .px2-horizontal-list > ul > ul > li, .px2-horizontal-list > li, .px2-horizontal-list > ul > li {
+    list-style-type: none;
+    padding-left: 0;
+    padding-right: 1em; }
+    .px2-horizontal-list > ul > li > p, .px2-horizontal-list > ul > ul > li > p, .px2-horizontal-list > li > p, .px2-horizontal-list > ul > li > p {
+      margin: 0; }
+
+.px2-note-list, .px2-note-list > ul {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  padding-left: 1.5em; }
+  .px2-note-list > ul > li, .px2-note-list > ul > ul > li, .px2-note-list > li, .px2-note-list > ul > li {
+    list-style-type: none;
+    color: #999;
+    font-size: 86%;
+    position: relative; }
+    .px2-note-list > ul > li::before, .px2-note-list > ul > ul > li::before, .px2-note-list > li::before, .px2-note-list > ul > li::before {
+      content: "※";
+      position: absolute;
+      left: -1.5em; }
+
+/**
  * module: testMod1:units/cols2
  */
 .cols {

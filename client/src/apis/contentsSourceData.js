@@ -175,7 +175,7 @@ module.exports = function(broccoli){
 					newData.fields[fieldName] = '';
 					if( modTpl.fields[fieldName].default !== undefined ){
 						// デフォルト値の設定がある場合、セット
-						newData.fields[fieldName] = modTpl.fields[fieldName].default;
+						newData.fields[fieldName] = JSON.parse(JSON.stringify(modTpl.fields[fieldName].default));
 					}
 					newData.fields[fieldName] = broccoli.getFieldDefinition(modTpl.fields[fieldName].type).normalizeData( newData.fields[fieldName] );
 				}else if( modTpl.fields[fieldName].fieldType == 'module' ){
