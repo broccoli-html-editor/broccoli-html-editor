@@ -10197,7 +10197,7 @@ module.exports = function(Px2style){
 	/**
 	 * Update loading message.
 	 */
-	Px2style.prototype.message = function(message){
+	Px2style.prototype.loadingMessage = function(message){
 		$message.text(message);
 		return;
 	}
