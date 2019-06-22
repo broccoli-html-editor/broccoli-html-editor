@@ -421,7 +421,7 @@
 											htmls[idx] = (function(src){
 												for(var resKey in resDb){
 													try {
-														src = src.replace('{broccoli-html-editor-resource-baser64:{'+resKey+'}}', resDb[resKey].base64);
+														src = src.split('{broccoli-html-editor-resource-baser64:{'+resKey+'}}').join(resDb[resKey].base64);
 													} catch (e) {
 													}
 												}
@@ -4197,7 +4197,7 @@ module.exports = function(broccoli){
 							html = (function(src){
 								for(var resKey in resDb){
 									try {
-										src = src.replace('{broccoli-html-editor-resource-baser64:{'+resKey+'}}', resDb[resKey].base64);
+										src = src.split('{broccoli-html-editor-resource-baser64:{'+resKey+'}}').join(resDb[resKey].base64);
 									} catch (e) {
 									}
 								}

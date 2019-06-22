@@ -5,6 +5,19 @@
             "fields": {
                 "main": [
                     {
+                        "modId": "testMod1:dev/image_double",
+                        "fields": {
+                            "image": {
+                                "resKey": "db76f07be1e9aab245086676f9e3ff1e",
+                                "path": "./index_files/resources/clip_m.png",
+                                "resType": "",
+                                "webUrl": ""
+                            }
+                        },
+                        "anchor": "",
+                        "dec": ""
+                    },
+                    {
                         "modId": "testMod1:dev/loop_and_echo",
                         "fields": {
                             "sample_txt": "Echo Sample String",
