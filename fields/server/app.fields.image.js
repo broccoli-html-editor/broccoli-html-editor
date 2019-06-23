@@ -23,6 +23,9 @@ module.exports = function(broccoli){
 			if( rtn.resType == 'web' ){
 				callback(rtn.webUrl);
 				return;
+			}else if( rtn.resType == 'none' ){
+				callback('');
+				return;
 			}else{
 				it79.fnc(
 					{},

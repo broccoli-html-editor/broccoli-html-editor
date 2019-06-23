@@ -62,6 +62,9 @@ module.exports = function(broccoli){
 				;
 				callback( $.html() );
 				return;
+			}else if( rtn.resType == 'none' ){
+				callback( 'No Image' );
+				return;
 			}else{
 				_resMgr.getResourceDb( function(resDb){
 					var res, imagePath;
@@ -98,6 +101,7 @@ module.exports = function(broccoli){
 	this.mkEditor = function( mod, data, elm, callback ){
 		var rtn = $('<div>');
 		var $uiImageResource = $('<div>');
+		var $uiNoImage = $('<div>');
 		var $uiWebResource = $('<div>');
 		var _this = this;
 		if( typeof(data) !== typeof({}) ){ data = {}; }
@@ -118,9 +122,12 @@ module.exports = function(broccoli){
 		function selectResourceType(){
 			var val = rtn.find('[name='+mod.name+'-resourceType]:checked').val();
 			$uiWebResource.hide();
+			$uiNoImage.hide();
 			$uiImageResource.hide();
 			if(val == 'web'){
 				$uiWebResource.show();
+			}else if(val == 'none'){
+				$uiNoImage.show();
 			}else{
 				$uiImageResource.show();
 			}
@@ -204,6 +211,20 @@ module.exports = function(broccoli){
 							})
 						)
 						.append( $( '<span>' ).text('ウェブリソース') )
+					)
+				)
+				.append( $( '<li>' )
+					.css(tmpListStyle)
+					.append( $( '<label>' )
+						.append( $( '<input type="radio">' )
+							.change(selectResourceType)
+							.attr({
+								"name":mod.name+'-resourceType',
+								"value":"none",
+								"checked": (data.resType=='none')
+							})
+						)
+						.append( $( '<span>' ).text('なし') )
 					)
 				)
 			);
@@ -424,7 +445,7 @@ module.exports = function(broccoli){
 					)
 			);
 
-			rtn.append($uiImageResource).append($uiWebResource);
+			rtn.append($uiImageResource).append($uiWebResource).append($uiNoImage);
 			rtn.append( $('<input>')
 				.attr({
 					'type': 'hidden',

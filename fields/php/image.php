@@ -45,6 +45,8 @@ class image extends \broccoliHtmlEditor\fieldBase{
 
 		if( $rtn['resType'] == 'web' ){
 			return $rtn['webUrl'];
+		}elseif( $rtn['resType'] == 'none' ){
+			return '';
 		}else{
 			$data = json_decode('{}');
 			$resMgr = $this->broccoli->resourceMgr();
