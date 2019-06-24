@@ -20,10 +20,10 @@ module.exports = function(broccoli){
 		if(mod.autowrap){
 			switch(fieldData.lang){
 				case 'javascript':
-					$rtn = '<script>'+$rtn+'</script>';
+					rtn = '<script>'+rtn+'</script>';
 					break;
 				case 'css':
-					$rtn = '<style>'+$rtn+'</style>';
+					rtn = '<style>'+rtn+'</style>';
 					break;
 				case 'php':
 					break;
