@@ -67,7 +67,11 @@ class image extends \broccoliHtmlEditor\fieldBase{
 					// ↓ ダミーの Sample Image
 					$data->path = $this->_imgDummy;
 				}else{
-					$data->path = 'data:'.$data->resourceInfo->type.';base64,'.'{broccoli-html-editor-resource-baser64:{'.$rtn['resKey'].'}}';
+					$resourceType = 'image/png';
+					if( property_exists($data, 'resourceInfo') && property_exists($data->resourceInfo, 'type') ){
+						$resourceType = $data->resourceInfo->type;
+					}
+					$data->path = 'data:'.$resourceType.';base64,'.'{broccoli-html-editor-resource-baser64:{'.$rtn['resKey'].'}}';
 				}
 			}
 			if( !$data->path && $data->resourceInfo && $data->resourceInfo->base64 ){
