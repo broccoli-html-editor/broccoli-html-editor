@@ -22,7 +22,9 @@
   position: relative;
   top: 0;
   left: 0;
-  overflow: auto; }
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  overflow-scrolling: touch; }
   .broccoli--canvas iframe {
     position: absolute;
     top: 0;
@@ -81,7 +83,9 @@
           bottom: 0; }
 
 .broccoli--instance-tree-view {
-  overflow: auto; }
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  overflow-scrolling: touch; }
   .broccoli--instance-tree-view ul {
     margin: 0;
     padding: 0 0 0 5px;
@@ -324,6 +328,8 @@
 .broccoli--edit-window-module-fields {
   padding: 10px;
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  overflow-scrolling: touch;
   height: 320px;
   border: 1px solid #bbb;
   border-radius: 5px;
@@ -332,7 +338,9 @@
   display: flex; }
   .broccoli--edit-window-module-fields__instances {
     width: 100%;
-    overflow: auto; }
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    overflow-scrolling: touch; }
     .broccoli--edit-window-module-fields--fieldtype-module .broccoli--edit-window-module-fields__instances {
       padding-right: 5px;
       margin-right: 5px;
@@ -385,6 +393,8 @@
     .broccoli--edit-window-module-fields--fieldtype-module .broccoli--edit-window-module-fields__palette {
       width: 30%;
       overflow: auto;
+      -webkit-overflow-scrolling: touch;
+      overflow-scrolling: touch;
       display: block; }
 
 .broccoli--edit-window-logical-path {
@@ -412,6 +422,8 @@
   top: 0;
   left: 0;
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  overflow-scrolling: touch;
   background-color: rgba(0, 0, 0, 0.5);
   width: 100%;
   height: 100%;
@@ -516,7 +528,9 @@
         box-sizing: border-box; }
 
 .broccoli--module-palette {
-  overflow: auto; }
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  overflow-scrolling: touch; }
   .broccoli--module-palette div.broccoli--module-palette-inner {
     overflow: hidden; }
   .broccoli--module-palette div.broccoli--module-palette-filter {
@@ -529,7 +543,9 @@
     margin: 0;
     padding: 0;
     font-size: small;
-    overflow: auto; }
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    overflow-scrolling: touch; }
     .broccoli--module-palette ul.broccoli--module-palette-list li {
       list-style-type: none;
       padding: 0; }
