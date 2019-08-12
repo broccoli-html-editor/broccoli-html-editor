@@ -294,6 +294,10 @@ $ composer test
 
 ## 更新履歴 - Change log
 
+### broccoli-html-editor v0.3.10 (リリース日未定)
+
+- PHP 7.3 で発生する不具合を修正。
+
 ### broccoli-html-editor v0.3.9 (2019年8月11日)
 
 - 1つのモジュール内で画像リソースを繰り返し呼び出す場合に、2回目以降の画像がプレビューされない不具合を修正。
