@@ -297,6 +297,7 @@ $ composer test
 ### broccoli-html-editor v0.3.10 (リリース日未定)
 
 - PHP 7.3 で発生する不具合を修正。
+- タッチ端末での操作性を改善。
 
 ### broccoli-html-editor v0.3.9 (2019年8月11日)
 

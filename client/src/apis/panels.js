@@ -350,6 +350,8 @@ module.exports = function(broccoli){
 	 * パネルにイベントハンドラをセットする
 	 */
 	this.setPanelEventHandlers = function($panel){
+		var timerTouchStart;
+		var isTouchStartHold = false;
 		var timerFocus;
 		$panel
 			.attr({
@@ -412,6 +414,21 @@ module.exports = function(broccoli){
 				_this.onDblClick(e, this, function(){
 					// console.log('dblclick event done.');
 				});
+				return;
+			})
+			.on('touchstart', function(e){
+				// タッチデバイス向けの処理
+				clearTimeout(timerTouchStart);
+				if( isTouchStartHold ){
+					_this.onDblClick(e, this, function(){
+						// console.log('dblclick event done.');
+					});
+					return;
+				}
+				isTouchStartHold = true;
+				timerTouchStart = setTimeout(function(){
+					isTouchStartHold = false;
+				}, 250);
 				return;
 			})
 			.on('dragleave', function(e){

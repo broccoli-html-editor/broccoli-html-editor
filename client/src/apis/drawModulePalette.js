@@ -103,6 +103,9 @@ module.exports = function(broccoli, targetElm, callback){
 	 * モジュールのボタンを生成する
 	 */
 	function generateModuleButton( mod, depth ){
+		var timerTouchStart;
+		var isTouchStartHold = false;
+
 		depth = depth || 0;
 		var $button = $('<a class="broccoli--module-palette--draggablebutton">');
 		if(depth){
@@ -168,6 +171,19 @@ module.exports = function(broccoli, targetElm, callback){
 						)
 					;
 				});
+			})
+			.on('touchstart', function(e){
+				// タッチデバイス向けの処理
+				clearTimeout(timerTouchStart);
+				if( isTouchStartHold ){
+					$(this).dblclick();
+					return;
+				}
+				isTouchStartHold = true;
+				timerTouchStart = setTimeout(function(){
+					isTouchStartHold = false;
+				}, 250);
+				return;
 			})
 			// .tooltip({'placement':'left'})
 		;

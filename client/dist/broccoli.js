@@ -2533,6 +2533,9 @@ module.exports = function(broccoli, targetElm, callback){
 	 * モジュールのボタンを生成する
 	 */
 	function generateModuleButton( mod, depth ){
+		var timerTouchStart;
+		var isTouchStartHold = false;
+
 		depth = depth || 0;
 		var $button = $('<a class="broccoli--module-palette--draggablebutton">');
 		if(depth){
@@ -2598,6 +2601,19 @@ module.exports = function(broccoli, targetElm, callback){
 						)
 					;
 				});
+			})
+			.on('touchstart', function(e){
+				// タッチデバイス向けの処理
+				clearTimeout(timerTouchStart);
+				if( isTouchStartHold ){
+					$(this).dblclick();
+					return;
+				}
+				isTouchStartHold = true;
+				timerTouchStart = setTimeout(function(){
+					isTouchStartHold = false;
+				}, 250);
+				return;
 			})
 			// .tooltip({'placement':'left'})
 		;
@@ -4835,6 +4851,8 @@ module.exports = function(broccoli){
 	 * パネルにイベントハンドラをセットする
 	 */
 	this.setPanelEventHandlers = function($panel){
+		var timerTouchStart;
+		var isTouchStartHold = false;
 		var timerFocus;
 		$panel
 			.attr({
@@ -4897,6 +4915,21 @@ module.exports = function(broccoli){
 				_this.onDblClick(e, this, function(){
 					// console.log('dblclick event done.');
 				});
+				return;
+			})
+			.on('touchstart', function(e){
+				// タッチデバイス向けの処理
+				clearTimeout(timerTouchStart);
+				if( isTouchStartHold ){
+					_this.onDblClick(e, this, function(){
+						// console.log('dblclick event done.');
+					});
+					return;
+				}
+				isTouchStartHold = true;
+				timerTouchStart = setTimeout(function(){
+					isTouchStartHold = false;
+				}, 250);
 				return;
 			})
 			.on('dragleave', function(e){
