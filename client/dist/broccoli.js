@@ -28,10 +28,11 @@
 		var selectedInstance = null;
 		var selectedInstanceRegion = [];
 		var $canvas;
-		var redrawTimer;
 		var serverConfig; // サーバー側から取得した設定情報
 		this.__dirname = __dirname;
 		var bootupInfomations;
+		var timer_redraw,
+			timer_onPreviewLoad;
 
 		/**
 		 * broccoli-client を初期化する
@@ -284,6 +285,15 @@
 					} ,
 					function(it1, data){
 						console.log('broccoli: init done.');
+
+						clearTimeout(timer_onPreviewLoad);
+						var timeout = 30;
+						timer_onPreviewLoad = setTimeout(function(){
+							// 何らかの理由で、 iframeの読み込み完了イベントが発生しなかった場合、
+							// 強制的にトリガーする。
+							console.error('Loading preview timeout ('+(timeout)+'sec): Force trigger onPreviewLoad();');
+							onPreviewLoad();
+						}, timeout*1000);
 						// callback(); // <- onPreviewLoad() がコールするので、ここでは呼ばない。
 						it1.next();
 					}
@@ -298,6 +308,7 @@
 		function onPreviewLoad( callback ){
 			callback = callback || function(){};
 			if(_this.postMessenger===undefined){return;}// broccoli.init() の実行前
+			clearTimeout(timer_onPreviewLoad);
 
 			it79.fnc(
 				{},
@@ -369,8 +380,8 @@
 					function( it1, data ){
 						// タイマー処理
 						// ウィンドウサイズの変更などの際に、無駄な再描画連打を減らすため
-						clearTimeout( redrawTimer );
-						redrawTimer = setTimeout(function(){
+						clearTimeout( timer_redraw );
+						timer_redraw = setTimeout(function(){
 							it1.next(data);
 						}, 100);
 					} ,
