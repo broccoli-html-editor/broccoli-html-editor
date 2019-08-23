@@ -1,19 +1,7 @@
 @charset "utf-8";
 .broccoli{
 	/* http://www.softel.co.jp/blogs/tech/archives/2909 */
-	user-select: none; // CSS3
-	-moz-user-select: none; // Firefox
-	-webkit-user-select: none; // Safari、Chromeなど
-	-ms-user-select: none; // IE10かららしい
 	cursor: default;
-
-	// 選択可能領域
-	&__user-selectable{
-		user-select: auto; // CSS3
-		-moz-user-select: auto; // Firefox
-		-webkit-user-select: auto; // Safari、Chromeなど
-		-ms-user-select: auto; // IE10かららしい
-	}
 
 	[draggable=true]{
 		cursor: move;
@@ -278,18 +266,7 @@
 	z-index: 0;
 	cursor: move;
 
-	user-select: auto; // CSS3
-	-moz-user-select: auto; // Firefox
-	-webkit-user-select: auto; // Safari、Chromeなど
-	-ms-user-select: auto; // IE10かららしい
 	pointer-events: auto;
-	> *{
-		user-select: none; // CSS3
-		-moz-user-select: none; // Firefox
-		-webkit-user-select: none; // Safari、Chromeなど
-		-ms-user-select: none; // IE10かららしい
-		pointer-events: none;
-	}
 
 	&-module-name{
 		display:none;
@@ -319,18 +296,7 @@
 	}
 }
 .broccoli--instance-tree-view-panel-item{
-	user-select: auto; // CSS3
-	-moz-user-select: auto; // Firefox
-	-webkit-user-select: auto; // Safari、Chromeなど
-	-ms-user-select: auto; // IE10かららしい
-	pointer-events: auto;
-	> *{
-		user-select: none; // CSS3
-		-moz-user-select: none; // Firefox
-		-webkit-user-select: none; // Safari、Chromeなど
-		-ms-user-select: none; // IE10かららしい
-		pointer-events: none;
-	}
+	// 
 }
 .broccoli--panel-drop-to-insert-here{
 	display:none;

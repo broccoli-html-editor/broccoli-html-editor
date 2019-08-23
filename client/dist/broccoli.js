@@ -31,6 +31,7 @@
 		var serverConfig; // サーバー側から取得した設定情報
 		this.__dirname = __dirname;
 		var bootupInfomations;
+		var uiState;
 		var timer_redraw,
 			timer_onPreviewLoad;
 
@@ -59,6 +60,8 @@
 
 			this.options = options;
 
+			uiState = 'initialize';
+
 			$canvas = $(options.elmCanvas);
 			$canvas
 				.addClass('broccoli')
@@ -71,6 +74,7 @@
 			$canvas.find('iframe')
 				.bind('load', function(){
 					console.log('broccoli: preview loaded');
+					_this.setUiState('standby');
 					onPreviewLoad( callback );
 				})
 			;
@@ -134,36 +138,6 @@
 			bindDropCancel(options.elmInstancePathView);
 			bindDropCancel(options.elmInstanceTreeView);
 			bindDropCancel(options.elmModulePalette);
-
-			$(window)
-				.bind('copy', function(e){
-					switch(e.target.tagName.toLowerCase()){
-						case 'textarea': case 'input': return;break;
-					}
-					e.stopPropagation();
-					e.preventDefault();
-					_this.copy();
-					return;
-				})
-				.bind('cut', function(e){
-					switch(e.target.tagName.toLowerCase()){
-						case 'textarea': case 'input': return;break;
-					}
-					e.stopPropagation();
-					e.preventDefault();
-					_this.cut();
-					return;
-				})
-				.bind('paste', function(e){
-					switch(e.target.tagName.toLowerCase()){
-						case 'textarea': case 'input': return;break;
-					}
-					e.stopPropagation();
-					e.preventDefault();
-					_this.paste();
-					return;
-				})
-			;
 
 
 			it79.fnc(
@@ -300,6 +274,51 @@
 				]
 			);
 			return this;
+		}
+
+		/**
+		 * UIの状態をセットする
+		 */
+		this.setUiState = function( state ){
+			uiState = state;
+			var $window = $(window)
+			$window
+				.off('copy')
+				.off('cut')
+				.off('paste')
+			;
+
+			if( uiState == 'standby' ){
+				$window
+					.on('copy', function(e){
+						switch(e.target.tagName.toLowerCase()){
+							case 'textarea': case 'input': return;break;
+						}
+						e.stopPropagation();
+						e.preventDefault();
+						_this.copy();
+						return;
+					})
+					.on('cut', function(e){
+						switch(e.target.tagName.toLowerCase()){
+							case 'textarea': case 'input': return;break;
+						}
+						e.stopPropagation();
+						e.preventDefault();
+						_this.cut();
+						return;
+					})
+					.on('paste', function(e){
+						switch(e.target.tagName.toLowerCase()){
+							case 'textarea': case 'input': return;break;
+						}
+						e.stopPropagation();
+						e.preventDefault();
+						_this.paste();
+						return;
+					})
+				;
+			}
 		}
 
 		/**
@@ -1151,6 +1170,7 @@
 		 */
 		this.lightbox = function( callback ){
 			callback = callback||function(){};
+			this.setUiState('lightbox');
 
 			var $dom = $('<div>')
 				.addClass('broccoli--lightbox-inner')
@@ -1205,6 +1225,7 @@
 					}
 				)
 			;
+			this.setUiState('standby');
 			return this;
 		}
 
@@ -2668,15 +2689,15 @@ module.exports = function(broccoli, targetElm, callback){
 		if( $img.size() ){
 			html += '<div class="broccoli--module-info-content-thumb"><img src="'+$img.attr('src')+'" /></div>';
 		}
-		html += '<h1 class="broccoli__user-selectable">'+$elm.attr('data-name')+'</h1>';
-		html += '<p class="broccoli__user-selectable">'+$elm.attr('data-id')+'</p>';
+		html += '<h1>'+$elm.attr('data-name')+'</h1>';
+		html += '<p>'+$elm.attr('data-id')+'</p>';
 		html += '<hr />';
 		var readme = $elm.attr('data-readme');
 		var $readme = $('<div>'+readme+'</div>')
 		$readme.find('a').each(function(){
 			$(this).attr({'target':'_blank'})
 		});
-		html += '<div class="broccoli__user-selectable">'+ (readme ? $readme.html() : '<p style="text-align:center; margin: 100px auto;">-- no readme --</p>' ) +'</div>';
+		html += '<div>'+ (readme ? $readme.html() : '<p style="text-align:center; margin: 100px auto;">-- no readme --</p>' ) +'</div>';
 
 		var pics = JSON.parse( $elm.attr('data-pics') );
 		if( pics.length ){

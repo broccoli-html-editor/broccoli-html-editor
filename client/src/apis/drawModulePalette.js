@@ -227,15 +227,15 @@ module.exports = function(broccoli, targetElm, callback){
 		if( $img.size() ){
 			html += '<div class="broccoli--module-info-content-thumb"><img src="'+$img.attr('src')+'" /></div>';
 		}
-		html += '<h1 class="broccoli__user-selectable">'+$elm.attr('data-name')+'</h1>';
-		html += '<p class="broccoli__user-selectable">'+$elm.attr('data-id')+'</p>';
+		html += '<h1>'+$elm.attr('data-name')+'</h1>';
+		html += '<p>'+$elm.attr('data-id')+'</p>';
 		html += '<hr />';
 		var readme = $elm.attr('data-readme');
 		var $readme = $('<div>'+readme+'</div>')
 		$readme.find('a').each(function(){
 			$(this).attr({'target':'_blank'})
 		});
-		html += '<div class="broccoli__user-selectable">'+ (readme ? $readme.html() : '<p style="text-align:center; margin: 100px auto;">-- no readme --</p>' ) +'</div>';
+		html += '<div>'+ (readme ? $readme.html() : '<p style="text-align:center; margin: 100px auto;">-- no readme --</p>' ) +'</div>';
 
 		var pics = JSON.parse( $elm.attr('data-pics') );
 		if( pics.length ){

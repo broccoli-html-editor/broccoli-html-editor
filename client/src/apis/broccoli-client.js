@@ -30,6 +30,7 @@
 		var serverConfig; // サーバー側から取得した設定情報
 		this.__dirname = __dirname;
 		var bootupInfomations;
+		var uiState;
 		var timer_redraw,
 			timer_onPreviewLoad;
 
@@ -58,6 +59,8 @@
 
 			this.options = options;
 
+			uiState = 'initialize';
+
 			$canvas = $(options.elmCanvas);
 			$canvas
 				.addClass('broccoli')
@@ -70,6 +73,7 @@
 			$canvas.find('iframe')
 				.bind('load', function(){
 					console.log('broccoli: preview loaded');
+					_this.setUiState('standby');
 					onPreviewLoad( callback );
 				})
 			;
@@ -133,36 +137,6 @@
 			bindDropCancel(options.elmInstancePathView);
 			bindDropCancel(options.elmInstanceTreeView);
 			bindDropCancel(options.elmModulePalette);
-
-			$(window)
-				.bind('copy', function(e){
-					switch(e.target.tagName.toLowerCase()){
-						case 'textarea': case 'input': return;break;
-					}
-					e.stopPropagation();
-					e.preventDefault();
-					_this.copy();
-					return;
-				})
-				.bind('cut', function(e){
-					switch(e.target.tagName.toLowerCase()){
-						case 'textarea': case 'input': return;break;
-					}
-					e.stopPropagation();
-					e.preventDefault();
-					_this.cut();
-					return;
-				})
-				.bind('paste', function(e){
-					switch(e.target.tagName.toLowerCase()){
-						case 'textarea': case 'input': return;break;
-					}
-					e.stopPropagation();
-					e.preventDefault();
-					_this.paste();
-					return;
-				})
-			;
 
 
 			it79.fnc(
@@ -299,6 +273,51 @@
 				]
 			);
 			return this;
+		}
+
+		/**
+		 * UIの状態をセットする
+		 */
+		this.setUiState = function( state ){
+			uiState = state;
+			var $window = $(window)
+			$window
+				.off('copy')
+				.off('cut')
+				.off('paste')
+			;
+
+			if( uiState == 'standby' ){
+				$window
+					.on('copy', function(e){
+						switch(e.target.tagName.toLowerCase()){
+							case 'textarea': case 'input': return;break;
+						}
+						e.stopPropagation();
+						e.preventDefault();
+						_this.copy();
+						return;
+					})
+					.on('cut', function(e){
+						switch(e.target.tagName.toLowerCase()){
+							case 'textarea': case 'input': return;break;
+						}
+						e.stopPropagation();
+						e.preventDefault();
+						_this.cut();
+						return;
+					})
+					.on('paste', function(e){
+						switch(e.target.tagName.toLowerCase()){
+							case 'textarea': case 'input': return;break;
+						}
+						e.stopPropagation();
+						e.preventDefault();
+						_this.paste();
+						return;
+					})
+				;
+			}
 		}
 
 		/**
@@ -1150,6 +1169,7 @@
 		 */
 		this.lightbox = function( callback ){
 			callback = callback||function(){};
+			this.setUiState('lightbox');
 
 			var $dom = $('<div>')
 				.addClass('broccoli--lightbox-inner')
@@ -1204,6 +1224,7 @@
 					}
 				)
 			;
+			this.setUiState('standby');
 			return this;
 		}
 
