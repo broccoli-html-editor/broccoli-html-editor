@@ -276,25 +276,27 @@ module.exports = function(broccoli){
 						"data-is-updated": 'no'
 					})
 					.css({
-						'min-width':'100px',
+						'min-width':'10%',
 						'max-width':'100%',
-						'min-height':'100px',
-						'max-height':'200px'
+						'min-height':'1px',
+						'max-height':'200px',
+						'user-select': 'none',
+						'pointer-events': 'none'
 					})
 				)
-				.bind('dragleave', function(e){
+				.on('dragleave', function(e){
 					e.stopPropagation();
 					e.preventDefault();
 					$(this).css({'background': '#fff'});
 				})
-				.bind('dragover', function(e){
+				.on('dragover', function(e){
 					// console.log(123478987654.123456);
 					e.stopPropagation();
 					e.preventDefault();
 					$(this).css({'background': '#eee'});
 					// console.log(event);
 				})
-				.bind('drop', function(e){
+				.on('drop', function(e){
 					e.stopPropagation();
 					e.preventDefault();
 					var event = e.originalEvent;

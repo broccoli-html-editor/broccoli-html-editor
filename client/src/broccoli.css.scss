@@ -267,6 +267,9 @@
 	cursor: move;
 
 	pointer-events: auto;
+	> *{
+		pointer-events: none;
+	}
 
 	&-module-name{
 		display:none;
@@ -296,7 +299,10 @@
 	}
 }
 .broccoli--instance-tree-view-panel-item{
-	// 
+	pointer-events: auto;
+	> *{
+		pointer-events: none;
+	}
 }
 .broccoli--panel-drop-to-insert-here{
 	display:none;

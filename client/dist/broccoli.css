@@ -191,6 +191,8 @@
   z-index: 0;
   cursor: move;
   pointer-events: auto; }
+  .broccoli--panel > * {
+    pointer-events: none; }
   .broccoli--panel-module-name {
     display: none; }
   .broccoli--panel:hover {
@@ -211,6 +213,11 @@
     .broccoli--panel:hover[data-broccoli-sub-mod-name] {
       border-color: #3c3;
       background-color: rgba(232, 255, 231, 0.5); }
+
+.broccoli--instance-tree-view-panel-item {
+  pointer-events: auto; }
+  .broccoli--instance-tree-view-panel-item > * {
+    pointer-events: none; }
 
 .broccoli--panel-drop-to-insert-here {
   display: none;
