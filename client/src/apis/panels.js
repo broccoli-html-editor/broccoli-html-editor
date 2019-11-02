@@ -130,6 +130,41 @@ module.exports = function(broccoli){
 			callback();
 			return;
 		}
+
+		var newInstancePath = (function(moveFrom, moveTo){
+			// 移動・挿入後の選択状態を更新する際、
+			// 移動元が抜けることで移動先の番号が変わる場合に、選択状態が乱れる。
+			// この関数では、移動先のパスを計算し直し、移動したインスタンス自身の新しいパスを返す。
+			// これを `broccoli.selectInstance()` すれば、移動・挿入成功後の選択状態を自然な結果にできる。
+			if(!moveFrom){
+				// 新規の場合
+				return moveTo;
+			}
+			if(!moveFrom.match(/^([\S]+)\@([0-9]+)$/)){
+				console.error('FATAL: Instance path has an illegal format.');
+				return moveTo;
+			}
+
+			var moveFromPath = RegExp.$1;
+			var moveFromIdx = RegExp.$2;
+
+			var idx = moveTo.indexOf(moveFromPath+'@');
+			if( idx !== 0 ){
+				return moveTo;
+			}
+			var tmpMoveToStr = moveTo.substring((moveFromPath+'@').length);
+			if(!tmpMoveToStr.match(/^([0-9]+)([\S]*)$/)){
+				return moveTo;
+			}
+			var moveToIdx = RegExp.$1;
+			var moveToPath = RegExp.$2;
+			if( moveToIdx > moveFromIdx ){
+				return moveFromPath + '@' + (moveToIdx-1) + moveToPath;
+			}
+
+			return moveTo;
+		})(moveFrom, moveTo);
+
 		if( subModNameFrom.length ){ // ドロップ元のインスタンスがサブモジュールだったら
 
 			if( method === 'moveTo' ){
@@ -155,11 +190,15 @@ module.exports = function(broccoli){
 							return;
 						}
 						// コンテンツを保存
-						broccoli.saveContents(function(){
-							// alert('インスタンスを移動しました。');
-							broccoli.redraw(function(){
-								broccoli.closeProgress(function(){
-									callback();
+						broccoli.unselectInstance(function(){
+							broccoli.saveContents(function(){
+								// alert('インスタンスを移動しました。');
+								broccoli.redraw(function(){
+									broccoli.closeProgress(function(){
+										broccoli.selectInstance(newInstancePath, function(){
+											callback();
+										});
+									});
 								});
 							});
 						});
@@ -187,11 +226,15 @@ module.exports = function(broccoli){
 						return;
 					}
 					// コンテンツを保存
-					broccoli.saveContents(function(){
-						// alert('インスタンスを移動しました。');
-						broccoli.redraw(function(){
-							broccoli.closeProgress(function(){
-								callback();
+					broccoli.unselectInstance(function(){
+						broccoli.saveContents(function(){
+							// alert('インスタンスを移動しました。');
+							broccoli.redraw(function(){
+								broccoli.closeProgress(function(){
+									broccoli.selectInstance(newInstancePath, function(){
+										callback();
+									});
+								});
 							});
 						});
 					});
@@ -251,11 +294,15 @@ module.exports = function(broccoli){
 						});
 					} ,
 					function(){
-						broccoli.saveContents(function(){
-							broccoli.message('クリップを挿入しました。');
-							broccoli.redraw(function(){
-								broccoli.closeProgress(function(){
-									callback();
+						broccoli.unselectInstance(function(){
+							broccoli.saveContents(function(){
+								broccoli.message('クリップを挿入しました。');
+								broccoli.redraw(function(){
+									broccoli.closeProgress(function(){
+										broccoli.selectInstance(newInstancePath, function(){
+											callback();
+										});
+									});
 								});
 							});
 						});
@@ -272,11 +319,15 @@ module.exports = function(broccoli){
 					}
 
 					// コンテンツを保存
-					broccoli.saveContents(function(){
-						// alert('インスタンスを追加しました。');
-						broccoli.redraw(function(){
-							broccoli.closeProgress(function(){
-								callback();
+					broccoli.unselectInstance(function(){
+						broccoli.saveContents(function(){
+							// alert('インスタンスを追加しました。');
+							broccoli.redraw(function(){
+								broccoli.closeProgress(function(){
+									broccoli.selectInstance(newInstancePath, function(){
+										callback();
+									});
+								});
 							});
 						});
 					});
