@@ -1,8 +1,8 @@
 {
   "name": "broccoli-html-editor",
-  "version": "0.3.11",
+  "version": "0.3.12-alpha.1+dev",
+  "private": true,
   "description": "GUI HTML Editor Library.",
-  "private": false,
   "main": "libs/main.js",
   "scripts": {
     "start": "node ./tests/biflora/server.js",
