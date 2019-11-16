@@ -36,7 +36,11 @@ module.exports = function(){
 
 		if( _this.options.customFields ){
 			for( var idx in _this.options.customFields ){
-				_this.fieldDefinitions[idx] = loadFieldDefinition( idx, _this.options.customFields[idx] );
+				try{
+					_this.fieldDefinitions[idx] = loadFieldDefinition( idx, _this.options.customFields[idx] );
+				}catch(e){
+					console.error(e);
+				}
 			}
 		}
 
