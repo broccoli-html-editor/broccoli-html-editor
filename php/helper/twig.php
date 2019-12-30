@@ -28,11 +28,12 @@ class helper_twig{
 
 		// PHP版は、ejs ではなく twig に対応
 		if( class_exists('\\Twig_Loader_Array') ){
-			// Twig ^1.35.3
+			// Twig ^1.35, ^2.12
 			$loader = new \Twig_Loader_Array(array(
 				'index' => $template,
 			));
-			$twig = new \Twig_Environment($loader);
+			$twig = new \Twig_Environment($loader, array('debug' => true, 'autoescape' => false));
+			$twig->addExtension(new \Twig_Extension_Debug());
 			$rtn = $twig->render('index', $data);
 
 		}elseif( class_exists('\\Twig\\Loader\\ArrayLoader') ){
