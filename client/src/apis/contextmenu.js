@@ -68,7 +68,7 @@ module.exports = function(broccoli){
 	 * context menu を表示しているか調べる
 	 */
 	this.isShow = function(){
-		if( $('.broccoli--contextmenu').size() ){
+		if( $('.broccoli--contextmenu').length ){
 			return true;
 		}
 		return false;

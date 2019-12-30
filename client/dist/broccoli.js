@@ -771,7 +771,7 @@
 				broccoli.panels.focusInstance(instancePath, function(){
 
 					var $targetElm = $(broccoli.panels.getPanelElement(instancePath));
-					if($targetElm.size()){
+					if($targetElm.length){
 						var minTop = $canvas.scrollTop() + $targetElm.offset().top - 30;
 						var topLine = $canvas.scrollTop();
 						var targetTop = topLine + $targetElm.offset().top;
@@ -1202,7 +1202,7 @@
 		 * ライトボックスが開いているか確認する
 		 */
 		this.isLightboxOpened = function(){
-			if( $('body').find('.broccoli--lightbox').size() ){
+			if( $('body').find('.broccoli--lightbox').length ){
 				return true;
 			}
 			return false;
@@ -1266,7 +1266,7 @@
 		this.closeProgress = function( callback ){
 			callback = callback||function(){};
 			var $progress = $('body').find('.broccoli--progress');
-			if( !$progress.size() ){
+			if( !$progress.length ){
 				callback();
 				return this;
 			}
@@ -2385,7 +2385,7 @@ module.exports = function(broccoli){
 	 * context menu を表示しているか調べる
 	 */
 	this.isShow = function(){
-		if( $('.broccoli--contextmenu').size() ){
+		if( $('.broccoli--contextmenu').length ){
 			return true;
 		}
 		return false;
@@ -2686,7 +2686,7 @@ module.exports = function(broccoli, targetElm, callback){
 		var html = '';
 		var $img = $elm.find('img').eq(0);
 		html += '<article class="broccoli--module-info-content">';
-		if( $img.size() ){
+		if( $img.length ){
 			html += '<div class="broccoli--module-info-content-thumb"><img src="'+$img.attr('src')+'" /></div>';
 		}
 		html += '<h1>'+$elm.attr('data-name')+'</h1>';
@@ -2909,7 +2909,7 @@ module.exports = function(broccoli, targetElm, callback){
 						$(targetElm).find('li').each(function(){
 							var $this = $(this);
 							var $btns = $this.find('a.broccoli--module-palette--draggablebutton.broccoli--module-palette__shown-module');
-							if( !$btns.size() ){
+							if( !$btns.length ){
 								$this.css({'display':'none'});
 							}else{
 								$this.css({'display':'block'});
@@ -3879,7 +3879,7 @@ module.exports = function(broccoli){
 		options.message = options.message || function(msg){};//ユーザーへのメッセージテキストを送信
 		var $dom = $(elm);
 		var src;
-		if( $dom.find('input[type=text]').size() ){
+		if( $dom.find('input[type=text]').length ){
 			src = $dom.find('input[type=text]').val();
 		}else if( editorLib == 'ace' && mod.aceEditor ){
 			src = mod.aceEditor.getValue();
@@ -4473,7 +4473,7 @@ module.exports = function(broccoli){
 		callback = callback || function(){};
 
 		var $targetElm = $(this.getElement(instancePath));
-		if($targetElm.size()){
+		if($targetElm.length){
 			var minTop = $instanceTreeView.scrollTop() + $targetElm.offset().top - 30;
 			var topLine = $instanceTreeView.scrollTop();
 			var targetTop = topLine + $targetElm.offset().top;
@@ -5092,7 +5092,7 @@ module.exports = function(broccoli){
 					it1.next(data);
 				} ,
 				function( it1, data ){
-					// console.log($contentsElements.size());
+					// console.log($contentsElements.length;
 					for( var idx in $contentsElements ){
 						drawPanel(idx, $contentsElements[idx]);
 					}

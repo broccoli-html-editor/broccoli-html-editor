@@ -224,7 +224,7 @@ module.exports = function(broccoli, targetElm, callback){
 		var html = '';
 		var $img = $elm.find('img').eq(0);
 		html += '<article class="broccoli--module-info-content">';
-		if( $img.size() ){
+		if( $img.length ){
 			html += '<div class="broccoli--module-info-content-thumb"><img src="'+$img.attr('src')+'" /></div>';
 		}
 		html += '<h1>'+$elm.attr('data-name')+'</h1>';
@@ -447,7 +447,7 @@ module.exports = function(broccoli, targetElm, callback){
 						$(targetElm).find('li').each(function(){
 							var $this = $(this);
 							var $btns = $this.find('a.broccoli--module-palette--draggablebutton.broccoli--module-palette__shown-module');
-							if( !$btns.size() ){
+							if( !$btns.length ){
 								$this.css({'display':'none'});
 							}else{
 								$this.css({'display':'block'});

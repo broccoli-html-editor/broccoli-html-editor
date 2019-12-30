@@ -562,7 +562,7 @@ module.exports = function(broccoli){
 					it1.next(data);
 				} ,
 				function( it1, data ){
-					// console.log($contentsElements.size());
+					// console.log($contentsElements.length;
 					for( var idx in $contentsElements ){
 						drawPanel(idx, $contentsElements[idx]);
 					}

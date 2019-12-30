@@ -770,7 +770,7 @@
 				broccoli.panels.focusInstance(instancePath, function(){
 
 					var $targetElm = $(broccoli.panels.getPanelElement(instancePath));
-					if($targetElm.size()){
+					if($targetElm.length){
 						var minTop = $canvas.scrollTop() + $targetElm.offset().top - 30;
 						var topLine = $canvas.scrollTop();
 						var targetTop = topLine + $targetElm.offset().top;
@@ -1201,7 +1201,7 @@
 		 * ライトボックスが開いているか確認する
 		 */
 		this.isLightboxOpened = function(){
-			if( $('body').find('.broccoli--lightbox').size() ){
+			if( $('body').find('.broccoli--lightbox').length ){
 				return true;
 			}
 			return false;
@@ -1265,7 +1265,7 @@
 		this.closeProgress = function( callback ){
 			callback = callback||function(){};
 			var $progress = $('body').find('.broccoli--progress');
-			if( !$progress.size() ){
+			if( !$progress.length ){
 				callback();
 				return this;
 			}

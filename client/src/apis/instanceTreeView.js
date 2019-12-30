@@ -300,7 +300,7 @@ module.exports = function(broccoli){
 		callback = callback || function(){};
 
 		var $targetElm = $(this.getElement(instancePath));
-		if($targetElm.size()){
+		if($targetElm.length){
 			var minTop = $instanceTreeView.scrollTop() + $targetElm.offset().top - 30;
 			var topLine = $instanceTreeView.scrollTop();
 			var targetTop = topLine + $targetElm.offset().top;
