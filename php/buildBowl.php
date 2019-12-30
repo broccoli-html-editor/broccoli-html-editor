@@ -152,12 +152,8 @@ class buildBowl{
 					"mode" => $this->options['mode']
 				);
 
-				$loader = new \Twig_Loader_Array(array(
-					'index' => $src,
-				));
-				$twig = new \Twig_Environment($loader, array('debug'=>true, 'autoescape'=>false));
-				$twig->addExtension(new \Twig_Extension_Debug());
-				$tmp_twig_rtn = $twig->render('index', $tplDataObj);
+				$twigHelper = new helper_twig();
+				$tmp_twig_rtn = $twigHelper->bind($src, $tplDataObj);
 
 				if( !is_string($tmp_twig_rtn) ){
 					// var_dump( 'TemplateEngine Rendering ERROR.' );

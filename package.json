@@ -29,7 +29,7 @@
     "glob": "^5.0.14",
     "htmlparser": "^1.7.7",
     "iterate79": "^1.1.1",
-    "jquery": "^3.4.0",
+    "jquery": "^3.4.1",
     "langbank": "0.0.2",
     "markdown": "^0.5.0",
     "marked": "^0.3.19",
