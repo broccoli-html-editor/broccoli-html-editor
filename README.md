@@ -296,7 +296,8 @@ $ composer test
 
 ### broccoli-html-editor v0.3.12 (リリース日未定)
 
-- ??????????????
+- PHP 7.4 に対応した。
+- Twig 3 に対応した。
 
 ### broccoli-html-editor v0.3.11 (2019年11月16日)
 
