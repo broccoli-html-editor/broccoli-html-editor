@@ -370,11 +370,19 @@
 	}
 }
 .broccoli--panel__drag-entered-u{
+	background: linear-gradient(rgba(231,244,255, 0.8), rgba(231,244,255, 0.0)) !important;
+	&[data-broccoli-sub-mod-name]{
+		background: linear-gradient(rgba(232,255,231, 0.8), rgba(232,255,231, 0.0)) !important;
+	}
 	>.broccoli--panel-drop-to-insert-here{
 		top:-8px; bottom: auto;
 	}
 }
 .broccoli--panel__drag-entered-d{
+	background: linear-gradient(rgba(231,244,255, 0.0), rgba(231,244,255, 0.8)) !important;
+	&[data-broccoli-sub-mod-name]{
+		background: linear-gradient(rgba(232,255,231, 0.0), rgba(232,255,231, 0.8)) !important;
+	}
 	>.broccoli--panel-drop-to-insert-here{
 		top: auto; bottom:-8px;
 	}
