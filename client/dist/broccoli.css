@@ -228,7 +228,8 @@
   top: -8px;
   width: 90%;
   margin: 0 auto;
-  height: 1px; }
+  height: 1px;
+  z-index: 10000; }
   .broccoli--panel-drop-to-insert-here:before, .broccoli--panel-drop-to-insert-here:after {
     content: ' ';
     width: 0;
@@ -268,6 +269,14 @@
     background-color: rgba(232, 255, 231, 0.5) !important; }
   .broccoli--panel__drag-entered > .broccoli--panel-drop-to-insert-here {
     display: block !important; }
+
+.broccoli--panel__drag-entered-u > .broccoli--panel-drop-to-insert-here {
+  top: -8px;
+  bottom: auto; }
+
+.broccoli--panel__drag-entered-d > .broccoli--panel-drop-to-insert-here {
+  top: auto;
+  bottom: -8px; }
 
 .broccoli--edit-window h2 {
   font-weight: bold;

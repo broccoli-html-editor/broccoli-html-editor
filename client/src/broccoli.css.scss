@@ -313,6 +313,7 @@
 	width:90%;
 	margin:0 auto;
 	height:1px;
+	z-index: 10000;
 
 	&:before,
 	&:after{
@@ -357,6 +358,16 @@
 	}
 	>.broccoli--panel-drop-to-insert-here{
 		display:block !important;
+	}
+}
+.broccoli--panel__drag-entered-u{
+	>.broccoli--panel-drop-to-insert-here{
+		top:-8px; bottom: auto;
+	}
+}
+.broccoli--panel__drag-entered-d{
+	>.broccoli--panel-drop-to-insert-here{
+		top: auto; bottom:-8px;
 	}
 }
 

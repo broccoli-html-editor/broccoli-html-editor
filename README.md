@@ -294,6 +294,10 @@ $ composer test
 
 ## 更新履歴 - Change log
 
+### broccoli-html-editor v0.3.13 (リリース日未定)
+
+- インスタンスの中央より下の座標にドロップすると、後ろに挿入されるようになった。
+
 ### broccoli-html-editor v0.3.12 (2020年1月2日)
 
 - PHP 7.4 に対応した。

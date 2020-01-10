@@ -4638,6 +4638,12 @@ module.exports = function(broccoli){
 		e.preventDefault();
 		var event = e.originalEvent;
 		$(elm).removeClass('broccoli--panel__drag-entered');
+		$(elm).removeClass('broccoli--panel__drag-entered-u');
+		$(elm).removeClass('broccoli--panel__drag-entered-d');
+
+		var ud = getUd(e, elm);
+		console.info(ud);
+
 		var transferData = event.dataTransfer.getData("text/json");
 		try {
 			transferData = JSON.parse(transferData);
@@ -4654,9 +4660,26 @@ module.exports = function(broccoli){
 		var isInstanceTreeView = $(elm).attr('data-broccoli-is-instance-tree-view') == 'yes';
 		var isEditWindow = $(elm).attr('data-broccoli-is-edit-window') == 'yes';
 
+		if( !isAppender && ud.y == 'd' ){
+			moveTo = (function(moveTo){
+				console.log(moveTo);
+				if(!moveTo.match(/^([\S]+)\@([0-9]+)$/)){
+					console.error('FATAL: Instance path has an illegal format.');
+					return moveTo;
+				}
+
+				var moveToPath = RegExp.$1;
+				var moveToIdx = RegExp.$2;
+
+				return moveToPath + '@' + (Number(moveToIdx)+1);
+			})(moveTo);
+		}
+
 		if( moveFrom === moveTo ){
 			// 移動元と移動先が同一の場合、キャンセルとみなす
 			$(elm).removeClass('broccoli--panel__drag-entered');
+			$(elm).removeClass('broccoli--panel__drag-entered-u');
+			$(elm).removeClass('broccoli--panel__drag-entered-d');
 			callback();
 			return;
 		}
@@ -4707,6 +4730,8 @@ module.exports = function(broccoli){
 				if( removeNum(moveFrom) !== removeNum(moveTo) ){
 					broccoli.message('並べ替え以外の移動操作はできません。');
 					$(elm).removeClass('broccoli--panel__drag-entered');
+					$(elm).removeClass('broccoli--panel__drag-entered-u');
+					$(elm).removeClass('broccoli--panel__drag-entered-d');
 					callback();
 					return;
 				}
@@ -4744,6 +4769,8 @@ module.exports = function(broccoli){
 			if(subModName){
 				broccoli.message('loopフィールドへの移動はできません。');
 				$(elm).removeClass('broccoli--panel__drag-entered');
+				$(elm).removeClass('broccoli--panel__drag-entered-u');
+				$(elm).removeClass('broccoli--panel__drag-entered-d');
 				callback();
 				return;
 			}
@@ -4840,7 +4867,7 @@ module.exports = function(broccoli){
 				);
 
 			}else{
-				broccoli.contentsSourceData.addInstance( modId, $(elm).attr('data-broccoli-instance-path'), function(result){
+				broccoli.contentsSourceData.addInstance( modId, moveTo, function(result){
 					if(!result){
 						broccoli.closeProgress(function(){
 							callback();
@@ -5016,6 +5043,8 @@ module.exports = function(broccoli){
 				e.stopPropagation();
 				e.preventDefault();
 				$(this).removeClass('broccoli--panel__drag-entered');
+				$(this).removeClass('broccoli--panel__drag-entered-u');
+				$(this).removeClass('broccoli--panel__drag-entered-d');
 			})
 			.on('dragover', function(e){
 				e.stopPropagation();
@@ -5029,11 +5058,23 @@ module.exports = function(broccoli){
 				$(this).addClass('broccoli--panel__drag-entered');
 				if( $(this).attr('data-broccoli-is-instance-tree-view') == 'yes' ){
 					if(focusedInstance != instancePath){
-						// if( $this.attr('data-broccoli-is-appender') == 'yes' ){
+						// if( $(this).attr('data-broccoli-is-appender') == 'yes' ){
 						// 	instancePath = php.dirname(instancePath);
 						// }
 						dragOvered = instancePath;
 						broccoli.focusInstance( instancePath );
+					}
+				}
+
+				if( $(this).attr('data-broccoli-is-appender') != 'yes' ){
+					var ud = getUd(e, this);
+					// console.info(ud);
+					if( ud.y == 'u' ){
+						$(this).addClass('broccoli--panel__drag-entered-u');
+						$(this).removeClass('broccoli--panel__drag-entered-d');
+					}else{
+						$(this).addClass('broccoli--panel__drag-entered-d');
+						$(this).removeClass('broccoli--panel__drag-entered-u');
 					}
 				}
 			})
@@ -5142,6 +5183,48 @@ module.exports = function(broccoli){
 		// this.updateInstancePathView();
 		callback();
 		return this;
+	}
+
+	/**
+	 * マウス座標の四象限の位置を得る
+	 */
+	function getUd(e, elm){
+		var posx = 0;
+		var posy = 0;
+		if (!e) e = window.event;
+		if (e.pageX || e.pageY)     {
+			posx = e.pageX;
+			posy = e.pageY;
+		}else if (e.clientX || e.clientY)    {
+			posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+			posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+		}
+		var mousepos = { x : posx, y : posy };
+		// console.info(instancePath, mousepos);
+
+		var docScrolls = {
+			left : document.body.scrollLeft + document.documentElement.scrollLeft,
+			top : document.body.scrollTop + document.documentElement.scrollTop
+		};
+		var bounds = elm.getBoundingClientRect();//対象要素の情報取得
+		var relmousepos = {
+			x : mousepos.x - bounds.left - docScrolls.left,
+			y : mousepos.y - bounds.top - docScrolls.top
+		};
+		// console.info(instancePath, relmousepos);
+
+		var ud = {};
+		if( relmousepos.y < $(elm).height()/2 ){
+			ud.y = 'u';
+		}else{
+			ud.y = 'd';
+		}
+		if( relmousepos.x < $(elm).width()/2 ){
+			ud.x = 'l';
+		}else{
+			ud.x = 'r';
+		}
+		return ud;
 	}
 
 	/**
