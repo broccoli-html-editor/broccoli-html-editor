@@ -313,7 +313,16 @@
 	width:90%;
 	margin:0 auto;
 	height:1px;
-	z-index: 10000;
+	z-index: 100000000;
+	animation: broccoli--panel-drop-to-insert-here 0.5s infinite;
+	@keyframes broccoli--panel-drop-to-insert-here{
+		0%{
+			opacity: 1;
+		}
+		50%{
+			opacity: 0.6;
+		}
+	}
 
 	&:before,
 	&:after{
