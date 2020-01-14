@@ -23,7 +23,7 @@ require_once('path/to/vendor/autoload.php');
 $broccoli = new broccoliHtmlEditor\broccoliHtmlEditor();
 $broccoli->init(
 	array(
-		'appMode': 'web', // 'web' or 'desktop'. default to 'web'
+		'appMode' => 'web', // 'web' or 'desktop'. default to 'web'
 		'paths_module_template' => array(
 			'testMod1' => '/realpath/to/modules1/' ,
 			'testMod2' => '/realpath/to/modules2/'
