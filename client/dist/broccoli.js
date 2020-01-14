@@ -6554,7 +6554,7 @@ module.exports = function(broccoli){
 		if(typeof(data) !== typeof({})){
 			data = {};
 		}
-		if( $dom.find('input[type=text]').size() ){
+		if( $dom.find('input[type=text]').length ){
 			data.src = $dom.find('input[type=text]').val();
 		}else if( editorLib == 'ace' && mod.aceEditor ){
 			data.src = mod.aceEditor.getValue();
@@ -6738,7 +6738,7 @@ module.exports = function(broccoli){
 		if(typeof(data) !== typeof({})){
 			data = {};
 		}
-		if( $dom.find('input[type=text]').size() ){
+		if( $dom.find('input[type=text]').length ){
 			data.src = $dom.find('input[type=text]').val();
 		}else if( editorLib == 'ace' && mod.aceEditor ){
 			data.src = mod.aceEditor.getValue();
@@ -6802,11 +6802,11 @@ module.exports = function(broccoli){
 					$select.append( $option );
 				}
 				// 選択されていなかったら default を選択。
-				if( !$select.find('input[type=radio]:checked').size() && mod.default ){
+				if( !$select.find('input[type=radio]:checked').length && mod.default ){
 					$select.find('input[type=radio][value='+mod.default+']').attr({'checked':'checked'});
 				}
 				// それでも選択されていなかったら、最初の選択肢を選択。
-				if( !$select.find('input[type=radio]:checked').size() ){
+				if( !$select.find('input[type=radio]:checked').length ){
 					$select.find('input[type=radio]:first').attr({'checked':'checked'});
 				}
 

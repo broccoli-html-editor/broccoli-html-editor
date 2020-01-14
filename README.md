@@ -164,7 +164,7 @@ broccoli.init(
 ### プレビュー用ウェブサーバー - Web Server for preview
 
 編集画面上のプレビューHTMLの最後に、次のスクリプトコードを埋め込んでください。
-`'http://127.0.0.1:8080'` には、`broccoli-html-editor` の編集画面が置かれるサーバーの `origin` を設定してください。
+`'http://127.0.0.1:8080'` の箇所には、`broccoli-html-editor` の編集画面が置かれるサーバーの `origin` を設定してください。
 
 ```html
 <script data-broccoli-receive-message="yes">
@@ -297,6 +297,7 @@ $ composer test
 ### broccoli-html-editor v0.3.13 (リリース日未定)
 
 - インスタンスの中央より下の座標にドロップすると、後ろに挿入されるようになった。
+- フィールドによって、編集結果を保存できない場合がある不具合を修正。
 
 ### broccoli-html-editor v0.3.12 (2020年1月2日)
 

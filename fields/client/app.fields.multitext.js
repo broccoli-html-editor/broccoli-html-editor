@@ -149,7 +149,7 @@ module.exports = function(broccoli){
 		if(typeof(data) !== typeof({})){
 			data = {};
 		}
-		if( $dom.find('input[type=text]').size() ){
+		if( $dom.find('input[type=text]').length ){
 			data.src = $dom.find('input[type=text]').val();
 		}else if( editorLib == 'ace' && mod.aceEditor ){
 			data.src = mod.aceEditor.getValue();
