@@ -2,8 +2,8 @@
 	var $ = require('jquery');
 	var $iframeWindow = $(window.document);
 
-	var e=document.querySelector('[data-broccoli-receive-message]');
-	e.parentNode.removeChild(e);
+	var scriptElement = document.querySelector('[data-broccoli-receive-message]');
+	if(scriptElement){scriptElement.parentNode.removeChild(scriptElement);}
 
 	var _origin;
 
