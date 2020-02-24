@@ -239,6 +239,17 @@
 							})
 							.css({
 								'pointer-events': 'none'
+									// 2020-02-24 tomk79
+									// これは、Chromium の不具合に対する一時的な対応です。
+									// iframeに重なったdiv要素で、dragoverイベントが発火しない不具合が起きています。
+									//
+									// Issue 923651: Drag over div over iframe does not receive dragover events
+									// Sat, Jan 19, 2019, 9:54 PM GMT+9
+									// https://bugs.chromium.org/p/chromium/issues/detail?id=923651
+									//
+									// この問題に対応するため、 iframeに `pointer-events:none` を付加するように変更しました。
+									// この変更は、一時的な対応としてリリースされます。
+									// Chrome が修正されるのを待ち、ロールバックされるべきです。
 							})
 						;
 						it1.next(data);
