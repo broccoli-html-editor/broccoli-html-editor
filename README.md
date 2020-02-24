@@ -296,6 +296,7 @@ $ composer test
 
 ### broccoli-html-editor v0.3.14 (リリース日未定)
 
+- Google Chrome でドラッグ・アンド・ドロップ操作ができない場合がある問題を修正。
 - 細かい不具合の修正。
 
 ### broccoli-html-editor v0.3.13 (2020年1月14日)

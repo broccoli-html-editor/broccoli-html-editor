@@ -238,6 +238,9 @@
 							.attr({
 								'src': $canvas.attr('data-broccoli-preview')
 							})
+							.css({
+								'pointer-events': 'none'
+							})
 						;
 						it1.next(data);
 
