@@ -14,8 +14,20 @@ module.exports = function(broccoli){
 	 */
 	this.bind = function( fieldData, mode, mod, callback ){
 		var rtn = '';
-		if(typeof(fieldData)===typeof({}) && typeof(fieldData.src)===typeof('')){
-			rtn = utils79.toStr(fieldData.src);
+		var is_escape = false;
+		if(typeof(fieldData)===typeof({})){
+			if(typeof(fieldData.src)===typeof('')){
+				var src = utils79.toStr(fieldData.src);
+				if(typeof(mod.escape)===typeof('')){
+					is_escape = true;
+					switch( mod.escape.toLowerCase() ){
+						case 'html_attr_text':
+							$src = utils79.h($src);
+							break;
+					}
+				}
+				rtn = ''+src;
+			}
 		}
 		if(mod.autowrap){
 			switch(fieldData.lang){
@@ -32,7 +44,11 @@ module.exports = function(broccoli){
 			}
 		}
 		if( mode == 'canvas' ){
-			rtn = '<span style="display:inline-block;color:#969800;background-color:#f0f1b3;border:1px solid #969800;font-size:10px;padding:0.2em 1em;max-width:100%;overflow:hidden;white-space:nowrap;">SCRIPT (ダブルクリックしてスクリプトを記述してください)</span>';
+			if(is_escape){
+				rtn = '';
+			}else{
+				rtn = '<span style="display:inline-block;color:#969800;background-color:#f0f1b3;border:1px solid #969800;font-size:10px;padding:0.2em 1em;max-width:100%;overflow:hidden;white-space:nowrap;">SCRIPT (ダブルクリックしてスクリプトを記述してください)</span>';
+			}
 		}
 
 		// setTimeout(function(){

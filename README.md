@@ -294,6 +294,10 @@ $ composer test
 
 ## 更新履歴 - Change log
 
+### broccoli-html-editor v0.3.15 (リリース日未定)
+
+- `script` フィールドに `escape` オプションを追加。
+
 ### broccoli-html-editor v0.3.14 (2020年2月24日)
 
 - Google Chrome でドラッグ・アンド・ドロップ操作ができない場合がある問題について一時的な修正対応。

@@ -27,8 +27,21 @@ class script extends \broccoliHtmlEditor\fieldBase{
 	 */
 	public function bind( $fieldData, $mode, $mod ){
 		$rtn = '';
-		if(is_array($fieldData) && is_string(@$fieldData['src'])){
-			$rtn = ''.$fieldData['src'];
+		$is_escape = false;
+		if(is_array($fieldData)){
+			if(array_key_exists('src', $fieldData) && is_string(@$fieldData['src'])){
+				$src = $fieldData['src'];
+				if(property_exists($mod, 'escape') && is_string($mod->escape)){
+					$is_escape = true;
+					switch( strtolower($mod->escape) ){
+						case 'html_attr_text':
+							$src = htmlspecialchars($src);
+							break;
+					}
+				}
+				$rtn = ''.$src;
+				unset($src);
+			}
 		}
 		if(property_exists($mod, 'autowrap') && $mod->autowrap){
 			switch($fieldData['lang']){
@@ -45,7 +58,11 @@ class script extends \broccoliHtmlEditor\fieldBase{
 			}
 		}
 		if( $mode == 'canvas' ){
-			$rtn = '<span style="display:inline-block;color:#969800;background-color:#f0f1b3;border:1px solid #969800;font-size:10px;padding:0.2em 1em;max-width:100%;overflow:hidden;white-space:nowrap;">SCRIPT (ダブルクリックしてスクリプトを記述してください)</span>';
+			if( $is_escape ){
+				$rtn = '';
+			}else{
+				$rtn = '<span style="display:inline-block;color:#969800;background-color:#f0f1b3;border:1px solid #969800;font-size:10px;padding:0.2em 1em;max-width:100%;overflow:hidden;white-space:nowrap;">SCRIPT (ダブルクリックしてスクリプトを記述してください)</span>';
+			}
 		}
 		return $rtn;
 	}
