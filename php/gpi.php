@@ -49,12 +49,14 @@ class gpi{
 					array_push($bootup['resourceList'], $resKey);
 				}
 				$bootup['modulePackageList'] = $this->broccoli->getPackageList();
+				$bootup['errors'] = $this->broccoli->get_errors();
 				return $bootup;
 
 			case "getConfig":
 				// broccoli の設定を取得する
 				$conf = array();
 				$conf['appMode'] = $this->broccoli->getAppMode();
+				$conf['errors'] = $this->broccoli->get_errors();
 				return $conf;
 
 			case "getLanguageCsv":

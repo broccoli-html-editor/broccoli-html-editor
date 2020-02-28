@@ -444,6 +444,7 @@
 								'contents_bowl_name_by': _this.options.contents_bowl_name_by
 							},
 							function(bowlList){
+								console.log('bowlList:', bowlList);
 								if( typeof(bowlList)!==typeof([]) || !bowlList.length ){
 									_this.message('FAILED to list bowls.');
 									console.log('bowlList - - - - - -', bowlList);
@@ -601,7 +602,14 @@
 		this.gpi = function(api, options, callback){
 			options = options || {};
 			options.lang = options.lang || this.options.lang;
-			this.options.gpiBridge(api, options, callback);
+			this.options.gpiBridge(api, options, function(result,a,b,c){
+				if(typeof(result) == typeof({}) && result.errors && result.errors.length){
+					for(var i in result.errors){
+						console.error(result.errors[i]);
+					}
+				}
+				callback(result);
+			});
 			return this;
 		} // gpi()
 

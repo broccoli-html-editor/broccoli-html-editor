@@ -16,6 +16,7 @@ module.exports = function(){
 	var _ = require('underscore');
 	var Promise = require('es6-promise').Promise;
 	var LangBank = require('langbank');
+	var errors = [];
 	this.lb = {};
 
 	function loadFieldDefinition(){
@@ -553,6 +554,23 @@ module.exports = function(){
 	this.log = function(msg){
 		this.options.log(msg);
 		return;
+	}
+
+	/**
+	 * エラーメッセージをブラウザへ送信する
+	 */
+	this.error = function(msg){
+		errors.push(msg);
+		console.error(msg);
+		this.log(msg);
+		return;
+	}
+
+	/**
+	 * 記録されたエラーメッセージを取得する
+	 */
+	this.get_errors = function(){
+		return errors;
 	}
 
 }

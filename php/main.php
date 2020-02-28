@@ -36,6 +36,9 @@ class broccoliHtmlEditor{
 	/** cache */
 	private $_moduleCollection;
 
+	/** Error Report */
+	private $errors = array();
+
 	/**
 	 * Constructor
 	 */
@@ -736,5 +739,22 @@ class broccoliHtmlEditor{
 	public function log($msg){
 		$this->options['log']($msg);
 		return;
+	}
+
+	/**
+	 * エラーメッセージをブラウザへ送信する
+	 */
+	public function error($msg){
+		array_push($this->errors, $msg);
+		// console.error(msg);
+		$this->log($msg);
+		return;
+	}
+
+	/**
+	 * 記録されたエラーメッセージを取得する
+	 */
+	public function get_errors(){
+		return $this->errors;
 	}
 }

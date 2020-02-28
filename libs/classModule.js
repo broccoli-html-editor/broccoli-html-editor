@@ -169,12 +169,10 @@ module.exports = function(broccoli, moduleId, options){
 					try{
 						tmpJson = JSON.parse( fs.readFileSync( _this.path+'/info.json' ) );
 					}catch(e){
-						console.error( 'module info.json parse error: ' + _this.path+'/info.json' );
-						broccoli.log( 'module info.json parse error: ' + _this.path+'/info.json' );
+						broccoli.error( 'module info.json parse error: ' + _this.path+'/info.json' );
 					}
 					if( typeof(tmpJson) != typeof({}) || tmpJson === null ){
-						console.error( 'module info.json contains a non object or null: ' + _this.path+'/info.json' );
-						broccoli.log( 'module info.json contains a non object or null: ' + _this.path+'/info.json' );
+						broccoli.error( 'module info.json contains a non object or null: ' + _this.path+'/info.json' );
 						tmpJson = {};
 					}
 					if( tmpJson.name ){
@@ -311,8 +309,7 @@ module.exports = function(broccoli, moduleId, options){
 					try{
 						field = JSON.parse( field );
 					}catch(e){
-						console.error( 'module template parse error: ' + _this.templateFilename );
-						broccoli.log( 'module template parse error: ' + _this.templateFilename );
+						broccoli.error( 'module template parse error: ' + _this.templateFilename );
 						field = {'input':{
 							'type':'html',
 							'name':'__error__'

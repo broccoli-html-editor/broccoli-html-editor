@@ -50,6 +50,7 @@ module.exports = function(broccoli, api, options, callback){
 
 							broccoli.getPackageList(function(modulePackageList){
 								$bootup.modulePackageList = modulePackageList;
+								$bootup.errors = broccoli.get_errors();
 								callback($bootup);
 							});
 
@@ -63,6 +64,7 @@ module.exports = function(broccoli, api, options, callback){
 				// broccoli の設定を取得する
 				var conf = {};
 				conf.appMode = broccoli.getAppMode();
+				conf.errors = broccoli.get_errors();
 				callback(conf);
 				break;
 
