@@ -443,7 +443,7 @@
 								'contents_bowl_name_by': _this.options.contents_bowl_name_by
 							},
 							function(bowlList){
-								console.log('bowlList:', bowlList);
+								// console.log('bowlList:', bowlList);
 								if( typeof(bowlList)!==typeof([]) || !bowlList.length ){
 									_this.message('FAILED to list bowls.');
 									console.log('bowlList - - - - - -', bowlList);

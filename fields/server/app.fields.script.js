@@ -22,7 +22,7 @@ module.exports = function(broccoli){
 					is_escape = true;
 					switch( mod.escape.toLowerCase() ){
 						case 'html_attr_text':
-							$src = utils79.h($src);
+							$src = utils79.h(src);
 							break;
 					}
 				}
