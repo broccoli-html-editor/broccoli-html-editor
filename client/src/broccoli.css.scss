@@ -534,7 +534,9 @@
 }
 
 // find window
-.broccoli--find-window{
+.broccoli__find-window{
+	display: flex;
+	flex-direction: column;
 	h2{
 		font-weight: bold;
 		text-align: center;
@@ -549,6 +551,16 @@
 		display: none;
 	}
 
+	&-result{
+		overflow: auto;
+		max-height: 400px;
+		a{
+			display: block;
+			padding: 1em;
+			margin: 1px 0;
+			border-top: 1px solid #ddd
+		}
+	}
 }
 
 
