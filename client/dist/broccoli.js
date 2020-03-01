@@ -1199,13 +1199,13 @@
 			this.setUiState('lightbox');
 
 			var $dom = $('<div>')
-				.addClass('broccoli--lightbox-inner')
+				.addClass('broccoli__lightbox-inner')
 			;
 
-			$('body').find('.broccoli--lightbox').remove();//一旦削除
+			$('body').find('.broccoli__lightbox').remove();//一旦削除
 			$('.broccoli *').attr({'tabindex':'-1'});
 			$('body')
-				.append( $('<div class="broccoli broccoli--lightbox">')
+				.append( $('<div class="broccoli broccoli__lightbox">')
 					// dropイベントをキャンセル
 					.bind('dragover', function(e){
 						e.stopPropagation();
@@ -1228,7 +1228,7 @@
 		 * ライトボックスが開いているか確認する
 		 */
 		this.isLightboxOpened = function(){
-			if( $('body').find('.broccoli--lightbox').length ){
+			if( $('body').find('.broccoli__lightbox').length ){
 				return true;
 			}
 			return false;
@@ -1239,7 +1239,7 @@
 		 */
 		this.closeLightbox = function( callback ){
 			callback = callback||function(){};
-			$('body').find('.broccoli--lightbox')
+			$('body').find('.broccoli__lightbox')
 				.fadeOut(
 					'fast',
 					function(){
@@ -1260,13 +1260,13 @@
 		 */
 		this.progress = function( callback ){
 			callback = callback||function(){};
-			$('body').find('.broccoli--progress').remove();//一旦削除
+			$('body').find('.broccoli__progress').remove();//一旦削除
 			$('body')
-				.append( $('<div class="broccoli broccoli--progress">')
-					.append( $('<div class="broccoli broccoli--progress-inner">')
-						.append( $('<div class="broccoli broccoli--progress-inner2">')
+				.append( $('<div class="broccoli broccoli__progress">')
+					.append( $('<div class="broccoli broccoli__progress-inner">')
+						.append( $('<div class="broccoli broccoli__progress-inner2">')
 							.append( $('<div class="px2-loading">') )
-							.append( $('<div class="broccoli--progress-comment">') )
+							.append( $('<div class="broccoli__progress-comment">') )
 						)
 					)
 				)
@@ -1282,7 +1282,7 @@
 		 */
 		this.progressMessage = function(str){
 			console.log(str);
-			var $userMessage = $('.broccoli--progress-comment');
+			var $userMessage = $('.broccoli__progress-comment');
 			$userMessage.text(str);
 		}
 
@@ -1291,7 +1291,7 @@
 		 */
 		this.closeProgress = function( callback ){
 			callback = callback||function(){};
-			var $progress = $('body').find('.broccoli--progress');
+			var $progress = $('body').find('.broccoli__progress');
 			if( !$progress.length ){
 				callback();
 				return this;
@@ -3083,7 +3083,7 @@ module.exports = function(broccoli){
 			$elm.show().append(
 				$err.text( '入力エラーがあります。確認してください。' )
 			);
-			$('.broccoli--lightbox').scrollTop(0);
+			$('.broccoli__lightbox').scrollTop(0);
 		}
 		return;
 	}

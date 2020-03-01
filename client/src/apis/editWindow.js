@@ -117,7 +117,7 @@ module.exports = function(broccoli){
 			$elm.show().append(
 				$err.text( '入力エラーがあります。確認してください。' )
 			);
-			$('.broccoli--lightbox').scrollTop(0);
+			$('.broccoli__lightbox').scrollTop(0);
 		}
 		return;
 	}
