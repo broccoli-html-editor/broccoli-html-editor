@@ -11,6 +11,7 @@ module.exports = function(broccoli){
 	var php = require('phpjs');
 	var $ = require('jquery');
 	var contentsElements;
+	var timerFormWatcher;
 
 	var $findWindow;
 	var $elmResult;
@@ -64,7 +65,7 @@ module.exports = function(broccoli){
 						'getAllInstance',
 						{},
 						function(_contentsElements){
-							console.log(_contentsElements);
+							// console.log(_contentsElements);
 							contentsElements = _contentsElements;
 							it1.next(data);
 						}
@@ -83,28 +84,55 @@ module.exports = function(broccoli){
 				} ,
 				function( it1, data ){
 					$elmResult = $findWindow.find('.broccoli__find-window-result');
-					for( var idx in contentsElements ){
-						var instance = contentsElements[idx];
-						var $instance = $('<a>');
-						$instance.text(instance.instancePath);
-						$instance.attr({
-							'href':'javascript:;',
-							'data-broccoli-instance-path': instance.instancePath
-						});
-						$instance.on('click', function(){
-							var instancePath = $(this).attr('data-broccoli-instance-path');
-							// alert(instancePath);
-							broccoli.selectInstance(instancePath);
-							broccoli.focusInstance(instancePath);
-							broccoli.instanceTreeView.focusInstance(instancePath);
-						});
-						$elmResult.append($instance);
-					}
+					it1.next(data);
+				} ,
+				function( it1, data ){
+					var $keywordForm = $findWindow.find('input[name=search-keyword]');
+					$keywordForm.on('change keyup', function(){
+						clearTimeout(timerFormWatcher);
+						timerFormWatcher = setTimeout(function(){
+							var keyword = $keywordForm.val();
+							if( !keyword.length ){
+								$elmResult.html('');
+								return;
+							}
+							// alert(keyword);
+							searchInstance(keyword);
+						}, 100);
+					});
 					it1.next(data);
 				}
 			]
 		);
 		return this;
+	}
+
+	/**
+	 * 検索を実行する
+	 */
+	function searchInstance(keyword){
+		$elmResult.html('');
+		for( var idx in contentsElements ){
+			var instance = contentsElements[idx];
+			if( !instance.instancePath.match(keyword) ){
+				continue;
+			}
+
+			var $instance = $('<a>');
+			$instance.text(instance.instancePath);
+			$instance.attr({
+				'href':'javascript:;',
+				'data-broccoli-instance-path': instance.instancePath
+			});
+			$instance.on('click', function(){
+				var instancePath = $(this).attr('data-broccoli-instance-path');
+				// alert(instancePath);
+				broccoli.selectInstance(instancePath);
+				broccoli.focusInstance(instancePath);
+				broccoli.instanceTreeView.focusInstance(instancePath);
+			});
+			$elmResult.append($instance);
+		}
 	}
 
 	return;
