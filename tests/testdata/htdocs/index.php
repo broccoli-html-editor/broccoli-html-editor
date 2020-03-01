@@ -18,6 +18,7 @@
 				<li><a href="javascript:window.main.broccoli.cut(function(res){console.log(res);alert('cut done.');});">cut</a></li>
 				<li><a href="javascript:window.main.broccoli.paste(function(res){console.log(res);alert('paste done.');});">paste</a></li>
 				<li><a href="javascript:window.main.broccoli.remove(function(res){console.log(res);alert('remove done.');});">remove</a></li>
+				<li><a href="javascript:window.main.broccoli.find();">find</a></li>
 				<li><a href="javascript:alert(window.main.broccoli.getSelectedInstance());">getSelectedInstance</a></li>
 			</ul>
 		</div>

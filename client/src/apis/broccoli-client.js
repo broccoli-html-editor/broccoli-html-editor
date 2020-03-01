@@ -1157,6 +1157,14 @@
 		}
 
 		/**
+		 * コンテンツ内を検索する
+		 */
+		this.find = function(){
+			alert('find...');
+		}
+
+
+		/**
 		 * モジュールパレットを描画する
 		 * @param  {Object}   moduleList モジュール一覧。
 		 * @param  {Element}  targetElm  描画する対象の要素
