@@ -73,7 +73,11 @@
 			;
 			$canvas.find('iframe')
 				.bind('load', function(){
-					console.log('broccoli: preview loaded');
+					var contWin = $canvas.find('iframe').get(0).contentWindow;
+					if(contWin.location.href == 'about:blank'){
+						return;
+					}
+					console.log('broccoli: preview loaded:', contWin.location.href);
 					_this.setUiState('standby');
 					onPreviewLoad( callback );
 				})
@@ -5354,6 +5358,7 @@ module.exports = function(broccoli, iframe){
 		var win = $(iframe).get(0).contentWindow;
 		$.ajax({
 			"url": __dirname+'/broccoli-preview-contents.js',
+			"dataType": "text",
 			"complete": function(XMLHttpRequest, textStatus){
 				var base64 = new Buffer(XMLHttpRequest.responseText).toString('base64');
 				win.postMessage({'scriptUrl':'data:text/javascript;base64,'+base64}, targetWindowOrigin);
