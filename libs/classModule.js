@@ -170,11 +170,11 @@ module.exports = function(broccoli, moduleId, options){
 					try{
 						tmpJson = JSON.parse( fs.readFileSync( _this.path+'/info.json' ) );
 					}catch(e){
-						var tmp_targetfile = utils79.basename(utils79.dirname(utils79.dirname(utils79.dirname(_this.path+'/info.json'))))+'/'+utils79.basename(utils79.dirname(utils79.dirname(_this.path+'/info.json')))+'/'+utils79.basename(utils79.dirname(_this.path+'info.json'))+'/info.json';
+						var tmp_targetfile = (_this.path+'/info.json').split(/\/+/).reverse().slice(0, 4).reverse().join('/');
 						broccoli.error( 'module info.json parse error: ' + tmp_targetfile );
 					}
 					if( typeof(tmpJson) != typeof({}) || tmpJson === null ){
-						var tmp_targetfile = utils79.basename(utils79.dirname(utils79.dirname(utils79.dirname(_this.path+'/info.json'))))+'/'+utils79.basename(utils79.dirname(utils79.dirname(_this.path+'/info.json')))+'/'+utils79.basename(utils79.dirname(_this.path+'info.json'))+'/info.json';
+						var tmp_targetfile = (_this.path+'/info.json').split(/\/+/).reverse().slice(0, 4).reverse().join('/');
 						broccoli.error( 'module info.json contains a non object or null: ' + tmp_targetfile );
 						tmpJson = {};
 					}
@@ -312,7 +312,7 @@ module.exports = function(broccoli, moduleId, options){
 					try{
 						field = JSON.parse( field );
 					}catch(e){
-						var tmp_targetfile = utils79.basename(utils79.dirname(utils79.dirname(utils79.dirname(_this.templateFilename))))+'/'+utils79.basename(utils79.dirname(utils79.dirname(_this.templateFilename)))+'/'+utils79.basename(utils79.dirname(_this.templateFilename))+'/'+utils79.basename(_this.templateFilename);
+						var tmp_targetfile = _this.templateFilename.split(/\/+/).reverse().slice(0, 4).reverse().join('/');
 						broccoli.error( 'module template parse error: ' + tmp_targetfile );
 						field = {'input':{
 							'type':'html',
