@@ -11,6 +11,7 @@ module.exports = function(broccoli, moduleId, options){
 	options = options || {};
 
 	var Promise = require('es6-promise').Promise;
+	var utils79 = require('utils79');
 	var it79 = require('iterate79');
 	var path = require('path');
 	var php = require('phpjs');
@@ -169,10 +170,12 @@ module.exports = function(broccoli, moduleId, options){
 					try{
 						tmpJson = JSON.parse( fs.readFileSync( _this.path+'/info.json' ) );
 					}catch(e){
-						broccoli.error( 'module info.json parse error: ' + _this.path+'/info.json' );
+						var tmp_targetfile = utils79.basename(utils79.dirname(utils79.dirname(utils79.dirname(_this.path+'/info.json'))))+'/'+utils79.basename(utils79.dirname(utils79.dirname(_this.path+'/info.json')))+'/'+utils79.basename(utils79.dirname(_this.path+'info.json'))+'/info.json';
+						broccoli.error( 'module info.json parse error: ' + tmp_targetfile );
 					}
 					if( typeof(tmpJson) != typeof({}) || tmpJson === null ){
-						broccoli.error( 'module info.json contains a non object or null: ' + _this.path+'/info.json' );
+						var tmp_targetfile = utils79.basename(utils79.dirname(utils79.dirname(utils79.dirname(_this.path+'/info.json'))))+'/'+utils79.basename(utils79.dirname(utils79.dirname(_this.path+'/info.json')))+'/'+utils79.basename(utils79.dirname(_this.path+'info.json'))+'/info.json';
+						broccoli.error( 'module info.json contains a non object or null: ' + tmp_targetfile );
 						tmpJson = {};
 					}
 					if( tmpJson.name ){
@@ -309,7 +312,8 @@ module.exports = function(broccoli, moduleId, options){
 					try{
 						field = JSON.parse( field );
 					}catch(e){
-						broccoli.error( 'module template parse error: ' + _this.templateFilename );
+						var tmp_targetfile = utils79.basename(utils79.dirname(utils79.dirname(utils79.dirname(_this.templateFilename))))+'/'+utils79.basename(utils79.dirname(utils79.dirname(_this.templateFilename)))+'/'+utils79.basename(utils79.dirname(_this.templateFilename))+'/'+utils79.basename(_this.templateFilename);
+						broccoli.error( 'module template parse error: ' + tmp_targetfile );
 						field = {'input':{
 							'type':'html',
 							'name':'__error__'

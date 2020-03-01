@@ -194,7 +194,8 @@ class classModule{
 
 		$field = json_decode( $field );
 		if( is_null($field) ){
-			$this->broccoli->error( 'module template parse error: ' . $this->templateFilename );
+			$tmp_targetfile = basename(dirname(dirname(dirname($this->templateFilename)))).'/'.basename(dirname(dirname($this->templateFilename))).'/'.basename(dirname($this->templateFilename)).'/'.basename($this->templateFilename);
+			$this->broccoli->error( 'module template parse error: ' . $tmp_targetfile );
 			$field = json_decode(json_encode(array(
 				'input' => array(
 					'type' => 'html',
@@ -308,7 +309,8 @@ class classModule{
 			if( is_file( $this->path.'/info.json' ) ){
 				$tmpJson = json_decode( file_get_contents( $this->path.'/info.json' ) );
 				if(is_null($tmpJson)){
-					$this->broccoli->error( 'module info.json parse error: '.$this->path.'/info.json' );
+					$tmp_targetfile = basename(dirname(dirname($this->path))).'/'.basename(dirname(dirname($this->path.'/info.json'))).'/'.basename(dirname($this->path.'/info.json')).'/info.json';
+					$this->broccoli->error( 'module info.json parse error: '.$tmp_targetfile );
 					$tmpJson = json_decode('{}');
 				}
 
