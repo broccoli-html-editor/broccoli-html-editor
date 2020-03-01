@@ -94,6 +94,7 @@
 			this.instanceTreeView = new (require( './instanceTreeView.js' ))(this);
 			this.editWindow = new (require( './editWindow.js' ))(this);
 			this.fieldBase = new (require('./fieldBase.js'))(this);
+			this.findWindow = new (require( './findWindow.js' ))(this);
 			this.fieldDefinitions = {};
 			function loadFieldDefinition(){
 				function loadFieldDefinition(fieldId, mod){
@@ -1164,7 +1165,8 @@
 		 * コンテンツ内を検索する
 		 */
 		this.find = function(){
-			alert('find...');
+			this.findWindow.init();
+			return;
 		}
 
 

@@ -416,6 +416,17 @@
 .broccoli--edit-window-field-error-message {
   display: none; }
 
+.broccoli--find-window h2 {
+  font-weight: bold;
+  text-align: center;
+  margin: 1em; }
+
+.broccoli--find-window-form-buttons {
+  margin-top: 1em; }
+
+.broccoli--find-window-field-error-message {
+  display: none; }
+
 .broccoli--lightbox {
   position: fixed;
   top: 0;

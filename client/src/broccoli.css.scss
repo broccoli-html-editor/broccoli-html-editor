@@ -533,6 +533,24 @@
 
 }
 
+// find window
+.broccoli--find-window{
+	h2{
+		font-weight: bold;
+		text-align: center;
+		margin: 1em;
+	}
+
+	&-form-buttons{
+		margin-top: 1em;
+	}
+
+	&-field-error-message{
+		display: none;
+	}
+
+}
+
 
 // lightbox
 .broccoli--lightbox{
