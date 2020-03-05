@@ -149,11 +149,35 @@ class buildBowl{
 			}else{
 				// 環境変数登録
 				$tplDataObj['_ENV'] = array(
-					"mode" => $this->options['mode']
+					"mode" => $this->options['mode'],
 				);
+				$tplFuncs = array();
+				$tplFuncs['appender'] = function($for) use ($fieldData, $mod){
+					if( $this->options['mode'] == 'finalize' ){
+						return;
+					}
+					if($mod->fields->{$for}->fieldType == 'loop'){
+						$appender = $this->mkAppender('loop', array(
+							'modId' => $this->data->modId,
+							'subModName' => $for,
+							'instancePath' => $this->options['instancePath'].'/fields.'.$for.'@'.count($fieldData[$for]),
+						));
+						echo $appender;
+
+					}elseif($mod->fields->{$for}->fieldType == 'module'){
+						$appender = $this->mkAppender('module', array(
+							'modId' => $this->data->modId,
+							'subModName' => null,
+							'instancePath' => $this->options['instancePath'].'/fields.'.$for.'@'.count($fieldData[$for]),
+						));
+						echo $appender;
+
+					}
+					return;
+				};
 
 				$twigHelper = new helper_twig();
-				$tmp_twig_rtn = $twigHelper->bind($src, $tplDataObj);
+				$tmp_twig_rtn = $twigHelper->bind($src, $tplDataObj, $tplFuncs);
 
 				if( !is_string($tmp_twig_rtn) ){
 					// var_dump( 'TemplateEngine Rendering ERROR.' );

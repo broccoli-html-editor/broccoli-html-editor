@@ -297,6 +297,7 @@ $ composer test
 ### broccoli-html-editor v0.3.15 (リリース日未定)
 
 - `script` フィールドに `escape` オプションを追加。
+- Twigテンプレートで `{{ appender($fieldName) }}` を使えるようになり、Twigテンプレートでも loopフィールドのアペンダーを利用できるようになった。
 - その他の細かい修正。
 
 ### broccoli-html-editor v0.3.14 (2020年2月24日)
