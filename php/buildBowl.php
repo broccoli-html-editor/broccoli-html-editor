@@ -147,12 +147,30 @@ class buildBowl{
 			if($mod->subModName){
 				$d->html = $tplDataObj;
 			}else{
-				// 環境変数登録
+				// Twig: 環境変数登録
 				$tplDataObj['_ENV'] = array(
 					"mode" => $this->options['mode'],
 				);
+				// Twig: カスタム関数登録
 				$tplFuncs = array();
-				$tplFuncs['appender'] = function($fieldNameFor) use ($fieldData, $mod){
+				$loopitem_memo = array();
+				$tplFuncs['loopitem_start'] = function($fieldNameFor) use ($loopitem_memo, $tplFuncs, $fieldData, $mod){
+					if( $this->options['mode'] == 'finalize' ){
+						return;
+					}
+					if($mod->fields->{$fieldNameFor}->fieldType == 'loop'){
+						echo '<div>';
+					}
+					return;
+				};
+				$tplFuncs['loopitem_end'] = function($fieldNameFor) use ($loopitem_memo, $tplFuncs, $fieldData, $mod){
+					if( $this->options['mode'] == 'finalize' ){
+						return;
+					}
+					echo '</div>';
+					return;
+				};
+				$tplFuncs['appender'] = function($fieldNameFor) use ($loopitem_memo, $tplFuncs, $fieldData, $mod){
 					if( $this->options['mode'] == 'finalize' ){
 						return;
 					}

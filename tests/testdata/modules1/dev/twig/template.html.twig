@@ -11,9 +11,11 @@
 </div>
 
 <div class="twig_template-loop">
+{{ loopitem_start('loop') }}
 {% for loopRow in loop %}
 {{dump(loopRow.text2)}}
 <p>{{loopRow.text1}}</p>
+{{ loopitem_end() }}
 {% endfor %}
 {{ appender('loop') }}
 
