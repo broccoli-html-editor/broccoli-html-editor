@@ -152,23 +152,23 @@ class buildBowl{
 					"mode" => $this->options['mode'],
 				);
 				$tplFuncs = array();
-				$tplFuncs['appender'] = function($for) use ($fieldData, $mod){
+				$tplFuncs['appender'] = function($fieldNameFor) use ($fieldData, $mod){
 					if( $this->options['mode'] == 'finalize' ){
 						return;
 					}
-					if($mod->fields->{$for}->fieldType == 'loop'){
+					if($mod->fields->{$fieldNameFor}->fieldType == 'loop'){
 						$appender = $this->mkAppender('loop', array(
 							'modId' => $this->data->modId,
-							'subModName' => $for,
-							'instancePath' => $this->options['instancePath'].'/fields.'.$for.'@'.count($fieldData[$for]),
+							'subModName' => $fieldNameFor,
+							'instancePath' => $this->options['instancePath'].'/fields.'.$fieldNameFor.'@'.count($fieldData[$fieldNameFor]),
 						));
 						echo $appender;
 
-					}elseif($mod->fields->{$for}->fieldType == 'module'){
+					}elseif($mod->fields->{$fieldNameFor}->fieldType == 'module'){
 						$appender = $this->mkAppender('module', array(
 							'modId' => $this->data->modId,
 							'subModName' => null,
-							'instancePath' => $this->options['instancePath'].'/fields.'.$for.'@'.count($fieldData[$for]),
+							'instancePath' => $this->options['instancePath'].'/fields.'.$fieldNameFor.'@'.count($fieldData[$fieldNameFor]),
 						));
 						echo $appender;
 

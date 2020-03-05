@@ -261,6 +261,29 @@ module.exports = function(broccoli, data, options, callback){
 									};
 
 									try {
+										twig.extendFunction("appender", function(fieldNameFor) {
+											if( options.mode == 'finalize' ){
+												return;
+											}
+											if(mod.fields[fieldNameFor].fieldType == 'loop'){
+												var $appender = mkAppender('loop', {
+													'modId': data.modId,
+													'subModName': fieldNameFor,
+													'instancePath': options.instancePath+'/fields.'+fieldNameFor+'@'+(fieldData[fieldNameFor].length)
+												});
+												return $appender;
+
+											}else if(mod.fields[fieldNameFor].fieldType == 'module'){
+												var $appender = mkAppender('module', {
+													'modId': data.modId,
+													'subModName': null,
+													'instancePath': options.instancePath+'/fields.'+fieldNameFor+'@'+count(fieldData[fieldNameFor].length)
+												});
+												return $appender;
+
+											}
+											return;
+										});
 										rtn = new twig.twig({
 											'data': src
 										}).render(tplDataObj);
