@@ -159,6 +159,9 @@ class buildBowl{
 				);
 				$tplFuncs['loopitem_start'] = function($fieldNameFor) use (&$loopitem_memo, $tplFuncs, $fieldData, $mod){
 					ob_start();
+					if( $this->options['mode'] == 'finalize' ){
+						return;
+					}
 					array_push($loopitem_memo['nest'], $fieldNameFor);
 					if( !array_key_exists($fieldNameFor, $loopitem_memo['status']) ){
 						$loopitem_memo['status'][$fieldNameFor] = array(

@@ -379,12 +379,50 @@ module.exports = function(broccoli, data, options, callback){
 								if(mod.subModName){
 									d.html = tplDataObj;
 								}else{
-									// 環境変数登録
+									// Twig: 環境変数登録
 									tplDataObj._ENV = {
 										"mode": options.mode
 									};
 
+									// Twig: カスタム関数登録
+									var $loopitem_memo = {
+										'nest': [],
+										'status': {}
+									};
 									try {
+										twig.extendFunction("loopitem_start", function(fieldNameFor) {
+											if( options['mode'] == 'finalize' ){
+												return '';
+											}
+											$loopitem_memo['nest'].push(fieldNameFor);
+											if( !$loopitem_memo['status'][fieldNameFor] ){
+												$loopitem_memo['status'][fieldNameFor] = {
+													'index': 0,
+													'closed': false
+												};
+											}else{
+												$loopitem_memo['status'][fieldNameFor]['index'] ++;
+												$loopitem_memo['status'][fieldNameFor]['closed'] = false;
+											}
+
+											var $html = '<div></div>';
+											var $tmp_options = JSON.parse(JSON.stringify(options));
+											$tmp_options['instancePath'] += '/fields.'+fieldNameFor+'@'+($loopitem_memo['status'][fieldNameFor]['index']);
+											$tmp_options['subModName'] = fieldNameFor;
+											$html = finalize_module_instance_panel( $html, mod, $tmp_options );
+											$html = $html.replace(/\<\/div\>$/, '');
+											return $html;
+										});
+										twig.extendFunction("loopitem_end", function() {
+											if( options['mode'] == 'finalize' ){
+												return '';
+											}
+
+											var fieldNameFor = $loopitem_memo['nest'].pop();
+											$loopitem_memo['status'][fieldNameFor]['closed'] = true;
+
+											return '</div>';
+										});
 										twig.extendFunction("appender", function(fieldNameFor) {
 											if( options.mode == 'finalize' ){
 												return;
