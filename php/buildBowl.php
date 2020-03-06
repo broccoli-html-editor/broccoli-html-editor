@@ -485,7 +485,8 @@ class buildBowl{
 		}
 
 		$d->html = $this->finalize_module_instance_panel( $d->html, $mod );
-		$d->html = $this->finalize_module_instance_dec( $d->html );
+		$d->html = $this->finalize_module_instance_dec( $d->html, $this->data );
+		$d->html = $this->finalize_module_instance_anchor( $d->html, $this->data );
 
 		return $d->html;
 	}
@@ -735,36 +736,12 @@ class buildBowl{
 	}
 
 	/**
-	 * モジュールインスタンスの仕上げ処理: DEC情報を埋め込む
+	 * モジュールインスタンスの仕上げ処理: anchor情報を埋め込む
 	 */
-	private function finalize_module_instance_dec( $d_html ){
+	private function finalize_module_instance_anchor( $d_html, $data ){
 
 		if(is_string($d_html)){
-			if( @$this->data->dec ){
-				// HTMLをパース
-				$simple_html_dom = str_get_html(
-					$d_html ,
-					false, // $lowercase
-					false, // $forceTagsClosed
-					DEFAULT_TARGET_CHARSET, // $target_charset
-					false, // $stripRN
-					DEFAULT_BR_TEXT, // $defaultBRText
-					DEFAULT_SPAN_TEXT // $defaultSpanText
-				);
-
-				if($simple_html_dom === false){
-					// HTMLパースに失敗
-				}else{
-					$attr = 'data-dec';
-					$simple_html_dom_ret = $simple_html_dom->find('*');
-					foreach( $simple_html_dom_ret as $simple_html_dom_ret_node ){
-						$simple_html_dom_ret_node->$attr = $this->data->dec;
-						break;
-					}
-					$d_html = $simple_html_dom->outertext;
-				}
-			}
-			if( @$this->data->anchor ){
+			if( @$data->anchor ){
 				// HTMLをパース
 				$simple_html_dom = str_get_html(
 					$d_html ,
@@ -782,7 +759,42 @@ class buildBowl{
 					$attr = 'id';
 					$simple_html_dom_ret = $simple_html_dom->find('*');
 					foreach( $simple_html_dom_ret as $simple_html_dom_ret_node ){
-						$simple_html_dom_ret_node->$attr = $this->data->anchor;
+						$simple_html_dom_ret_node->$attr = $data->anchor;
+						break;
+					}
+					$d_html = $simple_html_dom->outertext;
+				}
+			}
+		}
+
+		return $d_html;
+	}
+
+	/**
+	 * モジュールインスタンスの仕上げ処理: DEC情報を埋め込む
+	 */
+	private function finalize_module_instance_dec( $d_html, $data ){
+
+		if(is_string($d_html)){
+			if( @$data->dec ){
+				// HTMLをパース
+				$simple_html_dom = str_get_html(
+					$d_html ,
+					false, // $lowercase
+					false, // $forceTagsClosed
+					DEFAULT_TARGET_CHARSET, // $target_charset
+					false, // $stripRN
+					DEFAULT_BR_TEXT, // $defaultBRText
+					DEFAULT_SPAN_TEXT // $defaultSpanText
+				);
+
+				if($simple_html_dom === false){
+					// HTMLパースに失敗
+				}else{
+					$attr = 'data-dec';
+					$simple_html_dom_ret = $simple_html_dom->find('*');
+					foreach( $simple_html_dom_ret as $simple_html_dom_ret_node ){
+						$simple_html_dom_ret_node->$attr = $data->dec;
 						break;
 					}
 					$d_html = $simple_html_dom->outertext;
