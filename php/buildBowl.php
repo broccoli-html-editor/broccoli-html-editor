@@ -153,22 +153,42 @@ class buildBowl{
 				);
 				// Twig: カスタム関数登録
 				$tplFuncs = array();
-				$loopitem_memo = array();
-				$tplFuncs['loopitem_start'] = function($fieldNameFor) use ($loopitem_memo, $tplFuncs, $fieldData, $mod){
+				$loopitem_memo = array(
+					'nest' => array(),
+					'status' => array(),
+				);
+				$tplFuncs['loopitem_start'] = function($fieldNameFor) use (&$loopitem_memo, $tplFuncs, $fieldData, $mod){
 					ob_start();
+					array_push($loopitem_memo['nest'], $fieldNameFor);
+					if( !array_key_exists($fieldNameFor, $loopitem_memo['status']) ){
+						$loopitem_memo['status'][$fieldNameFor] = array(
+							'index' => 0,
+							'closed' => false,
+						);
+					}else{
+						$loopitem_memo['status'][$fieldNameFor]['index'] ++;
+						$loopitem_memo['status'][$fieldNameFor]['closed'] = false;
+					}
 					return;
 				};
-				$tplFuncs['loopitem_end'] = function($fieldNameFor) use ($loopitem_memo, $tplFuncs, $fieldData, $mod){
+				$tplFuncs['loopitem_end'] = function() use (&$loopitem_memo, $tplFuncs, $fieldData, $mod){
+					$fieldNameFor = array_pop($loopitem_memo['nest']);
+					$loopitem_memo['status'][$fieldNameFor]['closed'] = true;
+
 					$html = ob_get_clean();
 					if( $this->options['mode'] == 'finalize' ){
 						echo $html;
 						return;
 					}
-					$html = $this->finalize_module_instance_panel( $html, $mod );
+					$tmp_options = json_decode(json_encode($this->options), true);
+					$tmp_options['instancePath'] .= '/fields.'.$fieldNameFor.'@'.($loopitem_memo['status'][$fieldNameFor]['index']);
+					$tmp_options['subModName'] = $fieldNameFor;
+					$html = $this->finalize_module_instance_panel( $html, $mod, $tmp_options );
 					echo $html;
+					unset($tmp_options);
 					return;
 				};
-				$tplFuncs['appender'] = function($fieldNameFor) use ($loopitem_memo, $tplFuncs, $fieldData, $mod){
+				$tplFuncs['appender'] = function($fieldNameFor) use (&$loopitem_memo, $tplFuncs, $fieldData, $mod){
 					if( $this->options['mode'] == 'finalize' ){
 						return;
 					}
