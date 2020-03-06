@@ -484,7 +484,7 @@ class buildBowl{
 			}
 		}
 
-		$d->html = $this->finalize_module_instance_panel( $d->html, $mod );
+		$d->html = $this->finalize_module_instance_panel( $d->html, $mod, $this->options );
 		$d->html = $this->finalize_module_instance_dec( $d->html, $this->data );
 		$d->html = $this->finalize_module_instance_anchor( $d->html, $this->data );
 
@@ -642,13 +642,13 @@ class buildBowl{
 	/**
 	 * モジュールインスタンスの仕上げ処理: パネル情報を埋め込む
 	 */
-	private function finalize_module_instance_panel( $d_html, $mod ){
+	private function finalize_module_instance_panel( $d_html, $mod, $options ){
 
-		if( is_string($d_html) && $this->options['mode'] == 'canvas' ){
+		if( is_string($d_html) && $options['mode'] == 'canvas' ){
 			// var_dump( $d_html );
 
-			$isSingleRootElement = function($tplSrc){
-				if( preg_match('/^\/bowl\.[^\/]+$/s', $this->options['instancePath']) ){
+			$isSingleRootElement = function($tplSrc) use ($options){
+				if( preg_match('/^\/bowl\.[^\/]+$/s', $options['instancePath']) ){
 					return false;
 				}
 				$tplSrc = preg_replace( '/\<\!\-\-[\s\S]*?\-\-\>/s', '', $tplSrc );
@@ -706,9 +706,9 @@ class buildBowl{
 					$attr = 'data-dec';
 					$simple_html_dom_ret = $simple_html_dom->find('>*');
 
-					$simple_html_dom_ret[0]->{'data-broccoli-instance-path'} = $this->options['instancePath'];
-					if( @$this->options['subModName'] ){
-						$simple_html_dom_ret[0]->{'data-broccoli-sub-mod-name'} = $this->options['subModName'];
+					$simple_html_dom_ret[0]->{'data-broccoli-instance-path'} = $options['instancePath'];
+					if( @$options['subModName'] ){
+						$simple_html_dom_ret[0]->{'data-broccoli-sub-mod-name'} = $options['subModName'];
 					}
 					$simple_html_dom_ret[0]->{'data-broccoli-area-size-detection'} = (@$mod->info['areaSizeDetection'] ? $mod->info['areaSizeDetection'] : 'shallow');
 					$simple_html_dom_ret[0]->{'data-broccoli-module-name'} = (@$mod->info['name'] ? $mod->info['name'] : $mod->id);
@@ -718,9 +718,9 @@ class buildBowl{
 			}else{
 				$tmp_html = '';
 				$tmp_html .= '<div';
-				$tmp_html .= ' data-broccoli-instance-path="'.htmlspecialchars($this->options['instancePath']).'"';
-				if( @$this->options['subModName'] ){
-					$tmp_html .= ' data-broccoli-sub-mod-name="'.htmlspecialchars($this->options['subModName']).'"';
+				$tmp_html .= ' data-broccoli-instance-path="'.htmlspecialchars($options['instancePath']).'"';
+				if( @$options['subModName'] ){
+					$tmp_html .= ' data-broccoli-sub-mod-name="'.htmlspecialchars($options['subModName']).'"';
 				}
 				$tmp_html .= ' data-broccoli-area-size-detection="'.htmlspecialchars((@$mod->info['areaSizeDetection'] ? $mod->info['areaSizeDetection'] : 'shallow')).'"';
 				// $tmp_html .= ' data-broccoli-is-single-root-element="'+(isSingleRootElement?'yes':'no').'"';
