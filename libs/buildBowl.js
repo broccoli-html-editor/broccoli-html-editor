@@ -112,7 +112,7 @@ module.exports = function(broccoli, data, options, callback){
 	/**
 	 * モジュールインスタンスの仕上げ処理: パネル情報を埋め込む
 	 */
-	function finalize_module_instance_panel( $d_html ){
+	function finalize_module_instance_panel( $d_html, mod, options ){
 		if(typeof($d_html) !== typeof('')){
 			// console.log($d_html);
 			return $d_html;
@@ -183,10 +183,36 @@ module.exports = function(broccoli, data, options, callback){
 		}
 		return $d_html;
 	}
+
+	/**
+	 * モジュールインスタンスの仕上げ処理: anchor情報を埋め込む
+	 */
+	function finalize_module_instance_anchor( $d_html, data ){
+		if(typeof($d_html) !== typeof('')){
+			// console.log($d_html);
+			return $d_html;
+		}
+
+		if( data.dec ){
+			var $ = cheerio.load($d_html, {decodeEntities: false});
+			var $1stElm = $('*').eq(0);
+			$1stElm.attr({ 'data-dec': data.dec });
+			$d_html = $.html();
+		}
+		if( data.anchor ){
+			var $ = cheerio.load($d_html, {decodeEntities: false});
+			var $1stElm = $('*').eq(0);
+			$1stElm.attr({ 'id': data.anchor });
+			$d_html = $.html();
+		}
+
+		return $d_html;
+	}
+
 	/**
 	 * モジュールインスタンスの仕上げ処理: DEC情報を埋め込む
 	 */
-	function finalize_module_instance_dec( $d_html ){
+	function finalize_module_instance_dec( $d_html, data ){
 		if(typeof($d_html) !== typeof('')){
 			// console.log($d_html);
 			return $d_html;
@@ -741,11 +767,15 @@ module.exports = function(broccoli, data, options, callback){
 				return;
 			} ,
 			function(it1, d){
-				d.html = finalize_module_instance_panel(d.html);
+				d.html = finalize_module_instance_panel(d.html, mod, options);
 				it1.next(d);
 			} ,
 			function(it1, d){
-				d.html = finalize_module_instance_dec(d.html);
+				d.html = finalize_module_instance_dec(d.html, data);
+				it1.next(d);
+			} ,
+			function(it1, d){
+				d.html = finalize_module_instance_anchor(d.html, data);
 				it1.next(d);
 			} ,
 			function(it1, d){
