@@ -1013,7 +1013,40 @@
                             },
                             "select": "",
                             "include_main": [],
-                            "loop": []
+                            "loop": [
+                                {
+                                    "modId": "testMod1:dev/twig",
+                                    "fields": {
+                                        "text1": {
+                                            "src": "ううう",
+                                            "editor": "markdown"
+                                        },
+                                        "text2": {
+                                            "src": "えええ",
+                                            "editor": "markdown"
+                                        }
+                                    },
+                                    "subModName": "loop",
+                                    "anchor": "",
+                                    "dec": ""
+                                },
+                                {
+                                    "modId": "testMod1:dev/twig",
+                                    "fields": {
+                                        "text1": {
+                                            "src": "あああ",
+                                            "editor": "markdown"
+                                        },
+                                        "text2": {
+                                            "src": "いいい",
+                                            "editor": "markdown"
+                                        }
+                                    },
+                                    "subModName": "loop",
+                                    "anchor": "",
+                                    "dec": ""
+                                }
+                            ]
                         },
                         "anchor": "",
                         "dec": ""

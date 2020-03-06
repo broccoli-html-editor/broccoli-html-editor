@@ -155,19 +155,17 @@ class buildBowl{
 				$tplFuncs = array();
 				$loopitem_memo = array();
 				$tplFuncs['loopitem_start'] = function($fieldNameFor) use ($loopitem_memo, $tplFuncs, $fieldData, $mod){
-					if( $this->options['mode'] == 'finalize' ){
-						return;
-					}
-					if($mod->fields->{$fieldNameFor}->fieldType == 'loop'){
-						echo '<div>';
-					}
+					ob_start();
 					return;
 				};
 				$tplFuncs['loopitem_end'] = function($fieldNameFor) use ($loopitem_memo, $tplFuncs, $fieldData, $mod){
+					$html = ob_get_clean();
 					if( $this->options['mode'] == 'finalize' ){
+						echo $html;
 						return;
 					}
-					echo '</div>';
+					$html = $this->finalize_module_instance_panel( $html, $mod );
+					echo $html;
 					return;
 				};
 				$tplFuncs['appender'] = function($fieldNameFor) use ($loopitem_memo, $tplFuncs, $fieldData, $mod){
