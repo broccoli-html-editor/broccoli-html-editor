@@ -500,8 +500,9 @@ class buildBowl{
 			}
 		}
 
-		$d->html = $this->finalize_module_instance_panel( $d->html, $mod );
-		$d->html = $this->finalize_module_instance_dec( $d->html );
+		$d->html = $this->finalize_module_instance_panel( $d->html, $mod, $this->options );
+		$d->html = $this->finalize_module_instance_dec( $d->html, $this->data );
+		$d->html = $this->finalize_module_instance_anchor( $d->html, $this->data );
 
 		return $d->html;
 	}
@@ -657,13 +658,13 @@ class buildBowl{
 	/**
 	 * モジュールインスタンスの仕上げ処理: パネル情報を埋め込む
 	 */
-	private function finalize_module_instance_panel( $d_html, $mod ){
+	private function finalize_module_instance_panel( $d_html, $mod, $options ){
 
-		if( is_string($d_html) && $this->options['mode'] == 'canvas' ){
+		if( is_string($d_html) && $options['mode'] == 'canvas' ){
 			// var_dump( $d_html );
 
-			$isSingleRootElement = function($tplSrc){
-				if( preg_match('/^\/bowl\.[^\/]+$/s', $this->options['instancePath']) ){
+			$isSingleRootElement = function($tplSrc) use ($options){
+				if( preg_match('/^\/bowl\.[^\/]+$/s', $options['instancePath']) ){
 					return false;
 				}
 				$tplSrc = preg_replace( '/\<\!\-\-[\s\S]*?\-\-\>/s', '', $tplSrc );
@@ -721,9 +722,9 @@ class buildBowl{
 					$attr = 'data-dec';
 					$simple_html_dom_ret = $simple_html_dom->find('>*');
 
-					$simple_html_dom_ret[0]->{'data-broccoli-instance-path'} = $this->options['instancePath'];
-					if( @$this->options['subModName'] ){
-						$simple_html_dom_ret[0]->{'data-broccoli-sub-mod-name'} = $this->options['subModName'];
+					$simple_html_dom_ret[0]->{'data-broccoli-instance-path'} = $options['instancePath'];
+					if( @$options['subModName'] ){
+						$simple_html_dom_ret[0]->{'data-broccoli-sub-mod-name'} = $options['subModName'];
 					}
 					$simple_html_dom_ret[0]->{'data-broccoli-area-size-detection'} = (@$mod->info['areaSizeDetection'] ? $mod->info['areaSizeDetection'] : 'shallow');
 					$simple_html_dom_ret[0]->{'data-broccoli-module-name'} = (@$mod->info['name'] ? $mod->info['name'] : $mod->id);
@@ -733,9 +734,9 @@ class buildBowl{
 			}else{
 				$tmp_html = '';
 				$tmp_html .= '<div';
-				$tmp_html .= ' data-broccoli-instance-path="'.htmlspecialchars($this->options['instancePath']).'"';
-				if( @$this->options['subModName'] ){
-					$tmp_html .= ' data-broccoli-sub-mod-name="'.htmlspecialchars($this->options['subModName']).'"';
+				$tmp_html .= ' data-broccoli-instance-path="'.htmlspecialchars($options['instancePath']).'"';
+				if( @$options['subModName'] ){
+					$tmp_html .= ' data-broccoli-sub-mod-name="'.htmlspecialchars($options['subModName']).'"';
 				}
 				$tmp_html .= ' data-broccoli-area-size-detection="'.htmlspecialchars((@$mod->info['areaSizeDetection'] ? $mod->info['areaSizeDetection'] : 'shallow')).'"';
 				// $tmp_html .= ' data-broccoli-is-single-root-element="'+(isSingleRootElement?'yes':'no').'"';
@@ -751,36 +752,12 @@ class buildBowl{
 	}
 
 	/**
-	 * モジュールインスタンスの仕上げ処理: DEC情報を埋め込む
+	 * モジュールインスタンスの仕上げ処理: anchor情報を埋め込む
 	 */
-	private function finalize_module_instance_dec( $d_html ){
+	private function finalize_module_instance_anchor( $d_html, $data ){
 
 		if(is_string($d_html)){
-			if( @$this->data->dec ){
-				// HTMLをパース
-				$simple_html_dom = str_get_html(
-					$d_html ,
-					false, // $lowercase
-					false, // $forceTagsClosed
-					DEFAULT_TARGET_CHARSET, // $target_charset
-					false, // $stripRN
-					DEFAULT_BR_TEXT, // $defaultBRText
-					DEFAULT_SPAN_TEXT // $defaultSpanText
-				);
-
-				if($simple_html_dom === false){
-					// HTMLパースに失敗
-				}else{
-					$attr = 'data-dec';
-					$simple_html_dom_ret = $simple_html_dom->find('*');
-					foreach( $simple_html_dom_ret as $simple_html_dom_ret_node ){
-						$simple_html_dom_ret_node->$attr = $this->data->dec;
-						break;
-					}
-					$d_html = $simple_html_dom->outertext;
-				}
-			}
-			if( @$this->data->anchor ){
+			if( @$data->anchor ){
 				// HTMLをパース
 				$simple_html_dom = str_get_html(
 					$d_html ,
@@ -798,7 +775,42 @@ class buildBowl{
 					$attr = 'id';
 					$simple_html_dom_ret = $simple_html_dom->find('*');
 					foreach( $simple_html_dom_ret as $simple_html_dom_ret_node ){
-						$simple_html_dom_ret_node->$attr = $this->data->anchor;
+						$simple_html_dom_ret_node->$attr = $data->anchor;
+						break;
+					}
+					$d_html = $simple_html_dom->outertext;
+				}
+			}
+		}
+
+		return $d_html;
+	}
+
+	/**
+	 * モジュールインスタンスの仕上げ処理: DEC情報を埋め込む
+	 */
+	private function finalize_module_instance_dec( $d_html, $data ){
+
+		if(is_string($d_html)){
+			if( @$data->dec ){
+				// HTMLをパース
+				$simple_html_dom = str_get_html(
+					$d_html ,
+					false, // $lowercase
+					false, // $forceTagsClosed
+					DEFAULT_TARGET_CHARSET, // $target_charset
+					false, // $stripRN
+					DEFAULT_BR_TEXT, // $defaultBRText
+					DEFAULT_SPAN_TEXT // $defaultSpanText
+				);
+
+				if($simple_html_dom === false){
+					// HTMLパースに失敗
+				}else{
+					$attr = 'data-dec';
+					$simple_html_dom_ret = $simple_html_dom->find('*');
+					foreach( $simple_html_dom_ret as $simple_html_dom_ret_node ){
+						$simple_html_dom_ret_node->$attr = $data->dec;
 						break;
 					}
 					$d_html = $simple_html_dom->outertext;
