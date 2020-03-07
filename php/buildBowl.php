@@ -147,13 +147,76 @@ class buildBowl{
 			if($mod->subModName){
 				$d->html = $tplDataObj;
 			}else{
-				// 環境変数登録
+				// Twig: 環境変数登録
 				$tplDataObj['_ENV'] = array(
-					"mode" => $this->options['mode']
+					"mode" => $this->options['mode'],
 				);
+				// Twig: カスタム関数登録
+				$tplFuncs = array();
+				$loopitem_memo = array(
+					'nest' => array(),
+					'status' => array(),
+				);
+				$tplFuncs['loopitem_start'] = function($fieldNameFor) use (&$loopitem_memo, $tplFuncs, $fieldData, $mod){
+					ob_start();
+					if( $this->options['mode'] == 'finalize' ){
+						return;
+					}
+					array_push($loopitem_memo['nest'], $fieldNameFor);
+					if( !array_key_exists($fieldNameFor, $loopitem_memo['status']) ){
+						$loopitem_memo['status'][$fieldNameFor] = array(
+							'index' => 0,
+							'closed' => false,
+						);
+					}else{
+						$loopitem_memo['status'][$fieldNameFor]['index'] ++;
+						$loopitem_memo['status'][$fieldNameFor]['closed'] = false;
+					}
+					return;
+				};
+				$tplFuncs['loopitem_end'] = function() use (&$loopitem_memo, $tplFuncs, $fieldData, $mod){
+					$fieldNameFor = array_pop($loopitem_memo['nest']);
+					$loopitem_memo['status'][$fieldNameFor]['closed'] = true;
+
+					$html = ob_get_clean();
+					if( $this->options['mode'] == 'finalize' ){
+						echo $html;
+						return;
+					}
+					$tmp_options = json_decode(json_encode($this->options), true);
+					$tmp_options['instancePath'] .= '/fields.'.$fieldNameFor.'@'.($loopitem_memo['status'][$fieldNameFor]['index']);
+					$tmp_options['subModName'] = $fieldNameFor;
+					$html = $this->finalize_module_instance_panel( $html, $mod, $tmp_options );
+					echo $html;
+					unset($tmp_options);
+					return;
+				};
+				$tplFuncs['appender'] = function($fieldNameFor) use (&$loopitem_memo, $tplFuncs, $fieldData, $mod){
+					if( $this->options['mode'] == 'finalize' ){
+						return;
+					}
+					if($mod->fields->{$fieldNameFor}->fieldType == 'loop'){
+						$appender = $this->mkAppender('loop', array(
+							'modId' => $this->data->modId,
+							'subModName' => $fieldNameFor,
+							'instancePath' => $this->options['instancePath'].'/fields.'.$fieldNameFor.'@'.count($fieldData[$fieldNameFor]),
+						));
+						echo $appender;
+
+					}elseif($mod->fields->{$fieldNameFor}->fieldType == 'module'){
+						$appender = $this->mkAppender('module', array(
+							'modId' => $this->data->modId,
+							'subModName' => null,
+							'instancePath' => $this->options['instancePath'].'/fields.'.$fieldNameFor.'@'.count($fieldData[$fieldNameFor]),
+						));
+						echo $appender;
+
+					}
+					return;
+				};
 
 				$twigHelper = new helper_twig();
-				$tmp_twig_rtn = $twigHelper->bind($src, $tplDataObj);
+				$tmp_twig_rtn = $twigHelper->bind($src, $tplDataObj, $tplFuncs);
 
 				if( !is_string($tmp_twig_rtn) ){
 					// var_dump( 'TemplateEngine Rendering ERROR.' );
@@ -460,147 +523,9 @@ class buildBowl{
 			}
 		}
 
-
-		if( is_string($d->html) && $this->options['mode'] == 'canvas' ){
-			// var_dump( $d->html );
-
-			$isSingleRootElement = function($tplSrc){
-				if( preg_match('/^\/bowl\.[^\/]+$/s', $this->options['instancePath']) ){
-					return false;
-				}
-				$tplSrc = preg_replace( '/\<\!\-\-[\s\S]*?\-\-\>/s', '', $tplSrc );
-				$tplSrc = preg_replace( '/\{\&[\s\S]*?\&\}/s', '', $tplSrc );
-				$tplSrc = preg_replace( '/\r\n|\r|\n/s', '', $tplSrc );
-				$tplSrc = preg_replace( '/\t/s', '', $tplSrc );
-				$tplSrc = preg_replace( '/^[\s\r\n]*/s', '', $tplSrc );
-				$tplSrc = preg_replace( '/[\s\r\n]*$/s', '', $tplSrc );
-
-				if( strlen($tplSrc) && strpos($tplSrc, '<') === 0 && preg_match('/\>$/s', $tplSrc) ){
-					// HTMLをパース
-					$simple_html_dom = str_get_html(
-						$tplSrc ,
-						false, // $lowercase
-						false, // $forceTagsClosed
-						DEFAULT_TARGET_CHARSET, // $target_charset
-						false, // $stripRN
-						DEFAULT_BR_TEXT, // $defaultBRText
-						DEFAULT_SPAN_TEXT // $defaultSpanText
-					);
-
-					if($simple_html_dom === false){
-						// HTMLパースに失敗
-					}else{
-						$attr = 'data-dec';
-						$simple_html_dom_ret = $simple_html_dom->find('>*');
-						if( count($simple_html_dom_ret) == 1 ){
-							// var_dump('------------------------------------------------------');
-							// var_dump($tplSrc);
-							return true;
-						}
-					}
-
-				}
-				return false;
-
-			};
-			$isSingleRootElement = $isSingleRootElement($d->html);
-
-			if( $isSingleRootElement ){
-				// HTMLをパース
-				$simple_html_dom = str_get_html(
-					$d->html ,
-					false, // $lowercase
-					false, // $forceTagsClosed
-					DEFAULT_TARGET_CHARSET, // $target_charset
-					false, // $stripRN
-					DEFAULT_BR_TEXT, // $defaultBRText
-					DEFAULT_SPAN_TEXT // $defaultSpanText
-				);
-
-				if($simple_html_dom === false){
-					// HTMLパースに失敗
-				}else{
-					$attr = 'data-dec';
-					$simple_html_dom_ret = $simple_html_dom->find('>*');
-
-					$simple_html_dom_ret[0]->{'data-broccoli-instance-path'} = $this->options['instancePath'];
-					if( @$this->options['subModName'] ){
-						$simple_html_dom_ret[0]->{'data-broccoli-sub-mod-name'} = $this->options['subModName'];
-					}
-					$simple_html_dom_ret[0]->{'data-broccoli-area-size-detection'} = (@$mod->info['areaSizeDetection'] ? $mod->info['areaSizeDetection'] : 'shallow');
-					$simple_html_dom_ret[0]->{'data-broccoli-module-name'} = (@$mod->info['name'] ? $mod->info['name'] : $mod->id);
-					$d->html = $simple_html_dom->outertext;
-				}
-
-			}else{
-				$tmp_html = '';
-				$tmp_html .= '<div';
-				$tmp_html .= ' data-broccoli-instance-path="'.htmlspecialchars($this->options['instancePath']).'"';
-				if( @$this->options['subModName'] ){
-					$tmp_html .= ' data-broccoli-sub-mod-name="'.htmlspecialchars($this->options['subModName']).'"';
-				}
-				$tmp_html .= ' data-broccoli-area-size-detection="'.htmlspecialchars((@$mod->info['areaSizeDetection'] ? $mod->info['areaSizeDetection'] : 'shallow')).'"';
-				// $tmp_html .= ' data-broccoli-is-single-root-element="'+(isSingleRootElement?'yes':'no').'"';
-				$tmp_html .= ' data-broccoli-module-name="'.htmlspecialchars((@$mod->info['name'] ? $mod->info['name'] : $mod->id)).'"';
-				$tmp_html .= '>';
-				$tmp_html .= $d->html;
-				$tmp_html .= '</div>';
-				$d->html = $tmp_html;
-			}
-		}
-
-
-
-		if(is_string($d->html)){
-			if( @$this->data->dec ){
-				// HTMLをパース
-				$simple_html_dom = str_get_html(
-					$d->html ,
-					false, // $lowercase
-					false, // $forceTagsClosed
-					DEFAULT_TARGET_CHARSET, // $target_charset
-					false, // $stripRN
-					DEFAULT_BR_TEXT, // $defaultBRText
-					DEFAULT_SPAN_TEXT // $defaultSpanText
-				);
-
-				if($simple_html_dom === false){
-					// HTMLパースに失敗
-				}else{
-					$attr = 'data-dec';
-					$simple_html_dom_ret = $simple_html_dom->find('*');
-					foreach( $simple_html_dom_ret as $simple_html_dom_ret_node ){
-						$simple_html_dom_ret_node->$attr = $this->data->dec;
-						break;
-					}
-					$d->html = $simple_html_dom->outertext;
-				}
-			}
-			if( @$this->data->anchor ){
-				// HTMLをパース
-				$simple_html_dom = str_get_html(
-					$d->html ,
-					false, // $lowercase
-					false, // $forceTagsClosed
-					DEFAULT_TARGET_CHARSET, // $target_charset
-					false, // $stripRN
-					DEFAULT_BR_TEXT, // $defaultBRText
-					DEFAULT_SPAN_TEXT // $defaultSpanText
-				);
-
-				if($simple_html_dom === false){
-					// HTMLパースに失敗
-				}else{
-					$attr = 'id';
-					$simple_html_dom_ret = $simple_html_dom->find('*');
-					foreach( $simple_html_dom_ret as $simple_html_dom_ret_node ){
-						$simple_html_dom_ret_node->$attr = $this->data->anchor;
-						break;
-					}
-					$d->html = $simple_html_dom->outertext;
-				}
-			}
-		}
+		$d->html = $this->finalize_module_instance_panel( $d->html, $mod, $this->options );
+		$d->html = $this->finalize_module_instance_dec( $d->html, $this->data );
+		$d->html = $this->finalize_module_instance_anchor( $d->html, $this->data );
 
 		return $d->html;
 	}
@@ -752,5 +677,171 @@ class buildBowl{
 		}
 		return $boolResult;
 	} // evaluateIfFieldCond()
+
+	/**
+	 * モジュールインスタンスの仕上げ処理: パネル情報を埋め込む
+	 */
+	private function finalize_module_instance_panel( $d_html, $mod, $options ){
+
+		if( is_string($d_html) && $options['mode'] == 'canvas' ){
+			// var_dump( $d_html );
+
+			$isSingleRootElement = function($tplSrc) use ($options){
+				if( preg_match('/^\/bowl\.[^\/]+$/s', $options['instancePath']) ){
+					return false;
+				}
+				$tplSrc = preg_replace( '/\<\!\-\-[\s\S]*?\-\-\>/s', '', $tplSrc );
+				$tplSrc = preg_replace( '/\{\&[\s\S]*?\&\}/s', '', $tplSrc );
+				$tplSrc = preg_replace( '/\r\n|\r|\n/s', '', $tplSrc );
+				$tplSrc = preg_replace( '/\t/s', '', $tplSrc );
+				$tplSrc = preg_replace( '/^[\s\r\n]*/s', '', $tplSrc );
+				$tplSrc = preg_replace( '/[\s\r\n]*$/s', '', $tplSrc );
+
+				if( strlen($tplSrc) && strpos($tplSrc, '<') === 0 && preg_match('/\>$/s', $tplSrc) ){
+					// HTMLをパース
+					$simple_html_dom = str_get_html(
+						$tplSrc ,
+						false, // $lowercase
+						false, // $forceTagsClosed
+						DEFAULT_TARGET_CHARSET, // $target_charset
+						false, // $stripRN
+						DEFAULT_BR_TEXT, // $defaultBRText
+						DEFAULT_SPAN_TEXT // $defaultSpanText
+					);
+
+					if($simple_html_dom === false){
+						// HTMLパースに失敗
+					}else{
+						$attr = 'data-dec';
+						$simple_html_dom_ret = $simple_html_dom->find('>*');
+						if( count($simple_html_dom_ret) == 1 ){
+							// var_dump('------------------------------------------------------');
+							// var_dump($tplSrc);
+							return true;
+						}
+					}
+
+				}
+				return false;
+
+			};
+			$isSingleRootElement = $isSingleRootElement($d_html);
+
+			if( $isSingleRootElement ){
+				// HTMLをパース
+				$simple_html_dom = str_get_html(
+					$d_html ,
+					false, // $lowercase
+					false, // $forceTagsClosed
+					DEFAULT_TARGET_CHARSET, // $target_charset
+					false, // $stripRN
+					DEFAULT_BR_TEXT, // $defaultBRText
+					DEFAULT_SPAN_TEXT // $defaultSpanText
+				);
+
+				if($simple_html_dom === false){
+					// HTMLパースに失敗
+				}else{
+					$attr = 'data-dec';
+					$simple_html_dom_ret = $simple_html_dom->find('>*');
+
+					$simple_html_dom_ret[0]->{'data-broccoli-instance-path'} = $options['instancePath'];
+					if( @$options['subModName'] ){
+						$simple_html_dom_ret[0]->{'data-broccoli-sub-mod-name'} = $options['subModName'];
+					}
+					$simple_html_dom_ret[0]->{'data-broccoli-area-size-detection'} = (@$mod->info['areaSizeDetection'] ? $mod->info['areaSizeDetection'] : 'shallow');
+					$simple_html_dom_ret[0]->{'data-broccoli-module-name'} = (@$mod->info['name'] ? $mod->info['name'] : $mod->id);
+					$d_html = $simple_html_dom->outertext;
+				}
+
+			}else{
+				$tmp_html = '';
+				$tmp_html .= '<div';
+				$tmp_html .= ' data-broccoli-instance-path="'.htmlspecialchars($options['instancePath']).'"';
+				if( @$options['subModName'] ){
+					$tmp_html .= ' data-broccoli-sub-mod-name="'.htmlspecialchars($options['subModName']).'"';
+				}
+				$tmp_html .= ' data-broccoli-area-size-detection="'.htmlspecialchars((@$mod->info['areaSizeDetection'] ? $mod->info['areaSizeDetection'] : 'shallow')).'"';
+				// $tmp_html .= ' data-broccoli-is-single-root-element="'+(isSingleRootElement?'yes':'no').'"';
+				$tmp_html .= ' data-broccoli-module-name="'.htmlspecialchars((@$mod->info['name'] ? $mod->info['name'] : $mod->id)).'"';
+				$tmp_html .= '>';
+				$tmp_html .= $d_html;
+				$tmp_html .= '</div>';
+				$d_html = $tmp_html;
+			}
+		}
+
+		return $d_html;
+	}
+
+	/**
+	 * モジュールインスタンスの仕上げ処理: anchor情報を埋め込む
+	 */
+	private function finalize_module_instance_anchor( $d_html, $data ){
+
+		if(is_string($d_html)){
+			if( @$data->anchor ){
+				// HTMLをパース
+				$simple_html_dom = str_get_html(
+					$d_html ,
+					false, // $lowercase
+					false, // $forceTagsClosed
+					DEFAULT_TARGET_CHARSET, // $target_charset
+					false, // $stripRN
+					DEFAULT_BR_TEXT, // $defaultBRText
+					DEFAULT_SPAN_TEXT // $defaultSpanText
+				);
+
+				if($simple_html_dom === false){
+					// HTMLパースに失敗
+				}else{
+					$attr = 'id';
+					$simple_html_dom_ret = $simple_html_dom->find('*');
+					foreach( $simple_html_dom_ret as $simple_html_dom_ret_node ){
+						$simple_html_dom_ret_node->$attr = $data->anchor;
+						break;
+					}
+					$d_html = $simple_html_dom->outertext;
+				}
+			}
+		}
+
+		return $d_html;
+	}
+
+	/**
+	 * モジュールインスタンスの仕上げ処理: DEC情報を埋め込む
+	 */
+	private function finalize_module_instance_dec( $d_html, $data ){
+
+		if(is_string($d_html)){
+			if( @$data->dec ){
+				// HTMLをパース
+				$simple_html_dom = str_get_html(
+					$d_html ,
+					false, // $lowercase
+					false, // $forceTagsClosed
+					DEFAULT_TARGET_CHARSET, // $target_charset
+					false, // $stripRN
+					DEFAULT_BR_TEXT, // $defaultBRText
+					DEFAULT_SPAN_TEXT // $defaultSpanText
+				);
+
+				if($simple_html_dom === false){
+					// HTMLパースに失敗
+				}else{
+					$attr = 'data-dec';
+					$simple_html_dom_ret = $simple_html_dom->find('*');
+					foreach( $simple_html_dom_ret as $simple_html_dom_ret_node ){
+						$simple_html_dom_ret_node->$attr = $data->dec;
+						break;
+					}
+					$d_html = $simple_html_dom->outertext;
+				}
+			}
+		}
+
+		return $d_html;
+	}
 
 }

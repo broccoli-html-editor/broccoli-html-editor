@@ -109,6 +109,130 @@ module.exports = function(broccoli, data, options, callback){
 		return rtn;
 	}
 
+	/**
+	 * モジュールインスタンスの仕上げ処理: パネル情報を埋め込む
+	 */
+	function finalize_module_instance_panel( $d_html, mod, options ){
+		if(typeof($d_html) !== typeof('')){
+			// console.log($d_html);
+			return $d_html;
+		}
+		if( options.mode == 'canvas' ){
+			// console.log( $d_html );
+
+			var isSingleRootElement = (function(tplSrc){
+				if( options.instancePath.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
+					return false;
+				}
+				tplSrc = tplSrc.replace( new RegExp('\\<\\!\\-\\-[\\s\\S]*?\\-\\-\\>','g'), '' );
+				tplSrc = tplSrc.replace( new RegExp('\\{\\&[\\s\\S]*?\\&\\}','g'), '' );
+				tplSrc = tplSrc.replace( new RegExp('\\r\\n|\\r|\\n','g'), '' );
+				tplSrc = tplSrc.replace( new RegExp('\\t','g'), '' );
+				tplSrc = tplSrc.replace( new RegExp('^[\\s\\r\\n]*'), '' );
+				tplSrc = tplSrc.replace( new RegExp('[\\s\\r\\n]*$'), '' );
+
+				if( tplSrc.length && tplSrc.indexOf('<') === 0 && tplSrc.match(new RegExp('\\>$')) ){
+					var htmlparser = require('htmlparser');
+					var handler = new htmlparser.DefaultHandler(function (error, dom) {
+						// console.log('htmlparser callback');
+						if (error){
+							// console.log(error);
+						}
+					});
+					// console.log('htmlparser after');
+					var parser = new htmlparser.Parser(handler);
+					parser.parseComplete(tplSrc);
+					// console.log(tplSrc);
+					// console.log(handler.dom);
+
+					if( handler.dom.length == 1 ){
+						// console.log('------------------------------------------------------');
+						// console.log(tplSrc);
+						return true;
+					}
+				}
+				return false;
+
+			})($d_html);
+
+			if( isSingleRootElement ){
+				var $ = cheerio.load($d_html, {decodeEntities: false});
+				var $1stElm = $('*').eq(0);
+				$1stElm.attr({ 'data-broccoli-instance-path': options.instancePath });
+				if( options.subModName ){
+					$1stElm.attr({ 'data-broccoli-sub-mod-name': options.subModName });
+				}
+				$1stElm.attr({ 'data-broccoli-area-size-detection': (mod.info.areaSizeDetection||'shallow') });
+				$1stElm.attr({ 'data-broccoli-module-name': (mod.info.name||mod.id) });
+				$d_html = $.html();
+			}else{
+				var html = '';
+				html += '<div';
+				html += ' data-broccoli-instance-path="'+php.htmlspecialchars(options.instancePath)+'"';
+				if( options.subModName ){
+					html += ' data-broccoli-sub-mod-name="'+php.htmlspecialchars(options.subModName)+'"';
+				}
+				html += ' data-broccoli-area-size-detection="'+php.htmlspecialchars((mod.info.areaSizeDetection||'shallow'))+'"';
+				// html += ' data-broccoli-is-single-root-element="'+(isSingleRootElement?'yes':'no')+'"';
+				html += ' data-broccoli-module-name="'+php.htmlspecialchars((mod.info.name||mod.id))+'"';
+				html += '>';
+				html += $d_html;
+				html += '</div>';
+				$d_html = html;
+			}
+		}
+		return $d_html;
+	}
+
+	/**
+	 * モジュールインスタンスの仕上げ処理: anchor情報を埋め込む
+	 */
+	function finalize_module_instance_anchor( $d_html, data ){
+		if(typeof($d_html) !== typeof('')){
+			// console.log($d_html);
+			return $d_html;
+		}
+
+		if( data.dec ){
+			var $ = cheerio.load($d_html, {decodeEntities: false});
+			var $1stElm = $('*').eq(0);
+			$1stElm.attr({ 'data-dec': data.dec });
+			$d_html = $.html();
+		}
+		if( data.anchor ){
+			var $ = cheerio.load($d_html, {decodeEntities: false});
+			var $1stElm = $('*').eq(0);
+			$1stElm.attr({ 'id': data.anchor });
+			$d_html = $.html();
+		}
+
+		return $d_html;
+	}
+
+	/**
+	 * モジュールインスタンスの仕上げ処理: DEC情報を埋め込む
+	 */
+	function finalize_module_instance_dec( $d_html, data ){
+		if(typeof($d_html) !== typeof('')){
+			// console.log($d_html);
+			return $d_html;
+		}
+
+		if( data.dec ){
+			var $ = cheerio.load($d_html, {decodeEntities: false});
+			var $1stElm = $('*').eq(0);
+			$1stElm.attr({ 'data-dec': data.dec });
+			$d_html = $.html();
+		}
+		if( data.anchor ){
+			var $ = cheerio.load($d_html, {decodeEntities: false});
+			var $1stElm = $('*').eq(0);
+			$1stElm.attr({ 'id': data.anchor });
+			$d_html = $.html();
+		}
+
+		return $d_html;
+	}
 
 	it79.fnc(
 		{},
@@ -255,12 +379,73 @@ module.exports = function(broccoli, data, options, callback){
 								if(mod.subModName){
 									d.html = tplDataObj;
 								}else{
-									// 環境変数登録
+									// Twig: 環境変数登録
 									tplDataObj._ENV = {
 										"mode": options.mode
 									};
 
+									// Twig: カスタム関数登録
+									var $loopitem_memo = {
+										'nest': [],
+										'status': {}
+									};
 									try {
+										twig.extendFunction("loopitem_start", function(fieldNameFor) {
+											if( options['mode'] == 'finalize' ){
+												return '';
+											}
+											$loopitem_memo['nest'].push(fieldNameFor);
+											if( !$loopitem_memo['status'][fieldNameFor] ){
+												$loopitem_memo['status'][fieldNameFor] = {
+													'index': 0,
+													'closed': false
+												};
+											}else{
+												$loopitem_memo['status'][fieldNameFor]['index'] ++;
+												$loopitem_memo['status'][fieldNameFor]['closed'] = false;
+											}
+
+											var $html = '<div></div>';
+											var $tmp_options = JSON.parse(JSON.stringify(options));
+											$tmp_options['instancePath'] += '/fields.'+fieldNameFor+'@'+($loopitem_memo['status'][fieldNameFor]['index']);
+											$tmp_options['subModName'] = fieldNameFor;
+											$html = finalize_module_instance_panel( $html, mod, $tmp_options );
+											$html = $html.replace(/\<\/div\>$/, '');
+											return $html;
+										});
+										twig.extendFunction("loopitem_end", function() {
+											if( options['mode'] == 'finalize' ){
+												return '';
+											}
+
+											var fieldNameFor = $loopitem_memo['nest'].pop();
+											$loopitem_memo['status'][fieldNameFor]['closed'] = true;
+
+											return '</div>';
+										});
+										twig.extendFunction("appender", function(fieldNameFor) {
+											if( options.mode == 'finalize' ){
+												return '';
+											}
+											if(mod.fields[fieldNameFor].fieldType == 'loop'){
+												var $appender = mkAppender('loop', {
+													'modId': data.modId,
+													'subModName': fieldNameFor,
+													'instancePath': options.instancePath+'/fields.'+fieldNameFor+'@'+(fieldData[fieldNameFor].length)
+												});
+												return $appender;
+
+											}else if(mod.fields[fieldNameFor].fieldType == 'module'){
+												var $appender = mkAppender('module', {
+													'modId': data.modId,
+													'subModName': null,
+													'instancePath': options.instancePath+'/fields.'+fieldNameFor+'@'+count(fieldData[fieldNameFor].length)
+												});
+												return $appender;
+
+											}
+											return '';
+										});
 										rtn = new twig.twig({
 											'data': src
 										}).render(tplDataObj);
@@ -609,108 +794,28 @@ module.exports = function(broccoli, data, options, callback){
 				// canvasモードのとき、scriptタグは削除する。
 				// scriptの挙動がGUI編集画面を破壊する可能性があるため。
 				if( options.mode == 'canvas' ){
-					var $ = cheerio.load(d.html, {decodeEntities: false});
-					var $script = $('script');
-					$script.each(function(idx, elm){
-						$(this).replaceWith( $('<div style="color:#eee; background-color: #f00; border: 3px solid #f00; text-align: center;">script element</div>') );
-					});
-					d.html = $.html();
+					if( typeof(d.html) == typeof('') ){
+						var $ = cheerio.load(d.html, {decodeEntities: false});
+						var $script = $('script');
+						$script.each(function(idx, elm){
+							$(this).replaceWith( $('<div style="color:#eee; background-color: #f00; border: 3px solid #f00; text-align: center;">script element</div>') );
+						});
+						d.html = $.html();
+					}
 				}
 				it1.next(d);
 				return;
 			} ,
 			function(it1, d){
-				if(typeof(d.html) !== typeof('')){
-					// console.log(d.html);
-					it1.next(d);
-					return;
-				}
-				if( options.mode == 'canvas' ){
-					// console.log( d.html );
-
-					var isSingleRootElement = (function(tplSrc){
-						if( options.instancePath.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
-							return false;
-						}
-						tplSrc = tplSrc.replace( new RegExp('\\<\\!\\-\\-[\\s\\S]*?\\-\\-\\>','g'), '' );
-						tplSrc = tplSrc.replace( new RegExp('\\{\\&[\\s\\S]*?\\&\\}','g'), '' );
-						tplSrc = tplSrc.replace( new RegExp('\\r\\n|\\r|\\n','g'), '' );
-						tplSrc = tplSrc.replace( new RegExp('\\t','g'), '' );
-						tplSrc = tplSrc.replace( new RegExp('^[\\s\\r\\n]*'), '' );
-						tplSrc = tplSrc.replace( new RegExp('[\\s\\r\\n]*$'), '' );
-
-						if( tplSrc.length && tplSrc.indexOf('<') === 0 && tplSrc.match(new RegExp('\\>$')) ){
-							var htmlparser = require('htmlparser');
-							var handler = new htmlparser.DefaultHandler(function (error, dom) {
-								// console.log('htmlparser callback');
-								if (error){
-									// console.log(error);
-								}
-							});
-							// console.log('htmlparser after');
-							var parser = new htmlparser.Parser(handler);
-							parser.parseComplete(tplSrc);
-							// console.log(tplSrc);
-							// console.log(handler.dom);
-
-							if( handler.dom.length == 1 ){
-								// console.log('------------------------------------------------------');
-								// console.log(tplSrc);
-								return true;
-							}
-						}
-						return false;
-
-					})(d.html);
-
-					if( isSingleRootElement ){
-						var $ = cheerio.load(d.html, {decodeEntities: false});
-						var $1stElm = $('*').eq(0);
-						$1stElm.attr({ 'data-broccoli-instance-path': options.instancePath });
-						if( options.subModName ){
-							$1stElm.attr({ 'data-broccoli-sub-mod-name': options.subModName });
-						}
-						$1stElm.attr({ 'data-broccoli-area-size-detection': (mod.info.areaSizeDetection||'shallow') });
-						$1stElm.attr({ 'data-broccoli-module-name': (mod.info.name||mod.id) });
-						d.html = $.html();
-					}else{
-						var html = '';
-						html += '<div';
-						html += ' data-broccoli-instance-path="'+php.htmlspecialchars(options.instancePath)+'"';
-						if( options.subModName ){
-							html += ' data-broccoli-sub-mod-name="'+php.htmlspecialchars(options.subModName)+'"';
-						}
-						html += ' data-broccoli-area-size-detection="'+php.htmlspecialchars((mod.info.areaSizeDetection||'shallow'))+'"';
-						// html += ' data-broccoli-is-single-root-element="'+(isSingleRootElement?'yes':'no')+'"';
-						html += ' data-broccoli-module-name="'+php.htmlspecialchars((mod.info.name||mod.id))+'"';
-						html += '>';
-						html += d.html;
-						html += '</div>';
-						d.html = html;
-					}
-				}
+				d.html = finalize_module_instance_panel(d.html, mod, options);
 				it1.next(d);
 			} ,
 			function(it1, d){
-				if(typeof(d.html) !== typeof('')){
-					// console.log(d.html);
-					it1.next(d);
-					return;
-				}
-
-				if( data.dec ){
-					var $ = cheerio.load(d.html, {decodeEntities: false});
-					var $1stElm = $('*').eq(0);
-					$1stElm.attr({ 'data-dec': data.dec });
-					d.html = $.html();
-				}
-				if( data.anchor ){
-					var $ = cheerio.load(d.html, {decodeEntities: false});
-					var $1stElm = $('*').eq(0);
-					$1stElm.attr({ 'id': data.anchor });
-					d.html = $.html();
-				}
-
+				d.html = finalize_module_instance_dec(d.html, data);
+				it1.next(d);
+			} ,
+			function(it1, d){
+				d.html = finalize_module_instance_anchor(d.html, data);
 				it1.next(d);
 			} ,
 			function(it1, d){

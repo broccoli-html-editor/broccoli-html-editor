@@ -12,12 +12,19 @@
 
 <div class="twig_template-loop">
 {% for loopRow in loop %}
-{{dump(loopRow.text2)}}
-<p>{{loopRow.text1}}</p>
+{{ loopitem_start('loop') }}
+<div>
+    <div>{{ loopRow.text1 }}</div>
+    <div>{{ loopRow.text2 }}</div>
+    {# {{dump(loopRow.text2)}} #}
+</div>
+{{ loopitem_end() }}
 {% endfor %}
+{{ appender('loop') }}
 
-{{dump(loop)}}
-{{ loop[2].text1 }}
+
+{# {{dump(loop)}}
+{{ loop[2].text1 }} #}
 </div>
 
 {%if _ENV.mode=="canvas"%}
