@@ -186,44 +186,21 @@ module.exports = function(broccoli){
 	 * エディタUIで編集した内容を検証する (Client Side)
 	 */
 	this.validateEditorContent = function( elm, mod, callback ){
-		var errorMsgs = [];
-		// errorMsgs.push('エラーがあります。');
-		if( !mod.validate ){
-			callback([]);
-			return;
-		}
 		var $dom = $(elm);
-		var src;
+		var src = '';
 		if( $dom.find('input[type=text]').length ){
 			src = $dom.find('input[type=text]').val();
 		}else if( editorLib == 'ace' && mod.aceEditor ){
 			src = mod.aceEditor.getValue();
-		}else{
+		}else if( $dom.find('textarea').length ){
 			src = $dom.find('textarea').val();
 		}
 		src = JSON.parse( JSON.stringify(src) );
 
-		new Promise(function(rlv){rlv();})
-			.then(function(){ return new Promise(function(rlv, rjt){
-				it79.ary(
-					mod.validate,
-					function(it2, row, idx){
-						if( row == 'required' ){
-							if( !src.length ){
-								errorMsgs.push('この項目は必ず入力してください。');
-							}
-						}
-						it2.next();
-					},
-					function(){
-						rlv();
-					}
-				);
-			}); })
-			.then(function(){ return new Promise(function(rlv, rjt){
-				callback( errorMsgs );
-			}); })
-		;
+		// Validation
+		broccoli.validate(src, mod.validate, function(errorMsgs){
+			callback( errorMsgs );
+		});
 		return this;
 	}
 

@@ -171,12 +171,6 @@ module.exports = function(broccoli){
 	 * エディタUIで編集した内容を検証する (Client Side)
 	 */
 	this.validateEditorContent = function( elm, mod, callback ){
-		var errorMsgs = [];
-		if( !mod.validate ){
-			callback([]);
-			return;
-		}
-
 		var $dom = $(elm);
 		// console.log($dom.html());
 		if(typeof(data) !== typeof({})){
@@ -192,27 +186,10 @@ module.exports = function(broccoli){
 		data.src = JSON.parse( JSON.stringify(data.src) );
 		data.editor = $dom.find('input[type=radio][name=editor-'+mod.name+']:checked').val();
 
-		new Promise(function(rlv){rlv();})
-			.then(function(){ return new Promise(function(rlv, rjt){
-				it79.ary(
-					mod.validate,
-					function(it2, row, idx){
-						if( row == 'required' ){
-							if( !data || !data.src.length ){
-								errorMsgs.push('この項目は必ず入力してください。');
-							}
-						}
-						it2.next();
-					},
-					function(){
-						rlv();
-					}
-				);
-			}); })
-			.then(function(){ return new Promise(function(rlv, rjt){
-				callback( errorMsgs );
-			}); })
-		;
+		// Validation
+		broccoli.validate(data.src, mod.validate, function(errorMsgs){
+			callback( errorMsgs );
+		});
 		return this;
 	}
 
