@@ -425,7 +425,7 @@ module.exports = function(broccoli, data, options, callback){
 										});
 										twig.extendFunction("appender", function(fieldNameFor) {
 											if( options.mode == 'finalize' ){
-												return;
+												return '';
 											}
 											if(mod.fields[fieldNameFor].fieldType == 'loop'){
 												var $appender = mkAppender('loop', {
@@ -444,7 +444,7 @@ module.exports = function(broccoli, data, options, callback){
 												return $appender;
 
 											}
-											return;
+											return '';
 										});
 										rtn = new twig.twig({
 											'data': src
@@ -794,12 +794,14 @@ module.exports = function(broccoli, data, options, callback){
 				// canvasモードのとき、scriptタグは削除する。
 				// scriptの挙動がGUI編集画面を破壊する可能性があるため。
 				if( options.mode == 'canvas' ){
-					var $ = cheerio.load(d.html, {decodeEntities: false});
-					var $script = $('script');
-					$script.each(function(idx, elm){
-						$(this).replaceWith( $('<div style="color:#eee; background-color: #f00; border: 3px solid #f00; text-align: center;">script element</div>') );
-					});
-					d.html = $.html();
+					if( typeof(d.html) == typeof('') ){
+						var $ = cheerio.load(d.html, {decodeEntities: false});
+						var $script = $('script');
+						$script.each(function(idx, elm){
+							$(this).replaceWith( $('<div style="color:#eee; background-color: #f00; border: 3px solid #f00; text-align: center;">script element</div>') );
+						});
+						d.html = $.html();
+					}
 				}
 				it1.next(d);
 				return;

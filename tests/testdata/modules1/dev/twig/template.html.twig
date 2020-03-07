@@ -14,9 +14,9 @@
 {% for loopRow in loop %}
 {{ loopitem_start('loop') }}
 <div>
-{{loopRow.text2}}
-{# {{dump(loopRow.text2)}} #}
-<p>{{loopRow.text1}}</p>
+    <div>{{ loopRow.text1 }}</div>
+    <div>{{ loopRow.text2 }}</div>
+    {# {{dump(loopRow.text2)}} #}
 </div>
 {{ loopitem_end() }}
 {% endfor %}
