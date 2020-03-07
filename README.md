@@ -298,6 +298,7 @@ $ composer test
 
 - `script` フィールドに `escape` オプションを追加。
 - Twigテンプレートで `loopitem_start($fieldName)`、 `loopitem_end()`、 `appender($fieldName)` を使えるようになり、Twigテンプレートでも loopフィールドのアペンダーを利用できるようになった。
+- 各フィールドのバリデーションルール `required` を追加。
 - その他の細かい修正。
 
 ### broccoli-html-editor v0.3.14 (2020年2月24日)

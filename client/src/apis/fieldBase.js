@@ -8,6 +8,7 @@ module.exports = function(broccoli){
 	var _this = this;
 	var $ = require('jquery');
 	var utils79 = require('utils79');
+	var it79 = require('iterate79');
 	var editorLib = null;
 	try {
 		if(window.ace){
@@ -187,9 +188,42 @@ module.exports = function(broccoli){
 	this.validateEditorContent = function( elm, mod, callback ){
 		var errorMsgs = [];
 		// errorMsgs.push('エラーがあります。');
-		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
-			callback( errorMsgs );
-		}); });
+		if( !mod.validate ){
+			callback([]);
+			return;
+		}
+		var $dom = $(elm);
+		var src;
+		if( $dom.find('input[type=text]').length ){
+			src = $dom.find('input[type=text]').val();
+		}else if( editorLib == 'ace' && mod.aceEditor ){
+			src = mod.aceEditor.getValue();
+		}else{
+			src = $dom.find('textarea').val();
+		}
+		src = JSON.parse( JSON.stringify(src) );
+
+		new Promise(function(rlv){rlv();})
+			.then(function(){ return new Promise(function(rlv, rjt){
+				it79.ary(
+					mod.validate,
+					function(it2, row, idx){
+						if( row == 'required' ){
+							if( !src.length ){
+								errorMsgs.push('この項目は必ず入力してください。');
+							}
+						}
+						it2.next();
+					},
+					function(){
+						rlv();
+					}
+				);
+			}); })
+			.then(function(){ return new Promise(function(rlv, rjt){
+				callback( errorMsgs );
+			}); })
+		;
 		return this;
 	}
 

@@ -1,5 +1,7 @@
 module.exports = function(broccoli){
+	var $ = require('jquery');
 	var php = require('phpjs');
+	var it79 = require('iterate79');
 	var utils79 = require('utils79');
 	var editorLib = null;
 	try {
@@ -163,6 +165,55 @@ module.exports = function(broccoli){
 			callback(data);
 		}); });
 		return;
+	}
+
+	/**
+	 * エディタUIで編集した内容を検証する (Client Side)
+	 */
+	this.validateEditorContent = function( elm, mod, callback ){
+		var errorMsgs = [];
+		if( !mod.validate ){
+			callback([]);
+			return;
+		}
+
+		var $dom = $(elm);
+		// console.log($dom.html());
+		if(typeof(data) !== typeof({})){
+			data = {};
+		}
+		if( $dom.find('input[type=text]').length ){
+			data.src = $dom.find('input[type=text]').val();
+		}else if( editorLib == 'ace' && mod.aceEditor ){
+			data.src = mod.aceEditor.getValue();
+		}else{
+			data.src = $dom.find('textarea').val();
+		}
+		data.src = JSON.parse( JSON.stringify(data.src) );
+		data.editor = $dom.find('input[type=radio][name=editor-'+mod.name+']:checked').val();
+
+		new Promise(function(rlv){rlv();})
+			.then(function(){ return new Promise(function(rlv, rjt){
+				it79.ary(
+					mod.validate,
+					function(it2, row, idx){
+						if( row == 'required' ){
+							if( !data || !data.src.length ){
+								errorMsgs.push('この項目は必ず入力してください。');
+							}
+						}
+						it2.next();
+					},
+					function(){
+						rlv();
+					}
+				);
+			}); })
+			.then(function(){ return new Promise(function(rlv, rjt){
+				callback( errorMsgs );
+			}); })
+		;
+		return this;
 	}
 
 }
