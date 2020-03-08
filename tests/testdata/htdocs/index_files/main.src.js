@@ -78,6 +78,20 @@ window.main = new (function(){
 
 					}
 				},
+				'customValidationRules': {
+					'customValidation1': function(value, req, attribute, passes) {
+						// カスタムバリデーションを定義します。
+						// フィールドの validate に登録して呼び出すことができます。
+						console.log('---- customValidation1');
+						console.log(value, req, attribute);
+						var ok = (value == 'customvalidation');
+						if( ok ){
+							passes(); // if available
+						}else{
+							passes(false, 'The '+attribute+' is not valid.'); // if not available
+						}
+					}
+				},
 				'gpiBridge': function(api, options, callback){
 					// General Purpose Interface Bridge
 					// console.info('=----=----=', api, options);

@@ -47,7 +47,8 @@
                 "fieldType": "input",
                 "type": "multitext",
                 "validate": [
-                    "required"
+                    "required",
+                    "customValidation1:30"
                 ]
             }
         }

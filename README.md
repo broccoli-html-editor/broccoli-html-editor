@@ -111,6 +111,18 @@ broccoli.init(
 				// customFields オブジェクトのキー(ここでは custom1)が、フィールドの名称になります。
 			}
 		},
+		'customValidationRules': {
+			'customValidation1': function(value, req, attribute, passes) {
+				// カスタムバリデーションを定義します。
+				// フィールドの validate に登録して呼び出すことができます。
+				var ok = true;
+				if( ok ){
+					passes(); // if available
+				}else{
+					passes(false, 'The '+attribute+' is not valid.'); // if not available
+				}
+			}
+		},
 		'gpiBridge': function(api, options, callback){
 			// GPI(General Purpose Interface) Bridge
 			// broccoliは、バックグラウンドで様々なデータ通信を行います。
@@ -299,6 +311,7 @@ $ composer test
 - `script` フィールドに `escape` オプションを追加。
 - Twigテンプレートで `loopitem_start($fieldName)`、 `loopitem_end()`、 `appender($fieldName)` を使えるようになり、Twigテンプレートでも loopフィールドのアペンダーを利用できるようになった。
 - 各フィールドのオプション `validate` を追加。 npmパッケージ `validatorjs` のバリデーション機能が統合された。
+- クライアントサイドに `customValidationRules` オプションを追加。
 - その他の細かい修正。
 
 ### broccoli-html-editor v0.3.14 (2020年2月24日)

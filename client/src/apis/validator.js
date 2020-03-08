@@ -13,6 +13,12 @@ module.exports = function(broccoli){
 		Validator.setMessages('en', validatorLang[broccoli.options.lang]);
 	}
 
+	if( broccoli.options.customValidationRules ){
+		for( var tmpRuleName in broccoli.options.customValidationRules ){
+			Validator.registerAsync(tmpRuleName, broccoli.options.customValidationRules[tmpRuleName]);
+		}
+	}
+
 	this.validate = function(attr, value, rules, mod, callback){
 		callback = callback || function(){};
 		var errorMsgs = [];
@@ -36,11 +42,13 @@ module.exports = function(broccoli){
 		new Promise(function(rlv){rlv();})
 			.then(function(){ return new Promise(function(rlv, rjt){
 				var validation = new Validator(validateData, validateRules);
-				if( !validation.passes() ){
+				
+				validation.checkAsync(function(){
+					rlv();
+				}, function(){
 					errorMsgs = errorMsgs.concat(validation.errors.get(attr));
-				}
-				rlv();
-
+					rlv();
+				});
 			}); })
 			.then(function(){ return new Promise(function(rlv, rjt){
 				callback( errorMsgs );
