@@ -55,6 +55,7 @@
     "gulp-twig": "^0.3.0",
     "gulp-uglify": "^1.2.0",
     "mocha": "^2.1.0",
-    "px2style": "^2.0.5"
+    "px2style": "^2.0.5",
+    "validatorjs": "^3.18.1"
   }
 }

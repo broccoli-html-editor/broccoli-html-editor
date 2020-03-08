@@ -2,6 +2,7 @@
  * validate.js
  */
 module.exports = function(broccoli){
+	var Validator = require('validatorjs');
 	var it79 = require('iterate79');
 
 	this.validate = function(value, validators, callback){
