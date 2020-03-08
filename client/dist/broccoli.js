@@ -3987,7 +3987,8 @@ module.exports = function(broccoli){
 	var it79 = require('iterate79');
 	var php = require('phpjs');
 	var $ = require('jquery');
-	var contentsElements;
+	var moduleList = {};
+	var contentsElements = [];
 	var timerFormWatcher;
 
 	var $findWindow;
@@ -4038,16 +4039,88 @@ module.exports = function(broccoli){
 			{},
 			[
 				function( it1, data ){
-					broccoli.postMessenger.send(
-						'getAllInstance',
+					// --------------------------------------
+					// モジュール定義を整理
+					broccoli.gpi(
+						'getModulePackageList',
 						{},
-						function(_contentsElements){
-							// console.log(_contentsElements);
-							contentsElements = _contentsElements;
+						function(tmpAllModuleList){
+							// console.log(tmpAllModuleList);
+
+							for(var pkgId in tmpAllModuleList){
+								var pkg = tmpAllModuleList[pkgId];
+								for( var catId in pkg.categories ){
+									var cat = pkg.categories[catId];
+									for( var modId in cat.modules ){
+										var mod = cat.modules[modId];
+										moduleList[mod.moduleId] = mod;
+									}
+								}
+							}
+							// console.log(moduleList);
 							it1.next(data);
 						}
 					);
 				} ,
+				function( it1, data ){
+					// --------------------------------------
+					// コンテンツデータを整理
+					broccoli.gpi(
+						'getContentsDataJson',
+						{},
+						function(result){
+							// console.log(result);
+							function parseModuleRecursive(instancePath, instance){
+								console.log(instancePath, instance);
+								var data = {};
+								data.instancePath = instancePath;
+								data.modId = instance.modId;
+								data.content = '';
+								contentsElements.push(data);
+
+								var mod = moduleList[instance.modId];
+								// console.log(mod);
+
+								if( instance.fields ){
+									for( var fieldName in instance.fields ){
+										var fieldType = '';
+										if( mod && mod.moduleInfo && mod.moduleInfo.interface && mod.moduleInfo.interface[fieldName] ){
+											fieldType = mod.moduleInfo.interface[fieldName].fieldType;
+										}
+
+										if( fieldType == 'module' || fieldType == 'loop' ){
+											for( var idx in instance.fields[fieldName] ){
+												parseModuleRecursive(instancePath+'/fields.'+fieldName+'@'+idx, instance.fields[fieldName][idx]);
+											}
+
+										}else{
+											if( typeof(instance.fields[fieldName]) == typeof('') ){
+												data.content += instance.fields[fieldName];
+											}else{
+												data.content += JSON.stringify(instance.fields[fieldName]);
+											}
+										}
+										// instance.fields[fieldName];
+									}
+								}
+
+							}
+							// contentsElements
+							for( var bowlName in result.bowl ){
+								for( var fieldName in result.bowl[bowlName].fields ){
+									for( var idx in result.bowl[bowlName].fields[fieldName] ){
+										parseModuleRecursive('/bowl.'+bowlName+'/fields.'+fieldName+'@'+idx, result.bowl[bowlName].fields[fieldName][idx]);
+									}
+								}
+							}
+
+							// console.log('=-=-=-=-=-=');
+							// console.log(contentsElements);
+							it1.next(data);
+						}
+					);
+				} ,
+
 				function( it1, data ){
 					broccoli.lightbox( function( lbElm ){
 						$findWindow = $(lbElm);
@@ -4091,12 +4164,12 @@ module.exports = function(broccoli){
 		$elmResult.html('');
 		for( var idx in contentsElements ){
 			var instance = contentsElements[idx];
-			if( !instance.instancePath.match(keyword) ){
+			if( !instance.content.match(keyword) ){
 				continue;
 			}
 
 			var $instance = $('<a>');
-			$instance.text(instance.instancePath);
+			$instance.text(instance.content);
 			$instance.attr({
 				'href':'javascript:;',
 				'data-broccoli-instance-path': instance.instancePath
