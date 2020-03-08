@@ -1335,8 +1335,8 @@
 		/**
 		 * バリデーション
 		 */
-		this.validate = function(val, validators, callback){
-			this.valiidator.validate(val, validators, callback);
+		this.validate = function(attr, val, rules, mod, callback){
+			this.valiidator.validate(attr, val, rules, mod, callback);
 			return;
 		}
 

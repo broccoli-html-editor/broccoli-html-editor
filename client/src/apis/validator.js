@@ -13,24 +13,31 @@ module.exports = function(broccoli){
 		Validator.setMessages('en', validatorLang[broccoli.options.lang]);
 	}
 
-	this.validate = function(value, validators, callback){
+	this.validate = function(attr, value, rules, mod, callback){
 		callback = callback || function(){};
 		var errorMsgs = [];
 		// errorMsgs.push('エラーがあります。');
-		if( !validators ){
+		if( !rules ){
 			callback([]);
 			return;
 		}
+		if( !attr ){
+			attr = mod.name;
+		}
+		if( !attr ){
+			attr = 'targer';
+		}
+
+		var validateData = {};
+		validateData[attr] = value;
+		var validateRules = {};
+		validateRules[attr] = rules;
 
 		new Promise(function(rlv){rlv();})
 			.then(function(){ return new Promise(function(rlv, rjt){
-				var validation = new Validator({
-					'target': value
-				}, {
-					'target': validators
-				});
+				var validation = new Validator(validateData, validateRules);
 				if( !validation.passes() ){
-					errorMsgs = errorMsgs.concat(validation.errors.get('target'));
+					errorMsgs = errorMsgs.concat(validation.errors.get(attr));
 				}
 				rlv();
 

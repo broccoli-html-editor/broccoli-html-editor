@@ -187,7 +187,7 @@ module.exports = function(broccoli){
 		data.editor = $dom.find('input[type=radio][name=editor-'+mod.name+']:checked').val();
 
 		// Validation
-		broccoli.validate(data.src, mod.validate, function(errorMsgs){
+		broccoli.validate((mod.label||mod.name), data.src, mod.validate, mod, function(errorMsgs){
 			callback( errorMsgs );
 		});
 		return this;

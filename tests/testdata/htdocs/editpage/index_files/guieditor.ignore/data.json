@@ -155,7 +155,9 @@
                                 "src": "",
                                 "editor": "markdown"
                             }
-                        }
+                        },
+                        "anchor": "",
+                        "dec": ""
                     },
                     {
                         "modId": "testMod1:units/cols3",

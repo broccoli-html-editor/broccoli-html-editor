@@ -9,6 +9,7 @@
             "text_required": {
                 "fieldType": "input",
                 "type": "text",
+                "label": "テキスト入力 (必須)",
                 "validate": [
                     "required"
                 ]
@@ -24,7 +25,8 @@
                 "fieldType": "input",
                 "type": "html_attr_text",
                 "validate": [
-                    "required"
+                    "required",
+                    "email"
                 ]
             },
             "href_required": {

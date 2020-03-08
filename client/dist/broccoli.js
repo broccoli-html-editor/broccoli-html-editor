@@ -1336,8 +1336,8 @@
 		/**
 		 * バリデーション
 		 */
-		this.validate = function(val, validators, callback){
-			this.valiidator.validate(val, validators, callback);
+		this.validate = function(attr, val, rules, mod, callback){
+			this.valiidator.validate(attr, val, rules, mod, callback);
 			return;
 		}
 
@@ -3910,8 +3910,11 @@ module.exports = function(broccoli){
 		}
 		src = JSON.parse( JSON.stringify(src) );
 
+		var rules = mod.validate;
+		var attr = (mod.label || mod.name);
+
 		// Validation
-		broccoli.validate(src, mod.validate, function(errorMsgs){
+		broccoli.validate(attr, src, rules, mod, function(errorMsgs){
 			callback( errorMsgs );
 		});
 		return this;
@@ -3929,7 +3932,7 @@ module.exports = function(broccoli){
 			src = $dom.find('input[type=text]').val();
 		}else if( editorLib == 'ace' && mod.aceEditor ){
 			src = mod.aceEditor.getValue();
-		}else{
+		}else if( $dom.find('textarea').length ){
 			src = $dom.find('textarea').val();
 		}
 		src = JSON.parse( JSON.stringify(src) );
@@ -5763,24 +5766,31 @@ module.exports = function(broccoli){
 		Validator.setMessages('en', validatorLang[broccoli.options.lang]);
 	}
 
-	this.validate = function(value, validators, callback){
+	this.validate = function(attr, value, rules, mod, callback){
 		callback = callback || function(){};
 		var errorMsgs = [];
 		// errorMsgs.push('エラーがあります。');
-		if( !validators ){
+		if( !rules ){
 			callback([]);
 			return;
 		}
+		if( !attr ){
+			attr = mod.name;
+		}
+		if( !attr ){
+			attr = 'targer';
+		}
+
+		var validateData = {};
+		validateData[attr] = value;
+		var validateRules = {};
+		validateRules[attr] = rules;
 
 		new Promise(function(rlv){rlv();})
 			.then(function(){ return new Promise(function(rlv, rjt){
-				var validation = new Validator({
-					'target': value
-				}, {
-					'target': validators
-				});
+				var validation = new Validator(validateData, validateRules);
 				if( !validation.passes() ){
-					errorMsgs = errorMsgs.concat(validation.errors.get('target'));
+					errorMsgs = errorMsgs.concat(validation.errors.get(attr));
 				}
 				rlv();
 
@@ -6685,7 +6695,7 @@ module.exports = function(broccoli){
 		data.editor = $dom.find('input[type=radio][name=editor-'+mod.name+']:checked').val();
 
 		// Validation
-		broccoli.validate(data.src, mod.validate, function(errorMsgs){
+		broccoli.validate((mod.label||mod.name), data.src, mod.validate, mod, function(errorMsgs){
 			callback( errorMsgs );
 		});
 		return this;

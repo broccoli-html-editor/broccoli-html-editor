@@ -197,8 +197,11 @@ module.exports = function(broccoli){
 		}
 		src = JSON.parse( JSON.stringify(src) );
 
+		var rules = mod.validate;
+		var attr = (mod.label || mod.name);
+
 		// Validation
-		broccoli.validate(src, mod.validate, function(errorMsgs){
+		broccoli.validate(attr, src, rules, mod, function(errorMsgs){
 			callback( errorMsgs );
 		});
 		return this;
@@ -216,7 +219,7 @@ module.exports = function(broccoli){
 			src = $dom.find('input[type=text]').val();
 		}else if( editorLib == 'ace' && mod.aceEditor ){
 			src = mod.aceEditor.getValue();
-		}else{
+		}else if( $dom.find('textarea').length ){
 			src = $dom.find('textarea').val();
 		}
 		src = JSON.parse( JSON.stringify(src) );
