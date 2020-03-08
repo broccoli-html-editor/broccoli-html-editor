@@ -94,6 +94,7 @@
 			this.instanceTreeView = new (require( './instanceTreeView.js' ))(this);
 			this.editWindow = new (require( './editWindow.js' ))(this);
 			this.fieldBase = new (require('./fieldBase.js'))(this);
+			this.valiidator = new (require('./validator.js'))(this);
 			this.findWindow = new (require( './findWindow.js' ))(this);
 			this.fieldDefinitions = {};
 			function loadFieldDefinition(){
@@ -1340,6 +1341,14 @@
 		 * インスタンスパスの末尾の連番を1つ進める
 		 */
 		this.incrementInstancePath = require('../../../libs/fncs/incrementInstancePath.js');
+
+		/**
+		 * バリデーション
+		 */
+		this.validate = function(attr, val, rules, mod, callback){
+			this.valiidator.validate(attr, val, rules, mod, callback);
+			return;
+		}
 
 		/**
 		 * コンテンツデータを保存する

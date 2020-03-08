@@ -70,7 +70,11 @@ class buildBowl{
 					$fieldDef = $this->broccoli->getFieldDefinition( $field->type ); // フィールドタイプ定義を呼び出す
 					$tmpVal = '';
 					$tplDataObj[$field->name] = '';
-					$html = $fieldDef->bind( $fieldData[$field->name], $this->options['mode'], $field );
+					$tmp_bind_value = null;
+					if( array_key_exists($field->name, $fieldData) ){
+						$tmp_bind_value = $fieldData[$field->name];
+					}
+					$html = $fieldDef->bind( $tmp_bind_value, $this->options['mode'], $field );
 					$tmpVal .= $html;
 					if( !@$field->hidden ){//← "hidden": true だったら、非表示(=出力しない)
 						$tplDataObj[$field->name] = $tmpVal;

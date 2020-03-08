@@ -8,6 +8,7 @@ module.exports = function(broccoli){
 	var _this = this;
 	var $ = require('jquery');
 	var utils79 = require('utils79');
+	var it79 = require('iterate79');
 	var editorLib = null;
 	try {
 		if(window.ace){
@@ -185,11 +186,24 @@ module.exports = function(broccoli){
 	 * エディタUIで編集した内容を検証する (Client Side)
 	 */
 	this.validateEditorContent = function( elm, mod, callback ){
-		var errorMsgs = [];
-		// errorMsgs.push('エラーがあります。');
-		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+		var $dom = $(elm);
+		var src = '';
+		if( $dom.find('input[type=text]').length ){
+			src = $dom.find('input[type=text]').val();
+		}else if( editorLib == 'ace' && mod.aceEditor ){
+			src = mod.aceEditor.getValue();
+		}else if( $dom.find('textarea').length ){
+			src = $dom.find('textarea').val();
+		}
+		src = JSON.parse( JSON.stringify(src) );
+
+		var rules = mod.validate;
+		var attr = (mod.label || mod.name);
+
+		// Validation
+		broccoli.validate(attr, src, rules, mod, function(errorMsgs){
 			callback( errorMsgs );
-		}); });
+		});
 		return this;
 	}
 
@@ -205,7 +219,7 @@ module.exports = function(broccoli){
 			src = $dom.find('input[type=text]').val();
 		}else if( editorLib == 'ace' && mod.aceEditor ){
 			src = mod.aceEditor.getValue();
-		}else{
+		}else if( $dom.find('textarea').length ){
 			src = $dom.find('textarea').val();
 		}
 		src = JSON.parse( JSON.stringify(src) );

@@ -143,6 +143,23 @@
                         "dec": ""
                     },
                     {
+                        "modId": "testMod1:dev/validate_test",
+                        "fields": {
+                            "text": "",
+                            "text_required": "",
+                            "html_required": "",
+                            "html_attr_text_required": "",
+                            "href_required": "",
+                            "markdown_required": "",
+                            "multitext_required": {
+                                "src": "",
+                                "editor": "markdown"
+                            }
+                        },
+                        "anchor": "",
+                        "dec": ""
+                    },
+                    {
                         "modId": "testMod1:units/cols3",
                         "fields": {
                             "column1": [

@@ -1,0 +1,56 @@
+{
+    "name": "Validate Test",
+    "interface": {
+        "fields": {
+            "text": {
+                "fieldType": "input",
+                "type": "text"
+            },
+            "text_required": {
+                "fieldType": "input",
+                "type": "text",
+                "label": "テキスト入力 (必須)",
+                "validate": [
+                    "required"
+                ]
+            },
+            "html_required": {
+                "fieldType": "input",
+                "type": "html",
+                "validate": [
+                    "required"
+                ]
+            },
+            "html_attr_text_required": {
+                "fieldType": "input",
+                "type": "html_attr_text",
+                "validate": [
+                    "required",
+                    "email"
+                ]
+            },
+            "href_required": {
+                "fieldType": "input",
+                "type": "href",
+                "validate": [
+                    "required"
+                ]
+            },
+            "markdown_required": {
+                "fieldType": "input",
+                "type": "markdown",
+                "validate": [
+                    "required"
+                ]
+            },
+            "multitext_required": {
+                "fieldType": "input",
+                "type": "multitext",
+                "validate": [
+                    "required",
+                    "customValidation1:30"
+                ]
+            }
+        }
+    }
+}
