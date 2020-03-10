@@ -314,9 +314,16 @@
 .broccoli--edit-window .has-error h3 {
   color: #a94442; }
 
-.broccoli--edit-window-window-message-field {
+.broccoli--edit-window-message-field {
   display: none;
   margin: 10px; }
+
+.broccoli--edit-window-module-readme {
+  max-height: 400px;
+  overflow: auto; }
+
+.broccoli--edit-window-module-readme-switch {
+  text-align: right; }
 
 .broccoli--edit-window-builtin-fields {
   border: 1px solid #99e;

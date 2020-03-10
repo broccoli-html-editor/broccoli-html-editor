@@ -17,10 +17,13 @@ module.exports = function(broccoli){
 				+ '	<form action="javascript:;">'
 				+ '		<div class="broccoli--edit-window-logical-path">---</div>'
 				+ '		<h2 class="broccoli--edit-window-module-name">---</h2>'
+				+ '		<div class="broccoli--edit-window-module-readme-switch"><a href="javascript:;"><span class="glyphicon glyphicon-menu-right"></span> Show README</a></div>'
+				+ '		<div class="broccoli--edit-window-module-readme">'
+				+ '		</div>'
 				+ '		<div class="broccoli--edit-window-message-field"></div>'
 				+ '		<div class="broccoli--edit-window-fields">'
 				+ '		</div>'
-				+ '		<div><a href="javascript:;" class="broccoli--edit-window-builtin-fields-switch"><span class="glyphicon glyphicon-menu-right"></span> <%= lb.get(\'ui_label.show_advanced_setting\') %></a></div>'
+				+ '		<div class="broccoli--edit-window-builtin-fields-switch"><a href="javascript:;"><span class="glyphicon glyphicon-menu-right"></span> <%= lb.get(\'ui_label.show_advanced_setting\') %></a></div>'
 				+ '		<div class="broccoli--edit-window-builtin-fields">'
 				+ '			<div class="form-group">'
 				+ '				<label for="broccoli--edit-window-builtin-anchor-field"><%= lb.get(\'ui_label.anchor\') %></label>'
@@ -149,8 +152,40 @@ module.exports = function(broccoli){
 			drawLogicalPath(instancePath, data)
 		);
 
+		$editWindow.find('.broccoli--edit-window-module-readme').hide();
+		$editWindow.find('.broccoli--edit-window-module-readme-switch').hide();
+		try{
+			// console.log(broccoli.getBootupInfomations().modulePackageList);
+			var modulePackageList = broccoli.getBootupInfomations().modulePackageList;
+			mod.id.match(/^([\s\S]*)\:([\s\S]*)\/([\s\S]*)$/i);
+			var parsedModId = {
+				'package': RegExp.$1,
+				'category': RegExp.$2,
+				'module': RegExp.$3
+			};
+			var readme = modulePackageList[parsedModId.package].categories[parsedModId.category].modules[parsedModId.module].readme;
+			// console.log(readme);
+			if(readme){
+				$editWindow.find('.broccoli--edit-window-module-readme').html(readme);
+				$editWindow.find('.broccoli--edit-window-module-readme-switch').show();
+				$editWindow.find('.broccoli--edit-window-module-readme-switch a').click(function(){
+					var $this = $(this);
+					var className = 'broccoli--edit-window-module-readme-switch__on';
+					$editWindow.find('.broccoli--edit-window-module-readme').toggle('fast', function(){
+						if($(this).is(':visible')){
+							$this.addClass(className);
+							$this.html('<span class="glyphicon glyphicon-menu-down"></span> '+'Hide README')
+						}else{
+							$this.removeClass(className);
+							$this.html('<span class="glyphicon glyphicon-menu-right"></span> '+'Show README')
+						}
+					});
+				});
+			}
+		}catch(e){}
+
 		$editWindow.find('.broccoli--edit-window-builtin-fields').hide();
-		$editWindow.find('.broccoli--edit-window-builtin-fields-switch').click(function(){
+		$editWindow.find('.broccoli--edit-window-builtin-fields-switch a').click(function(){
 			var $this = $(this);
 			var className = 'broccoli--edit-window-builtin-fields-switch__on';
 			$editWindow.find('.broccoli--edit-window-builtin-fields').toggle('fast', function(){

@@ -413,9 +413,16 @@
 	.has-error h3{
 		color: #a94442;
 	}
-	&-window-message-field{
+	&-message-field{
 		display: none;
 		margin: 10px;
+	}
+	&-module-readme{
+		max-height: 400px;
+		overflow: auto;
+	}
+	&-module-readme-switch{
+		text-align: right;
 	}
 	&-builtin-fields{
 		border: 1px solid #99e;
