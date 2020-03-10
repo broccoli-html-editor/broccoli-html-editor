@@ -447,6 +447,12 @@
     margin: 20px auto 20px;
     border-radius: 5px;
     box-shadow: 0 10px 40px 20px rgba(0, 0, 0, 0.3); }
+    .broccoli__lightbox-inner::after {
+      display: block;
+      clear: both;
+      content: ' ';
+      height: 10px;
+      overflow: hidden; }
 
 .broccoli__progress {
   position: fixed;
@@ -511,6 +517,39 @@
     .broccoli--module-info-preview .broccoli--module-info-content h1:first-of-type {
       margin: 0; }
 
+.broccoli--module-info-content-readme {
+  color: #333;
+  padding-left: 1em; }
+  .broccoli--module-info-content-readme img {
+    max-width: 100%; }
+  .broccoli--module-info-content-readme h1 {
+    font-size: small;
+    font-weight: bold;
+    color: #999; }
+  .broccoli--module-info-content-readme h2 {
+    font-size: 146%;
+    font-weight: bold;
+    color: #000;
+    border-bottom: 1px solid #333;
+    padding: 0.3em 0.5em;
+    margin-top: 2em;
+    margin-bottom: 0.5em;
+    margin-left: -1em; }
+  .broccoli--module-info-content-readme h3 {
+    font-size: 123%;
+    font-weight: bold;
+    color: #000; }
+  .broccoli--module-info-content-readme h4 {
+    font-size: 110%;
+    font-weight: bold;
+    color: #000; }
+  .broccoli--module-info-content-readme p, .broccoli--module-info-content-readme ul, .broccoli--module-info-content-readme ol, .broccoli--module-info-content-readme blockquote, .broccoli--module-info-content-readme pre {
+    margin-top: 1em;
+    margin-bottom: 1em; }
+  .broccoli--module-info-content-readme li p, .broccoli--module-info-content-readme li ul, .broccoli--module-info-content-readme li ol, .broccoli--module-info-content-readme li blockquote, .broccoli--module-info-content-readme li pre {
+    margin-top: 0.2em;
+    margin-bottom: 0.2em; }
+
 .broccoli--module-info-content-thumb {
   width: 200px;
   max-width: 20%;
@@ -527,10 +566,15 @@
   margin: 10px 0; }
   .broccoli--module-info-content-pics ul {
     margin: 1em 0;
-    padding: 0; }
+    padding: 0;
+    overflow: auto;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap; }
     .broccoli--module-info-content-pics ul li {
       list-style-type: none;
-      margin: 1em 0;
+      margin: 1em;
       padding: 0; }
       .broccoli--module-info-content-pics ul li img {
         width: auto;

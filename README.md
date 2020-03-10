@@ -312,6 +312,7 @@ $ composer test
 - Twigテンプレートで `loopitem_start($fieldName)`、 `loopitem_end()`、 `appender($fieldName)` を使えるようになり、Twigテンプレートでも loopフィールドのアペンダーを利用できるようになった。
 - 各フィールドのオプション `validate` を追加。 npmパッケージ `validatorjs` のバリデーション機能が統合された。
 - クライアントサイドに `customValidationRules` オプションを追加。
+- モジュールのREADME内で画像を参照できるようになった。
 - その他の細かい修正。
 
 ### broccoli-html-editor v0.3.14 (2020年2月24日)

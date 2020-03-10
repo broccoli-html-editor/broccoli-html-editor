@@ -450,6 +450,43 @@ class broccoliHtmlEditor{
 					$readme = \Michelf\MarkdownExtra::defaultTransform($readme);
 				}
 
+				$readme = (function($readme) use ($realpath){
+					$rtn = '';
+					while(1){
+						if( !preg_match('/^(.*?\<img\s.*?)src\=\"(.*?)\"(.*?\>.*)$/si', $readme, $matched) ){
+							$rtn .= $readme;
+							break;
+						}
+						$rtn .= $matched[1];
+						$img_src = $matched[2];
+						$readme = $matched[3];
+
+						if( !preg_match('/^[a-zA-Z0-9]+\:/si', $img_src) && is_file($realpath.'/'.$img_src) ){
+							$ext = preg_replace( '/^[\s\S]*?\.([a-zA-Z0-9\_\-]+)$/', '$1', $img_src );
+							$ext = strtolower($ext);
+							$mime = 'image/png';
+							switch( $ext ){
+								// styles
+								case 'css': $mime = 'text/css'; break;
+								// images
+								case 'png': $mime = 'image/png'; break;
+								case 'gif': $mime = 'image/gif'; break;
+								case 'jpg': case 'jpeg': case 'jpe': $mime = 'image/jpeg'; break;
+								case 'svg': $mime = 'image/svg+xml'; break;
+								// fonts
+								case 'eot': $mime = 'application/vnd.ms-fontobject'; break;
+								case 'woff': $mime = 'application/x-woff'; break;
+								case 'otf': $mime = 'application/x-font-opentype'; break;
+								case 'ttf': $mime = 'application/x-font-truetype'; break;
+							}
+							$bin = file_get_contents($realpath.'/'.$img_src);
+							$img_src = 'data:'.$mime.';base64,'.base64_encode($bin);
+						}
+						$rtn .= 'src="'.htmlspecialchars($img_src).'"';
+					}
+					return $rtn;
+				})($readme);
+
 				$rtn['categories'][$idx]['modules'][$row2]['readme'] = $readme;
 
 				// pics/

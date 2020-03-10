@@ -565,6 +565,13 @@
 		margin: 20px auto 20px;
 		border-radius: 5px;
 		box-shadow: 0 10px 40px 20px rgba(0,0,0,0.3);
+		&::after{
+			display: block;
+			clear: both;
+			content: ' ';
+			height: 10px;
+			overflow: hidden;
+		}
 	}
 }
 
@@ -635,6 +642,48 @@
 }
 .broccoli--module-info-content{
 
+	&-readme{
+		color: #333;
+		padding-left: 1em;
+		img{
+			max-width: 100%;
+		}
+		h1{
+			font-size: small;
+			font-weight: bold;
+			color: #999;
+		}
+		h2{
+			font-size: 146%;
+			font-weight: bold;
+			color: #000;
+			border-bottom: 1px solid #333;
+			padding: 0.3em 0.5em;
+			margin-top: 2em;
+			margin-bottom: 0.5em;
+			margin-left: -1em;
+		}
+		h3{
+			font-size: 123%;
+			font-weight: bold;
+			color: #000;
+		}
+		h4{
+			font-size: 110%;
+			font-weight: bold;
+			color: #000;
+		}
+		p, ul, ol, blockquote, pre{
+			margin-top: 1em;
+			margin-bottom: 1em;
+		}
+		li {
+			p, ul, ol, blockquote, pre{
+				margin-top: 0.2em;
+				margin-bottom: 0.2em;
+			}
+		}
+	}
 	&-thumb{
 		width:200px;
 		max-width:20%;
@@ -653,9 +702,12 @@
 		ul{
 			margin: 1em 0;
 			padding: 0;
+			overflow: auto;
+			display: flex;
+			flex-wrap: wrap;
 			li{
 				list-style-type: none;
-				margin: 1em 0;
+				margin: 1em;
 				padding: 0;
 				img{
 					width:auto;
