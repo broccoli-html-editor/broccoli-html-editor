@@ -25,6 +25,13 @@ class gpi{
 	 * General Purpose Interface
 	 */
 	public function gpi($api, $options){
+		$options = (array) $options;
+		if( !array_key_exists('lang', $options) ){
+			$options['lang'] = null;
+		}
+		if( !strlen($options['lang']) ){
+			$options['lang'] = 'en';
+		}
 
 		// var_dump('broccoli: set language "'.$options['lang'].'"');
 		$this->broccoli->lb()->setLang( $options['lang'] );
