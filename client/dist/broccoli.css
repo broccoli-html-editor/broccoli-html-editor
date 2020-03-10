@@ -318,9 +318,14 @@
   display: none;
   margin: 10px; }
 
-.broccoli--edit-window-module-readme {
+.broccoli--edit-window-module-readme-inner {
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  background-color: #f9f9f9;
+  padding: 20px;
   max-height: 400px;
-  overflow: auto; }
+  overflow: auto;
+  margin: 0.5em 1em 2em; }
 
 .broccoli--edit-window-module-readme-switch {
   text-align: right; }
@@ -524,39 +529,6 @@
     .broccoli--module-info-preview .broccoli--module-info-content h1:first-of-type {
       margin: 0; }
 
-.broccoli--module-info-content-readme {
-  color: #333;
-  padding-left: 1em; }
-  .broccoli--module-info-content-readme img {
-    max-width: 100%; }
-  .broccoli--module-info-content-readme h1 {
-    font-size: small;
-    font-weight: bold;
-    color: #999; }
-  .broccoli--module-info-content-readme h2 {
-    font-size: 146%;
-    font-weight: bold;
-    color: #000;
-    border-bottom: 1px solid #333;
-    padding: 0.3em 0.5em;
-    margin-top: 2em;
-    margin-bottom: 0.5em;
-    margin-left: -1em; }
-  .broccoli--module-info-content-readme h3 {
-    font-size: 123%;
-    font-weight: bold;
-    color: #000; }
-  .broccoli--module-info-content-readme h4 {
-    font-size: 110%;
-    font-weight: bold;
-    color: #000; }
-  .broccoli--module-info-content-readme p, .broccoli--module-info-content-readme ul, .broccoli--module-info-content-readme ol, .broccoli--module-info-content-readme blockquote, .broccoli--module-info-content-readme pre {
-    margin-top: 1em;
-    margin-bottom: 1em; }
-  .broccoli--module-info-content-readme li p, .broccoli--module-info-content-readme li ul, .broccoli--module-info-content-readme li ol, .broccoli--module-info-content-readme li blockquote, .broccoli--module-info-content-readme li pre {
-    margin-top: 0.2em;
-    margin-bottom: 0.2em; }
-
 .broccoli--module-info-content-thumb {
   width: 200px;
   max-width: 20%;
@@ -706,6 +678,51 @@
       min-width: 27px;
       height: 27px;
       min-height: 27px; }
+
+.broccoli__module-readme {
+  color: #333;
+  text-align: left; }
+  .broccoli__module-readme img {
+    max-width: 100%; }
+  .broccoli__module-readme h1 {
+    font-size: small;
+    font-weight: bold;
+    color: #999;
+    text-align: left;
+    background: transparent; }
+  .broccoli__module-readme h2 {
+    font-size: 146%;
+    font-weight: bold;
+    color: #000;
+    border-bottom: 1px solid #333;
+    padding: 0.3em 0.5em;
+    margin: 2em 0 0.5em 0;
+    text-align: left;
+    background: transparent; }
+  .broccoli__module-readme h3 {
+    font-size: 123%;
+    font-weight: bold;
+    color: #000;
+    border: none;
+    padding: 0;
+    margin: 1em 0 0.5em 0;
+    text-align: left;
+    background: transparent; }
+  .broccoli__module-readme h4 {
+    font-size: 110%;
+    font-weight: bold;
+    color: #000;
+    border: none;
+    padding: 0;
+    margin: 1em 0 0.5em 0;
+    text-align: left;
+    background: transparent; }
+  .broccoli__module-readme p, .broccoli__module-readme ul, .broccoli__module-readme ol, .broccoli__module-readme blockquote, .broccoli__module-readme pre {
+    margin-top: 1em;
+    margin-bottom: 1em; }
+  .broccoli__module-readme li p, .broccoli__module-readme li ul, .broccoli__module-readme li ol, .broccoli__module-readme li blockquote, .broccoli__module-readme li pre {
+    margin-top: 0.2em;
+    margin-bottom: 0.2em; }
 
 .broccoli__inline-error-message {
   border: none;

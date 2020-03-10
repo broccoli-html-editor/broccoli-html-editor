@@ -418,8 +418,15 @@
 		margin: 10px;
 	}
 	&-module-readme{
-		max-height: 400px;
-		overflow: auto;
+		&-inner{
+			border: 1px solid #ddd;
+			border-radius: 3px;
+			background-color: #f9f9f9;
+			padding: 20px;
+			max-height: 400px;
+			overflow: auto;
+			margin: 0.5em 1em 2em;
+		}
 	}
 	&-module-readme-switch{
 		text-align: right;
@@ -649,48 +656,6 @@
 }
 .broccoli--module-info-content{
 
-	&-readme{
-		color: #333;
-		padding-left: 1em;
-		img{
-			max-width: 100%;
-		}
-		h1{
-			font-size: small;
-			font-weight: bold;
-			color: #999;
-		}
-		h2{
-			font-size: 146%;
-			font-weight: bold;
-			color: #000;
-			border-bottom: 1px solid #333;
-			padding: 0.3em 0.5em;
-			margin-top: 2em;
-			margin-bottom: 0.5em;
-			margin-left: -1em;
-		}
-		h3{
-			font-size: 123%;
-			font-weight: bold;
-			color: #000;
-		}
-		h4{
-			font-size: 110%;
-			font-weight: bold;
-			color: #000;
-		}
-		p, ul, ol, blockquote, pre{
-			margin-top: 1em;
-			margin-bottom: 1em;
-		}
-		li {
-			p, ul, ol, blockquote, pre{
-				margin-top: 0.2em;
-				margin-bottom: 0.2em;
-			}
-		}
-	}
 	&-thumb{
 		width:200px;
 		max-width:20%;
@@ -885,6 +850,63 @@
 		}
 	}
 }
+
+
+.broccoli__module-readme{
+	color: #333;
+	text-align: left;
+	img{
+		max-width: 100%;
+	}
+	h1{
+		font-size: small;
+		font-weight: bold;
+		color: #999;
+		text-align: left;
+		background: transparent;
+	}
+	h2{
+		font-size: 146%;
+		font-weight: bold;
+		color: #000;
+		border-bottom: 1px solid #333;
+		padding: 0.3em 0.5em;
+		margin: 2em 0 0.5em 0;
+		text-align: left;
+		background: transparent;
+	}
+	h3{
+		font-size: 123%;
+		font-weight: bold;
+		color: #000;
+		border: none;
+		padding: 0;
+		margin: 1em 0 0.5em 0;
+		text-align: left;
+		background: transparent;
+	}
+	h4{
+		font-size: 110%;
+		font-weight: bold;
+		color: #000;
+		border: none;
+		padding: 0;
+		margin: 1em 0 0.5em 0;
+		text-align: left;
+		background: transparent;
+	}
+	p, ul, ol, blockquote, pre{
+		margin-top: 1em;
+		margin-bottom: 1em;
+	}
+	li {
+		p, ul, ol, blockquote, pre{
+			margin-top: 0.2em;
+			margin-bottom: 0.2em;
+		}
+	}
+}
+
 
 .broccoli__inline-error-message{
 	border: none;

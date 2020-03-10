@@ -18,8 +18,7 @@ module.exports = function(broccoli){
 				+ '		<div class="broccoli--edit-window-logical-path">---</div>'
 				+ '		<h2 class="broccoli--edit-window-module-name">---</h2>'
 				+ '		<div class="broccoli--edit-window-module-readme-switch"><a href="javascript:;"><span class="glyphicon glyphicon-menu-right"></span> Show README</a></div>'
-				+ '		<div class="broccoli--edit-window-module-readme">'
-				+ '		</div>'
+				+ '		<div class="broccoli--edit-window-module-readme"><div class="broccoli--edit-window-module-readme-inner"><div class="broccoli__module-readme"></div></div></div>'
 				+ '		<div class="broccoli--edit-window-message-field"></div>'
 				+ '		<div class="broccoli--edit-window-fields">'
 				+ '		</div>'
@@ -153,7 +152,6 @@ module.exports = function(broccoli){
 		);
 
 		$editWindow.find('.broccoli--edit-window-module-readme').hide();
-		$editWindow.find('.broccoli--edit-window-module-readme-switch').hide();
 		try{
 			// console.log(broccoli.getBootupInfomations().modulePackageList);
 			var modulePackageList = broccoli.getBootupInfomations().modulePackageList;
@@ -166,8 +164,7 @@ module.exports = function(broccoli){
 			var readme = modulePackageList[parsedModId.package].categories[parsedModId.category].modules[parsedModId.module].readme;
 			// console.log(readme);
 			if(readme){
-				$editWindow.find('.broccoli--edit-window-module-readme').html(readme);
-				$editWindow.find('.broccoli--edit-window-module-readme-switch').show();
+				$editWindow.find('.broccoli--edit-window-module-readme-inner .broccoli__module-readme').html(readme);
 				$editWindow.find('.broccoli--edit-window-module-readme-switch a').click(function(){
 					var $this = $(this);
 					var className = 'broccoli--edit-window-module-readme-switch__on';
@@ -181,8 +178,12 @@ module.exports = function(broccoli){
 						}
 					});
 				});
+			}else{
+				$editWindow.find('.broccoli--edit-window-module-readme-switch').hide();
 			}
-		}catch(e){}
+		}catch(e){
+			$editWindow.find('.broccoli--edit-window-module-readme-switch').hide();
+		}
 
 		$editWindow.find('.broccoli--edit-window-builtin-fields').hide();
 		$editWindow.find('.broccoli--edit-window-builtin-fields-switch a').click(function(){
