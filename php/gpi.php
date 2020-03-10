@@ -97,6 +97,14 @@ class gpi{
 				) );
 				return $htmls;
 
+			case "buildModuleCss":
+				$css = $this->broccoli->buildModuleCss();
+				return $css;
+
+			case "buildModuleJs":
+				$js = $this->broccoli->buildModuleJs();
+				return $js;
+
 			case "updateContents":
 				$result = $this->broccoli->updateContents();
 				return $result;

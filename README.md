@@ -314,6 +314,7 @@ $ composer test
 - クライアントサイドに `customValidationRules` オプションを追加。
 - 編集ウィンドウ内に、モジュールのREADMEを表示する機能を追加。
 - モジュールのREADME内で画像を参照できるようになった。
+- GPIから CSS と JS をビルドできるようになった。
 - その他の細かい修正。
 
 ### broccoli-html-editor v0.3.14 (2020年2月24日)
