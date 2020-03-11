@@ -65,3 +65,14 @@ HTMLを直接書いてリンクする<a href="https://github.com/broccoli-html-e
 <style type="text/css">*{color:#f30 !important;}</style>
 
 <link rel="stylesheet" href="javascript:alert('JavaScript in link href');" />
+
+<div
+    style="border: 1px solid #f00; padding: 2em; margin: 1em 0;" onclick="alert('onclick');" onmouseover='alert("onmouseover");' onmouseout="alert(&amp;onmouseout&amp;);" onmousedown="alert('onmousedown');"
+    data-hoge-fuga
+    data-foo-bar="test"
+    disabled
+    data-hoge=fugaboga
+    nomark=nomark
+    onchange>
+    <p disabled>サニタイズテスト</p>
+</div>

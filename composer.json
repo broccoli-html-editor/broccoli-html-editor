@@ -56,8 +56,8 @@
             "fields/php/script.php",
             "fields/php/select.php",
             "fields/php/text.php",
+            "php/fncs/readme.php",
             "php/helper/twig.php",
-            "php/helper/readme.php",
             "php/simple_html_dom.php"
         ]
     }

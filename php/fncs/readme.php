@@ -5,11 +5,11 @@
 namespace broccoliHtmlEditor;
 
 /**
- * README Helper
+ * README Processor
  *
  * @author Tomoya Koyanagi <tomk79@gmail.com>
  */
-class helper_readme{
+class fncs_readme{
 
 	private $broccoli;
 
@@ -94,7 +94,7 @@ class helper_readme{
 		// 禁止のタグを削除
 		$rtn = '';
 		while(1){
-			if( !preg_match('/^(.*?)\<\/?(?:script|style|link|meta|form|input|select|option|textarea|button|object|embed|iframe)(?:.*?)\>(.*)$/si', $html, $matched) ){
+			if( !preg_match('/^(.*?)\<\/?(?:html|head|body|title|base|script|style|link|meta|form|fieldset|output|input|isindex|keygen|select|option|optgroup|textarea|button|object|applet|param|embed|iframe|frameset|frame|font|fontbase|audio|video)(?:.*?)\>(.*)$/si', $html, $matched) ){
 				$rtn .= $html;
 				break;
 			}
@@ -115,10 +115,10 @@ class helper_readme{
 			$html = $matched[3];
 
 			$attrs = '';
-			if(preg_match('/href\=(\"|\')(.*?)\1/', $attributes, $matched)){
+			if(preg_match('/href\=(\"|\')(.*?)\1/si', $attributes, $matched)){
 				$href = $matched[2];
 				$href = htmlspecialchars_decode(trim($href));
-				if( preg_match('/^(?:http|https)\:\/\//', $href) ){
+				if( preg_match('/^(?:http|https)\:\/\//si', $href) ){
 					// http, https 以外のリンクは許容しない
 					// 必ず `_blank` で開く
 					$attrs = ' href="'.htmlspecialchars($href).'" target="_blank"';
@@ -126,6 +126,28 @@ class helper_readme{
 			}
 
 			$rtn .= '<a'.$attrs.'>';
+		}
+
+		// 属性を無害化
+		$html = $rtn;
+		$rtn = '';
+		while(1){
+			if( !preg_match('/^(.*?)\<([a-zA-Z0-9\:\_\-]+)\s+(.*?)\>(.*)$/si', $html, $matched) ){
+				$rtn .= $html;
+				break;
+			}
+			$rtn .= $matched[1];
+			$tagname = $matched[2];
+			$attributes = $matched[3];
+			$html = $matched[4];
+
+			$attrs = ' '.trim($attributes);
+			$attrs = preg_replace('/\s+(?:on[a-zA-Z]*|data\-[\S]*|xmlns|style|class|challenge|allowpaymentrequest|formaction|form|for|name|crossorigin)(?:\=(\"|\')(?:.*?)\1)?/si', '', $attrs);
+			$attrs = trim($attrs);
+			if( strlen($attrs) ){
+				$attrs = ' '.$attrs;
+			}
+			$rtn .= '<'.trim($tagname).$attrs.'>';
 		}
 
 		return $rtn;

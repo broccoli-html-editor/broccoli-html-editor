@@ -11,6 +11,7 @@ module.exports = function(broccoli, packageId, callback){
 	var php = require('phpjs');
 	var fs = require('fs');
 	var Promise = require('es6-promise').Promise;
+	var FncsReadme = require('./fncs/readme.js');
 	var rtn = {};
 
 	function isFile(path){
@@ -177,67 +178,8 @@ module.exports = function(broccoli, packageId, callback){
 								}
 
 								// README.md (html)
-								var realpathReadme = path.resolve( realpath, 'README' );
-								var readme = '';
-								try{
-									readme = '';
-									if( isFile(realpathReadme+'.html') ){
-										readme = fs.readFileSync( realpathReadme+'.html' ).toString();
-									}else if( isFile(realpathReadme+'.md') ){
-										readme = fs.readFileSync( realpathReadme+'.md' ).toString();
-										var marked = require('marked');
-										marked.setOptions({
-											renderer: new marked.Renderer(),
-											gfm: true,
-											tables: true,
-											breaks: false,
-											pedantic: false,
-											sanitize: false,
-											smartLists: true,
-											smartypants: false
-										});
-										readme = marked(readme);
-									}
-								} catch (e) {
-									readme = '';
-								}
-
-								readme = (function(readme){
-									var $rtn = '';
-									while(1){
-										if( !readme.match(/^(.*?\<img\s.*?)src\=\"(.*?)\"(.*?\>.*)$/si) ){
-											$rtn += readme;
-											break;
-										}
-										$rtn += RegExp.$1;
-										var $img_src = RegExp.$2;
-										readme = RegExp.$3;
-
-										if( !$img_src.match(/^[a-zA-Z0-9]+\:/si) && isFile(realpath+'/'+$img_src) ){
-											var $ext = $img_src.replace( /^[\s\S]*?\.([a-zA-Z0-9\_\-]+)$/, '$1', $img_src );
-											$ext = $ext.toLowerCase();
-											var $mime = 'image/png';
-											switch( $ext ){
-												// styles
-												case 'css': $mime = 'text/css'; break;
-												// images
-												case 'png': $mime = 'image/png'; break;
-												case 'gif': $mime = 'image/gif'; break;
-												case 'jpg': case 'jpeg': case 'jpe': $mime = 'image/jpeg'; break;
-												case 'svg': $mime = 'image/svg+xml'; break;
-												// fonts
-												case 'eot': $mime = 'application/vnd.ms-fontobject'; break;
-												case 'woff': $mime = 'application/x-woff'; break;
-												case 'otf': $mime = 'application/x-font-opentype'; break;
-												case 'ttf': $mime = 'application/x-font-truetype'; break;
-											}
-											var $bin = fs.readFileSync(realpath+'/'+$img_src);
-											$img_src = 'data:'+$mime+';base64,'+base64_encode($bin);
-										}
-										$rtn += 'src="'+($img_src)+'"';
-									}
-									return $rtn;
-								})(readme);
+								var readmeHelper = new FncsReadme(broccoli);
+								var readme = readmeHelper.get_html(realpath);
 
 								rtn.categories[idx].modules[row2].readme = readme;
 

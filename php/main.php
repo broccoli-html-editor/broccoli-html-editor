@@ -441,7 +441,7 @@ class broccoliHtmlEditor{
 				}
 
 				// README.md (html)
-				$readmeHelper = new helper_readme($this);
+				$readmeHelper = new fncs_readme($this);
 				$readme = $readmeHelper->get_html($realpath);
 
 				$rtn['categories'][$idx]['modules'][$row2]['readme'] = $readme;
