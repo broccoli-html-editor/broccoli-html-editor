@@ -2731,11 +2731,7 @@ module.exports = function(broccoli, targetElm, callback){
 		html += '<p>'+$elm.attr('data-id')+'</p>';
 		html += '<hr />';
 		var readme = $elm.attr('data-readme');
-		var $readme = $('<div>'+readme+'</div>')
-		$readme.find('a').each(function(){
-			$(this).attr({'target':'_blank'})
-		});
-		html += '<div class="broccoli--module-info-content-readme"><div class="broccoli__module-readme">'+ (readme ? $readme.html() : '<p style="text-align:center; margin: 100px auto;">-- no readme --</p>' ) +'</div></div>';
+		html += '<div class="broccoli--module-info-content-readme"><div class="broccoli__module-readme">'+ (readme ? readme : '<p style="text-align:center; margin: 100px auto;">-- no readme --</p>' ) +'</div></div>';
 
 		var pics = JSON.parse( $elm.attr('data-pics') );
 		if( pics.length ){

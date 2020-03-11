@@ -24,6 +24,12 @@
 
 ### h3 表現サンプル
 
+リンクする[サンプル](https://github.com/broccoli-html-editor)。
+
+HTMLを直接書いてリンクする<a href="https://github.com/broccoli-html-editor">サンプル</a>。
+
+相対パスの[サンプル](./template.html)。
+
 #### h4 表現サンプル
 
 - ul/li サンプル
@@ -38,3 +44,24 @@
 2. ol/li サンプル
 3. ol/li サンプル
 4. ol/li サンプル
+
+##### サニタイズ
+
+<a href="javascript:alert('Script in href');">JavaScript in href</a>
+
+<a href="#" onclick="alert('Script in onclick');">JavaScript in onclick</a>
+
+<form action="javascript:alert('Script in form action');">
+<button type="submit">JavaScript in form action</button>
+</form>
+<form action="#" onsubmit="alert('Script in form action');">
+<button type="submit">JavaScript in form submit</button>
+</form>
+
+<script>alert('Script in README');</script>
+<script language="javascript">alert('Script in README');</script>
+
+<style>*{color:#f00 !important;}</style>
+<style type="text/css">*{color:#f30 !important;}</style>
+
+<link rel="stylesheet" href="javascript:alert('JavaScript in link href');" />
