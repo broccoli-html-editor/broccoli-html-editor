@@ -18,7 +18,7 @@ module.exports = function(broccoli){
 				+ '		<div class="broccoli--edit-window-logical-path">---</div>'
 				+ '		<h2 class="broccoli--edit-window-module-name">---</h2>'
 				+ '		<div class="broccoli--edit-window-module-readme-switch"><a href="javascript:;"><span class="glyphicon glyphicon-menu-right"></span> Show README</a></div>'
-				+ '		<div class="broccoli--edit-window-module-readme"><div class="broccoli--edit-window-module-readme-inner"><div class="broccoli__module-readme"></div></div></div>'
+				+ '		<div class="broccoli--edit-window-module-readme"><div class="broccoli--edit-window-module-readme-inner"><article class="broccoli__module-readme"></article></div></div>'
 				+ '		<div class="broccoli--edit-window-message-field"></div>'
 				+ '		<div class="broccoli--edit-window-fields">'
 				+ '		</div>'

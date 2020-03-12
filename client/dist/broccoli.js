@@ -2731,7 +2731,7 @@ module.exports = function(broccoli, targetElm, callback){
 		html += '<p>'+$elm.attr('data-id')+'</p>';
 		html += '<hr />';
 		var readme = $elm.attr('data-readme');
-		html += '<div class="broccoli--module-info-content-readme"><div class="broccoli__module-readme">'+ (readme ? readme : '<p style="text-align:center; margin: 100px auto;">-- no readme --</p>' ) +'</div></div>';
+		html += '<div class="broccoli--module-info-content-readme"><article class="broccoli__module-readme">'+ (readme ? readme : '<p style="text-align:center; margin: 100px auto;">-- no readme --</p>' ) +'</article></div>';
 
 		var pics = JSON.parse( $elm.attr('data-pics') );
 		if( pics.length ){
@@ -2992,7 +2992,7 @@ module.exports = function(broccoli){
 				+ '		<div class="broccoli--edit-window-logical-path">---</div>'
 				+ '		<h2 class="broccoli--edit-window-module-name">---</h2>'
 				+ '		<div class="broccoli--edit-window-module-readme-switch"><a href="javascript:;"><span class="glyphicon glyphicon-menu-right"></span> Show README</a></div>'
-				+ '		<div class="broccoli--edit-window-module-readme"><div class="broccoli--edit-window-module-readme-inner"><div class="broccoli__module-readme"></div></div></div>'
+				+ '		<div class="broccoli--edit-window-module-readme"><div class="broccoli--edit-window-module-readme-inner"><article class="broccoli__module-readme"></article></div></div>'
 				+ '		<div class="broccoli--edit-window-message-field"></div>'
 				+ '		<div class="broccoli--edit-window-fields">'
 				+ '		</div>'
