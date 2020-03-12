@@ -314,6 +314,12 @@
 .broccoli--edit-window .has-error h3 {
   color: #a94442; }
 
+.broccoli--edit-window-field-required h3::before {
+  content: "*";
+  color: #f33;
+  margin-right: 0.5em;
+  font-size: 80%; }
+
 .broccoli--edit-window-message-field {
   display: none;
   margin: 10px; }

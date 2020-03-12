@@ -413,6 +413,14 @@
 	.has-error h3{
 		color: #a94442;
 	}
+	&-field-required{
+		h3::before {
+			content: "*";
+			color: #f33;
+			margin-right: 0.5em;
+			font-size: 80%;
+		}
+	}
 	&-message-field{
 		display: none;
 		margin: 10px;

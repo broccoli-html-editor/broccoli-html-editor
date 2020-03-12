@@ -3429,6 +3429,16 @@ module.exports = function(broccoli){
 						.text((field.fieldType=='input' ? field.type : field.fieldType))
 					)
 				;
+
+				if( field.validate ){
+					for(var valiNum in field.validate){
+						if( field.validate[valiNum] == 'required' ){
+							$field.addClass('broccoli--edit-window-field-required');
+							break;
+						}
+					}
+				}
+
 				if( field.description ){
 					$field.find('>.broccoli--edit-window-field-description')
 						.html( field.description )
