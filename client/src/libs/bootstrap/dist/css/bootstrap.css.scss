@@ -5,7 +5,9 @@
 }
 .broccoli{
     @import "../../../../../../node_modules/bootstrap/dist/css/bootstrap";
-    textarea{
-        overflow: visible;
+
+    // AceEditor との競合を吸収
+    .ace_editor textarea{
+        overflow: hidden;
     }
 }

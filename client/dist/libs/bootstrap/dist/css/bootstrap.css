@@ -5226,5 +5226,5 @@
   @media print {
     .broccoli .hidden-print {
       display: none !important; } }
-  .broccoli textarea {
-    overflow: visible; }
+  .broccoli .ace_editor textarea {
+    overflow: hidden; }
