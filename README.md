@@ -306,6 +306,10 @@ $ composer test
 
 ## 更新履歴 - Change log
 
+### broccoli-html-editor v0.3.16 (リリース日未定)
+
+- ace editor 適用時に、日本語変換中のテキストが画面上で確認しにくい問題を修正。
+
 ### broccoli-html-editor v0.3.15 (2020年3月14日)
 
 - `script` フィールドに `escape` オプションを追加。

@@ -5,4 +5,7 @@
 }
 .broccoli{
     @import "../../../../../../node_modules/bootstrap/dist/css/bootstrap";
+    textarea{
+        overflow: visible;
+    }
 }
