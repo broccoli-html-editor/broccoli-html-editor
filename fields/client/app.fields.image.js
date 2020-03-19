@@ -517,11 +517,40 @@ module.exports = function(broccoli){
 	this.validateEditorContent = function( elm, mod, callback ){
 		var errorMsgs = [];
 		var resourceDb = null;
+		var $img = $(elm).find('img');
+		var filesize = Number($img.attr('data-size'));
 		var resType = $(elm).find('[name='+mod.name+'-resourceType]:checked').val();
 		var resKey = $(elm).find('[name='+mod.name+'-resKey]').val();
 		var filename = $(elm).find('[name='+mod.name+'-publicFilename]').val();
+		var rules = mod.validate || [];
+		if(typeof(rules) == typeof('')){rules = [rules];}
+		var rulesIsRequired = false;
+		var rulesMaxHeight = null;
+		var rulesMinHeight = 0;
+		var rulesMaxWidth = null;
+		var rulesMinWidth = 0;
+		var rulesMaxFileSize = null;
+		var rulesMinFileSize = 0;
+		for(var idx in rules){
+			if(rules[idx] == 'required'){
+				rulesIsRequired = true;
+			}
+		}
 
 		new Promise(function(rlv){rlv();})
+			.then(function(){ return new Promise(function(rlv, rjt){
+				// Validate image src
+				var nH, nW;
+				if(!$img.get(0)){
+					errorMsgs.push('[FATAL] イメージを取得できませんでした。');
+					rlv();
+					return;
+				}
+				nH = $img.get(0).naturalHeight;
+				nW = $img.get(0).naturalWidth;
+				// console.log(nH, nW, filesize);
+				rlv();
+			}); })
 			.then(function(){ return new Promise(function(rlv, rjt){
 				_resMgr.getResourceDb(function(res){
 					resourceDb = res;
