@@ -309,6 +309,7 @@ $ composer test
 ### broccoli-html-editor v0.3.16 (リリース日未定)
 
 - ace editor 適用時に、日本語変換中のテキストが画面上で確認しにくい問題を修正。
+- `image` フィールドに、バリデーション `min-height`、`max-height`、`min-width`、`max-width`、`min-filesize`、`max-filesize` を追加。
 
 ### broccoli-html-editor v0.3.15 (2020年3月14日)
 
