@@ -1781,7 +1781,7 @@ module.exports = function(broccoli){
 	 * インスタンスを更新する
 	 */
 	this.updateInstance = function( newData, containerInstancePath, cb ){
-		// console.log( '----- updateInstance: '+containerInstancePath );
+		// console.log( '----- updateInstance:', containerInstancePath, newData );
 		cb = cb||function(){};
 
 		var containerInstancePath = this.parseInstancePath( containerInstancePath );
@@ -3678,7 +3678,11 @@ module.exports = function(broccoli){
 	 * インスタンスの編集を保存する
 	 */
 	function saveInstance( instancePath, mod, data, callback ){
+		// console.log('=-=-=-= saveInstance:', data, mod, instancePath);
 		callback = callback || function(){};
+		if( data.fields && data.fields.length === 0 ){
+			data.fields = {};
+		}
 		it79.ary(
 			mod.fields,
 			function(it2, field2, fieldName2){

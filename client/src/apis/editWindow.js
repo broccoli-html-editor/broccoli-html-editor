@@ -704,7 +704,11 @@ module.exports = function(broccoli){
 	 * インスタンスの編集を保存する
 	 */
 	function saveInstance( instancePath, mod, data, callback ){
+		// console.log('=-=-=-= saveInstance:', data, mod, instancePath);
 		callback = callback || function(){};
+		if( data.fields && data.fields.length === 0 ){
+			data.fields = {};
+		}
 		it79.ary(
 			mod.fields,
 			function(it2, field2, fieldName2){

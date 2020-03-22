@@ -313,7 +313,7 @@ module.exports = function(broccoli){
 	 * インスタンスを更新する
 	 */
 	this.updateInstance = function( newData, containerInstancePath, cb ){
-		// console.log( '----- updateInstance: '+containerInstancePath );
+		// console.log( '----- updateInstance:', containerInstancePath, newData );
 		cb = cb||function(){};
 
 		var containerInstancePath = this.parseInstancePath( containerInstancePath );
