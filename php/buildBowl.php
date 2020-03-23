@@ -129,18 +129,20 @@ class buildBowl{
 					$opt = json_decode( json_encode($this->options) );
 					$opt->instancePath .= '/fields.'.$field->name;
 					$tplDataObj[$field->name] = array();
-					foreach($fieldData[$field->name] as $idx=>$row){
-						// ネストされたモジュールの再帰処理
-						$tmpopt = json_decode( json_encode($opt), true );
-						$tmpopt['instancePath'] .= '@'.$idx;
-						$tmpopt['subModName'] = $field->name;
-						// var_dump($tmpopt);
-						$html = $this->broccoli->buildBowl($row, $tmpopt );
-						array_push($tplDataObj[$field->name], $html);
+					if( array_key_exists($field->name, $fieldData) && (is_object($fieldData[$field->name]) || is_array($fieldData[$field->name])) ){
+						foreach($fieldData[$field->name] as $idx=>$row){
+							// ネストされたモジュールの再帰処理
+							$tmpopt = json_decode( json_encode($opt), true );
+							$tmpopt['instancePath'] .= '@'.$idx;
+							$tmpopt['subModName'] = $field->name;
+							// var_dump($tmpopt);
+							$html = $this->broccoli->buildBowl($row, $tmpopt );
+							array_push($tplDataObj[$field->name], $html);
+						}
 					}
 					if( $this->options['mode'] == 'canvas' ){
 						$tmpopt = json_decode( json_encode($opt), true );
-						if(!is_array($fieldData[$field->name])){ $fieldData[$field->name] = array(); }
+						if(!array_key_exists($field->name, $fieldData) || !is_array($fieldData[$field->name])){ $fieldData[$field->name] = array(); }
 						$tmpopt['instancePath'] .= '@'.(count($fieldData[$field->name]));
 					}
 
