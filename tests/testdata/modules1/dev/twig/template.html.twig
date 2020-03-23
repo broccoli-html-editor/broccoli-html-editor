@@ -27,6 +27,17 @@
 {{ loop[2].text1 }} #}
 </div>
 
+<div class="twig_template-loop2">
+{% for loop2Row in loop2 %}
+{{ loopitem_start('loop2') }}
+<div>
+    <div>{{ loop2Row.include_loop2_sub }}</div>
+</div>
+{{ loopitem_end() }}
+{% endfor %}
+{{ appender('loop2') }}
+</div>
+
 {%if _ENV.mode=="canvas"%}
 <div class="twig_template-is_canvas">これは編集画面にしか表示されない要素です。</div>
 {%endif%}

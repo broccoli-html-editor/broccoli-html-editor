@@ -245,7 +245,7 @@ module.exports = function(broccoli){
 							return false;
 						}
 					}
-					if(modTpl.fields[fieldName].enabledChildren.length){
+					if(typeof(modTpl.fields[fieldName].enabledChildren)==typeof([]) && modTpl.fields[fieldName].enabledChildren.length){
 						var tmpIsEnabledChild = false;
 						for(var tmpIdx in modTpl.fields[fieldName].enabledChildren){
 							if(modTpl.fields[fieldName].enabledChildren[tmpIdx] == newDataModTpl.id){

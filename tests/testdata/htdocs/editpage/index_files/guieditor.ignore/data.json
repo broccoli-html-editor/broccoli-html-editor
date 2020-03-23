@@ -1063,6 +1063,46 @@
                                     "anchor": "",
                                     "dec": ""
                                 }
+                            ],
+                            "loop2": [
+                                {
+                                    "modId": "testMod1:dev/twig",
+                                    "fields": {
+                                        "include_loop2_sub": [
+                                            {
+                                                "modId": "PlainHTMLElements:PlainHTML/MultiText",
+                                                "fields": {
+                                                    "main": {
+                                                        "src": "テストです。\n",
+                                                        "editor": "markdown"
+                                                    }
+                                                },
+                                                "anchor": "",
+                                                "dec": ""
+                                            }
+                                        ]
+                                    },
+                                    "subModName": "loop2"
+                                },
+                                {
+                                    "modId": "testMod1:dev/twig",
+                                    "fields": {
+                                        "include_loop2_sub": [
+                                            {
+                                                "modId": "PlainHTMLElements:PlainHTML/MultiText",
+                                                "fields": {
+                                                    "main": {
+                                                        "src": "テストです。\nその2。\n",
+                                                        "editor": "markdown"
+                                                    }
+                                                },
+                                                "anchor": "",
+                                                "dec": ""
+                                            }
+                                        ]
+                                    },
+                                    "subModName": "loop2"
+                                }
                             ]
                         },
                         "anchor": "",
