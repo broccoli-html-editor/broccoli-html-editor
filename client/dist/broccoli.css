@@ -438,6 +438,9 @@
         align-items: stretch;
     text-align: center;
     padding: 10px 0; }
+    @media all and (max-width: 600px) {
+      .broccoli__edit-window-form-buttons-fluid {
+        display: block; } }
   .broccoli__edit-window-form-buttons-ok {
     text-align: center;
     -ms-flex-positive: 1;
@@ -455,6 +458,10 @@
         flex-grow: 1;
     padding: 10px;
     width: 50%; }
+    @media all and (max-width: 600px) {
+      .broccoli__edit-window-form-buttons-cancel {
+        text-align: center;
+        width: 100%; } }
     .broccoli__edit-window-form-buttons-cancel button {
       max-width: 360px;
       width: 80%; }
@@ -467,6 +474,10 @@
         flex-grow: 1;
     padding: 10px;
     width: 50%; }
+    @media all and (max-width: 600px) {
+      .broccoli__edit-window-form-buttons-delete {
+        text-align: center;
+        width: 100%; } }
     .broccoli__edit-window-form-buttons-delete button {
       max-width: 360px;
       width: 80%; }
