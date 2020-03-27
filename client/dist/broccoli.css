@@ -293,38 +293,38 @@
     top: auto;
     bottom: -8px; }
 
-.broccoli--edit-window h2 {
+.broccoli__edit-window h2 {
   font-weight: bold;
   text-align: center;
   margin: 1em; }
 
-.broccoli--edit-window-fields {
+.broccoli__edit-window-fields {
   margin: 0.5em 0 3em 30px; }
 
-.broccoli--edit-window-field {
+.broccoli__edit-window-field {
   margin: 1em 0 2em; }
 
-.broccoli--edit-window h3 {
+.broccoli__edit-window h3 {
   padding: 0 0 0 10px;
   border-left: 3px solid #999;
   margin: 0.5em 0 0.5em -30px;
   background-color: #fff;
   font-weight: bold; }
 
-.broccoli--edit-window .has-error h3 {
+.broccoli__edit-window .has-error h3 {
   color: #a94442; }
 
-.broccoli--edit-window-field-required h3::before {
+.broccoli__edit-window-field-required h3::before {
   content: "*";
   color: #f33;
   margin-right: 0.5em;
   font-size: 80%; }
 
-.broccoli--edit-window-message-field {
+.broccoli__edit-window-message-field {
   display: none;
   margin: 10px; }
 
-.broccoli--edit-window-module-readme-inner {
+.broccoli__edit-window-module-readme-inner {
   border: 1px solid #ddd;
   border-radius: 3px;
   background-color: #f9f9f9;
@@ -333,16 +333,16 @@
   overflow: auto;
   margin: 0.5em 1em 2em; }
 
-.broccoli--edit-window-module-readme-switch {
+.broccoli__edit-window-module-readme-switch {
   text-align: right; }
 
-.broccoli--edit-window-builtin-fields {
-  border: 1px solid #99e;
+.broccoli__edit-window-builtin-fields {
+  border: 1px solid #ddd;
   padding: 1em;
-  margin: 1em 5%;
-  background: #eef; }
+  margin: 1em 0;
+  background: #f9f9f9; }
 
-.broccoli--edit-window-module-fields {
+.broccoli__edit-window-module-fields {
   padding: 10px;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
@@ -353,33 +353,33 @@
   background: #fafafa;
   display: -ms-flexbox;
   display: flex; }
-  .broccoli--edit-window-module-fields__instances {
+  .broccoli__edit-window-module-fields__instances {
     width: 100%;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
     overflow-scrolling: touch; }
-    .broccoli--edit-window-module-fields--fieldtype-module .broccoli--edit-window-module-fields__instances {
+    .broccoli__edit-window-module-fields--fieldtype-module .broccoli__edit-window-module-fields__instances {
       padding-right: 5px;
       margin-right: 5px;
       width: 70%; }
-    .broccoli--edit-window-module-fields__instances ul {
+    .broccoli__edit-window-module-fields__instances ul {
       padding: 0; }
-      .broccoli--edit-window-module-fields__instances ul li {
+      .broccoli__edit-window-module-fields__instances ul li {
         border-bottom: 1px solid #bbb;
         list-style-type: none;
         margin: 0;
         padding: 0; }
-        .broccoli--edit-window-module-fields__instances ul li a {
+        .broccoli__edit-window-module-fields__instances ul li a {
           display: block;
           position: relative;
           outline: none !important;
           padding: 0.5em 1em;
           margin: 0; }
-          .broccoli--edit-window-module-fields__instances ul li a:hover {
+          .broccoli__edit-window-module-fields__instances ul li a:hover {
             background: #eee; }
-          .broccoli--edit-window-module-fields__instances ul li a:last-child {
+          .broccoli__edit-window-module-fields__instances ul li a:last-child {
             border-bottom: none; }
-    .broccoli--edit-window-module-fields__instances [data-broccoli-is-appender] {
+    .broccoli__edit-window-module-fields__instances [data-broccoli-is-appender] {
       padding: 9px;
       background-color: #eef;
       border-color: #8585d2;
@@ -395,7 +395,7 @@
       box-sizing: border-box;
       clear: both;
       white-space: nowrap; }
-      .broccoli--edit-window-module-fields__instances [data-broccoli-is-appender][data-broccoli-sub-mod-name] {
+      .broccoli__edit-window-module-fields__instances [data-broccoli-is-appender][data-broccoli-sub-mod-name] {
         padding: 5px 15px;
         background-color: #dfe;
         border-color: #6dcd9d;
@@ -405,34 +405,76 @@
         box-sizing: border-box;
         clear: both;
         white-space: nowrap; }
-  .broccoli--edit-window-module-fields__palette {
+  .broccoli__edit-window-module-fields__palette {
     display: none; }
-    .broccoli--edit-window-module-fields--fieldtype-module .broccoli--edit-window-module-fields__palette {
+    .broccoli__edit-window-module-fields--fieldtype-module .broccoli__edit-window-module-fields__palette {
       width: 30%;
       overflow: auto;
       -webkit-overflow-scrolling: touch;
       overflow-scrolling: touch;
       display: block; }
 
-.broccoli--edit-window-logical-path {
+.broccoli__edit-window-logical-path {
   font-size: 74%; }
-  .broccoli--edit-window-logical-path ul {
+  .broccoli__edit-window-logical-path ul {
     margin: 0;
     padding: 0; }
-    .broccoli--edit-window-logical-path ul li {
+    .broccoli__edit-window-logical-path ul li {
       margin: 0;
       padding: 0;
       list-style-type: none;
       display: inline; }
-      .broccoli--edit-window-logical-path ul li::before {
+      .broccoli__edit-window-logical-path ul li::before {
         content: ">";
         margin: 0 0.5em; }
 
-.broccoli--edit-window-form-buttons {
+.broccoli__edit-window-form-buttons {
   margin-top: 1em;
   padding-bottom: 0.5em; }
+  .broccoli__edit-window-form-buttons-fluid {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-align: stretch;
+        align-items: stretch;
+    text-align: center;
+    padding: 10px 0; }
+  .broccoli__edit-window-form-buttons-ok {
+    text-align: center;
+    -ms-flex-positive: 1;
+        flex-grow: 1;
+    padding: 10px; }
+    .broccoli__edit-window-form-buttons-ok button {
+      max-width: 100%;
+      width: 60%; }
+      @media all and (max-width: 600px) {
+        .broccoli__edit-window-form-buttons-ok button {
+          width: 100%; } }
+  .broccoli__edit-window-form-buttons-cancel {
+    text-align: left;
+    -ms-flex-positive: 1;
+        flex-grow: 1;
+    padding: 10px;
+    width: 50%; }
+    .broccoli__edit-window-form-buttons-cancel button {
+      max-width: 360px;
+      width: 80%; }
+      @media all and (max-width: 600px) {
+        .broccoli__edit-window-form-buttons-cancel button {
+          width: 100%; } }
+  .broccoli__edit-window-form-buttons-delete {
+    text-align: right;
+    -ms-flex-positive: 1;
+        flex-grow: 1;
+    padding: 10px;
+    width: 50%; }
+    .broccoli__edit-window-form-buttons-delete button {
+      max-width: 360px;
+      width: 80%; }
+      @media all and (max-width: 600px) {
+        .broccoli__edit-window-form-buttons-delete button {
+          width: 100%; } }
 
-.broccoli--edit-window-field-error-message {
+.broccoli__edit-window-field-error-message {
   display: none; }
 
 .broccoli__lightbox {

@@ -2987,57 +2987,41 @@ module.exports = function(broccoli){
 
 	var $editWindow;
 	var tplFrame = ''
-				+ '<div class="broccoli--edit-window">'
+				+ '<div class="broccoli__edit-window">'
 				+ '	<form action="javascript:;">'
-				+ '		<div class="broccoli--edit-window-logical-path">---</div>'
-				+ '		<h2 class="broccoli--edit-window-module-name">---</h2>'
-				+ '		<div class="broccoli--edit-window-module-readme-switch"><a href="javascript:;"><span class="glyphicon glyphicon-menu-right"></span> Show README</a></div>'
-				+ '		<div class="broccoli--edit-window-module-readme"><div class="broccoli--edit-window-module-readme-inner"><article class="broccoli__module-readme"></article></div></div>'
-				+ '		<div class="broccoli--edit-window-message-field"></div>'
-				+ '		<div class="broccoli--edit-window-fields">'
+				+ '		<div class="broccoli__edit-window-logical-path">---</div>'
+				+ '		<h2 class="broccoli__edit-window-module-name">---</h2>'
+				+ '		<div class="broccoli__edit-window-module-readme-switch"><a href="javascript:;"><span class="glyphicon glyphicon-menu-right"></span> Show README</a></div>'
+				+ '		<div class="broccoli__edit-window-module-readme"><div class="broccoli__edit-window-module-readme-inner"><article class="broccoli__module-readme"></article></div></div>'
+				+ '		<div class="broccoli__edit-window-message-field"></div>'
+				+ '		<div class="broccoli__edit-window-fields">'
 				+ '		</div>'
-				+ '		<div class="broccoli--edit-window-builtin-fields-switch"><a href="javascript:;"><span class="glyphicon glyphicon-menu-right"></span> <%= lb.get(\'ui_label.show_advanced_setting\') %></a></div>'
-				+ '		<div class="broccoli--edit-window-builtin-fields">'
+				+ '		<div class="broccoli__edit-window-builtin-fields-switch"><a href="javascript:;"><span class="glyphicon glyphicon-menu-right"></span> <%= lb.get(\'ui_label.show_advanced_setting\') %></a></div>'
+				+ '		<div class="broccoli__edit-window-builtin-fields">'
 				+ '			<div class="form-group">'
-				+ '				<label for="broccoli--edit-window-builtin-anchor-field"><%= lb.get(\'ui_label.anchor\') %></label>'
+				+ '				<label for="broccoli__edit-window-builtin-anchor-field"><%= lb.get(\'ui_label.anchor\') %></label>'
 				+ '				<div class="input-group">'
 				+ '					<span class="input-group-addon" id="basic-addon1">#</span>'
-				+ '					<input type="text" class="form-control" id="broccoli--edit-window-builtin-anchor-field" placeholder="">'
+				+ '					<input type="text" class="form-control" id="broccoli__edit-window-builtin-anchor-field" placeholder="">'
 				+ '				</div>'
 				+ '			</div>'
 				+ '			<div class="form-group">'
-				+ '				<label for="broccoli--edit-window-builtin-dec-field"><%= lb.get(\'ui_label.embed_comment\') %></label>'
-				+ '				<textarea class="form-control" id="broccoli--edit-window-builtin-dec-field" placeholder=""></textarea>'
+				+ '				<label for="broccoli__edit-window-builtin-dec-field"><%= lb.get(\'ui_label.embed_comment\') %></label>'
+				+ '				<textarea class="form-control" id="broccoli__edit-window-builtin-dec-field" placeholder=""></textarea>'
 				+ '			</div>'
 				+ '		</div>'
-				+ '		<div class="broccoli--edit-window-form-buttons">'
-				+ '			<div class="container-fluid">'
-				+ '				<div class="row">'
-				+ '					<div class="col-sm-6 col-sm-offset-3">'
-				+ '						<div class="btn-group btn-group-justified" role="group">'
-				+ '							<div class="btn-group">'
-				+ '								<button disabled="disabled" type="submit" class="px2-btn px2-btn--primary px2-btn--lg px2-btn--block"><span class="glyphicon glyphicon-ok"></span> <%= lb.get(\'ui_label.ok\') %></button>'
-				+ '							</div>'
-				+ '						</div>'
-				+ '					</div>'
+				+ '		<div class="broccoli__edit-window-form-buttons">'
+				+ '			<div class="broccoli__edit-window-form-buttons-fluid">'
+				+ '				<div class="broccoli__edit-window-form-buttons-ok">'
+				+ '					<button disabled="disabled" type="submit" class="px2-btn px2-btn--primary px2-btn--lg"><span class="glyphicon glyphicon-ok"></span> <%= lb.get(\'ui_label.ok\') %></button>'
 				+ '				</div>'
 				+ '			</div>'
-				+ '			<div class="container-fluid">'
-				+ '				<div class="row">'
-				+ '					<div class="col-sm-4">'
-				+ '						<div class="btn-group btn-group-justified" role="group" style="margin-top:20px;">'
-				+ '							<div class="btn-group">'
-				+ '								<button disabled="disabled" type="button" class="px2-btn px2-btn--sm px2-btn--block broccoli--edit-window-btn-cancel"><%= lb.get(\'ui_label.cancel\') %></button>'
-				+ '							</div>'
-				+ '						</div>'
-				+ '					</div>'
-				+ '					<div class="col-sm-4 col-sm-offset-4">'
-				+ '						<div class="btn-group btn-group-justified" role="group" style="margin-top:20px;">'
-				+ '							<div class="btn-group">'
-				+ '								<button disabled="disabled" type="button" class="px2-btn px2-btn--danger px2-btn--sm px2-btn--block broccoli--edit-window-btn-remove"><span class="glyphicon glyphicon-trash"></span> <%= lb.get(\'ui_label.remove_this_module\') %></button>'
-				+ '							</div>'
-				+ '						</div>'
-				+ '					</div>'
+				+ '			<div class="broccoli__edit-window-form-buttons-fluid">'
+				+ '				<div class="broccoli__edit-window-form-buttons-cancel">'
+				+ '					<button disabled="disabled" type="button" class="px2-btn px2-btn--sm broccoli__edit-window-btn-cancel"><%= lb.get(\'ui_label.cancel\') %></button>'
+				+ '				</div>'
+				+ '				<div class="broccoli__edit-window-form-buttons-delete">'
+				+ '					<button disabled="disabled" type="button" class="px2-btn px2-btn--danger px2-btn--sm broccoli__edit-window-btn-remove"><span class="glyphicon glyphicon-trash"></span> <%= lb.get(\'ui_label.remove_this_module\') %></button>'
 				+ '				</div>'
 				+ '			</div>'
 				+ '		</div>'
@@ -3046,13 +3030,13 @@ module.exports = function(broccoli){
 	;
 
 	var tplField = ''
-				+ '<div class="broccoli--edit-window-field">'
+				+ '<div class="broccoli__edit-window-field">'
 				+ '	<h3>---</h3>'
-				+ '	<div class="broccoli--edit-window-field-description">'
+				+ '	<div class="broccoli__edit-window-field-description">'
 				+ '	</div>'
-				+ '	<div class="broccoli--edit-window-field-content">'
+				+ '	<div class="broccoli__edit-window-field-content">'
 				+ '	</div>'
-				+ '	<div class="broccoli--edit-window-field-error-message">'
+				+ '	<div class="broccoli__edit-window-field-error-message">'
 				+ '	</div>'
 				+ '</div>'
 	;
@@ -3071,9 +3055,9 @@ module.exports = function(broccoli){
 	}
 
 	function formErrorMessage(msgs){
-		var $elm = $editWindow.find('.broccoli--edit-window-message-field');
+		var $elm = $editWindow.find('.broccoli__edit-window-message-field');
 		$editWindow.find('[data-broccoli-edit-window-field-name]').removeClass('has-error');
-		$editWindow.find('.broccoli--edit-window-field-error-message').hide().html('');
+		$editWindow.find('.broccoli__edit-window-field-error-message').hide().html('');
 		$elm.hide().html('');
 		for( var idx in msgs ){
 			var $err = $('<div class="broccoli__inline-error-message">');
@@ -3086,7 +3070,7 @@ module.exports = function(broccoli){
 				);
 			}
 			$editWindow.find('[data-broccoli-edit-window-field-name='+idx+']').addClass('has-error');
-			$editWindow.find('[data-broccoli-edit-window-field-name='+idx+'] .broccoli--edit-window-field-error-message').show().append( $err.append($errUl) );
+			$editWindow.find('[data-broccoli-edit-window-field-name='+idx+'] .broccoli__edit-window-field-error-message').show().append( $err.append($errUl) );
 		}
 		if(errCount){
 			var $err = $('<div class="broccoli__error-message-box">');
@@ -3118,14 +3102,14 @@ module.exports = function(broccoli){
 		var $fields = $('<div>');
 		$editWindow = $(elmEditWindow);
 		$editWindow.html('').append( broccoli.bindEjs(tplFrame, {'lb':broccoli.lb}) );
-		$editWindow.find('.broccoli--edit-window-module-name').text(mod.info.name||mod.id);
-		$editWindow.find('.broccoli--edit-window-fields').append($fields);
+		$editWindow.find('.broccoli__edit-window-module-name').text(mod.info.name||mod.id);
+		$editWindow.find('.broccoli__edit-window-fields').append($fields);
 
-		$editWindow.find('.broccoli--edit-window-logical-path').html('').append(
+		$editWindow.find('.broccoli__edit-window-logical-path').html('').append(
 			drawLogicalPath(instancePath, data)
 		);
 
-		$editWindow.find('.broccoli--edit-window-module-readme').hide();
+		$editWindow.find('.broccoli__edit-window-module-readme').hide();
 		try{
 			// console.log(broccoli.getBootupInfomations().modulePackageList);
 			var modulePackageList = broccoli.getBootupInfomations().modulePackageList;
@@ -3138,11 +3122,11 @@ module.exports = function(broccoli){
 			var readme = modulePackageList[parsedModId.package].categories[parsedModId.category].modules[parsedModId.module].readme;
 			// console.log(readme);
 			if(readme){
-				$editWindow.find('.broccoli--edit-window-module-readme-inner .broccoli__module-readme').html(readme);
-				$editWindow.find('.broccoli--edit-window-module-readme-switch a').click(function(){
+				$editWindow.find('.broccoli__edit-window-module-readme-inner .broccoli__module-readme').html(readme);
+				$editWindow.find('.broccoli__edit-window-module-readme-switch a').click(function(){
 					var $this = $(this);
-					var className = 'broccoli--edit-window-module-readme-switch__on';
-					$editWindow.find('.broccoli--edit-window-module-readme').toggle('fast', function(){
+					var className = 'broccoli__edit-window-module-readme-switch__on';
+					$editWindow.find('.broccoli__edit-window-module-readme').toggle('fast', function(){
 						if($(this).is(':visible')){
 							$this.addClass(className);
 							$this.html('<span class="glyphicon glyphicon-menu-down"></span> '+'Hide README')
@@ -3153,17 +3137,17 @@ module.exports = function(broccoli){
 					});
 				});
 			}else{
-				$editWindow.find('.broccoli--edit-window-module-readme-switch').hide();
+				$editWindow.find('.broccoli__edit-window-module-readme-switch').hide();
 			}
 		}catch(e){
-			$editWindow.find('.broccoli--edit-window-module-readme-switch').hide();
+			$editWindow.find('.broccoli__edit-window-module-readme-switch').hide();
 		}
 
-		$editWindow.find('.broccoli--edit-window-builtin-fields').hide();
-		$editWindow.find('.broccoli--edit-window-builtin-fields-switch a').click(function(){
+		$editWindow.find('.broccoli__edit-window-builtin-fields').hide();
+		$editWindow.find('.broccoli__edit-window-builtin-fields-switch a').click(function(){
 			var $this = $(this);
-			var className = 'broccoli--edit-window-builtin-fields-switch__on';
-			$editWindow.find('.broccoli--edit-window-builtin-fields').toggle('fast', function(){
+			var className = 'broccoli__edit-window-builtin-fields-switch__on';
+			$editWindow.find('.broccoli__edit-window-builtin-fields').toggle('fast', function(){
 				if($(this).is(':visible')){
 					$this.addClass(className);
 					$this.html('<span class="glyphicon glyphicon-menu-down"></span> '+broccoli.lb.get('ui_label.hide_advanced_setting'))
@@ -3371,16 +3355,16 @@ module.exports = function(broccoli){
 										;
 										$ul.append( $li.append($appender) );
 
-										var $elmFieldContent = $fields.find('.broccoli--edit-window-module-fields[data-broccoli--editwindow-field-name='+field.name+']').eq(0);
-										$elmFieldContent.addClass('broccoli--edit-window-module-fields--fieldtype-'+field.fieldType);
-										$elmFieldContent.find('.broccoli--edit-window-module-fields__instances').html('')
+										var $elmFieldContent = $fields.find('.broccoli__edit-window-module-fields[data-broccoli--editwindow-field-name='+field.name+']').eq(0);
+										$elmFieldContent.addClass('broccoli__edit-window-module-fields--fieldtype-'+field.fieldType);
+										$elmFieldContent.find('.broccoli__edit-window-module-fields__instances').html('')
 											.append(
 												$ul
 											)
 										;
 										if(field.fieldType == 'module'){
 											// moduleフィールドには、モジュールパレットがつきます。
-											broccoli.drawModulePalette( $elmFieldContent.find('.broccoli--edit-window-module-fields__palette').get(0), function(){
+											broccoli.drawModulePalette( $elmFieldContent.find('.broccoli__edit-window-module-fields__palette').get(0), function(){
 												it1.next();
 											} );
 										}else{
@@ -3433,25 +3417,25 @@ module.exports = function(broccoli){
 				if( field.validate ){
 					for(var valiNum in field.validate){
 						if( field.validate[valiNum] == 'required' ){
-							$field.addClass('broccoli--edit-window-field-required');
+							$field.addClass('broccoli__edit-window-field-required');
 							break;
 						}
 					}
 				}
 
 				if( field.description ){
-					$field.find('>.broccoli--edit-window-field-description')
+					$field.find('>.broccoli__edit-window-field-description')
 						.html( field.description )
 					;
 				}else{
-					$field.find('>.broccoli--edit-window-field-description')
+					$field.find('>.broccoli__edit-window-field-description')
 						.remove()
 					;
 				}
 				$fields.append($field);
 
 				// console.log( broccoli.fieldDefinitions );
-				var elmFieldContent = $field.find('.broccoli--edit-window-field-content').get(0);
+				var elmFieldContent = $field.find('.broccoli__edit-window-field-content').get(0);
 				switch( field.fieldType ){
 					case 'input':
 						var fieldDefinition = broccoli.getFieldDefinition(field.type);
@@ -3472,15 +3456,15 @@ module.exports = function(broccoli){
 						$(elmFieldContent)
 							.append(
 								$('<div>')
-									.addClass('broccoli--edit-window-module-fields')
+									.addClass('broccoli__edit-window-module-fields')
 									.attr({
 										"data-broccoli--editwindow-field-name": field.name
 									})
 									.append( $('<div>')
-										.addClass('broccoli--edit-window-module-fields__instances')
+										.addClass('broccoli__edit-window-module-fields__instances')
 									)
 									.append( $('<div>')
-										.addClass('broccoli--edit-window-module-fields__palette')
+										.addClass('broccoli__edit-window-module-fields__palette')
 									)
 							)
 						;
@@ -3500,13 +3484,13 @@ module.exports = function(broccoli){
 			function(){
 
 				updateModuleAndLoopField(instancePath, function(){
-					$editWindow.find('#broccoli--edit-window-builtin-anchor-field')
+					$editWindow.find('#broccoli__edit-window-builtin-anchor-field')
 						.val(data.anchor)
 					;
-					$editWindow.find('#broccoli--edit-window-builtin-dec-field')
+					$editWindow.find('#broccoli__edit-window-builtin-dec-field')
 						.val(data.dec)
 					;
-					$editWindow.find('.broccoli--edit-window-form-buttons button')
+					$editWindow.find('.broccoli__edit-window-form-buttons button')
 						.removeAttr('disabled')
 					;
 					$editWindow.find('form')
@@ -3535,13 +3519,13 @@ module.exports = function(broccoli){
 
 						})
 					;
-					$editWindow.find('button.broccoli--edit-window-btn-cancel')
+					$editWindow.find('button.broccoli__edit-window-btn-cancel')
 						.bind('click', function(){
 							_this.lock();
 							callback(false);
 						})
 					;
-					$editWindow.find('button.broccoli--edit-window-btn-remove')
+					$editWindow.find('button.broccoli__edit-window-btn-remove')
 						.bind('click', function(){
 							_this.lock();
 							if( !confirm('このモジュールを削除します。よろしいですか？') ){
@@ -3707,8 +3691,8 @@ module.exports = function(broccoli){
 				it79.fnc({},
 					[
 						function(it2, arg){
-							data.anchor = $editWindow.find('#broccoli--edit-window-builtin-anchor-field').val();
-							data.dec = $editWindow.find('#broccoli--edit-window-builtin-dec-field').val();
+							data.anchor = $editWindow.find('#broccoli__edit-window-builtin-anchor-field').val();
+							data.dec = $editWindow.find('#broccoli__edit-window-builtin-dec-field').val();
 
 							it2.next(arg);
 						} ,
@@ -3739,8 +3723,8 @@ module.exports = function(broccoli){
 	 */
 	this.lock = function(callback){
 		callback = callback || function(){};
-		$editWindow.find('.broccoli--edit-window-builtin-fields').find('input, textarea').attr({'disabled': true});
-		$editWindow.find('.broccoli--edit-window-form-buttons').find('button').attr({'disabled': true});
+		$editWindow.find('.broccoli__edit-window-builtin-fields').find('input, textarea').attr({'disabled': true});
+		$editWindow.find('.broccoli__edit-window-form-buttons').find('button').attr({'disabled': true});
 		callback();
 		return this;
 	}
@@ -3750,8 +3734,8 @@ module.exports = function(broccoli){
 	 */
 	this.unlock = function(callback){
 		callback = callback || function(){};
-		$editWindow.find('.broccoli--edit-window-builtin-fields').find('input, textarea').attr({'disabled': false});
-		$editWindow.find('.broccoli--edit-window-form-buttons').find('button').attr({'disabled': false});
+		$editWindow.find('.broccoli__edit-window-builtin-fields').find('input, textarea').attr({'disabled': false});
+		$editWindow.find('.broccoli__edit-window-form-buttons').find('button').attr({'disabled': false});
 		callback();
 		return this;
 	}

@@ -390,7 +390,7 @@
 
 
 // edit window
-.broccoli--edit-window{
+.broccoli__edit-window{
 	h2{
 		font-weight: bold;
 		text-align: center;
@@ -440,10 +440,10 @@
 		text-align: right;
 	}
 	&-builtin-fields{
-		border: 1px solid #99e;
+		border: 1px solid #ddd;
 		padding: 1em;
-		margin: 1em 5%;
-		background: #eef;
+		margin: 1em 0;
+		background: #f9f9f9;
 	}
 	&-module-fields{
 		padding: 10px;
@@ -461,7 +461,7 @@
 			overflow: auto;
 			-webkit-overflow-scrolling: touch;
 			overflow-scrolling: touch;
-			.broccoli--edit-window-module-fields--fieldtype-module &{
+			.broccoli__edit-window-module-fields--fieldtype-module &{
 				padding-right: 5px;
 				margin-right: 5px;
 				width: 70%;
@@ -519,7 +519,7 @@
 		&__palette{
 			display: none;
 
-			.broccoli--edit-window-module-fields--fieldtype-module &{
+			.broccoli__edit-window-module-fields--fieldtype-module &{
 				width: 30%;
 				overflow: auto;
 				-webkit-overflow-scrolling: touch;
@@ -548,6 +548,50 @@
 	&-form-buttons{
 		margin-top: 1em;
 		padding-bottom: 0.5em;
+		&-fluid {
+			display: flex;
+			align-items: stretch;
+			text-align: center;
+			padding: 10px 0;
+		}
+		&-ok {
+			text-align: center;
+			flex-grow: 1;
+			padding: 10px;
+			button {
+				max-width: 100%;
+				width: 60%;
+				@media all and (max-width:600px){
+					width: 100%;
+				}
+			}
+		}
+		&-cancel {
+			text-align: left;
+			flex-grow: 1;
+			padding: 10px;
+			width: 50%;
+			button {
+				max-width: 360px;
+				width: 80%;
+				@media all and (max-width:600px){
+					width: 100%;
+				}
+			}
+		}
+		&-delete {
+			text-align: right;
+			flex-grow: 1;
+			padding: 10px;
+			width: 50%;
+			button {
+				max-width: 360px;
+				width: 80%;
+				@media all and (max-width:600px){
+					width: 100%;
+				}
+			}
+		}
 	}
 
 	&-field-error-message{
