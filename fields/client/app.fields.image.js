@@ -148,7 +148,8 @@ module.exports = function(broccoli){
 				// アップした画像名をプリセット
 				// ただし、既に名前がセットされている場合は変更しない
 				var fname = fileInfo.name;
-				fname = fname.replace(new RegExp('\\.[a-zA-Z0-9]*$'), '');
+				fname = fname.replace(/\.[a-zA-Z0-9]*$/, '');
+				fname = fname.split(/[^0-9a-zA-Z\-\_\.]/).join('_');
 				$inputImageName.val(fname);
 			}
 			readSelectedLocalFile(fileInfo, function(dataUri){
