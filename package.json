@@ -54,6 +54,7 @@
     "gulp-sass": "^4.0.2",
     "gulp-twig": "^0.3.0",
     "gulp-uglify": "^1.2.0",
+    "md5": "^2.2.1",
     "mocha": "^2.1.0",
     "px2style": "^2.0.5",
     "validatorjs": "^3.18.1"
