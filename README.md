@@ -309,7 +309,8 @@ $ composer test
 ### broccoli-html-editor v0.3.16 (リリース日未定)
 
 - ace editor 適用時に、日本語変換中のテキストが画面上で確認しにくい問題を修正。
-- `image` フィールドに、バリデーション `min-height`、`max-height`、`min-width`、`max-width`、`min-filesize`、`max-filesize` を追加。
+- `image` フィールドに、バリデーション `required`、`min-height`、`max-height`、`min-width`、`max-width`、`min-filesize`、`max-filesize` を追加。
+- `image` フィールドで、画像ファイル名のあとに拡張子を表示するようになった。
 - `data.json` 上のフィールドデータが空白の場合に上書きできなくなることがある問題を修正。
 - Twigテンプレートで作成したモジュールで、 loopフィールドサブモジュール内のmoduleフィールドに他のモジュールを入れられな不具合を修正。
 
