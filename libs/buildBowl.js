@@ -260,6 +260,7 @@ module.exports = function(broccoli, data, options, callback){
 				// console.log(mod.topThis.templateType);
 
 				if( mod.topThis.templateType != 'broccoli' ){
+					// --------------------------------------
 					// テンプレートエンジン(Twigなど)利用の場合の処理
 					// console.log(mod.id + ' - ' + mod.subModName);
 					var tplDataObj = {};
@@ -275,6 +276,7 @@ module.exports = function(broccoli, data, options, callback){
 											// input field
 											var fieldDef = broccoli.getFieldDefinition( field.type ); // フィールドタイプ定義を呼び出す
 											var tmpVal = '';
+											var tmpValFin = '';
 											tplDataObj[field.name] = '';
 											fieldDef.bind( fieldData[field.name], options.mode, field, function(html){
 												tmpVal += html;
@@ -284,7 +286,13 @@ module.exports = function(broccoli, data, options, callback){
 												_this.nameSpace.vars[field.name] = {
 													fieldType: "input", type: field.type, val: tmpVal
 												}
-												it3.next();
+												fieldDef.bind( fieldData[field.name], 'finalize', field, function(html){
+													tmpValFin += html;
+													_this.nameSpace.varsFinalized[field.name] = {
+														fieldType: "input", type: field.type, val: tmpValFin
+													}
+													it3.next();
+												} );
 											} );
 											return;
 
@@ -324,6 +332,9 @@ module.exports = function(broccoli, data, options, callback){
 														tplDataObj[field.name] = tmp_tplDataObj;
 													}
 													_this.nameSpace.vars[field.name] = {
+														fieldType: "module", val: tmp_tplDataObj
+													}
+													_this.nameSpace.varsFinalized[field.name] = {
 														fieldType: "module", val: tmp_tplDataObj
 													}
 													it3.next();
@@ -381,8 +392,12 @@ module.exports = function(broccoli, data, options, callback){
 								}else{
 									// Twig: 環境変数登録
 									tplDataObj._ENV = {
-										"mode": options.mode
+										"mode": options.mode,
+										"vars": {}
 									};
+									for(var tmpIdx in _this.nameSpace.varsFinalized){
+										tplDataObj._ENV.vars[tmpIdx] = _this.nameSpace.varsFinalized[tmpIdx].val;
+									}
 
 									// Twig: カスタム関数登録
 									var $loopitem_memo = {
@@ -463,6 +478,7 @@ module.exports = function(broccoli, data, options, callback){
 					return;
 
 				}else{
+					// --------------------------------------
 					// Broccoliエンジン利用の処理
 					function buildBroccoliHtml(src, rtn, callback){
 
