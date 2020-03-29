@@ -1,6 +1,11 @@
 <div class="twig_template">
 <h2>{{heading}}</h2>
-{{body}}
+{# {{ dump(_ENV.vars.body) }} #}
+{% if _ENV.vars.body %}
+{{ body }}
+{% else %}
+<p><code>body</code> は入力されていません。</p>
+{% endif %}
 
 <div class="twig_template-include">
 {{include_main}}

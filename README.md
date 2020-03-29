@@ -315,6 +315,7 @@ $ composer test
 - `image` フィールドに、 `filenameAutoSetter` オプションを追加。
 - `data.json` 上のフィールドデータが空白の場合に上書きできなくなることがある問題を修正。
 - Twigテンプレートで作成したモジュールで、 loopフィールドサブモジュール内のmoduleフィールドに他のモジュールを入れられな不具合を修正。
+- Twigテンプレートで作成したモジュールで、 `_ENV.vars` を利用できるようになった。
 
 ### broccoli-html-editor v0.3.15 (2020年3月14日)
 
