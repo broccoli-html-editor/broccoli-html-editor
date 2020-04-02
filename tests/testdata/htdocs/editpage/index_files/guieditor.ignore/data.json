@@ -1183,7 +1183,11 @@
                             "multitext-1liner": {
                                 "src": "- 1行マルチテキストです。",
                                 "editor": "text"
-                            }
+                            },
+                            "color": "#c09fb0",
+                            "date": "2020-04-30",
+                            "time": "22:15",
+                            "datetime": "2020-04-08T13:16:02.000Z"
                         },
                         "anchor": "",
                         "dec": ""

@@ -5916,12 +5916,175 @@ module.exports = function(broccoli){
 
 },{"./apis/broccoli-client.js":1}],16:[function(require,module,exports){
 module.exports = function(broccoli){
+
+	/**
+	 * エディタUIを生成 (Client Side)
+	 */
+	this.mkEditor = function( mod, data, elm, callback ){
+		var rows = 12;
+		if( mod.rows ){
+			rows = mod.rows;
+		}
+		var $rtn = $('<div>'),
+			$formElm
+		;
+
+		$formElm = $('<input type="color" class="form-control">')
+			.attr({
+				"name": mod.name
+			})
+			.val(data)
+			.css({'width':'160px', 'max-width': '100%'})
+		;
+		$rtn.append( $formElm );
+
+		$(elm).html($rtn);
+
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+			callback();
+		}); });
+		return this;
+	}
+
+	/**
+	 * エディタUIで編集した内容を保存 (Client Side)
+	 */
+	this.saveEditorContent = function( elm, data, mod, callback, options ){
+		options = options || {};
+		options.message = options.message || function(msg){};//ユーザーへのメッセージテキストを送信
+		var $dom = $(elm);
+		var src = $dom.find('input[type=color]').val();
+		src = JSON.parse( JSON.stringify(src) );
+
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+			callback(src);
+		}); });
+		return this;
+	}
+
 }
 
 },{}],17:[function(require,module,exports){
-module.exports=require(16)
+module.exports = function(broccoli){
+
+	/**
+	 * エディタUIを生成 (Client Side)
+	 */
+	this.mkEditor = function( mod, data, elm, callback ){
+		var rows = 12;
+		if( mod.rows ){
+			rows = mod.rows;
+		}
+		var $rtn = $('<div>'),
+			$formElm
+		;
+
+		$formElm = $('<input type="date" class="form-control">')
+			.attr({
+				"name": mod.name
+			})
+			.val(data)
+			.css({'width':'180px', 'max-width': '100%'})
+		;
+		$rtn.append( $formElm );
+
+		$(elm).html($rtn);
+
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+			callback();
+		}); });
+		return this;
+	}
+
+	/**
+	 * エディタUIで編集した内容を保存 (Client Side)
+	 */
+	this.saveEditorContent = function( elm, data, mod, callback, options ){
+		options = options || {};
+		options.message = options.message || function(msg){};//ユーザーへのメッセージテキストを送信
+		var $dom = $(elm);
+		var src = $dom.find('input[type=date]').val();
+		src = JSON.parse( JSON.stringify(src) );
+
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+			callback(src);
+		}); });
+		return this;
+	}
+
+}
+
 },{}],18:[function(require,module,exports){
-module.exports=require(16)
+module.exports = function(broccoli){
+
+	/**
+	 * エディタUIを生成 (Client Side)
+	 */
+	this.mkEditor = function( mod, data, elm, callback ){
+		var rows = 12;
+		if( mod.rows ){
+			rows = mod.rows;
+		}
+		var $rtn = $('<div>');
+
+		var valDate, valTime;
+		if( data ){
+			var tmpDate = new Date(data);
+			valDate = 'Y-m-d';
+			valDate = valDate.replace(/Y/g, tmpDate.getFullYear());
+			valDate = valDate.replace(/m/g, ('0' + (tmpDate.getMonth() + 1)).slice(-2));
+			valDate = valDate.replace(/d/g, ('0' + tmpDate.getDate()).slice(-2));
+			valTime = 'H:i:s';
+			valTime = valTime.replace(/H/g, ('0' + tmpDate.getHours()).slice(-2));
+			valTime = valTime.replace(/i/g, ('0' + tmpDate.getMinutes()).slice(-2));
+			valTime = valTime.replace(/s/g, ('0' + tmpDate.getSeconds()).slice(-2));
+		}
+
+		$rtn
+			.append( $('<input type="date" class="form-control">')
+				.attr({ "name": mod.name + "__date" })
+				.val(valDate)
+				.css({'width':'180px', 'max-width': '100%'})
+			)
+			.append( $('<input type="time" step="1" class="form-control">')
+				.attr({ "name": mod.name + "__time" })
+				.val(valTime)
+				.css({'width':'130px', 'max-width': '100%'})
+			)
+		;
+
+		$(elm).html($rtn);
+
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+			callback();
+		}); });
+		return this;
+	}
+
+	/**
+	 * エディタUIで編集した内容を保存 (Client Side)
+	 */
+	this.saveEditorContent = function( elm, data, mod, callback, options ){
+		options = options || {};
+		options.message = options.message || function(msg){};//ユーザーへのメッセージテキストを送信
+		var $dom = $(elm);
+		var valDate = $dom.find('input[type=date]').val();
+		var valTime = $dom.find('input[type=time]').val();
+		var src = '';
+		if( valDate && valTime ){
+			src = valDate + ' ' + valTime;
+			src = new Date(src).toISOString();
+		}
+		src = JSON.parse( JSON.stringify(src) );
+
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+			callback(src);
+		}); });
+		return this;
+	}
+
+}
+
 },{}],19:[function(require,module,exports){
 module.exports = function(broccoli){
 
@@ -5964,9 +6127,11 @@ module.exports = function(broccoli){
 }
 
 },{}],20:[function(require,module,exports){
-module.exports=require(16)
+module.exports = function(broccoli){
+}
+
 },{}],21:[function(require,module,exports){
-module.exports=require(16)
+module.exports=require(20)
 },{}],22:[function(require,module,exports){
 module.exports = function(broccoli){
 
@@ -6749,7 +6914,7 @@ module.exports = function(broccoli){
 }
 
 },{"cheerio":38,"es6-promise":96,"iterate79":123,"md5":129,"url-parse":149,"utils79":170}],23:[function(require,module,exports){
-module.exports=require(16)
+module.exports=require(20)
 },{}],24:[function(require,module,exports){
 module.exports = function(broccoli){
 	var $ = require('jquery');
@@ -7254,9 +7419,57 @@ module.exports = function(broccoli){
 }
 
 },{"utils79":170}],27:[function(require,module,exports){
-module.exports=require(16)
+module.exports=require(20)
 },{}],28:[function(require,module,exports){
-module.exports=require(16)
+module.exports = function(broccoli){
+
+	/**
+	 * エディタUIを生成 (Client Side)
+	 */
+	this.mkEditor = function( mod, data, elm, callback ){
+		var rows = 12;
+		if( mod.rows ){
+			rows = mod.rows;
+		}
+		var $rtn = $('<div>'),
+			$formElm
+		;
+
+		$formElm = $('<input type="time" class="form-control">')
+			.attr({
+				"name": mod.name
+			})
+			.val(data)
+			.css({'width':'100px', 'max-width': '100%'})
+		;
+		$rtn.append( $formElm );
+
+		$(elm).html($rtn);
+
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+			callback();
+		}); });
+		return this;
+	}
+
+	/**
+	 * エディタUIで編集した内容を保存 (Client Side)
+	 */
+	this.saveEditorContent = function( elm, data, mod, callback, options ){
+		options = options || {};
+		options.message = options.message || function(msg){};//ユーザーへのメッセージテキストを送信
+		var $dom = $(elm);
+		var src = $dom.find('input[type=time]').val();
+		src = JSON.parse( JSON.stringify(src) );
+
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+			callback(src);
+		}); });
+		return this;
+	}
+
+}
+
 },{}],29:[function(require,module,exports){
 /**
  * インスタンスパスの末尾の連番を1つ進める
