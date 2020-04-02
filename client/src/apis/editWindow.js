@@ -228,9 +228,10 @@ module.exports = function(broccoli){
 										}
 										var $li = $('<li>');
 										var $a = $('<a>');
+										var $label = $('<span>');
 										$li.append($a);
 										$a
-											.text(label)
+											.append($label.text(label))
 											.attr({
 												'href': 'javascript:;',
 												'data-broccoli-parent-instance-path': instancePath,
@@ -245,6 +246,45 @@ module.exports = function(broccoli){
 												.addClass('broccoli--panel-drop-to-insert-here')
 											)
 										;
+
+										if(childMod.fields){
+											// プレビューを表示
+											(function($label, childMod, childData){
+												it79.ary(
+													childMod.fields,
+													function(itMkLabel, field, fieldName){
+														// console.log(field.fieldType);
+														// console.log(field.type);
+														var fieldType = field.fieldType;
+														var type = field.type;
+														if(fieldType == 'input'){
+															if( !broccoli.fieldDefinitions[type] ){
+																itMkLabel.next();
+																return;
+															}
+															broccoli.fieldDefinitions[type].mkPreviewHtml(childData.fields[fieldName], childMod.fields[fieldName], function(result){
+																$label.append('<div class="broccoli__edit-window-field-preview"><div>'+result+'</div></div>');
+																itMkLabel.next();
+															});
+															return;
+														}else if(fieldType == 'module'){
+															$label.append('<div class="broccoli__edit-window-field-preview"><div>(module field)</div></div>');
+															itMkLabel.next();
+															return;
+														}else if(fieldType == 'loop'){
+															$label.append('<div class="broccoli__edit-window-field-preview"><div>(loop field)</div></div>');
+															itMkLabel.next();
+															return;
+														}
+														itMkLabel.next();
+														return;
+													},
+													function(){
+													}
+												);
+											})($label, childMod, childData);
+										}
+
 										broccoli.panels.setPanelEventHandlers( $a );
 										$a
 											.unbind('drop')

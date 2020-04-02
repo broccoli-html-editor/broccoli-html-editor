@@ -485,6 +485,16 @@
         .broccoli__edit-window-form-buttons-delete button {
           width: 100%; } }
 
+.broccoli__edit-window-field-preview {
+  font-size: 64%;
+  line-height: 1.1; }
+  .broccoli__edit-window-field-preview * {
+    color: #666;
+    text-decoration: none;
+    max-width: 100%;
+    max-height: 1.2em;
+    display: inline; }
+
 .broccoli__edit-window-field-error-message {
   display: none; }
 
