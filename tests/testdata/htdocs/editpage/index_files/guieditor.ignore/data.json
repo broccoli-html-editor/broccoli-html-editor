@@ -8,7 +8,15 @@
                         "modId": "testMod1:dev/parse_error_1",
                         "fields": {
                             "__error__": ""
-                        }
+                        },
+                        "anchor": "",
+                        "dec": ""
+                    },
+                    {
+                        "modId": "testMod1:dev/empty_module",
+                        "fields": [],
+                        "anchor": "",
+                        "dec": ""
                     },
                     {
                         "modId": "testMod1:dev/image_double",

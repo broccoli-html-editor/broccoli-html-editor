@@ -417,6 +417,7 @@ module.exports = function(broccoli){
 		} // updateModuleAndLoopField()
 
 		var focusDone = false;
+		var fieldCount = 0;
 		it79.ary(
 			mod.fields,
 			function(it1, field, fieldName){
@@ -425,6 +426,7 @@ module.exports = function(broccoli){
 					it1.next();
 					return;
 				}
+				fieldCount ++;
 				// console.log(fieldName);
 				// console.log(field);
 				var $field = $(tplField)
@@ -508,6 +510,14 @@ module.exports = function(broccoli){
 				return;
 			},
 			function(){
+
+				if(!fieldCount){
+					$fields
+						.append(
+							'<p style="text-align: center; margin: 7em 1em;">このモジュールにはオプションが定義されていません。</p>'
+						)
+					;
+				}
 
 				updateModuleAndLoopField(instancePath, function(){
 					$editWindow.find('#broccoli__edit-window-builtin-anchor-field')
