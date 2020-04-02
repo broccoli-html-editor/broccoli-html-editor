@@ -148,6 +148,10 @@ class broccoliHtmlEditor{
 		$this->fieldDefinitions['script'] = $loadFieldDefinition('script');
 		$this->fieldDefinitions['select'] = $loadFieldDefinition('select');
 		$this->fieldDefinitions['text'] = $loadFieldDefinition('text');
+		$this->fieldDefinitions['color'] = $loadFieldDefinition('color');
+		$this->fieldDefinitions['date'] = $loadFieldDefinition('date');
+		$this->fieldDefinitions['time'] = $loadFieldDefinition('time');
+		$this->fieldDefinitions['datetime'] = $loadFieldDefinition('datetime');
 
 		if( $this->options['customFields'] ){
 			foreach( $this->options['customFields'] as $idx=>$className ){
