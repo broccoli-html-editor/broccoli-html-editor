@@ -262,9 +262,20 @@ module.exports = function(broccoli){
 																itMkLabel.next();
 																return;
 															}
-															broccoli.fieldDefinitions[type].mkPreviewHtml(childData.fields[fieldName], childMod.fields[fieldName], function(result){
-																$label.append('<div class="broccoli__edit-window-field-preview"><div>'+result+'</div></div>');
-																itMkLabel.next();
+															broccoli.resourceMgr.getResourceDb(function(resDb){
+																broccoli.fieldDefinitions[type].mkPreviewHtml(childData.fields[fieldName], childMod.fields[fieldName], function(html){
+																	html = (function(src){
+																		for(var resKey in resDb){
+																			try {
+																				src = src.split('{broccoli-html-editor-resource-baser64:{'+resKey+'}}').join(resDb[resKey].base64);
+																			} catch (e) {
+																			}
+																		}
+																		return src;
+																	})(html);
+																	$label.append('<div class="broccoli__edit-window-field-preview"><div>'+html+'</div></div>');
+																	itMkLabel.next();
+																});
 															});
 															return;
 														}else if(fieldType == 'module'){
