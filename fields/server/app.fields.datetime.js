@@ -28,12 +28,36 @@ module.exports = function(broccoli){
 
 	function dateFormat(format, date){
 		var tmpDate = new Date(date);
-		format = format.replace(/Y/g, tmpDate.getFullYear());
-		format = format.replace(/m/g, ('0' + (tmpDate.getMonth() + 1)).slice(-2));
-		format = format.replace(/d/g, ('0' + tmpDate.getDate()).slice(-2));
-		format = format.replace(/H/g, ('0' + tmpDate.getHours()).slice(-2));
-		format = format.replace(/i/g, ('0' + tmpDate.getMinutes()).slice(-2));
-		format = format.replace(/s/g, ('0' + tmpDate.getSeconds()).slice(-2));
+
+		format = format.replace(/y/g, (''+tmpDate.getFullYear()).slice(-2)); // 年。2 桁の数字。
+		format = format.replace(/Y/g, tmpDate.getFullYear()); // 年。4 桁の数字。
+
+		format = format.replace(/m/g, ('0' + (tmpDate.getMonth() + 1)).slice(-2)); // 月。数字。先頭にゼロをつける。
+		format = format.replace(/n/g, (tmpDate.getMonth() + 1)); // 月。数字。先頭にゼロをつけない。
+
+		format = format.replace(/d/g, ('0' + tmpDate.getDate()).slice(-2)); // 日。二桁の数字（先頭にゼロがつく場合も）
+		format = format.replace(/j/g, tmpDate.getDate()); // 日。先頭にゼロをつけない。
+
+		var G = tmpDate.getHours();
+		format = format.replace(/H/g, ('0' + G).slice(-2)); // 時。数字。24 時間単位。
+		format = format.replace(/G/g, G); // 時。24時間単位。先頭にゼロを付けない。
+
+		var g = G % 12;
+		if(g === 0){ g = 12; }
+		format = format.replace(/h/g, ('0' + g).slice(-2)); // 時。数字。12 時間単位。
+		format = format.replace(/g/g, g); // 時。12時間単位。先頭にゼロを付けない。
+
+		var a = (G < 12 ? 'am' : 'pm');
+		var A = (G < 12 ? 'AM' : 'PM');
+		format = format.replace(/a/g, a); // 午前または午後（小文字）
+		format = format.replace(/A/g, A); // 午前または午後（大文字）
+
+		format = format.replace(/i/g, ('0' + tmpDate.getMinutes()).slice(-2)); // 分。先頭にゼロをつける。
+		format = format.replace(/s/g, ('0' + tmpDate.getSeconds()).slice(-2)); // 秒。先頭にゼロをつける。
+
+		// PHP の dateformat に含まれないため割愛
+		// format = format.replace(/xxxxxxx/g, tmpDate.getMinutes());
+		// format = format.replace(/xxxxxxx/g, tmpDate.getSeconds());
 		return format;
 	}
 
