@@ -6020,10 +6020,8 @@ module.exports = function(broccoli){
 		var src = '';
 		if( valDate && valTime ){
 			src = valDate + ' ' + valTime;
-			src = new Date(src).toISOString();
 		}else if( valDate ){
 			src = valDate + ' 00:00:00';
-			src = new Date(src).toISOString();
 		}
 		src = JSON.parse( JSON.stringify(src) );
 
