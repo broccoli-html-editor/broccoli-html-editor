@@ -308,7 +308,7 @@ $ composer test
 
 ### broccoli-html-editor v0.3.16 (リリース日未定)
 
-- 新しいフィールド `color`、 `date`、 `time`、 `datetime` を追加。
+- 新しいフィールド `color`、 `datetime` を追加。
 - ace editor 適用時に、日本語変換中のテキストが画面上で確認しにくい問題を修正。
 - `image` フィールドに、バリデーション `required`、`min-height`、`max-height`、`min-width`、`max-width`、`min-filesize`、`max-filesize` を追加。
 - `image` フィールドで、画像ファイル名のあとに拡張子を表示するようになった。

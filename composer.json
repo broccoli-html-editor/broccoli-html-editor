@@ -57,8 +57,6 @@
             "fields/php/select.php",
             "fields/php/text.php",
             "fields/php/color.php",
-            "fields/php/date.php",
-            "fields/php/time.php",
             "fields/php/datetime.php",
             "php/fncs/readme.php",
             "php/helper/twig.php",

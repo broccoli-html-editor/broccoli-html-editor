@@ -4,36 +4,35 @@ module.exports = function(broccoli){
 	 * エディタUIを生成 (Client Side)
 	 */
 	this.mkEditor = function( mod, data, elm, callback ){
-		var rows = 12;
-		if( mod.rows ){
-			rows = mod.rows;
-		}
+		mod.step = mod.step || "min";
 		var $rtn = $('<div>');
 
 		var valDate, valTime;
 		if( data ){
-			var tmpDate = new Date(data);
-			valDate = 'Y-m-d';
-			valDate = valDate.replace(/Y/g, tmpDate.getFullYear());
-			valDate = valDate.replace(/m/g, ('0' + (tmpDate.getMonth() + 1)).slice(-2));
-			valDate = valDate.replace(/d/g, ('0' + tmpDate.getDate()).slice(-2));
-			valTime = 'H:i:s';
-			valTime = valTime.replace(/H/g, ('0' + tmpDate.getHours()).slice(-2));
-			valTime = valTime.replace(/i/g, ('0' + tmpDate.getMinutes()).slice(-2));
-			valTime = valTime.replace(/s/g, ('0' + tmpDate.getSeconds()).slice(-2));
+			valDate = dateFormat('Y-m-d', data);
+			valTime = dateFormat('H:i', data);
+			valTimeSec = dateFormat('H:i:s', data);
+		}
+
+		var $date = $('<input type="date" class="form-control">')
+			.attr({ "name": mod.name + "__date" })
+			.val(valDate)
+			.css({'width':'180px', 'max-width': '100%'});
+		var $time = $('<input type="time" class="form-control">')
+			.attr({ "name": mod.name + "__time" })
+			.val(valTime)
+			.css({'width':'130px', 'max-width': '100%'});
+
+		if( mod.step == "date" ){
+			$time.css({"display": "none"});
+		}else if( mod.step == "sec" ){
+			$time.val(valTimeSec);
+			$time.attr({"step": 1});
 		}
 
 		$rtn
-			.append( $('<input type="date" class="form-control">')
-				.attr({ "name": mod.name + "__date" })
-				.val(valDate)
-				.css({'width':'180px', 'max-width': '100%'})
-			)
-			.append( $('<input type="time" step="1" class="form-control">')
-				.attr({ "name": mod.name + "__time" })
-				.val(valTime)
-				.css({'width':'130px', 'max-width': '100%'})
-			)
+			.append( $date )
+			.append( $time )
 		;
 
 		$(elm).html($rtn);
@@ -57,6 +56,9 @@ module.exports = function(broccoli){
 		if( valDate && valTime ){
 			src = valDate + ' ' + valTime;
 			src = new Date(src).toISOString();
+		}else if( valDate ){
+			src = valDate + ' 00:00:00';
+			src = new Date(src).toISOString();
 		}
 		src = JSON.parse( JSON.stringify(src) );
 
@@ -66,4 +68,15 @@ module.exports = function(broccoli){
 		return this;
 	}
 
+
+	function dateFormat(format, date){
+		var tmpDate = new Date(date);
+		format = format.replace(/Y/g, tmpDate.getFullYear());
+		format = format.replace(/m/g, ('0' + (tmpDate.getMonth() + 1)).slice(-2));
+		format = format.replace(/d/g, ('0' + tmpDate.getDate()).slice(-2));
+		format = format.replace(/H/g, ('0' + tmpDate.getHours()).slice(-2));
+		format = format.replace(/i/g, ('0' + tmpDate.getMinutes()).slice(-2));
+		format = format.replace(/s/g, ('0' + tmpDate.getSeconds()).slice(-2));
+		return format;
+	}
 }
