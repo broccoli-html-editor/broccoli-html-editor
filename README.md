@@ -306,7 +306,7 @@ $ composer test
 
 ## 更新履歴 - Change log
 
-### broccoli-html-editor v0.3.16 (リリース日未定)
+### broccoli-html-editor v0.3.16 (2020年4月4日)
 
 - 新しいフィールド `color`、 `datetime` を追加。
 - ace editor 適用時に、日本語変換中のテキストが画面上で確認しにくい問題を修正。
