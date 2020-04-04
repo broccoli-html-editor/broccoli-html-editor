@@ -60,6 +60,7 @@ class buildBowl{
 		// var_dump($mod->topThis->templateType);
 
 		if( $mod->topThis->templateType != 'broccoli' ){
+			// --------------------------------------
 			// テンプレートエンジン(Twigなど)利用の場合の処理
 			// var_dump($mod->id . ' - ' . $mod->subModName);
 			$tplDataObj = array();
@@ -69,6 +70,7 @@ class buildBowl{
 					// input field
 					$fieldDef = $this->broccoli->getFieldDefinition( $field->type ); // フィールドタイプ定義を呼び出す
 					$tmpVal = '';
+					$tmpValFin = '';
 					$tplDataObj[$field->name] = '';
 					$tmp_bind_value = null;
 					if( array_key_exists($field->name, $fieldData) ){
@@ -76,6 +78,8 @@ class buildBowl{
 					}
 					$html = $fieldDef->bind( $tmp_bind_value, $this->options['mode'], $field );
 					$tmpVal .= $html;
+					$html = $fieldDef->bind( @$fieldData[$field->name], 'finalize', $field );
+					$tmpValFin .= $html;
 					if( !@$field->hidden ){//← "hidden": true だったら、非表示(=出力しない)
 						$tplDataObj[$field->name] = $tmpVal;
 					}
@@ -83,6 +87,11 @@ class buildBowl{
 						"fieldType" => "input",
 						"type" => $field->type,
 						"val" => $tmpVal
+					);
+					@$this->nameSpace['varsFinalized'][$field->name] = array(
+						'fieldType' => "input",
+						'type' => $field->type,
+						'val' => $tmpValFin
 					);
 
 				}elseif( @$field->fieldType == 'module' ){
@@ -120,6 +129,10 @@ class buildBowl{
 						"fieldType" => "module",
 						"val" => $tmp_tplDataObj
 					);
+					@$this->nameSpace['varsFinalized'][$field->name] = array(
+						"fieldType" => "module",
+						"val" => $tmp_tplDataObj
+					);
 
 				}elseif( @$field->fieldType == 'loop' ){
 					// loop field
@@ -129,18 +142,20 @@ class buildBowl{
 					$opt = json_decode( json_encode($this->options) );
 					$opt->instancePath .= '/fields.'.$field->name;
 					$tplDataObj[$field->name] = array();
-					foreach($fieldData[$field->name] as $idx=>$row){
-						// ネストされたモジュールの再帰処理
-						$tmpopt = json_decode( json_encode($opt), true );
-						$tmpopt['instancePath'] .= '@'.$idx;
-						$tmpopt['subModName'] = $field->name;
-						// var_dump($tmpopt);
-						$html = $this->broccoli->buildBowl($row, $tmpopt );
-						array_push($tplDataObj[$field->name], $html);
+					if( array_key_exists($field->name, $fieldData) && (is_object($fieldData[$field->name]) || is_array($fieldData[$field->name])) ){
+						foreach($fieldData[$field->name] as $idx=>$row){
+							// ネストされたモジュールの再帰処理
+							$tmpopt = json_decode( json_encode($opt), true );
+							$tmpopt['instancePath'] .= '@'.$idx;
+							$tmpopt['subModName'] = $field->name;
+							// var_dump($tmpopt);
+							$html = $this->broccoli->buildBowl($row, $tmpopt );
+							array_push($tplDataObj[$field->name], $html);
+						}
 					}
 					if( $this->options['mode'] == 'canvas' ){
 						$tmpopt = json_decode( json_encode($opt), true );
-						if(!is_array($fieldData[$field->name])){ $fieldData[$field->name] = array(); }
+						if(!array_key_exists($field->name, $fieldData) || !is_array($fieldData[$field->name])){ $fieldData[$field->name] = array(); }
 						$tmpopt['instancePath'] .= '@'.(count($fieldData[$field->name]));
 					}
 
@@ -154,7 +169,12 @@ class buildBowl{
 				// Twig: 環境変数登録
 				$tplDataObj['_ENV'] = array(
 					"mode" => $this->options['mode'],
+					"vars" => array(),
 				);
+				foreach( $this->nameSpace['varsFinalized'] as $tmpKey=>$tmpRow ){
+					$tplDataObj['_ENV']["vars"][$tmpKey] = $tmpRow['val'];
+				}
+
 				// Twig: カスタム関数登録
 				$tplFuncs = array();
 				$loopitem_memo = array(
@@ -231,6 +251,7 @@ class buildBowl{
 			}
 
 		}else{
+			// --------------------------------------
 			// Broccoliエンジン利用の処理
 			$rtn = '';
 			while(1){

@@ -30,6 +30,9 @@
 			},
 			"loop":{
 				"fieldType": "loop"
+			},
+			"loop2":{
+				"fieldType": "loop"
 			}
 		},
 		"subModule": {
@@ -42,6 +45,13 @@
 					"text2": {
 						"fieldType": "input",
 						"type": "multitext"
+					}
+				}
+			},
+			"loop2": {
+				"fields": {
+					"include_loop2_sub": {
+						"fieldType": "module"
 					}
 				}
 			}

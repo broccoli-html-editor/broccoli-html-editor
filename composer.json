@@ -31,9 +31,9 @@
         "php": ">=5.4.0",
         "tomk79/filesystem": "^1.0",
         "tomk79/langbank": "^0.0.4",
-        "michelf/php-markdown": "^1.8",
+        "michelf/php-markdown": ">=1.8",
         "twig/twig": ">=1.35",
-        "leafo/scssphp": "^0.7.6"
+        "leafo/scssphp": ">=0.7.6"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.1.0"
@@ -56,6 +56,9 @@
             "fields/php/script.php",
             "fields/php/select.php",
             "fields/php/text.php",
+            "fields/php/color.php",
+            "fields/php/datetime.php",
+            "php/fncs/readme.php",
             "php/helper/twig.php",
             "php/simple_html_dom.php"
         ]

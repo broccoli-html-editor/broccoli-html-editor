@@ -162,9 +162,12 @@ module.exports = function(broccoli, targetElm, callback){
 				var html = generateModuleInfoHtml(this);
 				broccoli.lightbox(function(elm){
 					$(elm)
+						.css({
+							'max-width': 570
+						})
 						.append(html)
-						.append( $('<button class="px2-btn px2-btn--primary px2-btn--block">')
-							.text('close')
+						.append( $('<button class="px2-btn">')
+							.text('閉じる')
 							.bind('click', function(){
 								broccoli.closeLightbox();
 							})
@@ -231,11 +234,7 @@ module.exports = function(broccoli, targetElm, callback){
 		html += '<p>'+$elm.attr('data-id')+'</p>';
 		html += '<hr />';
 		var readme = $elm.attr('data-readme');
-		var $readme = $('<div>'+readme+'</div>')
-		$readme.find('a').each(function(){
-			$(this).attr({'target':'_blank'})
-		});
-		html += '<div>'+ (readme ? $readme.html() : '<p style="text-align:center; margin: 100px auto;">-- no readme --</p>' ) +'</div>';
+		html += '<div class="broccoli--module-info-content-readme"><article class="broccoli__module-readme">'+ (readme ? readme : '<p style="text-align:center; margin: 100px auto;">-- no readme --</p>' ) +'</article></div>';
 
 		var pics = JSON.parse( $elm.attr('data-pics') );
 		if( pics.length ){

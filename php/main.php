@@ -148,6 +148,8 @@ class broccoliHtmlEditor{
 		$this->fieldDefinitions['script'] = $loadFieldDefinition('script');
 		$this->fieldDefinitions['select'] = $loadFieldDefinition('select');
 		$this->fieldDefinitions['text'] = $loadFieldDefinition('text');
+		$this->fieldDefinitions['color'] = $loadFieldDefinition('color');
+		$this->fieldDefinitions['datetime'] = $loadFieldDefinition('datetime');
 
 		if( $this->options['customFields'] ){
 			foreach( $this->options['customFields'] as $idx=>$className ){
@@ -441,14 +443,8 @@ class broccoliHtmlEditor{
 				}
 
 				// README.md (html)
-				$realpathReadme = $this->fs->normalize_path($this->fs->get_realpath( $realpath.'/README' ));
-				$readme = '';
-				if( is_file($realpathReadme.'.html') ){
-					$readme = file_get_contents( $realpathReadme.'.html' );
-				}elseif( is_file($realpathReadme.'.md') ){
-					$readme = file_get_contents( $realpathReadme.'.md' );
-					$readme = \Michelf\MarkdownExtra::defaultTransform($readme);
-				}
+				$readmeHelper = new fncs_readme($this);
+				$readme = $readmeHelper->get_html($realpath);
 
 				$rtn['categories'][$idx]['modules'][$row2]['readme'] = $readme;
 
@@ -637,6 +633,9 @@ class broccoliHtmlEditor{
 	public function markdown($md, $options = array()){
 		$rtn = \Michelf\MarkdownExtra::defaultTransform($md);
 		$rtn = preg_replace('/(\r\n|\r|\n)+/s', "\n", $rtn);
+		if( !strlen(trim($rtn)) ){
+			$rtn = '';
+		}
 		return $rtn;
 	}
 

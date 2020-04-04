@@ -8,7 +8,15 @@
                         "modId": "testMod1:dev/parse_error_1",
                         "fields": {
                             "__error__": ""
-                        }
+                        },
+                        "anchor": "",
+                        "dec": ""
+                    },
+                    {
+                        "modId": "testMod1:dev/empty_module",
+                        "fields": [],
+                        "anchor": "",
+                        "dec": ""
                     },
                     {
                         "modId": "testMod1:dev/image_double",
@@ -1063,6 +1071,46 @@
                                     "anchor": "",
                                     "dec": ""
                                 }
+                            ],
+                            "loop2": [
+                                {
+                                    "modId": "testMod1:dev/twig",
+                                    "fields": {
+                                        "include_loop2_sub": [
+                                            {
+                                                "modId": "PlainHTMLElements:PlainHTML/MultiText",
+                                                "fields": {
+                                                    "main": {
+                                                        "src": "テストです。\n",
+                                                        "editor": "markdown"
+                                                    }
+                                                },
+                                                "anchor": "",
+                                                "dec": ""
+                                            }
+                                        ]
+                                    },
+                                    "subModName": "loop2"
+                                },
+                                {
+                                    "modId": "testMod1:dev/twig",
+                                    "fields": {
+                                        "include_loop2_sub": [
+                                            {
+                                                "modId": "PlainHTMLElements:PlainHTML/MultiText",
+                                                "fields": {
+                                                    "main": {
+                                                        "src": "テストです。\nその2。\n",
+                                                        "editor": "markdown"
+                                                    }
+                                                },
+                                                "anchor": "",
+                                                "dec": ""
+                                            }
+                                        ]
+                                    },
+                                    "subModName": "loop2"
+                                }
                             ]
                         },
                         "anchor": "",
@@ -1135,7 +1183,15 @@
                             "multitext-1liner": {
                                 "src": "- 1行マルチテキストです。",
                                 "editor": "text"
-                            }
+                            },
+                            "color": "#c09fb0",
+                            "date": "2020-04-29 00:00",
+                            "time": "22:15",
+                            "datetime": "2020-04-14 18:20",
+                            "datetimesec": "2024-02-07 11:18:03",
+                            "f_date": "2020-04-23 00:00",
+                            "f_datetime": "2016-02-01 22:05",
+                            "f_datetimesec": "2008-03-09 12:07:01"
                         },
                         "anchor": "",
                         "dec": ""

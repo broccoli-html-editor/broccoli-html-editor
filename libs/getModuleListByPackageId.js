@@ -11,6 +11,7 @@ module.exports = function(broccoli, packageId, callback){
 	var php = require('phpjs');
 	var fs = require('fs');
 	var Promise = require('es6-promise').Promise;
+	var FncsReadme = require('./fncs/readme.js');
 	var rtn = {};
 
 	function isFile(path){
@@ -177,30 +178,9 @@ module.exports = function(broccoli, packageId, callback){
 								}
 
 								// README.md (html)
-								var realpathReadme = path.resolve( realpath, 'README' );
-								var readme = '';
-								try{
-									readme = '';
-									if( isFile(realpathReadme+'.html') ){
-										readme = fs.readFileSync( realpathReadme+'.html' ).toString();
-									}else if( isFile(realpathReadme+'.md') ){
-										readme = fs.readFileSync( realpathReadme+'.md' ).toString();
-										var marked = require('marked');
-										marked.setOptions({
-											renderer: new marked.Renderer(),
-											gfm: true,
-											tables: true,
-											breaks: false,
-											pedantic: false,
-											sanitize: false,
-											smartLists: true,
-											smartypants: false
-										});
-										readme = marked(readme);
-									}
-								} catch (e) {
-									readme = '';
-								}
+								var readmeHelper = new FncsReadme(broccoli);
+								var readme = readmeHelper.get_html(realpath);
+
 								rtn.categories[idx].modules[row2].readme = readme;
 
 								// pics/

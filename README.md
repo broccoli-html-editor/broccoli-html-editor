@@ -306,12 +306,28 @@ $ composer test
 
 ## 更新履歴 - Change log
 
-### broccoli-html-editor v0.3.15 (リリース日未定)
+### broccoli-html-editor v0.3.16 (2020年4月4日)
+
+- 新しいフィールド `color`、 `datetime` を追加。
+- ace editor 適用時に、日本語変換中のテキストが画面上で確認しにくい問題を修正。
+- `image` フィールドに、バリデーション `required`、`min-height`、`max-height`、`min-width`、`max-width`、`min-filesize`、`max-filesize` を追加。
+- `image` フィールドで、画像ファイル名のあとに拡張子を表示するようになった。
+- `image` フィールドで、画像ファイル名に含まれる 英数字、ハイフン、アンダースコア、ドット以外の文字が、初回の自動セット時にアンダースコアに置き換えられるようになった。
+- `image` フィールドに、 `filenameAutoSetter` オプションを追加。
+- `data.json` 上のフィールドデータが空白の場合に上書きできなくなることがある問題を修正。
+- 編集ウィンドウ上の `module`フィールドと `loop`フィールドの編集欄に、子要素の大まかな内容を伝えるプレビューを表示するようになった。
+- Twigテンプレートで作成したモジュールで、 loopフィールドサブモジュール内のmoduleフィールドに他のモジュールを入れられな不具合を修正。
+- Twigテンプレートで作成したモジュールで、 `_ENV.vars` を利用できるようになった。
+
+### broccoli-html-editor v0.3.15 (2020年3月14日)
 
 - `script` フィールドに `escape` オプションを追加。
 - Twigテンプレートで `loopitem_start($fieldName)`、 `loopitem_end()`、 `appender($fieldName)` を使えるようになり、Twigテンプレートでも loopフィールドのアペンダーを利用できるようになった。
 - 各フィールドのオプション `validate` を追加。 npmパッケージ `validatorjs` のバリデーション機能が統合された。
 - クライアントサイドに `customValidationRules` オプションを追加。
+- 編集ウィンドウ内に、モジュールのREADMEを表示する機能を追加。
+- モジュールのREADME内で画像を参照できるようになった。
+- GPIから CSS と JS をビルドできるようになった。
 - その他の細かい修正。
 
 ### broccoli-html-editor v0.3.14 (2020年2月24日)

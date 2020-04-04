@@ -346,10 +346,12 @@ class classModule{
 						foreach( $tmpJson->interface->subModule as $tmpIdx=>$tmpRow  ){
 							@$this->subModule->{$tmpIdx} = json_decode(json_encode($tmpRow));
 							@$this->subModule->{$tmpIdx}->fields = array();
-							foreach( $tmpRow->fields as $tmpIdx2=>$tmpRow2 ){
-								@$this->subModule->{$tmpIdx}->fields[$tmpIdx2] = $tmpRow2;
-								// name属性を自動補完
-								@$this->subModule->{$tmpIdx}->fields[$tmpIdx2]->name = $tmpIdx2;
+							if( property_exists($tmpRow, 'fields') && (is_object($tmpRow->fields) || is_array($tmpRow->fields)) ){
+								foreach( $tmpRow->fields as $tmpIdx2=>$tmpRow2 ){
+									@$this->subModule->{$tmpIdx}->fields[$tmpIdx2] = $tmpRow2;
+									// name属性を自動補完
+									@$this->subModule->{$tmpIdx}->fields[$tmpIdx2]->name = $tmpIdx2;
+								}
 							}
 						}
 					}

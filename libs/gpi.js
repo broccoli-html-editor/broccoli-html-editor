@@ -136,6 +136,18 @@ module.exports = function(broccoli, api, options, callback){
 				);
 				break;
 
+			case "buildModuleCss":
+				broccoli.buildModuleCss(function(css){
+					callback(css);
+				});
+				break;
+
+			case "buildModuleJs":
+				broccoli.buildModuleJs(function(js){
+					callback(js);
+				});
+				break;
+
 			case "updateContents":
 				broccoli.updateContents(
 					function(result){

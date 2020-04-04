@@ -245,7 +245,7 @@ module.exports = function(broccoli){
 							return false;
 						}
 					}
-					if(modTpl.fields[fieldName].enabledChildren.length){
+					if(typeof(modTpl.fields[fieldName].enabledChildren)==typeof([]) && modTpl.fields[fieldName].enabledChildren.length){
 						var tmpIsEnabledChild = false;
 						for(var tmpIdx in modTpl.fields[fieldName].enabledChildren){
 							if(modTpl.fields[fieldName].enabledChildren[tmpIdx] == newDataModTpl.id){
@@ -313,7 +313,7 @@ module.exports = function(broccoli){
 	 * インスタンスを更新する
 	 */
 	this.updateInstance = function( newData, containerInstancePath, cb ){
-		// console.log( '----- updateInstance: '+containerInstancePath );
+		// console.log( '----- updateInstance:', containerInstancePath, newData );
 		cb = cb||function(){};
 
 		var containerInstancePath = this.parseInstancePath( containerInstancePath );

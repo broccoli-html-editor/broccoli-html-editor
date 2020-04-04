@@ -1,6 +1,11 @@
 <div class="twig_template">
 <h2>{{heading}}</h2>
-{{body}}
+{# {{ dump(_ENV.vars.body) }} #}
+{% if _ENV.vars.body %}
+{{ body }}
+{% else %}
+<p><code>body</code> は入力されていません。</p>
+{% endif %}
 
 <div class="twig_template-include">
 {{include_main}}
@@ -25,6 +30,17 @@
 
 {# {{dump(loop)}}
 {{ loop[2].text1 }} #}
+</div>
+
+<div class="twig_template-loop2">
+{% for loop2Row in loop2 %}
+{{ loopitem_start('loop2') }}
+<div>
+    <div>{{ loop2Row.include_loop2_sub }}</div>
+</div>
+{{ loopitem_end() }}
+{% endfor %}
+{{ appender('loop2') }}
 </div>
 
 {%if _ENV.mode=="canvas"%}

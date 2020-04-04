@@ -25,6 +25,13 @@ class gpi{
 	 * General Purpose Interface
 	 */
 	public function gpi($api, $options){
+		$options = (array) $options;
+		if( !array_key_exists('lang', $options) ){
+			$options['lang'] = null;
+		}
+		if( !strlen($options['lang']) ){
+			$options['lang'] = 'en';
+		}
 
 		// var_dump('broccoli: set language "'.$options['lang'].'"');
 		$this->broccoli->lb()->setLang( $options['lang'] );
@@ -96,6 +103,14 @@ class gpi{
 					'bowlList' => $options['bowlList']
 				) );
 				return $htmls;
+
+			case "buildModuleCss":
+				$css = $this->broccoli->buildModuleCss();
+				return $css;
+
+			case "buildModuleJs":
+				$js = $this->broccoli->buildModuleJs();
+				return $js;
 
 			case "updateContents":
 				$result = $this->broccoli->updateContents();
