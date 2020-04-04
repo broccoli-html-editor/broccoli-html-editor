@@ -5971,6 +5971,7 @@ module.exports = function(broccoli){
 	this.mkEditor = function( mod, data, elm, callback ){
 		mod.step = mod.step || "min";
 		var $rtn = $('<div>');
+		$rtn.css({'display': 'flex'});
 
 		var valDate, valTime;
 		if( data ){
