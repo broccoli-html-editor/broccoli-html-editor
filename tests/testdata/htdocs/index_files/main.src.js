@@ -28,7 +28,7 @@ window.main = new (function(){
 
 	// broccoli をインスタンス化
 	var broccoli = new Broccoli();
-	this.broccoli = broccoli;
+	this.broccoli = window.broccoli = broccoli;
 
 	(function(){
 		var h = $(window).height() - 70;

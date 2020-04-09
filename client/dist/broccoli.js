@@ -1087,6 +1087,11 @@
 				callback(false);
 				return;
 			}
+			if( this.isLightboxOpened() ){
+				// lightboxを表示中は削除を受け付けない。
+				callback(false);
+				return;
+			}
 			selectedInstanceRegion = JSON.parse( JSON.stringify(selectedInstanceRegion) );
 			selectedInstanceRegion.reverse();//先頭から削除すると添字がリアルタイムに変わってしまうので、逆順に削除する。
 
