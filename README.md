@@ -306,6 +306,10 @@ $ composer test
 
 ## 更新履歴 - Change log
 
+### broccoli-html-editor v0.3.17 (リリース日未定)
+
+- 細かい不具合の修正。
+
 ### broccoli-html-editor v0.3.16 (2020年4月4日)
 
 - 新しいフィールド `color`、 `datetime` を追加。

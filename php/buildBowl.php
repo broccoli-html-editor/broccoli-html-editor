@@ -100,6 +100,9 @@ class buildBowl{
 					$opt->instancePath .= '/fields.'.$field->name;
 					$tmp_tplDataObj = '';
 
+					if( !array_key_exists($field->name, $fieldData) ){
+						$fieldData[$field->name] = array();
+					}
 					foreach( $fieldData[$field->name] as $idx=>$row ){
 						// ネストされたモジュールの再帰処理
 						$tmpopt = json_decode( json_encode($opt), true );
@@ -122,14 +125,14 @@ class buildBowl{
 						);
 					}
 
-					if( !@$field->hidden ){//← "hidden": true だったら、非表示(=出力しない)
+					if( !property_exists($field, 'hidden') || !$field->hidden ){//← "hidden": true だったら、非表示(=出力しない)
 						$tplDataObj[$field->name] = $tmp_tplDataObj;
 					}
-					@$this->nameSpace['vars'][$field->name] = array(
+					$this->nameSpace['vars'][$field->name] = array(
 						"fieldType" => "module",
 						"val" => $tmp_tplDataObj
 					);
-					@$this->nameSpace['varsFinalized'][$field->name] = array(
+					$this->nameSpace['varsFinalized'][$field->name] = array(
 						"fieldType" => "module",
 						"val" => $tmp_tplDataObj
 					);
