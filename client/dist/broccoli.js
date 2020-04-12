@@ -74,10 +74,12 @@
 			$canvas.find('iframe')
 				.bind('load', function(){
 					var contWin = $canvas.find('iframe').get(0).contentWindow;
-					if(contWin.location.href == 'about:blank'){
-						return;
-					}
-					console.log('broccoli: preview loaded:', contWin.location.href);
+					try{
+						if(contWin.location.href == 'about:blank'){
+							return;
+						}
+						console.log('broccoli: preview loaded:', contWin.location.href);
+					}catch(e){}
 					_this.setUiState('standby');
 					onPreviewLoad( callback );
 				})
