@@ -157,7 +157,9 @@ broccoli.init(
 		'onMessage': function( message ){
 			// ユーザーへ知らせるメッセージを表示する
 			console.info('message: '+message);
-		}
+		},
+		'enableModuleAnchor': true, // モジュールごとのid属性入力の有効/無効 (デフォルトは `true`)
+		'enableModuleDec': true // DEC入力の有効/無効 (デフォルトは `true`)
 	} ,
 	function(){
 		// 初期化が完了すると呼びだされるコールバック関数です。
@@ -308,6 +310,8 @@ $ composer test
 
 ### broccoli-html-editor v0.3.17 (リリース日未定)
 
+- 新しい設定項目 `enableModuleAnchor` を追加。(デフォルトは `true`)
+- 新しい設定項目 `enableModuleDec` を追加。(デフォルトは `true`)
 - 細かい不具合の修正。
 
 ### broccoli-html-editor v0.3.16 (2020年4月4日)

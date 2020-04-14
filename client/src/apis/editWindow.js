@@ -24,14 +24,14 @@ module.exports = function(broccoli){
 				+ '		</div>'
 				+ '		<div class="broccoli__edit-window-builtin-fields-switch"><a href="javascript:;"><span class="glyphicon glyphicon-menu-right"></span> <%= lb.get(\'ui_label.show_advanced_setting\') %></a></div>'
 				+ '		<div class="broccoli__edit-window-builtin-fields">'
-				+ '			<div class="form-group">'
+				+ '			<div class="form-group broccoli__edit-window-builtin-anchor-field-wrap">'
 				+ '				<label for="broccoli__edit-window-builtin-anchor-field"><%= lb.get(\'ui_label.anchor\') %></label>'
 				+ '				<div class="input-group">'
 				+ '					<span class="input-group-addon" id="basic-addon1">#</span>'
 				+ '					<input type="text" class="form-control" id="broccoli__edit-window-builtin-anchor-field" placeholder="">'
 				+ '				</div>'
 				+ '			</div>'
-				+ '			<div class="form-group">'
+				+ '			<div class="form-group broccoli__edit-window-builtin-dec-field-wrap">'
 				+ '				<label for="broccoli__edit-window-builtin-dec-field"><%= lb.get(\'ui_label.embed_comment\') %></label>'
 				+ '				<textarea class="form-control" id="broccoli__edit-window-builtin-dec-field" placeholder=""></textarea>'
 				+ '			</div>'
@@ -134,6 +134,19 @@ module.exports = function(broccoli){
 		$editWindow.find('.broccoli__edit-window-logical-path').html('').append(
 			drawLogicalPath(instancePath, data)
 		);
+
+		// options
+		if( !broccoli.options.enableModuleAnchor ){
+			$editWindow.find('.broccoli__edit-window-builtin-anchor-field-wrap').css({'display': 'none'});
+		}
+		if( !broccoli.options.enableModuleDec ){
+			$editWindow.find('.broccoli__edit-window-builtin-dec-field-wrap').css({'display': 'none'});
+		}
+		if( !broccoli.options.enableModuleAnchor && !broccoli.options.enableModuleDec ){
+			$editWindow.find('.broccoli__edit-window-builtin-fields-switch').css({'display': 'none'});
+			$editWindow.find('.broccoli__edit-window-builtin-fields').css({'display': 'none'});
+		}
+
 
 		$editWindow.find('.broccoli__edit-window-module-readme').hide();
 		try{

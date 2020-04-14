@@ -16854,7 +16854,9 @@ window.main = new (function(){
 				},
 				'onMessage': function(message){
 					console.info('message: '+message);
-				}
+				},
+				'enableModuleAnchor': true, // モジュールごとのid属性入力の有効/無効 (デフォルトは `true`)
+				'enableModuleDec': true // DEC入力の有効/無効 (デフォルトは `true`)
 			} ,
 			function(){
 				console.log('broccoli standby.');

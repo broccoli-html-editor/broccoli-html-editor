@@ -56,6 +56,8 @@
 			options.clipboard = options.clipboard || {};
 			options.clipboard.set = options.clipboard.set || null;
 			options.clipboard.get = options.clipboard.get || null;
+			options.enableModuleDec = ( typeof(options.enableModuleDec) == typeof(true) ? options.enableModuleDec : true );
+			options.enableModuleAnchor = ( typeof(options.enableModuleAnchor) == typeof(true) ? options.enableModuleAnchor : true );
 
 			this.options = options;
 
