@@ -3580,7 +3580,7 @@ module.exports = function(broccoli){
 					;
 					$editWindow.find('form')
 						.removeAttr('disabled')
-						.bind('submit', function(){
+						.on('submit', function(){
 							// 編集内容を保存する
 							// console.log( data );
 							// console.log( mod );
@@ -3605,13 +3605,13 @@ module.exports = function(broccoli){
 						})
 					;
 					$editWindow.find('button.broccoli__edit-window-btn-cancel')
-						.bind('click', function(){
+						.on('click', function(){
 							_this.lock();
 							callback(false);
 						})
 					;
 					$editWindow.find('button.broccoli__edit-window-btn-remove')
-						.bind('click', function(){
+						.on('click', function(){
 							_this.lock();
 							if( !confirm('このモジュールを削除します。よろしいですか？') ){
 								_this.unlock();
@@ -3629,6 +3629,32 @@ module.exports = function(broccoli){
 							});
 						})
 					;
+					(function($target){
+						// タブキーの制御
+						var $tabTargets = $target.find('a, input, textarea, select, button');
+						var $start = $tabTargets.eq(0);
+						var $end = $tabTargets.eq(-1);
+						$start
+							.on('keydown', function(e){
+								if (e.keyCode == 9 && e.originalEvent.shiftKey) {
+									$end.focus();
+									e.preventDefault();
+									e.stopPropagation();
+									return false;
+								}
+							})
+						;
+						$end
+							.on('keydown', function(e){
+								if (e.keyCode == 9 && !e.originalEvent.shiftKey) {
+									$start.focus();
+									e.preventDefault();
+									e.stopPropagation();
+									return false;
+								}
+							})
+						;
+					})($editWindow);
 				});
 
 			}
