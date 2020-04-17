@@ -558,7 +558,7 @@
 						// インスタンスツリービュー描画
 						_this.progressMessage('インスタンスツリービューを描画しています...。');
 						_this.instanceTreeView.update( function(){
-							console.log('broccoli: instanceTreeView redoraw : done.');
+							console.log('broccoli: instanceTreeView redraw : done.');
 							it1.next(data);
 						} );
 					} ,
@@ -566,7 +566,7 @@
 						// インスタンスパスビューを更新
 						_this.progressMessage('インスタンスパスビューを描画しています...。');
 						_this.instancePathView.update( function(){
-							console.log('broccoli: instancePathView redoraw : done.');
+							console.log('broccoli: instancePathView redraw : done.');
 							it1.next(data);
 						} );
 					} ,
