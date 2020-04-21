@@ -27,6 +27,7 @@ class classModule{
 	public	$subModName,
 			$isSingleRootElement,
 			$isSystemModule,
+			$isClipModule,
 			$templateFilename,
 			$templateType,
 			$path,
@@ -46,6 +47,7 @@ class classModule{
 
 		$this->realpath = $this->broccoli->getModuleRealpath($moduleId);
 		$this->isSystemModule = $this->broccoli->isSystemMod($moduleId);
+		$this->isClipModule = null;
 
 		// var_dump('classModTpl -> '.$moduleId);
 
@@ -121,6 +123,10 @@ class classModule{
 			if( is_file( $this->path.'/finalize.php' ) ){
 				$tmpRealathFinalizePhp = $this->broccoli->fs()->get_realpath($this->path.'/finalize.php');
 				$this->finalize = include($tmpRealathFinalizePhp);
+			}
+			$this->isClipModule = false;
+			if( is_file( $this->path.'/clip.json' ) ){
+				$this->isClipModule = true;
 			}
 			if( is_file( $this->path.'/template.html' ) ){
 				$this->templateFilename = $this->path.'/template.html';

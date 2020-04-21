@@ -58,6 +58,7 @@ module.exports = function(broccoli, moduleId, options){
 	// console.log('classModTpl -> '+moduleId);
 
 	this.isSingleRootElement = false;
+	this.isClipModule = null;
 	this.path = null;
 	if( !this.isSystemModule && typeof(options.src) !== typeof('') ){
 		try {
@@ -427,6 +428,10 @@ module.exports = function(broccoli, moduleId, options){
 				var tmpRealathFinalizeJs = require('path').resolve(_this.path+'finalize.js');
 				delete(require.cache[tmpRealathFinalizeJs]);
 				_this.finalize = require(tmpRealathFinalizeJs);
+			}
+			_this.isClipModule = false;
+			if( isFile( _this.path+'clip.json' ) ){
+				_this.isClipModule = true;
 			}
 			if( isFile( _this.path+'template.html' ) ){
 				_this.templateFilename = _this.path+'template.html';
