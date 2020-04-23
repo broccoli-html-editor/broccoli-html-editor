@@ -12,6 +12,7 @@ module.exports = function(broccoli){
 	 * initialize resource Manager
 	 */
 	this.init = function( callback ){
+		// console.log('broccoli: Initializing resourceDb...');
 		loadResourceDb( function(){
 			callback();
 		} );
@@ -22,7 +23,7 @@ module.exports = function(broccoli){
 	 * Loading resource DB
 	 */
 	function loadResourceDb( callback ){
-		console.log('broccoli: Loading all resources...');
+		// console.log('broccoli: Loading all resources...');
 		_resourceDb = {};
 		it79.fnc({},
 			[
@@ -31,7 +32,7 @@ module.exports = function(broccoli){
 					it1.next(data);
 				},
 				function(it1, data){
-					console.log('broccoli: Loading all resources: Done.');
+					// console.log('broccoli: Loading all resources: Done.');
 					// console.log(_resourceDb);
 					callback();
 				}
@@ -42,11 +43,15 @@ module.exports = function(broccoli){
 
 	/**
 	 * Save resources DB
+	 * 
+	 * このメソッドは、現在は使われていません。
+	 * パフォーマンス改善の一環で、リソース全体の送受信を廃止したためです。
+	 * 
 	 * @param  {Function} cb Callback function.
 	 * @return {boolean}     Always true.
 	 */
 	this.save = function( callback ){
-		// console.log('resourceDb save method: called.');
+		console.error('resourceDb save method: called.');
 		callback = callback || function(){};
 		it79.fnc({}, [
 			function(it1, data){
@@ -54,7 +59,7 @@ module.exports = function(broccoli){
 					'resourceMgr.save',
 					{'resourceDb': _resourceDb} ,
 					function(rtn){
-						// console.log('resourceDb save method: done.');
+						console.error('resourceDb save method: done.');
 						loadResourceDb(function(){
 							callback(rtn);
 						});

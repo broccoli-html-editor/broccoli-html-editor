@@ -747,7 +747,7 @@ module.exports = function(broccoli){
 					if( $img.attr('data-is-updated') == 'yes' ){
 						resInfo.ext = $img.attr('data-extension');
 						resInfo.type = $img.attr('data-mime-type');
-						resInfo.size = $img.attr('data-size');
+						resInfo.size = parseInt($img.attr('data-size'));
 						resInfo.base64 = $img.attr('data-base64');
 						resInfo.field = mod.type;
 						resInfo.fieldNote = {}; // <= フィールド記録欄をクリア
