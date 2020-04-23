@@ -711,7 +711,9 @@
     cursor: move;
     font-weight: bold; }
     .broccoli--module-palette a.broccoli--module-palette--draggablebutton:after {
-      content: "@";
+      content: url("./images/clip.png");
+      width: 20px;
+      height: 20px;
       margin-left: 0.5em;
       color: #669; }
     .broccoli--module-palette a.broccoli--module-palette--draggablebutton[data-clip="false"] {

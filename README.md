@@ -313,6 +313,7 @@ $ composer test
 - 新しい設定項目 `enableModuleAnchor` を追加。(デフォルトは `true`)
 - 新しい設定項目 `enableModuleDec` を追加。(デフォルトは `true`)
 - 編集ウィンドウ上のタブキー制御の改善。
+- クリップモジュールアイコンを画像化した。
 - 細かい不具合の修正。
 
 ### broccoli-html-editor v0.3.16 (2020年4月4日)

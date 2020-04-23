@@ -457,7 +457,7 @@
 								// console.log('bowlList:', bowlList);
 								if( typeof(bowlList)!==typeof([]) || !bowlList.length ){
 									_this.message('FAILED to list bowls.');
-									console.log('bowlList - - - - - -', bowlList);
+									console.error('FAILED to list bowls - - - - - -', 'bowlList',  bowlList);
 								}
 								var indexOfMain = bowlList.indexOf('main');
 								if( typeof(indexOfMain) != typeof(0) || indexOfMain < 0 ){
@@ -1376,11 +1376,12 @@
 				function(it1, data){
 					// コンテンツを更新
 					_this.progressMessage('コンテンツを更新しています...');
+						// この処理は、サーバーサイドでHTMLやリソースのリビルドを実行しています。
 					_this.gpi(
 						'updateContents',
 						{} ,
 						function(result){
-							// console.log(result);
+							// console.log('------ gpi.updateContents result --', result);
 							it1.next(data);
 						}
 					);
