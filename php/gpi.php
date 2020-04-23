@@ -100,6 +100,19 @@ class gpi{
 				$moduleInfo['readme'] = $module->getReadme();
 				return $moduleInfo;
 
+			case "getClipModuleContents":
+				// クリップモジュールの内容を取得する
+				$moduleId = false;
+				if( array_key_exists('moduleId', $options) ){
+					$moduleId = $options['moduleId'];
+				}
+				if( !strlen($moduleId) ){
+					return false;
+				}
+				$module = $this->broccoli->getModule($moduleId);
+				$clip = $module->getClipContents();
+				return $clip;
+
 			case "getAllModuleList":
 				// 全モジュールの一覧を取得する
 				$list = $this->broccoli->getAllModuleList();

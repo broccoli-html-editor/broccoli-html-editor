@@ -5057,37 +5057,49 @@ module.exports = function(broccoli){
 				var parsedModId = broccoli.parseModuleId(modId);
 				// console.log(parsedModId.package);
 
-				it79.ary(
-					modClip.data ,
-					function(it1, row1, idx1){
-						broccoli.contentsSourceData.duplicateInstance(modClip.data[idx1], modClip.resources, {'supplementModPackage': parsedModId.package}, function(newData){
-							// console.log(newData);
-
-							broccoli.contentsSourceData.addInstance( newData, moveTo, function(result){
-								// 上から順番に挿入していくので、
-								// moveTo を1つインクリメントしなければいけない。
-								// (そうしないと、天地逆さまに積み上げられることになる。)
-								moveTo = broccoli.incrementInstancePath(moveTo);
-								it1.next();
-							} );
-
-						});
+				broccoli.gpi(
+					'getClipModuleContents',
+					{
+						'moduleId': modId
 					} ,
-					function(){
-						broccoli.unselectInstance(function(){
-							broccoli.saveContents(function(){
-								broccoli.message('クリップを挿入しました。');
-								broccoli.redraw(function(){
-									broccoli.closeProgress(function(){
-										broccoli.selectInstance(newInstancePath, function(){
-											callback();
+					function(clipContents){
+						console.log('------ clipModuleContents --', clipContents);
+
+						it79.ary(
+							clipContents.data ,
+							function(it1, row1, idx1){
+								broccoli.contentsSourceData.duplicateInstance(clipContents.data[idx1], clipContents.resources, {'supplementModPackage': parsedModId.package}, function(newData){
+									// console.log(newData);
+
+									broccoli.contentsSourceData.addInstance( newData, moveTo, function(result){
+										// 上から順番に挿入していくので、
+										// moveTo を1つインクリメントしなければいけない。
+										// (そうしないと、天地逆さまに積み上げられることになる。)
+										moveTo = broccoli.incrementInstancePath(moveTo);
+										it1.next();
+									} );
+
+								});
+							} ,
+							function(){
+								broccoli.unselectInstance(function(){
+									broccoli.saveContents(function(){
+										broccoli.message('クリップを挿入しました。');
+										broccoli.redraw(function(){
+											broccoli.closeProgress(function(){
+												broccoli.selectInstance(newInstancePath, function(){
+													callback();
+												});
+											});
 										});
 									});
 								});
-							});
-						});
+							}
+						);
+
 					}
 				);
+
 
 			}else{
 				broccoli.contentsSourceData.addInstance( modId, moveTo, function(result){

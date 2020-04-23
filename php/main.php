@@ -426,7 +426,7 @@ class broccoliHtmlEditor{
 				// clip.json
 				$rtn['categories'][$idx]['modules'][$row2]['clip'] = false;
 				if( is_file( $realpath.'/clip.json' ) ){
-					$rtn['categories'][$idx]['modules'][$row2]['clip'] = json_decode(file_get_contents( $realpath.'/clip.json' ));
+					$rtn['categories'][$idx]['modules'][$row2]['clip'] = true;
 				}
 
 				// moduleName

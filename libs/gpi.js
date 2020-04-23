@@ -83,6 +83,10 @@ module.exports = function(broccoli, api, options, callback){
 				// モジュール情報を取得する
 				var moduleId = options.moduleId;
 				broccoli.getModule(moduleId, undefined, function(module){
+					if(!module){
+						callback(false);
+						return;
+					}
 					var moduleInfo = {};
 					moduleInfo.id = moduleId;
 					moduleInfo.name = module.info.name;
@@ -101,6 +105,20 @@ module.exports = function(broccoli, api, options, callback){
 
 							callback(moduleInfo); 
 						});
+					});
+				});
+				break;
+
+			case "getClipModuleContents":
+				// クリップモジュールの内容を取得する
+				var moduleId = options.moduleId;
+				broccoli.getModule(moduleId, undefined, function(module){
+					if(!module){
+						callback(false);
+						return;
+					}
+					module.getClipContents(function(clip){
+						callback(clip); 
 					});
 				});
 				break;

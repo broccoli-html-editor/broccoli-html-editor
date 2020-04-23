@@ -153,8 +153,11 @@ module.exports = function(broccoli, packageId, callback){
 								rtn.categories[idx].modules[row2].deprecated = (rtn.categories[idx].modules[row2].moduleInfo.deprecated||false);
 
 								// clip.json
+								rtn.categories[idx].modules[row2].clip = false;
 								try {
-									rtn.categories[idx].modules[row2].clip = JSON.parse(fs.readFileSync( path.resolve( realpath, 'clip.json' ) ));
+									if( isFile( path.resolve( realpath, 'clip.json' ) ) ){
+										rtn.categories[idx].modules[row2].clip = true;
+									}
 								} catch (e) {
 									rtn.categories[idx].modules[row2].clip = false;
 								}

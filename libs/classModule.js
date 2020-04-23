@@ -55,7 +55,7 @@ module.exports = function(broccoli, moduleId, options){
 
 	this.isSubModule = false;
 	this.isSingleRootElement = false;
-	this.isClipModule = null;
+	this.isClipModule = false;
 	this.realpath = null;
 	if( !this.isSystemModule && typeof(options.src) !== typeof('') ){
 		try {
@@ -450,6 +450,26 @@ module.exports = function(broccoli, moduleId, options){
 		return this;
 	}
 
+
+	/**
+	 * クリップモジュールの内容を取得する
+	 *
+	 * クリップモジュールではない場合は false が返されます。
+	 */
+	this.getClipContents = function(callback){
+		var $realpath_clip = _this.realpath+'clip.json';
+		if( !isFile( $realpath_clip ) ){
+			callback(false);
+			return;
+		}
+		var rtn = false;
+		try{
+			var json = fs.readFileSync( $realpath_clip );
+			rtn = JSON.parse( json );
+		}catch(e){}
+		callback(rtn);
+		return;
+	}
 
 	/**
 	 * READMEを取得する

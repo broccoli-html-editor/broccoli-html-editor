@@ -54,7 +54,7 @@ class classModule{
 		$this->isSystemModule = $this->broccoli->isSystemMod($moduleId);
 		$this->isSubModule = false;
 		$this->isSingleRootElement = false;
-		$this->isClipModule = null;
+		$this->isClipModule = false;
 
 		if( !$this->isSystemModule && !is_string(@$options['src']) && !is_string($this->realpath) ){
 			$moduleId = '_sys/unknown';
@@ -435,6 +435,22 @@ class classModule{
 
 	} // parseTpl()
 
+
+	/**
+	 * クリップモジュールの内容を取得する
+	 *
+	 * クリップモジュールではない場合は false が返されます。
+	 */
+	public function getClipContents(){
+		$rtn = false;
+		$realpath_clip = $this->realpath.'/clip.json';
+		if( !is_file( $realpath_clip ) ){
+			return false;
+		}
+		$json = file_get_contents( $realpath_clip );
+		$rtn = json_decode($json);
+		return $rtn;
+	}
 
 	/**
 	 * READMEを取得する
