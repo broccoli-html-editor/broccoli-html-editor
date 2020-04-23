@@ -96,6 +96,7 @@ class gpi{
 				$moduleInfo['isSingleRootElement'] = $module->isSingleRootElement;
 				$moduleInfo['isClipModule'] = $module->isClipModule;
 				$moduleInfo['deprecated'] = $module->deprecated;
+				$moduleInfo['pics'] = $module->getPics();
 				return $moduleInfo;
 
 			case "getAllModuleList":

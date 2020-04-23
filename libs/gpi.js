@@ -93,7 +93,11 @@ module.exports = function(broccoli, api, options, callback){
 					moduleInfo.isSingleRootElement = module.isSingleRootElement;
 					moduleInfo.isClipModule = module.isClipModule;
 					moduleInfo.deprecated = module.deprecated;
-					callback(moduleInfo);
+					module.getPics(function(pics){
+						moduleInfo.pics = pics;
+
+						callback(moduleInfo); 
+					});
 				});
 				break;
 

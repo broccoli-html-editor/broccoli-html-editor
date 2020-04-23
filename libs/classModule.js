@@ -57,10 +57,10 @@ module.exports = function(broccoli, moduleId, options){
 	this.isSubModule = false;
 	this.isSingleRootElement = false;
 	this.isClipModule = null;
-	this.path = null;
+	this.realpath = null;
 	if( !this.isSystemModule && typeof(options.src) !== typeof('') ){
 		try {
-			this.path = fs.realpathSync( broccoli.getModuleRealpath(moduleId) )+'/';
+			this.realpath = fs.realpathSync( broccoli.getModuleRealpath(moduleId) )+'/';
 		} catch (e) {
 			moduleId = '_sys/unknown';
 			this.isSystemModule = true;
@@ -164,17 +164,17 @@ module.exports = function(broccoli, moduleId, options){
 			}
 			_this.template = src;
 
-			if( _this.path && isDirectory( _this.path ) ){
-				if( isFile( _this.path+'/info.json' ) ){
+			if( _this.realpath && isDirectory( _this.realpath ) ){
+				if( isFile( _this.realpath+'/info.json' ) ){
 					var tmpJson = {};
 					try{
-						tmpJson = JSON.parse( fs.readFileSync( _this.path+'/info.json' ) );
+						tmpJson = JSON.parse( fs.readFileSync( _this.realpath+'/info.json' ) );
 					}catch(e){
-						var tmp_targetfile = (_this.path+'/info.json').split(/\/+/).reverse().slice(0, 4).reverse().join('/');
+						var tmp_targetfile = (_this.realpath+'/info.json').split(/\/+/).reverse().slice(0, 4).reverse().join('/');
 						broccoli.error( 'module info.json parse error: ' + tmp_targetfile );
 					}
 					if( typeof(tmpJson) != typeof({}) || tmpJson === null ){
-						var tmp_targetfile = (_this.path+'/info.json').split(/\/+/).reverse().slice(0, 4).reverse().join('/');
+						var tmp_targetfile = (_this.realpath+'/info.json').split(/\/+/).reverse().slice(0, 4).reverse().join('/');
 						broccoli.error( 'module info.json contains a non object or null: ' + tmp_targetfile );
 						tmpJson = {};
 					}
@@ -216,14 +216,14 @@ module.exports = function(broccoli, moduleId, options){
 				}
 				_this.deprecated = (_this.info.deprecated||false);
 				_this.thumb = null;
-				if( isFile( _this.path+'/thumb.png' ) ){
+				if( isFile( _this.realpath+'/thumb.png' ) ){
 					_this.thumb = (function(){
-						var tmpBin = fs.readFileSync( _this.path+'/thumb.png' ).toString();
+						var tmpBin = fs.readFileSync( _this.realpath+'/thumb.png' ).toString();
 						var tmpBase64;
 						try {
 							tmpBase64 = base64_encode( tmpBin );
 						} catch (e) {
-							console.log('ERROR: base64_encode() FAILED; -> '+_this.path+'/thumb.png');
+							console.log('ERROR: base64_encode() FAILED; -> '+_this.realpath+'/thumb.png');
 							return null;
 						}
 						return 'data:image/png;base64,'+tmpBase64;
@@ -421,23 +421,23 @@ module.exports = function(broccoli, moduleId, options){
 			parseTpl( options.src, _this, options.topThis, callback );
 		}else if( _this.topThis.templateType != 'broccoli' && typeof(_this.subModName) == typeof('') ){
 			parseTpl( null, _this, options.topThis, callback );
-		}else if( _this.path ){
+		}else if( _this.realpath ){
 			var tmpTplSrc = null;
-			if( isFile( _this.path+'finalize.js' ) ){
-				var tmpRealathFinalizeJs = require('path').resolve(_this.path+'finalize.js');
+			if( isFile( _this.realpath+'finalize.js' ) ){
+				var tmpRealathFinalizeJs = require('path').resolve(_this.realpath+'finalize.js');
 				delete(require.cache[tmpRealathFinalizeJs]);
 				_this.finalize = require(tmpRealathFinalizeJs);
 			}
 			_this.isClipModule = false;
-			if( isFile( _this.path+'clip.json' ) ){
+			if( isFile( _this.realpath+'clip.json' ) ){
 				_this.isClipModule = true;
 			}
-			if( isFile( _this.path+'template.html' ) ){
-				_this.templateFilename = _this.path+'template.html';
+			if( isFile( _this.realpath+'template.html' ) ){
+				_this.templateFilename = _this.realpath+'template.html';
 				_this.templateType = 'broccoli';
 				tmpTplSrc = fs.readFileSync( _this.templateFilename );
-			}else if( isFile( _this.path+'template.html.twig' ) ){
-				_this.templateFilename = _this.path+'template.html.twig';
+			}else if( isFile( _this.realpath+'template.html.twig' ) ){
+				_this.templateFilename = _this.realpath+'template.html.twig';
 				_this.templateType = 'twig';
 				tmpTplSrc = fs.readFileSync( _this.templateFilename );
 			}
@@ -449,6 +449,38 @@ module.exports = function(broccoli, moduleId, options){
 		}
 
 		return this;
+	}
+
+
+	/**
+	 * 説明用画像を取得する
+	 */
+	this.getPics = function(callback){
+		// pics/
+		var realpathPics = require('path').resolve( realpath, 'pics/' );
+		var rtn = [];
+		if( isDir(realpathPics) ){
+			var piclist = fs.readdirSync(realpathPics);
+			piclist.sort(function(a,b){
+				if( a < b ) return -1;
+				if( a > b ) return 1;
+				return 0;
+			});
+			for( var picIdx in piclist ){
+				var imgPath = '';
+				try{
+					if( isFile(realpathPics+'/'+piclist[picIdx]) ){
+						imgPath = fs.readFileSync( realpathPics+'/'+piclist[picIdx] ).toString('base64');
+					}
+				} catch (e) {
+					imgPath = '';
+				}
+				// console.log( imgPath );
+				rtn.push( 'data:image/png;base64,'+imgPath );
+			}
+		}
+		callback(rtn);
+		return;
 	}
 
 	return;

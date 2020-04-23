@@ -448,25 +448,25 @@ class broccoliHtmlEditor{
 
 				$rtn['categories'][$idx]['modules'][$row2]['readme'] = $readme;
 
-				// pics/
-				$realpathPics = $this->fs->normalize_path($this->fs->get_realpath( $realpath.'/pics/' ));
-				$rtn['categories'][$idx]['modules'][$row2]['pics'] = array();
-				if( is_dir($realpathPics) ){
-					$piclist = $this->fs->ls($realpathPics);
-					uasort($piclist, function($a,$b){
-						if( $a < $b ) return -1;
-						if( $a > $b ) return 1;
-						return 0;
-					});
-					foreach( $piclist as $picIdx=>$row ){
-						$imgPath = '';
-						if( is_file($realpathPics.'/'.$piclist[$picIdx]) ){
-							$imgPath = base64_encode(file_get_contents( $realpathPics.'/'.$piclist[$picIdx] ));
-						}
-						// var_dump( $imgPath );
-						array_push($rtn['categories'][$idx]['modules'][$row2]['pics'], 'data:image/png;base64,'.$imgPath);
-					}
-				}
+				// // pics/
+				// $realpathPics = $this->fs->normalize_path($this->fs->get_realpath( $realpath.'/pics/' ));
+				// $rtn['categories'][$idx]['modules'][$row2]['pics'] = array();
+				// if( is_dir($realpathPics) ){
+				// 	$piclist = $this->fs->ls($realpathPics);
+				// 	uasort($piclist, function($a,$b){
+				// 		if( $a < $b ) return -1;
+				// 		if( $a > $b ) return 1;
+				// 		return 0;
+				// 	});
+				// 	foreach( $piclist as $picIdx=>$row ){
+				// 		$imgPath = '';
+				// 		if( is_file($realpathPics.'/'.$piclist[$picIdx]) ){
+				// 			$imgPath = base64_encode(file_get_contents( $realpathPics.'/'.$piclist[$picIdx] ));
+				// 		}
+				// 		// var_dump( $imgPath );
+				// 		array_push($rtn['categories'][$idx]['modules'][$row2]['pics'], 'data:image/png;base64,'.$imgPath);
+				// 	}
+				// }
 
 				$modInstance = $this->getModule($moduleId, null);
 				$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->interface = (@$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->interface ? $rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->interface : $modInstance->fields());

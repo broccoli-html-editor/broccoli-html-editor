@@ -435,4 +435,31 @@ class classModule{
 
 	} // parseTpl()
 
+	/**
+	 * 説明用画像を取得する
+	 */
+	public function getPics(){
+
+		$realpathPics = $this->broccoli->fs()->normalize_path($this->broccoli->fs()->get_realpath( $this->realpath.'/pics/' ));
+		$rtn = array();
+		if( is_dir($realpathPics) ){
+			$piclist = $this->broccoli->fs()->ls($realpathPics);
+			uasort($piclist, function($a,$b){
+				if( $a < $b ) return -1;
+				if( $a > $b ) return 1;
+				return 0;
+			});
+			foreach( $piclist as $picIdx=>$row ){
+				$imgPath = '';
+				if( is_file($realpathPics.'/'.$piclist[$picIdx]) ){
+					$imgPath = base64_encode(file_get_contents( $realpathPics.'/'.$piclist[$picIdx] ));
+				}
+				// var_dump( $imgPath );
+				array_push($rtn, 'data:image/png;base64,'.$imgPath);
+			}
+		}
+
+		return $rtn;
+	}
+
 }

@@ -8,7 +8,6 @@ module.exports = function(broccoli, packageId, callback){
 
 	var it79 = require('iterate79');
 	var path = require('path');
-	var php = require('phpjs');
 	var fs = require('fs');
 	var Promise = require('es6-promise').Promise;
 	var FncsReadme = require('./fncs/readme.js');
@@ -182,30 +181,6 @@ module.exports = function(broccoli, packageId, callback){
 								var readme = readmeHelper.get_html(realpath);
 
 								rtn.categories[idx].modules[row2].readme = readme;
-
-								// pics/
-								var realpathPics = path.resolve( realpath, 'pics/' );
-								rtn.categories[idx].modules[row2].pics = [];
-								if( isDir(realpathPics) ){
-									var piclist = fs.readdirSync(realpathPics);
-									piclist.sort(function(a,b){
-										if( a < b ) return -1;
-										if( a > b ) return 1;
-										return 0;
-									});
-									for( var picIdx in piclist ){
-										var imgPath = '';
-										try{
-											if( isFile(realpathPics+'/'+piclist[picIdx]) ){
-												imgPath = fs.readFileSync( realpathPics+'/'+piclist[picIdx] ).toString('base64');
-											}
-										} catch (e) {
-											imgPath = '';
-										}
-										// console.log( imgPath );
-										rtn.categories[idx].modules[row2].pics.push( 'data:image/png;base64,'+imgPath );
-									}
-								}
 
 								broccoli.getModule(moduleId, null, function(modInstance){
 									rtn.categories[idx].modules[row2].moduleInfo.interface = rtn.categories[idx].modules[row2].moduleInfo.interface || modInstance.fields;

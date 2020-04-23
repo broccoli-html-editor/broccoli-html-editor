@@ -133,7 +133,6 @@ module.exports = function(broccoli, targetElm, callback){
 				'data-name': mod.moduleName,
 				'data-readme': mod.readme,
 				'data-clip': JSON.stringify(mod.clip),
-				'data-pics': JSON.stringify(mod.pics),
 				'draggable': true, //←HTML5のAPI http://www.htmq.com/dnd/
 				'href': 'javascript:;'
 			})
@@ -161,15 +160,6 @@ module.exports = function(broccoli, targetElm, callback){
 				var $html = $(html);
 				var moduleId = $(this).attr('data-id');
 				broccoli.lightbox(function(elm){
-					broccoli.gpi(
-						'getModule',
-						{
-							'moduleId': moduleId
-						} ,
-						function(result){
-							console.log('------ moduleInfo --', result);
-						}
-					);
 					$(elm)
 						.css({
 							'max-width': 570
@@ -182,6 +172,33 @@ module.exports = function(broccoli, targetElm, callback){
 							})
 						)
 					;
+
+					// モジュールの詳細な情報を取得して補完する
+					broccoli.gpi(
+						'getModule',
+						{
+							'moduleId': moduleId
+						} ,
+						function(result){
+							console.log('------ moduleInfo --', result);
+							var $pics = $html.find('.broccoli--module-info-content-pics');
+							var pics = result.pics;
+							if( !pics.length ){
+								$pics.remove();
+							}else{
+								var html = '';
+								// html += '<hr />';
+								html += '<p>参考イメージ</p>';
+								html += '<ul>';
+								for( var idx in pics ){
+									// console.log(pics[idx]);
+									html += '<li><img src="'+ pics[idx] +'" /></li>';
+								}
+								html += '</ul>';
+								$pics.append(html);
+							}
+						}
+					);
 				});
 			})
 			.on('touchstart', function(e){
@@ -245,20 +262,9 @@ module.exports = function(broccoli, targetElm, callback){
 		var readme = $elm.attr('data-readme');
 		html += '<div class="broccoli--module-info-content-readme"><article class="broccoli__module-readme">'+ (readme ? readme : '<p style="text-align:center; margin: 100px auto;">-- no readme --</p>' ) +'</article></div>';
 
-		var pics = JSON.parse( $elm.attr('data-pics') );
-		if( pics.length ){
-			// html += '<hr />';
-			html += '<div class="broccoli--module-info-content-pics">';
-			html += '<p>参考イメージ</p>';
-			html += '<ul>';
-			for( var idx in pics ){
-				// console.log(pics[idx]);
-				html += '<li><img src="'+ pics[idx] +'" /></li>';
-			}
-			html += '</ul>';
-			html += '</div>';
-		}
-		html += '<hr />';
+		// ↓picsが多くなるとモジュールパレットが重くなるため、
+		// 　必要なときだけ非同期でロードするようにした。 2020-04-23 @tomk79
+		html += '<div class="broccoli--module-info-content-pics"></div>';
 		html += '</article>';
 		return html;
 	}
