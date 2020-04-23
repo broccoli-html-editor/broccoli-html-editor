@@ -34,7 +34,7 @@ class broccoliHtmlEditor{
 	private $fieldDefinitions;
 
 	/** cache */
-	private $_moduleCollection;
+	private $_moduleCollection = array();
 
 	/** Error Report */
 	private $errors = array();
@@ -597,7 +597,11 @@ class broccoliHtmlEditor{
 	 * @return {Object}            this
 	 */
 	public function getModule($moduleId, $subModName){
-		$rtn = @$this->_moduleCollection[$moduleId];
+		$rtn = null;
+		if( array_key_exists($moduleId, $this->_moduleCollection) ){
+			$rtn = $this->_moduleCollection[$moduleId];
+		}
+
 		if( $rtn === false ){
 			// 過去に生成を試みて、falseになっていた場合
 			return false;

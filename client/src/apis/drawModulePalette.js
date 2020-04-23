@@ -12,9 +12,7 @@ module.exports = function(broccoli, targetElm, callback){
 	var moduleList = {};
 
 	var it79 = require('iterate79');
-	var path = require('path');
 	var php = require('phpjs');
-	var twig = require('twig');
 	var $ = require('jquery');
 
 	var btIconClosed = '<span class="glyphicon glyphicon-menu-right"></span> ';
@@ -36,14 +34,14 @@ module.exports = function(broccoli, targetElm, callback){
 
 				var $liCat = $('<li>');
 				var $ulMod = $('<ul>');
-				$liCat.append( $('<a class="broccoli--module-palette--buttongroups">')
+				$liCat.append( $('<a class="broccoli__module-palette--buttongroups">')
 					.append( btIconOpened )
 					.append( $('<span>').text(category.categoryName)  )
 					.attr({'href':'javascript:;'})
 					.click(function(){
-						$(this).toggleClass('broccoli--module-palette__closed');
+						$(this).toggleClass('broccoli__module-palette__closed');
 						$ulMod.toggle(100)
-						if( $(this).hasClass('broccoli--module-palette__closed') ){
+						if( $(this).hasClass('broccoli__module-palette__closed') ){
 							$(this).find('.glyphicon').get(0).outerHTML = btIconClosed;
 						}else{
 							$(this).find('.glyphicon').get(0).outerHTML = btIconOpened;
@@ -107,9 +105,9 @@ module.exports = function(broccoli, targetElm, callback){
 		var isTouchStartHold = false;
 
 		depth = depth || 0;
-		var $button = $('<a class="broccoli--module-palette--draggablebutton">');
+		var $button = $('<a class="broccoli__module-palette--draggablebutton">');
 		if(depth){
-			$button.addClass('broccoli--module-palette--draggablebutton-children');
+			$button.addClass('broccoli__module-palette--draggablebutton-children');
 		}
 		$button
 			.html((function(d){
@@ -120,11 +118,11 @@ module.exports = function(broccoli, targetElm, callback){
 					thumb = d.thumb;
 				}
 				if(thumb){
-					rtn += '<span class="broccoli--module-palette--draggablebutton-thumb"><img src="'+php.htmlspecialchars( thumb )+'" alt="'+php.htmlspecialchars( label )+'" /></span>';
+					rtn += '<span class="broccoli__module-palette--draggablebutton-thumb"><img src="'+php.htmlspecialchars( thumb )+'" alt="'+php.htmlspecialchars( label )+'" /></span>';
 				}else{
-					rtn += '<span class="broccoli--module-palette--draggablebutton-thumb"></span>';
+					rtn += '<span class="broccoli__module-palette--draggablebutton-thumb"></span>';
 				}
-				rtn += '<span class="broccoli--module-palette--draggablebutton-label">'+php.htmlspecialchars( label )+'</span>';
+				rtn += '<span class="broccoli__module-palette--draggablebutton-label">'+php.htmlspecialchars( label )+'</span>';
 				return rtn;
 			})(mod))
 			.attr({
@@ -355,9 +353,9 @@ module.exports = function(broccoli, targetElm, callback){
 				$(targetElm)
 					.html('loading...')
 					.removeClass('broccoli').addClass('broccoli')
-					.removeClass('broccoli--module-palette').addClass('broccoli--module-palette')
+					.removeClass('broccoli__module-palette').addClass('broccoli__module-palette')
 				;
-				data.$ul = $('<ul class="broccoli--module-palette-list">');
+				data.$ul = $('<ul class="broccoli__module-palette-list">');
 				it1.next(data);
 			} ,
 			function(it1, data){
@@ -372,14 +370,14 @@ module.exports = function(broccoli, targetElm, callback){
 
 						var $li = $('<li>');
 						var $ulCat = $('<ul>');
-						$li.append( $('<a class="broccoli--module-palette--buttongroups">')
+						$li.append( $('<a class="broccoli__module-palette--buttongroups">')
 							.append( btIconOpened )
 							.append( $('<span>').text( pkg.packageName ) )
 							.attr({'href':'javascript:;'})
 							.on('click', function(){
-								$(this).toggleClass('broccoli--module-palette__closed');
+								$(this).toggleClass('broccoli__module-palette__closed');
 								$ulCat.toggle(100)
-								if( $(this).hasClass('broccoli--module-palette__closed') ){
+								if( $(this).hasClass('broccoli__module-palette__closed') ){
 									$(this).find('.glyphicon').get(0).outerHTML = btIconClosed;
 								}else{
 									$(this).find('.glyphicon').get(0).outerHTML = btIconOpened;
@@ -408,8 +406,8 @@ module.exports = function(broccoli, targetElm, callback){
 				var changeTimer;
 				var lastKeyword = '';
 
-				html += '<div class="broccoli--module-palette-inner">';
-				html += '<div class="broccoli--module-palette-filter"><input type="text" style="width:100%;" placeholder="filter..." /></div>';
+				html += '<div class="broccoli__module-palette-inner">';
+				html += '<div class="broccoli__module-palette-filter"><input type="text" style="width:100%;" placeholder="filter..." /></div>';
 				html += '</div>';
 				$wrap = $(html);
 				$wrap.append(data.$ul);
@@ -424,28 +422,28 @@ module.exports = function(broccoli, targetElm, callback){
 					clearTimeout( changeTimer );
 					// console.log( keyword );
 
-					$(targetElm).find('a').removeClass('broccoli--module-palette__closed');
+					$(targetElm).find('a').removeClass('broccoli__module-palette__closed');
 					$(targetElm).find('ul').show();
 
 					changeTimer = setTimeout(function(){
-						$(targetElm).find('a.broccoli--module-palette--draggablebutton').each(function(){
+						$(targetElm).find('a.broccoli__module-palette--draggablebutton').each(function(){
 							var $this = $(this);
 							if( $this.attr('data-id').toLowerCase().match( keyword.toLowerCase() ) ){
-								$this.show().addClass('broccoli--module-palette__shown-module');
+								$this.show().addClass('broccoli__module-palette__shown-module');
 								return;
 							}
 							if( $this.attr('data-name').toLowerCase().match( keyword.toLowerCase() ) ){
-								$this.show().addClass('broccoli--module-palette__shown-module');
+								$this.show().addClass('broccoli__module-palette__shown-module');
 								return;
 							}
 							// if( $this.attr('data-readme') ){
 							// }
-							$this.hide().removeClass('broccoli--module-palette__shown-module');
+							$this.hide().removeClass('broccoli__module-palette__shown-module');
 						});
 
 						$(targetElm).find('li').each(function(){
 							var $this = $(this);
-							var $btns = $this.find('a.broccoli--module-palette--draggablebutton.broccoli--module-palette__shown-module');
+							var $btns = $this.find('a.broccoli__module-palette--draggablebutton.broccoli__module-palette__shown-module');
 							if( !$btns.length ){
 								$this.css({'display':'none'});
 							}else{
@@ -457,7 +455,7 @@ module.exports = function(broccoli, targetElm, callback){
 					}, 100);
 
 				}
-				$(targetElm).find('.broccoli--module-palette-filter input')
+				$(targetElm).find('.broccoli__module-palette-filter input')
 					.on( 'change', onChange )
 					.on( 'keyup', onChange )
 				;

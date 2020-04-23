@@ -545,9 +545,9 @@
 					function( it1, data ){
 						// モジュールパレットのサイズ合わせ
 						_this.progressMessage('モジュールパレットのサイズを合わせています...。');
-						var $elm = $(_this.options.elmModulePalette).find('.broccoli--module-palette-inner');
-						var filterHeight = $elm.find('.broccoli--module-palette-filter').outerHeight();
-						$elm.find('.broccoli--module-palette-list').css({
+						var $elm = $(_this.options.elmModulePalette).find('.broccoli__module-palette-inner');
+						var filterHeight = $elm.find('.broccoli__module-palette-filter').outerHeight();
+						$elm.find('.broccoli__module-palette-list').css({
 							'height': $elm.parent().outerHeight() - filterHeight
 						});
 
