@@ -260,16 +260,30 @@ class resourceMgr{
 			// 未登録の resKey
 			return false;
 		}
-		$this->resourceDb[$resKey] = json_decode(json_encode($resInfo));
+		$this->resourceDb[$resKey] = (object) $resInfo;
 
-		@mkdir( $this->resourcesDirPath.'/'.$resKey );
+		$realpath_dir = $this->resourcesDirPath.'/'.urlencode($resKey);
+		clearstatcache();
+		if( !file_exists( $realpath_dir ) ){
+			mkdir( $realpath_dir );
+		}
 		$this->broccoli->fs()->save_file(
-			$this->resourcesDirPath.'/'.$resKey.'/res.json',
+			$realpath_dir.'/res.json',
 			json_encode( $this->resourceDb[$resKey], JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES )
 		);
-		$bin = base64_decode($this->resourceDb[$resKey]->base64);
+
+		$bin = '';
+		if( property_exists( $this->resourceDb[$resKey], 'base64' ) ){
+			$bin = base64_decode($this->resourceDb[$resKey]->base64);
+		}
+
+		$bin_filename = 'bin';
+		if( property_exists( $this->resourceDb[$resKey], 'ext' ) ){
+			$bin_filename .= '.'.urlencode($this->resourceDb[$resKey]->ext);
+		}
+
 		$this->broccoli->fs()->save_file(
-			$this->resourcesDirPath.'/'.$resKey.'/bin.'.$this->resourceDb[$resKey]->ext,
+			$realpath_dir.'/'.$bin_filename,
 			$bin
 		);
 		return true;
