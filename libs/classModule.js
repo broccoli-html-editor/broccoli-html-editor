@@ -11,10 +11,7 @@ module.exports = function(broccoli, moduleId, options){
 	options = options || {};
 
 	var Promise = require('es6-promise').Promise;
-	var utils79 = require('utils79');
 	var it79 = require('iterate79');
-	var path = require('path');
-	var php = require('phpjs');
 	var fs = require('fs');
 
 	var rtn = {};
@@ -57,6 +54,7 @@ module.exports = function(broccoli, moduleId, options){
 
 	// console.log('classModTpl -> '+moduleId);
 
+	this.isSubModule = false;
 	this.isSingleRootElement = false;
 	this.isClipModule = null;
 	this.path = null;
@@ -86,6 +84,7 @@ module.exports = function(broccoli, moduleId, options){
 		this.topThis = options.topThis;
 		this.templateType = this.topThis.templateType;
 		this.info.name = '- ' + this.topThis.info.name;
+		this.isSubModule = true;
 		if( options.modName ){
 			this.info.name = '- ' + options.modName;
 		}

@@ -531,14 +531,14 @@ class broccoliHtmlEditor{
 		$data = array('tmp'=>array(), 'rtn'=>array());
 
 		$list = $this->getPackageList();
-		$data['tmp']['_sys/root'] = $this->createModuleInstance('_sys/root');
-		$data['tmp']['_sys/unknown'] = $this->createModuleInstance('_sys/unknown');
-		$data['tmp']['_sys/html'] = $this->createModuleInstance('_sys/html');
+		$data['tmp']['_sys/root'] = $this->getModule('_sys/root');
+		$data['tmp']['_sys/unknown'] = $this->getModule('_sys/unknown');
+		$data['tmp']['_sys/html'] = $this->getModule('_sys/html');
 
 		foreach( $list as $pkgId=>$pkg ){
 			foreach( $list[$pkgId]['categories'] as $catId=>$cat ){
 				foreach( $list[$pkgId]['categories'][$catId]['modules'] as $modId=>$mod ){
-					$data['tmp'][$mod['moduleId']] = $this->createModuleInstance($mod['moduleId']);
+					$data['tmp'][$mod['moduleId']] = $this->getModule($mod['moduleId']);
 				}
 			}
 		}
@@ -596,7 +596,7 @@ class broccoliHtmlEditor{
 	 * @param  {Function} callback  callback function.
 	 * @return {Object}            this
 	 */
-	public function getModule($moduleId, $subModName){
+	public function getModule($moduleId, $subModName = null){
 		$rtn = null;
 		if( array_key_exists($moduleId, $this->_moduleCollection) ){
 			$rtn = $this->_moduleCollection[$moduleId];

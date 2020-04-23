@@ -76,6 +76,28 @@ class gpi{
 				$list = $this->broccoli->getPackageList();
 				return $list;
 
+			case "getModule":
+				// モジュール情報を取得する
+				$moduleId = false;
+				if( array_key_exists('moduleId', $options) ){
+					$moduleId = $options['moduleId'];
+				}
+				if( !strlen($moduleId) ){
+					return false;
+				}
+				$module = $this->broccoli->getModule($moduleId);
+				$moduleInfo = array();
+				$moduleInfo['id'] = $moduleId;
+				$moduleInfo['name'] = $module->info['name'];
+				$moduleInfo['thumb'] = $module->thumb;
+				$moduleInfo['areaSizeDetection'] = $module->info['areaSizeDetection'];
+				$moduleInfo['isSystemModule'] = $module->isSystemModule;
+				$moduleInfo['isSubModule'] = $module->isSubModule;
+				$moduleInfo['isSingleRootElement'] = $module->isSingleRootElement;
+				$moduleInfo['isClipModule'] = $module->isClipModule;
+				$moduleInfo['deprecated'] = $module->deprecated;
+				return $moduleInfo;
+
 			case "getAllModuleList":
 				// 全モジュールの一覧を取得する
 				$list = $this->broccoli->getAllModuleList();
@@ -98,9 +120,10 @@ class gpi{
 				return $result;
 
 			case "buildHtml":
+				$bowlList = $options['bowlList'];
 				$htmls = $this->broccoli->buildHtml( array(
 					'mode' => 'canvas',
-					'bowlList' => $options['bowlList']
+					'bowlList' => $bowlList,
 				) );
 				return $htmls;
 

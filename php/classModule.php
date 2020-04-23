@@ -27,16 +27,18 @@ class classModule{
 	public	$subModName,
 			$isSingleRootElement,
 			$isSystemModule,
+			$isSubModule,
 			$isClipModule,
+			$deprecated,
 			$templateFilename,
 			$templateType,
-			$path,
 			$info,
 			$id,
 			$fields,
 			$subModule,
 			$topThis,
-			$finalize;
+			$finalize,
+			$thumb;
 
 	/**
 	 * Constructor
@@ -46,22 +48,17 @@ class classModule{
 		$this->options = ($options ? $options : array());
 
 		$this->realpath = $this->broccoli->getModuleRealpath($moduleId);
+		if( $this->realpath !== false ){
+			$this->realpath = $this->broccoli->fs()->get_realpath( $this->realpath.'/' );
+		}
 		$this->isSystemModule = $this->broccoli->isSystemMod($moduleId);
+		$this->isSubModule = false;
+		$this->isSingleRootElement = false;
 		$this->isClipModule = null;
 
-		// var_dump('classModTpl -> '.$moduleId);
-
-		$this->isSingleRootElement = false;
-		$this->path = null;
-		if( !$this->isSystemModule && !is_string(@$options['src']) ){
-			$tmpModuleRealpath = $this->broccoli->getModuleRealpath($moduleId);
-			if(is_string($tmpModuleRealpath)){
-				$this->path = $this->broccoli->fs()->get_realpath( $tmpModuleRealpath.'/' );
-			}else{
-				$moduleId = '_sys/unknown';
-				$this->isSystemModule = true;
-			}
-
+		if( !$this->isSystemModule && !is_string(@$options['src']) && !is_string($this->realpath) ){
+			$moduleId = '_sys/unknown';
+			$this->isSystemModule = true;
 		}
 		$this->id = $moduleId;
 		$this->fields = json_decode('{}');
@@ -82,6 +79,7 @@ class classModule{
 			$this->topThis = $this->options['topThis'];
 			$this->templateType = $this->topThis->templateType;
 			$this->info['name'] = '- ' . ($this->topThis->info['name'] ? $this->topThis->info['name'] : 'null');
+			$this->isSubModule = true;
 			if( $options['modName'] ){
 				$this->info['name'] = '- ' . $options['modName'];
 			}
@@ -118,22 +116,22 @@ class classModule{
 			return $this->parseTpl( $this->options['src'], $this->options['topThis'] );
 		}elseif( $this->topThis->templateType != 'broccoli' && is_string($this->subModName) ){
 			return $this->parseTpl( null, $this->options['topThis'] );
-		}elseif( $this->path ){
+		}elseif( $this->realpath ){
 			$tmpTplSrc = null;
-			if( is_file( $this->path.'/finalize.php' ) ){
-				$tmpRealathFinalizePhp = $this->broccoli->fs()->get_realpath($this->path.'/finalize.php');
+			if( is_file( $this->realpath.'/finalize.php' ) ){
+				$tmpRealathFinalizePhp = $this->broccoli->fs()->get_realpath($this->realpath.'/finalize.php');
 				$this->finalize = include($tmpRealathFinalizePhp);
 			}
 			$this->isClipModule = false;
-			if( is_file( $this->path.'/clip.json' ) ){
+			if( is_file( $this->realpath.'/clip.json' ) ){
 				$this->isClipModule = true;
 			}
-			if( is_file( $this->path.'/template.html' ) ){
-				$this->templateFilename = $this->path.'/template.html';
+			if( is_file( $this->realpath.'/template.html' ) ){
+				$this->templateFilename = $this->realpath.'/template.html';
 				$this->templateType = 'broccoli';
 				$tmpTplSrc = file_get_contents( $this->templateFilename );
-			}elseif( is_file( $this->path.'/template.html.twig' ) ){
-				$this->templateFilename = $this->path.'/template.html.twig';
+			}elseif( is_file( $this->realpath.'/template.html.twig' ) ){
+				$this->templateFilename = $this->realpath.'/template.html.twig';
 				$this->templateType = 'twig';
 				$tmpTplSrc = file_get_contents( $this->templateFilename );
 			}
@@ -160,13 +158,6 @@ class classModule{
 	 */
 	public function getTemplateType(){
 		return $this->templateType;
-	}
-
-	/**
-	 * $isSingleRootElement
-	 */
-	public function isSingleRootElement(){
-		return $this->isSingleRootElement;
 	}
 
 	/**
@@ -313,18 +304,18 @@ class classModule{
 		}
 		$this->template = $src;
 
-		if( $this->path && is_dir( $this->path ) ){
-			if( is_file( $this->path.'/info.json' ) ){
-				$tmpJson = json_decode( file_get_contents( $this->path.'/info.json' ) );
+		if( $this->realpath && is_dir( $this->realpath ) ){
+			if( is_file( $this->realpath.'/info.json' ) ){
+				$tmpJson = json_decode( file_get_contents( $this->realpath.'/info.json' ) );
 				if(is_null($tmpJson)){
-					$tmp_targetfile = preg_split('/\/+/', $this->path.'/info.json');
+					$tmp_targetfile = preg_split('/\/+/', $this->realpath.'/info.json');
 					$tmp_targetfile = array_slice( $tmp_targetfile, count($tmp_targetfile)-4, count($tmp_targetfile)-1 );
 					$tmp_targetfile = implode('/', $tmp_targetfile);
 					$this->broccoli->error( 'module info.json parse error: '.$tmp_targetfile );
 					$tmpJson = json_decode('{}');
 				}
 
-				if( @$tmpJson->name ){
+				if( !strlen($this->info['name']) && @$tmpJson->name ){
 					$this->info['name'] = $tmpJson->name;
 				}
 				if( @$tmpJson->areaSizeDetection ){
@@ -368,8 +359,8 @@ class classModule{
 			}
 			$this->deprecated = ($this->info['deprecated'] ? true : false);
 			$this->thumb = null;
-			if( is_file( $this->path.'/thumb.png' ) ){
-				$tmpBin = file_get_contents( $this->path.'/thumb.png' );
+			if( is_file( $this->realpath.'/thumb.png' ) ){
+				$tmpBin = file_get_contents( $this->realpath.'/thumb.png' );
 				$tmpBase64 = base64_encode( $tmpBin );
 				$this->thumb = 'data:image/png;base64,'.$tmpBase64;
 			}

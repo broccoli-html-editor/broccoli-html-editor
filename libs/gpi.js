@@ -38,24 +38,22 @@ module.exports = function(broccoli, api, options, callback){
 						$bootup.contentsDataJson = {};
 					}
 
-					broccoli.resourceMgr.getResourceDb(
-						function(resourceDb){
-							// console.log(resourceDb);
-							$bootup.resourceDb = resourceDb;
-							var resourceList = [];
-							for(var resKey in resourceDb){
-								resourceList.push(resKey);
-							}
-							$bootup.resourceList = resourceList;
-
-							broccoli.getPackageList(function(modulePackageList){
-								$bootup.modulePackageList = modulePackageList;
-								$bootup.errors = broccoli.get_errors();
-								callback($bootup);
-							});
-
+					broccoli.resourceMgr.getResourceDb( function(resourceDb){
+						// console.log(resourceDb);
+						$bootup.resourceDb = resourceDb;
+						var resourceList = [];
+						for(var resKey in resourceDb){
+							resourceList.push(resKey);
 						}
-					);
+						$bootup.resourceList = resourceList;
+
+						broccoli.getPackageList(function(modulePackageList){
+							$bootup.modulePackageList = modulePackageList;
+							$bootup.errors = broccoli.get_errors();
+							callback($bootup);
+						});
+
+					} );
 
 				});
 				break;
@@ -78,6 +76,24 @@ module.exports = function(broccoli, api, options, callback){
 				// モジュールパッケージ一覧を取得する
 				broccoli.getPackageList(function(list){
 					callback(list);
+				});
+				break;
+
+			case "getModule":
+				// モジュール情報を取得する
+				var moduleId = options.moduleId;
+				broccoli.getModule(moduleId, undefined, function(module){
+					var moduleInfo = {};
+					moduleInfo.id = moduleId;
+					moduleInfo.name = module.info.name;
+					moduleInfo.thumb = module.thumb;
+					moduleInfo.areaSizeDetection = module.info.areaSizeDetection;
+					moduleInfo.isSystemModule = module.isSystemModule;
+					moduleInfo.isSubModule = module.isSubModule;
+					moduleInfo.isSingleRootElement = module.isSingleRootElement;
+					moduleInfo.isClipModule = module.isClipModule;
+					moduleInfo.deprecated = module.deprecated;
+					callback(moduleInfo);
 				});
 				break;
 
