@@ -181,7 +181,7 @@ module.exports = function(broccoli, targetElm, callback){
 							'moduleId': moduleId
 						} ,
 						function(result){
-							console.log('------ moduleInfo --', result);
+							// console.log('------ moduleInfo --', result);
 							var $pics = $html.find('.broccoli--module-info-content-pics');
 							var pics = result.pics;
 							if( !pics.length ){

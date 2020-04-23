@@ -474,7 +474,7 @@ module.exports = function(broccoli, moduleId, options){
 
 		var realpathPics = require('path').resolve( realpath, 'pics/' );
 		var rtn = [];
-		if( isDir(realpathPics) ){
+		if( isDirectory(realpathPics) ){
 			var piclist = fs.readdirSync(realpathPics);
 			piclist.sort(function(a,b){
 				if( a < b ) return -1;
