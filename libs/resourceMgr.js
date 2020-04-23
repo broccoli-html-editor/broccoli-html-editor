@@ -10,8 +10,6 @@ module.exports = function(broccoli){
 	var fsEx = require('fs-extra');
 	var it79 = require('iterate79');
 	var utils79 = require('utils79');
-	var php = require('phpjs');
-	var mkdirp = require('mkdirp');
 	var DIRECTORY_SEPARATOR = '/';
 
 	var _this = this;
@@ -88,6 +86,18 @@ module.exports = function(broccoli){
 		return false;
 	}//rmdir_r()
 
+	function md5(bin){
+		var md5 = require('crypto').createHash('md5');
+		md5.update(bin);
+		return md5.digest('hex');
+	} // md5()
+
+	function md5file(path){
+		if(!utils79.is_file(path)){return false;}
+		var content = require('fs').readFileSync( path );
+		return md5(content);
+	} // md5file()
+
 	/**
 	 * initialize resource Manager
 	 */
@@ -155,18 +165,6 @@ module.exports = function(broccoli){
 		// var logStartTime = Date.now(); // debug code
 		callback = callback || function(){};
 		_resourceDb = newResourceDb;
-
-		function md5(bin){
-			var md5 = require('crypto').createHash('md5');
-			md5.update(bin);
-			return md5.digest('hex');
-		}
-		function md5file(path){
-			if(!utils79.is_file(path)){return false;}
-			var content = require('fs').readFileSync( path );
-			return md5(content);
-		}
-
 
 		function resetDirectory(dir){
 			if( isDirectory( dir ) ){ // 一旦削除
@@ -311,7 +309,7 @@ module.exports = function(broccoli){
 		callback = callback || function(){};
 		var newResKey;
 		while(1){
-			newResKey = php.md5( (new Date).getTime() );
+			newResKey = md5( (new Date).getTime() );
 			if( typeof(_resourceDb[newResKey]) === typeof({}) ){
 				// 登録済みの resKey
 				continue;
@@ -320,7 +318,7 @@ module.exports = function(broccoli){
 				'ext': 'txt',
 				'size': 0,
 				'base64': '',
-				'md5': '',
+				'md5': md5(''),
 				'isPrivateMaterial': false,
 				'publicFilename': '',
 				'field': '', // <= フィールド名 (ex: image, multitext)

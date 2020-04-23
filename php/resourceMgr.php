@@ -45,13 +45,13 @@ class resourceMgr{
 		}else{
 			$list = $this->broccoli->fs()->ls( $this->resourcesDirPath );
 			foreach( $list as $idx=>$resKey ){
-				if( !is_dir( $this->resourcesDirPath.'/'.$resKey ) ){ continue; }
+				if( !is_dir( $this->resourcesDirPath.'/'.urlencode($resKey) ) ){ continue; }
 				$this->resourceDb[$resKey] = array();
-				if( is_file( $this->resourcesDirPath.'/'.$resKey.'/res.json' ) ){
-					$jsonStr = file_get_contents( $this->resourcesDirPath.'/'.$resKey.'/res.json' );
-					$this->resourceDb[$resKey] = @json_decode( $jsonStr );
+				if( is_file( $this->resourcesDirPath.'/'.urlencode($resKey).'/res.json' ) ){
+					$jsonStr = file_get_contents( $this->resourcesDirPath.'/'.urlencode($resKey).'/res.json' );
+					$this->resourceDb[$resKey] = json_decode( $jsonStr );
 					if( is_null($this->resourceDb[$resKey]) ){
-						$this->resourceDb[$resKey] = array();
+						$this->resourceDb[$resKey] = json_decode('{}');
 					}
 				}
 			}
@@ -86,7 +86,7 @@ class resourceMgr{
 		$save_res_json = function($resKey){
 			$json_str = json_encode( $this->resourceDb[$resKey], JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES );
 			$result = $this->broccoli->fs()->save_file(
-				$this->resourcesDirPath.'/'.$resKey.'/res.json',
+				$this->resourcesDirPath.'/'.urlencode($resKey).'/res.json',
 				$json_str
 			);
 			return $result;
@@ -94,50 +94,55 @@ class resourceMgr{
 
 		// リソースデータの保存と公開領域への設置
 		foreach($this->resourceDb as $resKey=>$res){
-			$this->broccoli->fs()->mkdir( $this->resourcesDirPath.'/'.$resKey );
+			$this->broccoli->fs()->mkdir( $this->resourcesDirPath.'/'.urlencode($resKey) );
 
-			if( !strlen(@$this->resourceDb[$resKey]->base64) ){
+			$dotext = '';
+			if( property_exists($res, 'ext') && is_string($res->ext) && strlen($res->ext) ){
+				$dotext .= '.'.$res->ext;
+			}
+
+			if( !property_exists($res, 'base64') || !strlen($res->base64) ){
 				// base64がセットされていなかったら終わり
 				$save_res_json($resKey);
 				continue;
 			}
 
-			$bin = base64_decode($this->resourceDb[$resKey]->base64);
+			$bin = base64_decode($res->base64);
 
 			// 違う拡張子のファイルが存在していたら削除
-			$filelist = $this->broccoli->fs()->ls( $this->resourcesDirPath . '/' . $resKey );
+			$filelist = $this->broccoli->fs()->ls( $this->resourcesDirPath.'/'.urlencode($resKey) );
 			foreach( $filelist as $idx=>$row ){
-				if($filelist[$idx] === 'bin.'.$this->resourceDb[$resKey]->ext){continue;}
+				if($filelist[$idx] === 'bin'.$dotext){continue;}
 				if($filelist[$idx] === 'res.json'){continue;}
-				$this->broccoli->fs()->rm( $this->resourcesDirPath . '/' . $resKey . '/' . $filelist[$idx] );
+				$this->broccoli->fs()->rm( $this->resourcesDirPath.'/'.urlencode($resKey).'/'.$filelist[$idx] );
 			}
 
 			$this->resourceDb[$resKey]->md5 = md5($bin);
 
 			// オリジナルファイルを保存
 			$this->broccoli->fs()->save_file(
-				$this->resourcesDirPath.'/'.$resKey.'/bin.'.$this->resourceDb[$resKey]->ext,
+				$this->resourcesDirPath.'/'.urlencode($resKey).'/bin'.$dotext,
 				$bin
 			);
 
 			// 公開ファイル
-			if( @$this->resourceDb[$resKey]->isPrivateMaterial ){
+			if( property_exists($res, 'isPrivateMaterial') && $res->isPrivateMaterial ){
 				// 非公開ファイルなら終わり
 				$save_res_json($resKey);
 				continue;
 			}
 
 			$filename = $resKey;
-			if( is_string(@$this->resourceDb[$resKey]->publicFilename) && strlen($this->resourceDb[$resKey]->publicFilename) ){
-				$filename = $this->resourceDb[$resKey]->publicFilename;
+			if( property_exists($res, 'publicFilename') && is_string($res->publicFilename) && strlen($res->publicFilename) ){
+				$filename = $res->publicFilename;
 			}
 
-			if( @$this->resourceDb[$resKey]->field ){
-				$fieldDefinition = $this->broccoli->getFieldDefinition( $this->resourceDb[$resKey]->field );
+			if( property_exists($res, 'field') && $res->field ){
+				$fieldDefinition = $this->broccoli->getFieldDefinition( $res->field );
 				if( $fieldDefinition !== false ){
 					$fieldDefinition->resourceProcessor(
-						$this->resourcesDirPath.'/'.$resKey.'/bin.'.$this->resourceDb[$resKey]->ext ,
-						$this->resourcesPublishDirPath.'/'.$filename.'.'.$this->resourceDb[$resKey]->ext ,
+						$this->resourcesDirPath.'/'.urlencode($resKey).'/'.urlencode('bin'.$dotext) ,
+						$this->resourcesPublishDirPath.'/'.urlencode($filename.$dotext) ,
 						$this->resourceDb[$resKey]
 					);
 					$save_res_json($resKey);
@@ -147,8 +152,8 @@ class resourceMgr{
 
 			// フィールド名が記録されていない場合のデフォルトの処理
 			copy(
-				$this->resourcesDirPath.'/'.$resKey.'/bin.'.$this->resourceDb[$resKey]->ext,
-				$this->resourcesPublishDirPath.'/'.$filename.'.'.$this->resourceDb[$resKey]->ext
+				$this->resourcesDirPath.'/'.urlencode($resKey).'/'.urlencode('bin'.$dotext),
+				$this->resourcesPublishDirPath.'/'.urlencode($filename.$dotext)
 			);
 
 			$save_res_json($resKey);
@@ -166,15 +171,15 @@ class resourceMgr{
 		$newResKey;
 		while(1){
 			$newResKey = md5( microtime() );
-			if( is_object(@$this->resourceDb[$newResKey]) ){
+			if( array_key_exists($newResKey, $this->resourceDb) && is_object( $this->resourceDb[$newResKey] ) ){
 				// 登録済みの resKey
 				continue;
 			}
 			$this->resourceDb[$newResKey] = json_decode( json_encode( array( //予約
 				'ext' => 'txt',
 				'size' => 0,
-				'base64' => '',
-				'md5' => '',
+				'base64' => base64_encode(''),
+				'md5' => md5(''),
 				'isPrivateMaterial' => false,
 				'publicFilename' => '',
 				'field' => '', // <= フィールド名 (ex: image, multitext)
@@ -184,16 +189,24 @@ class resourceMgr{
 		}
 
 		$resKey = $newResKey;
-		if( !is_dir( $this->resourcesDirPath ) ){ // 作成
-			@mkdir( $this->resourcesDirPath );
+		if( !file_exists( $this->resourcesDirPath ) ){
+			// 作成
+			mkdir( $this->resourcesDirPath );
 		}
-		@mkdir( $this->resourcesDirPath.'/'.$resKey );
+		if( !file_exists( $this->resourcesDirPath.'/'.urlencode($resKey) ) ){
+			// 作成
+			mkdir( $this->resourcesDirPath.'/'.urlencode($resKey) );
+		}
 		$this->broccoli->fs()->save_file(
-			$this->resourcesDirPath.'/'.$resKey.'/res.json',
+			$this->resourcesDirPath.'/'.urlencode($resKey).'/res.json',
 			json_encode( $this->resourceDb[$resKey], JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES )
 		);
+		$bin_basename = 'bin';
+		if( property_exists($this->resourceDb[$resKey], 'ext') && is_string($this->resourceDb[$resKey]->ext) && strlen($this->resourceDb[$resKey]->ext) ){
+			$bin_basename .= '.'.$this->resourceDb[$resKey]->ext;
+		}
 		$this->broccoli->fs()->save_file(
-			$this->resourcesDirPath.'/'.$resKey.'/bin.'.$this->resourceDb[$resKey]->ext,
+			$this->resourcesDirPath.'/'.urlencode($resKey).'/'.urlencode($bin_basename),
 			''
 		);
 
@@ -230,10 +243,12 @@ class resourceMgr{
 		}
 		$newResKey = $this->addResource();
 		$this->resourceDb[$newResKey] = json_decode( json_encode( $this->resourceDb[$resKey] ) );
-		@mkdir($this->resourcesDirPath.$newResKey.'/');
+		if( !file_exists( $this->resourcesDirPath.urlencode($newResKey).'/' ) ){
+			mkdir( $this->resourcesDirPath.urlencode($newResKey).'/' );
+		}
 		copy(
-			$this->resourcesDirPath.$resKey.'/' ,
-			$this->resourcesDirPath.$newResKey.'/'
+			$this->resourcesDirPath.urlencode($resKey).'/' ,
+			$this->resourcesDirPath.urlencode($newResKey).'/'
 		);
 		return $newResKey;
 	}
@@ -279,11 +294,11 @@ class resourceMgr{
 
 		$bin_filename = 'bin';
 		if( property_exists( $this->resourceDb[$resKey], 'ext' ) ){
-			$bin_filename .= '.'.urlencode($this->resourceDb[$resKey]->ext);
+			$bin_filename .= '.'.$this->resourceDb[$resKey]->ext;
 		}
 
 		$this->broccoli->fs()->save_file(
-			$realpath_dir.'/'.$bin_filename,
+			$realpath_dir.'/'.urlencode($bin_filename),
 			$bin
 		);
 		return true;
@@ -321,9 +336,9 @@ class resourceMgr{
 		$this->resourceDb[$resKey]->size = strlen($bin);
 
 		$json_str = json_encode( $this->resourceDb[$resKey], JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES );
-		$json_str = preg_replace('/^(    )+/m', ' ', $json_str);
+		$json_str = preg_replace('/^(    )+/m', ' ', $json_str); // インデントを スペース1つ分 に変換
 		file_put_contents(
-			$this->resourcesDirPath.'/'.$resKey.'/res.json',
+			$this->resourcesDirPath.'/'.urlencode($resKey).'/res.json',
 			$json_str
 		);
 
@@ -336,6 +351,9 @@ class resourceMgr{
 	public function getResourcePublicPath( $resKey ){
 		$filename = $resKey;
 		$res = $this->getResource( $resKey );
+		if( !$res ){
+			return false;
+		}
 
 		if( is_string(@$res->publicFilename) && strlen(@$res->publicFilename) ){
 			$filename = $res->publicFilename;
@@ -346,7 +364,7 @@ class resourceMgr{
 		if(!strlen($filename)){$filename = 'noname';}
 		$ext = @$res->ext;
 		if(!strlen($ext)){$ext = 'unknown';}
-		$rtn = $this->broccoli->fs()->get_relatedpath('/'.$resourcesPublishDirPath.'/'.$filename.'.'.$ext, dirname($contentsPath));
+		$rtn = $this->broccoli->fs()->get_relatedpath('/'.$resourcesPublishDirPath.'/'.urlencode($filename.'.'.$ext), dirname($contentsPath));
 		$rtn = $this->broccoli->fs()->normalize_path($rtn);
 		$rtn = preg_replace('/\\\\/s', '/', $rtn); // <= convert Windows path to Linux path
 
@@ -359,16 +377,25 @@ class resourceMgr{
 	public function getResourcePublicRealpath( $resKey ){
 		$filename = $resKey;
 		$res = $this->getResource( $resKey );
-		if($res === false){return false;}
+		if($res === false){
+			return false;
+		}
 
-		if( is_string($res->publicFilename) && strlen($res->publicFilename) ){
+		if( property_exists($res, 'publicFilename') && is_string($res->publicFilename) && strlen($res->publicFilename) ){
 			$filename = $res->publicFilename;
 		}
 
-		if(!strlen($filename)){$filename = 'noname';}
-		$ext = $res->ext;
-		if(!strlen($ext)){$ext = 'unknown';}
-		$rtn = $this->broccoli->fs()->get_realpath($this->resourcesPublishDirPath.'/'.$filename.'.'.$ext);
+		if( !strlen($filename) ){
+			$filename = 'noname';
+		}
+		$ext = null;
+		if( property_exists($res, 'ext') && is_string($res->ext) && strlen($res->ext) ){
+			$ext = $res->ext;
+		}
+		if( !strlen($ext) ){
+			$ext = 'unknown';
+		}
+		$rtn = $this->broccoli->fs()->get_realpath($this->resourcesPublishDirPath.'/'.urlencode($filename.'.'.$ext));
 
 		return $rtn;
 	}
@@ -383,7 +410,11 @@ class resourceMgr{
 		if(!$res){
 			return false;
 		}
-		$rtn = $this->broccoli->fs()->get_realpath($this->resourcesDirPath.'/'.$resKey.'/bin.'.$res->ext);
+		$bin_filename = 'bin';
+		if( property_exists($res, 'ext') && is_string($res->ext) && strlen($res->ext) ){
+			$bin_filename .= '.'.$res->ext;
+		}
+		$rtn = $this->broccoli->fs()->get_realpath($this->resourcesDirPath.'/'.urlencode($resKey).'/'.urlencode($bin_filename));
 
 		return $rtn;
 	}
@@ -395,8 +426,8 @@ class resourceMgr{
 		$this->resourceDb[$resKey] = null;
 		unset( $this->resourceDb[$resKey] );
 		$result = false;
-		if( is_dir($this->resourcesDirPath.'/'.$resKey.'/') ){
-			$result = $this->broccoli->fs()->rm( $this->resourcesDirPath.'/'.$resKey.'/' );
+		if( is_dir($this->resourcesDirPath.'/'.urlencode($resKey).'/') ){
+			$result = $this->broccoli->fs()->rm( $this->resourcesDirPath.'/'.urlencode($resKey).'/' );
 		}
 		return $result;
 	}
