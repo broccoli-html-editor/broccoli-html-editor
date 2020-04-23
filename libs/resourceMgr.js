@@ -88,7 +88,7 @@ module.exports = function(broccoli){
 
 	function md5(bin){
 		var md5 = require('crypto').createHash('md5');
-		md5.update(bin);
+		md5.update(bin, 'binary');
 		return md5.digest('hex');
 	} // md5()
 
@@ -309,7 +309,7 @@ module.exports = function(broccoli){
 		callback = callback || function(){};
 		var newResKey;
 		while(1){
-			newResKey = md5( (new Date).getTime() );
+			newResKey = md5( ''+(new Date).getTime() );
 			if( typeof(_resourceDb[newResKey]) === typeof({}) ){
 				// 登録済みの resKey
 				continue;
