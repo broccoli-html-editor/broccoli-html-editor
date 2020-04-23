@@ -96,7 +96,11 @@ module.exports = function(broccoli, api, options, callback){
 					module.getPics(function(pics){
 						moduleInfo.pics = pics;
 
-						callback(moduleInfo); 
+						module.getReadme(function(readme){
+							moduleInfo.readme = readme;
+
+							callback(moduleInfo); 
+						});
 					});
 				});
 				break;

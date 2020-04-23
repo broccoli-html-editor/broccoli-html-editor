@@ -2666,9 +2666,10 @@ module.exports = function(broccoli, targetElm, callback){
 				updateModuleInfoPreview(null, {'elm': this}, function(){});
 			})
 			.on('dblclick', function(e){
+				var $this = $(this);
 				var html = generateModuleInfoHtml(this);
 				var $html = $(html);
-				var moduleId = $(this).attr('data-id');
+				var moduleId = $this.attr('data-id');
 				broccoli.lightbox(function(elm){
 					$(elm)
 						.css({
@@ -2706,6 +2707,11 @@ module.exports = function(broccoli, targetElm, callback){
 								}
 								html += '</ul>';
 								$pics.append(html);
+							}
+							var $readme = $html.find('.broccoli__module-readme');
+							if( result.readme ){
+								$readme.html(result.readme);
+								$this.attr({'data-readme': result.readme});
 							}
 						}
 					);
@@ -2766,17 +2772,24 @@ module.exports = function(broccoli, targetElm, callback){
 		if( $img.length ){
 			html += '<div class="broccoli--module-info-content-thumb"><img src="'+$img.attr('src')+'" /></div>';
 		}
-		html += '<h1>'+$elm.attr('data-name')+'</h1>';
-		html += '<p>'+$elm.attr('data-id')+'</p>';
+		html += '<h1 class="broccoli--module-info-content-h1"></h1>';
+		html += '<p class="broccoli--module-info-content-id"></p>';
 		html += '<hr />';
-		var readme = $elm.attr('data-readme');
-		html += '<div class="broccoli--module-info-content-readme"><article class="broccoli__module-readme">'+ (readme ? readme : '<p style="text-align:center; margin: 100px auto;">-- no readme --</p>' ) +'</article></div>';
+		html += '<div class="broccoli--module-info-content-readme"><article class="broccoli__module-readme"></article></div>';
 
 		// ↓picsが多くなるとモジュールパレットが重くなるため、
 		// 　必要なときだけ非同期でロードするようにした。 2020-04-23 @tomk79
 		html += '<div class="broccoli--module-info-content-pics"></div>';
 		html += '</article>';
-		return html;
+
+		var $html = $('<div>');
+		$html.html(html);
+		$html.find('h1.broccoli--module-info-content-h1').text($elm.attr('data-name'));
+		$html.find('.broccoli--module-info-content-id').text($elm.attr('data-id'));
+		var readme = $elm.attr('data-readme');
+		$html.find('.broccoli__module-readme').html((readme ? readme : '<p style="text-align:center; margin: 100px auto;">-- no readme --</p>' ));
+
+		return $html.html();
 	}
 
 	/**

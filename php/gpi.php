@@ -97,6 +97,7 @@ class gpi{
 				$moduleInfo['isClipModule'] = $module->isClipModule;
 				$moduleInfo['deprecated'] = $module->deprecated;
 				$moduleInfo['pics'] = $module->getPics();
+				$moduleInfo['readme'] = $module->getReadme();
 				return $moduleInfo;
 
 			case "getAllModuleList":

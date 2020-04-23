@@ -435,6 +435,19 @@ class classModule{
 
 	} // parseTpl()
 
+
+	/**
+	 * READMEを取得する
+	 */
+	public function getReadme(){
+
+		// README.md (html)
+		$readmeHelper = new fncs_readme($this->broccoli);
+		$readme = $readmeHelper->get_html($this->realpath);
+
+		return $readme;
+	}
+
 	/**
 	 * 説明用画像を取得する
 	 */

@@ -182,6 +182,7 @@ module.exports = function(broccoli, packageId, callback){
 
 								rtn.categories[idx].modules[row2].readme = readme;
 
+
 								broccoli.getModule(moduleId, null, function(modInstance){
 									rtn.categories[idx].modules[row2].moduleInfo.interface = rtn.categories[idx].modules[row2].moduleInfo.interface || modInstance.fields;
 									it2.next();

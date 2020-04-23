@@ -13,8 +13,7 @@ module.exports = function(broccoli, moduleId, options){
 	var Promise = require('es6-promise').Promise;
 	var it79 = require('iterate79');
 	var fs = require('fs');
-
-	var rtn = {};
+	var FncsReadme = require('./fncs/readme.js');
 
 	var realpath = broccoli.getModuleRealpath(moduleId);
 	this.isSystemModule = broccoli.isSystemMod(moduleId);
@@ -453,10 +452,26 @@ module.exports = function(broccoli, moduleId, options){
 
 
 	/**
+	 * READMEを取得する
+	 */
+	this.getReadme = function(callback){
+		callback = callback || function(){};
+
+		// README.md (html)
+		var readmeHelper = new FncsReadme(broccoli);
+		var readme = readmeHelper.get_html(realpath);
+
+		callback(readme);
+		return;
+	}
+
+
+	/**
 	 * 説明用画像を取得する
 	 */
 	this.getPics = function(callback){
-		// pics/
+		callback = callback || function(){};
+
 		var realpathPics = require('path').resolve( realpath, 'pics/' );
 		var rtn = [];
 		if( isDir(realpathPics) ){
