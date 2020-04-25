@@ -307,10 +307,11 @@ module.exports = function(broccoli){
 				broccoli.gpi(
 					'getClipModuleContents',
 					{
-						'moduleId': modId
+						'moduleId': modId,
+						'resourceMode': 'temporaryHash'
 					} ,
 					function(clipContents){
-						console.log('------ clipModuleContents --', clipContents);
+						// console.log('------ clipModuleContents --', clipContents);
 
 						it79.ary(
 							clipContents.data ,
@@ -329,18 +330,29 @@ module.exports = function(broccoli){
 								});
 							} ,
 							function(){
-								broccoli.unselectInstance(function(){
-									broccoli.saveContents(function(){
-										broccoli.message('クリップを挿入しました。');
-										broccoli.redraw(function(){
-											broccoli.closeProgress(function(){
-												broccoli.selectInstance(newInstancePath, function(){
-													callback();
+								broccoli.gpi(
+									'replaceClipModuleResources',
+									{
+										'moduleId': modId
+									} ,
+									function(result){
+										// console.log(result);
+
+										broccoli.unselectInstance(function(){
+											broccoli.saveContents(function(){
+												broccoli.message('クリップを挿入しました。');
+												broccoli.redraw(function(){
+													broccoli.closeProgress(function(){
+														broccoli.selectInstance(newInstancePath, function(){
+															callback();
+														});
+													});
 												});
 											});
 										});
-									});
-								});
+
+									}
+								);
 							}
 						);
 

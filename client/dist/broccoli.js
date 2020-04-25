@@ -5060,10 +5060,11 @@ module.exports = function(broccoli){
 				broccoli.gpi(
 					'getClipModuleContents',
 					{
-						'moduleId': modId
+						'moduleId': modId,
+						'resourceMode': 'temporaryHash'
 					} ,
 					function(clipContents){
-						console.log('------ clipModuleContents --', clipContents);
+						// console.log('------ clipModuleContents --', clipContents);
 
 						it79.ary(
 							clipContents.data ,
@@ -5082,18 +5083,29 @@ module.exports = function(broccoli){
 								});
 							} ,
 							function(){
-								broccoli.unselectInstance(function(){
-									broccoli.saveContents(function(){
-										broccoli.message('クリップを挿入しました。');
-										broccoli.redraw(function(){
-											broccoli.closeProgress(function(){
-												broccoli.selectInstance(newInstancePath, function(){
-													callback();
+								broccoli.gpi(
+									'replaceClipModuleResources',
+									{
+										'moduleId': modId
+									} ,
+									function(result){
+										// console.log(result);
+
+										broccoli.unselectInstance(function(){
+											broccoli.saveContents(function(){
+												broccoli.message('クリップを挿入しました。');
+												broccoli.redraw(function(){
+													broccoli.closeProgress(function(){
+														broccoli.selectInstance(newInstancePath, function(){
+															callback();
+														});
+													});
 												});
 											});
 										});
-									});
-								});
+
+									}
+								);
 							}
 						);
 
@@ -5650,17 +5662,6 @@ module.exports = function(broccoli){
 	 */
 	this.init = function( callback ){
 		// console.log('broccoli: Initializing resourceDb...');
-		loadResourceDb( function(){
-			callback();
-		} );
-		return this;
-	}
-
-	/**
-	 * Loading resource DB
-	 */
-	function loadResourceDb( callback ){
-		// console.log('broccoli: Loading all resources...');
 		_resourceDb = {};
 		it79.fnc({},
 			[
@@ -5675,7 +5676,7 @@ module.exports = function(broccoli){
 				}
 			]
 		);
-		return;
+		return this;
 	}
 
 	/**
@@ -5697,9 +5698,7 @@ module.exports = function(broccoli){
 					{'resourceDb': _resourceDb} ,
 					function(rtn){
 						console.error('resourceDb save method: done.');
-						loadResourceDb(function(){
-							callback(rtn);
-						});
+						callback(rtn);
 					}
 				);
 			}

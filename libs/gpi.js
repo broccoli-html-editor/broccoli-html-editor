@@ -118,7 +118,47 @@ module.exports = function(broccoli, api, options, callback){
 						return;
 					}
 					module.getClipContents(function(clip){
+
+						if( options.resourceMode == 'temporaryHash' ){
+							for(var resId in clip.resources){
+								var bin = '-----broccoli-resource-temporary-hash='+resId;
+								clip.resources[resId].base64 = (new Buffer(bin)).toString('base64');
+							}
+						}
+
 						callback(clip); 
+					});
+				});
+				break;
+
+			case "replaceClipModuleResources":
+				// クリップモジュールのリソースを取得し、コンテンツのリソースを更新する
+				var moduleId = options.moduleId;
+				broccoli.getModule(moduleId, undefined, function(module){
+					if(!module){
+						callback(false);
+						return;
+					}
+					module.getClipContents(function(clip){
+						broccoli.resourceMgr.getResourceDb(function(resourceDb){
+							it79.ary(
+								resourceDb,
+								function(it1, resInfo, resId){
+									if( resInfo.base64.match( /^LS0tLS1icm9jY29saS1yZXNvdXJjZS10ZW1wb3JhcnktaGFz/ ) ){
+										var bin = (new Buffer(resInfo.base64, 'base64')).toString();
+										var $hash = bin.replace(/^\-\-\-\-\-broccoli\-resource\-temporary\-hash\=/, '');
+										broccoli.resourceMgr.updateResource(resId, clip.resources[$hash], function(){
+											it1.next();
+										});
+										return;
+									}
+									it1.next();
+								},
+								function(){
+									callback(clip); 
+								}
+							);
+						});
 					});
 				});
 				break;

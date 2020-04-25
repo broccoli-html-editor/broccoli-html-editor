@@ -13,17 +13,6 @@ module.exports = function(broccoli){
 	 */
 	this.init = function( callback ){
 		// console.log('broccoli: Initializing resourceDb...');
-		loadResourceDb( function(){
-			callback();
-		} );
-		return this;
-	}
-
-	/**
-	 * Loading resource DB
-	 */
-	function loadResourceDb( callback ){
-		// console.log('broccoli: Loading all resources...');
 		_resourceDb = {};
 		it79.fnc({},
 			[
@@ -38,7 +27,7 @@ module.exports = function(broccoli){
 				}
 			]
 		);
-		return;
+		return this;
 	}
 
 	/**
@@ -60,9 +49,7 @@ module.exports = function(broccoli){
 					{'resourceDb': _resourceDb} ,
 					function(rtn){
 						console.error('resourceDb save method: done.');
-						loadResourceDb(function(){
-							callback(rtn);
-						});
+						callback(rtn);
 					}
 				);
 			}

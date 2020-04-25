@@ -111,6 +111,35 @@ class gpi{
 				}
 				$module = $this->broccoli->getModule($moduleId);
 				$clip = $module->getClipContents();
+				if( array_key_exists('resourceMode', $options) && $options['resourceMode'] == 'temporaryHash' ){
+					foreach($clip->resources as $resId=>$res){
+						$res->base64 = base64_encode('-----broccoli-resource-temporary-hash='.$resId);
+					}
+				}
+				return $clip;
+
+			case "replaceClipModuleResources":
+				// クリップモジュールのリソースを取得し、コンテンツのリソースを更新する
+				$moduleId = false;
+				if( array_key_exists('moduleId', $options) ){
+					$moduleId = $options['moduleId'];
+				}
+				if( !strlen($moduleId) ){
+					return false;
+				}
+				$module = $this->broccoli->getModule($moduleId);
+				$clip = $module->getClipContents();
+				$resourceDb = $this->broccoli->resourceMgr()->getResourceDb();
+				$tmpMetaInitial = '-----broccoli-resource-temporary-hash=';
+				$tmpBase64Initial = 'LS0tLS1icm9jY29saS1yZXNvdXJjZS10ZW1wb3JhcnktaGFz';
+				foreach( $resourceDb as $resId=>$resInfo ){
+					if( preg_match('/^'.preg_quote($tmpBase64Initial,'/').'/', $resInfo->base64) ){
+						$bin = base64_decode($resInfo->base64);
+						$hash = preg_replace('/^'.preg_quote($tmpMetaInitial, '/').'/', '', $bin);
+						$this->broccoli->resourceMgr()->updateResource($resId, $clip->resources->{$hash});
+					}
+
+				}
 				return $clip;
 
 			case "getAllModuleList":
