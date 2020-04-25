@@ -336,15 +336,16 @@ module.exports = function(broccoli){
 										'moduleId': modId
 									} ,
 									function(result){
-										// console.log(result);
-
-										broccoli.unselectInstance(function(){
-											broccoli.saveContents(function(){
-												broccoli.message('クリップを挿入しました。');
-												broccoli.redraw(function(){
-													broccoli.closeProgress(function(){
-														broccoli.selectInstance(newInstancePath, function(){
-															callback();
+										console.log(result);
+										broccoli.resourceMgr.reload(function(result){
+											broccoli.unselectInstance(function(){
+												broccoli.saveContents(function(){
+													broccoli.message('クリップを挿入しました。');
+													broccoli.redraw(function(){
+														broccoli.closeProgress(function(){
+															broccoli.selectInstance(newInstancePath, function(){
+																callback();
+															});
 														});
 													});
 												});

@@ -58,6 +58,29 @@ module.exports = function(broccoli){
 	}
 
 	/**
+	 * Reload resources DB
+	 * 
+	 * @param  {Function} cb Callback function.
+	 * @return {boolean}     Always true.
+	 */
+	this.reload = function( callback ){
+		callback = callback || function(){};
+		it79.fnc({}, [
+			function(it1, data){
+				broccoli.gpi(
+					'resourceMgr.getResourceDb',
+					{} ,
+					function(rtn){
+						_resourceDb = rtn;
+						callback(rtn);
+					}
+				);
+			}
+		]);
+		return this;
+	}
+
+	/**
 	 * add resource
 	 * リソースの登録を行い、resKeyを生成して返す。
 	 */

@@ -5089,15 +5089,16 @@ module.exports = function(broccoli){
 										'moduleId': modId
 									} ,
 									function(result){
-										// console.log(result);
-
-										broccoli.unselectInstance(function(){
-											broccoli.saveContents(function(){
-												broccoli.message('クリップを挿入しました。');
-												broccoli.redraw(function(){
-													broccoli.closeProgress(function(){
-														broccoli.selectInstance(newInstancePath, function(){
-															callback();
+										console.log(result);
+										broccoli.resourceMgr.reload(function(result){
+											broccoli.unselectInstance(function(){
+												broccoli.saveContents(function(){
+													broccoli.message('クリップを挿入しました。');
+													broccoli.redraw(function(){
+														broccoli.closeProgress(function(){
+															broccoli.selectInstance(newInstancePath, function(){
+																callback();
+															});
 														});
 													});
 												});
@@ -5698,6 +5699,29 @@ module.exports = function(broccoli){
 					{'resourceDb': _resourceDb} ,
 					function(rtn){
 						console.error('resourceDb save method: done.');
+						callback(rtn);
+					}
+				);
+			}
+		]);
+		return this;
+	}
+
+	/**
+	 * Reload resources DB
+	 * 
+	 * @param  {Function} cb Callback function.
+	 * @return {boolean}     Always true.
+	 */
+	this.reload = function( callback ){
+		callback = callback || function(){};
+		it79.fnc({}, [
+			function(it1, data){
+				broccoli.gpi(
+					'resourceMgr.getResourceDb',
+					{} ,
+					function(rtn){
+						_resourceDb = rtn;
 						callback(rtn);
 					}
 				);
