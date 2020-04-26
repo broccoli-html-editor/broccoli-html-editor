@@ -112,8 +112,10 @@ class gpi{
 				$module = $this->broccoli->getModule($moduleId);
 				$clip = $module->getClipContents();
 				if( array_key_exists('resourceMode', $options) && $options['resourceMode'] == 'temporaryHash' ){
-					foreach($clip->resources as $resId=>$res){
-						$res->base64 = base64_encode('-----broccoli-resource-temporary-hash='.$resId);
+					foreach($clip->resources as $resKey=>$resInfo){
+						if(!strlen($resKey)){continue;}
+						if(!is_object($resInfo)){continue;}
+						$resInfo->base64 = base64_encode('-----broccoli-resource-temporary-hash='.$resKey);
 					}
 				}
 				return $clip;
@@ -133,14 +135,15 @@ class gpi{
 				$tmpMetaInitial = '-----broccoli-resource-temporary-hash=';
 				$tmpBase64Initial = 'LS0tLS1icm9jY29saS1yZXNvdXJjZS10ZW1wb3JhcnktaGFz';
 				$rtn = array();
-				foreach( $resourceDb as $resId=>$resInfo ){
-					if( preg_match('/^'.preg_quote($tmpBase64Initial,'/').'/', $resInfo->base64) ){
+				foreach( $resourceDb as $resKey=>$resInfo ){
+					if(!strlen($resKey)){continue;}
+					if(!is_object($resInfo)){continue;}
+					if( property_exists($resInfo, 'base64') && preg_match('/^'.preg_quote($tmpBase64Initial,'/').'/', $resInfo->base64) ){
 						$bin = base64_decode($resInfo->base64);
 						$hash = preg_replace('/^'.preg_quote($tmpMetaInitial, '/').'/', '', $bin);
-						$this->broccoli->resourceMgr()->updateResource($resId, $clip->resources->{$hash});
-						$rtn[$resId] = $clip->resources->{$hash};
+						$this->broccoli->resourceMgr()->updateResource($resKey, $clip->resources->{$hash});
+						$rtn[$resKey] = $clip->resources->{$hash};
 					}
-
 				}
 				return $rtn;
 

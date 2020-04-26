@@ -120,9 +120,11 @@ module.exports = function(broccoli, api, options, callback){
 					module.getClipContents(function(clip){
 
 						if( options.resourceMode == 'temporaryHash' ){
-							for(var resId in clip.resources){
-								var bin = '-----broccoli-resource-temporary-hash='+resId;
-								clip.resources[resId].base64 = (new Buffer(bin)).toString('base64');
+							for(var resKey in clip.resources){
+								if( !resKey.length ){ continue; }
+								if( typeof(clip.resources[resKey]) !== typeof({}) ){ continue; }
+								var bin = '-----broccoli-resource-temporary-hash='+resKey;
+								clip.resources[resKey].base64 = (new Buffer(bin)).toString('base64');
 							}
 						}
 
@@ -144,12 +146,14 @@ module.exports = function(broccoli, api, options, callback){
 						broccoli.resourceMgr.getResourceDb(function(resourceDb){
 							it79.ary(
 								resourceDb,
-								function(it1, resInfo, resId){
+								function(it1, resInfo, resKey){
+									if( !resKey.length ){ it1.next(); return; }
+									if( typeof(resInfo) !== typeof({}) ){ it1.next(); return; }
 									if( resInfo.base64.match( /^LS0tLS1icm9jY29saS1yZXNvdXJjZS10ZW1wb3JhcnktaGFz/ ) ){
 										var bin = (new Buffer(resInfo.base64, 'base64')).toString();
 										var $hash = bin.replace(/^\-\-\-\-\-broccoli\-resource\-temporary\-hash\=/, '');
-										broccoli.resourceMgr.updateResource(resId, clip.resources[$hash], function(){
-											rtn[resId] = clip.resources[$hash];
+										broccoli.resourceMgr.updateResource(resKey, clip.resources[$hash], function(){
+											rtn[resKey] = clip.resources[$hash];
 											it1.next();
 										});
 										return;
