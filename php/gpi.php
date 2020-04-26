@@ -132,15 +132,17 @@ class gpi{
 				$resourceDb = $this->broccoli->resourceMgr()->getResourceDb();
 				$tmpMetaInitial = '-----broccoli-resource-temporary-hash=';
 				$tmpBase64Initial = 'LS0tLS1icm9jY29saS1yZXNvdXJjZS10ZW1wb3JhcnktaGFz';
+				$rtn = array();
 				foreach( $resourceDb as $resId=>$resInfo ){
 					if( preg_match('/^'.preg_quote($tmpBase64Initial,'/').'/', $resInfo->base64) ){
 						$bin = base64_decode($resInfo->base64);
 						$hash = preg_replace('/^'.preg_quote($tmpMetaInitial, '/').'/', '', $bin);
 						$this->broccoli->resourceMgr()->updateResource($resId, $clip->resources->{$hash});
+						$rtn[$resId] = $clip->resources->{$hash};
 					}
 
 				}
-				return $clip;
+				return $rtn;
 
 			case "getAllModuleList":
 				// 全モジュールの一覧を取得する

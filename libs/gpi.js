@@ -139,6 +139,7 @@ module.exports = function(broccoli, api, options, callback){
 						callback(false);
 						return;
 					}
+					var rtn = {};
 					module.getClipContents(function(clip){
 						broccoli.resourceMgr.getResourceDb(function(resourceDb){
 							it79.ary(
@@ -148,6 +149,7 @@ module.exports = function(broccoli, api, options, callback){
 										var bin = (new Buffer(resInfo.base64, 'base64')).toString();
 										var $hash = bin.replace(/^\-\-\-\-\-broccoli\-resource\-temporary\-hash\=/, '');
 										broccoli.resourceMgr.updateResource(resId, clip.resources[$hash], function(){
+											rtn[resId] = clip.resources[$hash];
 											it1.next();
 										});
 										return;
@@ -155,7 +157,7 @@ module.exports = function(broccoli, api, options, callback){
 									it1.next();
 								},
 								function(){
-									callback(clip); 
+									callback(rtn); 
 								}
 							);
 						});
