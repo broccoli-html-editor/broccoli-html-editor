@@ -27,7 +27,7 @@ module.exports = function(broccoli){
 				}
 			]
 		);
-		return this;
+		return;
 	}
 
 	/**
@@ -54,7 +54,30 @@ module.exports = function(broccoli){
 				);
 			}
 		]);
-		return this;
+		return;
+	}
+
+	/**
+	 * get resource DB
+	 */
+	this.getResourceDb = function( callback ){
+		callback = callback || function(){};
+		callback(_resourceDb);
+		return;
+	}
+
+	/**
+	 * get resource DB
+	 */
+	this.setResourceDb = function( newResourceDb, callback ){
+		callback = callback || function(){};
+		if( typeof(newResourceDb) !== typeof({}) ){
+			callback(false);
+			return;
+		}
+		_resourceDb = newResourceDb;
+		callback(true);
+		return;
 	}
 
 	/**
@@ -77,7 +100,7 @@ module.exports = function(broccoli){
 				);
 			}
 		]);
-		return this;
+		return;
 	}
 
 	/**
@@ -99,16 +122,7 @@ module.exports = function(broccoli){
 				);
 			}
 		]);
-		return this;
-	}
-
-	/**
-	 * get resource DB
-	 */
-	this.getResourceDb = function( callback ){
-		callback = callback || function(){};
-		callback(_resourceDb);
-		return this;
+		return;
 	}
 
 	/**
@@ -135,7 +149,7 @@ module.exports = function(broccoli){
 				);
 			}
 		]);
-		return this;
+		return;
 	}
 
 	/**
@@ -154,7 +168,7 @@ module.exports = function(broccoli){
 				);
 			}
 		]);
-		return this;
+		return;
 	}
 
 	/**
@@ -196,7 +210,7 @@ module.exports = function(broccoli){
 				}
 			]
 		);
-		return this;
+		return;
 	}
 
 	/**
@@ -218,7 +232,7 @@ module.exports = function(broccoli){
 				}
 			]
 		);
-		return this;
+		return;
 	}
 
 	/**
@@ -246,7 +260,7 @@ module.exports = function(broccoli){
 				}
 			]
 		);
-		return this;
+		return;
 	}
 
 	/**
@@ -267,7 +281,7 @@ module.exports = function(broccoli){
 				}
 			]
 		);
-		return this;
+		return;
 	}
 
 	/**
@@ -288,7 +302,7 @@ module.exports = function(broccoli){
 				}
 			]
 		);
-		return this;
+		return;
 	}
 
 	/**
@@ -309,7 +323,7 @@ module.exports = function(broccoli){
 				}
 			]
 		);
-		return this;
+		return;
 	}
 
 }

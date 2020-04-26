@@ -16805,8 +16805,9 @@ window.main = new (function(){
 				},
 				'gpiBridge': function(api, options, callback){
 					// General Purpose Interface Bridge
-					// console.info('=----=----=', api, options);
-					// var millitime = (new Date()).getTime();
+					console.info('=----= GPI Request =----=', api, options);
+					var millitime = (new Date()).getTime();
+
 					if(serverType == 'biflora'){
 						socket.send(
 							'broccoli',
@@ -16818,7 +16819,7 @@ window.main = new (function(){
 								}
 							} ,
 							function(rtn){
-								// console.info('--result', (new Date()).getTime() - millitime);
+								console.info('-- GPI result', (new Date()).getTime() - millitime, rtn);
 								callback(rtn);
 							}
 						);
@@ -16840,7 +16841,7 @@ window.main = new (function(){
 								console.error(error);
 							},
 							"complete": function(){
-								// console.info('--result', (new Date()).getTime() - millitime);
+								console.info('-- GPI result', (new Date()).getTime() - millitime, res);
 								callback(res);
 							}
 						});

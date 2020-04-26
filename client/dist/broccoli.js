@@ -344,6 +344,7 @@
 					})
 				;
 			}
+			return;
 		}
 
 		/**
@@ -389,7 +390,7 @@
 					}
 				]
 			);
-			return this;
+			return;
 		}
 
 
@@ -589,7 +590,7 @@
 					}
 				]
 			);
-			return this;
+			return;
 		} // redraw()
 
 		/**
@@ -621,7 +622,7 @@
 				}
 				callback(result);
 			});
-			return this;
+			return;
 		} // gpi()
 
 		/**
@@ -691,7 +692,7 @@
 					} );
 				} );
 			});
-			return this;
+			return;
 		} // editInstance()
 
 		/**
@@ -719,7 +720,7 @@
 					});
 				});
 			});
-			return this;
+			return;
 		}
 
 		/**
@@ -731,7 +732,7 @@
 			if( !selectedInstance ){
 				// 無選択状態だったら、選択操作に転送する。
 				this.selectInstance(instancePathRegionTo, callback);
-				return this;
+				return;
 			}
 			console.log("Select Region: from "+selectedInstance+" to "+instancePathRegionTo);
 			selectedInstance.match(/^([\s\S]*?)([0-9]*)$/, '$1');
@@ -743,7 +744,7 @@
 				// ずれた階層間での範囲選択はできません。
 				console.error('ずれた階層間での範囲選択はできません。');
 				callback(false);
-				return this;
+				return;
 			}
 
 			var numberTo = instancePathRegionTo.split(commonLayer)[1];
@@ -766,7 +767,7 @@
 					callback();
 				});
 			});
-			return this;
+			return;
 		}
 
 		/**
@@ -786,7 +787,7 @@
 					});
 				});
 			});
-			return this;
+			return;
 		}
 
 		/**
@@ -819,7 +820,7 @@
 					callback();
 				});
 			});
-			return this;
+			return;
 
 		}
 
@@ -831,7 +832,7 @@
 			this.panels.unfocusInstance(function(){
 				callback();
 			});
-			return this;
+			return;
 		}
 
 		/**
@@ -1149,7 +1150,7 @@
 					});
 				});
 			});
-			return this;
+			return;
 		}
 
 		/**
@@ -1170,7 +1171,7 @@
 					});
 				});
 			});
-			return this;
+			return;
 		}
 
 		/**
@@ -1181,7 +1182,7 @@
 		 */
 		this.drawModulePalette = function(targetElm, callback){
 			require( './drawModulePalette.js' )(_this, targetElm, callback);
-			return this;
+			return;
 		}
 
 		/**
@@ -1191,7 +1192,7 @@
 		 */
 		this.drawPanels = function(callback){
 			this.panels.init(this.options.elmPanels, callback);
-			return this;
+			return;
 		}
 
 		/**
@@ -1199,7 +1200,7 @@
 		 */
 		this.drawEditWindow = function(instancePath, elmEditWindow, callback){
 			this.editWindow.init(instancePath, elmEditWindow, callback);
-			return this;
+			return;
 		}
 
 		/**
@@ -1232,7 +1233,7 @@
 			;
 
 			callback( $dom.get(0) );
-			return this;
+			return;
 		}
 
 		/**
@@ -1263,7 +1264,7 @@
 				)
 			;
 			this.setUiState('standby');
-			return this;
+			return;
 		}
 
 		/**
@@ -1284,7 +1285,7 @@
 			;
 			var dom = $('body').find('.px2-loading').get(0);
 			callback(dom);
-			return this;
+			return;
 		}
 
 		/**
@@ -1295,6 +1296,7 @@
 			console.log(str);
 			var $userMessage = $('.broccoli__progress-comment');
 			$userMessage.text(str);
+			return;
 		}
 
 		/**
@@ -1316,7 +1318,7 @@
 					}
 				)
 			;
-			return this;
+			return;
 		}
 
 		/**
@@ -1330,7 +1332,7 @@
 			console.info(message);
 			this.options.onMessage(message);
 			callback();
-			return this;
+			return;
 		}
 
 		/**
@@ -1395,7 +1397,7 @@
 					it1.next(data);
 				}
 			]);
-			return this;
+			return;
 		}
 
 		/**
@@ -5677,7 +5679,7 @@ module.exports = function(broccoli){
 				}
 			]
 		);
-		return this;
+		return;
 	}
 
 	/**
@@ -5704,7 +5706,30 @@ module.exports = function(broccoli){
 				);
 			}
 		]);
-		return this;
+		return;
+	}
+
+	/**
+	 * get resource DB
+	 */
+	this.getResourceDb = function( callback ){
+		callback = callback || function(){};
+		callback(_resourceDb);
+		return;
+	}
+
+	/**
+	 * get resource DB
+	 */
+	this.setResourceDb = function( newResourceDb, callback ){
+		callback = callback || function(){};
+		if( typeof(newResourceDb) !== typeof({}) ){
+			callback(false);
+			return;
+		}
+		_resourceDb = newResourceDb;
+		callback(true);
+		return;
 	}
 
 	/**
@@ -5727,7 +5752,7 @@ module.exports = function(broccoli){
 				);
 			}
 		]);
-		return this;
+		return;
 	}
 
 	/**
@@ -5749,16 +5774,7 @@ module.exports = function(broccoli){
 				);
 			}
 		]);
-		return this;
-	}
-
-	/**
-	 * get resource DB
-	 */
-	this.getResourceDb = function( callback ){
-		callback = callback || function(){};
-		callback(_resourceDb);
-		return this;
+		return;
 	}
 
 	/**
@@ -5785,7 +5801,7 @@ module.exports = function(broccoli){
 				);
 			}
 		]);
-		return this;
+		return;
 	}
 
 	/**
@@ -5804,7 +5820,7 @@ module.exports = function(broccoli){
 				);
 			}
 		]);
-		return this;
+		return;
 	}
 
 	/**
@@ -5846,7 +5862,7 @@ module.exports = function(broccoli){
 				}
 			]
 		);
-		return this;
+		return;
 	}
 
 	/**
@@ -5868,7 +5884,7 @@ module.exports = function(broccoli){
 				}
 			]
 		);
-		return this;
+		return;
 	}
 
 	/**
@@ -5896,7 +5912,7 @@ module.exports = function(broccoli){
 				}
 			]
 		);
-		return this;
+		return;
 	}
 
 	/**
@@ -5917,7 +5933,7 @@ module.exports = function(broccoli){
 				}
 			]
 		);
-		return this;
+		return;
 	}
 
 	/**
@@ -5938,7 +5954,7 @@ module.exports = function(broccoli){
 				}
 			]
 		);
-		return this;
+		return;
 	}
 
 	/**
@@ -5959,7 +5975,7 @@ module.exports = function(broccoli){
 				}
 			]
 		);
-		return this;
+		return;
 	}
 
 }
