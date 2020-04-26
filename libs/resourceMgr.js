@@ -109,7 +109,7 @@ module.exports = function(broccoli){
 		loadResourceList( function(){
 			callback();
 		} );
-		return this;
+		return;
 	}
 
 	/**
@@ -298,7 +298,7 @@ module.exports = function(broccoli){
 			}
 		);
 
-		return this;
+		return;
 	} // save()
 
 	/**
@@ -346,7 +346,41 @@ module.exports = function(broccoli){
 				callback( newResKey );
 			}); })
 		;
-		return this;
+		return;
+	}
+
+	/**
+	 * add new resource
+	 * リソースの登録を行い、リソースを保存し、新しい ResourceKey と publicPath 等を生成して返す。
+	 */
+	this.addNewResource = function(resInfo, callback){
+		callback = callback || function(){};
+		var rtn = {
+			'newResourceKey': null,
+			'updateResult': null,
+			'publicPath': null
+		};
+		_this.addResource(
+			function(newResourceKey){
+				rtn.newResourceKey = newResourceKey;
+				_this.updateResource(
+					rtn.newResourceKey ,
+					resInfo ,
+					function(updateResult){
+						rtn.updateResult = updateResult;
+						_this.getResourcePublicPath(
+							rtn.newResourceKey ,
+							function(publicPath){
+								rtn.publicPath = publicPath;
+								// console.log(publicPath);
+								callback(rtn);
+							}
+						);
+					}
+				);
+			}
+		);
+		return;
 	}
 
 	/**
@@ -359,7 +393,7 @@ module.exports = function(broccoli){
 				callback(_resourceDb);
 			}); })
 		;
-		return this;
+		return;
 	}
 
 	/**
@@ -370,14 +404,14 @@ module.exports = function(broccoli){
 		if( typeof(_resourceDb[resKey]) !== typeof({}) ){
 			// 未登録の resKey
 			callback(false);
-			return this;
+			return;
 		}
 		new Promise(function(rlv){rlv();})
 			.then(function(){ return new Promise(function(rlv, rjt){
 				callback(_resourceDb[resKey]);
 			}); })
 		;
-		return this;
+		return;
 	}
 
 	/**
@@ -394,7 +428,7 @@ module.exports = function(broccoli){
 					callback(false);
 				}); })
 			;
-			return this;
+			return;
 		}
 		this.addResource(function(newResKey){
 			_resourceDb[newResKey] = JSON.parse( JSON.stringify( _resourceDb[resKey] ) );
@@ -414,7 +448,7 @@ module.exports = function(broccoli){
 				);
 			} );
 		});
-		return this;
+		return;
 	}
 
 	/**
@@ -443,7 +477,7 @@ module.exports = function(broccoli){
 					callback(false);
 				}); })
 			;
-			return this;
+			return;
 		}
 		_resourceDb[resKey] = resInfo;
 
@@ -468,7 +502,7 @@ module.exports = function(broccoli){
 				callback(true);
 			}); })
 		;
-		return this;
+		return;
 	}
 
 	/**
@@ -479,7 +513,7 @@ module.exports = function(broccoli){
 		if( typeof(_resourceDb[resKey]) !== typeof({}) ){
 			// 未登録の resKey
 			callback(false);
-			return this;
+			return;
 		}
 		this.getResourceOriginalRealpath( resKey, function(realpath){
 			// console.log(_resourceDb[resKey].base64);
@@ -489,7 +523,7 @@ module.exports = function(broccoli){
 			callback(true);
 		} );
 
-		return this;
+		return;
 	}
 
 	/**
@@ -502,7 +536,7 @@ module.exports = function(broccoli){
 			new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 				callback(false);
 			}); });
-			return this;
+			return;
 		}
 		this.getResourceOriginalRealpath( resKey, function(realpath){
 			var bin = fs.readFileSync( realpath, {} );
@@ -517,7 +551,7 @@ module.exports = function(broccoli){
 			callback(true);
 		} );
 
-		return this;
+		return;
 	}
 
 	/**
@@ -544,7 +578,7 @@ module.exports = function(broccoli){
 
 			callback(rtn);
 		} );
-		return this;
+		return;
 	}
 
 	/**
@@ -568,7 +602,7 @@ module.exports = function(broccoli){
 
 			callback(rtn);
 		} );
-		return this;
+		return;
 	}
 
 	/**
@@ -586,7 +620,7 @@ module.exports = function(broccoli){
 			return;
 		} );
 
-		return this;
+		return;
 	}
 
 	/**
@@ -603,7 +637,7 @@ module.exports = function(broccoli){
 		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 			callback(true);
 		}); });
-		return this;
+		return;
 	}
 
 }

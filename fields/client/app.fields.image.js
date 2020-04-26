@@ -522,17 +522,9 @@ module.exports = function(broccoli){
 			data,
 			[
 				function(it1, data){
-					_resMgr.addResource( function(newResKey){
-						_resMgr.updateResource( newResKey, resources[data.resKey], function(result){
-							// console.log(newResKey);
-							data.resKey = newResKey;
-							it1.next(data);
-						} );
-					} );
-				} ,
-				function(it1, data){
-					_resMgr.getResourcePublicPath( data.resKey, function(publicPath){
-						data.path = publicPath;
+					_resMgr.addNewResource( resources[data.resKey], function(result){
+						data.resKey = result.newResourceKey;
+						data.path = result.publicPath;
 						it1.next(data);
 					} );
 				} ,

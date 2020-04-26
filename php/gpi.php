@@ -213,6 +213,10 @@ class gpi{
 				$newResKey = $this->broccoli->resourceMgr()->addResource();
 				return $newResKey;
 
+			case "resourceMgr.addNewResource":
+				$rtn = $this->broccoli->resourceMgr()->addNewResource($options['resInfo']);
+				return $rtn;
+
 			case "resourceMgr.getResourcePublicPath":
 				$publicPath = $this->broccoli->resourceMgr()->getResourcePublicPath( $options['resKey'] );
 				return $publicPath;

@@ -214,6 +214,22 @@ class resourceMgr{
 	}
 
 	/**
+	 * add new resource
+	 * リソースの登録を行い、リソースを保存し、新しい ResourceKey と publicPath 等を生成して返す。
+	 */
+	public function addNewResource($resInfo){
+		$rtn = array(
+			'newResourceKey' => null,
+			'updateResult' => null,
+			'publicPath' => null,
+		);
+		$rtn['newResourceKey'] = $this->addResource();
+		$rtn['updateResult'] = $this->updateResource( $rtn['newResourceKey'] , $resInfo );
+		$rtn['publicPath'] = $this->getResourcePublicPath( $rtn['newResourceKey'] );
+		return $rtn;
+	}
+
+	/**
 	 * get resource DB
 	 */
 	public function getResourceDb(){

@@ -126,6 +126,31 @@ module.exports = function(broccoli){
 	}
 
 	/**
+	 * add new resource
+	 * リソースの登録を行い、リソースを保存し、新しい ResourceKey と publicPath 等を生成して返す。
+	 */
+	this.addNewResource = function(resInfo, callback){
+		callback = callback || function(){};
+		it79.fnc({}, [
+			function(it1, data){
+				broccoli.gpi(
+					'resourceMgr.addNewResource',
+					{
+						'resInfo': resInfo
+					} ,
+					function(result){
+						if( result && result.newResourceKey.length && result.updateResult && result.publicPath ){
+							_resourceDb[result.newResourceKey] = resInfo;
+						}
+						callback(result);
+					}
+				);
+			}
+		]);
+		return;
+	}
+
+	/**
 	 * get resource
 	 */
 	this.getResource = function( resKey, callback ){

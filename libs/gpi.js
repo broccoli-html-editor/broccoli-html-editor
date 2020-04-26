@@ -296,6 +296,18 @@ module.exports = function(broccoli, api, options, callback){
 				);
 				break;
 
+			case "resourceMgr.addNewResource":
+				// console.log('GPI resourceMgr.addNewResource');
+				// console.log(options);
+				broccoli.resourceMgr.addNewResource(
+					options.resInfo ,
+					function(result){
+						// console.log(result);
+						callback(result);
+					}
+				);
+				break;
+
 			case "resourceMgr.getResourcePublicPath":
 				broccoli.resourceMgr.getResourcePublicPath(
 					options.resKey ,
