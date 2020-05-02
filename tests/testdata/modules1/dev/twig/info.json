@@ -5,7 +5,8 @@
 			"heading":{
 				"type":"multitext",
 				"label":"Heading Text",
-				"rows":3
+				"rows":3,
+				"hidden": true
 			} ,
 			"body":{
 				"type":"multitext",

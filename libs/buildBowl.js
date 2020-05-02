@@ -280,9 +280,7 @@ module.exports = function(broccoli, data, options, callback){
 											tplDataObj[field.name] = '';
 											fieldDef.bind( fieldData[field.name], options.mode, field, function(html){
 												tmpVal += html;
-												if( !field.hidden ){//← "hidden": true だったら、非表示(=出力しない)
-													tplDataObj[field.name] = tmpVal;
-												}
+												tplDataObj[field.name] = tmpVal;
 												_this.nameSpace.vars[field.name] = {
 													fieldType: "input", type: field.type, val: tmpVal
 												}
@@ -328,9 +326,7 @@ module.exports = function(broccoli, data, options, callback){
 														);
 													}
 
-													if( !field.hidden ){//← "hidden": true だったら、非表示(=出力しない)
-														tplDataObj[field.name] = tmp_tplDataObj;
-													}
+													tplDataObj[field.name] = tmp_tplDataObj;
 													_this.nameSpace.vars[field.name] = {
 														fieldType: "module", val: tmp_tplDataObj
 													}

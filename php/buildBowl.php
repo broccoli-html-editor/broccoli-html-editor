@@ -80,9 +80,7 @@ class buildBowl{
 					$tmpVal .= $html;
 					$html = $fieldDef->bind( @$fieldData[$field->name], 'finalize', $field );
 					$tmpValFin .= $html;
-					if( !@$field->hidden ){//← "hidden": true だったら、非表示(=出力しない)
-						$tplDataObj[$field->name] = $tmpVal;
-					}
+					$tplDataObj[$field->name] = $tmpVal;
 					@$this->nameSpace['vars'][$field->name] = array(
 						"fieldType" => "input",
 						"type" => $field->type,
@@ -125,9 +123,7 @@ class buildBowl{
 						);
 					}
 
-					if( !property_exists($field, 'hidden') || !$field->hidden ){//← "hidden": true だったら、非表示(=出力しない)
-						$tplDataObj[$field->name] = $tmp_tplDataObj;
-					}
+					$tplDataObj[$field->name] = $tmp_tplDataObj;
 					$this->nameSpace['vars'][$field->name] = array(
 						"fieldType" => "module",
 						"val" => $tmp_tplDataObj
