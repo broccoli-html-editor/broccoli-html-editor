@@ -219,6 +219,7 @@ module.exports = function(broccoli){
 							return;
 						}
 
+						field.fieldType = field.fieldType || 'input';
 						switch( field.fieldType ){
 							case 'input':
 								it1.next();
@@ -493,6 +494,7 @@ module.exports = function(broccoli){
 				fieldCount ++;
 				// console.log(fieldName);
 				// console.log(field);
+				field.fieldType = field.fieldType || 'input';
 				var $field = $(tplField)
 					.attr({
 						'data-broccoli-edit-window-field-name': field.name ,
@@ -528,6 +530,7 @@ module.exports = function(broccoli){
 
 				// console.log( broccoli.fieldDefinitions );
 				var elmFieldContent = $field.find('.broccoli__edit-window-field-content').get(0);
+				field.fieldType = field.fieldType || 'input';
 				switch( field.fieldType ){
 					case 'input':
 						var fieldDefinition = broccoli.getFieldDefinition(field.type);

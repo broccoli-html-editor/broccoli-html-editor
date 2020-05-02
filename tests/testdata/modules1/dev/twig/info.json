@@ -3,19 +3,16 @@
 	"interface": {
 		"fields":{
 			"heading":{
-				"fieldType":"input",
 				"type":"multitext",
 				"label":"Heading Text",
 				"rows":3
 			} ,
 			"body":{
-				"fieldType":"input",
 				"type":"multitext",
 				"label":"Body Text",
 				"rows":5
 			},
 			"select":{
-				"fieldType":"input",
 				"type":"select",
 				"options":[
 					{"value":"", "label":"選択なし"},
@@ -39,11 +36,9 @@
 			"loop": {
 				"fields": {
 					"text1": {
-						"fieldType": "input",
 						"type": "multitext"
 					},
 					"text2": {
-						"fieldType": "input",
 						"type": "multitext"
 					}
 				}

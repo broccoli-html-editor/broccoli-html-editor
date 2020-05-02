@@ -1561,6 +1561,7 @@ module.exports = function(broccoli){
 			return this.get( aryPath, data.bowl[fieldName] );
 		}
 
+		modTpl.fields[fieldName].fieldType = modTpl.fields[fieldName].fieldType || 'input';
 		if( !aryPath.length ){
 			// ここが最後のインスタンスだったら
 			if( !data.fields ){
@@ -1652,6 +1653,7 @@ module.exports = function(broccoli){
 			var fieldList = _.keys( modTpl.fields );
 			for( var idx in fieldList ){
 				var fieldName = fieldList[idx];
+				modTpl.fields[fieldName].fieldType = modTpl.fields[fieldName].fieldType || 'input';
 				if( modTpl.fields[fieldName].fieldType == 'input' ){
 					newData.fields[fieldName] = '';
 					if( modTpl.fields[fieldName].default !== undefined ){
@@ -1702,6 +1704,7 @@ module.exports = function(broccoli){
 				if( !data.fields[fieldName] ){
 					data.fields[fieldName] = [];
 				}
+				modTpl.fields[fieldName].fieldType = modTpl.fields[fieldName].fieldType || 'input';
 				if( modTpl.fields[fieldName].fieldType == 'input'){
 					data.fields[fieldName] = newData;
 				}else if( modTpl.fields[fieldName].fieldType == 'module'){
@@ -1769,6 +1772,7 @@ module.exports = function(broccoli){
 				return true;
 			}else{
 				// もっと深かったら
+				modTpl.fields[fieldName].fieldType = modTpl.fields[fieldName].fieldType || 'input';
 				if( modTpl.fields[fieldName].fieldType == 'input'){
 					return set_r( aryPath, data.fields[fieldName], newData );
 				}else if( modTpl.fields[fieldName].fieldType == 'module'){
@@ -1825,6 +1829,7 @@ module.exports = function(broccoli){
 				return set_r( aryPath, data.bowl[fieldName], newData );
 			}
 
+			modTpl.fields[fieldName].fieldType = modTpl.fields[fieldName].fieldType || 'input';
 			if( !aryPath.length ){
 				// ここが最後のインスタンスだったら
 				if( !data.fields ){
@@ -1999,6 +2004,7 @@ module.exports = function(broccoli){
 		it79.ary(
 			modTpl.fields,
 			function(it1, field, fieldName){
+				modTpl.fields[fieldName].fieldType = modTpl.fields[fieldName].fieldType || 'input';
 				if( modTpl.fields[fieldName].fieldType == 'input' ){
 					broccoli.getFieldDefinition(modTpl.fields[fieldName].type).duplicateData( objInstance.fields[fieldName], function( result ){
 						newData.fields[fieldName] = result;
@@ -2070,6 +2076,7 @@ module.exports = function(broccoli){
 		it79.ary(
 			modTpl.fields,
 			function(it1, field, fieldName){
+				modTpl.fields[fieldName].fieldType = modTpl.fields[fieldName].fieldType || 'input';
 				if( modTpl.fields[fieldName].fieldType == 'input' ){
 					broccoli.getFieldDefinition(modTpl.fields[fieldName].type).extractResourceId( objInstance.fields[fieldName], function( result ){
 						resourceIdList = resourceIdList.concat(result);
@@ -2154,6 +2161,7 @@ module.exports = function(broccoli){
 				return remove_r( aryPath, data.bowl[fieldName] );
 			}
 
+			modTpl.fields[fieldName].fieldType = modTpl.fields[fieldName].fieldType || 'input';
 			if( !aryPath.length ){
 				// ここが最後のインスタンスだったら
 				if( !data.fields ){
@@ -3236,6 +3244,7 @@ module.exports = function(broccoli){
 							return;
 						}
 
+						field.fieldType = field.fieldType || 'input';
 						switch( field.fieldType ){
 							case 'input':
 								it1.next();
@@ -3510,6 +3519,7 @@ module.exports = function(broccoli){
 				fieldCount ++;
 				// console.log(fieldName);
 				// console.log(field);
+				field.fieldType = field.fieldType || 'input';
 				var $field = $(tplField)
 					.attr({
 						'data-broccoli-edit-window-field-name': field.name ,
@@ -3545,6 +3555,7 @@ module.exports = function(broccoli){
 
 				// console.log( broccoli.fieldDefinitions );
 				var elmFieldContent = $field.find('.broccoli__edit-window-field-content').get(0);
+				field.fieldType = field.fieldType || 'input';
 				switch( field.fieldType ){
 					case 'input':
 						var fieldDefinition = broccoli.getFieldDefinition(field.type);

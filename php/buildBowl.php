@@ -66,7 +66,7 @@ class buildBowl{
 			$tplDataObj = array();
 
 			foreach($mod->fields as $fieldName=>$field){
-				if( @$field->fieldType == 'input' ){
+				if( !property_exists($field, 'fieldType') || !strlen($field->fieldType) || $field->fieldType == 'input' ){
 					// input field
 					$fieldDef = $this->broccoli->getFieldDefinition( $field->type ); // フィールドタイプ定義を呼び出す
 					$tmpVal = '';
@@ -94,7 +94,7 @@ class buildBowl{
 						'val' => $tmpValFin
 					);
 
-				}elseif( @$field->fieldType == 'module' ){
+				}elseif( $field->fieldType == 'module' ){
 					// module field
 					$opt = json_decode( json_encode($this->options) );
 					$opt->instancePath .= '/fields.'.$field->name;
@@ -137,7 +137,7 @@ class buildBowl{
 						"val" => $tmp_tplDataObj
 					);
 
-				}elseif( @$field->fieldType == 'loop' ){
+				}elseif( $field->fieldType == 'loop' ){
 					// loop field
 					$tmpSearchResult = $mod->searchEndTag( $src, 'loop' );
 					$src = $tmpSearchResult['nextSrc'];

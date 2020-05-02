@@ -272,7 +272,7 @@ module.exports = function(broccoli, data, options, callback){
 									mod.fields ,
 									function(it3, field, fieldName){
 
-										if( field.fieldType == 'input' ){
+										if( !field.fieldType || field.fieldType == 'input' ){
 											// input field
 											var fieldDef = broccoli.getFieldDefinition( field.type ); // フィールドタイプ定義を呼び出す
 											var tmpVal = '';
