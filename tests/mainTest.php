@@ -150,7 +150,7 @@ class mainTest extends PHPUnit_Framework_TestCase{
 		// var_dump( $mod );
 		$this->assertSame(is_object($mod), true);
 		$this->assertSame($mod->getTemplateType(), 'broccoli');
-		$this->assertTrue($mod->isSingleRootElement());
+		$this->assertTrue($mod->isSingleRootElement);
 
 		// testMod1:dev/twig
 		$mod = $broccoli->createModuleInstance('testMod1:dev/twig', array());
@@ -160,7 +160,7 @@ class mainTest extends PHPUnit_Framework_TestCase{
 		// var_dump( $mod );
 		$this->assertTrue(is_object($mod));
 		$this->assertSame($mod->getTemplateType(), 'twig');
-		$this->assertTrue($mod->isSingleRootElement());
+		$this->assertTrue($mod->isSingleRootElement);
 	
 		// testMod1:units/thumb_list
 		$mod = $broccoli->createModuleInstance('testMod1:units/thumb_list', array());
@@ -170,7 +170,7 @@ class mainTest extends PHPUnit_Framework_TestCase{
 		// var_dump( $mod );
 		$this->assertTrue(is_object($mod));
 		$this->assertSame($mod->getTemplateType(), 'broccoli');
-		$this->assertTrue($mod->isSingleRootElement());
+		$this->assertTrue($mod->isSingleRootElement);
 	
 
 		// testMod1:dev/multitext
@@ -181,7 +181,7 @@ class mainTest extends PHPUnit_Framework_TestCase{
 		// var_dump( $mod );
 		$this->assertTrue(is_object($mod));
 		$this->assertSame($mod->getTemplateType(), 'broccoli');
-		$this->assertFalse($mod->isSingleRootElement());
+		$this->assertFalse($mod->isSingleRootElement);
 	
 	}
 

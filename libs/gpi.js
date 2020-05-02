@@ -38,24 +38,22 @@ module.exports = function(broccoli, api, options, callback){
 						$bootup.contentsDataJson = {};
 					}
 
-					broccoli.resourceMgr.getResourceDb(
-						function(resourceDb){
-							// console.log(resourceDb);
-							$bootup.resourceDb = resourceDb;
-							var resourceList = [];
-							for(var resKey in resourceDb){
-								resourceList.push(resKey);
-							}
-							$bootup.resourceList = resourceList;
-
-							broccoli.getPackageList(function(modulePackageList){
-								$bootup.modulePackageList = modulePackageList;
-								$bootup.errors = broccoli.get_errors();
-								callback($bootup);
-							});
-
+					broccoli.resourceMgr.getResourceDb( function(resourceDb){
+						// console.log(resourceDb);
+						$bootup.resourceDb = resourceDb;
+						var resourceList = [];
+						for(var resKey in resourceDb){
+							resourceList.push(resKey);
 						}
-					);
+						$bootup.resourceList = resourceList;
+
+						broccoli.getPackageList(function(modulePackageList){
+							$bootup.modulePackageList = modulePackageList;
+							$bootup.errors = broccoli.get_errors();
+							callback($bootup);
+						});
+
+					} );
 
 				});
 				break;
@@ -78,6 +76,96 @@ module.exports = function(broccoli, api, options, callback){
 				// モジュールパッケージ一覧を取得する
 				broccoli.getPackageList(function(list){
 					callback(list);
+				});
+				break;
+
+			case "getModule":
+				// モジュール情報を取得する
+				var moduleId = options.moduleId;
+				broccoli.getModule(moduleId, undefined, function(module){
+					if(!module){
+						callback(false);
+						return;
+					}
+					var moduleInfo = {};
+					moduleInfo.id = moduleId;
+					moduleInfo.name = module.info.name;
+					moduleInfo.thumb = module.thumb;
+					moduleInfo.areaSizeDetection = module.info.areaSizeDetection;
+					moduleInfo.isSystemModule = module.isSystemModule;
+					moduleInfo.isSubModule = module.isSubModule;
+					moduleInfo.isSingleRootElement = module.isSingleRootElement;
+					moduleInfo.isClipModule = module.isClipModule;
+					moduleInfo.deprecated = module.deprecated;
+					module.getPics(function(pics){
+						moduleInfo.pics = pics;
+
+						module.getReadme(function(readme){
+							moduleInfo.readme = readme;
+
+							callback(moduleInfo); 
+						});
+					});
+				});
+				break;
+
+			case "getClipModuleContents":
+				// クリップモジュールの内容を取得する
+				var moduleId = options.moduleId;
+				broccoli.getModule(moduleId, undefined, function(module){
+					if(!module){
+						callback(false);
+						return;
+					}
+					module.getClipContents(function(clip){
+
+						if( options.resourceMode == 'temporaryHash' ){
+							for(var resKey in clip.resources){
+								if( !resKey.length ){ continue; }
+								if( typeof(clip.resources[resKey]) !== typeof({}) ){ continue; }
+								var bin = '-----broccoli-resource-temporary-hash='+resKey;
+								clip.resources[resKey].base64 = (new Buffer(bin)).toString('base64');
+							}
+						}
+
+						callback(clip); 
+					});
+				});
+				break;
+
+			case "replaceClipModuleResources":
+				// クリップモジュールのリソースを取得し、コンテンツのリソースを更新する
+				var moduleId = options.moduleId;
+				broccoli.getModule(moduleId, undefined, function(module){
+					if(!module){
+						callback(false);
+						return;
+					}
+					var rtn = {};
+					module.getClipContents(function(clip){
+						broccoli.resourceMgr.getResourceDb(function(resourceDb){
+							it79.ary(
+								resourceDb,
+								function(it1, resInfo, resKey){
+									if( !resKey.length ){ it1.next(); return; }
+									if( typeof(resInfo) !== typeof({}) ){ it1.next(); return; }
+									if( resInfo.base64.match( /^LS0tLS1icm9jY29saS1yZXNvdXJjZS10ZW1wb3JhcnktaGFz/ ) ){
+										var bin = (new Buffer(resInfo.base64, 'base64')).toString();
+										var $hash = bin.replace(/^\-\-\-\-\-broccoli\-resource\-temporary\-hash\=/, '');
+										broccoli.resourceMgr.updateResource(resKey, clip.resources[$hash], function(){
+											rtn[resKey] = clip.resources[$hash];
+											it1.next();
+										});
+										return;
+									}
+									it1.next();
+								},
+								function(){
+									callback(rtn); 
+								}
+							);
+						});
+					});
 				});
 				break;
 
@@ -204,6 +292,18 @@ module.exports = function(broccoli, api, options, callback){
 					function(newResKey){
 						// console.log(newResKey);
 						callback(newResKey);
+					}
+				);
+				break;
+
+			case "resourceMgr.addNewResource":
+				// console.log('GPI resourceMgr.addNewResource');
+				// console.log(options);
+				broccoli.resourceMgr.addNewResource(
+					options.resInfo ,
+					function(result){
+						// console.log(result);
+						callback(result);
 					}
 				);
 				break;

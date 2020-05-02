@@ -522,17 +522,9 @@ module.exports = function(broccoli){
 			data,
 			[
 				function(it1, data){
-					_resMgr.addResource( function(newResKey){
-						_resMgr.updateResource( newResKey, resources[data.resKey], function(result){
-							// console.log(newResKey);
-							data.resKey = newResKey;
-							it1.next(data);
-						} );
-					} );
-				} ,
-				function(it1, data){
-					_resMgr.getResourcePublicPath( data.resKey, function(publicPath){
-						data.path = publicPath;
+					_resMgr.addNewResource( resources[data.resKey], function(result){
+						data.resKey = result.newResourceKey;
+						data.path = result.publicPath;
 						it1.next(data);
 					} );
 				} ,
@@ -747,7 +739,7 @@ module.exports = function(broccoli){
 					if( $img.attr('data-is-updated') == 'yes' ){
 						resInfo.ext = $img.attr('data-extension');
 						resInfo.type = $img.attr('data-mime-type');
-						resInfo.size = $img.attr('data-size');
+						resInfo.size = parseInt($img.attr('data-size'));
 						resInfo.base64 = $img.attr('data-base64');
 						resInfo.field = mod.type;
 						resInfo.fieldNote = {}; // <= フィールド記録欄をクリア

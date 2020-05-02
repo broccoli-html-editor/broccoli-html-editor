@@ -843,6 +843,7 @@ module.exports = function(broccoli){
 	this.save = function(callback){
 		var _this = this;
 		callback = callback||function(){};
+		// console.log('-------- saving contentsSourceData ---', _contentsSourceData);
 		it79.fnc(
 			{},
 			[
@@ -851,6 +852,7 @@ module.exports = function(broccoli){
 						'saveContentsData',
 						{
 							'data': _contentsSourceData
+								// ↑保存するたびに、コンテンツデータの全量が送られる。(ただし画像等のリソースはここに含まない)
 						},
 						function(){
 							it1.next(data);

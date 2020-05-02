@@ -799,15 +799,15 @@
 }
 
 // Module Palette
-.broccoli--module-palette{
+.broccoli__module-palette{
 	overflow: auto;
 	-webkit-overflow-scrolling: touch;
 	overflow-scrolling: touch;
 
-	div.broccoli--module-palette-inner{
+	div.broccoli__module-palette-inner{
 		overflow: hidden;
 	}
-	div.broccoli--module-palette-filter{
+	div.broccoli__module-palette-filter{
 		overflow: hidden;
 		padding: 3px 1px;
 		input{
@@ -815,7 +815,7 @@
 			border: 1px #999 solid;
 		}
 	}
-	ul.broccoli--module-palette-list{
+	ul.broccoli__module-palette-list{
 		margin: 0;
 		padding: 0;
 		font-size: small;
@@ -827,7 +827,7 @@
 			list-style-type: none;
 			padding: 0;
 
-			a.broccoli--module-palette--buttongroups{
+			a.broccoli__module-palette--buttongroups{
 				display: block;
 				color: #eee;
 				border-top: 1px solid #666;
@@ -849,7 +849,7 @@
 				padding: 0;
 				font-size: small;
 				li{ // <- category
-					a.broccoli--module-palette--buttongroups{
+					a.broccoli__module-palette--buttongroups{
 						color: #000;
 						border-top: 1px solid #999;
 						background-color: #666;
@@ -875,7 +875,7 @@
 			}
 		}
 	}
-	a.broccoli--module-palette--draggablebutton{
+	a.broccoli__module-palette--draggablebutton{
 		box-sizing: border-box;
 		display: flex;
 		align-items: center;
@@ -902,7 +902,8 @@
 		font-weight: bold;
 
 		&:after{
-			content: "@";
+			content: url("./images/clip.png");
+			width: 20px; height: 20px;
 			margin-left: 0.5em;
 			color: #669;
 		}
@@ -922,7 +923,7 @@
 		}
 
 	}
-	span.broccoli--module-palette--draggablebutton-thumb{
+	span.broccoli__module-palette--draggablebutton-thumb{
 		text-overflow: ellipsis;
 		overflow: hidden;
 		background-color: #ccc;
@@ -936,18 +937,18 @@
 			height:100%;
 		}
 	}
-	span.broccoli--module-palette--draggablebutton-label{
+	span.broccoli__module-palette--draggablebutton-label{
 		text-overflow: ellipsis;
 		overflow: hidden;
 		padding-left: 8px;
 	}
 
-	button.broccoli--module-palette__shown-module{}
+	button.broccoli__module-palette__shown-module{}
 
-	a.broccoli--module-palette--draggablebutton-children{
+	a.broccoli__module-palette--draggablebutton-children{
 		padding-left: 24px;
 
-		span.broccoli--module-palette--draggablebutton-thumb{
+		span.broccoli__module-palette--draggablebutton-thumb{
 			width: 27px;
 			min-width: 27px;
 			height: 27px;

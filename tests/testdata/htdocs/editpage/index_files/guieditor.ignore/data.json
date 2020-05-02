@@ -15,8 +15,8 @@
                     {
                         "modId": "testMod1:dev/empty_module",
                         "fields": [],
-                        "anchor": "",
-                        "dec": ""
+                        "anchor": "test_top_anchor",
+                        "dec": "このコメントはテスト用です。"
                     },
                     {
                         "modId": "testMod1:dev/image_double",

@@ -28,7 +28,7 @@ window.main = new (function(){
 
 	// broccoli をインスタンス化
 	var broccoli = new Broccoli();
-	this.broccoli = broccoli;
+	this.broccoli = window.broccoli = broccoli;
 
 	(function(){
 		var h = $(window).height() - 70;
@@ -94,8 +94,9 @@ window.main = new (function(){
 				},
 				'gpiBridge': function(api, options, callback){
 					// General Purpose Interface Bridge
-					// console.info('=----=----=', api, options);
-					// var millitime = (new Date()).getTime();
+					console.info('=----= GPI Request =----=', api, options);
+					var millitime = (new Date()).getTime();
+
 					if(serverType == 'biflora'){
 						socket.send(
 							'broccoli',
@@ -107,7 +108,7 @@ window.main = new (function(){
 								}
 							} ,
 							function(rtn){
-								// console.info('--result', (new Date()).getTime() - millitime);
+								console.info('-- GPI result', (new Date()).getTime() - millitime, rtn);
 								callback(rtn);
 							}
 						);
@@ -129,7 +130,7 @@ window.main = new (function(){
 								console.error(error);
 							},
 							"complete": function(){
-								// console.info('--result', (new Date()).getTime() - millitime);
+								console.info('-- GPI result', (new Date()).getTime() - millitime, res);
 								callback(res);
 							}
 						});
@@ -143,7 +144,9 @@ window.main = new (function(){
 				},
 				'onMessage': function(message){
 					console.info('message: '+message);
-				}
+				},
+				'enableModuleAnchor': true, // モジュールごとのid属性入力の有効/無効 (デフォルトは `true`)
+				'enableModuleDec': true // DEC入力の有効/無効 (デフォルトは `true`)
 			} ,
 			function(){
 				console.log('broccoli standby.');

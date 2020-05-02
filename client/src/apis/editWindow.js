@@ -24,14 +24,14 @@ module.exports = function(broccoli){
 				+ '		</div>'
 				+ '		<div class="broccoli__edit-window-builtin-fields-switch"><a href="javascript:;"><span class="glyphicon glyphicon-menu-right"></span> <%= lb.get(\'ui_label.show_advanced_setting\') %></a></div>'
 				+ '		<div class="broccoli__edit-window-builtin-fields">'
-				+ '			<div class="form-group">'
+				+ '			<div class="form-group broccoli__edit-window-builtin-anchor-field-wrap">'
 				+ '				<label for="broccoli__edit-window-builtin-anchor-field"><%= lb.get(\'ui_label.anchor\') %></label>'
 				+ '				<div class="input-group">'
 				+ '					<span class="input-group-addon" id="basic-addon1">#</span>'
 				+ '					<input type="text" class="form-control" id="broccoli__edit-window-builtin-anchor-field" placeholder="">'
 				+ '				</div>'
 				+ '			</div>'
-				+ '			<div class="form-group">'
+				+ '			<div class="form-group broccoli__edit-window-builtin-dec-field-wrap">'
 				+ '				<label for="broccoli__edit-window-builtin-dec-field"><%= lb.get(\'ui_label.embed_comment\') %></label>'
 				+ '				<textarea class="form-control" id="broccoli__edit-window-builtin-dec-field" placeholder=""></textarea>'
 				+ '			</div>'
@@ -134,6 +134,19 @@ module.exports = function(broccoli){
 		$editWindow.find('.broccoli__edit-window-logical-path').html('').append(
 			drawLogicalPath(instancePath, data)
 		);
+
+		// options
+		if( !broccoli.options.enableModuleAnchor ){
+			$editWindow.find('.broccoli__edit-window-builtin-anchor-field-wrap').css({'display': 'none'});
+		}
+		if( !broccoli.options.enableModuleDec ){
+			$editWindow.find('.broccoli__edit-window-builtin-dec-field-wrap').css({'display': 'none'});
+		}
+		if( !broccoli.options.enableModuleAnchor && !broccoli.options.enableModuleDec ){
+			$editWindow.find('.broccoli__edit-window-builtin-fields-switch').css({'display': 'none'});
+			$editWindow.find('.broccoli__edit-window-builtin-fields').css({'display': 'none'});
+		}
+
 
 		$editWindow.find('.broccoli__edit-window-module-readme').hide();
 		try{
@@ -582,7 +595,7 @@ module.exports = function(broccoli){
 					;
 					$editWindow.find('form')
 						.removeAttr('disabled')
-						.bind('submit', function(){
+						.on('submit', function(){
 							// 編集内容を保存する
 							// console.log( data );
 							// console.log( mod );
@@ -607,13 +620,13 @@ module.exports = function(broccoli){
 						})
 					;
 					$editWindow.find('button.broccoli__edit-window-btn-cancel')
-						.bind('click', function(){
+						.on('click', function(){
 							_this.lock();
 							callback(false);
 						})
 					;
 					$editWindow.find('button.broccoli__edit-window-btn-remove')
-						.bind('click', function(){
+						.on('click', function(){
 							_this.lock();
 							if( !confirm('このモジュールを削除します。よろしいですか？') ){
 								_this.unlock();
@@ -631,6 +644,32 @@ module.exports = function(broccoli){
 							});
 						})
 					;
+					(function($target){
+						// タブキーの制御
+						var $tabTargets = $target.find('a, input, textarea, select, button');
+						var $start = $tabTargets.eq(0);
+						var $end = $tabTargets.eq(-1);
+						$start
+							.on('keydown', function(e){
+								if (e.keyCode == 9 && e.originalEvent.shiftKey) {
+									$end.focus();
+									e.preventDefault();
+									e.stopPropagation();
+									return false;
+								}
+							})
+						;
+						$end
+							.on('keydown', function(e){
+								if (e.keyCode == 9 && !e.originalEvent.shiftKey) {
+									$start.focus();
+									e.preventDefault();
+									e.stopPropagation();
+									return false;
+								}
+							})
+						;
+					})($editWindow);
 				});
 
 			}

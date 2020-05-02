@@ -34,7 +34,7 @@ class broccoliHtmlEditor{
 	private $fieldDefinitions;
 
 	/** cache */
-	private $_moduleCollection;
+	private $_moduleCollection = array();
 
 	/** Error Report */
 	private $errors = array();
@@ -426,7 +426,7 @@ class broccoliHtmlEditor{
 				// clip.json
 				$rtn['categories'][$idx]['modules'][$row2]['clip'] = false;
 				if( is_file( $realpath.'/clip.json' ) ){
-					$rtn['categories'][$idx]['modules'][$row2]['clip'] = json_decode(file_get_contents( $realpath.'/clip.json' ));
+					$rtn['categories'][$idx]['modules'][$row2]['clip'] = true;
 				}
 
 				// moduleName
@@ -448,25 +448,6 @@ class broccoliHtmlEditor{
 
 				$rtn['categories'][$idx]['modules'][$row2]['readme'] = $readme;
 
-				// pics/
-				$realpathPics = $this->fs->normalize_path($this->fs->get_realpath( $realpath.'/pics/' ));
-				$rtn['categories'][$idx]['modules'][$row2]['pics'] = array();
-				if( is_dir($realpathPics) ){
-					$piclist = $this->fs->ls($realpathPics);
-					uasort($piclist, function($a,$b){
-						if( $a < $b ) return -1;
-						if( $a > $b ) return 1;
-						return 0;
-					});
-					foreach( $piclist as $picIdx=>$row ){
-						$imgPath = '';
-						if( is_file($realpathPics.'/'.$piclist[$picIdx]) ){
-							$imgPath = base64_encode(file_get_contents( $realpathPics.'/'.$piclist[$picIdx] ));
-						}
-						// var_dump( $imgPath );
-						array_push($rtn['categories'][$idx]['modules'][$row2]['pics'], 'data:image/png;base64,'.$imgPath);
-					}
-				}
 
 				$modInstance = $this->getModule($moduleId, null);
 				$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->interface = (@$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->interface ? $rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->interface : $modInstance->fields());
@@ -531,14 +512,14 @@ class broccoliHtmlEditor{
 		$data = array('tmp'=>array(), 'rtn'=>array());
 
 		$list = $this->getPackageList();
-		$data['tmp']['_sys/root'] = $this->createModuleInstance('_sys/root');
-		$data['tmp']['_sys/unknown'] = $this->createModuleInstance('_sys/unknown');
-		$data['tmp']['_sys/html'] = $this->createModuleInstance('_sys/html');
+		$data['tmp']['_sys/root'] = $this->getModule('_sys/root');
+		$data['tmp']['_sys/unknown'] = $this->getModule('_sys/unknown');
+		$data['tmp']['_sys/html'] = $this->getModule('_sys/html');
 
 		foreach( $list as $pkgId=>$pkg ){
 			foreach( $list[$pkgId]['categories'] as $catId=>$cat ){
 				foreach( $list[$pkgId]['categories'][$catId]['modules'] as $modId=>$mod ){
-					$data['tmp'][$mod['moduleId']] = $this->createModuleInstance($mod['moduleId']);
+					$data['tmp'][$mod['moduleId']] = $this->getModule($mod['moduleId']);
 				}
 			}
 		}
@@ -550,6 +531,7 @@ class broccoliHtmlEditor{
 			$data['rtn'][$modId]->fields = $obj->fields;
 			$data['rtn'][$modId]->isSystemModule = $obj->isSystemModule;
 			$data['rtn'][$modId]->isSingleRootElement = $obj->isSingleRootElement;
+			$data['rtn'][$modId]->isClipModule = $obj->isClipModule;
 			$data['rtn'][$modId]->templateType = $obj->templateType;
 			$data['rtn'][$modId]->template = $obj->template;
 			$data['rtn'][$modId]->info = $obj->info;
@@ -564,6 +546,7 @@ class broccoliHtmlEditor{
 					$data['rtn'][$modId]->subModule->{$idx}->fields = $obj->subModule->{$idx}->fields;
 					$data['rtn'][$modId]->subModule->{$idx}->isSystemModule = $obj->subModule->{$idx}->isSystemModule;
 					$data['rtn'][$modId]->subModule->{$idx}->isSingleRootElement = $obj->subModule->{$idx}->isSingleRootElement;
+					$data['rtn'][$modId]->subModule->{$idx}->isClipModule = $obj->subModule->{$idx}->isClipModule;
 					$data['rtn'][$modId]->subModule->{$idx}->templateType = $obj->subModule->{$idx}->templateType;
 					$data['rtn'][$modId]->subModule->{$idx}->template = $obj->subModule->{$idx}->template;
 					$data['rtn'][$modId]->subModule->{$idx}->info = $obj->subModule->{$idx}->info;
@@ -594,8 +577,12 @@ class broccoliHtmlEditor{
 	 * @param  {Function} callback  callback function.
 	 * @return {Object}            this
 	 */
-	public function getModule($moduleId, $subModName){
-		$rtn = @$this->_moduleCollection[$moduleId];
+	public function getModule($moduleId, $subModName = null){
+		$rtn = null;
+		if( array_key_exists($moduleId, $this->_moduleCollection) ){
+			$rtn = $this->_moduleCollection[$moduleId];
+		}
+
 		if( $rtn === false ){
 			// 過去に生成を試みて、falseになっていた場合
 			return false;

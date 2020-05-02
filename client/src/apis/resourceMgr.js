@@ -12,17 +12,7 @@ module.exports = function(broccoli){
 	 * initialize resource Manager
 	 */
 	this.init = function( callback ){
-		loadResourceDb( function(){
-			callback();
-		} );
-		return this;
-	}
-
-	/**
-	 * Loading resource DB
-	 */
-	function loadResourceDb( callback ){
-		console.log('broccoli: Loading all resources...');
+		// console.log('broccoli: Initializing resourceDb...');
 		_resourceDb = {};
 		it79.fnc({},
 			[
@@ -31,7 +21,7 @@ module.exports = function(broccoli){
 					it1.next(data);
 				},
 				function(it1, data){
-					console.log('broccoli: Loading all resources: Done.');
+					// console.log('broccoli: Loading all resources: Done.');
 					// console.log(_resourceDb);
 					callback();
 				}
@@ -42,11 +32,15 @@ module.exports = function(broccoli){
 
 	/**
 	 * Save resources DB
+	 * 
+	 * このメソッドは、現在は使われていません。
+	 * パフォーマンス改善の一環で、リソース全体の送受信を廃止したためです。
+	 * 
 	 * @param  {Function} cb Callback function.
 	 * @return {boolean}     Always true.
 	 */
 	this.save = function( callback ){
-		// console.log('resourceDb save method: called.');
+		console.error('resourceDb save method: called.');
 		callback = callback || function(){};
 		it79.fnc({}, [
 			function(it1, data){
@@ -54,15 +48,59 @@ module.exports = function(broccoli){
 					'resourceMgr.save',
 					{'resourceDb': _resourceDb} ,
 					function(rtn){
-						// console.log('resourceDb save method: done.');
-						loadResourceDb(function(){
-							callback(rtn);
-						});
+						console.error('resourceDb save method: done.');
+						callback(rtn);
 					}
 				);
 			}
 		]);
-		return this;
+		return;
+	}
+
+	/**
+	 * get resource DB
+	 */
+	this.getResourceDb = function( callback ){
+		callback = callback || function(){};
+		callback(_resourceDb);
+		return;
+	}
+
+	/**
+	 * get resource DB
+	 */
+	this.setResourceDb = function( newResourceDb, callback ){
+		callback = callback || function(){};
+		if( typeof(newResourceDb) !== typeof({}) ){
+			callback(false);
+			return;
+		}
+		_resourceDb = newResourceDb;
+		callback(true);
+		return;
+	}
+
+	/**
+	 * Reload resources DB
+	 * 
+	 * @param  {Function} cb Callback function.
+	 * @return {boolean}     Always true.
+	 */
+	this.reload = function( callback ){
+		callback = callback || function(){};
+		it79.fnc({}, [
+			function(it1, data){
+				broccoli.gpi(
+					'resourceMgr.getResourceDb',
+					{} ,
+					function(rtn){
+						_resourceDb = rtn;
+						callback(rtn);
+					}
+				);
+			}
+		]);
+		return;
 	}
 
 	/**
@@ -84,16 +122,32 @@ module.exports = function(broccoli){
 				);
 			}
 		]);
-		return this;
+		return;
 	}
 
 	/**
-	 * get resource DB
+	 * add new resource
+	 * リソースの登録を行い、リソースを保存し、新しい ResourceKey と publicPath 等を生成して返す。
 	 */
-	this.getResourceDb = function( callback ){
+	this.addNewResource = function(resInfo, callback){
 		callback = callback || function(){};
-		callback(_resourceDb);
-		return this;
+		it79.fnc({}, [
+			function(it1, data){
+				broccoli.gpi(
+					'resourceMgr.addNewResource',
+					{
+						'resInfo': resInfo
+					} ,
+					function(result){
+						if( result && result.newResourceKey.length && result.updateResult && result.publicPath ){
+							_resourceDb[result.newResourceKey] = resInfo;
+						}
+						callback(result);
+					}
+				);
+			}
+		]);
+		return;
 	}
 
 	/**
@@ -120,7 +174,7 @@ module.exports = function(broccoli){
 				);
 			}
 		]);
-		return this;
+		return;
 	}
 
 	/**
@@ -139,7 +193,7 @@ module.exports = function(broccoli){
 				);
 			}
 		]);
-		return this;
+		return;
 	}
 
 	/**
@@ -181,7 +235,7 @@ module.exports = function(broccoli){
 				}
 			]
 		);
-		return this;
+		return;
 	}
 
 	/**
@@ -203,7 +257,7 @@ module.exports = function(broccoli){
 				}
 			]
 		);
-		return this;
+		return;
 	}
 
 	/**
@@ -231,7 +285,7 @@ module.exports = function(broccoli){
 				}
 			]
 		);
-		return this;
+		return;
 	}
 
 	/**
@@ -252,7 +306,7 @@ module.exports = function(broccoli){
 				}
 			]
 		);
-		return this;
+		return;
 	}
 
 	/**
@@ -273,7 +327,7 @@ module.exports = function(broccoli){
 				}
 			]
 		);
-		return this;
+		return;
 	}
 
 	/**
@@ -294,7 +348,7 @@ module.exports = function(broccoli){
 				}
 			]
 		);
-		return this;
+		return;
 	}
 
 }

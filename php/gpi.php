@@ -76,6 +76,77 @@ class gpi{
 				$list = $this->broccoli->getPackageList();
 				return $list;
 
+			case "getModule":
+				// モジュール情報を取得する
+				$moduleId = false;
+				if( array_key_exists('moduleId', $options) ){
+					$moduleId = $options['moduleId'];
+				}
+				if( !strlen($moduleId) ){
+					return false;
+				}
+				$module = $this->broccoli->getModule($moduleId);
+				$moduleInfo = array();
+				$moduleInfo['id'] = $moduleId;
+				$moduleInfo['name'] = $module->info['name'];
+				$moduleInfo['thumb'] = $module->thumb;
+				$moduleInfo['areaSizeDetection'] = $module->info['areaSizeDetection'];
+				$moduleInfo['isSystemModule'] = $module->isSystemModule;
+				$moduleInfo['isSubModule'] = $module->isSubModule;
+				$moduleInfo['isSingleRootElement'] = $module->isSingleRootElement;
+				$moduleInfo['isClipModule'] = $module->isClipModule;
+				$moduleInfo['deprecated'] = $module->deprecated;
+				$moduleInfo['pics'] = $module->getPics();
+				$moduleInfo['readme'] = $module->getReadme();
+				return $moduleInfo;
+
+			case "getClipModuleContents":
+				// クリップモジュールの内容を取得する
+				$moduleId = false;
+				if( array_key_exists('moduleId', $options) ){
+					$moduleId = $options['moduleId'];
+				}
+				if( !strlen($moduleId) ){
+					return false;
+				}
+				$module = $this->broccoli->getModule($moduleId);
+				$clip = $module->getClipContents();
+				if( array_key_exists('resourceMode', $options) && $options['resourceMode'] == 'temporaryHash' ){
+					foreach($clip->resources as $resKey=>$resInfo){
+						if(!strlen($resKey)){continue;}
+						if(!is_object($resInfo)){continue;}
+						$resInfo->base64 = base64_encode('-----broccoli-resource-temporary-hash='.$resKey);
+					}
+				}
+				return $clip;
+
+			case "replaceClipModuleResources":
+				// クリップモジュールのリソースを取得し、コンテンツのリソースを更新する
+				$moduleId = false;
+				if( array_key_exists('moduleId', $options) ){
+					$moduleId = $options['moduleId'];
+				}
+				if( !strlen($moduleId) ){
+					return false;
+				}
+				$module = $this->broccoli->getModule($moduleId);
+				$clip = $module->getClipContents();
+				$resourceDb = $this->broccoli->resourceMgr()->getResourceDb();
+				$tmpMetaInitial = '-----broccoli-resource-temporary-hash=';
+				$tmpBase64Initial = 'LS0tLS1icm9jY29saS1yZXNvdXJjZS10ZW1wb3JhcnktaGFz';
+				$rtn = array();
+				foreach( $resourceDb as $resKey=>$resInfo ){
+					if(!strlen($resKey)){continue;}
+					if(!is_object($resInfo)){continue;}
+					if( property_exists($resInfo, 'base64') && preg_match('/^'.preg_quote($tmpBase64Initial,'/').'/', $resInfo->base64) ){
+						$bin = base64_decode($resInfo->base64);
+						$hash = preg_replace('/^'.preg_quote($tmpMetaInitial, '/').'/', '', $bin);
+						$this->broccoli->resourceMgr()->updateResource($resKey, $clip->resources->{$hash});
+						$rtn[$resKey] = $clip->resources->{$hash};
+					}
+				}
+				return $rtn;
+
 			case "getAllModuleList":
 				// 全モジュールの一覧を取得する
 				$list = $this->broccoli->getAllModuleList();
@@ -98,9 +169,10 @@ class gpi{
 				return $result;
 
 			case "buildHtml":
+				$bowlList = $options['bowlList'];
 				$htmls = $this->broccoli->buildHtml( array(
 					'mode' => 'canvas',
-					'bowlList' => $options['bowlList']
+					'bowlList' => $bowlList,
 				) );
 				return $htmls;
 
@@ -140,6 +212,10 @@ class gpi{
 			case "resourceMgr.addResource":
 				$newResKey = $this->broccoli->resourceMgr()->addResource();
 				return $newResKey;
+
+			case "resourceMgr.addNewResource":
+				$rtn = $this->broccoli->resourceMgr()->addNewResource($options['resInfo']);
+				return $rtn;
 
 			case "resourceMgr.getResourcePublicPath":
 				$publicPath = $this->broccoli->resourceMgr()->getResourcePublicPath( $options['resKey'] );

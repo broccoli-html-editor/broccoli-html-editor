@@ -10,8 +10,6 @@ module.exports = function(broccoli){
 	var fsEx = require('fs-extra');
 	var it79 = require('iterate79');
 	var utils79 = require('utils79');
-	var php = require('phpjs');
-	var mkdirp = require('mkdirp');
 	var DIRECTORY_SEPARATOR = '/';
 
 	var _this = this;
@@ -88,6 +86,18 @@ module.exports = function(broccoli){
 		return false;
 	}//rmdir_r()
 
+	function md5(bin){
+		var md5 = require('crypto').createHash('md5');
+		md5.update(bin, 'binary');
+		return md5.digest('hex');
+	} // md5()
+
+	function md5file(path){
+		if(!utils79.is_file(path)){return false;}
+		var content = require('fs').readFileSync( path );
+		return md5(content);
+	} // md5file()
+
 	/**
 	 * initialize resource Manager
 	 */
@@ -99,7 +109,7 @@ module.exports = function(broccoli){
 		loadResourceList( function(){
 			callback();
 		} );
-		return this;
+		return;
 	}
 
 	/**
@@ -155,18 +165,6 @@ module.exports = function(broccoli){
 		// var logStartTime = Date.now(); // debug code
 		callback = callback || function(){};
 		_resourceDb = newResourceDb;
-
-		function md5(bin){
-			var md5 = require('crypto').createHash('md5');
-			md5.update(bin);
-			return md5.digest('hex');
-		}
-		function md5file(path){
-			if(!utils79.is_file(path)){return false;}
-			var content = require('fs').readFileSync( path );
-			return md5(content);
-		}
-
 
 		function resetDirectory(dir){
 			if( isDirectory( dir ) ){ // 一旦削除
@@ -300,7 +298,7 @@ module.exports = function(broccoli){
 			}
 		);
 
-		return this;
+		return;
 	} // save()
 
 	/**
@@ -311,7 +309,7 @@ module.exports = function(broccoli){
 		callback = callback || function(){};
 		var newResKey;
 		while(1){
-			newResKey = php.md5( (new Date).getTime() );
+			newResKey = md5( ''+(new Date).getTime() );
 			if( typeof(_resourceDb[newResKey]) === typeof({}) ){
 				// 登録済みの resKey
 				continue;
@@ -320,7 +318,7 @@ module.exports = function(broccoli){
 				'ext': 'txt',
 				'size': 0,
 				'base64': '',
-				'md5': '',
+				'md5': md5(''),
 				'isPrivateMaterial': false,
 				'publicFilename': '',
 				'field': '', // <= フィールド名 (ex: image, multitext)
@@ -348,7 +346,41 @@ module.exports = function(broccoli){
 				callback( newResKey );
 			}); })
 		;
-		return this;
+		return;
+	}
+
+	/**
+	 * add new resource
+	 * リソースの登録を行い、リソースを保存し、新しい ResourceKey と publicPath 等を生成して返す。
+	 */
+	this.addNewResource = function(resInfo, callback){
+		callback = callback || function(){};
+		var rtn = {
+			'newResourceKey': null,
+			'updateResult': null,
+			'publicPath': null
+		};
+		_this.addResource(
+			function(newResourceKey){
+				rtn.newResourceKey = newResourceKey;
+				_this.updateResource(
+					rtn.newResourceKey ,
+					resInfo ,
+					function(updateResult){
+						rtn.updateResult = updateResult;
+						_this.getResourcePublicPath(
+							rtn.newResourceKey ,
+							function(publicPath){
+								rtn.publicPath = publicPath;
+								// console.log(publicPath);
+								callback(rtn);
+							}
+						);
+					}
+				);
+			}
+		);
+		return;
 	}
 
 	/**
@@ -361,7 +393,7 @@ module.exports = function(broccoli){
 				callback(_resourceDb);
 			}); })
 		;
-		return this;
+		return;
 	}
 
 	/**
@@ -372,14 +404,14 @@ module.exports = function(broccoli){
 		if( typeof(_resourceDb[resKey]) !== typeof({}) ){
 			// 未登録の resKey
 			callback(false);
-			return this;
+			return;
 		}
 		new Promise(function(rlv){rlv();})
 			.then(function(){ return new Promise(function(rlv, rjt){
 				callback(_resourceDb[resKey]);
 			}); })
 		;
-		return this;
+		return;
 	}
 
 	/**
@@ -396,7 +428,7 @@ module.exports = function(broccoli){
 					callback(false);
 				}); })
 			;
-			return this;
+			return;
 		}
 		this.addResource(function(newResKey){
 			_resourceDb[newResKey] = JSON.parse( JSON.stringify( _resourceDb[resKey] ) );
@@ -416,7 +448,7 @@ module.exports = function(broccoli){
 				);
 			} );
 		});
-		return this;
+		return;
 	}
 
 	/**
@@ -445,7 +477,7 @@ module.exports = function(broccoli){
 					callback(false);
 				}); })
 			;
-			return this;
+			return;
 		}
 		_resourceDb[resKey] = resInfo;
 
@@ -470,7 +502,7 @@ module.exports = function(broccoli){
 				callback(true);
 			}); })
 		;
-		return this;
+		return;
 	}
 
 	/**
@@ -481,7 +513,7 @@ module.exports = function(broccoli){
 		if( typeof(_resourceDb[resKey]) !== typeof({}) ){
 			// 未登録の resKey
 			callback(false);
-			return this;
+			return;
 		}
 		this.getResourceOriginalRealpath( resKey, function(realpath){
 			// console.log(_resourceDb[resKey].base64);
@@ -491,7 +523,7 @@ module.exports = function(broccoli){
 			callback(true);
 		} );
 
-		return this;
+		return;
 	}
 
 	/**
@@ -504,7 +536,7 @@ module.exports = function(broccoli){
 			new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 				callback(false);
 			}); });
-			return this;
+			return;
 		}
 		this.getResourceOriginalRealpath( resKey, function(realpath){
 			var bin = fs.readFileSync( realpath, {} );
@@ -519,7 +551,7 @@ module.exports = function(broccoli){
 			callback(true);
 		} );
 
-		return this;
+		return;
 	}
 
 	/**
@@ -546,7 +578,7 @@ module.exports = function(broccoli){
 
 			callback(rtn);
 		} );
-		return this;
+		return;
 	}
 
 	/**
@@ -570,7 +602,7 @@ module.exports = function(broccoli){
 
 			callback(rtn);
 		} );
-		return this;
+		return;
 	}
 
 	/**
@@ -588,7 +620,7 @@ module.exports = function(broccoli){
 			return;
 		} );
 
-		return this;
+		return;
 	}
 
 	/**
@@ -605,7 +637,7 @@ module.exports = function(broccoli){
 		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 			callback(true);
 		}); });
-		return this;
+		return;
 	}
 
 }
