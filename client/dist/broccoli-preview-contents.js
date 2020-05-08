@@ -75,7 +75,7 @@
 				var $this = $(this);
 				var elm = {};
 				elm.instancePath = $this.attr('data-broccoli-instance-path');
-				elm.modId = $this.attr('data-broccoli-mod-id');
+				elm.modId = $this.attr('data-broccoli-mod-id');// <- このidは、コンテンツデータ由来なので、実際にはinternalIdを扱っている。が、名前は id でよい。
 				elm.subModName = $this.attr('data-broccoli-sub-mod-name');
 				elm.isAppender = ($this.attr('data-broccoli-is-appender') == 'yes');
 				elm.areaSizeDetection = $this.attr('data-broccoli-area-size-detection');

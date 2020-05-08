@@ -15,6 +15,11 @@ module.exports = function(broccoli){
 	var _contentsSourceData = broccoli.getBootupInfomations().contentsDataJson; // <= data.jsonの中身
 	var _modTpls = broccoli.getBootupInfomations().allModuleList; // <- module の一覧
 
+	var _moduleInternalIdMap = {};
+	for(var idx in _modTpls){
+		_moduleInternalIdMap[_modTpls[idx].internalId] = idx;
+	}
+
 	/**
 	 * 初期化
 	 */
@@ -159,14 +164,14 @@ module.exports = function(broccoli){
 
 		var newData = {};
 		if( typeof(modId) === typeof('') ){
-			newData = new (function(){
-				this.modId = modId ,
+			var modTpl = _this.getModule( modId, subModName );
+			newData = new (function(modId, subModName){
+				this.modId =  modId,
 				this.fields = {}
 				if( typeof(subModName) === typeof('') ){
 					this.subModName = subModName;
 				}
-			})(modId, subModName);
-			var modTpl = _this.getModule( newData.modId, subModName );
+			})(modTpl.internalId, subModName);
 
 			// 初期データ追加
 			var fieldList = _.keys( modTpl.fields );
@@ -208,7 +213,7 @@ module.exports = function(broccoli){
 			var tmpCur = cur.split('.');
 			var container = tmpCur[0];
 			var fieldName = tmpCur[1];
-			var modTpl = _this.getModule( data.modId, data.subModName );
+			var modTpl = _this.getModuleByInternalId( data.modId, data.subModName );
 
 			if( container == 'bowl' ){
 				// ルート要素だったらスキップして次へ
@@ -228,7 +233,7 @@ module.exports = function(broccoli){
 					data.fields[fieldName] = newData;
 				}else if( modTpl.fields[fieldName].fieldType == 'module'){
 					data.fields[fieldName] = data.fields[fieldName]||[];
-					var newDataModTpl = _this.getModule( newData.modId );
+					var newDataModTpl = _this.getModuleByInternalId( newData.modId );
 					if( modTpl.fields[fieldName]['maxLength'] && data.fields[fieldName].length >= modTpl.fields[fieldName]['maxLength'] ){
 						// 最大件数に達していたら、追加できない
 						broccoli.message('モジュールの数が最大件数 '+modTpl.fields[fieldName]['maxLength']+' に達しています。');
@@ -802,6 +807,17 @@ module.exports = function(broccoli){
 			return rtn.subModule[subModName];
 		}
 		return rtn;
+	}
+
+	/**
+	 * internalIdからモジュールを取得 (同期)
+	 */
+	this.getModuleByInternalId = function( modInternalId, subModName ){
+		var modId = _moduleInternalIdMap[modInternalId];
+		if( typeof(modId) !== typeof('') || !modId.length ){
+			return false;
+		}
+		return this.getModule(modId, subModName);
 	}
 
 	/**
