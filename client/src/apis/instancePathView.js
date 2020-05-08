@@ -42,7 +42,7 @@ module.exports = function(broccoli){
 				// 処理できないので、スキップする。
 				continue;
 			}
-			var mod = broccoli.contentsSourceData.getModule(contData.modId, contData.subModName);
+			var mod = broccoli.contentsSourceData.getModuleByInternalId(contData.modId, contData.subModName);
 			var label = mod && mod.info.name||mod.id;
 			if(instPathMemo.length==2){
 				// bowl自体だったら
@@ -80,7 +80,7 @@ module.exports = function(broccoli){
 				var $ulChildren = $('<ul class="broccoli--instance-path-view-children">');
 				for(var child in children){
 					var contData = broccoli.contentsSourceData.get(children[child]);
-					var mod = broccoli.contentsSourceData.getModule(contData.modId, contData.subModName);
+					var mod = broccoli.contentsSourceData.getModuleByInternalId(contData.modId, contData.subModName);
 					var label = mod && mod.info.name||mod.id;
 					$ulChildren.append( $('<li>')
 						.append( $('<a href="javascript:;">')

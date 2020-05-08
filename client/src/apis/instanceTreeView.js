@@ -35,7 +35,7 @@ module.exports = function(broccoli){
 		function buildInstance(data, parentInstancePath, subModName, callback){
 			callback = callback||function(){};
 			// console.log(data);
-			var mod = broccoli.contentsSourceData.getModule(data.modId, subModName);
+			var mod = broccoli.contentsSourceData.getModuleByInternalId(data.modId, subModName);
 			if( mod === false ){
 				mod = {
 					'id': '_sys/unknown',

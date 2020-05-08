@@ -68,7 +68,7 @@ module.exports = function(broccoli){
 	;
 
 	function initMod(data){
-		var mod = broccoli.contentsSourceData.getModule(data.modId, data.subModName);
+		var mod = broccoli.contentsSourceData.getModuleByInternalId(data.modId, data.subModName);
 		if( mod === false ){
 			mod = {
 				'id': '_sys/unknown',
@@ -230,7 +230,7 @@ module.exports = function(broccoli){
 								it79.ary(
 									data.fields[field.name],
 									function(it2, childData, idx2){
-										var childMod = broccoli.contentsSourceData.getModule(childData.modId, childData.subModName);
+										var childMod = broccoli.contentsSourceData.getModuleByInternalId(childData.modId, childData.subModName);
 										var childInstancePath = instancePath + '/fields.'+field.name+'@'+idx2+''
 										// console.log(childInstancePath);
 										// console.log(childData);
@@ -703,7 +703,7 @@ module.exports = function(broccoli){
 				// 処理できないので、スキップする。
 				continue;
 			}
-			var mod = broccoli.contentsSourceData.getModule(contData.modId, contData.subModName);
+			var mod = broccoli.contentsSourceData.getModuleByInternalId(contData.modId, contData.subModName);
 			var label = mod && mod.info.name||mod.id;
 			if(instPathMemo.length==2){
 				// bowl自体だったら
