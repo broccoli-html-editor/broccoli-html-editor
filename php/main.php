@@ -423,6 +423,12 @@ class broccoliHtmlEditor{
 				}
 				$rtn['categories'][$idx]['modules'][$row2]['deprecated'] = (@$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->deprecated ? $rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->deprecated : false);
 
+				// moduleInternalId
+				$rtn['categories'][$idx]['modules'][$row2]['moduleInternalId'] = $moduleId;
+				if( is_object($rtn['categories'][$idx]['modules'][$row2]['moduleInfo']) && property_exists( $rtn['categories'][$idx]['modules'][$row2]['moduleInfo'], 'id' ) ){
+					$rtn['categories'][$idx]['modules'][$row2]['moduleInternalId'] = $this->getModuleInternalId($moduleId, $rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->id);
+				}
+
 				// clip.json
 				$rtn['categories'][$idx]['modules'][$row2]['clip'] = false;
 				if( is_file( $realpath.'/clip.json' ) ){
@@ -461,8 +467,6 @@ class broccoliHtmlEditor{
 
 	/**
 	 * enabledParents または enabledChildren を正規化する
-	 * @param {*} enabledParentsOrChildren
-	 * @param {*} currentModuleId
 	 */
 	public function normalizeEnabledParentsOrChildren($enabledParentsOrChildren, $currentModuleId){
 		$enabledParentsOrChildren = ($enabledParentsOrChildren ? $enabledParentsOrChildren : array());
@@ -477,8 +481,6 @@ class broccoliHtmlEditor{
 
 	/**
 	 * モジュールIDを補完して完成させる
-	 * @param {*} targetModuleId
-	 * @param {*} currentModuleId
 	 */
 	private function completeModuleId($targetModuleId, $currentModuleId){
 		$currentModuleId = ($currentModuleId ? $currentModuleId : '');
@@ -498,9 +500,27 @@ class broccoliHtmlEditor{
 	}
 
 	/**
+	 * モジュールの内部IDを補完して完成させる
+	 */
+	public function getModuleInternalId($targetModuleId, $internalIdTemplate = null){
+		$internalId = $targetModuleId;
+		$tmpParsedModuleInternalIdBefore = $this->parseModuleId($internalId);
+		$tmpParsedModuleInternalIdAfter = $this->parseModuleId($internalIdTemplate);
+		if( strlen($tmpParsedModuleInternalIdAfter['package']) ){
+			$tmpParsedModuleInternalIdBefore['package'] = $tmpParsedModuleInternalIdAfter['package'];
+		}
+		if( strlen($tmpParsedModuleInternalIdAfter['category']) ){
+			$tmpParsedModuleInternalIdBefore['category'] = $tmpParsedModuleInternalIdAfter['category'];
+		}
+		if( strlen($tmpParsedModuleInternalIdAfter['module']) ){
+			$tmpParsedModuleInternalIdBefore['module'] = $tmpParsedModuleInternalIdAfter['module'];
+		}
+		$internalId = $tmpParsedModuleInternalIdBefore['package'].':'.$tmpParsedModuleInternalIdBefore['category'].'/'.$tmpParsedModuleInternalIdBefore['module'];
+		return $internalId;
+	}
+
+	/**
 	 * 全モジュールの一覧を取得する
-	 * @param  {Function} callback  callback function.
-	 * @return {Object}             this
 	 */
 	public function getAllModuleList(){
 		static $_allModuleList = null;

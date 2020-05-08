@@ -130,6 +130,7 @@ module.exports = function(broccoli, targetElm, callback){
 				// 	return (d.moduleName ? d.moduleName+' ('+d.moduleId+')' : d.moduleId);
 				// })(mod),
 				'data-id': mod.moduleId,
+				'data-internal-id': mod.moduleInternalId,
 				'data-name': mod.moduleName,
 				'data-readme': mod.readme,
 				'data-clip': JSON.stringify(mod.clip),
@@ -275,7 +276,7 @@ module.exports = function(broccoli, targetElm, callback){
 		var $html = $('<div>');
 		$html.html(html);
 		$html.find('h1.broccoli--module-info-content-h1').text($elm.attr('data-name'));
-		$html.find('.broccoli--module-info-content-id').text($elm.attr('data-id'));
+		$html.find('.broccoli--module-info-content-id').text($elm.attr('data-internal-id'));
 		var readme = $elm.attr('data-readme');
 		$html.find('.broccoli__module-readme').html((readme ? readme : '<p style="text-align:center; margin: 100px auto;">-- no readme --</p>' ));
 

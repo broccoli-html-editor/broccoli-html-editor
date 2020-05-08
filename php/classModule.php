@@ -318,19 +318,7 @@ class classModule{
 				}
 
 				if( property_exists($tmpJson, 'id') && strlen($tmpJson->id) ){
-					$tmpParsedModuleInternalIdBefore = $this->broccoli->parseModuleId($this->internalId);
-					$tmpParsedModuleInternalIdAfter = $this->broccoli->parseModuleId($tmpJson->id);
-					if( strlen($tmpParsedModuleInternalIdAfter['package']) ){
-						$tmpParsedModuleInternalIdBefore['package'] = $tmpParsedModuleInternalIdAfter['package'];
-					}
-					if( strlen($tmpParsedModuleInternalIdAfter['category']) ){
-						$tmpParsedModuleInternalIdBefore['category'] = $tmpParsedModuleInternalIdAfter['category'];
-					}
-					if( strlen($tmpParsedModuleInternalIdAfter['module']) ){
-						$tmpParsedModuleInternalIdBefore['module'] = $tmpParsedModuleInternalIdAfter['module'];
-					}
-					$this->internalId = $tmpParsedModuleInternalIdBefore['package'].':'.$tmpParsedModuleInternalIdBefore['category'].'/'.$tmpParsedModuleInternalIdBefore['module'];
-					unset($tmpParsedModuleInternalIdBefore, $tmpParsedModuleInternalIdAfter);
+					$this->internalId = $this->broccoli->getModuleInternalId($this->id, $tmpJson->id);
 				}
 
 				if( !strlen($this->info['name']) && @$tmpJson->name ){

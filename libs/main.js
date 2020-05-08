@@ -289,7 +289,30 @@ module.exports = function(){
 			return targetModuleId;
 		}
 		return targetModuleId;
-}
+	}
+
+
+	/**
+	 * モジュールの内部IDを補完して完成させる
+	 */
+	this.getModuleInternalId = function($targetModuleId, $internalIdTemplate){
+		var $internalId = $targetModuleId;
+
+		var $tmpParsedModuleInternalIdBefore = this.parseModuleId($targetModuleId);
+		var $tmpParsedModuleInternalIdAfter = this.parseModuleId($internalIdTemplate);
+		if( typeof($tmpParsedModuleInternalIdAfter['package']) == typeof('') && $tmpParsedModuleInternalIdAfter['package'].length ){
+			$tmpParsedModuleInternalIdBefore['package'] = $tmpParsedModuleInternalIdAfter['package'];
+		}
+		if( typeof($tmpParsedModuleInternalIdAfter['category']) == typeof('') && $tmpParsedModuleInternalIdAfter['category'].length ){
+			$tmpParsedModuleInternalIdBefore['category'] = $tmpParsedModuleInternalIdAfter['category'];
+		}
+		if( typeof($tmpParsedModuleInternalIdAfter['module']) == typeof('') && $tmpParsedModuleInternalIdAfter['module'].length ){
+			$tmpParsedModuleInternalIdBefore['module'] = $tmpParsedModuleInternalIdAfter['module'];
+		}
+		$internalId = $tmpParsedModuleInternalIdBefore['package']+':'+$tmpParsedModuleInternalIdBefore['category']+'/'+$tmpParsedModuleInternalIdBefore['module'];
+
+		return $internalId;
+	}
 
 	/**
 	 * 全モジュールの一覧を取得する

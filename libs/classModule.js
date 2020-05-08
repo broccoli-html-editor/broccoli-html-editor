@@ -179,20 +179,7 @@ module.exports = function(broccoli, moduleId, options){
 						tmpJson = {};
 					}
 					if( tmpJson.id ){
-						var $tmpParsedModuleInternalIdBefore = broccoli.parseModuleId(_this.internalId);
-						var $tmpParsedModuleInternalIdAfter = broccoli.parseModuleId(tmpJson.id);
-						if( typeof($tmpParsedModuleInternalIdAfter['package']) == typeof('') && $tmpParsedModuleInternalIdAfter['package'].length ){
-							$tmpParsedModuleInternalIdBefore['package'] = $tmpParsedModuleInternalIdAfter['package'];
-						}
-						if( typeof($tmpParsedModuleInternalIdAfter['category']) == typeof('') && $tmpParsedModuleInternalIdAfter['category'].length ){
-							$tmpParsedModuleInternalIdBefore['category'] = $tmpParsedModuleInternalIdAfter['category'];
-						}
-						if( typeof($tmpParsedModuleInternalIdAfter['module']) == typeof('') && $tmpParsedModuleInternalIdAfter['module'].length ){
-							$tmpParsedModuleInternalIdBefore['module'] = $tmpParsedModuleInternalIdAfter['module'];
-						}
-						_this.internalId = $tmpParsedModuleInternalIdBefore['package']+':'+$tmpParsedModuleInternalIdBefore['category']+'/'+$tmpParsedModuleInternalIdBefore['module'];
-						delete($tmpParsedModuleInternalIdBefore);
-						delete($tmpParsedModuleInternalIdAfter);
+						_this.internalId = broccoli.getModuleInternalId(_this.id, tmpJson.id);
 					}
 					if( tmpJson.name ){
 						_this.info.name = tmpJson.name;
