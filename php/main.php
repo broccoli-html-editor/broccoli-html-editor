@@ -528,6 +528,7 @@ class broccoliHtmlEditor{
 			$obj->init();
 			$data['rtn'][$modId] = json_decode('{}');
 			$data['rtn'][$modId]->id = $obj->id;
+			$data['rtn'][$modId]->internalId = $obj->internalId;
 			$data['rtn'][$modId]->fields = $obj->fields;
 			$data['rtn'][$modId]->isSystemModule = $obj->isSystemModule;
 			$data['rtn'][$modId]->isSingleRootElement = $obj->isSingleRootElement;
@@ -542,6 +543,7 @@ class broccoliHtmlEditor{
 					// var_dump($data['rtn'][$modId]->subModule->{$idx});
 					// var_dump($obj->subModule->{$idx});
 					$data['rtn'][$modId]->subModule->{$idx}->id = $obj->subModule->{$idx}->id;
+					$data['rtn'][$modId]->subModule->{$idx}->internalId = $obj->subModule->{$idx}->internalId;
 					$data['rtn'][$modId]->subModule->{$idx}->subModName = $obj->subModule->{$idx}->subModName;
 					$data['rtn'][$modId]->subModule->{$idx}->fields = $obj->subModule->{$idx}->fields;
 					$data['rtn'][$modId]->subModule->{$idx}->isSystemModule = $obj->subModule->{$idx}->isSystemModule;

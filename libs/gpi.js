@@ -89,6 +89,7 @@ module.exports = function(broccoli, api, options, callback){
 					}
 					var moduleInfo = {};
 					moduleInfo.id = moduleId;
+					moduleInfo.internalId = module.internalId;
 					moduleInfo.name = module.info.name;
 					moduleInfo.thumb = module.thumb;
 					moduleInfo.areaSizeDetection = module.info.areaSizeDetection;
