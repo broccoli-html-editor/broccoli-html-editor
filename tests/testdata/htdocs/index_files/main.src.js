@@ -177,4 +177,15 @@ window.main = new (function(){
 		return this;
 	}
 
+	/**
+	 * Broccoliをリロード
+	 */
+	this.reloadBroccoli = function(){
+		this.init({
+			'serverType': serverType
+		},function(){
+			console.log('TestPage: Re-initialize Broccoli: done');
+		});
+	}
+
 })();
