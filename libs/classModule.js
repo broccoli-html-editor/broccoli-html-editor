@@ -66,6 +66,7 @@ module.exports = function(broccoli, moduleId, options){
 		}
 	}
 	this.id = moduleId;
+	this.internalId = moduleId;
 	this.fields = {};
 	this.templateType = 'broccoli';
 	this.finalize = function(html, callback){callback(html);return;}
@@ -176,6 +177,22 @@ module.exports = function(broccoli, moduleId, options){
 						var tmp_targetfile = (_this.realpath+'/info.json').split(/\/+/).reverse().slice(0, 4).reverse().join('/');
 						broccoli.error( 'module info.json contains a non object or null: ' + tmp_targetfile );
 						tmpJson = {};
+					}
+					if( tmpJson.id ){
+						var $tmpParsedModuleInternalIdBefore = broccoli.parseModuleId(_this.internalId);
+						var $tmpParsedModuleInternalIdAfter = broccoli.parseModuleId(tmpJson.id);
+						if( typeof($tmpParsedModuleInternalIdAfter['package']) == typeof('') && $tmpParsedModuleInternalIdAfter['package'].length ){
+							$tmpParsedModuleInternalIdBefore['package'] = $tmpParsedModuleInternalIdAfter['package'];
+						}
+						if( typeof($tmpParsedModuleInternalIdAfter['category']) == typeof('') && $tmpParsedModuleInternalIdAfter['category'].length ){
+							$tmpParsedModuleInternalIdBefore['category'] = $tmpParsedModuleInternalIdAfter['category'];
+						}
+						if( typeof($tmpParsedModuleInternalIdAfter['module']) == typeof('') && $tmpParsedModuleInternalIdAfter['module'].length ){
+							$tmpParsedModuleInternalIdBefore['module'] = $tmpParsedModuleInternalIdAfter['module'];
+						}
+						_this.internalId = $tmpParsedModuleInternalIdBefore['package']+':'+$tmpParsedModuleInternalIdBefore['category']+'/'+$tmpParsedModuleInternalIdBefore['module'];
+						delete($tmpParsedModuleInternalIdBefore);
+						delete($tmpParsedModuleInternalIdAfter);
 					}
 					if( tmpJson.name ){
 						_this.info.name = tmpJson.name;

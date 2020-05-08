@@ -219,12 +219,12 @@ class broccoliHtmlEditor{
 		if( !is_string($moduleId) ){
 			return false;
 		}
-		if( !preg_match('/^(?:([0-9a-zA-Z\\_\\-\\.]*?)\\:)?([^\\/\\:\\s]+)\\/([^\\/\\:\\s]+)$/', $moduleId, $matched) ){
+		if( !preg_match('/^(?:([0-9a-zA-Z\\_\\-\\.]*?)\\:)?([^\\/\\:\\s]*)\\/([^\\/\\:\\s]*)$/', $moduleId, $matched) ){
 			return false;
 		}
-		$rtn['package'] = $matched[1];
-		$rtn['category'] = $matched[2];
-		$rtn['module'] = $matched[3];
+		$rtn['package'] = (strlen($matched[1]) ? $matched[1] : null);
+		$rtn['category'] = (strlen($matched[2]) ? $matched[2] : null);
+		$rtn['module'] = (strlen($matched[3]) ? $matched[3] : null);
 
 		if( !strlen($rtn['package']) ){
 			$rtn['package'] = null;

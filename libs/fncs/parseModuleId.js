@@ -11,7 +11,7 @@ module.exports = function(moduleId){
 	if(typeof(moduleId) != typeof('')){
 		return false;
 	}
-	if( !moduleId.match( new RegExp('^(?:([0-9a-zA-Z\\_\\-\\.]*?)\\:)?([^\\/\\:\\s]+)\\/([^\\/\\:\\s]+)$') ) ){
+	if( !moduleId.match( new RegExp('^(?:([0-9a-zA-Z\\_\\-\\.]*?)\\:)?([^\\/\\:\\s]*)\\/([^\\/\\:\\s]*)$') ) ){
 		return false;
 	}
 	rtn.package = RegExp.$1;
@@ -20,6 +20,12 @@ module.exports = function(moduleId){
 
 	if( !rtn.package.length ){
 		rtn.package = null;
+	}
+	if( !rtn.category.length ){
+		rtn.category = null;
+	}
+	if( !rtn.module.length ){
+		rtn.module = null;
 	}
 	return rtn;
 }
