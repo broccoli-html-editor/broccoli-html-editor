@@ -63,11 +63,18 @@
 
 			uiState = 'initialize';
 
+			// 内容を消去
+			$(options.elmCanvas).html('');
+			$(options.elmInstancePathView).html('...');
+			$(options.elmInstanceTreeView).html('...');
+			$(options.elmModulePalette).html('...');
+
 			$canvas = $(options.elmCanvas);
 			$canvas
 				.addClass('broccoli')
 				.addClass('broccoli--canvas')
 				.append( $('<iframe>')
+					.css({'border': 'none'})
 				)
 				.append( $('<div class="broccoli--panels">')
 				)
@@ -154,17 +161,13 @@
 				{},
 				[
 					function(it1, data){
-						// プログレスを表示
-						_this.progress(function(){
-							it1.next(data);
-						});
-					} ,
-					function(it1, data){
+						// リソースファイルの読み込み
 						var css = [
 							__dirname+'/libs/bootstrap/dist/css/bootstrap.css',
 							__dirname+'/libs/px2style/dist/styles.css',
 							__dirname+'/broccoli.css',
 						];
+						$('head *[data-broccoli-resource]').remove(); // 一旦削除
 						it79.ary(
 							css,
 							function(it2, row, idx){
@@ -176,11 +179,18 @@
 								$('head').append(link);
 								link.rel = 'stylesheet';
 								link.href = row;
+								link.setAttribute('data-broccoli-resource', true);
 							},
 							function(){
 								it1.next(data);
 							}
 						);
+					} ,
+					function(it1, data){
+						// プログレスを表示
+						_this.progress(function(){
+							it1.next(data);
+						});
 					} ,
 					function(it1, data){
 						_this.progressMessage('データを読み込んでいます...。');
