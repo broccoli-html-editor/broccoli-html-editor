@@ -35,6 +35,7 @@ class broccoliHtmlEditor{
 
 	/** cache */
 	private $_moduleCollection = array();
+	private $_moduleInternalIdMap = array();
 
 	/** Error Report */
 	private $errors = array();
@@ -594,12 +595,11 @@ class broccoliHtmlEditor{
 
 	/**
 	 * モジュールオブジェクトを取得する
-	 * @param  {String}   moduleId モジュールID
-	 * @param  {String}   subModName サブモジュール名
-	 * @param  {Function} callback  callback function.
-	 * @return {Object}            this
 	 */
 	public function getModule($moduleId, $subModName = null){
+		if(!strlen($moduleId)){
+			return false;
+		}
 		$rtn = null;
 		if( array_key_exists($moduleId, $this->_moduleCollection) ){
 			$rtn = $this->_moduleCollection[$moduleId];
@@ -619,6 +619,7 @@ class broccoliHtmlEditor{
 			}
 			$this->_moduleCollection[$moduleId]->init();
 			$rtn = $this->_moduleCollection[$moduleId];
+			$this->_moduleInternalIdMap[$this->_moduleCollection[$moduleId]->internalId] = $moduleId;
 			if( is_string($subModName) ){
 				return $rtn->subModule->{$subModName};
 			}
@@ -633,6 +634,31 @@ class broccoliHtmlEditor{
 			return $rtn->subModule->{$subModName};
 		}
 
+		return $rtn;
+	}
+
+	/**
+	 * internaiIdから、モジュールオブジェクトを取得する
+	 */
+	public function getModuleByInternalId($moduleInternalId, $subModName = null){
+		$rtn = null;
+		$moduleId = null;
+		if( array_key_exists($moduleInternalId, $this->_moduleInternalIdMap) ){
+			// キャッシュ済みならそれを返す。
+			$moduleId = $this->_moduleInternalIdMap[$moduleInternalId];
+		}else{
+			//キャッシュされていなければ全量を生成する。
+			$this->getAllModuleList();
+			if( array_key_exists($moduleInternalId, $this->_moduleInternalIdMap) ){
+				// 生成したなかにあれば返す。
+				$moduleId = $this->_moduleInternalIdMap[$moduleInternalId];
+			}else{
+				// なければ、結果 false を記録して false を返す。
+				$this->_moduleInternalIdMap[$moduleInternalId] = false;
+				return false;
+			}
+		}
+		$rtn = $this->getModule($moduleId, $subModName);
 		return $rtn;
 	}
 

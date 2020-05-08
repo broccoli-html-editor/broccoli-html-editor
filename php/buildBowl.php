@@ -50,7 +50,7 @@ class buildBowl{
 	public function build(){
 		$d = json_decode('{"html": ""}');
 
-		$mod = $this->broccoli->getModule( @$this->data->modId, @$this->options['subModName'] );
+		$mod = $this->broccoli->getModuleByInternalId( @$this->data->modId, @$this->options['subModName'] );
 		if($mod === false){
 			$mod = $this->broccoli->getModule( '_sys/unknown', null );
 		}

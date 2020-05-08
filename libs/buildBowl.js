@@ -238,7 +238,7 @@ module.exports = function(broccoli, data, options, callback){
 		{},
 		[
 			function(it1, d){
-				broccoli.getModule( data.modId, options.subModName, function(result){
+				broccoli.getModuleByInternalId( data.modId, options.subModName, function(result){
 					mod = result;
 					it1.next(d);
 				} );
