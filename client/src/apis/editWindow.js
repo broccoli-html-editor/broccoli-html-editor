@@ -392,6 +392,7 @@ module.exports = function(broccoli){
 												.attr({
 													'data-broccoli-instance-path':appenderInstancePath,
 													'data-broccoli-mod-id': mod.id,
+													'data-broccoli-mod-internal-id': mod.internalId,
 													'data-broccoli-sub-mod-name': field.name,
 													'data-broccoli-is-appender':'yes',
 													// 'data-broccoli-is-instance-tree-view': 'yes',
