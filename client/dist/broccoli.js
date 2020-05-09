@@ -1570,7 +1570,7 @@ module.exports = function(broccoli){
 		var tmpCur = cur.split('.');
 		var container = tmpCur[0];
 		var fieldName = tmpCur[1];
-		var modTpl = _this.getModule( data.modId, data.subModName );
+		var modTpl = _this.getModuleByInternalId( data.modId, data.subModName );
 
 		if( container == 'bowl' ){
 			return this.get( aryPath, data.bowl[fieldName] );
@@ -1620,7 +1620,7 @@ module.exports = function(broccoli){
 		if( !current ){
 			callback([]);return;
 		}
-		var modTpl = _this.getModule( current.modId, current.subModName );
+		var modTpl = _this.getModuleByInternalId( current.modId, current.subModName );
 		var targetFieldNames = {};
 		for( var fieldName in modTpl.fields ){
 			switch( modTpl.fields[fieldName].fieldType ){
@@ -1655,7 +1655,7 @@ module.exports = function(broccoli){
 
 		var newData = {};
 		if( typeof(modId) === typeof('') ){
-			var modTpl = _this.getModule( modId, subModName );
+			var modTpl = _this.getModuleByInternalId( modId, subModName );
 			newData = new (function(modId, subModName){
 				this.modId =  modId,
 				this.fields = {}
@@ -1832,7 +1832,7 @@ module.exports = function(broccoli){
 			var tmpCur = cur.split('.');
 			var container = tmpCur[0];
 			var fieldName = tmpCur[1];
-			var modTpl = _this.getModule( data.modId, data.subModName );
+			var modTpl = _this.getModuleByInternalId( data.modId, data.subModName );
 
 			if( container == 'bowl' ){
 				// ルート要素だったら
@@ -2169,7 +2169,7 @@ module.exports = function(broccoli){
 			var tmpCur = cur.split('.');
 			var container = tmpCur[0];
 			var fieldName = tmpCur[1];
-			var modTpl = _this.getModule( data.modId, data.subModName );
+			var modTpl = _this.getModuleByInternalId( data.modId, data.subModName );
 
 			if( container == 'bowl' ){
 				// ルート要素だったらスキップして次へ
@@ -2690,6 +2690,7 @@ module.exports = function(broccoli, targetElm, callback){
 				var transferData = {
 					'method': 'add',
 					'modId': $(this).attr('data-id'),
+					'modInternalId': $(this).attr('data-internal-id'),
 					'modClip': $(this).attr('data-clip')
 				};
 				event.dataTransfer.setData('text/json', JSON.stringify(transferData) );
@@ -4867,6 +4868,7 @@ module.exports = function(broccoli){
 				'data-broccoli-instance-path': $this.instancePath,
 				'data-broccoli-is-appender': 'no',
 				'data-broccoli-mod-id': modInfo.id,
+				'data-broccoli-mod-internal-id': modInfo.internalId,
 				'data-broccoli-sub-mod-name': $this.subModName,
 				'draggable': (isAppender ? false : true) // <- HTML5のAPI https://developer.mozilla.org/ja/docs/Web/API/HTML_Drag_and_Drop_API
 			})
@@ -5085,6 +5087,7 @@ module.exports = function(broccoli){
 				transferData = JSON.parse(transferData);
 			} catch (e) {}
 			var modId = transferData["modId"];
+			var modInternalId = transferData["modInternalId"];
 			var modClip = transferData["modClip"];
 			try {
 				modClip = JSON.parse(modClip);
@@ -5163,7 +5166,7 @@ module.exports = function(broccoli){
 
 
 			}else{
-				broccoli.contentsSourceData.addInstance( modId, moveTo, function(result){
+				broccoli.contentsSourceData.addInstance( modInternalId, moveTo, function(result){
 					if(!result){
 						broccoli.closeProgress(function(){
 							callback();
@@ -5206,9 +5209,9 @@ module.exports = function(broccoli){
 
 		if( $this.attr('data-broccoli-sub-mod-name') && $this.attr('data-broccoli-is-appender') == 'yes' ){
 			// loopモジュールの繰り返し要素を増やします。
-			var modId = $this.attr("data-broccoli-mod-id");
+			var modInternalId = $this.attr("data-broccoli-mod-internal-id");
 			var subModName = $this.attr("data-broccoli-sub-mod-name");
-			broccoli.contentsSourceData.addInstance( modId, instancePath, function(result){
+			broccoli.contentsSourceData.addInstance( modInternalId, instancePath, function(result){
 				if(!result){
 					callback();
 					return;

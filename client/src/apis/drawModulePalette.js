@@ -144,6 +144,7 @@ module.exports = function(broccoli, targetElm, callback){
 				var transferData = {
 					'method': 'add',
 					'modId': $(this).attr('data-id'),
+					'modInternalId': $(this).attr('data-internal-id'),
 					'modClip': $(this).attr('data-clip')
 				};
 				event.dataTransfer.setData('text/json', JSON.stringify(transferData) );

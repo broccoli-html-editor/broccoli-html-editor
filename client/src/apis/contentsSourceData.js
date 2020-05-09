@@ -79,7 +79,7 @@ module.exports = function(broccoli){
 		var tmpCur = cur.split('.');
 		var container = tmpCur[0];
 		var fieldName = tmpCur[1];
-		var modTpl = _this.getModule( data.modId, data.subModName );
+		var modTpl = _this.getModuleByInternalId( data.modId, data.subModName );
 
 		if( container == 'bowl' ){
 			return this.get( aryPath, data.bowl[fieldName] );
@@ -129,7 +129,7 @@ module.exports = function(broccoli){
 		if( !current ){
 			callback([]);return;
 		}
-		var modTpl = _this.getModule( current.modId, current.subModName );
+		var modTpl = _this.getModuleByInternalId( current.modId, current.subModName );
 		var targetFieldNames = {};
 		for( var fieldName in modTpl.fields ){
 			switch( modTpl.fields[fieldName].fieldType ){
@@ -164,7 +164,7 @@ module.exports = function(broccoli){
 
 		var newData = {};
 		if( typeof(modId) === typeof('') ){
-			var modTpl = _this.getModule( modId, subModName );
+			var modTpl = _this.getModuleByInternalId( modId, subModName );
 			newData = new (function(modId, subModName){
 				this.modId =  modId,
 				this.fields = {}
@@ -341,7 +341,7 @@ module.exports = function(broccoli){
 			var tmpCur = cur.split('.');
 			var container = tmpCur[0];
 			var fieldName = tmpCur[1];
-			var modTpl = _this.getModule( data.modId, data.subModName );
+			var modTpl = _this.getModuleByInternalId( data.modId, data.subModName );
 
 			if( container == 'bowl' ){
 				// ルート要素だったら
@@ -678,7 +678,7 @@ module.exports = function(broccoli){
 			var tmpCur = cur.split('.');
 			var container = tmpCur[0];
 			var fieldName = tmpCur[1];
-			var modTpl = _this.getModule( data.modId, data.subModName );
+			var modTpl = _this.getModuleByInternalId( data.modId, data.subModName );
 
 			if( container == 'bowl' ){
 				// ルート要素だったらスキップして次へ
