@@ -7505,8 +7505,12 @@ module.exports = function(broccoli){
 					$select.append( $option );
 				}
 				// 選択されていなかったら default を選択。
-				if( !$select.find('input[type=radio]:checked').length && mod.default ){
-					$select.find('input[type=radio][value='+mod.default+']').attr({'checked':'checked'});
+				if( !$select.find('input[type=radio]:checked').length ){
+					var defaultValue = mod.default;
+					if( defaultValue === undefined ){
+						defaultValue = '';
+					}
+				   $select.find('input[type=radio][value="'+defaultValue+'"]').attr({'checked':'checked'});
 				}
 				// それでも選択されていなかったら、最初の選択肢を選択。
 				if( !$select.find('input[type=radio]:checked').length ){
