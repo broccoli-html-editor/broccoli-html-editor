@@ -94,7 +94,7 @@ class testHelper{
 				$fin .= $htmls['secondly']."\n";
 				$fin .= '        </div><!-- /secondly -->'."\n";
 				$fin .= '        <footer>'."\n";
-				$fin .= '            <a href="../editpage/">top</a>, <a href="http://www.pxt.jp/" target="_blank">pxt</a>'."\n";
+				$fin .= '            <a href="../editpage/">top</a>, <a href="https://www.pxt.jp/" target="_blank">pxt</a>'."\n";
 				$fin .= '            <form action="javascript:alert(\'form submit done.\');">'."\n";
 				$fin .= '                <input type="submit" value="submit!" />'."\n";
 				$fin .= '            </form>'."\n";

@@ -593,7 +593,7 @@ module.exports = function(broccoli){
 		callback = callback || function(){};
 		var _this = this;
 		var resourceIdList = [];
-		var modTpl = _this.getModule( objInstance.modId, objInstance.subModName );
+		var modTpl = _this.getModuleByInternalId( objInstance.modId, objInstance.subModName );
 
 		// 初期データ追加
 		var fieldList = _.keys( modTpl.fields );
