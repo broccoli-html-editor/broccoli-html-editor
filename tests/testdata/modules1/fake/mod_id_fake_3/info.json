@@ -9,6 +9,9 @@
             "image": {
                 "type": "image"
             },
+            "module": {
+                "fieldType": "module"
+            },
             "loop": {
                 "fieldType": "loop"
             }
@@ -21,6 +24,9 @@
                     },
                     "image_in_loop": {
                         "type": "image"
+                    },
+                    "module_in_loop": {
+                        "fieldType": "module"
                     }
                 }
             }

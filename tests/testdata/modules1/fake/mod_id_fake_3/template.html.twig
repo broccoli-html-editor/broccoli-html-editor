@@ -4,12 +4,14 @@
     </p>
     <div>{{ text }}</div>
     <div><img src="{{ image }}" alt="" /></div>
+    <div>{{ module }}</div>
 
 {% for loopRow in loop %}
     {{ loopitem_start('loop') }}
     <div>
         <div>{{ loopRow.text_in_loop }}</div>
         <div><img src="{{ loopRow.image_in_loop }}" alt="" /></div>
+        <div>{{ loopRow.module_in_loop }}</div>
     </div>
     {{ loopitem_end() }}
 {% endfor %}
