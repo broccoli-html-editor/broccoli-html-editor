@@ -5,7 +5,8 @@ module.exports = function(){
 	delete(require.cache[require('path').resolve(__filename)]);
 
 	var _allModuleList, //キャッシュ
-		_moduleCollection = {};
+		_moduleCollection = {},
+		_moduleInternalIdMap = {};
 	;
 
 	var _this = this;
@@ -289,7 +290,30 @@ module.exports = function(){
 			return targetModuleId;
 		}
 		return targetModuleId;
-}
+	}
+
+
+	/**
+	 * モジュールの内部IDを補完して完成させる
+	 */
+	this.getModuleInternalId = function($targetModuleId, $internalIdTemplate){
+		var $internalId = $targetModuleId;
+
+		var $tmpParsedModuleInternalIdBefore = this.parseModuleId($targetModuleId);
+		var $tmpParsedModuleInternalIdAfter = this.parseModuleId($internalIdTemplate);
+		if( typeof($tmpParsedModuleInternalIdAfter['package']) == typeof('') && $tmpParsedModuleInternalIdAfter['package'].length ){
+			$tmpParsedModuleInternalIdBefore['package'] = $tmpParsedModuleInternalIdAfter['package'];
+		}
+		if( typeof($tmpParsedModuleInternalIdAfter['category']) == typeof('') && $tmpParsedModuleInternalIdAfter['category'].length ){
+			$tmpParsedModuleInternalIdBefore['category'] = $tmpParsedModuleInternalIdAfter['category'];
+		}
+		if( typeof($tmpParsedModuleInternalIdAfter['module']) == typeof('') && $tmpParsedModuleInternalIdAfter['module'].length ){
+			$tmpParsedModuleInternalIdBefore['module'] = $tmpParsedModuleInternalIdAfter['module'];
+		}
+		$internalId = $tmpParsedModuleInternalIdBefore['package']+':'+$tmpParsedModuleInternalIdBefore['category']+'/'+$tmpParsedModuleInternalIdBefore['module'];
+
+		return $internalId;
+	}
 
 	/**
 	 * 全モジュールの一覧を取得する
@@ -299,13 +323,14 @@ module.exports = function(){
 	this.getAllModuleList = function(callback){
 		if(_allModuleList){
 			// キャッシュがあればそれを返す
-			// setTimeout(function(){
-				callback(_allModuleList);
-			// }, 0);
+			callback(_allModuleList);
 			return;
 		}
 		require( './getAllModuleList.js' )(this, function(result){
 			_allModuleList = result;
+			for(var idx in _allModuleList){
+				_moduleInternalIdMap[_allModuleList[idx].internalId] = idx;
+			}
 			callback(result);
 		});
 		return this;
@@ -331,9 +356,13 @@ module.exports = function(){
 	 * @param  {String}   moduleId モジュールID
 	 * @param  {String}   subModName サブモジュール名
 	 * @param  {Function} callback  callback function.
-	 * @return {Object}            this
+	 * @return {Void}            Void
 	 */
 	this.getModule = function(moduleId, subModName, callback){
+		if( !moduleId.length ){
+			callback(false);
+			return;
+		}
 		var rtn = _moduleCollection[moduleId];
 		if( rtn === false ){
 			// 過去に生成を試みて、falseになっていた場合
@@ -342,7 +371,7 @@ module.exports = function(){
 					callback(false);
 				}); })
 			;
-			return this;
+			return;
 		}
 		if( rtn === undefined ){
 			var mod = _this.createModuleInstance(moduleId);
@@ -355,11 +384,12 @@ module.exports = function(){
 						callback(false);
 					}); })
 				;
-				return this;
+				return;
 			}
 
 			_moduleCollection[moduleId].init(function(){
 				var rtn = _moduleCollection[moduleId];
+				_moduleInternalIdMap[_moduleCollection[moduleId].internalId] = moduleId;
 				if( typeof(subModName) === typeof('') ){
 					callback(rtn.subModule[subModName]);
 					return;
@@ -367,7 +397,7 @@ module.exports = function(){
 				callback(rtn);
 				return;
 			});
-			return this;
+			return;
 		}
 		if( typeof(subModName) === typeof('') ){
 			if( !rtn.subModule || !rtn.subModule[subModName] ){
@@ -377,21 +407,64 @@ module.exports = function(){
 						callback(false);
 					}); })
 				;
-				return this;
+				return;
 			}
 			new Promise(function(rlv){rlv();})
 				.then(function(){ return new Promise(function(rlv, rjt){
 					callback(rtn.subModule[subModName]);
 				}); })
 			;
-			return this;
+			return;
 		}
 		new Promise(function(rlv){rlv();})
 			.then(function(){ return new Promise(function(rlv, rjt){
 				callback(rtn);
 			}); })
 		;
-		return this;
+		return;
+	}
+
+	/**
+	 * internalIdから、モジュールオブジェクトを取得する
+	 * @param  {String}   moduleInternalId モジュール内部ID
+	 * @param  {String}   subModName サブモジュール名
+	 * @param  {Function} callback  callback function.
+	 * @return {Void}            Void
+	 */
+	this.getModuleByInternalId = function(moduleInternalId, subModName, callback){
+		callback = callback || function(){};
+		var moduleId = null;
+		new Promise(function(rlv){rlv();})
+			.then(function(){ return new Promise(function(rlv, rjt){
+				if( typeof(_moduleInternalIdMap[moduleInternalId]) === typeof('') ){
+					// キャッシュ済みならそれを返す。
+					moduleId = _moduleInternalIdMap[moduleInternalId];
+					rlv();
+					return;
+				}else{
+					//キャッシュされていなければ全量を生成する。
+					_this.getAllModuleList(function(){
+						if( typeof(_moduleInternalIdMap[moduleInternalId]) === typeof('') ){
+							// 生成したなかにあれば返す。
+							moduleId = _moduleInternalIdMap[moduleInternalId];
+						}else{
+							// なければ、結果 false を記録して false を返す。
+							_moduleInternalIdMap[moduleInternalId] = false;
+							callback(false);
+							return;
+						}
+						rlv();
+					});
+					return;
+				}
+			}); })
+			.then(function(){ return new Promise(function(rlv, rjt){
+				_this.getModule(moduleId, subModName, function(rtn){
+					callback(rtn);
+				});
+			}); })
+		;
+		return;
 	}
 
 	/**
@@ -419,7 +492,7 @@ module.exports = function(){
 				callback(md);
 			}); })
 		;
-		return this;
+		return;
 	}
 
 	/**

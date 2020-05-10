@@ -15,6 +15,11 @@ module.exports = function(broccoli){
 	var _contentsSourceData = broccoli.getBootupInfomations().contentsDataJson; // <= data.jsonの中身
 	var _modTpls = broccoli.getBootupInfomations().allModuleList; // <- module の一覧
 
+	var _moduleInternalIdMap = {};
+	for(var idx in _modTpls){
+		_moduleInternalIdMap[_modTpls[idx].internalId] = idx;
+	}
+
 	/**
 	 * 初期化
 	 */
@@ -74,12 +79,13 @@ module.exports = function(broccoli){
 		var tmpCur = cur.split('.');
 		var container = tmpCur[0];
 		var fieldName = tmpCur[1];
-		var modTpl = _this.getModule( data.modId, data.subModName );
+		var modTpl = _this.getModuleByInternalId( data.modId, data.subModName );
 
 		if( container == 'bowl' ){
 			return this.get( aryPath, data.bowl[fieldName] );
 		}
 
+		modTpl.fields[fieldName].fieldType = modTpl.fields[fieldName].fieldType || 'input';
 		if( !aryPath.length ){
 			// ここが最後のインスタンスだったら
 			if( !data.fields ){
@@ -123,7 +129,7 @@ module.exports = function(broccoli){
 		if( !current ){
 			callback([]);return;
 		}
-		var modTpl = _this.getModule( current.modId, current.subModName );
+		var modTpl = _this.getModuleByInternalId( current.modId, current.subModName );
 		var targetFieldNames = {};
 		for( var fieldName in modTpl.fields ){
 			switch( modTpl.fields[fieldName].fieldType ){
@@ -158,19 +164,20 @@ module.exports = function(broccoli){
 
 		var newData = {};
 		if( typeof(modId) === typeof('') ){
-			newData = new (function(){
-				this.modId = modId ,
+			var modTpl = _this.getModuleByInternalId( modId, subModName );
+			newData = new (function(modId, subModName){
+				this.modId =  modId,
 				this.fields = {}
 				if( typeof(subModName) === typeof('') ){
 					this.subModName = subModName;
 				}
-			})(modId, subModName);
-			var modTpl = _this.getModule( newData.modId, subModName );
+			})(modTpl.internalId, subModName);
 
 			// 初期データ追加
 			var fieldList = _.keys( modTpl.fields );
 			for( var idx in fieldList ){
 				var fieldName = fieldList[idx];
+				modTpl.fields[fieldName].fieldType = modTpl.fields[fieldName].fieldType || 'input';
 				if( modTpl.fields[fieldName].fieldType == 'input' ){
 					newData.fields[fieldName] = '';
 					if( modTpl.fields[fieldName].default !== undefined ){
@@ -206,7 +213,7 @@ module.exports = function(broccoli){
 			var tmpCur = cur.split('.');
 			var container = tmpCur[0];
 			var fieldName = tmpCur[1];
-			var modTpl = _this.getModule( data.modId, data.subModName );
+			var modTpl = _this.getModuleByInternalId( data.modId, data.subModName );
 
 			if( container == 'bowl' ){
 				// ルート要素だったらスキップして次へ
@@ -221,11 +228,12 @@ module.exports = function(broccoli){
 				if( !data.fields[fieldName] ){
 					data.fields[fieldName] = [];
 				}
+				modTpl.fields[fieldName].fieldType = modTpl.fields[fieldName].fieldType || 'input';
 				if( modTpl.fields[fieldName].fieldType == 'input'){
 					data.fields[fieldName] = newData;
 				}else if( modTpl.fields[fieldName].fieldType == 'module'){
 					data.fields[fieldName] = data.fields[fieldName]||[];
-					var newDataModTpl = _this.getModule( newData.modId );
+					var newDataModTpl = _this.getModuleByInternalId( newData.modId );
 					if( modTpl.fields[fieldName]['maxLength'] && data.fields[fieldName].length >= modTpl.fields[fieldName]['maxLength'] ){
 						// 最大件数に達していたら、追加できない
 						broccoli.message('モジュールの数が最大件数 '+modTpl.fields[fieldName]['maxLength']+' に達しています。');
@@ -288,6 +296,7 @@ module.exports = function(broccoli){
 				return true;
 			}else{
 				// もっと深かったら
+				modTpl.fields[fieldName].fieldType = modTpl.fields[fieldName].fieldType || 'input';
 				if( modTpl.fields[fieldName].fieldType == 'input'){
 					return set_r( aryPath, data.fields[fieldName], newData );
 				}else if( modTpl.fields[fieldName].fieldType == 'module'){
@@ -332,7 +341,7 @@ module.exports = function(broccoli){
 			var tmpCur = cur.split('.');
 			var container = tmpCur[0];
 			var fieldName = tmpCur[1];
-			var modTpl = _this.getModule( data.modId, data.subModName );
+			var modTpl = _this.getModuleByInternalId( data.modId, data.subModName );
 
 			if( container == 'bowl' ){
 				// ルート要素だったら
@@ -344,6 +353,7 @@ module.exports = function(broccoli){
 				return set_r( aryPath, data.bowl[fieldName], newData );
 			}
 
+			modTpl.fields[fieldName].fieldType = modTpl.fields[fieldName].fieldType || 'input';
 			if( !aryPath.length ){
 				// ここが最後のインスタンスだったら
 				if( !data.fields ){
@@ -518,6 +528,7 @@ module.exports = function(broccoli){
 		it79.ary(
 			modTpl.fields,
 			function(it1, field, fieldName){
+				modTpl.fields[fieldName].fieldType = modTpl.fields[fieldName].fieldType || 'input';
 				if( modTpl.fields[fieldName].fieldType == 'input' ){
 					broccoli.getFieldDefinition(modTpl.fields[fieldName].type).duplicateData( objInstance.fields[fieldName], function( result ){
 						newData.fields[fieldName] = result;
@@ -582,13 +593,14 @@ module.exports = function(broccoli){
 		callback = callback || function(){};
 		var _this = this;
 		var resourceIdList = [];
-		var modTpl = _this.getModule( objInstance.modId, objInstance.subModName );
+		var modTpl = _this.getModuleByInternalId( objInstance.modId, objInstance.subModName );
 
 		// 初期データ追加
 		var fieldList = _.keys( modTpl.fields );
 		it79.ary(
 			modTpl.fields,
 			function(it1, field, fieldName){
+				modTpl.fields[fieldName].fieldType = modTpl.fields[fieldName].fieldType || 'input';
 				if( modTpl.fields[fieldName].fieldType == 'input' ){
 					broccoli.getFieldDefinition(modTpl.fields[fieldName].type).extractResourceId( objInstance.fields[fieldName], function( result ){
 						resourceIdList = resourceIdList.concat(result);
@@ -666,13 +678,14 @@ module.exports = function(broccoli){
 			var tmpCur = cur.split('.');
 			var container = tmpCur[0];
 			var fieldName = tmpCur[1];
-			var modTpl = _this.getModule( data.modId, data.subModName );
+			var modTpl = _this.getModuleByInternalId( data.modId, data.subModName );
 
 			if( container == 'bowl' ){
 				// ルート要素だったらスキップして次へ
 				return remove_r( aryPath, data.bowl[fieldName] );
 			}
 
+			modTpl.fields[fieldName].fieldType = modTpl.fields[fieldName].fieldType || 'input';
 			if( !aryPath.length ){
 				// ここが最後のインスタンスだったら
 				if( !data.fields ){
@@ -794,6 +807,17 @@ module.exports = function(broccoli){
 			return rtn.subModule[subModName];
 		}
 		return rtn;
+	}
+
+	/**
+	 * internalIdからモジュールを取得 (同期)
+	 */
+	this.getModuleByInternalId = function( modInternalId, subModName ){
+		var modId = _moduleInternalIdMap[modInternalId];
+		if( typeof(modId) !== typeof('') || !modId.length ){
+			return false;
+		}
+		return this.getModule(modId, subModName);
 	}
 
 	/**

@@ -35,7 +35,7 @@ module.exports = function(broccoli){
 		function buildInstance(data, parentInstancePath, subModName, callback){
 			callback = callback||function(){};
 			// console.log(data);
-			var mod = broccoli.contentsSourceData.getModule(data.modId, subModName);
+			var mod = broccoli.contentsSourceData.getModuleByInternalId(data.modId, subModName);
 			if( mod === false ){
 				mod = {
 					'id': '_sys/unknown',
@@ -160,6 +160,7 @@ module.exports = function(broccoli){
 									.attr({
 										'data-broccoli-instance-path':instancePath,
 										'data-broccoli-mod-id': mod.id,
+										'data-broccoli-mod-internal-id': mod.internalId,
 										'data-broccoli-sub-mod-name': row.name,
 										'data-broccoli-is-appender':'yes',
 										'data-broccoli-is-instance-tree-view': 'yes',

@@ -184,7 +184,7 @@
                                     "fields": {
                                         "href": "",
                                         "image_src": {
-                                            "resKey": "b949e7429bdfed6bd195a89f69fd2c13",
+                                            "resKey": "259c0dd8b8365f6a3fd399aa47ce6196",
                                             "path": "./index_files/resources/otosan.jpg",
                                             "resType": "",
                                             "webUrl": ""
@@ -1403,6 +1403,216 @@
                                         }
                                     },
                                     "subModName": "loop",
+                                    "anchor": "",
+                                    "dec": ""
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "modId": "testMod2:dev/module_id_fake",
+                        "fields": []
+                    },
+                    {
+                        "modId": "testMod2:fake/mod_id_fake_2",
+                        "fields": []
+                    },
+                    {
+                        "modId": "testMod1:unit/module_id_fake_3",
+                        "fields": {
+                            "text": {
+                                "src": "テストテキスト。",
+                                "editor": "markdown"
+                            },
+                            "loop": [
+                                {
+                                    "modId": "testMod1:unit/module_id_fake_3",
+                                    "fields": {
+                                        "text_in_loop": {
+                                            "src": "内容テキスト1",
+                                            "editor": "markdown"
+                                        },
+                                        "image_in_loop": {
+                                            "resKey": "d4e81c969df569feda3169570b38cfdb",
+                                            "resType": "",
+                                            "webUrl": "",
+                                            "path": "./index_files/resources/photo009_thumb.jpg"
+                                        },
+                                        "module_in_loop": [
+                                            {
+                                                "modId": "PlainHTMLElements:PlainHTML/MultiText",
+                                                "fields": {
+                                                    "main": {
+                                                        "src": "internalId の中のループフィールドの中のモジュールフィールド。",
+                                                        "editor": "markdown"
+                                                    }
+                                                },
+                                                "anchor": "",
+                                                "dec": ""
+                                            }
+                                        ]
+                                    },
+                                    "subModName": "loop",
+                                    "anchor": "",
+                                    "dec": ""
+                                },
+                                {
+                                    "modId": "testMod1:unit/module_id_fake_3",
+                                    "fields": {
+                                        "text_in_loop": {
+                                            "src": "内容テキストその3。",
+                                            "editor": "markdown"
+                                        },
+                                        "image_in_loop": {
+                                            "resKey": "3988546747b93bedf3fa244d2da5992d",
+                                            "path": "./index_files/resources/dummy_image2.png",
+                                            "resType": "",
+                                            "webUrl": ""
+                                        },
+                                        "module_in_loop": []
+                                    },
+                                    "subModName": "loop",
+                                    "anchor": "",
+                                    "dec": ""
+                                },
+                                {
+                                    "modId": "testMod1:unit/module_id_fake_3",
+                                    "fields": {
+                                        "text_in_loop": {
+                                            "src": "内容テキストその2。",
+                                            "editor": "markdown"
+                                        },
+                                        "image_in_loop": {
+                                            "resKey": "38a7596742539b6b99eacbf0cb9b5b5d",
+                                            "resType": "",
+                                            "webUrl": "",
+                                            "path": "./index_files/resources/photo010_thumb.jpg"
+                                        },
+                                        "module_in_loop": []
+                                    },
+                                    "subModName": "loop",
+                                    "anchor": "",
+                                    "dec": ""
+                                }
+                            ],
+                            "image": {
+                                "resKey": "bf28accae44ebd3a09886fca59f17d50",
+                                "resType": "",
+                                "webUrl": "",
+                                "path": "./index_files/resources/dummy_image.png"
+                            },
+                            "module": [
+                                {
+                                    "modId": "PlainHTMLElements:PlainHTML/MultiText",
+                                    "fields": {
+                                        "main": {
+                                            "src": "internalId の中のモジュールフィールド。",
+                                            "editor": "markdown"
+                                        }
+                                    },
+                                    "anchor": "",
+                                    "dec": ""
+                                }
+                            ]
+                        },
+                        "anchor": "",
+                        "dec": ""
+                    },
+                    {
+                        "modId": "testMod2:units/cols2",
+                        "fields": {
+                            "column1": [
+                                {
+                                    "modId": "testMod2:dev/module_id_fake",
+                                    "fields": []
+                                },
+                                {
+                                    "modId": "testMod2:fake/mod_id_fake_2",
+                                    "fields": []
+                                }
+                            ],
+                            "column2": [
+                                {
+                                    "modId": "testMod1:unit/module_id_fake_3",
+                                    "fields": {
+                                        "text": {
+                                            "src": "テストテキスト",
+                                            "editor": "markdown"
+                                        },
+                                        "image": {
+                                            "resKey": "8b9e3b84d78bf91aeb16cf12bbbcfea3",
+                                            "path": "./index_files/resources/dummy_image_gif.gif",
+                                            "resType": "",
+                                            "webUrl": ""
+                                        },
+                                        "loop": [
+                                            {
+                                                "modId": "testMod1:unit/module_id_fake_3",
+                                                "fields": {
+                                                    "text_in_loop": {
+                                                        "src": "入れ子状態の中のテキスト1。",
+                                                        "editor": "markdown"
+                                                    },
+                                                    "image_in_loop": {
+                                                        "resKey": "3bf83cf10cffc0777153655fde7cca3b",
+                                                        "path": "./index_files/resources/dummy_image3.png",
+                                                        "resType": "",
+                                                        "webUrl": ""
+                                                    },
+                                                    "module_in_loop": [
+                                                        {
+                                                            "modId": "testMod2:fake/mod_id_fake_2",
+                                                            "fields": []
+                                                        }
+                                                    ]
+                                                },
+                                                "subModName": "loop",
+                                                "anchor": "",
+                                                "dec": ""
+                                            },
+                                            {
+                                                "modId": "testMod1:unit/module_id_fake_3",
+                                                "fields": {
+                                                    "text_in_loop": {
+                                                        "src": "テストテキスト2",
+                                                        "editor": "markdown"
+                                                    },
+                                                    "image_in_loop": {
+                                                        "resKey": "d16bbcca00a3d90df12da7249cac5901",
+                                                        "path": "./index_files/resources/dummy_image4.png",
+                                                        "resType": "",
+                                                        "webUrl": ""
+                                                    },
+                                                    "module_in_loop": [
+                                                        {
+                                                            "modId": "PlainHTMLElements:PlainHTML/image",
+                                                            "fields": {
+                                                                "href": "",
+                                                                "image_src": {
+                                                                    "resKey": "30d5fd51a84a04ee66c8b525e8e0a0c2",
+                                                                    "path": "./index_files/resources/photo007_thumb.jpg",
+                                                                    "resType": "",
+                                                                    "webUrl": ""
+                                                                },
+                                                                "alt_text": ""
+                                                            },
+                                                            "anchor": "",
+                                                            "dec": ""
+                                                        }
+                                                    ]
+                                                },
+                                                "subModName": "loop",
+                                                "anchor": "",
+                                                "dec": ""
+                                            }
+                                        ],
+                                        "module": [
+                                            {
+                                                "modId": "testMod2:dev/module_id_fake",
+                                                "fields": []
+                                            }
+                                        ]
+                                    },
                                     "anchor": "",
                                     "dec": ""
                                 }

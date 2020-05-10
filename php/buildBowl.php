@@ -50,7 +50,7 @@ class buildBowl{
 	public function build(){
 		$d = json_decode('{"html": ""}');
 
-		$mod = $this->broccoli->getModule( @$this->data->modId, @$this->options['subModName'] );
+		$mod = $this->broccoli->getModuleByInternalId( @$this->data->modId, @$this->options['subModName'] );
 		if($mod === false){
 			$mod = $this->broccoli->getModule( '_sys/unknown', null );
 		}
@@ -66,7 +66,7 @@ class buildBowl{
 			$tplDataObj = array();
 
 			foreach($mod->fields as $fieldName=>$field){
-				if( @$field->fieldType == 'input' ){
+				if( !property_exists($field, 'fieldType') || !strlen($field->fieldType) || $field->fieldType == 'input' ){
 					// input field
 					$fieldDef = $this->broccoli->getFieldDefinition( $field->type ); // フィールドタイプ定義を呼び出す
 					$tmpVal = '';
@@ -80,9 +80,7 @@ class buildBowl{
 					$tmpVal .= $html;
 					$html = $fieldDef->bind( @$fieldData[$field->name], 'finalize', $field );
 					$tmpValFin .= $html;
-					if( !@$field->hidden ){//← "hidden": true だったら、非表示(=出力しない)
-						$tplDataObj[$field->name] = $tmpVal;
-					}
+					$tplDataObj[$field->name] = $tmpVal;
 					@$this->nameSpace['vars'][$field->name] = array(
 						"fieldType" => "input",
 						"type" => $field->type,
@@ -94,7 +92,7 @@ class buildBowl{
 						'val' => $tmpValFin
 					);
 
-				}elseif( @$field->fieldType == 'module' ){
+				}elseif( $field->fieldType == 'module' ){
 					// module field
 					$opt = json_decode( json_encode($this->options) );
 					$opt->instancePath .= '/fields.'.$field->name;
@@ -125,9 +123,7 @@ class buildBowl{
 						);
 					}
 
-					if( !property_exists($field, 'hidden') || !$field->hidden ){//← "hidden": true だったら、非表示(=出力しない)
-						$tplDataObj[$field->name] = $tmp_tplDataObj;
-					}
+					$tplDataObj[$field->name] = $tmp_tplDataObj;
 					$this->nameSpace['vars'][$field->name] = array(
 						"fieldType" => "module",
 						"val" => $tmp_tplDataObj
@@ -137,7 +133,7 @@ class buildBowl{
 						"val" => $tmp_tplDataObj
 					);
 
-				}elseif( @$field->fieldType == 'loop' ){
+				}elseif( $field->fieldType == 'loop' ){
 					// loop field
 					$tmpSearchResult = $mod->searchEndTag( $src, 'loop' );
 					$src = $tmpSearchResult['nextSrc'];

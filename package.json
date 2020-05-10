@@ -1,6 +1,6 @@
 {
   "name": "broccoli-html-editor",
-  "version": "0.3.16",
+  "version": "0.3.17",
   "private": false,
   "description": "GUI HTML Editor Library.",
   "main": "libs/main.js",
@@ -44,7 +44,7 @@
   "devDependencies": {
     "biflora": "0.0.1-alpha.1",
     "bootstrap": "^3.4.1",
-    "gulp": "^3.8.10",
+    "gulp": "^4.0.2",
     "gulp-autoprefixer": "^2.3.1",
     "gulp-browserify": "^0.5.1",
     "gulp-concat": "^2.6.0",

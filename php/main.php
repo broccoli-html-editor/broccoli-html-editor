@@ -35,6 +35,7 @@ class broccoliHtmlEditor{
 
 	/** cache */
 	private $_moduleCollection = array();
+	private $_moduleInternalIdMap = array();
 
 	/** Error Report */
 	private $errors = array();
@@ -219,12 +220,12 @@ class broccoliHtmlEditor{
 		if( !is_string($moduleId) ){
 			return false;
 		}
-		if( !preg_match('/^(?:([0-9a-zA-Z\\_\\-\\.]*?)\\:)?([^\\/\\:\\s]+)\\/([^\\/\\:\\s]+)$/', $moduleId, $matched) ){
+		if( !preg_match('/^(?:([0-9a-zA-Z\\_\\-\\.]*?)\\:)?([^\\/\\:\\s]*)\\/([^\\/\\:\\s]*)$/', $moduleId, $matched) ){
 			return false;
 		}
-		$rtn['package'] = $matched[1];
-		$rtn['category'] = $matched[2];
-		$rtn['module'] = $matched[3];
+		$rtn['package'] = (strlen($matched[1]) ? $matched[1] : null);
+		$rtn['category'] = (strlen($matched[2]) ? $matched[2] : null);
+		$rtn['module'] = (strlen($matched[3]) ? $matched[3] : null);
 
 		if( !strlen($rtn['package']) ){
 			$rtn['package'] = null;
@@ -423,6 +424,12 @@ class broccoliHtmlEditor{
 				}
 				$rtn['categories'][$idx]['modules'][$row2]['deprecated'] = (@$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->deprecated ? $rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->deprecated : false);
 
+				// moduleInternalId
+				$rtn['categories'][$idx]['modules'][$row2]['moduleInternalId'] = $moduleId;
+				if( is_object($rtn['categories'][$idx]['modules'][$row2]['moduleInfo']) && property_exists( $rtn['categories'][$idx]['modules'][$row2]['moduleInfo'], 'id' ) ){
+					$rtn['categories'][$idx]['modules'][$row2]['moduleInternalId'] = $this->getModuleInternalId($moduleId, $rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->id);
+				}
+
 				// clip.json
 				$rtn['categories'][$idx]['modules'][$row2]['clip'] = false;
 				if( is_file( $realpath.'/clip.json' ) ){
@@ -461,8 +468,6 @@ class broccoliHtmlEditor{
 
 	/**
 	 * enabledParents または enabledChildren を正規化する
-	 * @param {*} enabledParentsOrChildren
-	 * @param {*} currentModuleId
 	 */
 	public function normalizeEnabledParentsOrChildren($enabledParentsOrChildren, $currentModuleId){
 		$enabledParentsOrChildren = ($enabledParentsOrChildren ? $enabledParentsOrChildren : array());
@@ -477,8 +482,6 @@ class broccoliHtmlEditor{
 
 	/**
 	 * モジュールIDを補完して完成させる
-	 * @param {*} targetModuleId
-	 * @param {*} currentModuleId
 	 */
 	private function completeModuleId($targetModuleId, $currentModuleId){
 		$currentModuleId = ($currentModuleId ? $currentModuleId : '');
@@ -498,9 +501,27 @@ class broccoliHtmlEditor{
 	}
 
 	/**
+	 * モジュールの内部IDを補完して完成させる
+	 */
+	public function getModuleInternalId($targetModuleId, $internalIdTemplate = null){
+		$internalId = $targetModuleId;
+		$tmpParsedModuleInternalIdBefore = $this->parseModuleId($internalId);
+		$tmpParsedModuleInternalIdAfter = $this->parseModuleId($internalIdTemplate);
+		if( strlen($tmpParsedModuleInternalIdAfter['package']) ){
+			$tmpParsedModuleInternalIdBefore['package'] = $tmpParsedModuleInternalIdAfter['package'];
+		}
+		if( strlen($tmpParsedModuleInternalIdAfter['category']) ){
+			$tmpParsedModuleInternalIdBefore['category'] = $tmpParsedModuleInternalIdAfter['category'];
+		}
+		if( strlen($tmpParsedModuleInternalIdAfter['module']) ){
+			$tmpParsedModuleInternalIdBefore['module'] = $tmpParsedModuleInternalIdAfter['module'];
+		}
+		$internalId = $tmpParsedModuleInternalIdBefore['package'].':'.$tmpParsedModuleInternalIdBefore['category'].'/'.$tmpParsedModuleInternalIdBefore['module'];
+		return $internalId;
+	}
+
+	/**
 	 * 全モジュールの一覧を取得する
-	 * @param  {Function} callback  callback function.
-	 * @return {Object}             this
 	 */
 	public function getAllModuleList(){
 		static $_allModuleList = null;
@@ -528,6 +549,7 @@ class broccoliHtmlEditor{
 			$obj->init();
 			$data['rtn'][$modId] = json_decode('{}');
 			$data['rtn'][$modId]->id = $obj->id;
+			$data['rtn'][$modId]->internalId = $obj->internalId;
 			$data['rtn'][$modId]->fields = $obj->fields;
 			$data['rtn'][$modId]->isSystemModule = $obj->isSystemModule;
 			$data['rtn'][$modId]->isSingleRootElement = $obj->isSingleRootElement;
@@ -542,6 +564,7 @@ class broccoliHtmlEditor{
 					// var_dump($data['rtn'][$modId]->subModule->{$idx});
 					// var_dump($obj->subModule->{$idx});
 					$data['rtn'][$modId]->subModule->{$idx}->id = $obj->subModule->{$idx}->id;
+					$data['rtn'][$modId]->subModule->{$idx}->internalId = $obj->subModule->{$idx}->internalId;
 					$data['rtn'][$modId]->subModule->{$idx}->subModName = $obj->subModule->{$idx}->subModName;
 					$data['rtn'][$modId]->subModule->{$idx}->fields = $obj->subModule->{$idx}->fields;
 					$data['rtn'][$modId]->subModule->{$idx}->isSystemModule = $obj->subModule->{$idx}->isSystemModule;
@@ -572,12 +595,11 @@ class broccoliHtmlEditor{
 
 	/**
 	 * モジュールオブジェクトを取得する
-	 * @param  {String}   moduleId モジュールID
-	 * @param  {String}   subModName サブモジュール名
-	 * @param  {Function} callback  callback function.
-	 * @return {Object}            this
 	 */
 	public function getModule($moduleId, $subModName = null){
+		if(!strlen($moduleId)){
+			return false;
+		}
 		$rtn = null;
 		if( array_key_exists($moduleId, $this->_moduleCollection) ){
 			$rtn = $this->_moduleCollection[$moduleId];
@@ -597,6 +619,7 @@ class broccoliHtmlEditor{
 			}
 			$this->_moduleCollection[$moduleId]->init();
 			$rtn = $this->_moduleCollection[$moduleId];
+			$this->_moduleInternalIdMap[$this->_moduleCollection[$moduleId]->internalId] = $moduleId;
 			if( is_string($subModName) ){
 				return $rtn->subModule->{$subModName};
 			}
@@ -611,6 +634,31 @@ class broccoliHtmlEditor{
 			return $rtn->subModule->{$subModName};
 		}
 
+		return $rtn;
+	}
+
+	/**
+	 * internaiIdから、モジュールオブジェクトを取得する
+	 */
+	public function getModuleByInternalId($moduleInternalId, $subModName = null){
+		$rtn = null;
+		$moduleId = null;
+		if( array_key_exists($moduleInternalId, $this->_moduleInternalIdMap) ){
+			// キャッシュ済みならそれを返す。
+			$moduleId = $this->_moduleInternalIdMap[$moduleInternalId];
+		}else{
+			//キャッシュされていなければ全量を生成する。
+			$this->getAllModuleList();
+			if( array_key_exists($moduleInternalId, $this->_moduleInternalIdMap) ){
+				// 生成したなかにあれば返す。
+				$moduleId = $this->_moduleInternalIdMap[$moduleInternalId];
+			}else{
+				// なければ、結果 false を記録して false を返す。
+				$this->_moduleInternalIdMap[$moduleInternalId] = false;
+				return false;
+			}
+		}
+		$rtn = $this->getModule($moduleId, $subModName);
 		return $rtn;
 	}
 

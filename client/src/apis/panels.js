@@ -57,6 +57,9 @@ module.exports = function(broccoli){
 		// 	return;
 		// }
 
+		var modInfo = broccoli.contentsSourceData.getModuleByInternalId($this.modId);
+			//postMessageから得られるモジュールのidは、実際にはinternalIdを格納するため、ここで翻訳する。
+
 		$panels.append($panel);
 		$panel
 			.css({
@@ -70,9 +73,10 @@ module.exports = function(broccoli){
 			.attr({
 				'data-broccoli-instance-path': $this.instancePath,
 				'data-broccoli-is-appender': 'no',
-				'data-broccoli-mod-id': $this.modId,
+				'data-broccoli-mod-id': modInfo.id,
+				'data-broccoli-mod-internal-id': modInfo.internalId,
 				'data-broccoli-sub-mod-name': $this.subModName,
-				'draggable': (isAppender ? false : true) // <- HTML5のAPI http://www.htmq.com/dnd/
+				'draggable': (isAppender ? false : true) // <- HTML5のAPI https://developer.mozilla.org/ja/docs/Web/API/HTML_Drag_and_Drop_API
 			})
 			.append( $('<div>')
 				.addClass('broccoli--panel-drop-to-insert-here')
@@ -289,6 +293,7 @@ module.exports = function(broccoli){
 				transferData = JSON.parse(transferData);
 			} catch (e) {}
 			var modId = transferData["modId"];
+			var modInternalId = transferData["modInternalId"];
 			var modClip = transferData["modClip"];
 			try {
 				modClip = JSON.parse(modClip);
@@ -367,7 +372,7 @@ module.exports = function(broccoli){
 
 
 			}else{
-				broccoli.contentsSourceData.addInstance( modId, moveTo, function(result){
+				broccoli.contentsSourceData.addInstance( modInternalId, moveTo, function(result){
 					if(!result){
 						broccoli.closeProgress(function(){
 							callback();
@@ -410,9 +415,9 @@ module.exports = function(broccoli){
 
 		if( $this.attr('data-broccoli-sub-mod-name') && $this.attr('data-broccoli-is-appender') == 'yes' ){
 			// loopモジュールの繰り返し要素を増やします。
-			var modId = $this.attr("data-broccoli-mod-id");
+			var modInternalId = $this.attr("data-broccoli-mod-internal-id");
 			var subModName = $this.attr("data-broccoli-sub-mod-name");
-			broccoli.contentsSourceData.addInstance( modId, instancePath, function(result){
+			broccoli.contentsSourceData.addInstance( modInternalId, instancePath, function(result){
 				if(!result){
 					callback();
 					return;

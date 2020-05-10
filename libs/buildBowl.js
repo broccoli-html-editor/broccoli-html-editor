@@ -238,7 +238,7 @@ module.exports = function(broccoli, data, options, callback){
 		{},
 		[
 			function(it1, d){
-				broccoli.getModule( data.modId, options.subModName, function(result){
+				broccoli.getModuleByInternalId( data.modId, options.subModName, function(result){
 					mod = result;
 					it1.next(d);
 				} );
@@ -272,7 +272,7 @@ module.exports = function(broccoli, data, options, callback){
 									mod.fields ,
 									function(it3, field, fieldName){
 
-										if( field.fieldType == 'input' ){
+										if( !field.fieldType || field.fieldType == 'input' ){
 											// input field
 											var fieldDef = broccoli.getFieldDefinition( field.type ); // フィールドタイプ定義を呼び出す
 											var tmpVal = '';
@@ -280,9 +280,7 @@ module.exports = function(broccoli, data, options, callback){
 											tplDataObj[field.name] = '';
 											fieldDef.bind( fieldData[field.name], options.mode, field, function(html){
 												tmpVal += html;
-												if( !field.hidden ){//← "hidden": true だったら、非表示(=出力しない)
-													tplDataObj[field.name] = tmpVal;
-												}
+												tplDataObj[field.name] = tmpVal;
 												_this.nameSpace.vars[field.name] = {
 													fieldType: "input", type: field.type, val: tmpVal
 												}
@@ -328,9 +326,7 @@ module.exports = function(broccoli, data, options, callback){
 														);
 													}
 
-													if( !field.hidden ){//← "hidden": true だったら、非表示(=出力しない)
-														tplDataObj[field.name] = tmp_tplDataObj;
-													}
+													tplDataObj[field.name] = tmp_tplDataObj;
 													_this.nameSpace.vars[field.name] = {
 														fieldType: "module", val: tmp_tplDataObj
 													}

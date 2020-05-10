@@ -152,6 +152,12 @@ module.exports = function(broccoli, packageId, callback){
 								}
 								rtn.categories[idx].modules[row2].deprecated = (rtn.categories[idx].modules[row2].moduleInfo.deprecated||false);
 
+								// moduleInternalId
+								rtn.categories[idx].modules[row2].moduleInternalId = moduleId;
+								if( typeof(rtn.categories[idx].modules[row2].moduleInfo) == typeof({}) && rtn.categories[idx].modules[row2].moduleInfo.id ){
+									rtn.categories[idx].modules[row2].moduleInternalId = broccoli.getModuleInternalId(moduleId, rtn.categories[idx].modules[row2].moduleInfo.id);
+								}
+				
 								// clip.json
 								rtn.categories[idx].modules[row2].clip = false;
 								try {

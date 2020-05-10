@@ -1,41 +1,40 @@
-var gulp = require('gulp');
-var sass = require('gulp-sass');//CSSコンパイラ
-var autoprefixer = require("gulp-autoprefixer");//CSSにベンダープレフィックスを付与してくれる
-var minifyCss = require('gulp-minify-css');//CSSファイルの圧縮ツール
-var uglify = require("gulp-uglify");//JavaScriptファイルの圧縮ツール
-var concat = require('gulp-concat');//ファイルの結合ツール
-var plumber = require("gulp-plumber");//コンパイルエラーが起きても watch を抜けないようになる
-var rename = require("gulp-rename");//ファイル名の置き換えを行う
-var twig = require("gulp-twig");//Twigテンプレートエンジン
-var browserify = require("gulp-browserify");//NodeJSのコードをブラウザ向けコードに変換
-var packageJson = require(__dirname+'/package.json');
-var _tasks = [
-	'broccoli.js',
-	'broccoli-preview-contents.js',
-	'.css.scss',
-	'test/main.js',
-	'client-libs'
-];
+let gulp = require('gulp');
+let sass = require('gulp-sass');//CSSコンパイラ
+let autoprefixer = require("gulp-autoprefixer");//CSSにベンダープレフィックスを付与してくれる
+let minifyCss = require('gulp-minify-css');//CSSファイルの圧縮ツール
+let uglify = require("gulp-uglify");//JavaScriptファイルの圧縮ツール
+let concat = require('gulp-concat');//ファイルの結合ツール
+let plumber = require("gulp-plumber");//コンパイルエラーが起きても watch を抜けないようになる
+let rename = require("gulp-rename");//ファイル名の置き換えを行う
+let twig = require("gulp-twig");//Twigテンプレートエンジン
+let browserify = require("gulp-browserify");//NodeJSのコードをブラウザ向けコードに変換
+let packageJson = require(__dirname+'/package.json');
 
 // client-libs (frontend) を処理
-gulp.task("client-libs", function() {
-	gulp.src(["node_modules/bootstrap/dist/fonts/**/*"])
+gulp.task("client-libs:bootstrap-fonts", function() {
+	return gulp.src(["node_modules/bootstrap/dist/fonts/**/*"])
 		.pipe(gulp.dest( './client/dist/libs/bootstrap/dist/fonts/' ))
 	;
-	gulp.src(["node_modules/bootstrap/dist/js/**/*"])
+});
+gulp.task("client-libs:bootstrap-js", function() {
+	return gulp.src(["node_modules/bootstrap/dist/js/**/*"])
 		.pipe(gulp.dest( './client/dist/libs/bootstrap/dist/js/' ))
 	;
-	gulp.src(["node_modules/px2style/dist/scripts.js"])
+});
+gulp.task("client-libs:px2style-scripts", function() {
+	return gulp.src(["node_modules/px2style/dist/scripts.js"])
 		.pipe(gulp.dest( './client/dist/libs/px2style/dist/' ))
 	;
-	gulp.src(["node_modules/px2style/dist/images/**/*"])
+});
+gulp.task("client-libs:px2style-images", function() {
+	return gulp.src(["node_modules/px2style/dist/images/**/*"])
 		.pipe(gulp.dest( './client/dist/libs/px2style/dist/images/' ))
 	;
 });
 
 // src 中の *.css.scss を処理
 gulp.task('.css.scss', function(){
-	gulp.src("client/src/**/*.css.scss")
+	return gulp.src("client/src/**/*.css.scss")
 		.pipe(plumber())
 		.pipe(sass({
 			"sourceComments": false
@@ -59,7 +58,7 @@ gulp.task('.css.scss', function(){
 
 // broccoli.js (frontend) を処理
 gulp.task("broccoli.js", function() {
-	gulp.src(["client/src/broccoli.js"])
+	return gulp.src(["client/src/broccoli.js"])
 		.pipe(plumber())
 		.pipe(browserify({}))
 		.pipe(concat('broccoli.js'))
@@ -72,7 +71,7 @@ gulp.task("broccoli.js", function() {
 
 // broccoli.js (frontend) を処理
 gulp.task("broccoli-preview-contents.js", function() {
-	gulp.src(["client/src/broccoli-preview-contents.js"])
+	return gulp.src(["client/src/broccoli-preview-contents.js"])
 		.pipe(plumber())
 		.pipe(browserify({}))
 		.pipe(concat('broccoli-preview-contents.js'))
@@ -85,7 +84,7 @@ gulp.task("broccoli-preview-contents.js", function() {
 
 // test/main.js を処理
 gulp.task("test/main.js", function() {
-	gulp.src(["tests/testdata/htdocs/index_files/main.src.js"])
+	return gulp.src(["tests/testdata/htdocs/index_files/main.src.js"])
 		.pipe(plumber())
 		.pipe(browserify({}))
 		.pipe(concat('main.js'))
@@ -93,14 +92,28 @@ gulp.task("test/main.js", function() {
 	;
 });
 
-// src 中のすべての拡張子を監視して処理
-gulp.task("watch", function() {
-	gulp.watch(["client/src/**/*","fields/client/**/*","libs/**/*","tests/testdata/htdocs/index_files/main.src.js"], _tasks);
+// ブラウザを立ち上げてプレビューする
+gulp.task("preview", function(callback) {
+	require('child_process').spawn('open',['http://127.0.0.1:8088/']);
+	callback();
+	return;
 });
 
-// ブラウザを立ち上げてプレビューする
-gulp.task("preview", function() {
-	require('child_process').spawn('open',['http://127.0.0.1:8088/']);
+
+let _tasks = gulp.parallel(
+	'broccoli.js',
+	'broccoli-preview-contents.js',
+	'.css.scss',
+	'test/main.js',
+	'client-libs:bootstrap-fonts',
+	'client-libs:bootstrap-js',
+	'client-libs:px2style-scripts',
+	'client-libs:px2style-images'
+);
+
+// src 中のすべての拡張子を監視して処理
+gulp.task("watch", function() {
+	return gulp.watch(["client/src/**/*","fields/client/**/*","libs/**/*","tests/testdata/htdocs/index_files/main.src.js"], _tasks);
 });
 
 // src 中のすべての拡張子を処理(default)

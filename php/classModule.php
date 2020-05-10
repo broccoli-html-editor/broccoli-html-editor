@@ -34,6 +34,7 @@ class classModule{
 			$templateType,
 			$info,
 			$id,
+			$internalId,
 			$fields,
 			$subModule,
 			$topThis,
@@ -61,6 +62,7 @@ class classModule{
 			$this->isSystemModule = true;
 		}
 		$this->id = $moduleId;
+		$this->internalId = $moduleId;
 		$this->fields = json_decode('{}');
 		$this->subModule = json_decode('{}');
 		$this->templateType = 'broccoli';
@@ -75,7 +77,7 @@ class classModule{
 			'deprecated' => false
 		);
 
-		if( @$this->options['topThis'] ){
+		if( array_key_exists('topThis', $this->options) && $this->options['topThis'] ){
 			$this->topThis = $this->options['topThis'];
 			$this->templateType = $this->topThis->templateType;
 			$this->info['name'] = '- ' . ($this->topThis->info['name'] ? $this->topThis->info['name'] : 'null');
@@ -86,7 +88,7 @@ class classModule{
 			// $this->nameSpace = $this->options['topThis']->nameSpace;
 			if( $options['subModName'] ){
 				$this->subModName = $options['subModName'];
-				if( @$this->topThis->subModule->{$this->subModName} ){
+				if( property_exists($this->topThis->subModule, $this->subModName) && $this->topThis->subModule->{$this->subModName} ){
 					// var_dump($this->topThis->subModule->{$this->subModName});
 					$this->fields = $this->topThis->subModule->{$this->subModName}->fields;
 				}
@@ -315,6 +317,10 @@ class classModule{
 					$tmpJson = json_decode('{}');
 				}
 
+				if( property_exists($tmpJson, 'id') && strlen($tmpJson->id) ){
+					$this->internalId = $this->broccoli->getModuleInternalId($this->id, $tmpJson->id);
+				}
+
 				if( !strlen($this->info['name']) && @$tmpJson->name ){
 					$this->info['name'] = $tmpJson->name;
 				}
@@ -353,7 +359,7 @@ class classModule{
 						}
 					}
 				}
-				if( @$tmpJson->deprecated ){
+				if( property_exists($tmpJson, 'deprecated') && $tmpJson->deprecated ){
 					$this->info['deprecated'] = $tmpJson->deprecated;
 				}
 			}

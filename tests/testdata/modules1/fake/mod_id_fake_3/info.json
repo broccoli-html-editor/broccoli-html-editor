@@ -1,0 +1,35 @@
+{
+    "id": ":unit/module_id_fake_3",
+    "name": "Module ID Fake 3: Change category and module",
+    "interface": {
+        "fields": {
+            "text": {
+                "type": "multitext"
+            },
+            "image": {
+                "type": "image"
+            },
+            "module": {
+                "fieldType": "module"
+            },
+            "loop": {
+                "fieldType": "loop"
+            }
+        },
+        "subModule": {
+            "loop": {
+                "fields": {
+                    "text_in_loop": {
+                        "type": "multitext"
+                    },
+                    "image_in_loop": {
+                        "type": "image"
+                    },
+                    "module_in_loop": {
+                        "fieldType": "module"
+                    }
+                }
+            }
+        }
+    }
+}

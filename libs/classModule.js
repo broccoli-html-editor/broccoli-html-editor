@@ -66,6 +66,7 @@ module.exports = function(broccoli, moduleId, options){
 		}
 	}
 	this.id = moduleId;
+	this.internalId = moduleId;
 	this.fields = {};
 	this.templateType = 'broccoli';
 	this.finalize = function(html, callback){callback(html);return;}
@@ -176,6 +177,9 @@ module.exports = function(broccoli, moduleId, options){
 						var tmp_targetfile = (_this.realpath+'/info.json').split(/\/+/).reverse().slice(0, 4).reverse().join('/');
 						broccoli.error( 'module info.json contains a non object or null: ' + tmp_targetfile );
 						tmpJson = {};
+					}
+					if( tmpJson.id ){
+						_this.internalId = broccoli.getModuleInternalId(_this.id, tmpJson.id);
 					}
 					if( tmpJson.name ){
 						_this.info.name = tmpJson.name;
