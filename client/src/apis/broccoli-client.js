@@ -69,93 +69,6 @@
 			$(options.elmInstanceTreeView).html('...');
 			$(options.elmModulePalette).html('...');
 
-			$canvas = $(options.elmCanvas);
-			$canvas
-				.addClass('broccoli')
-				.addClass('broccoli--canvas')
-				.append( $('<iframe>')
-					.css({'border': 'none'})
-				)
-				.append( $('<div class="broccoli--panels">')
-				)
-			;
-			$canvas.find('iframe')
-				.bind('load', function(){
-					var contWin = $canvas.find('iframe').get(0).contentWindow;
-					try{
-						if(contWin.location.href == 'about:blank'){
-							return;
-						}
-						console.log('broccoli: preview loaded:', contWin.location.href);
-					}catch(e){}
-					_this.setUiState('standby');
-					onPreviewLoad( callback );
-				})
-			;
-			// this.options.elmIframeWindow = $canvas.find('iframe').get(0).contentWindow;
-			this.options.elmPanels = $canvas.find('.broccoli--panels').get(0);
-			// this.options.elmInstancePathView = $canvas.find('.broccoli--instance-path-view').get(0);
-
-			this.clipboard = new (require('./clipboard.js'))(this);
-			this.postMessenger = new (require('./postMessenger.js'))(this, $canvas.find('iframe').get(0));
-			this.resourceMgr = new (require('./resourceMgr.js'))(this);
-			this.panels = new (require( './panels.js' ))(this);
-			this.contextmenu = new (require( './contextmenu.js' ))(this);
-			this.instancePathView = new (require( './instancePathView.js' ))(this);
-			this.instanceTreeView = new (require( './instanceTreeView.js' ))(this);
-			this.editWindow = new (require( './editWindow.js' ))(this);
-			this.fieldBase = new (require('./fieldBase.js'))(this);
-			this.valiidator = new (require('./validator.js'))(this);
-			this.fieldDefinitions = {};
-			function loadFieldDefinition(){
-				function loadFieldDefinition(fieldId, mod){
-					var rtn = _.defaults( new (mod)(_this), _this.fieldBase );
-					rtn.__fieldId__ = fieldId;
-					return rtn;
-				}
-				_this.fieldDefinitions.href = loadFieldDefinition('href', require('./../../../fields/client/app.fields.href.js'));
-				_this.fieldDefinitions.html = loadFieldDefinition('html', require('./../../../fields/client/app.fields.html.js'));
-				_this.fieldDefinitions.html_attr_text = loadFieldDefinition('html_attr_text', require('./../../../fields/client/app.fields.html_attr_text.js'));
-				_this.fieldDefinitions.image = loadFieldDefinition('image', require('./../../../fields/client/app.fields.image.js'));
-				_this.fieldDefinitions.markdown = loadFieldDefinition('markdown', require('./../../../fields/client/app.fields.markdown.js'));
-				_this.fieldDefinitions.multitext = loadFieldDefinition('multitext', require('./../../../fields/client/app.fields.multitext.js'));
-				_this.fieldDefinitions.script = loadFieldDefinition('script', require('./../../../fields/client/app.fields.script.js'));
-				_this.fieldDefinitions.select = loadFieldDefinition('select', require('./../../../fields/client/app.fields.select.js'));
-				_this.fieldDefinitions.text = loadFieldDefinition('text', require('./../../../fields/client/app.fields.text.js'));
-				_this.fieldDefinitions.color = loadFieldDefinition('color', require('./../../../fields/client/app.fields.color.js'));
-				_this.fieldDefinitions.datetime = loadFieldDefinition('datetime', require('./../../../fields/client/app.fields.datetime.js'));
-
-				if( _this.options.customFields ){
-					for( var idx in _this.options.customFields ){
-						_this.fieldDefinitions[idx] = loadFieldDefinition( idx, _this.options.customFields[idx] );
-					}
-				}
-
-				return true;
-			}
-			loadFieldDefinition();
-
-			function bindDropCancel(elm){
-				$(elm)
-					.bind('dragover', function(e){
-						e.stopPropagation();
-						e.preventDefault();
-						return;
-					})
-					.bind('drop', function(e){
-						// var event = e.originalEvent;
-						// var fileInfo = event.dataTransfer.files[0];
-						e.stopPropagation();
-						e.preventDefault();
-						return;
-					})
-				;
-			}
-			bindDropCancel($canvas);
-			bindDropCancel(options.elmInstancePathView);
-			bindDropCancel(options.elmInstanceTreeView);
-			bindDropCancel(options.elmModulePalette);
-
 
 			it79.fnc(
 				{},
@@ -185,6 +98,98 @@
 								it1.next(data);
 							}
 						);
+					} ,
+					function(it1, data){
+						// DOMの整備
+						$canvas = $(options.elmCanvas);
+						$canvas
+							.addClass('broccoli')
+							.addClass('broccoli--canvas')
+							.append( $('<iframe>')
+								.css({'border': 'none'})
+								.attr({'scrolling': 'no'})
+							)
+							.append( $('<div class="broccoli--panels">')
+							)
+						;
+						$canvas.find('iframe')
+							.bind('load', function(){
+								var contWin = $canvas.find('iframe').get(0).contentWindow;
+								try{
+									if(contWin.location.href == 'about:blank'){
+										return;
+									}
+									console.log('broccoli: preview loaded:', contWin.location.href);
+								}catch(e){}
+								_this.setUiState('standby');
+								onPreviewLoad( callback );
+							})
+						;
+						// _this.options.elmIframeWindow = $canvas.find('iframe').get(0).contentWindow;
+						_this.options.elmPanels = $canvas.find('.broccoli--panels').get(0);
+						// _this.options.elmInstancePathView = $canvas.find('.broccoli--instance-path-view').get(0);
+
+						_this.clipboard = new (require('./clipboard.js'))(_this);
+						_this.postMessenger = new (require('./postMessenger.js'))(_this, $canvas.find('iframe').get(0));
+						_this.resourceMgr = new (require('./resourceMgr.js'))(_this);
+						_this.panels = new (require( './panels.js' ))(_this);
+						_this.contextmenu = new (require( './contextmenu.js' ))(_this);
+						_this.instancePathView = new (require( './instancePathView.js' ))(_this);
+						_this.instanceTreeView = new (require( './instanceTreeView.js' ))(_this);
+						_this.editWindow = new (require( './editWindow.js' ))(_this);
+						_this.fieldBase = new (require('./fieldBase.js'))(_this);
+						_this.valiidator = new (require('./validator.js'))(_this);
+						_this.fieldDefinitions = {};
+						function loadFieldDefinition(){
+							function loadFieldDefinition(fieldId, mod){
+								var rtn = _.defaults( new (mod)(_this), _this.fieldBase );
+								rtn.__fieldId__ = fieldId;
+								return rtn;
+							}
+							_this.fieldDefinitions.href = loadFieldDefinition('href', require('./../../../fields/client/app.fields.href.js'));
+							_this.fieldDefinitions.html = loadFieldDefinition('html', require('./../../../fields/client/app.fields.html.js'));
+							_this.fieldDefinitions.html_attr_text = loadFieldDefinition('html_attr_text', require('./../../../fields/client/app.fields.html_attr_text.js'));
+							_this.fieldDefinitions.image = loadFieldDefinition('image', require('./../../../fields/client/app.fields.image.js'));
+							_this.fieldDefinitions.markdown = loadFieldDefinition('markdown', require('./../../../fields/client/app.fields.markdown.js'));
+							_this.fieldDefinitions.multitext = loadFieldDefinition('multitext', require('./../../../fields/client/app.fields.multitext.js'));
+							_this.fieldDefinitions.script = loadFieldDefinition('script', require('./../../../fields/client/app.fields.script.js'));
+							_this.fieldDefinitions.select = loadFieldDefinition('select', require('./../../../fields/client/app.fields.select.js'));
+							_this.fieldDefinitions.text = loadFieldDefinition('text', require('./../../../fields/client/app.fields.text.js'));
+							_this.fieldDefinitions.color = loadFieldDefinition('color', require('./../../../fields/client/app.fields.color.js'));
+							_this.fieldDefinitions.datetime = loadFieldDefinition('datetime', require('./../../../fields/client/app.fields.datetime.js'));
+
+							if( _this.options.customFields ){
+								for( var idx in _this.options.customFields ){
+									_this.fieldDefinitions[idx] = loadFieldDefinition( idx, _this.options.customFields[idx] );
+								}
+							}
+
+							return true;
+						}
+						loadFieldDefinition();
+
+						function bindDropCancel(elm){
+							$(elm)
+								.bind('dragover', function(e){
+									e.stopPropagation();
+									e.preventDefault();
+									return;
+								})
+								.bind('drop', function(e){
+									// var event = e.originalEvent;
+									// var fileInfo = event.dataTransfer.files[0];
+									e.stopPropagation();
+									e.preventDefault();
+									return;
+								})
+							;
+						}
+						bindDropCancel($canvas);
+						bindDropCancel(options.elmInstancePathView);
+						bindDropCancel(options.elmInstanceTreeView);
+						bindDropCancel(options.elmModulePalette);
+
+						it1.next(data);
 					} ,
 					function(it1, data){
 						// プログレスを表示
@@ -528,13 +533,19 @@
 					function( it1, data ){
 						// iframeのサイズ合わせ
 						_this.progressMessage('画面を調整しています...。');
-						$canvas.find('iframe').width( '100%' );
+						$canvas.find('iframe')
+							.width( '100%' )
+							.attr({'scrolling': 'no'})
+						;
 						_this.postMessenger.send(
 							'getHtmlContentHeightWidth',
 							{},
 							function(hw){
-								// console.log(height);
-								$canvas.find('iframe').height( hw.h + 0 ).width( hw.w + 0 );
+								// console.log(hw);
+								$canvas.find('iframe')
+									.height( hw.h + 16 )
+									// .removeAttr('scrolling')
+								;
 								it1.next(data);
 							}
 						);

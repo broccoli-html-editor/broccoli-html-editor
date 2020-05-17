@@ -122,10 +122,9 @@
 		}else if(data.api == 'getHtmlContentHeightWidth'){
 			// var height = $iframeWindow.find('html').outerHeight();
 			var hw = {};
-			hw.h = Math.max.apply( null, [document.body.clientHeight , document.body.scrollHeight, document.documentElement.scrollHeight, document.documentElement.clientHeight] );
-			hw.w = Math.max.apply( null, [document.body.clientWidth , document.body.scrollWidth, document.documentElement.scrollWidth, document.documentElement.clientWidth] );
-			hw.h += 16;
-
+			hw.h = Math.max.apply( null, [document.body.clientHeight, document.body.scrollHeight, document.documentElement.scrollHeight, document.documentElement.clientHeight] );
+			hw.w = Math.max.apply( null, [document.body.clientWidth, document.body.scrollWidth, document.documentElement.scrollWidth, document.documentElement.clientWidth] );
+			// hw.h += 16;
 			callbackMessage(data.callback, hw);
 			return;
 

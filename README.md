@@ -308,6 +308,10 @@ $ composer test
 
 ## 更新履歴 - Change log
 
+### broccoli-html-editor v0.3.17 (リリース日未定)
+
+- 初期化処理の改善。
+
 ### broccoli-html-editor v0.3.17 (2020年5月10日)
 
 - 新しい設定項目 `enableModuleAnchor` を追加。(デフォルトは `true`)
