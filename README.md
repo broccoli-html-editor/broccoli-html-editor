@@ -76,6 +76,13 @@ exit;
 
 APIの一覧は[こちらを参照](docs/api_server.md)ください。
 
+#### PHPの要件
+
+- PHP 5.4 以上
+  - [mbstring](https://www.php.net/manual/ja/book.mbstring.php)
+  - [ZipArchive](https://www.php.net/manual/ja/class.ziparchive.php)
+
+
 
 ### クライアント側 - Client side JavaScript
 
