@@ -203,6 +203,7 @@ module.exports = function(broccoli, moduleId, options){
 							for( var tmpIdx in _this.fields ){
 								// name属性を自動補完
 								_this.fields[tmpIdx].name = tmpIdx;
+								_this.fields[tmpIdx] = applyFieldConfig(_this.fields[tmpIdx]);
 							}
 						}
 						if( tmpJson.interface.subModule ){
@@ -211,6 +212,7 @@ module.exports = function(broccoli, moduleId, options){
 								for( var tmpIdx2 in _this.subModule[tmpIdx].fields ){
 									// name属性を自動補完
 									_this.subModule[tmpIdx].fields[tmpIdx2].name = tmpIdx2;
+									_this.subModule[tmpIdx].fields[tmpIdx2] = applyFieldConfig(_this.subModule[tmpIdx].fields[tmpIdx2]);
 								}
 							}
 						}
@@ -339,6 +341,7 @@ module.exports = function(broccoli, moduleId, options){
 					}else if( field.input ){
 						_this.fields[field.input.name] = field.input;
 						_this.fields[field.input.name].fieldType = 'input';
+						_this.fields[field.input.name] = applyFieldConfig(_this.fields[field.input.name]);
 
 						parseBroccoliTemplate( src, function(){
 							callback();
@@ -522,6 +525,25 @@ module.exports = function(broccoli, moduleId, options){
 		}
 		callback(rtn);
 		return;
+	}
+
+
+	/**
+	 * フィールド設定を反映する
+	 */
+	function applyFieldConfig( $field ){
+		if( $field.fieldType != 'input' ){
+			return $field;
+		}
+		var $fieldConf = broccoli.getFieldConfig();
+		if( $fieldConf[$field.type] ){
+			for( var $key in $fieldConf[$field.type] ){
+				if( !$field[$key] ){
+					$field[$key] = $fieldConf[$field.type][$key];
+				}
+			}
+		}
+		return $field;
 	}
 
 	return;

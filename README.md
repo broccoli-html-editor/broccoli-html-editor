@@ -22,53 +22,58 @@ require_once('path/to/vendor/autoload.php');
 
 $broccoli = new broccoliHtmlEditor\broccoliHtmlEditor();
 $broccoli->init(
-	array(
-		'appMode' => 'web', // 'web' or 'desktop'. default to 'web'
-		'paths_module_template' => array(
-			'testMod1' => '/realpath/to/modules1/' ,
-			'testMod2' => '/realpath/to/modules2/'
-		) ,
-		'documentRoot' => '/realpath/to/www/htdocs/', // realpath
-		'pathHtml' => '/path/to/your_preview.html',
-		'pathResourceDir' => '/path/to/your_preview_files/resources/',
-		'realpathDataDir' => '/realpath/to/www/htdocs/path/to/your_preview_files/guieditor.ignore/',
-		'customFields' => array(
-			// カスタムフィールドを実装します。
-			// このクラスは、 `broccoliHtmlEditor\\fieldBase` を基底クラスとして継承します。
-			// customFields のキー(ここでは custom1)が、フィールドの名称になります。
-			'custom1' => 'broccoli_class\\field_custom1'
-		) ,
-		'bindTemplate' => function($htmls){
-			$fin = '';
-			$fin .= '<!DOCTYPE html>'."\n";
-			$fin .= '<html>'."\n";
-			$fin .= '    <head>'."\n";
-			$fin .= '        <title>sample page</title>'."\n";
-			$fin .= '    </head>'."\n";
-			$fin .= '    <body>'."\n";
-			$fin .= '        <div data-contents="main">'."\n";
-			$fin .= $htmls['main']."\n";
-			$fin .= '        </div><!-- /main -->'."\n";
-			$fin .= '        <div data-contents="secondly">'."\n";
-			$fin .= $htmls['secondly']."\n";
-			$fin .= '        </div><!-- /secondly -->'."\n";
-			$fin .= '    </body>'."\n";
-			$fin .= '</html>';
+    array(
+        'appMode' => 'web', // 'web' or 'desktop'. default to 'web'
+        'paths_module_template' => array(
+            'testMod1' => '/realpath/to/modules1/' ,
+            'testMod2' => '/realpath/to/modules2/'
+        ) ,
+        'documentRoot' => '/realpath/to/www/htdocs/', // realpath
+        'pathHtml' => '/path/to/your_preview.html',
+        'pathResourceDir' => '/path/to/your_preview_files/resources/',
+        'realpathDataDir' => '/realpath/to/www/htdocs/path/to/your_preview_files/guieditor.ignore/',
+        'customFields' => array(
+            // カスタムフィールドを実装します。
+            // このクラスは、 `broccoliHtmlEditor\\fieldBase` を基底クラスとして継承します。
+            // customFields のキー(ここでは custom1)が、フィールドの名称になります。
+            'custom1' => 'broccoli_class\\field_custom1'
+        ) ,
+        'fieldConfig' => array(
+            'image' => array( // image field に対する設定
+                'filenameAutoSetter' => 'ifEmpty', // filenameAutoSetterの初期値を設定
+            ),
+        ),
+        'bindTemplate' => function($htmls){
+            $fin = '';
+            $fin .= '<!DOCTYPE html>'."\n";
+            $fin .= '<html>'."\n";
+            $fin .= '    <head>'."\n";
+            $fin .= '        <title>sample page</title>'."\n";
+            $fin .= '    </head>'."\n";
+            $fin .= '    <body>'."\n";
+            $fin .= '        <div data-contents="main">'."\n";
+            $fin .= $htmls['main']."\n";
+            $fin .= '        </div><!-- /main -->'."\n";
+            $fin .= '        <div data-contents="secondly">'."\n";
+            $fin .= $htmls['secondly']."\n";
+            $fin .= '        </div><!-- /secondly -->'."\n";
+            $fin .= '    </body>'."\n";
+            $fin .= '</html>';
 
-			return $fin;
-		},
-		'log' => function($msg){
-			// エラー発生時にコールされます。
-			// msg を受け取り、適切なファイルへ出力するように実装してください。
-			error_log('[ERROR HANDLED]'.$msg, 3, '/path/to/error.log');
-		}
-	)
+            return $fin;
+        },
+        'log' => function($msg){
+            // エラー発生時にコールされます。
+            // msg を受け取り、適切なファイルへ出力するように実装してください。
+            error_log('[ERROR HANDLED]'.$msg, 3, '/path/to/error.log');
+        }
+    )
 );
 
 
 $rtn = $broccoli->gpi(
-	$_REQUEST['api'],
-	json_decode($_REQUEST['options'], true)
+    $_REQUEST['api'],
+    json_decode($_REQUEST['options'], true)
 );
 echo json_encode($rtn);
 exit;
@@ -101,84 +106,84 @@ APIの一覧は[こちらを参照](docs/api_server.md)ください。
 <script>
 var broccoli = new Broccoli();
 broccoli.init(
-	{
-		'elmCanvas': document.getElementById('canvas'),
-		'elmModulePalette': document.getElementById('palette'),
-		'elmInstanceTreeView': document.getElementById('instanceTreeView'),
-		'elmInstancePathView': document.getElementById('instancePathView'),
-		'lang': 'en', // language
-		'contents_area_selector': '[data-contents]',
-			// ↑編集可能領域を探すためのクエリを設定します。
-			// 　この例では、data-contents属性が付いている要素が編集可能領域として認識されます。
-		'contents_bowl_name_by': 'data-contents',
-			// ↑bowlの名称を、data-contents属性値から取得します。
-		'customFields': {
-			'custom1': function(broccoli){
-				// カスタムフィールドを実装します。
-				// この関数は、fieldBase.js を基底クラスとして継承します。
-				// customFields オブジェクトのキー(ここでは custom1)が、フィールドの名称になります。
-			}
-		},
-		'customValidationRules': {
-			'customValidation1': function(value, req, attribute, passes) {
-				// カスタムバリデーションを定義します。
-				// フィールドの validate に登録して呼び出すことができます。
-				var ok = true;
-				if( ok ){
-					passes(); // if available
-				}else{
-					passes(false, 'The '+attribute+' is not valid.'); // if not available
-				}
-			}
-		},
-		'gpiBridge': function(api, options, callback){
-			// GPI(General Purpose Interface) Bridge
-			// broccoliは、バックグラウンドで様々なデータ通信を行います。
-			// GPIは、これらのデータ通信を行うための汎用的なAPIです。
-			$.ajax({
-				"url": "/path/to/broccoli_api.php",
-				"type": 'post',
-				'data': {
-					'api': api ,
-					'options': JSON.stringify(options)
-				},
-				"success": function(data){
-					callback(data);
-				}
-			});
-			return;
-		},
-		'clipboard': {
-			// クリップボード操作の機能を拡張できます。
-			'set': function( data, type ){
-				// クリップボードにコピーする機能を実装してください。
-			},
-			'get': function( type ){
-				// クリップボードからデータを取得する機能を実装してください。
-			}
-		},
-		'onClickContentsLink': function( uri, data ){
-			alert(uri + ' へ移動');
-			console.log(data);
-			return false;
-		},
-		'onMessage': function( message ){
-			// ユーザーへ知らせるメッセージを表示する
-			console.info('message: '+message);
-		},
-		'enableModuleAnchor': true, // モジュールごとのid属性入力の有効/無効 (デフォルトは `true`)
-		'enableModuleDec': true // DEC入力の有効/無効 (デフォルトは `true`)
-	} ,
-	function(){
-		// 初期化が完了すると呼びだされるコールバック関数です。
+    {
+        'elmCanvas': document.getElementById('canvas'),
+        'elmModulePalette': document.getElementById('palette'),
+        'elmInstanceTreeView': document.getElementById('instanceTreeView'),
+        'elmInstancePathView': document.getElementById('instancePathView'),
+        'lang': 'en', // language
+        'contents_area_selector': '[data-contents]',
+            // ↑編集可能領域を探すためのクエリを設定します。
+            // 　この例では、data-contents属性が付いている要素が編集可能領域として認識されます。
+        'contents_bowl_name_by': 'data-contents',
+            // ↑bowlの名称を、data-contents属性値から取得します。
+        'customFields': {
+            'custom1': function(broccoli){
+                // カスタムフィールドを実装します。
+                // この関数は、fieldBase.js を基底クラスとして継承します。
+                // customFields オブジェクトのキー(ここでは custom1)が、フィールドの名称になります。
+            }
+        },
+        'customValidationRules': {
+            'customValidation1': function(value, req, attribute, passes) {
+                // カスタムバリデーションを定義します。
+                // フィールドの validate に登録して呼び出すことができます。
+                var ok = true;
+                if( ok ){
+                    passes(); // if available
+                }else{
+                    passes(false, 'The '+attribute+' is not valid.'); // if not available
+                }
+            }
+        },
+        'gpiBridge': function(api, options, callback){
+            // GPI(General Purpose Interface) Bridge
+            // broccoliは、バックグラウンドで様々なデータ通信を行います。
+            // GPIは、これらのデータ通信を行うための汎用的なAPIです。
+            $.ajax({
+                "url": "/path/to/broccoli_api.php",
+                "type": 'post',
+                'data': {
+                    'api': api ,
+                    'options': JSON.stringify(options)
+                },
+                "success": function(data){
+                    callback(data);
+                }
+            });
+            return;
+        },
+        'clipboard': {
+            // クリップボード操作の機能を拡張できます。
+            'set': function( data, type ){
+                // クリップボードにコピーする機能を実装してください。
+            },
+            'get': function( type ){
+                // クリップボードからデータを取得する機能を実装してください。
+            }
+        },
+        'onClickContentsLink': function( uri, data ){
+            alert(uri + ' へ移動');
+            console.log(data);
+            return false;
+        },
+        'onMessage': function( message ){
+            // ユーザーへ知らせるメッセージを表示する
+            console.info('message: '+message);
+        },
+        'enableModuleAnchor': true, // モジュールごとのid属性入力の有効/無効 (デフォルトは `true`)
+        'enableModuleDec': true // DEC入力の有効/無効 (デフォルトは `true`)
+    } ,
+    function(){
+        // 初期化が完了すると呼びだされるコールバック関数です。
 
-		$(window).on('resize', function(){
-			// このメソッドは、canvasの再描画を行います。
-			// ウィンドウサイズが変更された際に、UIを再描画するよう命令しています。
-			broccoli.redraw();
-		});
+        $(window).on('resize', function(){
+            // このメソッドは、canvasの再描画を行います。
+            // ウィンドウサイズが変更された際に、UIを再描画するよう命令しています。
+            broccoli.redraw();
+        });
 
-	}
+    }
 );
 </script>
 ```
@@ -217,19 +222,19 @@ coming soon.
 このメソッドは、サーバーサイドは `broccoliHtmlEditor\fieldBase` を、クライアントサイドは `client/src/apis/fieldBase.js` を、基底クラスとして継承します。
 
 - server side
-	- bind($fieldData, $mode, $mod) - データをバインドする
-	- resourceProcessor($path_orig, $path_public, $resInfo) - リソースを加工する
-	- gpi($options) - GPI
+    - bind($fieldData, $mode, $mod) - データをバインドする
+    - resourceProcessor($path_orig, $path_public, $resInfo) - リソースを加工する
+    - gpi($options) - GPI
 - client side
-	- normalizeData(fieldData, mode) - データを正規化する
-	- mkPreviewHtml(fieldData, mod, callback) - プレビュー用の簡易なHTMLを生成する
-	- mkEditor(mod, data, elm, callback) - エディタUIを生成
-	- focus(elm, callback) - エディタUIにフォーカス
-	- duplicateData(data, callback) - データを複製する
-	- extractResourceId(data, callback) - データから使用するリソースのリソースIDを抽出する
-	- validateEditorContent(elm, data, mod, callback) - エディタUIで編集した内容を検証する
-	- saveEditorContent(elm, data, mod, callback, options) - エディタUIで編集した内容を保存
-	- callGpi(options, callback) - GPIを呼び出す
+    - normalizeData(fieldData, mode) - データを正規化する
+    - mkPreviewHtml(fieldData, mod, callback) - プレビュー用の簡易なHTMLを生成する
+    - mkEditor(mod, data, elm, callback) - エディタUIを生成
+    - focus(elm, callback) - エディタUIにフォーカス
+    - duplicateData(data, callback) - データを複製する
+    - extractResourceId(data, callback) - データから使用するリソースのリソースIDを抽出する
+    - validateEditorContent(elm, data, mod, callback) - エディタUIで編集した内容を検証する
+    - saveEditorContent(elm, data, mod, callback, options) - エディタUIで編集した内容を保存
+    - callGpi(options, callback) - GPIを呼び出す
 
 
 ## プラグインの種類と `broccoli.json`
@@ -241,7 +246,7 @@ coming soon.
 
 ```json
 {
-	"id": "foo-bar-elements",
+    "id": "foo-bar-elements",
     "name": "Foo Bar Elements",
     "type": "module",
     "path": "path/to/modules/"
@@ -252,7 +257,7 @@ coming soon.
 
 ```json
 {
-	"id": "foo-bar-field",
+    "id": "foo-bar-field",
     "name": "Foo Bar Field",
     "type": "field",
     "backend": {
@@ -316,9 +321,10 @@ $ composer test
 
 ## 更新履歴 - Change log
 
-### broccoli-html-editor v0.3.17 (リリース日未定)
+### broccoli-html-editor v0.3.18 (リリース日未定)
 
 - 初期化処理の改善。
+- バックエンドの新しい設定項目 `fieldConfig` を追加。フィールド毎のデフォルトの挙動を設定できるようになった。
 
 ### broccoli-html-editor v0.3.17 (2020年5月10日)
 

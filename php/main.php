@@ -115,6 +115,10 @@ class broccoliHtmlEditor{
 		$options['pathHtml'] = $this->fs->normalize_path( $this->fs->get_realpath($options['pathHtml']) );
 		$options['pathResourceDir'] = $this->fs->normalize_path( $this->fs->get_realpath($options['pathResourceDir']) );
 
+		if( !array_key_exists('fieldConfig', $options) || !$options['fieldConfig'] ){
+			$options['fieldConfig'] = array();
+		}
+
 		$this->paths_module_template = $options['paths_module_template'];
 		$this->realpathHtml = $this->fs->normalize_path($this->fs->get_realpath( $options['documentRoot'].'/'.$options['pathHtml'] ));
 		$this->realpathResourceDir = $this->fs->normalize_path($this->fs->get_realpath( $options['documentRoot'].'/'.$options['pathResourceDir'].'/' ));
@@ -152,7 +156,7 @@ class broccoliHtmlEditor{
 		$this->fieldDefinitions['color'] = $loadFieldDefinition('color');
 		$this->fieldDefinitions['datetime'] = $loadFieldDefinition('datetime');
 
-		if( $this->options['customFields'] ){
+		if( array_key_exists('customFields', $this->options) && $this->options['customFields'] ){
 			foreach( $this->options['customFields'] as $idx=>$className ){
 				$this->fieldDefinitions[$idx] = $loadFieldDefinition( $idx, $this->options['customFields'][$idx] );
 			}
@@ -176,11 +180,11 @@ class broccoliHtmlEditor{
 	}
 
 	/**
-	 * アプリケーションの実行モード設定を取得する (同期)
+	 * アプリケーションの実行モード設定を取得する
 	 * @return string 'web'|'desktop'
 	 */
 	public function getAppMode(){
-		$rtn = @$this->options['appMode'];
+		$rtn = $this->options['appMode'];
 		switch($rtn){
 			case 'web':
 			case 'desktop':
@@ -189,6 +193,15 @@ class broccoliHtmlEditor{
 				$rtn = 'web';
 				break;
 		}
+		return $rtn;
+	}
+
+	/**
+	 * フィールド設定を取得する
+	 * @return array フィールド設定
+	 */
+	public function getFieldConfig(){
+		$rtn = $this->options['fieldConfig'];
 		return $rtn;
 	}
 

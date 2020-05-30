@@ -50,6 +50,11 @@ module.exports = function( data, callback, main, socket ){
 
 						}
 					} ,
+					'fieldConfig': {
+						'image': {
+							'filenameAutoSetter': 'ifEmpty'
+						}
+					},
 					'bindTemplate': function(htmls, callback){
 						var fin = '';
 						fin += '<!DOCTYPE html>'+"\n";

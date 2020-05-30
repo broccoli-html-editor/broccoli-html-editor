@@ -49,6 +49,11 @@ function makeDefaultBroccoli(options, callback){
 
 				}
 			} ,
+			'fieldConfig': {
+				'image': {
+					'filenameAutoSetter': 'ifEmpty'
+				}
+			},
 			'bindTemplate': function(htmls, callback){
 				var fin = '';
 				fin += '<!DOCTYPE html>'+"\n";

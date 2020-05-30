@@ -23,6 +23,11 @@ $broccoli->init(
 		'customFields' => array(
 			'custom1' => 'test_php_field_custom1'
 		) ,
+		'fieldConfig' => array(
+			'image' => array(
+				'filenameAutoSetter' => 'ifEmpty',
+			),
+		),
 		'bindTemplate' => function($htmls){
 			$fin = '';
 			$fin .= '<!DOCTYPE html>'."\n";

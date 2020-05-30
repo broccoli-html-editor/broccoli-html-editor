@@ -213,6 +213,7 @@ class classModule{
 			@$this->fields->{$field->input->name} = $field->input;
 			@$this->fields->{$field->input->name}->fieldType = 'input';
 			@$this->fields->{$field->input->name}->description = $this->normalizeDescription(@$this->fields->{$field->input->name}->description);
+			@$this->fields->{$field->input->name} = $this->applyFieldConfig( @$this->fields->{$field->input->name} );
 
 			return $this->parseBroccoliTemplate( $src, $_topThis );
 		}elseif( @$field->module ){
@@ -342,6 +343,7 @@ class classModule{
 							@$this->fields->{$tmpIdx} = $tmpRow;
 							// name属性を自動補完
 							@$this->fields->{$tmpIdx}->name = $tmpIdx;
+							@$this->fields->{$tmpIdx} = $this->applyFieldConfig( @$this->fields->{$tmpIdx} );
 						}
 					}
 					if( @$tmpJson->interface->subModule ){
@@ -354,6 +356,7 @@ class classModule{
 									@$this->subModule->{$tmpIdx}->fields[$tmpIdx2] = $tmpRow2;
 									// name属性を自動補完
 									@$this->subModule->{$tmpIdx}->fields[$tmpIdx2]->name = $tmpIdx2;
+									@$this->subModule->{$tmpIdx}->fields[$tmpIdx2] = $this->applyFieldConfig( @$this->subModule->{$tmpIdx}->fields[$tmpIdx2] );
 								}
 							}
 						}
@@ -497,4 +500,21 @@ class classModule{
 		return $rtn;
 	}
 
+	/**
+	 * フィールド設定を反映する
+	 */
+	private function applyFieldConfig( $field ){
+		if( !is_object($field) || !property_exists($field, 'fieldType') || $field->fieldType != 'input' ){
+			return $field;
+		}
+		$fieldConf = $this->broccoli->getFieldConfig();
+		if( array_key_exists($field->type, $fieldConf) ){
+			foreach( $fieldConf[$field->type] as $key=>$val ){
+				if( !property_exists( $field, $key ) ){
+					$field->{$key} = $val;
+				}
+			}
+		}
+		return $field;
+	}
 }

@@ -85,6 +85,8 @@ module.exports = function(){
 		options.pathHtml = utils79.normalize_path( path.resolve(options.pathHtml) );
 		options.pathResourceDir = utils79.normalize_path( path.resolve(options.pathResourceDir) );
 
+		options.fieldConfig = options.fieldConfig || {};
+
 		this.paths_module_template = options.paths_module_template;
 		this.realpathHtml = path.resolve( options.documentRoot, './'+options.pathHtml );
 		this.realpathResourceDir = path.resolve( options.documentRoot, './'+options.pathResourceDir )+'/';
@@ -155,6 +157,15 @@ module.exports = function(){
 				rtn = 'web';
 				break;
 		}
+		return rtn;
+	}
+
+	/**
+	 * フィールド設定を取得する (同期)
+	 * @return object フィールド設定
+	 */
+	this.getFieldConfig = function(){
+		var rtn = this.options.fieldConfig;
 		return rtn;
 	}
 
