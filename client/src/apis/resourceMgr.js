@@ -58,29 +58,6 @@ module.exports = function(broccoli){
 	}
 
 	/**
-	 * get resource DB
-	 */
-	this.getResourceDb = function( callback ){
-		callback = callback || function(){};
-		callback(_resourceDb);
-		return;
-	}
-
-	/**
-	 * get resource DB
-	 */
-	this.setResourceDb = function( newResourceDb, callback ){
-		callback = callback || function(){};
-		if( typeof(newResourceDb) !== typeof({}) ){
-			callback(false);
-			return;
-		}
-		_resourceDb = newResourceDb;
-		callback(true);
-		return;
-	}
-
-	/**
 	 * Reload resources DB
 	 * 
 	 * @param  {Function} cb Callback function.
@@ -100,6 +77,29 @@ module.exports = function(broccoli){
 				);
 			}
 		]);
+		return;
+	}
+
+	/**
+	 * get resource DB
+	 */
+	this.getResourceDb = function( callback ){
+		callback = callback || function(){};
+		callback(_resourceDb);
+		return;
+	}
+
+	/**
+	 * set resource DB
+	 */
+	this.setResourceDb = function( newResourceDb, callback ){
+		callback = callback || function(){};
+		if( typeof(newResourceDb) !== typeof({}) ){
+			callback(false);
+			return;
+		}
+		_resourceDb = newResourceDb;
+		callback(true);
 		return;
 	}
 

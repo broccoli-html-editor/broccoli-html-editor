@@ -222,18 +222,18 @@
 						});
 					},
 					function(it1, data){
+						_this.progressMessage('リソースマネージャを初期化しています...。');
+						_this.resourceMgr.init(function(){
+							it1.next(data);
+						});
+					} ,
+					function(it1, data){
 						_this.progressMessage('コンテンツデータを初期化しています...。');
 						_this.contentsSourceData = new (require('./contentsSourceData.js'))(_this).init(
 							function(){
 								it1.next(data);
 							}
 						);
-					} ,
-					function(it1, data){
-						_this.progressMessage('リソースマネージャを初期化しています...。');
-						_this.resourceMgr.init(function(){
-							it1.next(data);
-						});
 					} ,
 					function(it1, data){
 						_this.progressMessage('モジュールパレットを生成しています...。');

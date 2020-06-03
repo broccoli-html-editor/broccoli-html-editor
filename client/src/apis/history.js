@@ -9,12 +9,12 @@ module.exports = function(broccoli){
 	/**
 	 * ヒストリーを初期化する
 	 */
-	this.init = function( data, callback ){
+	this.init = function( data, resourceDb, callback ){
 		callback = callback||function(){};
 
 		historyDataArray = [];
 		historyIdx = 0;
-		this.put(data, function(){
+		this.put(data, resourceDb, function(){
 			setTimeout( callback, 0 );
 		});
 		return this;
@@ -23,10 +23,14 @@ module.exports = function(broccoli){
 	/**
 	 * ヒストリーに歴史を追加する
 	 */
-	this.put = function( data, callback ){
+	this.put = function( data, resourceDb, callback ){
 		callback = callback||function(){};
 
-		historyDataArray.splice(0, historyIdx, JSON.stringify(data));
+		historyDataArray.splice(0, historyIdx, {
+			"datetime": (new Date).getTime(),
+			"contents": data,
+			"resources": resourceDb
+		});
 		historyIdx = 0;
 
 		// console.log('history.put()', historyDataArray);
@@ -38,7 +42,7 @@ module.exports = function(broccoli){
 	 * 1つ前のデータを得る
 	 */
 	this.back = function( callback ){
-		// console.log('history.back()', historyDataArray);
+		// console.log('history.back()', historyDataArray, historyIdx);
 		callback = callback||function(){};
 		historyIdx ++;
 		if( historyIdx >= historyDataArray.length || historyIdx < 0 ){
@@ -46,7 +50,10 @@ module.exports = function(broccoli){
 			callback(false);
 			return this;
 		}
-		callback(JSON.parse( historyDataArray[historyIdx] ));
+		// console.log('historyIdx: ', historyIdx);
+		var data = {contents: {}, resources: {}};
+		data = historyDataArray[historyIdx];
+		callback( data );
 		return this;
 	}
 
@@ -62,12 +69,15 @@ module.exports = function(broccoli){
 			callback(false);
 			return this;
 		}
-		callback(JSON.parse( historyDataArray[historyIdx] ));
+		// console.log(historyIdx, data.contents, data.resources);
+		var data = {contents: {}, resources: {}};
+		data = historyDataArray[historyIdx];
+		callback( data );
 		return this;
 	}
 
 	/**
-	 * history情報を取得する
+	 * history情報の全体を取得する
 	 */
 	this.getHistory = function(){
 		var rtn = {

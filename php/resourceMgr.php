@@ -96,6 +96,10 @@ class resourceMgr{
 		foreach($this->resourceDb as $resKey=>$res){
 			$this->broccoli->fs()->mkdir( $this->resourcesDirPath.'/'.urlencode($resKey) );
 
+			if( !is_object($res) ){
+				continue;
+			}
+
 			$dotext = '';
 			if( property_exists($res, 'ext') && is_string($res->ext) && strlen($res->ext) ){
 				$dotext .= '.'.$res->ext;

@@ -223,18 +223,18 @@
 						});
 					},
 					function(it1, data){
+						_this.progressMessage('リソースマネージャを初期化しています...。');
+						_this.resourceMgr.init(function(){
+							it1.next(data);
+						});
+					} ,
+					function(it1, data){
 						_this.progressMessage('コンテンツデータを初期化しています...。');
 						_this.contentsSourceData = new (require('./contentsSourceData.js'))(_this).init(
 							function(){
 								it1.next(data);
 							}
 						);
-					} ,
-					function(it1, data){
-						_this.progressMessage('リソースマネージャを初期化しています...。');
-						_this.resourceMgr.init(function(){
-							it1.next(data);
-						});
 					} ,
 					function(it1, data){
 						_this.progressMessage('モジュールパレットを生成しています...。');
@@ -1527,9 +1527,17 @@ module.exports = function(broccoli){
 	 */
 	this.init = function( callback ){
 		_this.history = new (require('./history.js'))(broccoli);
+		var resourceDb;
 		it79.fnc(
 			{},
 			[
+				function(it1, data){
+					// コンテンツデータを整理
+					broccoli.resourceMgr.getResourceDb(function(res){
+						resourceDb = res;
+						it1.next(data);
+					});
+				} ,
 				function(it1, data){
 					// コンテンツデータを整理
 					_contentsSourceData.bowl = _contentsSourceData.bowl||{};
@@ -1541,6 +1549,7 @@ module.exports = function(broccoli){
 					// ヒストリーマネージャーの初期化
 					_this.history.init(
 						_contentsSourceData,
+						resourceDb,
 						function(){
 							it1.next(data);
 						}
@@ -2339,8 +2348,11 @@ module.exports = function(broccoli){
 				cb(false);
 				return;
 			}
-			_contentsSourceData = data;
-			cb(true);
+			_contentsSourceData = data.contents;
+			var resourceDb = data.resources;
+			broccoli.resourceMgr.setResourceDb(resourceDb, function(){
+				cb(true);
+			});
 			return;
 		});
 		return this;
@@ -2356,8 +2368,11 @@ module.exports = function(broccoli){
 				cb(false);
 				return;
 			}
-			_contentsSourceData = data;
-			cb(true);
+			_contentsSourceData = data.contents;
+			var resourceDb = data.resources;
+			broccoli.resourceMgr.setResourceDb(resourceDb, function(){
+				cb(true);
+			});
 			return;
 		});
 		return this;
@@ -2368,11 +2383,18 @@ module.exports = function(broccoli){
 	 */
 	this.save = function(callback){
 		var _this = this;
+		var resourceDb;
 		callback = callback||function(){};
 		// console.log('-------- saving contentsSourceData ---', _contentsSourceData);
 		it79.fnc(
 			{},
 			[
+				function( it1, data ){
+					broccoli.resourceMgr.getResourceDb(function(res){
+						resourceDb = res;
+						it1.next(data);
+					});
+				} ,
 				function( it1, data ){
 					broccoli.gpi(
 						'saveContentsData',
@@ -2389,7 +2411,7 @@ module.exports = function(broccoli){
 					// 履歴に追加
 					var historyInfo = _this.history.getHistory();
 					if(historyInfo.index === 0){
-						_this.history.put( _contentsSourceData, function(){
+						_this.history.put( _contentsSourceData, resourceDb, function(){
 							it1.next(data);
 						} );
 						return;
@@ -4203,12 +4225,12 @@ module.exports = function(broccoli){
 	/**
 	 * ヒストリーを初期化する
 	 */
-	this.init = function( data, callback ){
+	this.init = function( data, resourceDb, callback ){
 		callback = callback||function(){};
 
 		historyDataArray = [];
 		historyIdx = 0;
-		this.put(data, function(){
+		this.put(data, resourceDb, function(){
 			setTimeout( callback, 0 );
 		});
 		return this;
@@ -4217,10 +4239,14 @@ module.exports = function(broccoli){
 	/**
 	 * ヒストリーに歴史を追加する
 	 */
-	this.put = function( data, callback ){
+	this.put = function( data, resourceDb, callback ){
 		callback = callback||function(){};
 
-		historyDataArray.splice(0, historyIdx, JSON.stringify(data));
+		historyDataArray.splice(0, historyIdx, {
+			"datetime": (new Date).getTime(),
+			"contents": data,
+			"resources": resourceDb
+		});
 		historyIdx = 0;
 
 		// console.log('history.put()', historyDataArray);
@@ -4232,7 +4258,7 @@ module.exports = function(broccoli){
 	 * 1つ前のデータを得る
 	 */
 	this.back = function( callback ){
-		// console.log('history.back()', historyDataArray);
+		// console.log('history.back()', historyDataArray, historyIdx);
 		callback = callback||function(){};
 		historyIdx ++;
 		if( historyIdx >= historyDataArray.length || historyIdx < 0 ){
@@ -4240,7 +4266,10 @@ module.exports = function(broccoli){
 			callback(false);
 			return this;
 		}
-		callback(JSON.parse( historyDataArray[historyIdx] ));
+		// console.log('historyIdx: ', historyIdx);
+		var data = {contents: {}, resources: {}};
+		data = historyDataArray[historyIdx];
+		callback( data );
 		return this;
 	}
 
@@ -4256,12 +4285,15 @@ module.exports = function(broccoli){
 			callback(false);
 			return this;
 		}
-		callback(JSON.parse( historyDataArray[historyIdx] ));
+		// console.log(historyIdx, data.contents, data.resources);
+		var data = {contents: {}, resources: {}};
+		data = historyDataArray[historyIdx];
+		callback( data );
 		return this;
 	}
 
 	/**
-	 * history情報を取得する
+	 * history情報の全体を取得する
 	 */
 	this.getHistory = function(){
 		var rtn = {
@@ -5772,29 +5804,6 @@ module.exports = function(broccoli){
 	}
 
 	/**
-	 * get resource DB
-	 */
-	this.getResourceDb = function( callback ){
-		callback = callback || function(){};
-		callback(_resourceDb);
-		return;
-	}
-
-	/**
-	 * get resource DB
-	 */
-	this.setResourceDb = function( newResourceDb, callback ){
-		callback = callback || function(){};
-		if( typeof(newResourceDb) !== typeof({}) ){
-			callback(false);
-			return;
-		}
-		_resourceDb = newResourceDb;
-		callback(true);
-		return;
-	}
-
-	/**
 	 * Reload resources DB
 	 * 
 	 * @param  {Function} cb Callback function.
@@ -5814,6 +5823,29 @@ module.exports = function(broccoli){
 				);
 			}
 		]);
+		return;
+	}
+
+	/**
+	 * get resource DB
+	 */
+	this.getResourceDb = function( callback ){
+		callback = callback || function(){};
+		callback(_resourceDb);
+		return;
+	}
+
+	/**
+	 * set resource DB
+	 */
+	this.setResourceDb = function( newResourceDb, callback ){
+		callback = callback || function(){};
+		if( typeof(newResourceDb) !== typeof({}) ){
+			callback(false);
+			return;
+		}
+		_resourceDb = newResourceDb;
+		callback(true);
 		return;
 	}
 
