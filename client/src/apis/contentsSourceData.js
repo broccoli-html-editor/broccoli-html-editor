@@ -992,16 +992,10 @@ module.exports = function(broccoli){
 				function( it1, data ){
 					// 履歴に追加
 					broccoli.progressMessage('履歴に追加しています...');
-					var historyInfo = _this.history.getHistory();
-					if(historyInfo.index === 0){
-						_this.history.put( _contentsSourceData, resourceDb, function(){
-							it1.next(data);
-						} );
-						return;
-					}else{
+					_this.history.put( _contentsSourceData, resourceDb, function(){
 						it1.next(data);
-						return;
-					}
+					} );
+					return;
 				} ,
 				function( it1, data ){
 					callback();

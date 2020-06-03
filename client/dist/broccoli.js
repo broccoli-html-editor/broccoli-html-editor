@@ -2523,16 +2523,10 @@ module.exports = function(broccoli){
 				function( it1, data ){
 					// 履歴に追加
 					broccoli.progressMessage('履歴に追加しています...');
-					var historyInfo = _this.history.getHistory();
-					if(historyInfo.index === 0){
-						_this.history.put( _contentsSourceData, resourceDb, function(){
-							it1.next(data);
-						} );
-						return;
-					}else{
+					_this.history.put( _contentsSourceData, resourceDb, function(){
 						it1.next(data);
-						return;
-					}
+					} );
+					return;
 				} ,
 				function( it1, data ){
 					callback();
@@ -4335,6 +4329,7 @@ module.exports = function(broccoli){
 
 	var historyDataArray = [];
 	var historyIdx = 0;
+	var maxHistorySize = 30;
 
 	/**
 	 * ヒストリーを初期化する
@@ -4347,7 +4342,7 @@ module.exports = function(broccoli){
 		this.put(data, resourceDb, function(){
 			setTimeout( callback, 0 );
 		});
-		return this;
+		return;
 	}
 
 	/**
@@ -4356,16 +4351,25 @@ module.exports = function(broccoli){
 	this.put = function( data, resourceDb, callback ){
 		callback = callback||function(){};
 
-		historyDataArray.splice(0, historyIdx, JSON.parse(JSON.stringify({
+		// 履歴をさかのぼっているとき、
+		// 現時点(=historyIdx)以降の履歴は削除する
+		historyDataArray.splice(0, historyIdx);
+
+		// 先頭に新しい履歴を追加
+		historyDataArray.unshift(JSON.parse(JSON.stringify({
 			"datetime": (new Date).getTime(),
 			"contents": data,
 			"resources": resourceDb
 		})));
 		historyIdx = 0;
 
+		// 件数の上限設定より古い履歴を削除
+		historyDataArray.splice( maxHistorySize );
+
+
 		// console.log('history.put()', historyDataArray);
 		setTimeout( callback, 0 );
-		return this;
+		return;
 	}
 
 	/**
@@ -4378,13 +4382,13 @@ module.exports = function(broccoli){
 		if( historyIdx >= historyDataArray.length || historyIdx < 0 ){
 			historyIdx --;
 			callback(false);
-			return this;
+			return;
 		}
 		// console.log('historyIdx: ', historyIdx);
 		var data = {contents: {}, resources: {}};
 		data = historyDataArray[historyIdx];
 		callback( data );
-		return this;
+		return;
 	}
 
 	/**
@@ -4397,13 +4401,13 @@ module.exports = function(broccoli){
 		if( historyIdx >= historyDataArray.length || historyIdx < 0 ){
 			historyIdx ++;
 			callback(false);
-			return this;
+			return;
 		}
 		// console.log(historyIdx, data.contents, data.resources);
 		var data = {contents: {}, resources: {}};
 		data = historyDataArray[historyIdx];
 		callback( data );
-		return this;
+		return;
 	}
 
 	/**
