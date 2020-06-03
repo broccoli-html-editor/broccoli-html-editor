@@ -159,22 +159,26 @@ module.exports = function(broccoli, data, options, callback){
 				var $ = cheerio.load($d_html, {decodeEntities: false});
 				var $1stElm = $('*').eq(0);
 				$1stElm.attr({ 'data-broccoli-instance-path': options.instancePath });
+				var moduleName = (mod.info.name||mod.id);
 				if( options.subModName ){
+					moduleName = options.subModName;
 					$1stElm.attr({ 'data-broccoli-sub-mod-name': options.subModName });
 				}
 				$1stElm.attr({ 'data-broccoli-area-size-detection': (mod.info.areaSizeDetection||'shallow') });
-				$1stElm.attr({ 'data-broccoli-module-name': (mod.info.name||mod.id) });
+				$1stElm.attr({ 'data-broccoli-module-name': moduleName });
 				$d_html = $.html();
 			}else{
 				var html = '';
 				html += '<div';
 				html += ' data-broccoli-instance-path="'+php.htmlspecialchars(options.instancePath)+'"';
+				var moduleName = (mod.info.name||mod.id);
 				if( options.subModName ){
+					moduleName = options.subModName;
 					html += ' data-broccoli-sub-mod-name="'+php.htmlspecialchars(options.subModName)+'"';
 				}
 				html += ' data-broccoli-area-size-detection="'+php.htmlspecialchars((mod.info.areaSizeDetection||'shallow'))+'"';
 				// html += ' data-broccoli-is-single-root-element="'+(isSingleRootElement?'yes':'no')+'"';
-				html += ' data-broccoli-module-name="'+php.htmlspecialchars((mod.info.name||mod.id))+'"';
+				html += ' data-broccoli-module-name="'+php.htmlspecialchars(moduleName)+'"';
 				html += '>';
 				html += $d_html;
 				html += '</div>';

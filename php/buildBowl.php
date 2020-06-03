@@ -770,11 +770,13 @@ class buildBowl{
 					$simple_html_dom_ret = $simple_html_dom->find('>*');
 
 					$simple_html_dom_ret[0]->{'data-broccoli-instance-path'} = $options['instancePath'];
+					$moduleName = (@$mod->info['name'] ? $mod->info['name'] : $mod->id);
 					if( @$options['subModName'] ){
+						$moduleName = $options['subModName'];
 						$simple_html_dom_ret[0]->{'data-broccoli-sub-mod-name'} = $options['subModName'];
 					}
 					$simple_html_dom_ret[0]->{'data-broccoli-area-size-detection'} = (@$mod->info['areaSizeDetection'] ? $mod->info['areaSizeDetection'] : 'shallow');
-					$simple_html_dom_ret[0]->{'data-broccoli-module-name'} = (@$mod->info['name'] ? $mod->info['name'] : $mod->id);
+					$simple_html_dom_ret[0]->{'data-broccoli-module-name'} = $moduleName;
 					$d_html = $simple_html_dom->outertext;
 				}
 
@@ -782,12 +784,14 @@ class buildBowl{
 				$tmp_html = '';
 				$tmp_html .= '<div';
 				$tmp_html .= ' data-broccoli-instance-path="'.htmlspecialchars($options['instancePath']).'"';
+				$moduleName = (@$mod->info['name'] ? $mod->info['name'] : $mod->id);
 				if( @$options['subModName'] ){
+					$moduleName = $options['subModName'];
 					$tmp_html .= ' data-broccoli-sub-mod-name="'.htmlspecialchars($options['subModName']).'"';
 				}
 				$tmp_html .= ' data-broccoli-area-size-detection="'.htmlspecialchars((@$mod->info['areaSizeDetection'] ? $mod->info['areaSizeDetection'] : 'shallow')).'"';
 				// $tmp_html .= ' data-broccoli-is-single-root-element="'+(isSingleRootElement?'yes':'no').'"';
-				$tmp_html .= ' data-broccoli-module-name="'.htmlspecialchars((@$mod->info['name'] ? $mod->info['name'] : $mod->id)).'"';
+				$tmp_html .= ' data-broccoli-module-name="'.htmlspecialchars($moduleName).'"';
 				$tmp_html .= '>';
 				$tmp_html .= $d_html;
 				$tmp_html .= '</div>';

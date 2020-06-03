@@ -80,11 +80,12 @@ class classModule{
 		if( array_key_exists('topThis', $this->options) && $this->options['topThis'] ){
 			$this->topThis = $this->options['topThis'];
 			$this->templateType = $this->topThis->templateType;
-			$this->info['name'] = '- ' . ($this->topThis->info['name'] ? $this->topThis->info['name'] : 'null');
+			$this->info['name'] = ($this->topThis->info['name'] ? $this->topThis->info['name'] : 'null');
 			$this->isSubModule = true;
 			if( $options['modName'] ){
-				$this->info['name'] = '- ' . $options['modName'];
+				$this->info['name'] = $options['modName'];
 			}
+			$this->info['name'] = $this->info['name'].' *';
 			// $this->nameSpace = $this->options['topThis']->nameSpace;
 			if( $options['subModName'] ){
 				$this->subModName = $options['subModName'];
@@ -429,6 +430,7 @@ class classModule{
 					@$_topThis->subModule->{$tmpFieldName} = $this->broccoli->createModuleInstance( $this->id, array(
 						"src" => '',
 						"subModName" => $tmpFieldName,
+						"modName" => ($this->fields->{$tmpFieldName}->label ? $this->fields->{$tmpFieldName}->label : $this->fields->{$tmpFieldName}->name),
 						"topThis" => $_topThis
 					) );
 					$_topThis->subModule->{$tmpFieldName}->init();
