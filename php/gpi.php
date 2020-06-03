@@ -247,6 +247,9 @@ class gpi{
 			case "resourceMgr.save":
 				// var_dump('GPI resourceMgr.save');
 				// var_dump(options);
+				foreach( $options['resourceDb'] as $key=>$val ){
+					$options['resourceDb'][$key] = (object) $val;
+				}
 				$result = $this->broccoli->resourceMgr()->save( $options['resourceDb'] );
 				return $result;
 

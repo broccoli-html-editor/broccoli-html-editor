@@ -923,6 +923,17 @@ module.exports = function(broccoli){
 					return;
 				} ,
 				function(it1, data){
+					// コンテンツを更新
+					broccoli.gpi(
+						'updateContents',
+						{} ,
+						function(result){
+							// console.log('------ gpi.updateContents result --', result);
+							it1.next(data);
+						}
+					);
+				} ,
+				function(it1, data){
 					callback(true);
 					return;
 				}
