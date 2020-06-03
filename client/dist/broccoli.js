@@ -957,6 +957,8 @@
 				return;
 			}
 
+			broccoli.contentsSourceData.resourceDbReloadRequest() // 削除したインスタンスにリソースが含まれている可能性があるので、リロードを要求する。
+
 			this.selectedInstanceToJsonString(function(jsonStr){
 				if(jsonStr === false){
 					_this.message('インスタンスのコピーに失敗しました。');
@@ -1120,6 +1122,8 @@
 			}
 			selectedInstanceRegion = JSON.parse( JSON.stringify(selectedInstanceRegion) );
 			selectedInstanceRegion.reverse();//先頭から削除すると添字がリアルタイムに変わってしまうので、逆順に削除する。
+
+			broccoli.contentsSourceData.resourceDbReloadRequest() // 削除したインスタンスにリソースが含まれている可能性があるので、リロードを要求する。
 
 			broccoli.progress(function(){
 				it79.ary(
@@ -1521,6 +1525,8 @@ module.exports = function(broccoli){
 	for(var idx in _modTpls){
 		_moduleInternalIdMap[_modTpls[idx].internalId] = idx;
 	}
+
+	var _resourceDbReloadRequest =false;
 
 	/**
 	 * 初期化
@@ -2339,6 +2345,16 @@ module.exports = function(broccoli){
 	}
 
 	/**
+	 * 次回のコンテンツ保存時に、resourceDb 全体の更新(ダウンロード)実行を要求する
+	 *
+	 * ここに要求が出されている場合、次回のコンテンツ保存時にresourceDbが更新されます。
+	 */
+	this.resourceDbReloadRequest = function(){
+		_resourceDbReloadRequest = true;
+		return true;
+	}
+
+	/**
 	 * history: 取り消し (非同期)
 	 */
 	this.historyBack = function( cb ){
@@ -2390,12 +2406,7 @@ module.exports = function(broccoli){
 			{},
 			[
 				function( it1, data ){
-					broccoli.resourceMgr.getResourceDb(function(res){
-						resourceDb = res;
-						it1.next(data);
-					});
-				} ,
-				function( it1, data ){
+					// コンテンツデータを保存する
 					broccoli.gpi(
 						'saveContentsData',
 						{
@@ -2406,6 +2417,28 @@ module.exports = function(broccoli){
 							it1.next(data);
 						}
 					);
+				} ,
+				function(it1, data){
+					// resourceDbを再取得
+					// (リロード要求が出されていたら実行する)
+					if( !_resourceDbReloadRequest ){
+						it1.next(data);
+						return;
+					}
+					broccoli.progressMessage('リソースデータを同期しています...');
+					broccoli.resourceMgr.reload(function(resourceDb){
+						console.log(resourceDb);
+						_resourceDbReloadRequest = false;
+						it1.next(data);
+					});
+					return;
+				} ,
+				function( it1, data ){
+					// リソース全体を取り出す
+					broccoli.resourceMgr.getResourceDb(function(res){
+						resourceDb = res;
+						it1.next(data);
+					});
 				} ,
 				function( it1, data ){
 					// 履歴に追加

@@ -956,6 +956,8 @@
 				return;
 			}
 
+			broccoli.contentsSourceData.resourceDbReloadRequest() // 削除したインスタンスにリソースが含まれている可能性があるので、リロードを要求する。
+
 			this.selectedInstanceToJsonString(function(jsonStr){
 				if(jsonStr === false){
 					_this.message('インスタンスのコピーに失敗しました。');
@@ -1119,6 +1121,8 @@
 			}
 			selectedInstanceRegion = JSON.parse( JSON.stringify(selectedInstanceRegion) );
 			selectedInstanceRegion.reverse();//先頭から削除すると添字がリアルタイムに変わってしまうので、逆順に削除する。
+
+			broccoli.contentsSourceData.resourceDbReloadRequest() // 削除したインスタンスにリソースが含まれている可能性があるので、リロードを要求する。
 
 			broccoli.progress(function(){
 				it79.ary(

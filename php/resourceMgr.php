@@ -75,12 +75,7 @@ class resourceMgr{
 		// var_dump($this->resourcesPublishDirPath);
 
 		// 使われていないリソースを削除
-		$jsonSrc = file_get_contents( $this->dataJsonPath );
-		foreach( $this->resourceDb as $resKey=>$res ){
-			if( strpos($jsonSrc, $resKey) === false ){// TODO: JSONファイルを文字列として検索しているが、この方法は完全ではない。
-				$this->removeResource($resKey);
-			}
-		}
+		$this->collectGarbage();
 
 		/** res.json を保存する */
 		$save_res_json = function($resKey){
@@ -237,6 +232,12 @@ class resourceMgr{
 	 * get resource DB
 	 */
 	public function getResourceDb(){
+
+		// 使われていないリソースを削除
+		// getter にファイルの削除処理が含まれるのは違和感があるが、
+		// クライアント側のリソースDBの更新を考慮すると、ここがもっともコストが低かった。
+		$this->collectGarbage();
+
 		return $this->resourceDb;
 	}
 
@@ -450,6 +451,19 @@ class resourceMgr{
 			$result = $this->broccoli->fs()->rm( $this->resourcesDirPath.'/'.urlencode($resKey).'/' );
 		}
 		return $result;
+	}
+
+	/**
+	 * 使われていないリソースを削除する
+	 */
+	private function collectGarbage(){
+		$jsonSrc = file_get_contents( $this->dataJsonPath );
+		foreach( $this->resourceDb as $resKey=>$res ){
+			if( strpos($jsonSrc, $resKey) === false ){// TODO: JSONファイルを文字列として検索しているが、この方法は完全ではない。
+				$this->removeResource($resKey);
+			}
+		}
+		return;
 	}
 
 }
