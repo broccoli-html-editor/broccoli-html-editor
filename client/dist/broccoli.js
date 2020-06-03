@@ -1165,14 +1165,14 @@
 						});
 						return;
 					}
-					_this.saveContents(function(){
-						// 画面を再描画
-						_this.redraw(function(){
-							_this.closeProgress(function(){
-								callback();
-							});
+
+					// 画面を再描画
+					_this.redraw(function(){
+						_this.closeProgress(function(){
+							callback();
 						});
 					});
+
 				});
 			});
 			return;
@@ -1185,15 +1185,20 @@
 			callback = callback||function(){};
 			_this.progress(function(){
 				_this.contentsSourceData.historyGo(function(result){
-					if(result === false){callback();return;}
-					_this.saveContents(function(){
-						// 画面を再描画
-						_this.redraw(function(){
-							_this.closeProgress(function(){
-								callback();
-							});
+					if(result === false){
+						_this.closeProgress(function(){
+							callback();
+						});
+						return;
+					}
+
+					// 画面を再描画
+					_this.redraw(function(){
+						_this.closeProgress(function(){
+							callback();
 						});
 					});
+
 				});
 			});
 			return;
@@ -1663,7 +1668,7 @@ module.exports = function(broccoli){
 			}
 		}
 		callback(rtn);
-		return this;
+		return;
 	}
 
 	/**
@@ -1832,7 +1837,7 @@ module.exports = function(broccoli){
 
 		cb(result);
 
-		return this;
+		return;
 	}// addInstance()
 
 	/**
@@ -1912,7 +1917,7 @@ module.exports = function(broccoli){
 
 		cb(result);
 
-		return this;
+		return;
 	}// updateInstance()
 
 	/**
@@ -2019,7 +2024,7 @@ module.exports = function(broccoli){
 			} );
 		}
 
-		return this;
+		return;
 	} // moveInstanceTo()
 
 	/**
@@ -2098,7 +2103,7 @@ module.exports = function(broccoli){
 				});
 			}
 		);
-		return this;
+		return;
 	} // duplicateInstance()
 
 	/**
@@ -2170,7 +2175,7 @@ module.exports = function(broccoli){
 				});
 			}
 		);
-		return this;
+		return;
 	}// extractResourceId()
 
 	/**
@@ -2240,7 +2245,7 @@ module.exports = function(broccoli){
 
 		cb();
 
-		return this;
+		return;
 	}// removeInstance()
 
 	/**
@@ -2357,41 +2362,84 @@ module.exports = function(broccoli){
 	/**
 	 * history: 取り消し (非同期)
 	 */
-	this.historyBack = function( cb ){
-		cb = cb || function(){};
-		this.history.back(function(data){
-			if( data === false ){
-				cb(false);
-				return;
-			}
-			_contentsSourceData = data.contents;
-			var resourceDb = data.resources;
-			broccoli.resourceMgr.setResourceDb(resourceDb, function(){
-				cb(true);
-			});
-			return;
-		});
-		return this;
+	this.historyBack = function( callback ){
+		this.historyBackOrGo('back', callback);
+		return;
 	}
 
 	/**
 	 * history: やりなおし (非同期)
 	 */
-	this.historyGo = function( cb ){
-		cb = cb || function(){};
-		this.history.go(function(data){
-			if( data === false ){
-				cb(false);
-				return;
-			}
-			_contentsSourceData = data.contents;
-			var resourceDb = data.resources;
-			broccoli.resourceMgr.setResourceDb(resourceDb, function(){
-				cb(true);
-			});
-			return;
-		});
-		return this;
+	this.historyGo = function( callback ){
+		this.historyBackOrGo('go', callback);
+		return;
+	}
+
+	/**
+	 * history: 戻る、または やりなおし (非同期)
+	 */
+	this.historyBackOrGo = function( backOrGo, callback ){
+		callback = callback || function(){};
+		var resourceDb;
+		it79.fnc(
+			{},
+			[
+				function( it1, data ){
+					// historyからコンテンツデータを復元する
+					if( backOrGo == 'back' || backOrGo == 'go' ){
+						_this.history[backOrGo](function(data){
+							if( data === false ){
+								callback(false);
+								return;
+							}
+							_contentsSourceData = data.contents;
+							resourceDb = data.resources;
+							it1.next(data);
+							return;
+						});
+						return;
+					}
+					console.error('無効な引数です。', backOrGo);
+					callback(false);
+					return;
+				} ,
+				function( it1, data ){
+					// historyからコンテンツデータを復元する
+					broccoli.resourceMgr.setResourceDb(resourceDb, function(result){
+						if(!result){
+							alert('resourceDb の更新に失敗');
+						}
+						it1.next(data);
+					});
+					return;
+				} ,
+				function( it1, data ){
+					// コンテンツデータを保存する
+					broccoli.gpi(
+						'saveContentsData',
+						{
+							'data': _contentsSourceData
+								// ↑保存するたびに、コンテンツデータの全量が送られる。(ただし画像等のリソースはここに含まない)
+						},
+						function(){
+							it1.next(data);
+						}
+					);
+				} ,
+				function(it1, data){
+					// resourceDbを保存する
+					broccoli.resourceMgr.save(function(res){
+						it1.next(data);
+					});
+					return;
+				} ,
+				function(it1, data){
+					callback(true);
+					return;
+				}
+			]
+		);
+		return;
 	}
 
 	/**
@@ -2427,7 +2475,7 @@ module.exports = function(broccoli){
 					}
 					broccoli.progressMessage('リソースデータを同期しています...');
 					broccoli.resourceMgr.reload(function(resourceDb){
-						console.log(resourceDb);
+						// console.log(resourceDb);
 						_resourceDbReloadRequest = false;
 						it1.next(data);
 					});
@@ -2459,7 +2507,7 @@ module.exports = function(broccoli){
 				}
 			]
 		);
-		return this;
+		return;
 	}
 
 }
@@ -4275,11 +4323,11 @@ module.exports = function(broccoli){
 	this.put = function( data, resourceDb, callback ){
 		callback = callback||function(){};
 
-		historyDataArray.splice(0, historyIdx, {
+		historyDataArray.splice(0, historyIdx, JSON.parse(JSON.stringify({
 			"datetime": (new Date).getTime(),
 			"contents": data,
 			"resources": resourceDb
-		});
+		})));
 		historyIdx = 0;
 
 		// console.log('history.put()', historyDataArray);
@@ -5812,14 +5860,10 @@ module.exports = function(broccoli){
 	/**
 	 * Save resources DB
 	 * 
-	 * このメソッドは、現在は使われていません。
-	 * パフォーマンス改善の一環で、リソース全体の送受信を廃止したためです。
-	 * 
 	 * @param  {Function} cb Callback function.
 	 * @return {boolean}     Always true.
 	 */
 	this.save = function( callback ){
-		console.error('resourceDb save method: called.');
 		callback = callback || function(){};
 		it79.fnc({}, [
 			function(it1, data){
@@ -5827,7 +5871,6 @@ module.exports = function(broccoli){
 					'resourceMgr.save',
 					{'resourceDb': _resourceDb} ,
 					function(rtn){
-						console.error('resourceDb save method: done.');
 						callback(rtn);
 					}
 				);

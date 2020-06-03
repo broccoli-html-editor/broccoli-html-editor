@@ -1164,14 +1164,14 @@
 						});
 						return;
 					}
-					_this.saveContents(function(){
-						// 画面を再描画
-						_this.redraw(function(){
-							_this.closeProgress(function(){
-								callback();
-							});
+
+					// 画面を再描画
+					_this.redraw(function(){
+						_this.closeProgress(function(){
+							callback();
 						});
 					});
+
 				});
 			});
 			return;
@@ -1184,15 +1184,20 @@
 			callback = callback||function(){};
 			_this.progress(function(){
 				_this.contentsSourceData.historyGo(function(result){
-					if(result === false){callback();return;}
-					_this.saveContents(function(){
-						// 画面を再描画
-						_this.redraw(function(){
-							_this.closeProgress(function(){
-								callback();
-							});
+					if(result === false){
+						_this.closeProgress(function(){
+							callback();
+						});
+						return;
+					}
+
+					// 画面を再描画
+					_this.redraw(function(){
+						_this.closeProgress(function(){
+							callback();
 						});
 					});
+
 				});
 			});
 			return;

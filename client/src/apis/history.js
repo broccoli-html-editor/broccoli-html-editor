@@ -26,11 +26,11 @@ module.exports = function(broccoli){
 	this.put = function( data, resourceDb, callback ){
 		callback = callback||function(){};
 
-		historyDataArray.splice(0, historyIdx, {
+		historyDataArray.splice(0, historyIdx, JSON.parse(JSON.stringify({
 			"datetime": (new Date).getTime(),
 			"contents": data,
 			"resources": resourceDb
-		});
+		})));
 		historyIdx = 0;
 
 		// console.log('history.put()', historyDataArray);
