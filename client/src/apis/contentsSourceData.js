@@ -955,6 +955,7 @@ module.exports = function(broccoli){
 			[
 				function( it1, data ){
 					// コンテンツデータを保存する
+					broccoli.progressMessage('コンテンツデータを保存しています...');
 					broccoli.gpi(
 						'saveContentsData',
 						{
@@ -990,6 +991,7 @@ module.exports = function(broccoli){
 				} ,
 				function( it1, data ){
 					// 履歴に追加
+					broccoli.progressMessage('履歴に追加しています...');
 					var historyInfo = _this.history.getHistory();
 					if(historyInfo.index === 0){
 						_this.history.put( _contentsSourceData, resourceDb, function(){

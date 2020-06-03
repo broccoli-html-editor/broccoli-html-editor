@@ -1159,6 +1159,7 @@
 			_this.progress(function(){
 				_this.contentsSourceData.historyBack(function(result){
 					if(result === false){
+						_this.message('これ以上戻れません。');
 						_this.closeProgress(function(){
 							callback();
 						});
@@ -1185,6 +1186,7 @@
 			_this.progress(function(){
 				_this.contentsSourceData.historyGo(function(result){
 					if(result === false){
+						_this.message('これ以上進められません。');
 						_this.closeProgress(function(){
 							callback();
 						});
@@ -1323,9 +1325,27 @@
 		 */
 		this.progressMessage = function(str){
 			console.log(str);
+			if( !this.isProgress() ){
+				this.progress(function(){
+					var $userMessage = $('.broccoli__progress-comment');
+					$userMessage.text(str);
+				});
+				return;
+			}
 			var $userMessage = $('.broccoli__progress-comment');
 			$userMessage.text(str);
 			return;
+		}
+
+		/**
+		 * プログレス表示中か調べる
+		 */
+		this.isProgress = function(){
+			var $progress = $('body').find('.broccoli__progress');
+			if( !$progress.length ){
+				return false;
+			}
+			return true;
 		}
 
 		/**
@@ -1336,7 +1356,7 @@
 			var $progress = $('body').find('.broccoli__progress');
 			if( !$progress.length ){
 				callback();
-				return this;
+				return;
 			}
 			$progress
 				.fadeOut(
