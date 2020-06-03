@@ -868,9 +868,6 @@
 		overflow: hidden;
 		cursor: move;
 
-		// クリップモジュールの場合の表示差異
-		font-weight: bold;
-
 		&:after{
 			content: url("./images/clip.png");
 			width: 20px; height: 20px;
@@ -878,7 +875,6 @@
 			color: #669;
 		}
 		&[data-clip="false"]{
-			font-weight: normal;
 			&:after{
 				content: "";
 				margin-left: 0;

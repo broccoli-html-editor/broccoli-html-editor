@@ -4351,16 +4351,18 @@ module.exports = function(broccoli){
 	this.put = function( data, resourceDb, callback ){
 		callback = callback||function(){};
 
+		var newRecord = JSON.parse(JSON.stringify({
+			"datetime": (new Date).getTime(),
+			"contents": data,
+			"resources": resourceDb
+		}));
+
 		// 履歴をさかのぼっているとき、
 		// 現時点(=historyIdx)以降の履歴は削除する
 		historyDataArray.splice(0, historyIdx);
 
 		// 先頭に新しい履歴を追加
-		historyDataArray.unshift(JSON.parse(JSON.stringify({
-			"datetime": (new Date).getTime(),
-			"contents": data,
-			"resources": resourceDb
-		})));
+		historyDataArray.unshift(newRecord);
 		historyIdx = 0;
 
 		// 件数の上限設定より古い履歴を削除
@@ -4368,7 +4370,7 @@ module.exports = function(broccoli){
 
 
 		// console.log('history.put()', historyDataArray);
-		setTimeout( callback, 0 );
+		callback();
 		return;
 	}
 
