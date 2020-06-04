@@ -791,6 +791,21 @@
 		}
 
 		/**
+		 * インスタンスが選択状態にあるか調べる
+		 */
+		this.isInstanceSelected = function(instancePath){
+			if(selectedInstance == instancePath){
+				return true;
+			}
+			for(var idx in selectedInstanceRegion){
+				if( selectedInstanceRegion[idx] == instancePath ){
+					return true;
+				}
+			}
+			return false;
+		}
+
+		/**
 		 * モジュールインスタンスの選択状態を解除する
 		 */
 		this.unselectInstance = function(callback){

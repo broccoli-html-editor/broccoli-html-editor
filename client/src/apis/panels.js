@@ -18,6 +18,7 @@ module.exports = function(broccoli){
 
 	var selectedInstance;
 	var focusedInstance;
+	var isOnDragging = false;
 
 	/**
 	 * 各パネルを描画する
@@ -116,7 +117,7 @@ module.exports = function(broccoli){
 		$(elm).removeClass('broccoli--panel__drag-entered-d');
 
 		var ud = getUd(e, elm);
-		console.info(ud);
+		// console.info(ud);
 
 		var transferData = event.dataTransfer.getData("text/json");
 		try {
@@ -134,6 +135,12 @@ module.exports = function(broccoli){
 		var isInstanceTreeView = $(elm).attr('data-broccoli-is-instance-tree-view') == 'yes';
 		var isEditWindow = $(elm).attr('data-broccoli-is-edit-window') == 'yes';
 
+		if( broccoli.isInstanceSelected(moveFrom) ){
+			moveFrom = broccoli.getSelectedInstanceRegion();
+		}else{
+			moveFrom = [moveFrom];
+		}
+
 		if( !isAppender && ud.y == 'd' ){
 			moveTo = (function(moveTo){
 				console.log(moveTo);
@@ -149,8 +156,9 @@ module.exports = function(broccoli){
 			})(moveTo);
 		}
 
-		if( moveFrom === moveTo ){
-			// 移動元と移動先が同一の場合、キャンセルとみなす
+		if( moveFrom[0] === moveTo || broccoli.isInstanceSelected( moveTo ) ){
+			// 移動元と移動先が同一の場合、
+			// または、移動先が選択状態の場合キャンセルとみなす
 			$(elm).removeClass('broccoli--panel__drag-entered');
 			$(elm).removeClass('broccoli--panel__drag-entered-u');
 			$(elm).removeClass('broccoli--panel__drag-entered-d');
@@ -190,7 +198,7 @@ module.exports = function(broccoli){
 			}
 
 			return moveTo;
-		})(moveFrom, moveTo);
+		})(moveFrom[0], moveTo);
 
 		if( subModNameFrom.length ){ // ドロップ元のインスタンスがサブモジュールだったら
 
@@ -201,7 +209,7 @@ module.exports = function(broccoli){
 				function removeNum(str){
 					return str.replace(new RegExp('[0-9]+$'),'');
 				}
-				if( removeNum(moveFrom) !== removeNum(moveTo) ){
+				if( removeNum(moveFrom[0]) !== removeNum(moveTo) ){
 					broccoli.message('並べ替え以外の移動操作はできません。');
 					$(elm).removeClass('broccoli--panel__drag-entered');
 					$(elm).removeClass('broccoli--panel__drag-entered-u');
@@ -211,7 +219,7 @@ module.exports = function(broccoli){
 				}
 
 				broccoli.progress(function(){
-					broccoli.contentsSourceData.moveInstanceTo( moveFrom, moveTo, function(result){
+					broccoli.contentsSourceData.moveInstanceTo( moveFrom[0], moveTo, function(result){
 						if(!result){
 							broccoli.closeProgress(function(){
 								callback();
@@ -249,7 +257,7 @@ module.exports = function(broccoli){
 				return;
 			}
 			broccoli.progress(function(){
-				broccoli.contentsSourceData.moveInstanceTo( moveFrom, moveTo, function(result){
+				broccoli.contentsSourceData.moveInstanceTo( moveFrom[0], moveTo, function(result){
 					if(!result){
 						broccoli.closeProgress(function(){
 							callback();
@@ -471,13 +479,16 @@ module.exports = function(broccoli){
 				'tabindex': 1
 			})
 			.on('click', function(e){
+				if(isOnDragging){
+					return;
+				}
 				e.preventDefault();
 				e.stopPropagation();
 				// console.log(e);
 				clearTimeout(timerFocus);
 				var $this = $(this);
 				var instancePath = $this.attr('data-broccoli-instance-path');
-				var selectedInstancePath = broccoli.getSelectedInstance();
+				// var selectedInstancePath = broccoli.getSelectedInstance();
 
 				if( e.shiftKey ){
 					broccoli.selectInstanceRegion( instancePath, function(){
@@ -487,13 +498,14 @@ module.exports = function(broccoli){
 
 				broccoli.selectInstance( instancePath, function(){
 					if( $this.hasClass('broccoli--instance-tree-view-panel-item') ){
-						// インスタンスツリービュー上での処理
+						// インスタンスツリービュー上でインスタンスクリックした場合の処理
 						broccoli.focusInstance( instancePath );
 						return;
 					}
-					// プレビューカンヴァス上での処理
+					// プレビューカンヴァス上でインスタンスクリックした場合の処理
 					broccoli.instanceTreeView.focusInstance( instancePath, function(){} );
 				} );
+				return;
 			})
 			.on('contextmenu', function(e){
 				e.preventDefault();
@@ -584,6 +596,7 @@ module.exports = function(broccoli){
 				}
 			})
 			.on('dragstart', function(e){
+				isOnDragging = true;
 				e.stopPropagation();
 				var event = e.originalEvent;
 				var transferData = {
@@ -602,6 +615,9 @@ module.exports = function(broccoli){
 					console.log('drop event done.');
 				});
 				return;
+			})
+			.on('dragend', function(e){
+				isOnDragging = false;
 			})
 		;
 		return $panel;

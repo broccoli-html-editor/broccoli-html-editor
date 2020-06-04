@@ -138,17 +138,19 @@ module.exports = function(broccoli, targetElm, callback){
 				'href': 'javascript:;'
 			})
 			.on('dragstart', function(e){
-				// console.log(e);
-				var event = e.originalEvent;
-				// px.message( $(this).data('id') );
-				var transferData = {
-					'method': 'add',
-					'modId': $(this).attr('data-id'),
-					'modInternalId': $(this).attr('data-internal-id'),
-					'modClip': $(this).attr('data-clip')
-				};
-				event.dataTransfer.setData('text/json', JSON.stringify(transferData) );
-				updateModuleInfoPreview(null, {'elm': this}, function(){});
+				var $this = $(this);
+				updateModuleInfoPreview(null, {'elm': this}, function(){
+					// console.log(e);
+					var event = e.originalEvent;
+					// px.message( $(this).data('id') );
+					var transferData = {
+						'method': 'add',
+						'modId': $this.attr('data-id'),
+						'modInternalId': $this.attr('data-internal-id'),
+						'modClip': $this.attr('data-clip')
+					};
+					event.dataTransfer.setData('text/json', JSON.stringify(transferData) );
+				});
 			})
 			.on('mouseover', function(e){
 				var html = generateModuleInfoHtml(this);
