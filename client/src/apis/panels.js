@@ -166,39 +166,7 @@ module.exports = function(broccoli){
 			return;
 		}
 
-		var newInstancePath = (function(moveFrom, moveTo){
-			// 移動・挿入後の選択状態を更新する際、
-			// 移動元が抜けることで移動先の番号が変わる場合に、選択状態が乱れる。
-			// この関数では、移動先のパスを計算し直し、移動したインスタンス自身の新しいパスを返す。
-			// これを `broccoli.selectInstance()` すれば、移動・挿入成功後の選択状態を自然な結果にできる。
-			if(!moveFrom){
-				// 新規の場合
-				return moveTo;
-			}
-			if(!moveFrom.match(/^([\S]+)\@([0-9]+)$/)){
-				console.error('FATAL: Instance path has an illegal format.');
-				return moveTo;
-			}
-
-			var moveFromPath = RegExp.$1;
-			var moveFromIdx = RegExp.$2;
-
-			var idx = moveTo.indexOf(moveFromPath+'@');
-			if( idx !== 0 ){
-				return moveTo;
-			}
-			var tmpMoveToStr = moveTo.substring((moveFromPath+'@').length);
-			if(!tmpMoveToStr.match(/^([0-9]+)([\S]*)$/)){
-				return moveTo;
-			}
-			var moveToIdx = RegExp.$1;
-			var moveToPath = RegExp.$2;
-			if( moveToIdx > moveFromIdx ){
-				return moveFromPath + '@' + (moveToIdx-1) + moveToPath;
-			}
-
-			return moveTo;
-		})(moveFrom[0], moveTo);
+		var newInstancePath = broccoli.utils.getInstancePathWhichWasAffectedRemovingInstance(moveTo, moveFrom[0]);
 
 		if( subModNameFrom.length ){ // ドロップ元のインスタンスがサブモジュールだったら
 
@@ -257,27 +225,37 @@ module.exports = function(broccoli){
 				return;
 			}
 			broccoli.progress(function(){
-				broccoli.contentsSourceData.moveInstanceTo( moveFrom[0], moveTo, function(result){
-					if(!result){
-						broccoli.closeProgress(function(){
-							callback();
-						});
-						return;
-					}
-					// コンテンツを保存
-					broccoli.unselectInstance(function(){
-						broccoli.saveContents(function(){
-							// alert('インスタンスを移動しました。');
-							broccoli.redraw(function(){
-								broccoli.closeProgress(function(){
-									broccoli.selectInstance(newInstancePath, function(){
-										callback();
+				it79.ary(
+					moveFrom,
+					function(it1, row, idx){
+						// broccoli.utils.getInstancePathWhichWasAffectedRemovingInstance(moveTo, moveFrom[idx]);
+						broccoli.contentsSourceData.moveInstanceTo( moveFrom[idx], moveTo, function(result){
+							if(!result){
+								console.error('移動に失敗しました。', moveFrom[idx], moveTo, result);
+								// broccoli.closeProgress(function(){
+								// 	callback();
+								// });
+								// return;
+							}
+							it1.next();
+						} );
+					},
+					function(){
+						// コンテンツを保存
+						broccoli.unselectInstance(function(){
+							broccoli.saveContents(function(){
+								// alert('インスタンスを移動しました。');
+								broccoli.redraw(function(){
+									broccoli.closeProgress(function(){
+										broccoli.selectInstance(newInstancePath, function(){
+											callback();
+										});
 									});
 								});
 							});
 						});
-					});
-				} );
+					}
+				);
 			});
 			return;
 		}

@@ -33,6 +33,7 @@
 		var uiState;
 		var timer_redraw,
 			timer_onPreviewLoad;
+		this.utils = new (require('./utils.js'))(_this);
 
 		/**
 		 * broccoli-client を初期化する
