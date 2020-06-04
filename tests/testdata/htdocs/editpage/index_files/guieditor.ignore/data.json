@@ -5,12 +5,101 @@
             "fields": {
                 "main": [
                     {
-                        "modId": "testMod1:dev/parse_error_1",
+                        "modId": "testMod1:units/cols2",
                         "fields": {
-                            "__error__": ""
-                        },
-                        "anchor": "",
-                        "dec": ""
+                            "column1": [
+                                {
+                                    "modId": "PlainHTMLElements:PlainHTML/MultiText",
+                                    "fields": {
+                                        "main": {
+                                            "src": "Left 1",
+                                            "editor": "markdown"
+                                        }
+                                    },
+                                    "anchor": "",
+                                    "dec": ""
+                                },
+                                {
+                                    "modId": "PlainHTMLElements:PlainHTML/MultiText",
+                                    "fields": {
+                                        "main": {
+                                            "src": "Left 2",
+                                            "editor": "markdown"
+                                        }
+                                    },
+                                    "anchor": "",
+                                    "dec": ""
+                                },
+                                {
+                                    "modId": "PlainHTMLElements:PlainHTML/MultiText",
+                                    "fields": {
+                                        "main": {
+                                            "src": "Left 3",
+                                            "editor": "markdown"
+                                        }
+                                    },
+                                    "anchor": "",
+                                    "dec": ""
+                                },
+                                {
+                                    "modId": "PlainHTMLElements:PlainHTML/MultiText",
+                                    "fields": {
+                                        "main": {
+                                            "src": "Left 4",
+                                            "editor": "markdown"
+                                        }
+                                    },
+                                    "anchor": "",
+                                    "dec": ""
+                                }
+                            ],
+                            "column2": [
+                                {
+                                    "modId": "PlainHTMLElements:PlainHTML/MultiText",
+                                    "fields": {
+                                        "main": {
+                                            "src": "Right 1",
+                                            "editor": "markdown"
+                                        }
+                                    },
+                                    "anchor": "",
+                                    "dec": ""
+                                },
+                                {
+                                    "modId": "PlainHTMLElements:PlainHTML/MultiText",
+                                    "fields": {
+                                        "main": {
+                                            "src": "Right 2",
+                                            "editor": "markdown"
+                                        }
+                                    },
+                                    "anchor": "",
+                                    "dec": ""
+                                },
+                                {
+                                    "modId": "PlainHTMLElements:PlainHTML/MultiText",
+                                    "fields": {
+                                        "main": {
+                                            "src": "Right 3",
+                                            "editor": "markdown"
+                                        }
+                                    },
+                                    "anchor": "",
+                                    "dec": ""
+                                },
+                                {
+                                    "modId": "PlainHTMLElements:PlainHTML/MultiText",
+                                    "fields": {
+                                        "main": {
+                                            "src": "Right 4",
+                                            "editor": "markdown"
+                                        }
+                                    },
+                                    "anchor": "",
+                                    "dec": ""
+                                }
+                            ]
+                        }
                     },
                     {
                         "modId": "testMod1:dev/empty_module",
@@ -100,6 +189,32 @@
                                                                         "dec": ""
                                                                     }
                                                                 ]
+                                                            },
+                                                            "subModName": "sample_loop3",
+                                                            "anchor": "",
+                                                            "dec": ""
+                                                        },
+                                                        {
+                                                            "modId": "testMod1:dev/mod_in_loop",
+                                                            "fields": {
+                                                                "multitext_src3": {
+                                                                    "src": "loop element 2",
+                                                                    "editor": "markdown"
+                                                                },
+                                                                "main": []
+                                                            },
+                                                            "subModName": "sample_loop3",
+                                                            "anchor": "",
+                                                            "dec": ""
+                                                        },
+                                                        {
+                                                            "modId": "testMod1:dev/mod_in_loop",
+                                                            "fields": {
+                                                                "multitext_src3": {
+                                                                    "src": "loop element 3",
+                                                                    "editor": "markdown"
+                                                                },
+                                                                "main": []
                                                             },
                                                             "subModName": "sample_loop3",
                                                             "anchor": "",
@@ -1618,6 +1733,14 @@
                                 }
                             ]
                         }
+                    },
+                    {
+                        "modId": "testMod1:dev/parse_error_1",
+                        "fields": {
+                            "__error__": ""
+                        },
+                        "anchor": "",
+                        "dec": ""
                     }
                 ]
             },

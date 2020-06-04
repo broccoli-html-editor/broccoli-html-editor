@@ -167,6 +167,38 @@ module.exports = function(broccoli){
 		}
 
 		var newInstancePath = broccoli.utils.getInstancePathWhichWasAffectedRemovingInstance(moveTo, moveFrom[0]);
+		var fncMoveWhile = function(moveFrom, moveTo){
+			// console.log('length:', moveFrom.length);
+			var tmpMoveFrom = moveFrom.shift();
+			broccoli.contentsSourceData.moveInstanceTo( tmpMoveFrom, moveTo, function(result){
+				if(!result){
+					console.error('移動に失敗しました。', tmpMoveFrom, moveTo, result);
+				}
+				if( moveFrom.length ){
+					moveTo = broccoli.utils.getInstancePathWhichWasAffectedInsertingInstance(moveTo, moveTo);
+					moveTo = broccoli.utils.getInstancePathWhichWasAffectedRemovingInstance(moveTo, tmpMoveFrom);
+					for(var idx in moveFrom){
+						moveFrom[idx] = broccoli.utils.getInstancePathWhichWasAffectedRemovingInstance(moveFrom[idx], tmpMoveFrom);
+						moveFrom[idx] = broccoli.utils.getInstancePathWhichWasAffectedInsertingInstance(moveFrom[idx], moveTo);
+					}
+					fncMoveWhile(moveFrom, moveTo);
+				}else{
+					// コンテンツを保存
+					broccoli.unselectInstance(function(){
+						broccoli.saveContents(function(){
+							// alert('インスタンスを移動しました。');
+							broccoli.redraw(function(){
+								broccoli.closeProgress(function(){
+									broccoli.selectInstance(newInstancePath, function(){
+										callback();
+									});
+								});
+							});
+						});
+					});
+				}
+			} );
+		}
 
 		if( subModNameFrom.length ){ // ドロップ元のインスタンスがサブモジュールだったら
 
@@ -187,27 +219,7 @@ module.exports = function(broccoli){
 				}
 
 				broccoli.progress(function(){
-					broccoli.contentsSourceData.moveInstanceTo( moveFrom[0], moveTo, function(result){
-						if(!result){
-							broccoli.closeProgress(function(){
-								callback();
-							});
-							return;
-						}
-						// コンテンツを保存
-						broccoli.unselectInstance(function(){
-							broccoli.saveContents(function(){
-								// alert('インスタンスを移動しました。');
-								broccoli.redraw(function(){
-									broccoli.closeProgress(function(){
-										broccoli.selectInstance(newInstancePath, function(){
-											callback();
-										});
-									});
-								});
-							});
-						});
-					} );
+					fncMoveWhile(moveFrom, moveTo);
 				});
 				return;
 			}
@@ -225,37 +237,7 @@ module.exports = function(broccoli){
 				return;
 			}
 			broccoli.progress(function(){
-				it79.ary(
-					moveFrom,
-					function(it1, row, idx){
-						// broccoli.utils.getInstancePathWhichWasAffectedRemovingInstance(moveTo, moveFrom[idx]);
-						broccoli.contentsSourceData.moveInstanceTo( moveFrom[idx], moveTo, function(result){
-							if(!result){
-								console.error('移動に失敗しました。', moveFrom[idx], moveTo, result);
-								// broccoli.closeProgress(function(){
-								// 	callback();
-								// });
-								// return;
-							}
-							it1.next();
-						} );
-					},
-					function(){
-						// コンテンツを保存
-						broccoli.unselectInstance(function(){
-							broccoli.saveContents(function(){
-								// alert('インスタンスを移動しました。');
-								broccoli.redraw(function(){
-									broccoli.closeProgress(function(){
-										broccoli.selectInstance(newInstancePath, function(){
-											callback();
-										});
-									});
-								});
-							});
-						});
-					}
-				);
+				fncMoveWhile(moveFrom, moveTo);
 			});
 			return;
 		}
@@ -410,7 +392,9 @@ module.exports = function(broccoli){
 				}
 				broccoli.saveContents(function(){
 					broccoli.redraw(function(){
-						callback();
+						broccoli.closeProgress(function(){
+							callback();
+						});
 					});
 				});
 			}, subModName );

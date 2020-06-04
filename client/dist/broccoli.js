@@ -5144,6 +5144,38 @@ module.exports = function(broccoli){
 		}
 
 		var newInstancePath = broccoli.utils.getInstancePathWhichWasAffectedRemovingInstance(moveTo, moveFrom[0]);
+		var fncMoveWhile = function(moveFrom, moveTo){
+			// console.log('length:', moveFrom.length);
+			var tmpMoveFrom = moveFrom.shift();
+			broccoli.contentsSourceData.moveInstanceTo( tmpMoveFrom, moveTo, function(result){
+				if(!result){
+					console.error('移動に失敗しました。', tmpMoveFrom, moveTo, result);
+				}
+				if( moveFrom.length ){
+					moveTo = broccoli.utils.getInstancePathWhichWasAffectedInsertingInstance(moveTo, moveTo);
+					moveTo = broccoli.utils.getInstancePathWhichWasAffectedRemovingInstance(moveTo, tmpMoveFrom);
+					for(var idx in moveFrom){
+						moveFrom[idx] = broccoli.utils.getInstancePathWhichWasAffectedRemovingInstance(moveFrom[idx], tmpMoveFrom);
+						moveFrom[idx] = broccoli.utils.getInstancePathWhichWasAffectedInsertingInstance(moveFrom[idx], moveTo);
+					}
+					fncMoveWhile(moveFrom, moveTo);
+				}else{
+					// コンテンツを保存
+					broccoli.unselectInstance(function(){
+						broccoli.saveContents(function(){
+							// alert('インスタンスを移動しました。');
+							broccoli.redraw(function(){
+								broccoli.closeProgress(function(){
+									broccoli.selectInstance(newInstancePath, function(){
+										callback();
+									});
+								});
+							});
+						});
+					});
+				}
+			} );
+		}
 
 		if( subModNameFrom.length ){ // ドロップ元のインスタンスがサブモジュールだったら
 
@@ -5164,27 +5196,7 @@ module.exports = function(broccoli){
 				}
 
 				broccoli.progress(function(){
-					broccoli.contentsSourceData.moveInstanceTo( moveFrom[0], moveTo, function(result){
-						if(!result){
-							broccoli.closeProgress(function(){
-								callback();
-							});
-							return;
-						}
-						// コンテンツを保存
-						broccoli.unselectInstance(function(){
-							broccoli.saveContents(function(){
-								// alert('インスタンスを移動しました。');
-								broccoli.redraw(function(){
-									broccoli.closeProgress(function(){
-										broccoli.selectInstance(newInstancePath, function(){
-											callback();
-										});
-									});
-								});
-							});
-						});
-					} );
+					fncMoveWhile(moveFrom, moveTo);
 				});
 				return;
 			}
@@ -5202,37 +5214,7 @@ module.exports = function(broccoli){
 				return;
 			}
 			broccoli.progress(function(){
-				it79.ary(
-					moveFrom,
-					function(it1, row, idx){
-						// broccoli.utils.getInstancePathWhichWasAffectedRemovingInstance(moveTo, moveFrom[idx]);
-						broccoli.contentsSourceData.moveInstanceTo( moveFrom[idx], moveTo, function(result){
-							if(!result){
-								console.error('移動に失敗しました。', moveFrom[idx], moveTo, result);
-								// broccoli.closeProgress(function(){
-								// 	callback();
-								// });
-								// return;
-							}
-							it1.next();
-						} );
-					},
-					function(){
-						// コンテンツを保存
-						broccoli.unselectInstance(function(){
-							broccoli.saveContents(function(){
-								// alert('インスタンスを移動しました。');
-								broccoli.redraw(function(){
-									broccoli.closeProgress(function(){
-										broccoli.selectInstance(newInstancePath, function(){
-											callback();
-										});
-									});
-								});
-							});
-						});
-					}
-				);
+				fncMoveWhile(moveFrom, moveTo);
 			});
 			return;
 		}
@@ -5387,7 +5369,9 @@ module.exports = function(broccoli){
 				}
 				broccoli.saveContents(function(){
 					broccoli.redraw(function(){
-						callback();
+						broccoli.closeProgress(function(){
+							callback();
+						});
 					});
 				});
 			}, subModName );
@@ -6234,47 +6218,87 @@ module.exports = function(broccoli){
 module.exports = function(broccoli){
 
 	/**
-	 * インスタンスBを削除した影響を受けたあとのインスタンスAのパスを取得する
+	 * インスタンスBを削除した影響を受けたあとのインスタンスAのパスを計算する
 	 */
-	this.getInstancePathWhichWasAffectedRemovingInstance = function( moveTo, moveFrom ){
-		console.log('=-=-=-=-=-==-=-=', moveTo, moveFrom);
+	this.getInstancePathWhichWasAffectedRemovingInstance = function( challangeInstancePathTo, remmovedInstancePath ){
+		// console.log('=-=-=-=-=-==-=-=', challangeInstancePathTo, remmovedInstancePath);
 
 		// 移動・挿入後の選択状態を更新する際、
 		// 移動元が抜けることで移動先の番号が変わる場合に、選択状態が乱れる。
 		// この関数では、移動先のパスを計算し直し、移動したインスタンス自身の新しいパスを返す。
 		// これを `broccoli.selectInstance()` すれば、移動・挿入成功後の選択状態を自然な結果にできる。
-		if(!moveFrom){
+		if(!remmovedInstancePath){
 			// 新規の場合
-			return moveTo;
+			return challangeInstancePathTo;
 		}
-		if(!moveFrom.match(/^([\S]+)\@([0-9]+)$/)){
-			console.error('FATAL: Instance path has an illegal format.');
-			return moveTo;
+		if(!remmovedInstancePath.match(/^([\S]+)\@([0-9]+)$/)){
+			console.error('FATAL: Instance path has an illegal format.', remmovedInstancePath);
+			return challangeInstancePathTo;
 		}
 
-		var moveFromPath = RegExp.$1;
-		var moveFromIdx = RegExp.$2;
+		var remmovedInstancePathPath = RegExp.$1;
+		var remmovedInstancePathIdx = Number(RegExp.$2);
 
-		var idx = moveTo.indexOf(moveFromPath+'@');
+		var idx = challangeInstancePathTo.indexOf(remmovedInstancePathPath+'@');
 		if( idx !== 0 ){
-			console.log('--- 影響なし', moveTo);
-			return moveTo;
+			// console.log('--- 影響なし', challangeInstancePathTo);
+			return challangeInstancePathTo;
 		}
-		var tmpMoveToStr = moveTo.substring((moveFromPath+'@').length);
-		if(!tmpMoveToStr.match(/^([0-9]+)([\S]*)$/)){
-			console.log('--- 影響なし', moveTo);
-			return moveTo;
+		var tmpchallangeInstancePathToStr = challangeInstancePathTo.substring((remmovedInstancePathPath+'@').length);
+		if(!tmpchallangeInstancePathToStr.match(/^([0-9]+)([\S]*)$/)){
+			// console.log('--- 影響なし', challangeInstancePathTo);
+			return challangeInstancePathTo;
 		}
-		var moveToIdx = RegExp.$1;
-		var moveToPath = RegExp.$2;
-		if( moveToIdx > moveFromIdx ){
-			var rtn = moveFromPath + '@' + (moveToIdx-1) + moveToPath;
-			console.log('+++ 影響あり', rtn);
+		var challangeInstancePathToIdx = Number(RegExp.$1);
+		var challangeInstancePathToPath = RegExp.$2;
+		if( challangeInstancePathToIdx > remmovedInstancePathIdx ){
+			var rtn = remmovedInstancePathPath + '@' + (challangeInstancePathToIdx-1) + challangeInstancePathToPath;
+			// console.log('+++ 影響あり', rtn);
 			return rtn;
 		}
 
-		console.log('--- 影響なし', moveTo);
-		return moveTo;
+		// console.log('--- 影響なし', challangeInstancePathTo);
+		return challangeInstancePathTo;
+	}
+
+	/**
+	 * インスタンスBを挿入した影響を受けたあとのインスタンスAのパスを計算する
+	 */
+	this.getInstancePathWhichWasAffectedInsertingInstance = function( challangeInstancePath, insertedInstancePath ){
+		// console.log('=-=-=-=-=-==-=-=', challangeInstancePath, insertedInstancePath);
+
+		if(!insertedInstancePath){
+			// 新規の場合
+			return challangeInstancePath;
+		}
+		if(!insertedInstancePath.match(/^([\S]+)\@([0-9]+)$/)){
+			console.error('FATAL: Instance path has an illegal format.', insertedInstancePath);
+			return challangeInstancePath;
+		}
+
+		var insertedInstancePathPath = RegExp.$1;
+		var insertedInstancePathIdx = Number(RegExp.$2);
+
+		var idx = challangeInstancePath.indexOf(insertedInstancePathPath+'@');
+		if( idx !== 0 ){
+			// console.log('--- 影響なし', challangeInstancePath);
+			return challangeInstancePath;
+		}
+		var tmpchallangeInstancePathStr = challangeInstancePath.substring((insertedInstancePathPath+'@').length);
+		if(!tmpchallangeInstancePathStr.match(/^([0-9]+)([\S]*)$/)){
+			// console.log('--- 影響なし', challangeInstancePath);
+			return challangeInstancePath;
+		}
+		var challangeInstancePathIdx = Number(RegExp.$1);
+		var challangeInstancePathPath = RegExp.$2;
+		if( challangeInstancePathIdx >= insertedInstancePathIdx ){
+			var rtn = insertedInstancePathPath + '@' + (challangeInstancePathIdx+1) + challangeInstancePathPath;
+			// console.log('+++ 影響あり', rtn);
+			return rtn;
+		}
+
+		// console.log('--- 影響なし', challangeInstancePath);
+		return challangeInstancePath;
 	}
 
 }
