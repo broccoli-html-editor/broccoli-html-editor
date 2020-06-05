@@ -5109,32 +5109,35 @@ module.exports = function(broccoli){
 		var isAppenderFrom = (transferData["data-broccoli-is-appender"] == 'yes');
 		var isAppender = ($(elm).attr('data-broccoli-is-appender') == 'yes');
 		var moveFrom = transferData["data-broccoli-instance-path"] || '';
+		var moveFroms = [];
 		var moveTo = $(elm).attr('data-broccoli-instance-path');
 		var isInstanceTreeView = $(elm).attr('data-broccoli-is-instance-tree-view') == 'yes';
 		var isEditWindow = $(elm).attr('data-broccoli-is-edit-window') == 'yes';
 
-		if( broccoli.isInstanceSelected(moveFrom) ){
-			moveFrom = broccoli.getSelectedInstanceRegion();
+		if( !moveFrom ){
+			moveFroms = [];
+		}else if( broccoli.isInstanceSelected(moveFrom) ){
+			moveFroms = broccoli.getSelectedInstanceRegion();
 		}else{
-			moveFrom = [moveFrom];
+			moveFroms = [moveFrom];
 		}
 
 		if( !isAppender && ud.y == 'd' ){
 			moveTo = (function(moveTo){
-				console.log(moveTo);
+				// console.log(moveTo);
 				if(!moveTo.match(/^([\S]+)\@([0-9]+)$/)){
 					console.error('FATAL: Instance path has an illegal format.');
 					return moveTo;
 				}
 
 				var moveToPath = RegExp.$1;
-				var moveToIdx = RegExp.$2;
+				var moveToIdx = Number(RegExp.$2);
 
-				return moveToPath + '@' + (Number(moveToIdx)+1);
+				return moveToPath + '@' + (moveToIdx + 1);
 			})(moveTo);
 		}
 
-		if( moveFrom[0] === moveTo || broccoli.isInstanceSelected( moveTo ) ){
+		if( moveFroms[0] === moveTo || broccoli.isInstanceSelected( moveTo ) ){
 			// 移動元と移動先が同一の場合、
 			// または、移動先が選択状態の場合キャンセルとみなす
 			$(elm).removeClass('broccoli--panel__drag-entered');
@@ -5145,12 +5148,12 @@ module.exports = function(broccoli){
 		}
 
 		// 処理後の選択状態に影響します。
-		var newInstancePath = moveFrom[0];
+		var newInstancePath = moveFroms[0];
 
-		var fncMoveWhile = function(moveFrom, moveTo){
-			// console.log('length:', moveFrom.length);
-			// console.log('====== move from, to', moveFrom, moveTo);
-			var currentMoveFrom = moveFrom.shift();
+		var fncMoveWhile = function(moveFroms, moveTo){
+			// console.log('length:', moveFroms.length);
+			// console.log('====== move from, to', moveFroms, moveTo);
+			var currentMoveFrom = moveFroms.shift();
 			// console.log('*** currentMoveFrom:', currentMoveFrom);
 			broccoli.contentsSourceData.moveInstanceTo( currentMoveFrom, moveTo, function(result){
 				if(!result){
@@ -5159,17 +5162,17 @@ module.exports = function(broccoli){
 
 				newInstancePath = broccoli.utils.getInstancePathWhichWasAffectedRemovingInstance(newInstancePath, currentMoveFrom);
 
-				if( moveFrom.length ){
-					for(var idx in moveFrom){
-						moveFrom[idx] = broccoli.utils.getInstancePathWhichWasAffectedRemovingInstance(moveFrom[idx], currentMoveFrom);
-						moveFrom[idx] = broccoli.utils.getInstancePathWhichWasAffectedInsertingInstance(moveFrom[idx], moveTo);
+				if( moveFroms.length ){
+					for(var idx in moveFroms){
+						moveFroms[idx] = broccoli.utils.getInstancePathWhichWasAffectedRemovingInstance(moveFroms[idx], currentMoveFrom);
+						moveFroms[idx] = broccoli.utils.getInstancePathWhichWasAffectedInsertingInstance(moveFroms[idx], moveTo);
 					}
 
 					currentMoveFrom = broccoli.utils.getInstancePathWhichWasAffectedInsertingInstance(currentMoveFrom, moveTo);
 					moveTo = broccoli.utils.getInstancePathWhichWasAffectedRemovingInstance(moveTo, currentMoveFrom);
 					moveTo = broccoli.utils.getInstancePathWhichWasAffectedInsertingInstance(moveTo, moveTo);
-					// console.log('====-- move from, to', moveFrom, moveTo);
-					fncMoveWhile(moveFrom, moveTo);
+					// console.log('====-- move from, to', moveFroms, moveTo);
+					fncMoveWhile(moveFroms, moveTo);
 				}else{
 					// コンテンツを保存
 					broccoli.unselectInstance(function(){
@@ -5197,7 +5200,7 @@ module.exports = function(broccoli){
 				function removeNum(str){
 					return str.replace(new RegExp('[0-9]+$'),'');
 				}
-				if( removeNum(moveFrom[0]) !== removeNum(moveTo) ){
+				if( removeNum(moveFroms[0]) !== removeNum(moveTo) ){
 					broccoli.message('並べ替え以外の移動操作はできません。');
 					$(elm).removeClass('broccoli--panel__drag-entered');
 					$(elm).removeClass('broccoli--panel__drag-entered-u');
@@ -5208,7 +5211,7 @@ module.exports = function(broccoli){
 
 				broccoli.progress(function(){
 					newInstancePath = moveTo;
-					fncMoveWhile(moveFrom, moveTo);
+					fncMoveWhile(moveFroms, moveTo);
 				});
 				return;
 			}
@@ -5227,7 +5230,7 @@ module.exports = function(broccoli){
 			}
 			broccoli.progress(function(){
 				newInstancePath = moveTo;
-				fncMoveWhile(moveFrom, moveTo);
+				fncMoveWhile(moveFroms, moveTo);
 			});
 			return;
 		}
