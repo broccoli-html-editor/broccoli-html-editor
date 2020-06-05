@@ -5144,21 +5144,27 @@ module.exports = function(broccoli){
 			return;
 		}
 
-		var newInstancePath = broccoli.utils.getInstancePathWhichWasAffectedRemovingInstance(moveTo, moveFrom[0]);
+		// 処理後の選択状態に影響します。
+		var newInstancePath = moveFrom[0];
+
 		var fncMoveWhile = function(moveFrom, moveTo){
 			// console.log('length:', moveFrom.length);
-			console.log('====== move from, to', moveFrom, moveTo);
+			// console.log('====== move from, to', moveFrom, moveTo);
 			var currentMoveFrom = moveFrom.shift();
 			// console.log('*** currentMoveFrom:', currentMoveFrom);
 			broccoli.contentsSourceData.moveInstanceTo( currentMoveFrom, moveTo, function(result){
 				if(!result){
 					console.error('移動に失敗しました。', currentMoveFrom, moveTo, result);
 				}
+
+				newInstancePath = broccoli.utils.getInstancePathWhichWasAffectedRemovingInstance(newInstancePath, currentMoveFrom);
+
 				if( moveFrom.length ){
 					for(var idx in moveFrom){
 						moveFrom[idx] = broccoli.utils.getInstancePathWhichWasAffectedRemovingInstance(moveFrom[idx], currentMoveFrom);
 						moveFrom[idx] = broccoli.utils.getInstancePathWhichWasAffectedInsertingInstance(moveFrom[idx], moveTo);
 					}
+
 					currentMoveFrom = broccoli.utils.getInstancePathWhichWasAffectedInsertingInstance(currentMoveFrom, moveTo);
 					moveTo = broccoli.utils.getInstancePathWhichWasAffectedRemovingInstance(moveTo, currentMoveFrom);
 					moveTo = broccoli.utils.getInstancePathWhichWasAffectedInsertingInstance(moveTo, moveTo);
@@ -5201,6 +5207,7 @@ module.exports = function(broccoli){
 				}
 
 				broccoli.progress(function(){
+					newInstancePath = moveTo;
 					fncMoveWhile(moveFrom, moveTo);
 				});
 				return;
@@ -5219,10 +5226,14 @@ module.exports = function(broccoli){
 				return;
 			}
 			broccoli.progress(function(){
+				newInstancePath = moveTo;
 				fncMoveWhile(moveFrom, moveTo);
 			});
 			return;
 		}
+
+		newInstancePath = broccoli.utils.getInstancePathWhichWasAffectedRemovingInstance(moveTo, newInstancePath);
+
 		if( subModName && method === 'add' ){
 			// loopフィールドのサブモジュールに新しいモジュールを追加しようとした場合の処理
 			broccoli.message('loopフィールドに新しいモジュールを追加することはできません。');
