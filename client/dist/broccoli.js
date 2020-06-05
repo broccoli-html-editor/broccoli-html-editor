@@ -1618,7 +1618,7 @@ module.exports = function(broccoli){
 	this.get = function( containerInstancePath, data ){
 		data = data || _contentsSourceData;
 
-		// console.log( containerInstancePath );
+		// console.log( '=-=-=-=-=-=-=-=-=-=-=-=-=-=', containerInstancePath );
 		if( containerInstancePath === undefined || !containerInstancePath.length ){
 			return data;
 		}
@@ -1638,6 +1638,7 @@ module.exports = function(broccoli){
 		var container = tmpCur[0];
 		var fieldName = tmpCur[1];
 		var modTpl = _this.getModuleByInternalId( data.modId, data.subModName );
+	// console.log(data,modTpl);
 
 		if( container == 'bowl' ){
 			return this.get( aryPath, data.bowl[fieldName] );
@@ -5147,6 +5148,7 @@ module.exports = function(broccoli){
 		var fncMoveWhile = function(moveFrom, moveTo){
 			// console.log('length:', moveFrom.length);
 			var tmpMoveFrom = moveFrom.shift();
+			// console.log('*** tmpMoveFrom:', tmpMoveFrom);
 			broccoli.contentsSourceData.moveInstanceTo( tmpMoveFrom, moveTo, function(result){
 				if(!result){
 					console.error('移動に失敗しました。', tmpMoveFrom, moveTo, result);
@@ -5158,6 +5160,7 @@ module.exports = function(broccoli){
 						moveFrom[idx] = broccoli.utils.getInstancePathWhichWasAffectedRemovingInstance(moveFrom[idx], tmpMoveFrom);
 						moveFrom[idx] = broccoli.utils.getInstancePathWhichWasAffectedInsertingInstance(moveFrom[idx], moveTo);
 					}
+					// console.log(moveTo, moveFrom);
 					fncMoveWhile(moveFrom, moveTo);
 				}else{
 					// コンテンツを保存
@@ -6231,7 +6234,7 @@ module.exports = function(broccoli){
 			// 新規の場合
 			return challangeInstancePathTo;
 		}
-		if(!remmovedInstancePath.match(/^([\S]+)\@([0-9]+)$/)){
+		if(!remmovedInstancePath.match(/^([\S]+?)\@([0-9]+)$/)){
 			console.error('FATAL: Instance path has an illegal format.', remmovedInstancePath);
 			return challangeInstancePathTo;
 		}
@@ -6245,7 +6248,7 @@ module.exports = function(broccoli){
 			return challangeInstancePathTo;
 		}
 		var tmpchallangeInstancePathToStr = challangeInstancePathTo.substring((remmovedInstancePathPath+'@').length);
-		if(!tmpchallangeInstancePathToStr.match(/^([0-9]+)([\S]*)$/)){
+		if(!tmpchallangeInstancePathToStr.match(/^([0-9]+)([\S]*?)$/)){
 			// console.log('--- 影響なし', challangeInstancePathTo);
 			return challangeInstancePathTo;
 		}
@@ -6271,7 +6274,7 @@ module.exports = function(broccoli){
 			// 新規の場合
 			return challangeInstancePath;
 		}
-		if(!insertedInstancePath.match(/^([\S]+)\@([0-9]+)$/)){
+		if(!insertedInstancePath.match(/^([\S]+?)\@([0-9]+)$/)){
 			console.error('FATAL: Instance path has an illegal format.', insertedInstancePath);
 			return challangeInstancePath;
 		}
@@ -6285,7 +6288,7 @@ module.exports = function(broccoli){
 			return challangeInstancePath;
 		}
 		var tmpchallangeInstancePathStr = challangeInstancePath.substring((insertedInstancePathPath+'@').length);
-		if(!tmpchallangeInstancePathStr.match(/^([0-9]+)([\S]*)$/)){
+		if(!tmpchallangeInstancePathStr.match(/^([0-9]+)([\S]*?)$/)){
 			// console.log('--- 影響なし', challangeInstancePath);
 			return challangeInstancePath;
 		}

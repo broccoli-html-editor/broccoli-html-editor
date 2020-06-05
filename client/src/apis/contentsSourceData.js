@@ -71,7 +71,7 @@ module.exports = function(broccoli){
 	this.get = function( containerInstancePath, data ){
 		data = data || _contentsSourceData;
 
-		// console.log( containerInstancePath );
+		// console.log( '=-=-=-=-=-=-=-=-=-=-=-=-=-=', containerInstancePath );
 		if( containerInstancePath === undefined || !containerInstancePath.length ){
 			return data;
 		}
@@ -91,6 +91,7 @@ module.exports = function(broccoli){
 		var container = tmpCur[0];
 		var fieldName = tmpCur[1];
 		var modTpl = _this.getModuleByInternalId( data.modId, data.subModName );
+	// console.log(data,modTpl);
 
 		if( container == 'bowl' ){
 			return this.get( aryPath, data.bowl[fieldName] );

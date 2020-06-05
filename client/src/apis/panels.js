@@ -170,6 +170,7 @@ module.exports = function(broccoli){
 		var fncMoveWhile = function(moveFrom, moveTo){
 			// console.log('length:', moveFrom.length);
 			var tmpMoveFrom = moveFrom.shift();
+			// console.log('*** tmpMoveFrom:', tmpMoveFrom);
 			broccoli.contentsSourceData.moveInstanceTo( tmpMoveFrom, moveTo, function(result){
 				if(!result){
 					console.error('移動に失敗しました。', tmpMoveFrom, moveTo, result);
@@ -181,6 +182,7 @@ module.exports = function(broccoli){
 						moveFrom[idx] = broccoli.utils.getInstancePathWhichWasAffectedRemovingInstance(moveFrom[idx], tmpMoveFrom);
 						moveFrom[idx] = broccoli.utils.getInstancePathWhichWasAffectedInsertingInstance(moveFrom[idx], moveTo);
 					}
+					// console.log(moveTo, moveFrom);
 					fncMoveWhile(moveFrom, moveTo);
 				}else{
 					// コンテンツを保存

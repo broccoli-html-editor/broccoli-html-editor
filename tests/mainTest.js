@@ -110,6 +110,105 @@ function makeDefaultBroccoli(options, callback){
 	return;
 }
 
+describe('Clientside Utilities', function() {
+
+	it("utils.getInstancePathWhichWasAffectedRemovingInstance()", function(done) {
+		this.timeout(60*1000);
+
+		var utils = new (require(__dirname+'/../client/src/apis/utils.js'))();
+
+		assert.equal(
+			utils.getInstancePathWhichWasAffectedRemovingInstance(
+				'/fields.main@1',
+				'/fields.main@2'
+			),
+			'/fields.main@1'
+		);
+		assert.equal(
+			utils.getInstancePathWhichWasAffectedRemovingInstance(
+				'/fields.main@4',
+				'/fields.main@1'
+			),
+			'/fields.main@3'
+		);
+		assert.equal(
+			utils.getInstancePathWhichWasAffectedRemovingInstance(
+				'/fields.main@4',
+				'/fields.main@1/fields.main@3'
+			),
+			'/fields.main@4'
+		);
+		assert.equal(
+			utils.getInstancePathWhichWasAffectedRemovingInstance(
+				'/fields.main@1/fields.main@3',
+				'/fields.main@4'
+			),
+			'/fields.main@1/fields.main@3'
+		);
+		assert.equal(
+			utils.getInstancePathWhichWasAffectedRemovingInstance(
+				'/fields.main@4/fields.main@3',
+				'/fields.main@1'
+			),
+			'/fields.main@3/fields.main@3'
+		);
+
+		done();
+	});
+
+	it("utils.getInstancePathWhichWasAffectedInsertingInstance()", function(done) {
+		this.timeout(60*1000);
+
+		var utils = new (require(__dirname+'/../client/src/apis/utils.js'))();
+
+		assert.equal(
+			utils.getInstancePathWhichWasAffectedInsertingInstance(
+				'/fields.main@1',
+				'/fields.main@2'
+			),
+			'/fields.main@1'
+		);
+		assert.equal(
+			utils.getInstancePathWhichWasAffectedInsertingInstance(
+				'/fields.main@4',
+				'/fields.main@4'
+			),
+			'/fields.main@5'
+		);
+		assert.equal(
+			utils.getInstancePathWhichWasAffectedInsertingInstance(
+				'/fields.main@4',
+				'/fields.main@1'
+			),
+			'/fields.main@5'
+		);
+		assert.equal(
+			utils.getInstancePathWhichWasAffectedInsertingInstance(
+				'/fields.main@4',
+				'/fields.main@1/fields.main@3'
+			),
+			'/fields.main@4'
+		);
+		assert.equal(
+			utils.getInstancePathWhichWasAffectedInsertingInstance(
+				'/fields.main@1/fields.main@3',
+				'/fields.main@4'
+			),
+			'/fields.main@1/fields.main@3'
+		);
+		assert.equal(
+			utils.getInstancePathWhichWasAffectedInsertingInstance(
+				'/fields.main@4/fields.main@3',
+				'/fields.main@1'
+			),
+			'/fields.main@5/fields.main@3'
+		);
+
+		done();
+	});
+
+});
+
 describe('インスタンス初期化', function() {
 
 	it("インスタンス初期化", function(done) {
