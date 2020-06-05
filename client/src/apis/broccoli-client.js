@@ -122,7 +122,7 @@
 									}
 									console.log('broccoli: preview loaded:', contWin.location.href);
 								}catch(e){}
-								_this.setUiState('standby');
+								_this.setUiState();
 								onPreviewLoad( callback );
 							})
 						;
@@ -327,6 +327,14 @@
 				.off('cut')
 				.off('paste')
 			;
+
+			if( !uiState ){
+				if( this.isLightboxOpened() ){
+					uiState = 'lightbox';
+				}else{
+					uiState = 'standby';
+				}
+			}
 
 			if( uiState == 'standby' ){
 				$window
@@ -1255,7 +1263,6 @@
 		 */
 		this.lightbox = function( callback ){
 			callback = callback||function(){};
-			this.setUiState('lightbox');
 
 			var $dom = $('<div>')
 				.addClass('broccoli__lightbox-inner')
@@ -1279,6 +1286,7 @@
 				)
 			;
 
+			this.setUiState();
 			callback( $dom.get(0) );
 			return;
 		}
@@ -1310,7 +1318,7 @@
 					}
 				)
 			;
-			this.setUiState('standby');
+			this.setUiState();
 			return;
 		}
 
