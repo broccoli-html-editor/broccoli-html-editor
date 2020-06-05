@@ -5147,20 +5147,22 @@ module.exports = function(broccoli){
 		var newInstancePath = broccoli.utils.getInstancePathWhichWasAffectedRemovingInstance(moveTo, moveFrom[0]);
 		var fncMoveWhile = function(moveFrom, moveTo){
 			// console.log('length:', moveFrom.length);
-			var tmpMoveFrom = moveFrom.shift();
-			// console.log('*** tmpMoveFrom:', tmpMoveFrom);
-			broccoli.contentsSourceData.moveInstanceTo( tmpMoveFrom, moveTo, function(result){
+			console.log('====== move from, to', moveFrom, moveTo);
+			var currentMoveFrom = moveFrom.shift();
+			// console.log('*** currentMoveFrom:', currentMoveFrom);
+			broccoli.contentsSourceData.moveInstanceTo( currentMoveFrom, moveTo, function(result){
 				if(!result){
-					console.error('移動に失敗しました。', tmpMoveFrom, moveTo, result);
+					console.error('移動に失敗しました。', currentMoveFrom, moveTo, result);
 				}
 				if( moveFrom.length ){
-					moveTo = broccoli.utils.getInstancePathWhichWasAffectedInsertingInstance(moveTo, moveTo);
-					moveTo = broccoli.utils.getInstancePathWhichWasAffectedRemovingInstance(moveTo, tmpMoveFrom);
 					for(var idx in moveFrom){
-						moveFrom[idx] = broccoli.utils.getInstancePathWhichWasAffectedRemovingInstance(moveFrom[idx], tmpMoveFrom);
+						moveFrom[idx] = broccoli.utils.getInstancePathWhichWasAffectedRemovingInstance(moveFrom[idx], currentMoveFrom);
 						moveFrom[idx] = broccoli.utils.getInstancePathWhichWasAffectedInsertingInstance(moveFrom[idx], moveTo);
 					}
-					// console.log(moveTo, moveFrom);
+					currentMoveFrom = broccoli.utils.getInstancePathWhichWasAffectedInsertingInstance(currentMoveFrom, moveTo);
+					moveTo = broccoli.utils.getInstancePathWhichWasAffectedRemovingInstance(moveTo, currentMoveFrom);
+					moveTo = broccoli.utils.getInstancePathWhichWasAffectedInsertingInstance(moveTo, moveTo);
+					// console.log('====-- move from, to', moveFrom, moveTo);
 					fncMoveWhile(moveFrom, moveTo);
 				}else{
 					// コンテンツを保存
