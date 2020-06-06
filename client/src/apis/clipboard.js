@@ -29,6 +29,7 @@ module.exports = function(broccoli){
 				return;
 			}
 		} catch (e) {
+			console.error(e);
 		}
 
 		if( !type ){
@@ -86,14 +87,14 @@ module.exports = function(broccoli){
 		try {
 			if( broccoli.options.clipboard.get ){
 				if( async ){
-					broccoli.options.clipboard.get( type, event, callback );
-					return clipboard;
+					return broccoli.options.clipboard.get( type, event, callback );
 				}else{
-					rtn = broccoli.options.clipboard.get( type, event );
+					return broccoli.options.clipboard.get( type, event );
 				}
-				return rtn;
+				return;
 			}
 		} catch (e) {
+			console.error(e);
 		}
 
 		if( !type ){
