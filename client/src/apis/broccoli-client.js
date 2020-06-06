@@ -19,6 +19,7 @@
 		// console.log(__dirname);
 
 		var _this = this;
+		var broccoli = this;
 		var it79 = require('iterate79');
 		var _ = require('underscore');
 		var $ = require('jquery');
@@ -1033,7 +1034,7 @@
 				return;
 			}
 
-			broccoli.contentsSourceData.resourceDbReloadRequest() // 削除したインスタンスにリソースが含まれている可能性があるので、リロードを要求する。
+			_this.contentsSourceData.resourceDbReloadRequest() // 削除したインスタンスにリソースが含まれている可能性があるので、リロードを要求する。
 
 			this.selectedInstanceToJsonString(function(jsonStr){
 				if(jsonStr === false){
