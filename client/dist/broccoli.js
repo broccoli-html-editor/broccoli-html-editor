@@ -5205,7 +5205,7 @@ module.exports = function(broccoli){
 			})(moveTo);
 		}
 
-		if( moveFroms[0] === moveTo || broccoli.isInstanceSelected( moveTo ) ){
+		if( moveFroms[0] === moveTo || ( broccoli.isInstanceSelected( moveTo ) && method === 'moveTo' ) ){
 			// 移動元と移動先が同一の場合、
 			// または、移動先が選択状態の場合キャンセルとみなす
 			$(elm).removeClass('broccoli--panel__drag-entered');
@@ -5406,6 +5406,7 @@ module.exports = function(broccoli){
 			}else{
 				broccoli.contentsSourceData.addInstance( modInternalId, moveTo, function(result){
 					if(!result){
+						console.error('Failed addInstance()', modInternalId, moveTo);
 						broccoli.closeProgress(function(){
 							callback();
 						});
