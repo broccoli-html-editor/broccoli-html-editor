@@ -505,7 +505,7 @@ module.exports = function(broccoli){
 				$field.find('>h3')
 					.text((field.label||field.name)+' ')
 					.append( $('<small>')
-						.text((field.fieldType=='input' ? field.type : field.fieldType))
+						.text( field.name + ' (' + (field.fieldType=='input' ? field.type : field.fieldType) + ')' )
 					)
 				;
 
