@@ -3925,6 +3925,7 @@ module.exports = function(broccoli){
 			if(instPathMemo.length==2){
 				// bowl自体だったら
 				label = instPathMemo[instPathMemo.length-1];
+				label = '編集エリア: ' + label.replace(/^bowl\./, '') + '';
 			}
 			var isLastOne = false;
 			if( idx >= instPath.length-1 ){ isLastOne = true; }
@@ -4497,6 +4498,7 @@ module.exports = function(broccoli){
 			if(instPathMemo.length==2){
 				// bowl自体だったら
 				label = instPathMemo[instPathMemo.length-1];
+				label = '編集エリア: ' + label.replace(/^bowl\./, '') + '';
 			}
 			$ul.append( $('<li>')
 				.append( $('<a href="javascript:;">')
@@ -4681,7 +4683,7 @@ module.exports = function(broccoli){
 					var $li = $('<li>')
 						.append(
 							$('<span>')
-								.text(idx) // ← field name
+								.text( row.label || idx ) // ← field name
 								.addClass('broccoli--instance-tree-view-fieldname')
 						)
 					;
@@ -4855,7 +4857,7 @@ module.exports = function(broccoli){
 					var $bowl = $('<li>')
 						.append(
 							$('<span>')
-								.text('bowl.'+idx) // ← bowl name
+								.text( '編集エリア: ' + idx ) // ← bowl name
 								.addClass('broccoli--instance-tree-view-bowlname')
 						)
 					;
@@ -4877,7 +4879,7 @@ module.exports = function(broccoli){
 			);
 		});
 
-		return this;
+		return;
 	}
 
 
@@ -4901,7 +4903,7 @@ module.exports = function(broccoli){
 			;
 			callback();
 		});
-		return this;
+		return;
 	}
 
 	/**
@@ -4914,7 +4916,7 @@ module.exports = function(broccoli){
 		;
 		// this.updateInstancePathView();
 		callback();
-		return this;
+		return;
 	}
 
 	/**
@@ -4936,7 +4938,7 @@ module.exports = function(broccoli){
 			$instanceTreeView.stop().animate({"scrollTop":to} , 'fast' );
 		}
 		callback();
-		return this;
+		return;
 	}
 
 	/**
@@ -4972,7 +4974,7 @@ module.exports = function(broccoli){
 				}
 			]
 		);
-		return this;
+		return;
 	}
 
 	return;

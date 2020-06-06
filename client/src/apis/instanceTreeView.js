@@ -58,7 +58,7 @@ module.exports = function(broccoli){
 					var $li = $('<li>')
 						.append(
 							$('<span>')
-								.text(idx) // ← field name
+								.text( row.label || idx ) // ← field name
 								.addClass('broccoli--instance-tree-view-fieldname')
 						)
 					;
@@ -232,7 +232,7 @@ module.exports = function(broccoli){
 					var $bowl = $('<li>')
 						.append(
 							$('<span>')
-								.text('bowl.'+idx) // ← bowl name
+								.text( '編集エリア: ' + idx ) // ← bowl name
 								.addClass('broccoli--instance-tree-view-bowlname')
 						)
 					;
@@ -254,7 +254,7 @@ module.exports = function(broccoli){
 			);
 		});
 
-		return this;
+		return;
 	}
 
 
@@ -278,7 +278,7 @@ module.exports = function(broccoli){
 			;
 			callback();
 		});
-		return this;
+		return;
 	}
 
 	/**
@@ -291,7 +291,7 @@ module.exports = function(broccoli){
 		;
 		// this.updateInstancePathView();
 		callback();
-		return this;
+		return;
 	}
 
 	/**
@@ -313,7 +313,7 @@ module.exports = function(broccoli){
 			$instanceTreeView.stop().animate({"scrollTop":to} , 'fast' );
 		}
 		callback();
-		return this;
+		return;
 	}
 
 	/**
@@ -349,7 +349,7 @@ module.exports = function(broccoli){
 				}
 			]
 		);
-		return this;
+		return;
 	}
 
 	return;
