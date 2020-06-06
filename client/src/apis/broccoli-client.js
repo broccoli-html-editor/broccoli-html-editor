@@ -352,7 +352,8 @@
 						}
 						e.stopPropagation();
 						e.preventDefault();
-						_this.copy();
+						console.debug(e.originalEvent.clipboardData);
+						_this.copy(function(){}, e.originalEvent);
 						return;
 					})
 					.on('cut.broccoli-html-editor', function(e){
@@ -361,7 +362,7 @@
 						}
 						e.stopPropagation();
 						e.preventDefault();
-						_this.cut();
+						_this.cut(function(){}, e.originalEvent);
 						return;
 					})
 					.on('paste.broccoli-html-editor', function(e){
@@ -370,7 +371,7 @@
 						}
 						e.stopPropagation();
 						e.preventDefault();
-						_this.paste();
+						_this.paste(function(){}, e.originalEvent);
 						return;
 					})
 				;
@@ -998,7 +999,7 @@
 		/**
 		 * 選択したインスタンスをクリップボードへコピーする
 		 */
-		this.copy = function(callback){
+		this.copy = function(callback, event){
 			callback = callback||function(){};
 			var instancePath = this.getSelectedInstance();
 			// console.log(instancePath);
@@ -1014,7 +1015,7 @@
 					callback(false);
 					return;
 				}
-				_this.clipboard.set( jsonStr );
+				_this.clipboard.set( jsonStr, null, event );
 				_this.message('インスタンスをコピーしました。');
 				callback(true);
 			});
@@ -1024,7 +1025,7 @@
 		/**
 		 * 選択したインスタンスをクリップボードへコピーして削除する
 		 */
-		this.cut = function(callback){
+		this.cut = function(callback, event){
 			callback = callback||function(){};
 			var instancePath = this.getSelectedInstance();
 			// console.log(instancePath);
@@ -1042,7 +1043,7 @@
 					callback(false);
 					return;
 				}
-				_this.clipboard.set( jsonStr );
+				_this.clipboard.set( jsonStr, null, event );
 
 				_this.remove(function(){
 					_this.message('インスタンスをカットしました。');
@@ -1055,7 +1056,7 @@
 		/**
 		 * クリップボードの内容を選択したインスタンスの位置に挿入する
 		 */
-		this.paste = function(callback){
+		this.paste = function(callback, event){
 			var broccoli = this;
 			callback = callback||function(){};
 			var selectedInstance = this.getSelectedInstance();
@@ -1067,7 +1068,7 @@
 			}
 			// console.log(selectedInstance);
 
-			var data = this.clipboard.get();
+			var data = this.clipboard.get( null, event );
 			try {
 				data = JSON.parse( data );
 			} catch (e) {
