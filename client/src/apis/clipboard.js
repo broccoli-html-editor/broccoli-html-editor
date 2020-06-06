@@ -25,7 +25,7 @@ module.exports = function(broccoli){
 		}
 
 		if( event && event.clipboardData ){
-			event.clipboardData.setData(type , text)
+			event.clipboardData.setData( type, text )
 		}else{
 			var copyArea = $("<textarea/>");
 			copyArea.text(text);
@@ -57,7 +57,7 @@ module.exports = function(broccoli){
 		}
 
 		if( event && event.clipboardData ){
-			event.clipboardData.setData(type , text)
+			event.clipboardData.getData( type )
 		}else{
 			var copyArea = $("<textarea/>");
 			$("body").append(copyArea);
