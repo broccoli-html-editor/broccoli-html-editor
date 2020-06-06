@@ -290,15 +290,6 @@
 						});
 					} ,
 					function(it1, data){
-						// キーイベント
-						$(window).on('keydown', function(e){
-							if( e.keyCode == 27 ){ // ESC
-								_this.esc();
-							}
-						});
-						it1.next(data);
-					} ,
-					function(it1, data){
 						console.log('broccoli: init done.');
 
 						clearTimeout(timer_onPreviewLoad);
@@ -322,24 +313,40 @@
 		 */
 		this.setUiState = function( state ){
 			uiState = state;
-			var $window = $(window)
+			var $window = $(window);
+			var $broccoli = $('.broccoli');
 			$window
-				.off('copy')
-				.off('cut')
-				.off('paste')
+				.off('copy.broccoli-html-editor')
+				.off('cut.broccoli-html-editor')
+				.off('paste.broccoli-html-editor')
+				.off('keydown.broccoli-html-editor')
+			;
+			$broccoli
+				.off('keydown.broccoli-html-editor')
 			;
 
 			if( !uiState ){
-				if( this.isLightboxOpened() ){
+				if( this.isProgress() ){
+					uiState = 'progress';
+				}else if( this.isLightboxOpened() ){
 					uiState = 'lightbox';
 				}else{
 					uiState = 'standby';
 				}
 			}
 
+			$window.on('keydown.broccoli-html-editor', function(e){
+				if( e.keyCode == 27 ){ // ESC
+					_this.esc();
+				}
+			});
+
 			if( uiState == 'standby' ){
+				// --------------------------------------
+				// 待機画面
+				// = ドラッグ・アンド・ドロップする画面
 				$window
-					.on('copy', function(e){
+					.on('copy.broccoli-html-editor', function(e){
 						switch(e.target.tagName.toLowerCase()){
 							case 'textarea': case 'input': return;break;
 						}
@@ -348,7 +355,7 @@
 						_this.copy();
 						return;
 					})
-					.on('cut', function(e){
+					.on('cut.broccoli-html-editor', function(e){
 						switch(e.target.tagName.toLowerCase()){
 							case 'textarea': case 'input': return;break;
 						}
@@ -357,7 +364,7 @@
 						_this.cut();
 						return;
 					})
-					.on('paste', function(e){
+					.on('paste.broccoli-html-editor', function(e){
 						switch(e.target.tagName.toLowerCase()){
 							case 'textarea': case 'input': return;break;
 						}
@@ -367,7 +374,36 @@
 						return;
 					})
 				;
+				$broccoli
+					.on('keydown.broccoli-html-editor', function(e){
+						switch(e.target.tagName.toLowerCase()){
+							case 'textarea': case 'input': return;break;
+						}
+						var cmdKey = ( e.originalEvent.metaKey || e.originalEvent.ctrlKey );
+						var pressedKey = e.originalEvent.key.toLowerCase();
+						// console.log('keydown:', e);
+						if(cmdKey){
+							if(pressedKey == 'a'){
+								// console.log('cmd/ctrl + a');
+								// e.stopPropagation();
+								// e.preventDefault();
+							}
+						}
+						return;
+					})
+				;
+
+			}else if( uiState == 'lightbox' ){
+				// --------------------------------------
+				// モーダルウィンドウが開いている状態
+				// モジュール説明画面、インスタンス編集画面など。
+
+			}else if( uiState == 'progress' ){
+				// --------------------------------------
+				// プログレス表示中
+
 			}
+
 			return;
 		}
 
@@ -1318,11 +1354,11 @@
 						$('.broccoli *').removeAttr('tabindex');
 						$('.broccoli .broccoli--panel').attr({'tabindex':'1'});
 						$('.broccoli .broccoli--instance-tree-view-panel-item').attr({'tabindex':'1'});
+						_this.setUiState();
 						callback();
 					}
 				)
 			;
-			this.setUiState();
 			return;
 		}
 
@@ -1343,6 +1379,7 @@
 				)
 			;
 			var dom = $('body').find('.px2-loading').get(0);
+			_this.setUiState();
 			callback(dom);
 			return;
 		}
@@ -1357,11 +1394,13 @@
 				this.progress(function(){
 					var $userMessage = $('.broccoli__progress-comment');
 					$userMessage.text(str);
+					_this.setUiState();
 				});
 				return;
 			}
 			var $userMessage = $('.broccoli__progress-comment');
 			$userMessage.text(str);
+			_this.setUiState();
 			return;
 		}
 
@@ -1383,6 +1422,7 @@
 			callback = callback||function(){};
 			var $progress = $('body').find('.broccoli__progress');
 			if( !$progress.length ){
+				_this.setUiState();
 				callback();
 				return;
 			}
@@ -1391,6 +1431,7 @@
 					'fast',
 					function(){
 						$(this).remove();
+						_this.setUiState();
 						callback();
 					}
 				)
