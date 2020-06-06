@@ -82,6 +82,16 @@ module.exports = function(broccoli, moduleId, options){
 		deprecated: false
 	};
 
+	if(this.isSystemModule){
+		if(this.id == '_sys/root'){
+			this.info['name'] = 'ルート';
+		}else if(this.id == '_sys/unknown'){
+			this.info['name'] = '不明なモジュール';
+		}else if(this.id == '_sys/html'){
+			this.info['name'] = 'HTML';
+		}
+	}
+
 	if( options.topThis ){
 		this.topThis = options.topThis;
 		this.templateType = this.topThis.templateType;

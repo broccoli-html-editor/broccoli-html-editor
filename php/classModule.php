@@ -77,6 +77,16 @@ class classModule{
 			'deprecated' => false
 		);
 
+		if($this->isSystemModule){
+			if($this->id == '_sys/root'){
+				$this->info['name'] = 'ルート';
+			}elseif($this->id == '_sys/unknown'){
+				$this->info['name'] = '不明なモジュール';
+			}elseif($this->id == '_sys/html'){
+				$this->info['name'] = 'HTML';
+			}
+		}
+
 		if( array_key_exists('topThis', $this->options) && $this->options['topThis'] ){
 			$this->topThis = $this->options['topThis'];
 			$this->templateType = $this->topThis->templateType;
