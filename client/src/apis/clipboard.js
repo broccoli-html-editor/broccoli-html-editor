@@ -10,12 +10,23 @@ module.exports = function(broccoli){
 	/**
 	 * clipboardに値をセットする
 	 */
-	this.set = function( text, type, event ){
+	this.set = function( text, type, event, callback ){
+		var async = false;
+		if(callback){
+			async = true;
+		}
+		callback = callback || function(){};
+
 		clipboard = text;
 
 		try {
 			if( broccoli.options.clipboard.set ){
-				return broccoli.options.clipboard.set( text, type, event );
+				if( async ){
+					return broccoli.options.clipboard.set( text, type, event, callback );
+				}else{
+					return broccoli.options.clipboard.set( text, type, event );
+				}
+				return;
 			}
 		} catch (e) {
 		}
@@ -25,17 +36,38 @@ module.exports = function(broccoli){
 		}
 
 		if( event && event.clipboardData ){
-			event.clipboardData.setData( type, text )
-		}else{
-			var copyArea = $("<textarea/>");
-			copyArea.text(text);
-			$("body").append(copyArea);
-			copyArea.select();
-			document.execCommand("copy");
-			// console.log('copied.');
-			// console.log(text);
-			copyArea.remove();
+			try{
+				event.clipboardData.setData( type, text );
+				callback();
+				return;
+			}catch(e){
+				console.error(e);
+
+				try{
+					navigator.clipboard.writeText(text).then(function() {
+						console.log('navigator.clipboard: Copying to clipboard was successful!');
+						callback();
+					}, function(err) {
+						console.error('navigator.clipboard: Could not copy text:', err);
+						callback();
+					});
+					return;
+				}catch(e){
+					console.error(e);
+				}
+			}
 		}
+	
+		var copyArea = $("<textarea/>");
+		copyArea.text(text);
+		$("body").append(copyArea);
+		copyArea.select();
+		document.execCommand("copy");
+		// console.log('copied.');
+		// console.log(text);
+		copyArea.remove();
+
+		callback();
 		return;
 	} // broccoli.clipboard.set();
 
@@ -43,11 +75,23 @@ module.exports = function(broccoli){
 	/**
 	 * clipboardから値を取得する
 	 */
-	this.get = function( type, event ){
+	this.get = function( type, event, callback ){
+		var async = false;
+		if(callback){
+			async = true;
+		}
+		callback = callback || function(){};
+		var rtn;
 
 		try {
 			if( broccoli.options.clipboard.get ){
-				return broccoli.options.clipboard.get( type, event );
+				if( async ){
+					broccoli.options.clipboard.get( type, event, callback );
+					return clipboard;
+				}else{
+					rtn = broccoli.options.clipboard.get( type, event );
+				}
+				return rtn;
 			}
 		} catch (e) {
 		}
@@ -57,19 +101,48 @@ module.exports = function(broccoli){
 		}
 
 		if( event && event.clipboardData ){
-			event.clipboardData.getData( type )
-		}else{
-			var copyArea = $("<textarea/>");
-			$("body").append(copyArea);
-			copyArea.select();
-			document.execCommand("paste");
-			var rtn = copyArea.text();
-			copyArea.remove();
+			try{
+				rtn = event.clipboardData.getData( type );
+				callback(rtn);
+				return rtn;
+			}catch(e){
+				console.error(e);
+
+				try{
+					if(async){
+						navigator.clipboard.readText().then(
+							function(clipText){
+								rtn = clipText;
+								console.log('===========================', rtn);
+								callback(rtn);
+							}, function(err) {
+								console.error('navigator.clipboard: Could not get clipboard contents:', err);
+								callback(clipboard);
+							}
+						);
+						return;
+					}
+				}catch(e){
+					console.error(e);
+				}
+			}
 		}
 
+		var copyArea = $("<textarea/>");
+		$("body").append(copyArea);
+		copyArea.select();
+		document.execCommand("paste");
+		rtn = copyArea.text();
+		copyArea.remove();
+
+		console.log('clipboard get', rtn);
+
 		if( typeof(rtn) !== typeof('') || !rtn.length ){
+			console.log('clipboard: クリップボードの読み込みが失敗した可能性があります。ローカル変数のコピーが返されます。');
 			rtn = clipboard;
 		}
+
+		callback(rtn);
 		return rtn;
 	} // broccoli.clipboard.get();
 

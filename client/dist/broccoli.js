@@ -353,7 +353,7 @@
 						}
 						e.stopPropagation();
 						e.preventDefault();
-						console.debug(e.originalEvent.clipboardData);
+						// console.debug(e.originalEvent.clipboardData);
 						_this.copy(function(){}, e.originalEvent);
 						return;
 					})
@@ -1062,96 +1062,98 @@
 			callback = callback||function(){};
 			var selectedInstance = this.getSelectedInstance();
 			if( typeof(selectedInstance) !== typeof('') ){
-				console.log(selectedInstance);
+				// console.log(selectedInstance);
 				_this.message('インスタンスを選択した状態でペーストしてください。');
 				callback(false);
 				return;
 			}
 			// console.log(selectedInstance);
 
-			var data = this.clipboard.get( null, event );
-			try {
-				data = JSON.parse( data );
-			} catch (e) {
-				_this.message('クリップボードのデータをデコードできませんでした。');
-				console.log('FAILED to decode clipboard.', data);
-				callback(false);
-				return;
-			}
-			// console.log(data);
+			this.clipboard.get( null, event, function(data){
 
-			var isValid = (function(){
-				var php = require('phpjs');
-				var dataToParent = broccoli.contentsSourceData.get(php.dirname(selectedInstance));
-				var modToParent = broccoli.contentsSourceData.getModule(dataToParent.modId);//subModuleの全量を知りたいので、第2引数は渡さない。
-				var currentInstanceTo = php.basename(selectedInstance).split('.')[1].split('@');
-				// console.log(modToParent);
-				// console.log(currentInstanceTo);
-				// console.log(dataToParent);
-				var typeTo = 'module';
-				if( modToParent.subModule && modToParent.subModule[currentInstanceTo[0]] ){
-					typeTo = 'loop';
+				try {
+					data = JSON.parse( data );
+				} catch (e) {
+					_this.message('クリップボードのデータをデコードできませんでした。');
+					console.error('FAILED to decode clipboard.', data);
+					callback(false);
+					return;
 				}
+				// console.log(data);
 
-				var modFrom = broccoli.contentsSourceData.getModule(data.data[0].modId, data.data[0].subModName);
-				// console.log(modFrom);
-				var typeFrom = 'module';
-				if( modFrom.subModName ){
-					typeFrom = 'loop';
-				}
+				var isValid = (function(){
+					var php = require('phpjs');
+					var dataToParent = broccoli.contentsSourceData.get(php.dirname(selectedInstance));
+					var modToParent = broccoli.contentsSourceData.getModule(dataToParent.modId);//subModuleの全量を知りたいので、第2引数は渡さない。
+					var currentInstanceTo = php.basename(selectedInstance).split('.')[1].split('@');
+					// console.log(modToParent);
+					// console.log(currentInstanceTo);
+					// console.log(dataToParent);
+					var typeTo = 'module';
+					if( modToParent.subModule && modToParent.subModule[currentInstanceTo[0]] ){
+						typeTo = 'loop';
+					}
 
-				if( typeTo != typeFrom ){
-					// loopフィールドとmoduleフィールド間の相互のコピペは禁止。
-					return false;
-				}
-				if( typeTo == 'loop' ){
-					// loopフィールドの場合、型が一致しないフィールドへのコピペは禁止。
-					if( dataToParent.modId != data.data[0].modId || currentInstanceTo[0] != data.data[0].subModName ){
+					var modFrom = broccoli.contentsSourceData.getModule(data.data[0].modId, data.data[0].subModName);
+					// console.log(modFrom);
+					var typeFrom = 'module';
+					if( modFrom.subModName ){
+						typeFrom = 'loop';
+					}
+
+					if( typeTo != typeFrom ){
+						// loopフィールドとmoduleフィールド間の相互のコピペは禁止。
 						return false;
 					}
+					if( typeTo == 'loop' ){
+						// loopフィールドの場合、型が一致しないフィールドへのコピペは禁止。
+						if( dataToParent.modId != data.data[0].modId || currentInstanceTo[0] != data.data[0].subModName ){
+							return false;
+						}
+					}
+
+					return true;
+				})();
+				if( !isValid ){
+					_this.message('ここにはペーストできません。');
+					callback(false);
+					return;
 				}
 
-				return true;
-			})();
-			if( !isValid ){
-				_this.message('ここにはペーストできません。');
-				callback(false);
-				return;
-			}
+				broccoli.progress(function(){
+					it79.ary(
+						data.data ,
+						function(it1, row1, idx1){
+							_this.contentsSourceData.duplicateInstance(data.data[idx1], data.resources, {}, function(newData){
+								// console.log(newData);
 
-			broccoli.progress(function(){
-				it79.ary(
-					data.data ,
-					function(it1, row1, idx1){
-						_this.contentsSourceData.duplicateInstance(data.data[idx1], data.resources, {}, function(newData){
-							// console.log(newData);
+								_this.contentsSourceData.addInstance( newData, selectedInstance, function(result){
+									// 上から順番に挿入していくので、
+									// moveTo を1つインクリメントしなければいけない。
+									// (そうしないと、天地逆さまに積み上げられることになる。)
+									selectedInstance = _this.incrementInstancePath(selectedInstance);
+									it1.next();
+								} );
 
-							_this.contentsSourceData.addInstance( newData, selectedInstance, function(result){
-								// 上から順番に挿入していくので、
-								// moveTo を1つインクリメントしなければいけない。
-								// (そうしないと、天地逆さまに積み上げられることになる。)
-								selectedInstance = _this.incrementInstancePath(selectedInstance);
-								it1.next();
-							} );
+							});
 
-						});
-
-					} ,
-					function(){
-						_this.saveContents(function(result){
-							// 画面を再描画
-							_this.redraw(function(){
-								_this.selectInstance(selectedInstance, function(){
-									_this.message('インスタンスをペーストしました。');
-									broccoli.closeProgress(function(){
-										callback(true);
+						} ,
+						function(){
+							_this.saveContents(function(result){
+								// 画面を再描画
+								_this.redraw(function(){
+									_this.selectInstance(selectedInstance, function(){
+										_this.message('インスタンスをペーストしました。');
+										broccoli.closeProgress(function(){
+											callback(true);
+										});
 									});
 								});
 							});
-						});
-					}
-				);
-			});
+						}
+					);
+				});
+			} );
 
 			return;
 		}
@@ -1569,12 +1571,23 @@ module.exports = function(broccoli){
 	/**
 	 * clipboardに値をセットする
 	 */
-	this.set = function( text, type, event ){
+	this.set = function( text, type, event, callback ){
+		var async = false;
+		if(callback){
+			async = true;
+		}
+		callback = callback || function(){};
+
 		clipboard = text;
 
 		try {
 			if( broccoli.options.clipboard.set ){
-				return broccoli.options.clipboard.set( text, type, event );
+				if( async ){
+					return broccoli.options.clipboard.set( text, type, event, callback );
+				}else{
+					return broccoli.options.clipboard.set( text, type, event );
+				}
+				return;
 			}
 		} catch (e) {
 		}
@@ -1584,17 +1597,38 @@ module.exports = function(broccoli){
 		}
 
 		if( event && event.clipboardData ){
-			event.clipboardData.setData( type, text )
-		}else{
-			var copyArea = $("<textarea/>");
-			copyArea.text(text);
-			$("body").append(copyArea);
-			copyArea.select();
-			document.execCommand("copy");
-			// console.log('copied.');
-			// console.log(text);
-			copyArea.remove();
+			try{
+				event.clipboardData.setData( type, text );
+				callback();
+				return;
+			}catch(e){
+				console.error(e);
+
+				try{
+					navigator.clipboard.writeText(text).then(function() {
+						console.log('navigator.clipboard: Copying to clipboard was successful!');
+						callback();
+					}, function(err) {
+						console.error('navigator.clipboard: Could not copy text:', err);
+						callback();
+					});
+					return;
+				}catch(e){
+					console.error(e);
+				}
+			}
 		}
+	
+		var copyArea = $("<textarea/>");
+		copyArea.text(text);
+		$("body").append(copyArea);
+		copyArea.select();
+		document.execCommand("copy");
+		// console.log('copied.');
+		// console.log(text);
+		copyArea.remove();
+
+		callback();
 		return;
 	} // broccoli.clipboard.set();
 
@@ -1602,11 +1636,23 @@ module.exports = function(broccoli){
 	/**
 	 * clipboardから値を取得する
 	 */
-	this.get = function( type, event ){
+	this.get = function( type, event, callback ){
+		var async = false;
+		if(callback){
+			async = true;
+		}
+		callback = callback || function(){};
+		var rtn;
 
 		try {
 			if( broccoli.options.clipboard.get ){
-				return broccoli.options.clipboard.get( type, event );
+				if( async ){
+					broccoli.options.clipboard.get( type, event, callback );
+					return clipboard;
+				}else{
+					rtn = broccoli.options.clipboard.get( type, event );
+				}
+				return rtn;
 			}
 		} catch (e) {
 		}
@@ -1616,19 +1662,48 @@ module.exports = function(broccoli){
 		}
 
 		if( event && event.clipboardData ){
-			event.clipboardData.getData( type )
-		}else{
-			var copyArea = $("<textarea/>");
-			$("body").append(copyArea);
-			copyArea.select();
-			document.execCommand("paste");
-			var rtn = copyArea.text();
-			copyArea.remove();
+			try{
+				rtn = event.clipboardData.getData( type );
+				callback(rtn);
+				return rtn;
+			}catch(e){
+				console.error(e);
+
+				try{
+					if(async){
+						navigator.clipboard.readText().then(
+							function(clipText){
+								rtn = clipText;
+								console.log('===========================', rtn);
+								callback(rtn);
+							}, function(err) {
+								console.error('navigator.clipboard: Could not get clipboard contents:', err);
+								callback(clipboard);
+							}
+						);
+						return;
+					}
+				}catch(e){
+					console.error(e);
+				}
+			}
 		}
 
+		var copyArea = $("<textarea/>");
+		$("body").append(copyArea);
+		copyArea.select();
+		document.execCommand("paste");
+		rtn = copyArea.text();
+		copyArea.remove();
+
+		console.log('clipboard get', rtn);
+
 		if( typeof(rtn) !== typeof('') || !rtn.length ){
+			console.log('clipboard: クリップボードの読み込みが失敗した可能性があります。ローカル変数のコピーが返されます。');
 			rtn = clipboard;
 		}
+
+		callback(rtn);
 		return rtn;
 	} // broccoli.clipboard.get();
 
@@ -2695,8 +2770,8 @@ module.exports = function(broccoli){
 							$a
 								.text(menu.label)
 								.attr({"href": "javascript:;"})
-								.on('click', function(){
-									menu.function();
+								.on('click', function(e){
+									menu.function(e.originalEvent);
 									_this.close();
 								})
 							;
@@ -2755,20 +2830,20 @@ module.exports = function(broccoli){
 		if( isCopyable ){
 			menu.push({
 				"label": "コピー",
-				"function": function(){
+				"function": function(event){
 					broccoli.copy(function(){
 						// nothing to do.
-					});
+					}, event);
 				}
 			});
 		}
 
 		menu.push({
 			"label": "この直前にペースト",
-			"function": function(){
+			"function": function(event){
 				broccoli.paste(function(){
 					// nothing to do.
-				});
+				}, event);
 			}
 		});
 
@@ -2778,7 +2853,7 @@ module.exports = function(broccoli){
 			});
 			menu.push({
 				"label": "削除する",
-				"function": function(){
+				"function": function(event){
 					broccoli.remove(function(){
 						// nothing to do.
 					});

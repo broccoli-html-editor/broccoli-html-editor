@@ -352,7 +352,7 @@
 						}
 						e.stopPropagation();
 						e.preventDefault();
-						console.debug(e.originalEvent.clipboardData);
+						// console.debug(e.originalEvent.clipboardData);
 						_this.copy(function(){}, e.originalEvent);
 						return;
 					})
@@ -1061,96 +1061,98 @@
 			callback = callback||function(){};
 			var selectedInstance = this.getSelectedInstance();
 			if( typeof(selectedInstance) !== typeof('') ){
-				console.log(selectedInstance);
+				// console.log(selectedInstance);
 				_this.message('インスタンスを選択した状態でペーストしてください。');
 				callback(false);
 				return;
 			}
 			// console.log(selectedInstance);
 
-			var data = this.clipboard.get( null, event );
-			try {
-				data = JSON.parse( data );
-			} catch (e) {
-				_this.message('クリップボードのデータをデコードできませんでした。');
-				console.log('FAILED to decode clipboard.', data);
-				callback(false);
-				return;
-			}
-			// console.log(data);
+			this.clipboard.get( null, event, function(data){
 
-			var isValid = (function(){
-				var php = require('phpjs');
-				var dataToParent = broccoli.contentsSourceData.get(php.dirname(selectedInstance));
-				var modToParent = broccoli.contentsSourceData.getModule(dataToParent.modId);//subModuleの全量を知りたいので、第2引数は渡さない。
-				var currentInstanceTo = php.basename(selectedInstance).split('.')[1].split('@');
-				// console.log(modToParent);
-				// console.log(currentInstanceTo);
-				// console.log(dataToParent);
-				var typeTo = 'module';
-				if( modToParent.subModule && modToParent.subModule[currentInstanceTo[0]] ){
-					typeTo = 'loop';
+				try {
+					data = JSON.parse( data );
+				} catch (e) {
+					_this.message('クリップボードのデータをデコードできませんでした。');
+					console.error('FAILED to decode clipboard.', data);
+					callback(false);
+					return;
 				}
+				// console.log(data);
 
-				var modFrom = broccoli.contentsSourceData.getModule(data.data[0].modId, data.data[0].subModName);
-				// console.log(modFrom);
-				var typeFrom = 'module';
-				if( modFrom.subModName ){
-					typeFrom = 'loop';
-				}
+				var isValid = (function(){
+					var php = require('phpjs');
+					var dataToParent = broccoli.contentsSourceData.get(php.dirname(selectedInstance));
+					var modToParent = broccoli.contentsSourceData.getModule(dataToParent.modId);//subModuleの全量を知りたいので、第2引数は渡さない。
+					var currentInstanceTo = php.basename(selectedInstance).split('.')[1].split('@');
+					// console.log(modToParent);
+					// console.log(currentInstanceTo);
+					// console.log(dataToParent);
+					var typeTo = 'module';
+					if( modToParent.subModule && modToParent.subModule[currentInstanceTo[0]] ){
+						typeTo = 'loop';
+					}
 
-				if( typeTo != typeFrom ){
-					// loopフィールドとmoduleフィールド間の相互のコピペは禁止。
-					return false;
-				}
-				if( typeTo == 'loop' ){
-					// loopフィールドの場合、型が一致しないフィールドへのコピペは禁止。
-					if( dataToParent.modId != data.data[0].modId || currentInstanceTo[0] != data.data[0].subModName ){
+					var modFrom = broccoli.contentsSourceData.getModule(data.data[0].modId, data.data[0].subModName);
+					// console.log(modFrom);
+					var typeFrom = 'module';
+					if( modFrom.subModName ){
+						typeFrom = 'loop';
+					}
+
+					if( typeTo != typeFrom ){
+						// loopフィールドとmoduleフィールド間の相互のコピペは禁止。
 						return false;
 					}
+					if( typeTo == 'loop' ){
+						// loopフィールドの場合、型が一致しないフィールドへのコピペは禁止。
+						if( dataToParent.modId != data.data[0].modId || currentInstanceTo[0] != data.data[0].subModName ){
+							return false;
+						}
+					}
+
+					return true;
+				})();
+				if( !isValid ){
+					_this.message('ここにはペーストできません。');
+					callback(false);
+					return;
 				}
 
-				return true;
-			})();
-			if( !isValid ){
-				_this.message('ここにはペーストできません。');
-				callback(false);
-				return;
-			}
+				broccoli.progress(function(){
+					it79.ary(
+						data.data ,
+						function(it1, row1, idx1){
+							_this.contentsSourceData.duplicateInstance(data.data[idx1], data.resources, {}, function(newData){
+								// console.log(newData);
 
-			broccoli.progress(function(){
-				it79.ary(
-					data.data ,
-					function(it1, row1, idx1){
-						_this.contentsSourceData.duplicateInstance(data.data[idx1], data.resources, {}, function(newData){
-							// console.log(newData);
+								_this.contentsSourceData.addInstance( newData, selectedInstance, function(result){
+									// 上から順番に挿入していくので、
+									// moveTo を1つインクリメントしなければいけない。
+									// (そうしないと、天地逆さまに積み上げられることになる。)
+									selectedInstance = _this.incrementInstancePath(selectedInstance);
+									it1.next();
+								} );
 
-							_this.contentsSourceData.addInstance( newData, selectedInstance, function(result){
-								// 上から順番に挿入していくので、
-								// moveTo を1つインクリメントしなければいけない。
-								// (そうしないと、天地逆さまに積み上げられることになる。)
-								selectedInstance = _this.incrementInstancePath(selectedInstance);
-								it1.next();
-							} );
+							});
 
-						});
-
-					} ,
-					function(){
-						_this.saveContents(function(result){
-							// 画面を再描画
-							_this.redraw(function(){
-								_this.selectInstance(selectedInstance, function(){
-									_this.message('インスタンスをペーストしました。');
-									broccoli.closeProgress(function(){
-										callback(true);
+						} ,
+						function(){
+							_this.saveContents(function(result){
+								// 画面を再描画
+								_this.redraw(function(){
+									_this.selectInstance(selectedInstance, function(){
+										_this.message('インスタンスをペーストしました。');
+										broccoli.closeProgress(function(){
+											callback(true);
+										});
 									});
 								});
 							});
-						});
-					}
-				);
-			});
+						}
+					);
+				});
+			} );
 
 			return;
 		}

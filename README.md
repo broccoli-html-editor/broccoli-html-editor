@@ -155,10 +155,10 @@ broccoli.init(
         },
         'clipboard': {
             // クリップボード操作の機能を拡張できます。
-            'set': function( data, type, event ){
+            'set': function( data, type, event, callback ){
                 // クリップボードにコピーする機能を実装してください。
             },
-            'get': function( type, event ){
+            'get': function( type, event, callback ){
                 // クリップボードからデータを取得する機能を実装してください。
             }
         },
