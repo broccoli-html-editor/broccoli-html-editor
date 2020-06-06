@@ -1648,7 +1648,11 @@ module.exports = function(broccoli){
 		try {
 			if( broccoli.options.clipboard.get ){
 				if( async ){
-					return broccoli.options.clipboard.get( type, event, callback );
+					rtn = broccoli.options.clipboard.get( type, event, callback );
+					if( typeof(rtn) == typeof('') ){
+						callback(rtn);
+					}
+					return;
 				}else{
 					return broccoli.options.clipboard.get( type, event );
 				}
