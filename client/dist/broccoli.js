@@ -383,11 +383,25 @@
 						var pressedKey = e.originalEvent.key.toLowerCase();
 						// console.log('keydown:', e);
 						if(cmdKey){
-							if(pressedKey == 'a'){
+							if(pressedKey == 'z'){
+								e.stopPropagation();
+								e.preventDefault();
+								_this.historyBack();
 								// console.log('cmd/ctrl + a');
-								// e.stopPropagation();
-								// e.preventDefault();
+								return;
+							}else if(pressedKey == 'y'){
+								e.stopPropagation();
+								e.preventDefault();
+								_this.historyGo();
+								// console.log('cmd/ctrl + a');
+								return;
 							}
+						}
+						if(pressedKey == 'delete' || pressedKey == 'backspace'){
+							e.stopPropagation();
+							e.preventDefault();
+							_this.remove();
+							return;
 						}
 						return;
 					})
