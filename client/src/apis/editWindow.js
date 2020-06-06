@@ -505,7 +505,7 @@ module.exports = function(broccoli){
 				$field.find('>h3')
 					.text((field.label||field.name)+' ')
 					.append( $('<small>')
-						.text((field.fieldType=='input' ? field.type : field.fieldType))
+						.text( field.name + ' (' + (field.fieldType=='input' ? field.type : field.fieldType) + ')' )
 					)
 				;
 
@@ -709,6 +709,7 @@ module.exports = function(broccoli){
 			if(instPathMemo.length==2){
 				// bowl自体だったら
 				label = instPathMemo[instPathMemo.length-1];
+				label = '編集エリア: ' + label.replace(/^bowl\./, '') + '';
 			}
 			var isLastOne = false;
 			if( idx >= instPath.length-1 ){ isLastOne = true; }

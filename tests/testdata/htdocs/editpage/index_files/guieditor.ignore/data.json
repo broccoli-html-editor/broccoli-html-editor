@@ -99,7 +99,9 @@
                                     "dec": ""
                                 }
                             ]
-                        }
+                        },
+                        "anchor": "",
+                        "dec": ""
                     },
                     {
                         "modId": "testMod1:dev/empty_module",

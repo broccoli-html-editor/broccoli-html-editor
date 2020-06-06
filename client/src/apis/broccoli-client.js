@@ -615,6 +615,9 @@
 					function(it1, data){
 						_this.progressMessage('完了');
 						callback();
+						setTimeout(function(){
+							_this.closeProgress();
+						}, 500);
 						it1.next();
 					}
 				]
