@@ -17,7 +17,7 @@ module.exports = function(broccoli){
 				+ '	<form action="javascript:;">'
 				+ '		<div class="broccoli__edit-window-logical-path">---</div>'
 				+ '		<h2 class="broccoli__edit-window-module-name">---</h2>'
-				+ '		<div class="broccoli__edit-window-module-readme-switch"><a href="javascript:;"><span class="glyphicon glyphicon-menu-right"></span> Show README</a></div>'
+				+ '		<div class="broccoli__edit-window-module-readme-switch"><a href="javascript:;"><span class="glyphicon glyphicon-menu-right"></span> 説明を読む</a></div>'
 				+ '		<div class="broccoli__edit-window-module-readme"><div class="broccoli__edit-window-module-readme-inner"><article class="broccoli__module-readme"></article></div></div>'
 				+ '		<div class="broccoli__edit-window-message-field"></div>'
 				+ '		<div class="broccoli__edit-window-fields">'
@@ -168,10 +168,10 @@ module.exports = function(broccoli){
 					$editWindow.find('.broccoli__edit-window-module-readme').toggle('fast', function(){
 						if($(this).is(':visible')){
 							$this.addClass(className);
-							$this.html('<span class="glyphicon glyphicon-menu-down"></span> '+'Hide README')
+							$this.html('<span class="glyphicon glyphicon-menu-down"></span> '+'説明を隠す')
 						}else{
 							$this.removeClass(className);
-							$this.html('<span class="glyphicon glyphicon-menu-right"></span> '+'Show README')
+							$this.html('<span class="glyphicon glyphicon-menu-right"></span> '+'説明を読む')
 						}
 					});
 				});
