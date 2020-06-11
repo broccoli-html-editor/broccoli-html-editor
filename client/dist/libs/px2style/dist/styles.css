@@ -27,6 +27,9 @@
   color: #666;
   background-color: #f9f9f9; }
 
+.broccoli .px2-btn:focus {
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); }
+
 .broccoli .px2-btn:hover {
   background-color: #f0f0f0; }
 
@@ -52,9 +55,9 @@
   color: #fff; }
 
 .broccoli .px2-btn.px2-btn--secondary {
-  border-color: #999;
+  border-color: #666;
   background: #fff;
-  color: #999; }
+  color: #666; }
 
 .broccoli .px2-btn.px2-btn--secondary:focus, .broccoli .px2-btn.px2-btn--secondary:hover {
   background-color: #f9f9f9; }
@@ -108,6 +111,10 @@
   background-color: rgba(153, 153, 153, 0.05);
   color: #ddd;
   cursor: default; }
+
+.broccoli .px2-btn--toggle-on {
+  box-shadow: inset 0 3px 15px rgba(0, 0, 0, 0.15);
+  transform: translateY(1px); }
 
 .broccoli .px2-btn--sm {
   font-size: 0.8em; }
@@ -948,3 +955,132 @@
     display: none; }
   .broccoli .px2-header .px2-header__shoulder-global-menu {
     display: block; } }
+
+.broccoli input[type=text].px2-input,
+.broccoli input[type=password].px2-input,
+.broccoli input[type=number].px2-input,
+.broccoli input[type=search].px2-input,
+.broccoli input[type=tel].px2-input,
+.broccoli input[type=url].px2-input,
+.broccoli input[type=email].px2-input,
+.broccoli input[type=datetime].px2-input,
+.broccoli input[type=date].px2-input,
+.broccoli input[type=month].px2-input,
+.broccoli input[type=week].px2-input,
+.broccoli input[type=time].px2-input,
+.broccoli input[type=color].px2-input,
+.broccoli input[type=datetime-local].px2-input,
+.broccoli textarea.px2-input,
+.broccoli select.px2-input {
+  display: inline-block;
+  box-sizing: border-box;
+  width: auto;
+  min-width: 50px;
+  max-width: 100%;
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  font-weight: normal;
+  line-height: 1.5;
+  color: #333;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: .25rem;
+  transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out; }
+
+.broccoli input[type=text].px2-input:focus,
+.broccoli input[type=password].px2-input:focus,
+.broccoli input[type=number].px2-input:focus,
+.broccoli input[type=search].px2-input:focus,
+.broccoli input[type=tel].px2-input:focus,
+.broccoli input[type=url].px2-input:focus,
+.broccoli input[type=email].px2-input:focus,
+.broccoli input[type=datetime].px2-input:focus,
+.broccoli input[type=date].px2-input:focus,
+.broccoli input[type=month].px2-input:focus,
+.broccoli input[type=week].px2-input:focus,
+.broccoli input[type=time].px2-input:focus,
+.broccoli input[type=color].px2-input:focus,
+.broccoli input[type=datetime-local].px2-input:focus,
+.broccoli textarea.px2-input:focus,
+.broccoli select.px2-input:focus {
+  color: #495057;
+  background-color: #fff;
+  border-color: #80bdff;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); }
+
+.broccoli input[type=text].px2-input[readonly],
+.broccoli input[type=password].px2-input[readonly],
+.broccoli input[type=number].px2-input[readonly],
+.broccoli input[type=search].px2-input[readonly],
+.broccoli input[type=tel].px2-input[readonly],
+.broccoli input[type=url].px2-input[readonly],
+.broccoli input[type=email].px2-input[readonly],
+.broccoli input[type=datetime].px2-input[readonly],
+.broccoli input[type=date].px2-input[readonly],
+.broccoli input[type=month].px2-input[readonly],
+.broccoli input[type=week].px2-input[readonly],
+.broccoli input[type=time].px2-input[readonly],
+.broccoli input[type=color].px2-input[readonly],
+.broccoli input[type=datetime-local].px2-input[readonly],
+.broccoli textarea.px2-input[readonly],
+.broccoli select.px2-input[readonly] {
+  background-color: #eee; }
+
+.broccoli input[type=text].px2-input[disabled],
+.broccoli input[type=password].px2-input[disabled],
+.broccoli input[type=number].px2-input[disabled],
+.broccoli input[type=search].px2-input[disabled],
+.broccoli input[type=tel].px2-input[disabled],
+.broccoli input[type=url].px2-input[disabled],
+.broccoli input[type=email].px2-input[disabled],
+.broccoli input[type=datetime].px2-input[disabled],
+.broccoli input[type=date].px2-input[disabled],
+.broccoli input[type=month].px2-input[disabled],
+.broccoli input[type=week].px2-input[disabled],
+.broccoli input[type=time].px2-input[disabled],
+.broccoli input[type=color].px2-input[disabled],
+.broccoli input[type=datetime-local].px2-input[disabled],
+.broccoli textarea.px2-input[disabled],
+.broccoli select.px2-input[disabled] {
+  color: #8e959c;
+  background-color: #eee; }
+
+.broccoli .px2-input-group {
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  border-radius: 0px; }
+
+.broccoli .px2-input-group__text {
+  display: inline-block;
+  box-sizing: border-box;
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  font-weight: normal;
+  line-height: 1.5;
+  color: #333;
+  background-color: #f9f9f9;
+  border: 1px solid #ced4da; }
+
+.broccoli .px2-input-group > *,
+.broccoli .px2-input-group > input.px2-input,
+.broccoli .px2-input-group > select.px2-input,
+.broccoli .px2-input-group > textarea.px2-input,
+.broccoli .px2-input-group > .px2-btn {
+  border-right-width: 0px; }
+
+.broccoli .px2-input-group > :first-child,
+.broccoli .px2-input-group > input:first-child.px2-input,
+.broccoli .px2-input-group > select:first-child.px2-input,
+.broccoli .px2-input-group > textarea:first-child.px2-input,
+.broccoli .px2-input-group > :first-child.px2-btn {
+  border-radius: .25rem 0 0 .25rem / .25rem 0 0 .25rem; }
+
+.broccoli .px2-input-group > :last-child,
+.broccoli .px2-input-group > input:last-child.px2-input,
+.broccoli .px2-input-group > select:last-child.px2-input,
+.broccoli .px2-input-group > textarea:last-child.px2-input,
+.broccoli .px2-input-group > :last-child.px2-btn {
+  border-right-width: 1px;
+  border-radius: 0 .25rem .25rem 0 / 0 .25rem .25rem 0; }
