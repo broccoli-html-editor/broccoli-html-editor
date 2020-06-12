@@ -29,6 +29,8 @@
     ],
     "require": {
         "php": ">=5.4.0",
+        "ext-json": "*",
+        "ext-mbstring": "*",
         "tomk79/filesystem": "^1.0",
         "tomk79/langbank": "^0.0.4",
         "michelf/php-markdown": ">=1.8",
