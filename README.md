@@ -80,8 +80,10 @@ APIの一覧は[こちらを参照](docs/api_server.md)ください。
 
 - PHP 5.4 以上
   - [mbstring](https://www.php.net/manual/ja/book.mbstring.php) PHP Extension
-  - [ZipArchive](https://www.php.net/manual/ja/class.ziparchive.php) PHP Extension
   - [JSON](https://www.php.net/manual/ja/book.json.php) PHP Extension
+
+モジュールやカスタムフィールドなど他のパッケージとの構成によって、いくつかの要件が追加される場合があります。
+依存パッケージのシステム要件も確認してください。
 
 
 
