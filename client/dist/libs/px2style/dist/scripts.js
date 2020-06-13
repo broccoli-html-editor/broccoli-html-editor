@@ -2,14 +2,13 @@
 /**
  * px2style/index.js
  */
-module.exports = function(Px2style){
-    var Px2style = function(){};
-    var modal = require('./src/modal/_modal.js')(Px2style);
-    var notice = require('./src/notice/_notice.js')(Px2style);
-    var loading = require('./src/styles/_loading.js')(Px2style);
-    var header = require('./src/header/_header.js')(Px2style);
-    return Px2style;
+module.exports = function(){
 }
+
+require('./src/modal/_modal.js')(module.exports);
+require('./src/notice/_notice.js')(module.exports);
+require('./src/styles/_loading.js')(module.exports);
+require('./src/header/_header.js')(module.exports);
 
 },{"./src/header/_header.js":4,"./src/modal/_modal.js":5,"./src/notice/_notice.js":6,"./src/styles/_loading.js":7}],2:[function(require,module,exports){
 /*!
