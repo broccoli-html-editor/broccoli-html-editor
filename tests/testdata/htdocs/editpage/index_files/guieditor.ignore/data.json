@@ -440,7 +440,9 @@
                                     "modId": "testMod1:parts/text",
                                     "fields": {
                                         "text_src": "ただのテキスト。<br />\nHTMLエンティティ変換される、はず。\n\n- でも、markdownの書式は使えない、はず。\n\nあー、改行が反映されない、か。\n\nスクロール位置は？\n\nちょうどいいじゃないですか。"
-                                    }
+                                    },
+                                    "anchor": "",
+                                    "dec": ""
                                 }
                             ],
                             "column3": [

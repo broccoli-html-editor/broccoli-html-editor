@@ -35,6 +35,7 @@
 		var timer_redraw,
 			timer_onPreviewLoad;
 		this.utils = new (require('./utils.js'))(_this);
+		this.indicator = new (require('./indicator.js'))(_this);
 
 		/**
 		 * broccoli-client を初期化する
@@ -190,6 +191,10 @@
 						bindDropCancel(options.elmInstancePathView);
 						bindDropCancel(options.elmInstanceTreeView);
 						bindDropCancel(options.elmModulePalette);
+
+						_this.indicator.putElement($('body'));
+						_this.indicator.putElement($canvas);
+						_this.indicator.putElement(options.elmInstanceTreeView);
 
 						it1.next(data);
 					} ,
@@ -726,6 +731,15 @@
 				broccoli.lightbox( function( lbElm ){
 					broccoli.drawEditWindow( instancePath, lbElm, function(isSave, callback){
 						callback = callback || function(){};
+						if( !isSave ){
+							broccoli.closeLightbox(function(){
+								broccoli.closeProgress(function(){
+									console.log('editInstance canceled.');
+									callback();
+								});
+							});
+							return;
+						}
 						// console.log(callback);
 						it79.fnc({},[
 							function(it1, data){
@@ -751,13 +765,13 @@
 								});
 							} ,
 							function(it1, data){
-								// 画面を再描画
-								_this.redraw(function(){
+								broccoli.closeLightbox(function(){
 									it1.next(data);
 								});
 							} ,
 							function(it1, data){
-								broccoli.closeLightbox(function(){
+								// 画面を再描画
+								_this.redraw(function(){
 									it1.next(data);
 								});
 							} ,
@@ -1497,6 +1511,7 @@
 				function(it1, data){
 					// コンテンツを保存
 					_this.progressMessage('コンテンツデータを保存しています...');
+					_this.indicator.saveProgress();
 					_this.contentsSourceData.save(function(){
 						it1.next(data);
 					});
@@ -1527,7 +1542,8 @@
 				function(it1, data){
 					// console.log('editInstance done.');
 					_this.progressMessage('コンテンツを保存しました。');
-					_this.message('コンテンツを保存しました。');
+					_this.indicator.saveCompleted();
+					// _this.message('コンテンツを保存しました。');
 					callback(true);
 					it1.next(data);
 				}
