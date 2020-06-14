@@ -886,7 +886,7 @@ module.exports = function(broccoli){
 		clearTimeout(historyTimer);
 
 		historyStepStock += step;
-		console.log(historyStepStock);
+		// console.log(historyStepStock);
 		(function(){
 			if( historyStepStock > 0 ){
 				var message = '進む';
@@ -990,9 +990,10 @@ module.exports = function(broccoli){
 		historyTimer = setTimeout(function(){
 			historyLock = true;
 			doHistoryCommand(historyStepStock);
-		}, 3000);
+		}, 500);
 		return;
-	}
+	} // historyBackOrGo()
+
 
 	/**
 	 * データを保存する(非同期)

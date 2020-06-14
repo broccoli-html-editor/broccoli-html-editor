@@ -70,12 +70,22 @@ module.exports = function(broccoli){
 	this.step = function( step, callback ){
 		// console.log('history.go()', historyDataArray);
 		callback = callback||function(){};
-		historyIdx -= step;
-		if( historyIdx >= historyDataArray.length || historyIdx < 0 ){
-			historyIdx += step;
-			callback(false);
-			return;
+		var tmpHistoryIdx = historyIdx - step;
+		if( tmpHistoryIdx >= historyDataArray.length ){
+			if( step === 1 || step === -1 ){
+				callback(false);
+				return;
+			}
+			tmpHistoryIdx = (historyDataArray.length - 1);
+		}else if( tmpHistoryIdx < 0 ){
+			if( step === 1 || step === -1 ){
+				callback(false);
+				return;
+			}
+			tmpHistoryIdx = 0;
 		}
+
+		historyIdx = tmpHistoryIdx;
 		// console.log(historyIdx, data.contents, data.resources);
 		var data = {contents: {}, resources: {}};
 		data = historyDataArray[historyIdx];
