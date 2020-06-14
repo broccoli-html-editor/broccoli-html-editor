@@ -94,6 +94,7 @@ module.exports = function(){
 		this.options = options;
 
 		this.resourceMgr = new (require('./resourceMgr.js'))(this);
+		this.userStorage = new (require('./userStorage.js'))(this);
 		this.fieldBase = new (require('./fieldBase.js'))(this);
 		this.fieldDefinitions = {};
 

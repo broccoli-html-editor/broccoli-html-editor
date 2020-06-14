@@ -49,6 +49,7 @@
             "php/buildModuleResources.php",
             "php/buildBowl.php",
             "php/gpi.php",
+            "php/userStorage.php",
             "fields/php/href.php",
             "fields/php/html_attr_text.php",
             "fields/php/html.php",

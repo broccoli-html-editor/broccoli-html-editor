@@ -66,6 +66,17 @@ $broccoli->init(
             // エラー発生時にコールされます。
             // msg を受け取り、適切なファイルへ出力するように実装してください。
             error_log('[ERROR HANDLED]'.$msg, 3, '/path/to/error.log');
+        },
+        'userStorage' => function($key, $val = null){
+            // ユーザー固有の情報を読み書きします。
+            $args = func_get_args();
+            if( count($args) == 1 ){
+                // 読み取りとしてコールされる場合、引数が1つだけ提供されます。
+                return file_get_contents('/path/to/userdir/'.$key.'.json');
+            }else{
+                // 書き込みの要求の場合、引数が2つ提供されます。
+                return file_put_contents('/path/to/userdir/'.$key.'.json', $val);
+            }
         }
     )
 );
@@ -327,6 +338,7 @@ $ composer test
 
 - 初期化処理の改善。
 - バックエンドの新しい設定項目 `fieldConfig` を追加。フィールド毎のデフォルトの挙動を設定できるようになった。
+- バックエンドの新しい設定項目 `userStorage` を追加。ユーザー固有の情報を読み書きするインターフェイスを指定できるようになった。
 - 削除したリソースファイルをもう一度アップロードするときにファイル名の重複エラーが起きる問題を修正。
 - 編集履歴の操作(戻る、やりなおし)をしたときに、画像が消えてしまう不具合を修正。
 - 編集履歴の件数に上限を追加し、30件 に設定した。

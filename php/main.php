@@ -27,6 +27,9 @@ class broccoliHtmlEditor{
 	/** Resource Manager */
 	private $resourceMgr;
 
+	/** User Storage Manager */
+	private $userStorage;
+
 	/** BaseClass of Fields */
 	private $fieldBase;
 
@@ -80,6 +83,14 @@ class broccoliHtmlEditor{
 	}
 
 	/**
+	 * $userStorage
+	 * @return object User Storage Object.
+	 */
+	public function userStorage(){
+		return $this->userStorage;
+	}
+
+	/**
 	 * Initialize
 	 * @param array $options オプション
 	 */
@@ -126,6 +137,7 @@ class broccoliHtmlEditor{
 		$this->options = $options;
 
 		$this->resourceMgr = new resourceMgr($this);
+		$this->userStorage = new userStorage($this);
 		$this->fieldBase = new fieldBase($this);
 		$this->fieldDefinitions = array();
 
