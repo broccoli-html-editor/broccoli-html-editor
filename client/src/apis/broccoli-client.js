@@ -393,13 +393,11 @@
 								e.stopPropagation();
 								e.preventDefault();
 								_this.historyBack();
-								// console.log('cmd/ctrl + a');
 								return;
 							}else if(pressedKey == 'y'){
 								e.stopPropagation();
 								e.preventDefault();
 								_this.historyGo();
-								// console.log('cmd/ctrl + a');
 								return;
 							}
 						}
