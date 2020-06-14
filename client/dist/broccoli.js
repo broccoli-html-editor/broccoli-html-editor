@@ -4615,25 +4615,28 @@ module.exports = function(broccoli){
 	this.put = function( data, resourceDb, callback ){
 		callback = callback||function(){};
 
+
+		// 履歴をさかのぼっているとき、
+		// 現時点(=historyIdx)以降の履歴は削除する
+		if( historyIdx ){
+			historyDataArray.splice(0, historyIdx);
+			historyIdx = 0;
+		}
+
+
+		// 先頭に新しい履歴を追加
 		var newRecord = JSON.parse(JSON.stringify({
 			"datetime": (new Date).getTime(),
 			"contents": data,
 			"resources": resourceDb
 		}));
-
-		// 履歴をさかのぼっているとき、
-		// 現時点(=historyIdx)以降の履歴は削除する
-		historyDataArray.splice(0, historyIdx);
-
-		// 先頭に新しい履歴を追加
 		historyDataArray.unshift(newRecord);
-		historyIdx = 0;
+
 
 		// 件数の上限設定より古い履歴を削除
 		historyDataArray.splice( maxHistorySize );
 
 
-		// console.log('history.put()', historyDataArray);
 		callback();
 		return;
 	}
@@ -4676,7 +4679,7 @@ module.exports = function(broccoli){
 		historyIdx = tmpHistoryIdx;
 		// console.log(historyIdx, data.contents, data.resources);
 		var data = {contents: {}, resources: {}};
-		data = historyDataArray[historyIdx];
+		data = JSON.parse(JSON.stringify(historyDataArray[historyIdx])); // deep copy
 		callback( data );
 		return;
 	}
