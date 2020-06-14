@@ -446,6 +446,7 @@ module.exports = function(broccoli){
 											})
 										;
 										$ul.append( $li.append($appender) );
+										$ul.css({'padding-top': 10});
 
 										var $elmFieldContent = $fields.find('.broccoli__edit-window-module-fields[data-broccoli--editwindow-field-name='+field.name+']').eq(0);
 										$elmFieldContent.addClass('broccoli__edit-window-module-fields--fieldtype-'+field.fieldType);

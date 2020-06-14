@@ -3845,6 +3845,7 @@ module.exports = function(broccoli){
 											})
 										;
 										$ul.append( $li.append($appender) );
+										$ul.css({'padding-top': 10});
 
 										var $elmFieldContent = $fields.find('.broccoli__edit-window-module-fields[data-broccoli--editwindow-field-name='+field.name+']').eq(0);
 										$elmFieldContent.addClass('broccoli__edit-window-module-fields--fieldtype-'+field.fieldType);
@@ -4667,13 +4668,8 @@ module.exports = function(broccoli){
 	this.saveCompleted = function(){
 		console.info('保存を完了しました');
 		for( var idx in targetElements ){
-			$(targetElements[idx]).find('.broccoli__indicator').text('保存を完了しました');
+			$(targetElements[idx]).find('.broccoli__indicator').addClass('broccoli__indicator-completed').text('保存を完了しました').fadeOut(2000);
 		}
-		timerForRemove = setTimeout(function(){
-			for( var idx in targetElements ){
-				$(targetElements[idx]).find('.broccoli__indicator').fadeOut();
-			}
-		}, 1000);
 	}
 }
 

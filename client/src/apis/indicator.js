@@ -33,12 +33,7 @@ module.exports = function(broccoli){
 	this.saveCompleted = function(){
 		console.info('保存を完了しました');
 		for( var idx in targetElements ){
-			$(targetElements[idx]).find('.broccoli__indicator').text('保存を完了しました');
+			$(targetElements[idx]).find('.broccoli__indicator').addClass('broccoli__indicator-completed').text('保存を完了しました').fadeOut(2000);
 		}
-		timerForRemove = setTimeout(function(){
-			for( var idx in targetElements ){
-				$(targetElements[idx]).find('.broccoli__indicator').fadeOut();
-			}
-		}, 1000);
 	}
 }
