@@ -56,6 +56,8 @@ class gpi{
 					array_push($bootup['resourceList'], $resKey);
 				}
 				$bootup['modulePackageList'] = $this->broccoli->getPackageList();
+				$bootup['userData'] = json_decode('{}');
+				$bootup['userData']->modPaletteCondition = $this->broccoli->userStorage()->get('modPaletteCondition');
 				$bootup['errors'] = $this->broccoli->get_errors();
 				return $bootup;
 
