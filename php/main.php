@@ -112,6 +112,7 @@ class broccoliHtmlEditor{
 		$options['log'] = (@$options['log'] ? $options['log'] : function($msg){
 			var_dump($msg);
 		});
+		$options['userStorage'] = (@$options['userStorage'] ? $options['userStorage'] : null);
 		if( !$options['pathHtml'] || !$options['pathResourceDir'] || !$options['realpathDataDir'] ){
 			// 必須項目
 			// var_dump($options);

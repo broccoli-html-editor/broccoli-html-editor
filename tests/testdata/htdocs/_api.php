@@ -77,6 +77,17 @@ $broccoli->init(
 		},
 		'log' => function($msg){
 			// var_dump('[ERROR HANDLED]'.$msg);
+		},
+		'userStorage' => function($key, $val = null){
+			// ユーザー固有の情報を読み書きします。
+			$args = func_get_args();
+			if( count($args) == 1 ){
+				// 読み取りとしてコールされる場合、引数が1つだけ提供されます。
+				return file_get_contents(__DIR__.'/user_storage/'.urlencode($key).'.json');
+			}else{
+				// 書き込みの要求の場合、引数が2つ提供されます。
+				return file_put_contents(__DIR__.'/user_storage/'.urlencode($key).'.json', $val);
+			}
 		}
 	)
 );

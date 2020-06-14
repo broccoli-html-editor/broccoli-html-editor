@@ -71,6 +71,7 @@ module.exports = function(){
 		options.log = options.log || function(msg){
 			console.error(msg);
 		};
+		options.userStorage = options.userStorage || null;
 		if( !options.pathHtml || !options.pathResourceDir || !options.realpathDataDir ){
 			// 必須項目
 			// console.log(options);

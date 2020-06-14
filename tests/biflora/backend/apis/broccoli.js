@@ -5,6 +5,7 @@ module.exports = function( data, callback, main, socket ){
 	delete(require.cache[require('path').resolve(__filename)]);
 	var path = require('path');
 	var it79 = require('iterate79');
+	var fs = require('fs');
 
 	data = data||{};
 	callback = callback||function(){};
@@ -105,6 +106,21 @@ module.exports = function( data, callback, main, socket ){
 					},
 					'log': function(msg){
 						console.error('[ERROR HANDLED]'+msg);
+					},
+					'userStorage': function($key, $val, callback){
+						// ユーザー固有の情報を読み書きします。
+						$args = func_get_args();
+						if( arguments.length == 2 ){
+							// 読み取りとしてコールされる場合、引数が2つだけ提供されます。
+							var data = fs.readFileSync( __dirname+'../../../testdata/htdocs/user_storage/'+$key+'.json' );
+							callback(data);
+							return;
+						}else{
+							// 書き込みの要求の場合、引数が3つ提供されます。
+							var result = fs.writeFileSync( __dirname+'../../../testdata/htdocs/user_storage/'+$key+'.json', $val );
+							callback(result);
+							return;
+						}
 					}
 				},
 				function(){

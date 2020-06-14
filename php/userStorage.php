@@ -21,4 +21,18 @@ class userStorage{
 		$this->broccoli = $broccoli;
 	}
 
+	/**
+	 * ユーザー固有の情報を取得する
+	 */
+	public function get($key){
+		return null;
+	}
+
+	/**
+	 * ユーザー固有の情報を保存する
+	 */
+	public function put($key, $val){
+		return true;
+	}
+
 }
