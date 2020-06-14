@@ -54,30 +54,25 @@ module.exports = function(broccoli){
 	 * 1つ前のデータを得る
 	 */
 	this.back = function( callback ){
-		// console.log('history.back()', historyDataArray, historyIdx);
-		callback = callback||function(){};
-		historyIdx ++;
-		if( historyIdx >= historyDataArray.length || historyIdx < 0 ){
-			historyIdx --;
-			callback(false);
-			return;
-		}
-		// console.log('historyIdx: ', historyIdx);
-		var data = {contents: {}, resources: {}};
-		data = historyDataArray[historyIdx];
-		callback( data );
-		return;
+		return this.step(-1, callback);
 	}
 
 	/**
 	 * 1つ次のデータを得る
 	 */
 	this.go = function( callback ){
+		return this.step(1, callback);
+	}
+
+	/**
+	 * 次(または前)のデータを得る
+	 */
+	this.step = function( step, callback ){
 		// console.log('history.go()', historyDataArray);
 		callback = callback||function(){};
-		historyIdx --;
+		historyIdx -= step;
 		if( historyIdx >= historyDataArray.length || historyIdx < 0 ){
-			historyIdx ++;
+			historyIdx += step;
 			callback(false);
 			return;
 		}

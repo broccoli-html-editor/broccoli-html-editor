@@ -1824,10 +1824,12 @@ module.exports = function(broccoli){
 		var container = tmpCur[0];
 		var fieldName = tmpCur[1];
 		var modTpl = _this.getModuleByInternalId( data.modId, data.subModName );
-	// console.log(data,modTpl);
 
 		if( container == 'bowl' ){
 			return this.get( aryPath, data.bowl[fieldName] );
+		}
+		if( !modTpl.fields[fieldName] ){
+			return false;
 		}
 
 		modTpl.fields[fieldName].fieldType = modTpl.fields[fieldName].fieldType || 'input';
@@ -2586,7 +2588,7 @@ module.exports = function(broccoli){
 	 * history: 取り消し (非同期)
 	 */
 	this.historyBack = function( callback ){
-		this.historyBackOrGo('back', callback);
+		this.historyBackOrGo(-1, callback);
 		return;
 	}
 
@@ -2594,24 +2596,26 @@ module.exports = function(broccoli){
 	 * history: やりなおし (非同期)
 	 */
 	this.historyGo = function( callback ){
-		this.historyBackOrGo('go', callback);
+		this.historyBackOrGo(1, callback);
 		return;
 	}
 
 	/**
 	 * history: 戻る、または やりなおし (非同期)
 	 */
-	this.historyBackOrGo = function( backOrGo, callback ){
+	this.historyBackOrGo = function( step, callback ){
 		callback = callback || function(){};
 		var resourceDb;
+		broccoli.indicator.saveProgress();
 		it79.fnc(
 			{},
 			[
 				function( it1, data ){
 					// historyからコンテンツデータを復元する
-					if( backOrGo == 'back' || backOrGo == 'go' ){
-						_this.history[backOrGo](function(data){
+					if( typeof(step) == typeof(0) && ( step > 0 || step < 0 ) ){
+						_this.history.step(step, function(data){
 							if( data === false ){
+								broccoli.indicator.saveCompleted();
 								callback(false);
 								return;
 							}
@@ -2622,15 +2626,16 @@ module.exports = function(broccoli){
 						});
 						return;
 					}
-					console.error('無効な引数です。', backOrGo);
+					console.error('無効な引数です。', step);
+					broccoli.indicator.saveCompleted();
 					callback(false);
 					return;
 				} ,
 				function( it1, data ){
-					// historyからコンテンツデータを復元する
+					// historyからリソースデータを復元する
 					broccoli.resourceMgr.setResourceDb(resourceDb, function(result){
 						if(!result){
-							alert('resourceDb の更新に失敗');
+							alert('resourceDb の更新に失敗しました。');
 						}
 						it1.next(data);
 					});
@@ -2668,6 +2673,7 @@ module.exports = function(broccoli){
 					);
 				} ,
 				function(it1, data){
+					broccoli.indicator.saveCompleted();
 					callback(true);
 					return;
 				}
@@ -4585,30 +4591,25 @@ module.exports = function(broccoli){
 	 * 1つ前のデータを得る
 	 */
 	this.back = function( callback ){
-		// console.log('history.back()', historyDataArray, historyIdx);
-		callback = callback||function(){};
-		historyIdx ++;
-		if( historyIdx >= historyDataArray.length || historyIdx < 0 ){
-			historyIdx --;
-			callback(false);
-			return;
-		}
-		// console.log('historyIdx: ', historyIdx);
-		var data = {contents: {}, resources: {}};
-		data = historyDataArray[historyIdx];
-		callback( data );
-		return;
+		return this.step(-1, callback);
 	}
 
 	/**
 	 * 1つ次のデータを得る
 	 */
 	this.go = function( callback ){
+		return this.step(1, callback);
+	}
+
+	/**
+	 * 次(または前)のデータを得る
+	 */
+	this.step = function( step, callback ){
 		// console.log('history.go()', historyDataArray);
 		callback = callback||function(){};
-		historyIdx --;
+		historyIdx -= step;
 		if( historyIdx >= historyDataArray.length || historyIdx < 0 ){
-			historyIdx ++;
+			historyIdx += step;
 			callback(false);
 			return;
 		}
@@ -4707,10 +4708,19 @@ module.exports = function(broccoli){
 
 		var $ul = $('<ul>');
 		var instPathMemo = [];
+
 		for( var idx in instPath ){
 			instPathMemo.push(instPath[idx]);
-			if( instPathMemo.length <= 1 ){ continue; }
-			var contData = broccoli.contentsSourceData.get(instPathMemo.join('/'));
+			if( instPathMemo.length <= 1 ){
+				continue;
+			}
+			var contData;
+			try{
+				contData = broccoli.contentsSourceData.get(instPathMemo.join('/'));
+			}catch(e){
+				console.error(e);
+				break;
+			}
 			if( !contData ){
 				// appender を選択した場合に、
 				// 存在しない instance が末尾に含まれた状態で送られてくる。
