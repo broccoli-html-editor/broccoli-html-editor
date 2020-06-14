@@ -908,6 +908,13 @@ module.exports = function(broccoli){
 
 
 		var doHistoryCommand = function(step){
+			if(!step){
+				broccoli.indicator.saveCompleted();
+				historyLock = false;
+				historyStepStock = 0;
+				callback(true);
+				return;
+			}
 			it79.fnc(
 				{},
 				[

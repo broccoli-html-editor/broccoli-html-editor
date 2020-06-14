@@ -72,17 +72,17 @@ module.exports = function(broccoli){
 		callback = callback||function(){};
 		var tmpHistoryIdx = historyIdx - step;
 		if( tmpHistoryIdx >= historyDataArray.length ){
-			if( step === 1 || step === -1 ){
-				callback(false);
-				return;
-			}
 			tmpHistoryIdx = (historyDataArray.length - 1);
-		}else if( tmpHistoryIdx < 0 ){
-			if( step === 1 || step === -1 ){
+			if( historyIdx == tmpHistoryIdx ){
 				callback(false);
 				return;
 			}
+		}else if( tmpHistoryIdx < 0 ){
 			tmpHistoryIdx = 0;
+			if( historyIdx == tmpHistoryIdx ){
+				callback(false);
+				return;
+			}
 		}
 
 		historyIdx = tmpHistoryIdx;
