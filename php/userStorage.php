@@ -24,15 +24,25 @@ class userStorage{
 	/**
 	 * ユーザー固有の情報を取得する
 	 */
-	public function get($key){
-		return null;
+	public function load($key){
+		$fnc = $this->broccoli->options['userStorage'];
+		if( !is_callable($fnc) ){
+			return false;
+		}
+		$rtn = $fnc($key);
+		return $rtn;
 	}
 
 	/**
 	 * ユーザー固有の情報を保存する
 	 */
-	public function put($key, $val){
-		return true;
+	public function save($key, $val){
+		$fnc = $this->broccoli->options['userStorage'];
+		if( !is_callable($fnc) ){
+			return false;
+		}
+		$rtn = $fnc($key, $val);
+		return $rtn;
 	}
 
 }

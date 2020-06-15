@@ -83,6 +83,10 @@ $broccoli->init(
 			$args = func_get_args();
 			if( count($args) == 1 ){
 				// 読み取りとしてコールされる場合、引数が1つだけ提供されます。
+				$path = __DIR__.'/user_storage/'.urlencode($key).'.json';
+				if( !is_file($path) ){
+					touch($path);
+				}
 				return file_get_contents(__DIR__.'/user_storage/'.urlencode($key).'.json');
 			}else{
 				// 書き込みの要求の場合、引数が2つ提供されます。

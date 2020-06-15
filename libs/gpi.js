@@ -69,7 +69,7 @@ module.exports = function(broccoli, api, options, callback){
 						},
 						function(it1){
 							$bootup.userData = {};
-							broccoli.userStorage.get('modPaletteCondition', function(data){
+							broccoli.userStorage.load('modPaletteCondition', function(data){
 								$bootup.userData.modPaletteCondition = data;
 								it1.next();
 							});
@@ -432,7 +432,27 @@ module.exports = function(broccoli, api, options, callback){
 
 			case "saveUserData":
 				// TODO: 開発中
-				callback(true);
+				var result = true;
+				it79.fnc(
+					{},
+					[
+						function(it1){
+							if( options.modPaletteCondition ){
+								broccoli.userStorage.save('modPaletteCondition', options.modPaletteCondition, function(result){
+									if( !result ){
+										result = false;
+									}
+									it1.next();
+								});
+								return;
+							}
+							it1.next();
+						},
+						function(it1){
+							callback(result);
+						}
+					]
+				);
 				break;
 
 			default:

@@ -109,15 +109,16 @@ module.exports = function( data, callback, main, socket ){
 					},
 					'userStorage': function($key, $val, callback){
 						// ユーザー固有の情報を読み書きします。
-						$args = func_get_args();
+						var path = __dirname+'/../../../testdata/htdocs/user_storage/'+$key+'.json';
 						if( arguments.length == 2 ){
 							// 読み取りとしてコールされる場合、引数が2つだけ提供されます。
-							var data = fs.readFileSync( __dirname+'../../../testdata/htdocs/user_storage/'+$key+'.json' );
+							callback = arguments[1];
+							var data = fs.readFileSync( path ).toString();
 							callback(data);
 							return;
 						}else{
 							// 書き込みの要求の場合、引数が3つ提供されます。
-							var result = fs.writeFileSync( __dirname+'../../../testdata/htdocs/user_storage/'+$key+'.json', $val );
+							var result = fs.writeFileSync( path, $val );
 							callback(result);
 							return;
 						}

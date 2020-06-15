@@ -57,7 +57,7 @@ class gpi{
 				}
 				$bootup['modulePackageList'] = $this->broccoli->getPackageList();
 				$bootup['userData'] = json_decode('{}');
-				$bootup['userData']->modPaletteCondition = $this->broccoli->userStorage()->get('modPaletteCondition');
+				$bootup['userData']->modPaletteCondition = $this->broccoli->userStorage()->load('modPaletteCondition');
 				$bootup['errors'] = $this->broccoli->get_errors();
 				return $bootup;
 
@@ -266,8 +266,12 @@ class gpi{
 				return $result;
 
 			case "saveUserData":
-				// TODO: 開発中
 				$result = true;
+				if( array_key_exists( 'modPaletteCondition', $options ) && $options['modPaletteCondition'] ){
+					if( !$this->broccoli->userStorage()->save('modPaletteCondition', $options['modPaletteCondition']) ){
+						$result = false;
+					}
+				}
 				return $result;
 
 			default:

@@ -24,7 +24,7 @@ module.exports = function(broccoli, targetElm, callback){
 
 	var modulePaletteCondition = {};
 	try{
-		modulePaletteCondition = broccoli.getBootupInfomations().userData.modPaletteCondition;
+		modulePaletteCondition = JSON.parse( broccoli.getBootupInfomations().userData.modPaletteCondition );
 	}catch(e){
 		console.error(e);
 	}
@@ -45,9 +45,16 @@ module.exports = function(broccoli, targetElm, callback){
 					it1.next();return;
 				}
 
+				var isOpened = true;
+				try{
+					if( modulePaletteCondition.cond[packageId + ':' + categoryId] == 'closed' ){
+						isOpened = false;
+					}
+				}catch(e){}
+
 				var $liCat = $('<li>');
 				var $ulMod = $('<ul>');
-				$liCat.append( $('<a class="broccoli__module-palette--buttongroups">')
+				var $a = $('<a class="broccoli__module-palette--buttongroups">')
 					.append( btIconOpened )
 					.append( $('<span>').text(category.categoryName)  )
 					.attr({
@@ -60,13 +67,19 @@ module.exports = function(broccoli, targetElm, callback){
 						$ulMod.toggle(100)
 						if( $(this).hasClass('broccoli__module-palette__closed') ){
 							$(this).find('.glyphicon').get(0).outerHTML = btIconClosed;
-							updateModPaletteCondition($categoryId, 'closed');
+							saveModPaletteCondition($categoryId, 'closed');
 						}else{
 							$(this).find('.glyphicon').get(0).outerHTML = btIconOpened;
-							updateModPaletteCondition($categoryId, 'opened');
+							saveModPaletteCondition($categoryId, 'opened');
 						}
 					})
-				);
+				;
+				if( !isOpened ){
+					$a.addClass('broccoli__module-palette__closed');
+					$a.find('.glyphicon').get(0).outerHTML = btIconClosed;
+					$ulMod.hide(0);
+				}
+				$liCat.append( $a );
 				$ul.append( $liCat );
 
 				drawModules(
@@ -357,7 +370,7 @@ module.exports = function(broccoli, targetElm, callback){
 	/**
 	 * モジュールパレットのコンディション情報を更新する
 	 */
-	function updateModPaletteCondition(packageId, openedOrClosed, callback){
+	function saveModPaletteCondition(packageId, openedOrClosed, callback){
 		callback = callback || function(){}
 		if( !modulePaletteCondition ){
 			modulePaletteCondition = {};
@@ -455,9 +468,16 @@ module.exports = function(broccoli, targetElm, callback){
 							it2.next();return;
 						}
 
+						var isOpened = true;
+						try{
+							if( modulePaletteCondition.cond[packageId] == 'closed' ){
+								isOpened = false;
+							}
+						}catch(e){}
+
 						var $li = $('<li>');
 						var $ulCat = $('<ul>');
-						$li.append( $('<a class="broccoli__module-palette--buttongroups">')
+						var $a = $('<a class="broccoli__module-palette--buttongroups">')
 							.append( btIconOpened )
 							.append( $('<span>').text( pkg.packageName ) )
 							.attr({
@@ -467,17 +487,23 @@ module.exports = function(broccoli, targetElm, callback){
 							.on('click', function(){
 								var $pkgId = $(this).attr('data-broccoli-module-package-id');
 								$(this).toggleClass('broccoli__module-palette__closed');
-								$ulCat.toggle(100)
+								$ulCat.toggle(100);
 								if( $(this).hasClass('broccoli__module-palette__closed') ){
 									$(this).find('.glyphicon').get(0).outerHTML = btIconClosed;
-									updateModPaletteCondition($pkgId, 'closed');
+									saveModPaletteCondition($pkgId, 'closed');
 								}else{
 									$(this).find('.glyphicon').get(0).outerHTML = btIconOpened;
-									updateModPaletteCondition($pkgId, 'opened');
+									saveModPaletteCondition($pkgId, 'opened');
 								}
 								return false;
 							})
-						);
+						;
+						if( !isOpened ){
+							$a.addClass('broccoli__module-palette__closed');
+							$a.find('.glyphicon').get(0).outerHTML = btIconClosed;
+							$ulCat.hide(0);
+						}
+						$li.append( $a );
 
 						drawCategories(
 							packageId,
