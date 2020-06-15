@@ -87,7 +87,7 @@
 						it79.ary(
 							css,
 							function(it2, row, idx){
-								_this.progressMessage('リソースを読み込んでいます...。 ('+(Number(idx)+1)+'/'+(css.length)+')');
+								console.log('リソースを読み込んでいます...。 ('+(Number(idx)+1)+'/'+(css.length)+')');
 								var link = document.createElement('link');
 								link.addEventListener('load', function(){
 									it2.next();

@@ -265,6 +265,11 @@ class gpi{
 				$result = $this->broccoli->getFieldDefinition( $options['__fieldId__'] )->gpi( $options['options'] );
 				return $result;
 
+			case "saveUserData":
+				// TODO: 開発中
+				$result = true;
+				return $result;
+
 			default:
 				return true;
 		}

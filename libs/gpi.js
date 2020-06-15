@@ -430,6 +430,11 @@ module.exports = function(broccoli, api, options, callback){
 				);
 				break;
 
+			case "saveUserData":
+				// TODO: 開発中
+				callback(true);
+				break;
+
 			default:
 				callback(true);
 				break;

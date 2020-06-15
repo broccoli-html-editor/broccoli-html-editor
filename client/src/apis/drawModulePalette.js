@@ -22,8 +22,21 @@ module.exports = function(broccoli, targetElm, callback){
 	var hasSystemParents = {};
 	var childrenIndex = {};
 
+	var modulePaletteCondition = {};
+	try{
+		modulePaletteCondition = broccoli.getBootupInfomations().userData.modPaletteCondition;
+	}catch(e){
+		console.error(e);
+	}
+	if( !modulePaletteCondition ){
+		modulePaletteCondition = {};
+	}
+	if( !modulePaletteCondition.cond ){
+		modulePaletteCondition.cond = {};
+	}
+
 	// カテゴリの階層を描画
-	function drawCategories(categories, $ul, callback){
+	function drawCategories(packageId, categories, $ul, callback){
 		it79.ary(
 			categories ,
 			function(it1, category, categoryId){
@@ -37,20 +50,28 @@ module.exports = function(broccoli, targetElm, callback){
 				$liCat.append( $('<a class="broccoli__module-palette--buttongroups">')
 					.append( btIconOpened )
 					.append( $('<span>').text(category.categoryName)  )
-					.attr({'href':'javascript:;'})
+					.attr({
+						'href':'javascript:;',
+						'data-broccoli-module-category-id': packageId + ':' + categoryId
+					})
 					.click(function(){
+						var $categoryId = $(this).attr('data-broccoli-module-category-id');
 						$(this).toggleClass('broccoli__module-palette__closed');
 						$ulMod.toggle(100)
 						if( $(this).hasClass('broccoli__module-palette__closed') ){
 							$(this).find('.glyphicon').get(0).outerHTML = btIconClosed;
+							updateModPaletteCondition($categoryId, 'closed');
 						}else{
 							$(this).find('.glyphicon').get(0).outerHTML = btIconOpened;
+							updateModPaletteCondition($categoryId, 'opened');
 						}
 					})
 				);
 				$ul.append( $liCat );
 
 				drawModules(
+					packageId,
+					categoryId,
 					category.modules,
 					$ulMod,
 					function(){
@@ -67,7 +88,7 @@ module.exports = function(broccoli, targetElm, callback){
 	}
 
 	// モジュールの階層を描画
-	function drawModules(modules, $ul, callback){
+	function drawModules(packageId, categoryId, modules, $ul, callback){
 		it79.ary(
 			modules ,
 			function(it1, mod, moduleId){
@@ -151,6 +172,9 @@ module.exports = function(broccoli, targetElm, callback){
 					};
 					event.dataTransfer.setData('text/json', JSON.stringify(transferData) );
 				});
+			})
+			.on('dragover', function(e){
+				updateModuleInfoPreview(null, {'elm': this}, function(){});
 			})
 			.on('mouseover', function(e){
 				var html = generateModuleInfoHtml(this);
@@ -296,14 +320,17 @@ module.exports = function(broccoli, targetElm, callback){
 		if( $(window).height() < 400 || $(window).width() < 400 ){
 			// Window が小さすぎたら表示しない
 			callback();
-			return this;
+			return;
 		}
 		if( $html === null ){
 			callback();
-			return this;
+			return;
 		}
 		var $preview = $('<div class="broccoli broccoli--module-info-preview">');
 		$preview.append( $html );
+		$preview.on('mouseover dragover', function(e){
+			$(this).remove();
+		});
 
 		$body
 			.append( $preview )
@@ -323,7 +350,33 @@ module.exports = function(broccoli, targetElm, callback){
 			});
 		}
 		callback();
-		return this;
+		return;
+	}
+
+
+	/**
+	 * モジュールパレットのコンディション情報を更新する
+	 */
+	function updateModPaletteCondition(packageId, openedOrClosed, callback){
+		callback = callback || function(){}
+		if( !modulePaletteCondition ){
+			modulePaletteCondition = {};
+		}
+		if( !modulePaletteCondition.cond ){
+			modulePaletteCondition.cond = {};
+		}
+		modulePaletteCondition.cond[packageId] = openedOrClosed;
+
+		broccoli.gpi(
+			'saveUserData',
+			{
+				'modPaletteCondition': JSON.stringify(modulePaletteCondition)
+			},
+			function(){
+				callback();
+			}
+		);
+		return;
 	}
 
 
@@ -407,19 +460,27 @@ module.exports = function(broccoli, targetElm, callback){
 						$li.append( $('<a class="broccoli__module-palette--buttongroups">')
 							.append( btIconOpened )
 							.append( $('<span>').text( pkg.packageName ) )
-							.attr({'href':'javascript:;'})
+							.attr({
+								'href':'javascript:;',
+								'data-broccoli-module-package-id': packageId
+							})
 							.on('click', function(){
+								var $pkgId = $(this).attr('data-broccoli-module-package-id');
 								$(this).toggleClass('broccoli__module-palette__closed');
 								$ulCat.toggle(100)
 								if( $(this).hasClass('broccoli__module-palette__closed') ){
 									$(this).find('.glyphicon').get(0).outerHTML = btIconClosed;
+									updateModPaletteCondition($pkgId, 'closed');
 								}else{
 									$(this).find('.glyphicon').get(0).outerHTML = btIconOpened;
+									updateModPaletteCondition($pkgId, 'opened');
 								}
+								return false;
 							})
 						);
 
 						drawCategories(
+							packageId,
 							pkg.categories,
 							$ulCat,
 							function(){
