@@ -95,7 +95,7 @@ module.exports = function(broccoli){
 		if( container == 'bowl' ){
 			return this.get( aryPath, data.bowl[fieldName] );
 		}
-		if( !modTpl.fields[fieldName] ){
+		if( !modTpl || !modTpl.fields || !modTpl.fields[fieldName] ){
 			return false;
 		}
 
