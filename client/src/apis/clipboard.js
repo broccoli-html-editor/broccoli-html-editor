@@ -48,8 +48,8 @@ module.exports = function(broccoli){
 					navigator.clipboard.writeText(text).then(function() {
 						console.log('navigator.clipboard: Copying to clipboard was successful!');
 						callback();
-					}, function(err) {
-						console.error('navigator.clipboard: Could not copy text:', err);
+					}, function() {
+						console.error('navigator.clipboard: Could not copy text:', text);
 						callback();
 					});
 					return;

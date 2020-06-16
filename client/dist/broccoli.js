@@ -1022,6 +1022,8 @@
 				return;
 			}
 
+			_this.progressMessage('コピーしています。');
+
 			this.selectedInstanceToJsonString(function(jsonStr){
 				if(jsonStr === false){
 					_this.message('インスタンスのコピーに失敗しました。');
@@ -1029,7 +1031,9 @@
 					return;
 				}
 				_this.clipboard.set( jsonStr, null, event );
+				_this.progressMessage('インスタンスをコピーしました。');
 				_this.message('インスタンスをコピーしました。');
+				_this.closeProgress();
 				callback(true);
 			});
 			return;
@@ -1449,7 +1453,7 @@
 		 * プログレスを閉じる
 		 */
 		this.closeProgress = function( callback ){
-			callback = callback||function(){};
+			callback = callback || function(){};
 			var $progress = $('body').find('.broccoli__progress');
 			if( !$progress.length ){
 				_this.setUiState();
@@ -1623,8 +1627,8 @@ module.exports = function(broccoli){
 					navigator.clipboard.writeText(text).then(function() {
 						console.log('navigator.clipboard: Copying to clipboard was successful!');
 						callback();
-					}, function(err) {
-						console.error('navigator.clipboard: Could not copy text:', err);
+					}, function() {
+						console.error('navigator.clipboard: Could not copy text:', text);
 						callback();
 					});
 					return;

@@ -1021,6 +1021,8 @@
 				return;
 			}
 
+			_this.progressMessage('コピーしています。');
+
 			this.selectedInstanceToJsonString(function(jsonStr){
 				if(jsonStr === false){
 					_this.message('インスタンスのコピーに失敗しました。');
@@ -1028,7 +1030,9 @@
 					return;
 				}
 				_this.clipboard.set( jsonStr, null, event );
+				_this.progressMessage('インスタンスをコピーしました。');
 				_this.message('インスタンスをコピーしました。');
+				_this.closeProgress();
 				callback(true);
 			});
 			return;
@@ -1448,7 +1452,7 @@
 		 * プログレスを閉じる
 		 */
 		this.closeProgress = function( callback ){
-			callback = callback||function(){};
+			callback = callback || function(){};
 			var $progress = $('body').find('.broccoli__progress');
 			if( !$progress.length ){
 				_this.setUiState();
