@@ -112,6 +112,7 @@ module.exports = function(broccoli){
 		e.stopPropagation();
 		e.preventDefault();
 		var event = e.originalEvent;
+		// console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=', event);
 		$(elm).removeClass('broccoli--panel__drag-entered');
 		$(elm).removeClass('broccoli--panel__drag-entered-u');
 		$(elm).removeClass('broccoli--panel__drag-entered-d');
@@ -157,6 +158,11 @@ module.exports = function(broccoli){
 
 				return moveToPath + '@' + (moveToIdx + 1);
 			})(moveTo);
+		}
+
+		if( event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files.length ){
+			console.log('外部からファイルがドロップされました。', event.dataTransfer.files);
+			return onDropFile(e, moveTo, callback);
 		}
 
 		if( moveFroms[0] === moveTo || ( broccoli.isInstanceSelected( moveTo ) && method === 'moveTo' ) ){
@@ -286,14 +292,10 @@ module.exports = function(broccoli){
 			} catch (e) {
 				modClip = false;
 			}
-			// console.log(modId);
-			// console.log(modClip);
+
 			if( modClip !== false ){
 				console.log('クリップがドロップされました。');
-				// console.log(modId);
-				// console.log(modClip);
 				var parsedModId = broccoli.parseModuleId(modId);
-				// console.log(parsedModId.package);
 
 				broccoli.gpi(
 					'getClipModuleContents',
@@ -387,6 +389,113 @@ module.exports = function(broccoli){
 		});
 		return;
 	} // onDrop()
+
+	/**
+	 * パネルの ondrop イベントハンドラ: ファイルを受け取った場合の処理
+	 */
+	function onDropFile(e, moveTo, callback){
+		callback = callback || function(){};
+		var event = e.originalEvent;
+		if( !event.dataTransfer || !event.dataTransfer.files || !event.dataTransfer.files.length ){
+			console.error('外部からドロップされたファイルが取得できません。', event);
+			callback();
+			return;
+		}
+		var fileInfo = event.dataTransfer.files[0];
+		// console.log(fileInfo);
+		var type = fileInfo.type;
+		var reader = new FileReader();
+		reader.onload = function(evt) {
+			// console.log(evt.target);
+			var content = evt.target.result;
+			console.log(content);
+			switch( type ){
+				case 'text/json':
+				case 'application/json':
+					var clipContents;
+					try{
+						clipContents = JSON.parse(content);
+					}catch(e){
+						console.error(e);
+					}
+					// console.log(clipContents);
+					if( clipContents.data && clipContents.resources ){
+						if(!confirm('クリップデータを挿入しますか？')){
+							callback();
+							return;
+						}
+
+						it79.ary(
+							clipContents.data ,
+							function(it1, row1, idx1){
+								broccoli.contentsSourceData.duplicateInstance(clipContents.data[idx1], clipContents.resources, {'supplementModPackage': '_'}, function(newData){
+									// console.log(newData, moveTo);
+
+									broccoli.contentsSourceData.addInstance( newData, moveTo, function(result){
+										// 上から順番に挿入していくので、
+										// moveTo を1つインクリメントしなければいけない。
+										// (そうしないと、天地逆さまに積み上げられることになる。)
+
+										moveTo = broccoli.incrementInstancePath(moveTo);
+										it1.next();
+									} );
+
+								});
+							} ,
+							function(){
+								broccoli.resourceMgr.getResourceDb(function(tmpResourceDb){
+									for( var resKey in clipContents.resources ){
+										tmpResourceDb[resKey] = clipContents.resources[resKey];
+									}
+									broccoli.resourceMgr.setResourceDb(tmpResourceDb, function(result){
+										broccoli.unselectInstance(function(){
+											broccoli.saveContents(function(){
+												broccoli.message('クリップを挿入しました。');
+												broccoli.redraw(function(){
+													broccoli.closeProgress(function(){
+														broccoli.selectInstance(newInstancePath, function(){
+															callback();
+														});
+													});
+												});
+											});
+										});
+									});
+								});
+							}
+						);
+						return;
+					}
+					break;
+				default:
+					break;
+			}
+			callback();
+			return;
+		}
+
+		switch( type ){
+			case 'image/jpeg':
+			case 'image/png':
+			case 'image/gif':
+				reader.readAsDataURL(fileInfo);
+				break;
+			case 'text/plain':
+			case 'text/json':
+			case 'application/json':
+			case 'text/html':
+			case 'text/markdown':
+				reader.readAsText(fileInfo);
+				break;
+			default:
+				reader.abort();
+				console.error('処理できないファイルです。', fileInfo.type);
+				callback();
+				break;
+		}
+
+		return;
+	} // onDropFile()
 
 	/**
 	 * パネルの ondblclick イベントハンドラ

@@ -236,7 +236,8 @@
 					} ,
 					function(it1, data){
 						_this.progressMessage('コンテンツデータを初期化しています...。');
-						_this.contentsSourceData = new (require('./contentsSourceData.js'))(_this).init(
+						_this.contentsSourceData = new (require('./contentsSourceData.js'))(_this);
+						_this.contentsSourceData.init(
 							function(){
 								it1.next(data);
 							}

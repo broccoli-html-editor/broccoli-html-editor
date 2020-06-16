@@ -62,7 +62,7 @@ module.exports = function(broccoli){
 			]
 		);
 
-		return this;
+		return;
 	}// init()
 
 	/**
@@ -167,13 +167,13 @@ module.exports = function(broccoli){
 	 * インスタンスを追加する (非同期)
 	 */
 	this.addInstance = function( modId, containerInstancePath, cb, subModName ){
-		// console.log( '----- addInstance: '+modId+': '+containerInstancePath );
+		// console.log( '----- addInstance: '+(modId.modId || modId)+': '+containerInstancePath );
 		cb = cb||function(){};
 
 		if( containerInstancePath.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
 			broccoli.message('bowl に追加することはできません。アペンダーに追加してください。');
 			cb();
-			return this;
+			return;
 		}
 
 		var newData = {};
@@ -215,7 +215,7 @@ module.exports = function(broccoli){
 		// console.log( aryPath );
 
 		function set_r( aryPath, data, newData ){
-			// console.log( data );
+			// console.log( '=-=-=-=-=-=-=-=-=-=-=-=', data );
 			var cur = aryPath.shift();
 			var idx = null;
 			var tmpSplit = cur.split('@');
@@ -427,12 +427,12 @@ module.exports = function(broccoli){
 		if( isBowlRoot(fromContainerInstancePath) ){
 			broccoli.message('bowl を移動することはできません。');
 			cb(false);
-			return this;
+			return;
 		}
 		if( isBowlRoot(toContainerInstancePath) ){
 			broccoli.message('bowl への移動はできません。アペンダーへドロップしてください。');
 			cb(false);
-			return this;
+			return;
 		}
 
 		function parseInstancePath(path){
@@ -468,7 +468,7 @@ module.exports = function(broccoli){
 			if( fromParsed.num == toParsed.num ){
 				// to と from が一緒だったら何もしない。
 				cb(false);
-				return this;
+				return;
 			}
 			if( fromParsed.num < toParsed.num ){
 				// 上から1つ以上下へ
@@ -528,7 +528,7 @@ module.exports = function(broccoli){
 		callback = callback || function(){};
 		options = options || {};
 		var _this = this;
-		var supplementModPackage = options.supplementModPackage;
+		var supplementModPackage = options.supplementModPackage || '';
 		var parsedModId = broccoli.parseModuleId(objInstance.modId);
 		if( parsedModId.package === null ){
 			objInstance.modId = supplementModPackage + ':' + parsedModId.category + '/' + parsedModId.module;
