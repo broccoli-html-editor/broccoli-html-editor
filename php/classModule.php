@@ -84,6 +84,8 @@ class classModule{
 				$this->info['name'] = '不明なモジュール';
 			}elseif($this->id == '_sys/html'){
 				$this->info['name'] = 'HTML';
+			}elseif($this->id == '_sys/image'){
+				$this->info['name'] = '画像';
 			}
 		}
 
@@ -120,11 +122,13 @@ class classModule{
 		}
 
 		if( $this->id == '_sys/root' ){
-			return $this->parseTpl( '{&{"module":{"name":"main"}}&}', $this );
+			return $this->parseTpl( '{&{"module":{"name":"main","label":"コンテンツエリア"}}&}', $this );
 		}elseif( $this->id == '_sys/unknown' ){
 			return $this->parseTpl( '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;">[ERROR] 未知のモジュールテンプレートです。<!-- .error --></div>'."\n", $this );
 		}elseif( $this->id == '_sys/html' ){
-			return $this->parseTpl( '{&{"input":{"type":"html","name":"main"}}&}', $this );
+			return $this->parseTpl( '{&{"input":{"type":"html","name":"main","label":"HTML"}}&}', $this );
+		}elseif( $this->id == '_sys/image' ){
+			return $this->parseTpl( '<img src="{&{"input":{"type":"image","name":"src","label":"画像"}}&}" alt="{&{"input":{"type":"html_attr_text","name":"alt","label":"代替テキスト"}}&}" />', $this );
 		}elseif( is_string(@$this->options['src']) ){
 			return $this->parseTpl( $this->options['src'], $this->options['topThis'] );
 		}elseif( $this->topThis->templateType != 'broccoli' && is_string($this->subModName) ){

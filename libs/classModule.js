@@ -89,6 +89,8 @@ module.exports = function(broccoli, moduleId, options){
 			this.info['name'] = '不明なモジュール';
 		}else if(this.id == '_sys/html'){
 			this.info['name'] = 'HTML';
+		}else if(this.id == '_sys/image'){
+			this.info['name'] = '画像';
 		}
 	}
 
@@ -432,11 +434,13 @@ module.exports = function(broccoli, moduleId, options){
 		}
 
 		if( moduleId == '_sys/root' ){
-			parseTpl( '{&{"module":{"name":"main"}}&}', _this, _this, callback );
+			parseTpl( '{&{"module":{"name":"main","label":"コンテンツエリア"}}&}', _this, _this, callback );
 		}else if( moduleId == '_sys/unknown' ){
 			parseTpl( '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;">[ERROR] 未知のモジュールテンプレートです。<!-- .error --></div>'+"\n", _this, _this, callback );
 		}else if( moduleId == '_sys/html' ){
-			parseTpl( '{&{"input":{"type":"html","name":"main"}}&}', _this, _this, callback );
+			parseTpl( '{&{"input":{"type":"html","name":"main","label":"HTML"}}&}', _this, _this, callback );
+		}else if( moduleId == '_sys/image' ){
+			parseTpl( '<img src="{&{"input":{"type":"image","name":"src","label":"画像"}}&}" alt="{&{"input":{"type":"html_attr_text","name":"alt","label":"代替テキスト"}}&}" />', _this, _this, callback );
 		}else if( typeof(options.src) === typeof('') ){
 			parseTpl( options.src, _this, options.topThis, callback );
 		}else if( _this.topThis.templateType != 'broccoli' && typeof(_this.subModName) == typeof('') ){

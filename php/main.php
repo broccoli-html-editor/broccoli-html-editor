@@ -562,6 +562,7 @@ class broccoliHtmlEditor{
 		$data['tmp']['_sys/root'] = $this->getModule('_sys/root');
 		$data['tmp']['_sys/unknown'] = $this->getModule('_sys/unknown');
 		$data['tmp']['_sys/html'] = $this->getModule('_sys/html');
+		$data['tmp']['_sys/image'] = $this->getModule('_sys/image');
 
 		foreach( $list as $pkgId=>$pkg ){
 			foreach( $list[$pkgId]['categories'] as $catId=>$cat ){
