@@ -215,7 +215,7 @@ module.exports = function(broccoli){
 		// console.log( aryPath );
 
 		function set_r( aryPath, data, newData ){
-			// console.log( '=-=-=-=-=-=-=-=-=-=-=-=', data );
+			// console.log( '=-=-=-=-=-=-=-=-=-=-=-=', aryPath, data );
 			var cur = aryPath.shift();
 			var idx = null;
 			var tmpSplit = cur.split('@');
@@ -253,7 +253,7 @@ module.exports = function(broccoli){
 						broccoli.message('モジュールの数が最大件数 '+modTpl.fields[fieldName]['maxLength']+' に達しています。');
 						return false;
 					}
-					if(newDataModTpl.info.enabledParents.length){
+					if( newDataModTpl && newDataModTpl.info && newDataModTpl.info.enabledParents && newDataModTpl.info.enabledParents.length ){
 						var tmpIsEnabledParent = false;
 						for(var tmpIdx in newDataModTpl.info.enabledParents){
 							if(newDataModTpl.info.enabledParents[tmpIdx] == modTpl.id){
@@ -281,7 +281,7 @@ module.exports = function(broccoli){
 							return false;
 						}
 					}
-					if(newDataModTpl.info.enabledBowls.length){
+					if(newDataModTpl && newDataModTpl.info && newDataModTpl.info.enabledBowls && newDataModTpl.info.enabledBowls.length){
 						var tmpIsEnabledBowl = false;
 						for(var tmpIdx in newDataModTpl.info.enabledBowls){
 							if( containerInstancePath.match( new RegExp('^\\/bowl\\.' + (newDataModTpl.info.enabledBowls[tmpIdx]) + '\\/') ) ){
@@ -330,7 +330,7 @@ module.exports = function(broccoli){
 		cb(result);
 
 		return;
-	}// addInstance()
+	} // addInstance()
 
 	/**
 	 * インスタンスを更新する
