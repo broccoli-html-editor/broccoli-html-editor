@@ -232,12 +232,6 @@ class resourceMgr{
 	 * get resource DB
 	 */
 	public function getResourceDb(){
-
-		// 使われていないリソースを削除
-		// getter にファイルの削除処理が含まれるのは違和感があるが、
-		// クライアント側のリソースDBの更新を考慮すると、ここがもっともコストが低かった。
-		$this->collectGarbage();
-
 		return $this->resourceDb;
 	}
 

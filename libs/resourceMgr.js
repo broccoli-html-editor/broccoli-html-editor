@@ -383,11 +383,6 @@ module.exports = function(broccoli){
 	this.getResourceDb = function( callback ){
 		callback = callback || function(){};
 
-		// 使われていないリソースを削除
-		// getter にファイルの削除処理が含まれるのは違和感があるが、
-		// クライアント側のリソースDBの更新を考慮すると、ここがもっともコストが低かった。
-		collectGarbage();
-
 		new Promise(function(rlv){rlv();})
 			.then(function(){ return new Promise(function(rlv, rjt){
 				callback(_resourceDb);
