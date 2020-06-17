@@ -402,15 +402,17 @@ module.exports = function(broccoli){
 			callback();
 			return;
 		}
-		var fileInfo = event.dataTransfer.files[0];
+		var fileInfo = event.dataTransfer.files[0]; // 1つめのファイルだけ対応
 		// console.log(fileInfo);
-		var type = fileInfo.type;
+		var mimetype = fileInfo.type;
+		var originalFileSize = fileInfo.size;
+		var originalFileName = fileInfo.name;
 		var reader = new FileReader();
 		reader.onload = function(evt) {
 			// console.log(evt.target);
 			var content = evt.target.result;
-			console.log(content);
-			switch( type ){
+			// console.log(content);
+			switch( mimetype ){
 				case 'text/json':
 				case 'application/json':
 					// --------------------------------------
@@ -451,6 +453,45 @@ module.exports = function(broccoli){
 					// --------------------------------------
 					// 画像ファイルのドロップを処理
 					// _sys/image に当てはめて挿入します。
+					var basename = originalFileName;
+					var ext = 'png';
+					if( originalFileName.match( /^(.*)\.([a-zA-Z0-9\_]+)$/i ) ){
+						basename = RegExp.$1;
+						ext = RegExp.$2;
+					}
+					basename = basename.split(/[^a-zA-Z0-9]/).join('_');
+					var base64 = content.replace(/^data\:[a-zA-Z0-9]+\/[a-zA-Z0-9]+\;base64\,/i, '');
+					var clipContents = {
+						'data': [
+							{
+								"modId": "_sys/image",
+								"fields": {
+									"src": {
+										"resKey": "___dropped_local_image___",
+										"path": "./index_files/resources/photo009-800x600px-png8.png",
+										"resType": "",
+										"webUrl": ""
+									}
+								}
+							}
+						],
+						'resources': {
+							"___dropped_local_image___": {
+								"ext": ext,
+								"type": mimetype,
+								"size": originalFileSize,
+								"base64": base64,
+								"isPrivateMaterial": false,
+								"publicFilename": basename,
+								"md5": "",
+								"field": "image",
+								"fieldNote": {}
+							}
+						}
+					};
+					insertClipModule(clipContents, moveTo, {}, function(){
+						callback();
+					});
 					break;
 				default:
 					broccoli.message('対応していないファイル形式です。');
@@ -463,7 +504,7 @@ module.exports = function(broccoli){
 			return;
 		}
 
-		switch( type ){
+		switch( mimetype ){
 			case 'image/jpeg':
 			case 'image/png':
 			case 'image/gif':
@@ -478,7 +519,7 @@ module.exports = function(broccoli){
 				break;
 			default:
 				broccoli.message('処理できないファイルです。');
-				console.error('処理できないファイルです。', fileInfo.type);
+				console.error('処理できないファイルです。', mimetype);
 				callback();
 				break;
 		}
@@ -790,7 +831,7 @@ module.exports = function(broccoli){
 	 */
 	function insertClipModule(clipContents, moveTo, options, callback){
 		options = options || {};
-		options.packageId = options.packageId || '_';
+		options.packageId = options.packageId || undefined;
 
 		it79.ary(
 			clipContents.data ,

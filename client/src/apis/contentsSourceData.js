@@ -531,7 +531,11 @@ module.exports = function(broccoli){
 		var supplementModPackage = options.supplementModPackage || '';
 		var parsedModId = broccoli.parseModuleId(objInstance.modId);
 		if( parsedModId.package === null ){
-			objInstance.modId = supplementModPackage + ':' + parsedModId.category + '/' + parsedModId.module;
+			if( parsedModId.category == '_sys' ){
+				objInstance.modId = parsedModId.category + '/' + parsedModId.module;
+			}else{
+				objInstance.modId = supplementModPackage + ':' + parsedModId.category + '/' + parsedModId.module;
+			}
 		}
 
 		var newData = JSON.parse( JSON.stringify( objInstance ) );
