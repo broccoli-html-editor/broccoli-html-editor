@@ -5771,6 +5771,7 @@ module.exports = function(broccoli){
 		callback = callback || function(){};
 		var event = e.originalEvent;
 		if( !event.dataTransfer || !event.dataTransfer.files || !event.dataTransfer.files.length ){
+			broccoli.message('外部からドロップされたファイルが取得できません。');
 			console.error('外部からドロップされたファイルが取得できません。', event);
 			callback();
 			return;
@@ -5786,62 +5787,50 @@ module.exports = function(broccoli){
 			switch( type ){
 				case 'text/json':
 				case 'application/json':
-					var clipContents;
+					// --------------------------------------
+					// JSON形式のファイルドロップを処理
+					var jsonContents = false;
 					try{
-						clipContents = JSON.parse(content);
+						jsonContents = JSON.parse(content);
 					}catch(e){
 						console.error(e);
+						broccoli.message('JSON形式をデコードできません。');
+						callback();
+						return;
 					}
-					// console.log(clipContents);
-					if( clipContents.data && clipContents.resources ){
+					// console.log(jsonContents);
+					if( jsonContents && jsonContents.data && jsonContents.resources ){
+						// クリップモジュール形式と評価される場合は、
+						// クリップモジュールドロップと同様の挿入処理をする。
+
 						if(!confirm('クリップデータを挿入しますか？')){
 							callback();
 							return;
 						}
 
-						it79.ary(
-							clipContents.data ,
-							function(it1, row1, idx1){
-								broccoli.contentsSourceData.duplicateInstance(clipContents.data[idx1], clipContents.resources, {'supplementModPackage': '_'}, function(newData){
-									// console.log(newData, moveTo);
+						insertClipModule(jsonContents, moveTo, {}, function(){
+							callback();
+						});
 
-									broccoli.contentsSourceData.addInstance( newData, moveTo, function(result){
-										// 上から順番に挿入していくので、
-										// moveTo を1つインクリメントしなければいけない。
-										// (そうしないと、天地逆さまに積み上げられることになる。)
-
-										moveTo = broccoli.incrementInstancePath(moveTo);
-										it1.next();
-									} );
-
-								});
-							} ,
-							function(){
-								broccoli.resourceMgr.getResourceDb(function(tmpResourceDb){
-									for( var resKey in clipContents.resources ){
-										tmpResourceDb[resKey] = clipContents.resources[resKey];
-									}
-									broccoli.resourceMgr.setResourceDb(tmpResourceDb, function(result){
-										broccoli.unselectInstance(function(){
-											broccoli.saveContents(function(){
-												broccoli.message('クリップを挿入しました。');
-												broccoli.redraw(function(){
-													broccoli.closeProgress(function(){
-														broccoli.selectInstance(newInstancePath, function(){
-															callback();
-														});
-													});
-												});
-											});
-										});
-									});
-								});
-							}
-						);
+						return;
+					}else{
+						broccoli.message('対応していないJSON形式です。');
+						callback();
 						return;
 					}
 					break;
+				case 'image/jpeg':
+				case 'image/png':
+				case 'image/gif':
+					// --------------------------------------
+					// 画像ファイルのドロップを処理
+					// _sys/image に当てはめて挿入します。
+					break;
 				default:
+					broccoli.message('対応していないファイル形式です。');
+					console.error('対応していないファイル形式です。', fileInfo.type);
+					callback();
+					return;
 					break;
 			}
 			callback();
@@ -5862,7 +5851,7 @@ module.exports = function(broccoli){
 				reader.readAsText(fileInfo);
 				break;
 			default:
-				reader.abort();
+				broccoli.message('処理できないファイルです。');
 				console.error('処理できないファイルです。', fileInfo.type);
 				callback();
 				break;
@@ -6168,6 +6157,55 @@ module.exports = function(broccoli){
 		// this.updateInstancePathView();
 		callback();
 		return this;
+	}
+
+	/**
+	 * クリップモジュールを挿入する
+	 */
+	function insertClipModule(clipContents, moveTo, options, callback){
+		options = options || {};
+		options.packageId = options.packageId || '_';
+
+		it79.ary(
+			clipContents.data ,
+			function(it1, row1, idx1){
+				broccoli.contentsSourceData.duplicateInstance(clipContents.data[idx1], clipContents.resources, {'supplementModPackage': options.packageId}, function(newData){
+					// console.log(newData, moveTo);
+
+					broccoli.contentsSourceData.addInstance( newData, moveTo, function(result){
+						// 上から順番に挿入していくので、
+						// moveTo を1つインクリメントしなければいけない。
+						// (そうしないと、天地逆さまに積み上げられることになる。)
+
+						moveTo = broccoli.incrementInstancePath(moveTo);
+						it1.next();
+					} );
+
+				});
+			} ,
+			function(){
+				broccoli.resourceMgr.getResourceDb(function(tmpResourceDb){
+					for( var resKey in clipContents.resources ){
+						tmpResourceDb[resKey] = clipContents.resources[resKey];
+					}
+					broccoli.resourceMgr.setResourceDb(tmpResourceDb, function(result){
+						broccoli.unselectInstance(function(){
+							broccoli.saveContents(function(){
+								broccoli.message('クリップを挿入しました。');
+								broccoli.redraw(function(){
+									broccoli.closeProgress(function(){
+										broccoli.selectInstance(newInstancePath, function(){
+											callback();
+										});
+									});
+								});
+							});
+						});
+					});
+				});
+			}
+		);
+		return;
 	}
 
 	/**
