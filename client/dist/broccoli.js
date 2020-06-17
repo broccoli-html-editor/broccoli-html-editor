@@ -54,6 +54,7 @@
 			options.contents_area_selector = options.contents_area_selector || '.contents';
 			options.contents_bowl_name_by = options.contents_bowl_name_by || 'id';
 			options.gpiBridge = options.gpiBridge || function(){};
+			options.droppedFileOperator = options.droppedFileOperator || {};
 			options.onClickContentsLink = options.onClickContentsLink || function(){};
 			options.onMessage = options.onMessage || function(){};
 			options.lang = options.lang || 'en';
@@ -5785,6 +5786,34 @@ module.exports = function(broccoli){
 		var mimetype = fileInfo.type;
 		var originalFileSize = fileInfo.size;
 		var originalFileName = fileInfo.name;
+		var originalFileFirstname = originalFileName;
+		var originalFileExt = 'png';
+		if( originalFileName.match( /^(.*)\.([a-zA-Z0-9\_]+)$/i ) ){
+			originalFileFirstname = RegExp.$1;
+			originalFileExt = RegExp.$2;
+			originalFileExt = originalFileExt.toLowerCase();
+		}
+
+		var customFunc = false;
+		if( typeof(broccoli.options.droppedFileOperator[mimetype]) == typeof(function(){}) ){
+			// mimetypeで登録されていたら、そちらへ転送
+			customFunc = broccoli.options.droppedFileOperator[mimetype];
+		}else if( typeof(broccoli.options.droppedFileOperator[originalFileExt]) == typeof(function(){}) ){
+			// 拡張子で登録されていたら、そちらへ転送
+			customFunc = broccoli.options.droppedFileOperator[originalFileExt];
+		}
+		if(customFunc){
+			customFunc( fileInfo, function(clipContents){
+				if( typeof(clipContents) == typeof({}) && clipContents.data && clipContents.resources ){
+					insertClipModule(clipContents, moveTo, {}, function(){
+						callback();
+					});
+					return;
+				}
+			} );
+			return;
+		}
+
 		var reader = new FileReader();
 		reader.onload = function(evt) {
 			// console.log(evt.target);
@@ -5828,16 +5857,12 @@ module.exports = function(broccoli){
 				case 'image/jpeg':
 				case 'image/png':
 				case 'image/gif':
+				case 'image/svg+xml':
 					// --------------------------------------
 					// 画像ファイルのドロップを処理
 					// _sys/image に当てはめて挿入します。
-					var basename = originalFileName;
-					var ext = 'png';
-					if( originalFileName.match( /^(.*)\.([a-zA-Z0-9\_]+)$/i ) ){
-						basename = RegExp.$1;
-						ext = RegExp.$2;
-					}
-					basename = basename.split(/[^a-zA-Z0-9]/).join('_');
+					originalFileFirstname = originalFileFirstname.split(/[^a-zA-Z0-9]/).join('_');
+
 					var base64 = content.replace(/^data\:[a-zA-Z0-9]+\/[a-zA-Z0-9]+\;base64\,/i, '');
 					var clipContents = {
 						'data': [
@@ -5846,7 +5871,7 @@ module.exports = function(broccoli){
 								"fields": {
 									"src": {
 										"resKey": "___dropped_local_image___",
-										"path": "./index_files/resources/photo009-800x600px-png8.png",
+										"path": "",
 										"resType": "",
 										"webUrl": ""
 									}
@@ -5855,12 +5880,12 @@ module.exports = function(broccoli){
 						],
 						'resources': {
 							"___dropped_local_image___": {
-								"ext": ext,
+								"ext": originalFileExt,
 								"type": mimetype,
 								"size": originalFileSize,
 								"base64": base64,
 								"isPrivateMaterial": false,
-								"publicFilename": basename,
+								"publicFilename": originalFileFirstname,
 								"md5": "",
 								"field": "image",
 								"fieldNote": {}
@@ -5886,6 +5911,7 @@ module.exports = function(broccoli){
 			case 'image/jpeg':
 			case 'image/png':
 			case 'image/gif':
+			case 'image/svg+xml':
 				reader.readAsDataURL(fileInfo);
 				break;
 			case 'text/plain':

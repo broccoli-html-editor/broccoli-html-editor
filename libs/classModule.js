@@ -440,7 +440,7 @@ module.exports = function(broccoli, moduleId, options){
 		}else if( moduleId == '_sys/html' ){
 			parseTpl( '{&{"input":{"type":"html","name":"main","label":"HTML"}}&}', _this, _this, callback );
 		}else if( moduleId == '_sys/image' ){
-			parseTpl( '<img src="{&{"input":{"type":"image","name":"src","label":"画像"}}&}" alt="{&{"input":{"type":"html_attr_text","name":"alt","label":"代替テキスト"}}&}" />', _this, _this, callback );
+			parseTpl( '<img src="{&{"input":{"type":"image","name":"src","label":"画像"}}&}" alt="{&{"input":{"type":"html_attr_text","name":"alt","label":"代替テキスト","rows":1}}&}" />', _this, _this, callback );
 		}else if( typeof(options.src) === typeof('') ){
 			parseTpl( options.src, _this, options.topThis, callback );
 		}else if( _this.topThis.templateType != 'broccoli' && typeof(_this.subModName) == typeof('') ){
