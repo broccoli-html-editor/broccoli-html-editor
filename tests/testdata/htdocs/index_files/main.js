@@ -16805,6 +16805,7 @@ window.main = new (function(){
 				},
 				'droppedFileOperator': {
 					'jpg': function(fileInfo, callback){
+						console.log('tests/main.js: JPEG Operator', fileInfo);
 						var mimetype = fileInfo.type;
 						var originalFileSize = fileInfo.size;
 						var originalFileName = fileInfo.name;

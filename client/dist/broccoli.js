@@ -5781,152 +5781,189 @@ module.exports = function(broccoli){
 			callback();
 			return;
 		}
-		var fileInfo = event.dataTransfer.files[0]; // 1つめのファイルだけ対応
-		// console.log(fileInfo);
-		var mimetype = fileInfo.type;
-		var originalFileSize = fileInfo.size;
-		var originalFileName = fileInfo.name;
-		var originalFileFirstname = originalFileName;
-		var originalFileExt = 'png';
-		if( originalFileName.match( /^(.*)\.([a-zA-Z0-9\_]+)$/i ) ){
-			originalFileFirstname = RegExp.$1;
-			originalFileExt = RegExp.$2;
-			originalFileExt = originalFileExt.toLowerCase();
-		}
 
-		var customFunc = false;
-		if( typeof(broccoli.options.droppedFileOperator[mimetype]) == typeof(function(){}) ){
-			// mimetypeで登録されていたら、そちらへ転送
-			customFunc = broccoli.options.droppedFileOperator[mimetype];
-		}else if( typeof(broccoli.options.droppedFileOperator[originalFileExt]) == typeof(function(){}) ){
-			// 拡張子で登録されていたら、そちらへ転送
-			customFunc = broccoli.options.droppedFileOperator[originalFileExt];
-		}
-		if(customFunc){
-			customFunc( fileInfo, function(clipContents){
-				if( typeof(clipContents) == typeof({}) && clipContents.data && clipContents.resources ){
-					insertClipModule(clipContents, moveTo, {}, function(){
-						callback();
-					});
+		// console.info( event.dataTransfer.files );
+
+		it79.ary(
+			event.dataTransfer.files,
+			function( it1, fileInfo, idx ){
+				// console.log(idx, fileInfo);
+
+				var mimetype = fileInfo.type;
+				if( !mimetype ){
+					it1.next();
 					return;
 				}
-			} );
-			return;
-		}
 
-		var reader = new FileReader();
-		reader.onload = function(evt) {
-			// console.log(evt.target);
-			var content = evt.target.result;
-			// console.log(content);
-			switch( mimetype ){
-				case 'text/json':
-				case 'application/json':
-					// --------------------------------------
-					// JSON形式のファイルドロップを処理
-					var jsonContents = false;
-					try{
-						jsonContents = JSON.parse(content);
-					}catch(e){
-						console.error(e);
-						broccoli.message('JSON形式をデコードできません。');
-						callback();
-						return;
-					}
-					// console.log(jsonContents);
-					if( jsonContents && jsonContents.data && jsonContents.resources ){
-						// クリップモジュール形式と評価される場合は、
-						// クリップモジュールドロップと同様の挿入処理をする。
+				broccoli.progressMessage( fileInfo.name + ' を処理中...' );
 
-						if(!confirm('クリップデータを挿入しますか？')){
-							callback();
+				var originalFileSize = fileInfo.size;
+				var originalFileName = fileInfo.name;
+				var originalFileFirstname = originalFileName;
+				var originalFileExt = 'png';
+				if( originalFileName.match( /^(.*)\.([a-zA-Z0-9\_]+)$/i ) ){
+					originalFileFirstname = RegExp.$1;
+					originalFileExt = RegExp.$2;
+					originalFileExt = originalFileExt.toLowerCase();
+				}
+
+				var customFunc = false;
+				if( typeof(broccoli.options.droppedFileOperator[mimetype]) == typeof(function(){}) ){
+					// mimetypeで登録されていたら、そちらへ転送
+					customFunc = broccoli.options.droppedFileOperator[mimetype];
+				}else if( typeof(broccoli.options.droppedFileOperator[originalFileExt]) == typeof(function(){}) ){
+					// 拡張子で登録されていたら、そちらへ転送
+					customFunc = broccoli.options.droppedFileOperator[originalFileExt];
+				}
+				if(customFunc){
+					customFunc( fileInfo, function(clipContents){
+						if( typeof(clipContents) == typeof({}) && clipContents.data && clipContents.resources ){
+							insertClipModule(clipContents, moveTo, {}, function(){
+								it1.next();
+							});
 							return;
 						}
+					} );
+					return;
+				}
 
-						insertClipModule(jsonContents, moveTo, {}, function(){
-							callback();
-						});
+				var reader = new FileReader();
+				reader.onload = function(evt) {
+					// console.log(evt.target);
+					var content = evt.target.result;
+					// console.log(content);
 
-						return;
-					}else{
-						broccoli.message('対応していないJSON形式です。');
-						callback();
-						return;
-					}
-					break;
-				case 'image/jpeg':
-				case 'image/png':
-				case 'image/gif':
-				case 'image/svg+xml':
-					// --------------------------------------
-					// 画像ファイルのドロップを処理
-					// _sys/image に当てはめて挿入します。
-					originalFileFirstname = originalFileFirstname.split(/[^a-zA-Z0-9]/).join('_');
+					switch( mimetype ){
 
-					var base64 = content.replace(/^data\:[a-zA-Z0-9]+\/[a-zA-Z0-9]+\;base64\,/i, '');
-					var clipContents = {
-						'data': [
-							{
-								"modId": "_sys/image",
-								"fields": {
-									"src": {
-										"resKey": "___dropped_local_image___",
-										"path": "",
-										"resType": "",
-										"webUrl": ""
+						// --------------------------------------
+						// JSON形式のファイルドロップを処理
+						case 'text/json':
+						case 'application/json':
+							var jsonContents = false;
+							try{
+								jsonContents = JSON.parse(content);
+							}catch(e){
+								console.error(e);
+								broccoli.message('JSON形式をデコードできません。');
+								it1.next();
+								return;
+							}
+							// console.log(jsonContents);
+							if( jsonContents && jsonContents.data && jsonContents.resources ){
+								// クリップモジュール形式と評価される場合は、
+								// クリップモジュールドロップと同様の挿入処理をする。
+
+								if(!confirm('クリップデータを挿入しますか？')){
+									it1.next();
+									return;
+								}
+
+								insertClipModule(jsonContents, moveTo, {}, function(){
+									it1.next();
+								});
+
+								return;
+							}
+
+							broccoli.message('対応していないJSON形式です。');
+							it1.next();
+							return;
+							break;
+
+						// --------------------------------------
+						// 画像ファイルのドロップを処理
+						// _sys/image に当てはめて挿入します。
+						case 'image/jpeg':
+						case 'image/png':
+						case 'image/gif':
+						case 'image/svg+xml':
+							originalFileFirstname = originalFileFirstname.split(/[^a-zA-Z0-9]/).join('_');
+
+							var base64 = content.replace(/^data\:[a-zA-Z0-9]+\/[a-zA-Z0-9]+\;base64\,/i, '');
+							var clipContents = {
+								'data': [
+									{
+										"modId": "_sys/image",
+										"fields": {
+											"src": {
+												"resKey": "___dropped_local_image___",
+												"path": "",
+												"resType": "",
+												"webUrl": ""
+											}
+										}
+									}
+								],
+								'resources': {
+									"___dropped_local_image___": {
+										"ext": originalFileExt,
+										"type": mimetype,
+										"size": originalFileSize,
+										"base64": base64,
+										"isPrivateMaterial": false,
+										"publicFilename": originalFileFirstname,
+										"md5": "",
+										"field": "image",
+										"fieldNote": {}
 									}
 								}
-							}
-						],
-						'resources': {
-							"___dropped_local_image___": {
-								"ext": originalFileExt,
-								"type": mimetype,
-								"size": originalFileSize,
-								"base64": base64,
-								"isPrivateMaterial": false,
-								"publicFilename": originalFileFirstname,
-								"md5": "",
-								"field": "image",
-								"fieldNote": {}
-							}
-						}
-					};
-					insertClipModule(clipContents, moveTo, {}, function(){
-						callback();
-					});
-					break;
-				default:
-					broccoli.message('対応していないファイル形式です。');
-					console.error('対応していないファイル形式です。', fileInfo.type);
-					callback();
-					return;
-					break;
-			}
-			callback();
-			return;
-		}
+							};
+							insertClipModule(clipContents, moveTo, {}, function(){
+								it1.next();
+							});
+							return;
+							break;
 
-		switch( mimetype ){
-			case 'image/jpeg':
-			case 'image/png':
-			case 'image/gif':
-			case 'image/svg+xml':
-				reader.readAsDataURL(fileInfo);
-				break;
-			case 'text/plain':
-			case 'text/json':
-			case 'application/json':
-			case 'text/html':
-			case 'text/markdown':
-				reader.readAsText(fileInfo);
-				break;
-			default:
-				broccoli.message('処理できないファイルです。');
-				console.error('処理できないファイルです。', mimetype);
-				callback();
-				break;
-		}
+						// --------------------------------------
+						// 対応していないファイル形式
+						default:
+							broccoli.message('対応していないファイル形式です。');
+							console.error('対応していないファイル形式です。', fileInfo.type);
+							it1.next();
+							return;
+							break;
+					}
+					it1.next();
+					return;
+				}
+
+				switch( mimetype ){
+					case 'image/jpeg':
+					case 'image/png':
+					case 'image/gif':
+					case 'image/svg+xml':
+						reader.readAsDataURL(fileInfo);
+						break;
+					case 'text/plain':
+					case 'text/json':
+					case 'application/json':
+					case 'text/html':
+					case 'text/markdown':
+						reader.readAsText(fileInfo);
+						break;
+					default:
+						broccoli.message('処理できないファイルです。');
+						console.error('処理できないファイルです。', mimetype);
+						it1.next();
+						break;
+				}
+			},
+			function(){
+				// callback();
+				broccoli.unselectInstance(function(){
+					broccoli.saveContents(function(){
+						broccoli.message('ファイルを挿入しました。');
+						broccoli.redraw(function(){
+							broccoli.closeProgress(function(){
+								broccoli.selectInstance(newInstancePath, function(){
+									callback();
+								});
+							});
+						});
+					});
+				});
+			}
+		);
 
 		return;
 	} // onDropFile()
@@ -6260,18 +6297,19 @@ module.exports = function(broccoli){
 						tmpResourceDb[resKey] = clipContents.resources[resKey];
 					}
 					broccoli.resourceMgr.setResourceDb(tmpResourceDb, function(result){
-						broccoli.unselectInstance(function(){
-							broccoli.saveContents(function(){
-								broccoli.message('クリップを挿入しました。');
-								broccoli.redraw(function(){
-									broccoli.closeProgress(function(){
-										broccoli.selectInstance(newInstancePath, function(){
-											callback();
-										});
-									});
-								});
-							});
-						});
+						callback();
+						// broccoli.unselectInstance(function(){
+						// 	broccoli.saveContents(function(){
+						// 		broccoli.message('クリップモジュールを挿入しました。');
+						// 		broccoli.redraw(function(){
+						// 			broccoli.closeProgress(function(){
+						// 				broccoli.selectInstance(newInstancePath, function(){
+						// 					callback();
+						// 				});
+						// 			});
+						// 		});
+						// 	});
+						// });
 					});
 				});
 			}
