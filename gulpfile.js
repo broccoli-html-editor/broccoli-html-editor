@@ -113,7 +113,7 @@ let _tasks = gulp.parallel(
 
 // src 中のすべての拡張子を監視して処理
 gulp.task("watch", function() {
-	return gulp.watch(["client/src/**/*","fields/client/**/*","libs/**/*","tests/testdata/htdocs/index_files/main.src.js"], _tasks);
+	return gulp.watch(["client/src/**/*","fields/client/**/*","fields/**/*","libs/**/*","tests/testdata/htdocs/index_files/main.src.js"], _tasks);
 });
 
 // src 中のすべての拡張子を処理(default)
