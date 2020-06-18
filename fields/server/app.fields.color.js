@@ -13,7 +13,7 @@ module.exports = function(broccoli){
 			rtn = rtn.replace(new RegExp('\r\n|\r|\n','g'), '<br />'); // ← 改行コードは改行タグに変換
 		}
 		if( mode == 'canvas' && !rtn.length ){
-			rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてテキストを編集してください)</span>';
+			rtn = '';
 		}
 		// setTimeout(function(){
 			callback(rtn);
