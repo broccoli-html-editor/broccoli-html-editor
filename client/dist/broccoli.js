@@ -5949,7 +5949,13 @@ module.exports = function(broccoli){
 				}
 			},
 			function(){
-				// callback();
+
+				broccoli.contentsSourceData.resourceDbReloadRequest();
+					// 複数のリソースファイルを同時に挿入したあとに、
+					// 末尾の画像がロードされない場合があるので、
+					// resourceDb をリロードするようにした。
+
+
 				broccoli.unselectInstance(function(){
 					broccoli.saveContents(function(){
 						broccoli.message('ファイルを挿入しました。');
