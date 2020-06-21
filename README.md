@@ -355,7 +355,7 @@ $ composer test
 
 ## 更新履歴 - Change log
 
-### broccoli-html-editor v0.3.18 (リリース日未定)
+### broccoli-html-editor v0.3.18 (2020年6月21日)
 
 - 初期化処理の改善。
 - 画像ファイルや、JSONファイル化されたクリップモジュールを、直接ドロップできるようになった。
