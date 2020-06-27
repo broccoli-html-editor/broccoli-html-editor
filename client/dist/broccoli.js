@@ -1210,7 +1210,7 @@
 				return;
 			}
 			if( selectedInstance.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
-				_this.message('bowlを削除することはできません。');
+				_this.message('ルートインスタンスを削除することはできません。');
 				callback(false);
 				return;
 			}
@@ -4186,12 +4186,12 @@ module.exports = function(broccoli){
 					$editWindow.find('button.broccoli__edit-window-btn-remove')
 						.on('click', function(){
 							_this.lock();
-							if( !confirm('このモジュールを削除します。よろしいですか？') ){
+							if( !confirm('このインスタンスを削除します。よろしいですか？') ){
 								_this.unlock();
 								return;
 							}
 							if( instancePath.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
-								alert('bowlは削除できません。');
+								alert('ルートインスタンスは削除できません。');
 								_this.unlock();
 								return;
 							}

@@ -1209,7 +1209,7 @@
 				return;
 			}
 			if( selectedInstance.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
-				_this.message('bowlを削除することはできません。');
+				_this.message('ルートインスタンスを削除することはできません。');
 				callback(false);
 				return;
 			}

@@ -633,12 +633,12 @@ module.exports = function(broccoli){
 					$editWindow.find('button.broccoli__edit-window-btn-remove')
 						.on('click', function(){
 							_this.lock();
-							if( !confirm('このモジュールを削除します。よろしいですか？') ){
+							if( !confirm('このインスタンスを削除します。よろしいですか？') ){
 								_this.unlock();
 								return;
 							}
 							if( instancePath.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
-								alert('bowlは削除できません。');
+								alert('ルートインスタンスは削除できません。');
 								_this.unlock();
 								return;
 							}

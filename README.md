@@ -355,6 +355,10 @@ $ composer test
 
 ## 更新履歴 - Change log
 
+### broccoli-html-editor v0.3.19 (リリース日未定)
+
+- 画面表示要素の呼称統一などの細かい改善。
+
 ### broccoli-html-editor v0.3.18 (2020年6月21日)
 
 - 初期化処理の改善。
