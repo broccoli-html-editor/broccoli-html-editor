@@ -4554,6 +4554,23 @@ module.exports = function(broccoli){
 				mod.aceEditor.getSession().setMode("ace/mode/plain_text");
 			}
 
+			// 編集中のコンテンツ量に合わせて、
+			// AceEditor編集欄のサイズを広げる
+			var updateAceHeight = function() {
+				var h =
+					mod.aceEditor.getSession().getScreenLength()
+					* mod.aceEditor.renderer.lineHeight
+					+ mod.aceEditor.renderer.scrollBar.getWidth()
+				;
+				if( h < mod.aceEditor.renderer.lineHeight * rows ){
+					h = mod.aceEditor.renderer.lineHeight * rows;
+				}
+				$formElm.eq(0).height(h.toString() + "px");
+				mod.aceEditor.resize();
+			};
+			mod.aceEditor.getSession().on('change', updateAceHeight);
+			setTimeout(updateAceHeight, 200);
+
 		}else{
 			$formElm = $('<textarea class="form-control">')
 				.attr({
@@ -8230,6 +8247,23 @@ module.exports = function(broccoli){
 				mod.aceEditor.getSession().setMode("ace/mode/html");
 			}
 
+			// 編集中のコンテンツ量に合わせて、
+			// AceEditor編集欄のサイズを広げる
+			var updateAceHeight = function() {
+				var h =
+					mod.aceEditor.getSession().getScreenLength()
+					* mod.aceEditor.renderer.lineHeight
+					+ mod.aceEditor.renderer.scrollBar.getWidth()
+				;
+				if( h < mod.aceEditor.renderer.lineHeight * rows ){
+					h = mod.aceEditor.renderer.lineHeight * rows;
+				}
+				$formElm.eq(0).height(h.toString() + "px");
+				mod.aceEditor.resize();
+			};
+			mod.aceEditor.getSession().on('change', updateAceHeight);
+			setTimeout(updateAceHeight, 200);
+
 		}else{
 			$formElm = $('<textarea class="form-control">')
 				.attr({
@@ -8256,7 +8290,7 @@ module.exports = function(broccoli){
 		$rtn.find('input[type=radio][name=editor-'+mod.name+'][value="'+data.editor+'"]').attr({'checked':'checked'});
 
 		if( editorLib == 'ace' && mod.aceEditor ){
-			$rtn.find('input[type=radio][name=editor-'+mod.name+']').change(function(){
+			$rtn.find('input[type=radio][name=editor-'+mod.name+']').on('change', function(){
 				var $this = $(this);
 				var val = $this.val();
 				if( val == 'text' ){
@@ -8433,6 +8467,23 @@ module.exports = function(broccoli){
 				mod.aceEditor.setTheme("ace/theme/katzenmilch");
 				mod.aceEditor.getSession().setMode("ace/mode/plain_text");
 			}
+
+			// 編集中のコンテンツ量に合わせて、
+			// AceEditor編集欄のサイズを広げる
+			var updateAceHeight = function() {
+				var h =
+					mod.aceEditor.getSession().getScreenLength()
+					* mod.aceEditor.renderer.lineHeight
+					+ mod.aceEditor.renderer.scrollBar.getWidth()
+				;
+				if( h < mod.aceEditor.renderer.lineHeight * rows ){
+					h = mod.aceEditor.renderer.lineHeight * rows;
+				}
+				$formElm.eq(0).height(h.toString() + "px");
+				mod.aceEditor.resize();
+			};
+			mod.aceEditor.getSession().on('change', updateAceHeight);
+			setTimeout(updateAceHeight, 200);
 
 		}else{
 			$formElm = $('<textarea class="form-control">')

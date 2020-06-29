@@ -358,6 +358,7 @@ $ composer test
 ### broccoli-html-editor v0.3.19 (リリース日未定)
 
 - 画面表示要素の呼称統一などの細かい改善。
+- Aceエディタの高さが、内容量に合わせて自動的に広がるようにした。
 
 ### broccoli-html-editor v0.3.18 (2020年6月21日)
 
