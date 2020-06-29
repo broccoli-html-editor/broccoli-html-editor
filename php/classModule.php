@@ -124,7 +124,7 @@ class classModule{
 		if( $this->id == '_sys/root' ){
 			return $this->parseTpl( '{&{"module":{"name":"main","label":"コンテンツエリア"}}&}', $this );
 		}elseif( $this->id == '_sys/unknown' ){
-			return $this->parseTpl( '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;">[ERROR] 未知のモジュールテンプレートです。<!-- .error --></div>'."\n", $this );
+			return $this->parseTpl( '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;" data-broccoli-error-message="未知のモジュールテンプレートです。">[ERROR] 未知のモジュールテンプレートです。<!-- .error --></div>'."\n", $this );
 		}elseif( $this->id == '_sys/html' ){
 			return $this->parseTpl( '{&{"input":{"type":"html","name":"main","label":"HTML"}}&}', $this );
 		}elseif( $this->id == '_sys/image' ){

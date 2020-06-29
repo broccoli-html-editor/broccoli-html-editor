@@ -436,7 +436,7 @@ module.exports = function(broccoli, moduleId, options){
 		if( moduleId == '_sys/root' ){
 			parseTpl( '{&{"module":{"name":"main","label":"コンテンツエリア"}}&}', _this, _this, callback );
 		}else if( moduleId == '_sys/unknown' ){
-			parseTpl( '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;">[ERROR] 未知のモジュールテンプレートです。<!-- .error --></div>'+"\n", _this, _this, callback );
+			parseTpl( '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;" data-broccoli-error-message="未知のモジュールテンプレートです。">[ERROR] 未知のモジュールテンプレートです。<!-- .error --></div>'+"\n", _this, _this, callback );
 		}else if( moduleId == '_sys/html' ){
 			parseTpl( '{&{"input":{"type":"html","name":"main","label":"HTML"}}&}', _this, _this, callback );
 		}else if( moduleId == '_sys/image' ){
