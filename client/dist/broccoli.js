@@ -4849,6 +4849,11 @@ module.exports = function(broccoli){
 		for( var idx in targetElements ){
 			$(targetElements[idx]).find('.broccoli__indicator').addClass('broccoli__indicator-completed').text('保存を完了しました').fadeOut(2000);
 		}
+		timerForRemove = setTimeout(function(){
+			for( var idx in targetElements ){
+				$(targetElements[idx]).find('.broccoli__indicator').remove();
+			}
+		}, 2000);
 	}
 }
 
