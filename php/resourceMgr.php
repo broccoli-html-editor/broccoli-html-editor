@@ -36,6 +36,7 @@ class resourceMgr{
 		$this->resourcesPublishDirPath = $this->broccoli->realpathResourceDir;
 
 		$this->resourceDb = array();
+		clearstatcache();
 
 		// リソースの一覧を読み込む
 		if( !is_dir( $this->resourcesDirPath ) ){
@@ -66,6 +67,8 @@ class resourceMgr{
 	 * @return {boolean}	 Always true.
 	 */
 	public function save( $newResourceDb ){
+		clearstatcache();
+
 		// var logStartTime = Date.now(); // debug code
 		$this->resourceDb = $newResourceDb;
 
@@ -89,6 +92,7 @@ class resourceMgr{
 
 		// リソースデータの保存と公開領域への設置
 		foreach($this->resourceDb as $resKey=>$res){
+			clearstatcache();
 			$this->broccoli->fs()->mkdir( $this->resourcesDirPath.'/'.urlencode($resKey) );
 
 			if( !is_object($res) ){
@@ -239,7 +243,7 @@ class resourceMgr{
 	 * get resource
 	 */
 	public function getResource( $resKey ){
-		if( !is_object(@$this->resourceDb[$resKey]) ){
+		if( !is_array($this->resourceDb) || !array_key_exists($resKey, $this->resourceDb) || !is_object($this->resourceDb[$resKey]) ){
 			// 未登録の resKey
 			return false;
 		}
@@ -252,6 +256,7 @@ class resourceMgr{
 	 * @return 複製された新しいリソースのキー
 	 */
 	public function duplicateResource( $resKey ){
+		clearstatcache();
 		if( !is_object($this->resourceDb[$resKey]) ){
 			// 未登録の resKey
 			return false;
@@ -286,6 +291,7 @@ class resourceMgr{
 	 * @return {boolean}		always true.
 	 */
 	public function updateResource( $resKey, $resInfo ){
+		clearstatcache();
 		if( !is_object($this->resourceDb[$resKey]) ){
 			// 未登録の resKey
 			return false;
@@ -438,6 +444,7 @@ class resourceMgr{
 	 * remove resource
 	 */
 	public function removeResource( $resKey ){
+		clearstatcache();
 		$this->resourceDb[$resKey] = null;
 		unset( $this->resourceDb[$resKey] );
 		$result = false;
@@ -451,6 +458,7 @@ class resourceMgr{
 	 * 使われていないリソースを削除する
 	 */
 	private function collectGarbage(){
+		clearstatcache();
 		$jsonSrc = file_get_contents( $this->dataJsonPath );
 		foreach( $this->resourceDb as $resKey=>$res ){
 			if( strpos($jsonSrc, $resKey) === false ){// TODO: JSONファイルを文字列として検索しているが、この方法は完全ではない。
