@@ -355,6 +355,10 @@ $ composer test
 
 ## 更新履歴 - Change log
 
+### broccoli-html-editor v0.3.20 (リリース日未定)
+
+- HTMLパーサーが 600MB までの大きいソースを解析できるようにした。
+
 ### broccoli-html-editor v0.3.19 (2020年8月12日)
 
 - 画面表示要素の呼称統一などの細かい改善。
