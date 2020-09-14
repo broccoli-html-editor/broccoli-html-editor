@@ -231,6 +231,7 @@ broccoli.init(
 <script data-broccoli-receive-message="yes">
 window.addEventListener('message',(function() {
 return function f(event) {
+if(!event.data.scriptUrl){return;}
 if(event.origin!='http://127.0.0.1:8080'){return;}// <- check your own server's origin.
 var s=document.createElement('script');
 document.querySelector('body').appendChild(s);s.src=event.data.scriptUrl;
