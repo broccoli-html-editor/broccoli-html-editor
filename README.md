@@ -359,6 +359,7 @@ $ composer test
 ### broccoli-html-editor v0.3.20 (リリース日未定)
 
 - HTMLパーサーが 600MB までの大きいソースを解析できるようにした。
+- 一度 `fields` が空白になった階層に、新しいモジュールを入れようとすると反映されなくなる場合がある問題を修正。
 
 ### broccoli-html-editor v0.3.19 (2020年8月12日)
 

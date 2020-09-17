@@ -102,7 +102,7 @@ module.exports = function(broccoli){
 		modTpl.fields[fieldName].fieldType = modTpl.fields[fieldName].fieldType || 'input';
 		if( !aryPath.length ){
 			// ここが最後のインスタンスだったら
-			if( !data.fields ){
+			if( !data.fields || isArray(data.fields) ){
 				data.fields = {};
 			}
 			if( !data.fields[fieldName] ){
@@ -236,7 +236,7 @@ module.exports = function(broccoli){
 
 			if( !aryPath.length ){
 				// ここが最後のインスタンスだったら
-				if( !data.fields ){
+				if( !data.fields || isArray(data.fields) ){
 					data.fields = {};
 				}
 				if( !data.fields[fieldName] ){
@@ -370,7 +370,7 @@ module.exports = function(broccoli){
 			modTpl.fields[fieldName].fieldType = modTpl.fields[fieldName].fieldType || 'input';
 			if( !aryPath.length ){
 				// ここが最後のインスタンスだったら
-				if( !data.fields ){
+				if( !data.fields || isArray(data.fields) ){
 					data.fields = {};
 				}
 				if( !data.fields[fieldName] ){
@@ -706,7 +706,7 @@ module.exports = function(broccoli){
 			modTpl.fields[fieldName].fieldType = modTpl.fields[fieldName].fieldType || 'input';
 			if( !aryPath.length ){
 				// ここが最後のインスタンスだったら
-				if( !data.fields ){
+				if( !data.fields || isArray(data.fields) ){
 					data.fields = {};
 				}
 				if( !data.fields[fieldName] ){
@@ -1070,4 +1070,13 @@ module.exports = function(broccoli){
 		return;
 	}
 
+	/**
+	 * 値が、配列型か調べる
+	 */
+	function isArray(value){
+		if( typeof(value) !== typeof({}) || typeof(value.length) !== typeof(0) || typeof(value.splice) !== 'function' || value.propertyIsEnumerable('length') ){
+			return false;
+		}
+		return true;
+	}
 }

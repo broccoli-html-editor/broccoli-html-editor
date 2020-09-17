@@ -1843,6 +1843,10 @@
             },
             "anchor": "",
             "dec": ""
+        },
+        "thirdly": {
+            "modId": "_sys/root",
+            "fields": []
         }
     }
 }
