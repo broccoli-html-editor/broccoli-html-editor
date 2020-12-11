@@ -79,6 +79,10 @@ function makeDefaultBroccoli(options, callback){
 				fin += '        <div class="contents" data-contents="secondly">'+"\n";
 				fin += htmls['secondly']+"\n";
 				fin += '        </div><!-- /secondly -->'+"\n";
+				fin += '        <h2>thirdly</h2>'+"\n";
+				fin += '        <div class="contents" data-contents="thirdly">'+"\n";
+				fin += htmls['thirdly']+"\n";
+				fin += '        </div><!-- /thirdly -->'+"\n";
 				fin += '        <footer>'+"\n";
 				fin += '            <a href="../editpage/">top</a>, <a href="https://www.pxt.jp/" target="_blank">pxt</a>'+"\n";
 				fin += '            <form action="javascript:alert(\'form submit done.\');">'+"\n";
