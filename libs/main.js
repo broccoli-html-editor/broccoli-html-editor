@@ -127,10 +127,11 @@ module.exports = function(){
 
 	/**
 	 * 汎用API
-	 * @param  {[type]}   api      [description]
-	 * @param  {[type]}   options  [description]
-	 * @param  {Function} callback [description]
-	 * @return {[type]}            [description]
+	 *
+	 * @param  {String}   api      実行するAPI名
+	 * @param  {Object}   options  オプション
+	 * @param  {Function} callback コールバック関数
+	 * @return {Mixed}             実行結果。
 	 */
 	this.gpi = function(api, options, callback){
 		var gpi = require( __dirname+'/gpi.js' );
