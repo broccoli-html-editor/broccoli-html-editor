@@ -37,6 +37,9 @@
 		this.utils = new (require('./utils.js'))(_this);
 		this.indicator = new (require('./indicator.js'))(_this);
 
+		this.px2style = new (require('px2style'))();
+		this.px2style.setConfig('additionalClassName', 'broccoli');
+
 		/**
 		 * broccoli-client を初期化する
 		 * @param  {Object}   options  options.
@@ -81,7 +84,6 @@
 						// リソースファイルの読み込み
 						var css = [
 							__dirname+'/libs/bootstrap/dist/css/bootstrap.css',
-							__dirname+'/libs/px2style/dist/styles.css',
 							__dirname+'/broccoli.css',
 						];
 						$('head *[data-broccoli-resource]').remove(); // 一旦削除

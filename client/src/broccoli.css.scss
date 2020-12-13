@@ -16,6 +16,10 @@
 
 	// Fields
 	@import '../../fields/client/app.fields.color';
+
+	// px2style
+	@import '../../node_modules/px2style/dist/px2style';
+
 }
 
 // mixin: appender
