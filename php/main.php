@@ -179,9 +179,9 @@ class broccoliHtmlEditor{
 	/**
 	 * 汎用API
 	 *
-	 * @param  string   $api      実行するAPI名
-	 * @param  array    $options  オプション
-	 * @return mixed 実行結果。
+	 * @param  string $api 呼び出すAPIの種類
+	 * @param  array|object $options オプション
+	 * @return mixed 実行したAPIの返却値
 	 */
 	public function gpi($api, $options){
 		$gpi = new gpi($this);

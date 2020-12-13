@@ -356,7 +356,11 @@ $ composer test
 
 ## 更新履歴 - Change log
 
-### broccoli-html-editor v0.3.20 (リリース日未定)
+### broccoli-html-editor v0.3.21 (リリース日未定)
+
+- imageフィールドが、画像の入力がない場合に、空白の文字を返すようになった。
+
+### broccoli-html-editor v0.3.20 (2020年12月10日)
 
 - HTMLパーサーが 600MB までの大きいソースを解析できるようにした。
 - 一度 `fields` が空白になった階層に、新しいモジュールを入れようとすると反映されなくなる場合がある問題を修正。
