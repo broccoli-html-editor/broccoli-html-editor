@@ -54,10 +54,10 @@
     "gulp-sass": "^4.0.2",
     "gulp-sourcemaps": "^2.6.5",
     "gulp-twig": "^0.3.0",
-    "gulp-uglify": "^1.2.0",
+    "gulp-uglify": "^3.0.2",
     "md5": "^2.2.1",
     "mocha": "^2.1.0",
     "px2style": "git+https://github.com/pickles2/px2style.git#develop",
-    "validatorjs": "^3.18.1"
+    "validatorjs": "3.18.1"
   }
 }

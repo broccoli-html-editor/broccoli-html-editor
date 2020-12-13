@@ -106,13 +106,23 @@
   cursor: default;
   transform: none; }
 
-.broccoli .px2-btn[disabled]:focus, .broccoli .px2-btn[disabled]:hover {
+.broccoli .px2-btn[disabled]:focus, .broccoli .px2-btn[disabled]:hover, .broccoli .px2-btn[disabled]:active {
   border-color: #ddd;
   background-color: rgba(153, 153, 153, 0.05);
   color: #ddd;
-  cursor: default; }
+  cursor: default;
+  box-shadow: 0 2px 0px rgba(0, 0, 0, 0.1);
+  transform: none; }
 
 .broccoli .px2-btn--toggle-on {
+  box-shadow: inset 0 3px 15px rgba(0, 0, 0, 0.15);
+  transform: translateY(1px); }
+
+.broccoli .px2-btn--toggle-on[disabled] {
+  box-shadow: inset 0 3px 15px rgba(0, 0, 0, 0.15);
+  transform: translateY(1px); }
+
+.broccoli .px2-btn--toggle-on[disabled]:focus, .broccoli .px2-btn--toggle-on[disabled]:hover, .broccoli .px2-btn--toggle-on[disabled]:active {
   box-shadow: inset 0 3px 15px rgba(0, 0, 0, 0.15);
   transform: translateY(1px); }
 
@@ -127,7 +137,8 @@
   width: 100%; }
 
 .broccoli .px2-a:before,
-.broccoli .px2-link.px2-link--burette:before {
+.broccoli .px2-link.px2-link--burette:before,
+.broccoli .px2-link.px2-link--bullet:before {
   content: ' ';
   width: 0;
   height: 0;
@@ -211,6 +222,29 @@
 
 .broccoli .px2-ordered-list li {
   list-style-type: decimal; }
+
+.broccoli .px2-note-list,
+.broccoli .px2-note-list > ul {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  padding-left: 1.5em; }
+
+.broccoli .px2-note-list > ul > li,
+.broccoli .px2-note-list > li,
+.broccoli .px2-note-list > ul > ul > li,
+.broccoli .px2-note-list > ul > li {
+  list-style-type: none;
+  color: #999;
+  font-size: 86%;
+  position: relative; }
+
+.broccoli .px2-note-list > ul > li::before,
+.broccoli .px2-note-list > li::before,
+.broccoli .px2-note-list > ul > ul > li::before,
+.broccoli .px2-note-list > ul > li::before {
+  content: "※";
+  position: absolute;
+  left: -1.5em; }
 
 .broccoli .px2-table {
   border: none;
@@ -623,7 +657,7 @@
   overflow: auto; }
 
 .broccoli .px2-header {
-  height: 30px; }
+  height: 45px; }
 
 .broccoli .px2-header__inner {
   display: -ms-flexbox;
@@ -905,6 +939,7 @@
 
 .broccoli .px2-header__shoulder-menu > ul li.px2-header__shoulder-menu-group ul {
   padding: 0 0 0 15px;
+  margin: 0 0 0 0;
   display: none; }
 
 .broccoli .px2-header__shoulder-menu > ul li.px2-header__shoulder-menu-group ul li {

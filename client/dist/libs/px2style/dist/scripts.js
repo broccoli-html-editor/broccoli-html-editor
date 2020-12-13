@@ -5,12 +5,13 @@
 module.exports = function(){
 }
 
+require('./src/config/_config.js')(module.exports);
 require('./src/modal/_modal.js')(module.exports);
 require('./src/notice/_notice.js')(module.exports);
 require('./src/styles/_loading.js')(module.exports);
 require('./src/header/_header.js')(module.exports);
 
-},{"./src/header/_header.js":4,"./src/modal/_modal.js":5,"./src/notice/_notice.js":6,"./src/styles/_loading.js":7}],2:[function(require,module,exports){
+},{"./src/config/_config.js":3,"./src/header/_header.js":5,"./src/modal/_modal.js":6,"./src/notice/_notice.js":7,"./src/styles/_loading.js":8}],2:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v3.5.1
  * https://jquery.com/
@@ -10885,12 +10886,39 @@ return jQuery;
 } );
 
 },{}],3:[function(require,module,exports){
+/**
+ * config.js
+ */
+module.exports = function(Px2style){
+
+	var config = {
+		'additionalClassName': '',
+	};
+
+	/**
+	 * Set config.
+	 */
+	Px2style.prototype.setConfig = function(key, val){
+		config[key] = val;
+		return true;
+	}
+
+	/**
+	 * Get config.
+	 */
+	Px2style.prototype.getConfig = function(key){
+		return config[key];
+	}
+
+}
+
+},{}],4:[function(require,module,exports){
 (function(){
     var Px2style = require('../index.js');
     var px2style = window.px2style = new Px2style;
 })();
 
-},{"../index.js":1}],4:[function(require,module,exports){
+},{"../index.js":1}],5:[function(require,module,exports){
 /**
  * header.js
  */
@@ -11066,7 +11094,7 @@ module.exports = function(Px2style){
 	}
 }
 
-},{"jquery":2}],5:[function(require,module,exports){
+},{"jquery":2}],6:[function(require,module,exports){
 /**
  * modal.js
  */
@@ -11113,7 +11141,22 @@ module.exports = function(Px2style){
 		}
 		tpl += '</div>';
 
-		var $modal = $(tpl);
+		var $modal = $('<div>')
+			.css({
+				'display': 'flex',
+				'position': 'absolute',
+				'top': 0,
+				'left': 0,
+				'width': '100%',
+				'height': '100%',
+				'z-index': 1000000,
+			})
+		;
+		var additionalClassName = this.getConfig('additionalClassName');
+		if( additionalClassName ){
+			$modal.addClass(additionalClassName);
+		}
+		$modal.append(tpl);
 
 		if(options.form){
 			$modal.find('form').attr({
@@ -11277,11 +11320,12 @@ module.exports = function(Px2style){
 	}
 }
 
-},{"jquery":2}],6:[function(require,module,exports){
+},{"jquery":2}],7:[function(require,module,exports){
 /**
  * notice.js
  */
 module.exports = function(Px2style){
+
 	var $ = require('jquery');
 	var $flashmessage,
 		$target;
@@ -11312,7 +11356,9 @@ module.exports = function(Px2style){
 
 		$notice.hide();
 
-		appendToFlashArea($notice);
+		var additionalClassName = this.getConfig('additionalClassName');
+
+		appendToFlashArea($notice, additionalClassName);
 
 		$notice
 			.fadeIn('slow', function(){
@@ -11342,9 +11388,12 @@ module.exports = function(Px2style){
 		return;
 	}
 
-	function appendToFlashArea(elm){
+	function appendToFlashArea(elm, additionalClassName){
 		if( !$flashmessage ){
 			$flashmessage = $('<div>');
+			if( additionalClassName ){
+				$flashmessage.addClass(additionalClassName);
+			}
 			$flashmessage.css({
 				'position': 'fixed',
 				'left': 0,
@@ -11368,7 +11417,7 @@ module.exports = function(Px2style){
 	}
 }
 
-},{"jquery":2}],7:[function(require,module,exports){
+},{"jquery":2}],8:[function(require,module,exports){
 /**
  * loading.js
  */
@@ -11383,6 +11432,7 @@ module.exports = function(Px2style){
 	 */
 	Px2style.prototype.loading = function(options, callback){
 		var _this = this;
+		var additionalClassName = this.getConfig('additionalClassName');
 		callback = callback||function(){};
 
 		this.closeLoading(function(){
@@ -11395,6 +11445,9 @@ module.exports = function(Px2style){
 			tpl += '</div>';
 
 			$loading = $(tpl);
+			if( additionalClassName ){
+				$loading.addClass(additionalClassName);
+			}
 			$message = $('<div>');
 			$message.css({
 				"clear": "both",
@@ -11466,4 +11519,4 @@ module.exports = function(Px2style){
 
 }
 
-},{"jquery":2}]},{},[3])
+},{"jquery":2}]},{},[4])

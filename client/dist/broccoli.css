@@ -1,7 +1,7 @@
 .broccoli {
   /* http://www.softel.co.jp/blogs/tech/archives/2909 */
   cursor: default;
-  /*! Pickr 1.7.1 MIT | https://github.com/Simonwep/pickr */ }
+  /*! Pickr 1.8.0 MIT | https://github.com/Simonwep/pickr */ }
   .broccoli [draggable=true] {
     cursor: move; }
   .broccoli [draggable=false] {
