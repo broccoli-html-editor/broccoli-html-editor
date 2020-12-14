@@ -37,8 +37,12 @@ module.exports = function(broccoli){
 								data.resourceInfo = res;
 								if( !data.resourceInfo ){
 									is_image_uploaded = false;
-								}else if( data.resourceInfo && !data.resourceInfo.size ){
-									is_image_uploaded = false;
+								}else if( data.resourceInfo ){
+									if( !data.resourceInfo.base64 ){
+										is_image_uploaded = false;
+									}else if( !data.resourceInfo.size ){
+										is_image_uploaded = false;
+									}
 								}
 								if( mode != 'canvas' && !is_image_uploaded ){
 									callback('');
