@@ -416,6 +416,13 @@ class broccoliHtmlEditor{
 			}
 		}
 
+		$fncFindLang = function( $lb, $key, $default ){
+			$tmpName = $lb->get($key);
+			if( strlen($tmpName) && $tmpName !== '---' ){
+				return $tmpName;
+			}
+			return $default;
+		};
 
 		foreach($rtn['categories'] as $idx=>$row){
 			$fileList = $this->fs->ls( $rtn['categories'][$idx]['realpath'] );
@@ -430,6 +437,9 @@ class broccoliHtmlEditor{
 					continue;
 				}
 
+				$lb = new \tomk79\LangBank($realpath.'/language.csv');
+				$lb->setLang( $this->lb()->lang );
+
 				$rtn['categories'][$idx]['modules'][$row2] = array();
 
 				// moduleId
@@ -443,6 +453,9 @@ class broccoliHtmlEditor{
 					if(!is_object($rtn['categories'][$idx]['modules'][$row2]['moduleInfo'])){
 						$rtn['categories'][$idx]['modules'][$row2]['moduleInfo'] = json_decode('{}');
 					}
+				}
+				if( !property_exists( $rtn['categories'][$idx]['modules'][$row2]['moduleInfo'], 'name' ) ){
+					$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->name = null;
 				}
 				$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->enabledParents = $this->normalizeEnabledParentsOrChildren(@$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->enabledParents, $moduleId);
 				if( is_string(@$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->enabledBowls)  ){
@@ -481,6 +494,9 @@ class broccoliHtmlEditor{
 
 				$rtn['categories'][$idx]['modules'][$row2]['readme'] = $readme;
 
+				// Multi Language
+				$rtn['categories'][$idx]['modules'][$row2]['moduleName'] = $fncFindLang( $lb, 'name', $rtn['categories'][$idx]['modules'][$row2]['moduleName'] );
+				$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->name = $fncFindLang( $lb, 'name', $rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->name );
 
 				$modInstance = $this->getModule($moduleId, null);
 				$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->interface = (@$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->interface ? $rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->interface : $modInstance->fields());
@@ -603,7 +619,7 @@ class broccoliHtmlEditor{
 				}
 			}
 		}
-	
+
 		return $data['rtn'];
 	}
 

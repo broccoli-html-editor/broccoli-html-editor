@@ -39,7 +39,8 @@ class classModule{
 			$subModule,
 			$topThis,
 			$finalize,
-			$thumb;
+			$thumb,
+			$lb;
 
 	/**
 	 * Constructor
@@ -120,6 +121,9 @@ class classModule{
 		if( $this->realpath === false && !$this->isSystemModule ){
 			return false;
 		}
+
+		$this->lb = new \tomk79\LangBank($this->realpath.'/language.csv');
+		$this->lb->setLang( $this->broccoli->lb()->lang );
 
 		if( $this->id == '_sys/root' ){
 			return $this->parseTpl( '{&{"module":{"name":"main","label":"コンテンツエリア"}}&}', $this );
@@ -391,6 +395,9 @@ class classModule{
 			}
 		}
 
+		// Multi Language
+		$this->info['name'] = $this->findLang('name', $this->info['name']);
+
 		if( $src ){
 			// 単一のルート要素を持っているかどうか判定。
 			$this->isSingleRootElement = false;
@@ -533,5 +540,16 @@ class classModule{
 			}
 		}
 		return $field;
+	}
+
+	/**
+	 * LangBank を検索し、対訳を返す
+	 */
+	private function findLang( $key, $default ){
+		$tmpName = $this->lb->get($key);
+		if( strlen($tmpName) && $tmpName !== '---' ){
+			return $tmpName;
+		}
+		return $default;
 	}
 }

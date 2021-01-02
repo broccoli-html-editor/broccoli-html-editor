@@ -1,0 +1,11 @@
+{
+    "name": "多言語対応モジュール",
+    "interface": {
+        "fields": {
+            "text1": {
+                "type": "multitext",
+                "label": "テキスト入力"
+            }
+        }
+    }
+}

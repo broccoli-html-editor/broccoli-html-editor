@@ -14,6 +14,7 @@ module.exports = function(broccoli, moduleId, options){
 	var it79 = require('iterate79');
 	var fs = require('fs');
 	var FncsReadme = require('./fncs/readme.js');
+	var LangBank = require('langbank');
 
 	var realpath = broccoli.getModuleRealpath(moduleId);
 	this.isSystemModule = broccoli.isSystemMod(moduleId);
@@ -251,6 +252,9 @@ module.exports = function(broccoli, moduleId, options){
 				}
 			}
 
+			// Multi Language
+			_this.info.name = findLang('name', _this.info.name);
+
 			if( src ){
 				_this.isSingleRootElement = (function(tplSrc){
 					// 単一のルート要素を持っているかどうか判定。
@@ -433,44 +437,49 @@ module.exports = function(broccoli, moduleId, options){
 			return;
 		}
 
-		if( moduleId == '_sys/root' ){
-			parseTpl( '{&{"module":{"name":"main","label":"コンテンツエリア"}}&}', _this, _this, callback );
-		}else if( moduleId == '_sys/unknown' ){
-			parseTpl( '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;" data-broccoli-error-message="未知のモジュールテンプレートです。">[ERROR] 未知のモジュールテンプレートです。<!-- .error --></div>'+"\n", _this, _this, callback );
-		}else if( moduleId == '_sys/html' ){
-			parseTpl( '{&{"input":{"type":"html","name":"main","label":"HTML"}}&}', _this, _this, callback );
-		}else if( moduleId == '_sys/image' ){
-			parseTpl( '<img src="{&{"input":{"type":"image","name":"src","label":"画像"}}&}" alt="{&{"input":{"type":"html_attr_text","name":"alt","label":"代替テキスト","rows":1}}&}" />', _this, _this, callback );
-		}else if( typeof(options.src) === typeof('') ){
-			parseTpl( options.src, _this, options.topThis, callback );
-		}else if( _this.topThis.templateType != 'broccoli' && typeof(_this.subModName) == typeof('') ){
-			parseTpl( null, _this, options.topThis, callback );
-		}else if( _this.realpath ){
-			var tmpTplSrc = null;
-			if( isFile( _this.realpath+'finalize.js' ) ){
-				var tmpRealathFinalizeJs = require('path').resolve(_this.realpath+'finalize.js');
-				delete(require.cache[tmpRealathFinalizeJs]);
-				_this.finalize = require(tmpRealathFinalizeJs);
+		_this.lb = new LangBank(_this.realpath+'language.csv', function(){
+			_this.lb.setLang( broccoli.lb.lang );
+			if( moduleId == '_sys/root' ){
+				parseTpl( '{&{"module":{"name":"main","label":"コンテンツエリア"}}&}', _this, _this, callback );
+			}else if( moduleId == '_sys/unknown' ){
+				parseTpl( '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;" data-broccoli-error-message="未知のモジュールテンプレートです。">[ERROR] 未知のモジュールテンプレートです。<!-- .error --></div>'+"\n", _this, _this, callback );
+			}else if( moduleId == '_sys/html' ){
+				parseTpl( '{&{"input":{"type":"html","name":"main","label":"HTML"}}&}', _this, _this, callback );
+			}else if( moduleId == '_sys/image' ){
+				parseTpl( '<img src="{&{"input":{"type":"image","name":"src","label":"画像"}}&}" alt="{&{"input":{"type":"html_attr_text","name":"alt","label":"代替テキスト","rows":1}}&}" />', _this, _this, callback );
+			}else if( typeof(options.src) === typeof('') ){
+				parseTpl( options.src, _this, options.topThis, callback );
+			}else if( _this.topThis.templateType != 'broccoli' && typeof(_this.subModName) == typeof('') ){
+				parseTpl( null, _this, options.topThis, callback );
+			}else if( _this.realpath ){
+				var tmpTplSrc = null;
+				if( isFile( _this.realpath+'finalize.js' ) ){
+					var tmpRealathFinalizeJs = require('path').resolve(_this.realpath+'finalize.js');
+					delete(require.cache[tmpRealathFinalizeJs]);
+					_this.finalize = require(tmpRealathFinalizeJs);
+				}
+				_this.isClipModule = false;
+				if( isFile( _this.realpath+'clip.json' ) ){
+					_this.isClipModule = true;
+				}
+
+				if( isFile( _this.realpath+'template.html' ) ){
+					_this.templateFilename = _this.realpath+'template.html';
+					_this.templateType = 'broccoli';
+					tmpTplSrc = fs.readFileSync( _this.templateFilename );
+				}else if( isFile( _this.realpath+'template.html.twig' ) ){
+					_this.templateFilename = _this.realpath+'template.html.twig';
+					_this.templateType = 'twig';
+					tmpTplSrc = fs.readFileSync( _this.templateFilename );
+				}
+				if( !tmpTplSrc ){
+					tmpTplSrc = '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;">[ERROR] モジュールテンプレートの読み込みエラーです。<!-- .error --></div>'+"\n";
+				}
+				tmpTplSrc = JSON.parse( JSON.stringify( tmpTplSrc.toString() ) );
+				parseTpl( tmpTplSrc, _this, _this, callback );
 			}
-			_this.isClipModule = false;
-			if( isFile( _this.realpath+'clip.json' ) ){
-				_this.isClipModule = true;
-			}
-			if( isFile( _this.realpath+'template.html' ) ){
-				_this.templateFilename = _this.realpath+'template.html';
-				_this.templateType = 'broccoli';
-				tmpTplSrc = fs.readFileSync( _this.templateFilename );
-			}else if( isFile( _this.realpath+'template.html.twig' ) ){
-				_this.templateFilename = _this.realpath+'template.html.twig';
-				_this.templateType = 'twig';
-				tmpTplSrc = fs.readFileSync( _this.templateFilename );
-			}
-			if( !tmpTplSrc ){
-				tmpTplSrc = '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;">[ERROR] モジュールテンプレートの読み込みエラーです。<!-- .error --></div>'+"\n";
-			}
-			tmpTplSrc = JSON.parse( JSON.stringify( tmpTplSrc.toString() ) );
-			parseTpl( tmpTplSrc, _this, _this, callback );
-		}
+
+		});
 
 		return this;
 	}
@@ -560,6 +569,17 @@ module.exports = function(broccoli, moduleId, options){
 			}
 		}
 		return $field;
+	}
+
+	/**
+	 * LangBank を検索し、対訳を返す
+	 */
+	function findLang( $key, $default ){
+		var $tmpName = _this.lb.get($key);
+		if( $tmpName.length && $tmpName !== '---' ){
+			return $tmpName;
+		}
+		return $default;
 	}
 
 	return;

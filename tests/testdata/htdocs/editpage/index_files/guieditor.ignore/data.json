@@ -5,6 +5,15 @@
             "fields": {
                 "main": [
                     {
+                        "modId": "testMod1:dev/multilang",
+                        "fields": {
+                            "text1": {
+                                "src": "",
+                                "editor": "markdown"
+                            }
+                        }
+                    },
+                    {
                         "modId": "testMod1:units/cols2",
                         "fields": {
                             "column1": [

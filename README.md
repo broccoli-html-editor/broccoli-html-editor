@@ -356,6 +356,11 @@ $ composer test
 
 ## 更新履歴 - Change log
 
+### broccoli-html-editor v0.3.22 (リリース日未定)
+
+- モジュールのマルチ言語化に対応した。
+- 内部コードの細かい修正。
+
 ### broccoli-html-editor v0.3.21 (2020年12月15日)
 
 - imageフィールドが、画像の入力がない場合に、空白の文字を返すようになった。
