@@ -4,7 +4,29 @@
         "fields": {
             "text1": {
                 "type": "multitext",
-                "label": "テキスト入力"
+                "label": "テキスト入力1"
+            },
+            "loop1": {
+                "fieldType": "loop",
+                "label": "ループフィールド1"
+            },
+            "module1": {
+                "fieldType": "module",
+                "label": "モジュールフィールド1"
+            }
+        },
+        "subModule": {
+            "loop1": {
+                "fields": {
+                    "text2": {
+                        "type": "multitext",
+                        "label": "テキスト入力2"
+                    },
+                    "module2": {
+                        "fieldType": "module",
+                        "label": "モジュールフィールド2"
+                    }
+                }
             }
         }
     }

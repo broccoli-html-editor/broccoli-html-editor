@@ -10,7 +10,33 @@
                             "text1": {
                                 "src": "",
                                 "editor": "markdown"
-                            }
+                            },
+                            "loop1": [
+                                {
+                                    "modId": "testMod1:dev/multilang",
+                                    "fields": {
+                                        "text2": {
+                                            "src": "",
+                                            "editor": "markdown"
+                                        },
+                                        "module2": [
+                                            {
+                                                "modId": "PlainHTMLElements:PlainHTML/MultiText",
+                                                "fields": {
+                                                    "main": {
+                                                        "src": "",
+                                                        "editor": "markdown"
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "subModName": "loop1",
+                                    "anchor": "",
+                                    "dec": ""
+                                }
+                            ],
+                            "module1": []
                         }
                     },
                     {

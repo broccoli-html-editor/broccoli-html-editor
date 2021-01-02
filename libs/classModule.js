@@ -215,8 +215,13 @@ module.exports = function(broccoli, moduleId, options){
 						if( tmpJson.interface.fields ){
 							_this.fields = tmpJson.interface.fields;
 							for( var tmpIdx in _this.fields ){
+
 								// name属性を自動補完
 								_this.fields[tmpIdx].name = tmpIdx;
+
+								// Multi Language
+								_this.fields[tmpIdx].label = findLang('fields.'+tmpIdx+':label', _this.fields[tmpIdx].label);
+
 								_this.fields[tmpIdx] = applyFieldConfig(_this.fields[tmpIdx]);
 							}
 						}
@@ -224,8 +229,13 @@ module.exports = function(broccoli, moduleId, options){
 							_this.subModule = tmpJson.interface.subModule;
 							for( var tmpIdx in _this.subModule ){
 								for( var tmpIdx2 in _this.subModule[tmpIdx].fields ){
+
 									// name属性を自動補完
 									_this.subModule[tmpIdx].fields[tmpIdx2].name = tmpIdx2;
+
+									// Multi Language
+									_this.subModule[tmpIdx].fields[tmpIdx2].label = findLang('subModule.'+tmpIdx+'.'+tmpIdx2+':label', _this.subModule[tmpIdx].fields[tmpIdx2].label);
+
 									_this.subModule[tmpIdx].fields[tmpIdx2] = applyFieldConfig(_this.subModule[tmpIdx].fields[tmpIdx2]);
 								}
 							}
