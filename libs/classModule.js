@@ -72,6 +72,7 @@ module.exports = function(broccoli, moduleId, options){
 	this.internalId = moduleId;
 	this.fields = {};
 	this.templateType = 'broccoli';
+	this.languageCsv = null;
 	this.finalize = function(html, callback){callback(html);return;}
 
 	this.info = {
@@ -471,6 +472,10 @@ module.exports = function(broccoli, moduleId, options){
 				_this.isClipModule = false;
 				if( isFile( _this.realpath+'clip.json' ) ){
 					_this.isClipModule = true;
+				}
+
+				if( isFile( _this.realpath+'language.csv' ) ){
+					_this.languageCsv = fs.readFileSync( _this.realpath+'language.csv' ).toString();
 				}
 
 				if( isFile( _this.realpath+'template.html' ) ){

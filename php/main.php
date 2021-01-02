@@ -629,6 +629,7 @@ class broccoliHtmlEditor{
 			$data['rtn'][$modId]->isClipModule = $obj->isClipModule;
 			$data['rtn'][$modId]->templateType = $obj->templateType;
 			$data['rtn'][$modId]->template = $obj->template;
+			$data['rtn'][$modId]->languageCsv = $obj->languageCsv;
 			$data['rtn'][$modId]->info = $obj->info;
 			if($obj->subModule){
 				$data['rtn'][$modId]->subModule = json_decode('{}');

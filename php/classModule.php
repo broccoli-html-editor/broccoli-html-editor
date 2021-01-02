@@ -30,8 +30,10 @@ class classModule{
 			$isSubModule,
 			$isClipModule,
 			$deprecated,
+			$template,
 			$templateFilename,
 			$templateType,
+			$languageCsv,
 			$info,
 			$id,
 			$internalId,
@@ -67,6 +69,7 @@ class classModule{
 		$this->fields = json_decode('{}');
 		$this->subModule = json_decode('{}');
 		$this->templateType = 'broccoli';
+		$this->languageCsv = null;
 		$this->finalize = function($html, $data){ return $html; };
 
 		$this->info = array(
@@ -147,6 +150,10 @@ class classModule{
 			$this->isClipModule = false;
 			if( is_file( $this->realpath.'/clip.json' ) ){
 				$this->isClipModule = true;
+			}
+
+			if( is_file( $this->realpath.'/language.csv' ) ){
+				$this->languageCsv = file_get_contents( $this->realpath.'/language.csv' );
 			}
 
 			if( is_file( $this->realpath.'/template.html' ) ){
