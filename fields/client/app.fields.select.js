@@ -6,6 +6,11 @@ module.exports = function(broccoli){
 	 */
 	this.mkEditor = function( mod, data, elm, callback ){
 
+		// TODO: 一般モジュールでは言語検索できるが、サブモジュールのときに辞書が参照されない。
+		console.log('=-=-=-=');
+		console.log(mod.lb);
+		console.log(mod.lb.get('label'));
+
 		var $select = $('<select>');
 		if( mod.options ){
 			if(mod.display == 'radio'){

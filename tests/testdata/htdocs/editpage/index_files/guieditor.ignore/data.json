@@ -21,15 +21,15 @@
                                         },
                                         "module2": [
                                             {
-                                                "modId": "PlainHTMLElements:PlainHTML/MultiText",
+                                                "modId": "testMod1:dev/select1",
                                                 "fields": {
-                                                    "main": {
-                                                        "src": "",
-                                                        "editor": "markdown"
-                                                    }
+                                                    "select-test-1": "",
+                                                    "select-test-2": "",
+                                                    "select-test-3": ""
                                                 }
                                             }
-                                        ]
+                                        ],
+                                        "select2": "1"
                                     },
                                     "subModName": "loop1",
                                     "anchor": "",
@@ -37,7 +37,9 @@
                                 }
                             ],
                             "module1": []
-                        }
+                        },
+                        "anchor": "",
+                        "dec": ""
                     },
                     {
                         "modId": "testMod1:units/cols2",
