@@ -60,6 +60,14 @@ module.exports = function(broccoli, packageId, callback){
 		}
 		return rtn;
 	}
+	function fncFindLang( $lb, $key, $default ){
+		var $tmpName = $lb.get($key);
+		if( $tmpName.length && $tmpName !== '---' ){
+			return $tmpName;
+		}
+		return $default;
+	};
+
 
 	new Promise(function(rlv){rlv();})
 		.then(function(){ return new Promise(function(rlv, rjt){
@@ -93,17 +101,27 @@ module.exports = function(broccoli, packageId, callback){
 						var realpath = path.resolve(rtn.realpath, row);
 						if( fs.statSync(realpath).isDirectory() ){
 							realpath += '/';
-							rtn.categories[row] = {};
-							rtn.categories[row].categoryId = row;
-							try {
-								rtn.categories[row].categoryInfo = JSON.parse(fs.readFileSync( path.resolve( realpath, 'info.json' ) ));
-							} catch (e) {
-								rtn.categories[row].categoryInfo = {};
-							}
-							rtn.categories[row].categoryName = rtn.categories[row].categoryInfo.name||row;
-							rtn.categories[row].realpath = realpath;
-							rtn.categories[row].deprecated = (rtn.categories[row].categoryInfo.deprecated || false)
-							rtn.categories[row].modules = {};
+							var lb = new LangBank(path.resolve( realpath, 'language.csv' ), function(){
+								lb.setLang(broccoli.lb.lang);
+								rtn.categories[row] = {};
+								rtn.categories[row].categoryId = row;
+								try {
+									rtn.categories[row].categoryInfo = JSON.parse(fs.readFileSync( path.resolve( realpath, 'info.json' ) ));
+								} catch (e) {
+									rtn.categories[row].categoryInfo = {};
+								}
+								rtn.categories[row].categoryName = rtn.categories[row].categoryInfo.name||row;
+								rtn.categories[row].realpath = realpath;
+								rtn.categories[row].deprecated = (rtn.categories[row].categoryInfo.deprecated || false)
+
+								// Multi Language
+								rtn.categories[row].categoryInfo.name = fncFindLang( lb, 'name', rtn.categories[row].categoryInfo.name );
+								rtn.categories[row].categoryName = fncFindLang( lb, 'name', rtn.categories[row].categoryName );
+
+								rtn.categories[row].modules = {};
+								it1.next();
+							});
+							return;
 						}
 						it1.next();
 					} ,
@@ -120,14 +138,6 @@ module.exports = function(broccoli, packageId, callback){
 				rtn.categories,
 				function( it1, row, idx ){
 					// console.log(row);
-
-					function fncFindLang( $lb, $key, $default ){
-						var $tmpName = $lb.get($key);
-						if( $tmpName.length && $tmpName !== '---' ){
-							return $tmpName;
-						}
-						return $default;
-					};
 
 					fs.readdir( rtn.categories[idx].realpath, function(err, fileList){
 						// console.log(fileList);

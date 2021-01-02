@@ -342,7 +342,7 @@ describe('パッケージ一覧の取得', function() {
 			broccoli.getPackageList(function(list){
 				// console.log( list );
 				assert.equal(list['testMod1'].packageId, 'testMod1');
-				assert.equal(list['testMod1'].packageName, 'テストモジュール1');
+				assert.equal(list['testMod1'].packageName, 'テストモジュール1(en)');
 				assert.equal(list['testMod1'].categories.units.modules.cols2.moduleId, 'testMod1:units/cols2');
 				assert.equal(list['testMod1'].categories.units.modules.cols2.realpath, path.resolve(__dirname, 'testdata/modules1/units/cols2/')+'/');
 				done();

@@ -101,7 +101,7 @@ class mainTest extends PHPUnit_Framework_TestCase{
 		// パッケージ一覧の取得
 		$list = $broccoli->getPackageList();
 		$this->assertEquals($list['testMod1']['packageId'], 'testMod1');
-		$this->assertEquals($list['testMod1']['packageName'], 'テストモジュール1');
+		$this->assertEquals($list['testMod1']['packageName'], 'テストモジュール1(en)');
 		$this->assertEquals($list['testMod1']['categories']['units']['modules']['cols2']['moduleId'], 'testMod1:units/cols2');
 		$this->assertEquals($list['testMod1']['categories']['units']['modules']['cols2']['realpath'], $this->fs->normalize_path(__DIR__.'/testdata/modules1/units/cols2/'));
 

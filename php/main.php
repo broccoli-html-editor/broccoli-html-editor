@@ -319,12 +319,30 @@ class broccoliHtmlEditor{
 		$modules = $this->paths_module_template;
 		$rtn = array();
 
+		$fncFindLang = function( $lb, $key, $default ){
+			$tmpName = $lb->get($key);
+			if( strlen($tmpName) && $tmpName !== '---' ){
+				return $tmpName;
+			}
+			return $default;
+		};
+
 		foreach( $modules as $idx=>$row ){
 			$realpath = $row;
+
+			$lb = new \tomk79\LangBank($realpath.'/language.csv');
+			$lb->setLang( $this->lb()->lang );
+
 			$infoJson = json_decode('{}');
 			if( is_file($realpath.'/info.json') ){
 				$infoJson = json_decode(file_get_contents( $realpath.'/info.json' ));
 			}
+			if( !property_exists( $infoJson, 'name' ) ){
+				$infoJson->name = null;
+			}
+
+			// Multi Language
+			$infoJson->name = $fncFindLang($lb, 'name', $infoJson->name);
 
 			$rtn[$idx] = array(
 				'packageId' => $idx,
@@ -347,6 +365,14 @@ class broccoliHtmlEditor{
 	public function getModuleListByPackageId($packageId){
 
 		$rtn = array();
+
+		$fncFindLang = function( $lb, $key, $default ){
+			$tmpName = $lb->get($key);
+			if( strlen($tmpName) && $tmpName !== '---' ){
+				return $tmpName;
+			}
+			return $default;
+		};
 
 		$sortModuleDirectoryNames = function($dirNames, $sortBy){
 			if( !is_array($sortBy) ){ return $dirNames; }
@@ -403,26 +429,30 @@ class broccoliHtmlEditor{
 			$realpath = $this->fs->normalize_path($this->fs->get_realpath($rtn['realpath'].'/'.$row));
 			if( is_dir($realpath) ){
 				$realpath .= '/';
+
+				$lb = new \tomk79\LangBank($realpath.'/language.csv');
+				$lb->setLang( $this->lb()->lang );
+
 				$rtn['categories'][$row] = array();
 				$rtn['categories'][$row]['categoryId'] = $row;
 				$rtn['categories'][$row]['categoryInfo'] = @json_decode(file_get_contents( $realpath.'/info.json' ));
 				if( is_null($rtn['categories'][$row]['categoryInfo']) ){
-					$rtn['categories'][$row]['categoryInfo'] = array();
+					$rtn['categories'][$row]['categoryInfo'] = new \stdClass();
+				}
+				if( !property_exists($rtn['categories'][$row]['categoryInfo'], 'name') ){
+					$rtn['categories'][$row]['categoryInfo']->name = null;
 				}
 				$rtn['categories'][$row]['categoryName'] = (@$rtn['categories'][$row]['categoryInfo']->name ? $rtn['categories'][$row]['categoryInfo']->name : $row);
 				$rtn['categories'][$row]['realpath'] = $realpath;
 				$rtn['categories'][$row]['deprecated'] = (@$rtn['categories'][$row]['categoryInfo']->deprecated ? true : false);
+
+				// Multi Language
+				$rtn['categories'][$row]['categoryInfo']->name = $fncFindLang( $lb, 'name', $rtn['categories'][$row]['categoryInfo']->name );
+				$rtn['categories'][$row]['categoryName'] = $fncFindLang( $lb, 'name', $rtn['categories'][$row]['categoryName'] );
+
 				$rtn['categories'][$row]['modules'] = array();
 			}
 		}
-
-		$fncFindLang = function( $lb, $key, $default ){
-			$tmpName = $lb->get($key);
-			if( strlen($tmpName) && $tmpName !== '---' ){
-				return $tmpName;
-			}
-			return $default;
-		};
 
 		foreach($rtn['categories'] as $idx=>$row){
 			$fileList = $this->fs->ls( $rtn['categories'][$idx]['realpath'] );
