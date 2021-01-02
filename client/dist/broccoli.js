@@ -3029,7 +3029,7 @@ module.exports = function(broccoli, targetElm, callback){
 						'href':'javascript:;',
 						'data-broccoli-module-category-id': packageId + ':' + categoryId
 					})
-					.click(function(){
+					.on('click', function(){
 						var $categoryId = $(this).attr('data-broccoli-module-category-id');
 						$(this).toggleClass('broccoli__module-palette__closed');
 						$ulMod.toggle(100)
@@ -3726,7 +3726,7 @@ module.exports = function(broccoli){
 			// console.log(readme);
 			if(readme){
 				$editWindow.find('.broccoli__edit-window-module-readme-inner .broccoli__module-readme').html(readme);
-				$editWindow.find('.broccoli__edit-window-module-readme-switch a').click(function(){
+				$editWindow.find('.broccoli__edit-window-module-readme-switch a').on('click', function(){
 					var $this = $(this);
 					var className = 'broccoli__edit-window-module-readme-switch__on';
 					$editWindow.find('.broccoli__edit-window-module-readme').toggle('fast', function(){
@@ -3747,7 +3747,7 @@ module.exports = function(broccoli){
 		}
 
 		$editWindow.find('.broccoli__edit-window-builtin-fields').hide();
-		$editWindow.find('.broccoli__edit-window-builtin-fields-switch a').click(function(){
+		$editWindow.find('.broccoli__edit-window-builtin-fields-switch a').on('click', function(){
 			var $this = $(this);
 			var className = 'broccoli__edit-window-builtin-fields-switch__on';
 			$editWindow.find('.broccoli__edit-window-builtin-fields').toggle('fast', function(){

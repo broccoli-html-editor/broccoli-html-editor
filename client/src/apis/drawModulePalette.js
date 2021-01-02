@@ -61,7 +61,7 @@ module.exports = function(broccoli, targetElm, callback){
 						'href':'javascript:;',
 						'data-broccoli-module-category-id': packageId + ':' + categoryId
 					})
-					.click(function(){
+					.on('click', function(){
 						var $categoryId = $(this).attr('data-broccoli-module-category-id');
 						$(this).toggleClass('broccoli__module-palette__closed');
 						$ulMod.toggle(100)

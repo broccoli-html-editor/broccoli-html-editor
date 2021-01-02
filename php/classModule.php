@@ -143,6 +143,7 @@ class classModule{
 			if( is_file( $this->realpath.'/clip.json' ) ){
 				$this->isClipModule = true;
 			}
+
 			if( is_file( $this->realpath.'/template.html' ) ){
 				$this->templateFilename = $this->realpath.'/template.html';
 				$this->templateType = 'broccoli';
@@ -296,7 +297,7 @@ class classModule{
 					continue;
 				}
 				return $rtn;
-			}elseif( @$field->{$fieldType} ){
+			}elseif( property_exists($field, $fieldType) ){
 				$depth ++;
 				$rtn['content'] .= '{&'.$fieldSrc.'&}';
 				continue;
@@ -337,7 +338,7 @@ class classModule{
 					$this->internalId = $this->broccoli->getModuleInternalId($this->id, $tmpJson->id);
 				}
 
-				if( !strlen($this->info['name']) && @$tmpJson->name ){
+				if( !strlen($this->info['name']) && property_exists($tmpJson, 'name') ){
 					$this->info['name'] = $tmpJson->name;
 				}
 				if( @$tmpJson->areaSizeDetection ){
