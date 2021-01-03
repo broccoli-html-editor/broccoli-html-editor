@@ -103,6 +103,9 @@ class classModule{
 				$this->info['name'] = $options['modName'];
 			}
 			$this->info['name'] = $this->info['name'].' *';
+			if( $this->topThis->languageCsv ){
+				$this->languageCsv = $this->topThis->languageCsv;
+			}
 			// $this->nameSpace = $this->options['topThis']->nameSpace;
 			if( $options['subModName'] ){
 				$this->subModName = $options['subModName'];

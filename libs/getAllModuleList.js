@@ -63,6 +63,7 @@ module.exports = function(broccoli, callback){
 									data.rtn[modId].subModule[idx].isClipModule = obj.subModule[idx].isClipModule;
 									data.rtn[modId].subModule[idx].templateType = obj.subModule[idx].templateType;
 									data.rtn[modId].subModule[idx].template = obj.subModule[idx].template;
+									data.rtn[modId].subModule[idx].languageCsv = obj.subModule[idx].languageCsv;
 									data.rtn[modId].subModule[idx].info = obj.subModule[idx].info;
 								}
 							}

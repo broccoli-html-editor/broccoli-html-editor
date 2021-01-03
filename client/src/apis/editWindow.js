@@ -553,7 +553,7 @@ module.exports = function(broccoli){
 							case 'input':
 								var fieldDefinition = broccoli.getFieldDefinition(field.type);
 								mod.fields[field.name].lb = new (function(lb, field){
-									this.get = function(key){
+									this.get = function(key, defValue){
 										// console.log('=-=-=-=-=-=', field, data);
 										var rtn = '';
 										var fullkey = '';
@@ -563,6 +563,9 @@ module.exports = function(broccoli){
 											fullkey = 'fields.'+field.name+':'+key;
 										}
 										rtn = lb.get(fullkey);
+										if( rtn == '' || rtn == '---' ){
+											rtn = defValue;
+										}
 										// console.log(fullkey, lb.getList(), rtn);
 										return rtn;
 									}

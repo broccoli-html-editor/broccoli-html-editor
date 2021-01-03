@@ -2,8 +2,10 @@
 "name","MultiLanguage(en)","多言語対応(ja)","多言語対応(zh)","多言語対応(zh-TW)"
 "fields.text1:label","TextInput(en)","テキスト入力(ja)",,
 "fields.select1:label","Select(en)","選択入力1(ja)",,
+"fields.select1:options.0.label","Option1-1(en)","選択肢1-1(ja)",,
 "fields.loop1:label","LoopField1(en)","ループフィールド1(ja)",,
 "fields.module1:label","ModuleField1(en)","モジュールフィールド1(ja)",,
 "subModule.loop1.text2:label","TextInput2(en)","テキスト入力2(ja)",,
 "subModule.loop1.select2:label","Select2(en)","選択入力2(ja)",,
+"subModule.loop1.select2:options.0.label","Option2-1(en)","選択肢2-1(ja)",,
 "subModule.loop1.module2:label","TextInput2(en)","モジュールフィールド2(ja)",,

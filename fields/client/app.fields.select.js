@@ -6,11 +6,6 @@ module.exports = function(broccoli){
 	 */
 	this.mkEditor = function( mod, data, elm, callback ){
 
-		// TODO: 一般モジュールでは言語検索できるが、サブモジュールのときに辞書が参照されない。
-		console.log('=-=-=-=');
-		console.log(mod.lb);
-		console.log(mod.lb.get('label'));
-
 		var $select = $('<select>');
 		if( mod.options ){
 			if(mod.display == 'radio'){
@@ -19,6 +14,7 @@ module.exports = function(broccoli){
 					.css({'max-width':'100%'})
 				;
 				for( var idx in mod.options ){
+					var label = mod.lb.get('options.'+idx+'.label', mod.options[idx].label);
 					var $option = $('<label>')
 						.css({
 							'display': 'inline-block',
@@ -33,7 +29,7 @@ module.exports = function(broccoli){
 							})
 						)
 						.append( $('<span>')
-							.text(mod.options[idx].label)
+							.text(label)
 						)
 					;
 					if( data==mod.options[idx].value ){
@@ -67,11 +63,12 @@ module.exports = function(broccoli){
 					})
 				;
 				for( var idx in mod.options ){
+					var label = mod.lb.get('options.'+idx+'.label', mod.options[idx].label);
 					var $option = $('<option>')
 						.attr({
 							'value':mod.options[idx].value
 						})
-						.text(mod.options[idx].label)
+						.text(label)
 					;
 					if( data==mod.options[idx].value ){
 						$option.attr({

@@ -104,6 +104,9 @@ module.exports = function(broccoli, moduleId, options){
 		if( options.modName ){
 			this.info.name = options.modName;
 		}
+		if( this.topThis.languageCsv ){
+			this.languageCsv = this.topThis.languageCsv;
+		}
 		this.info.name = this.info.name + ' *';
 		// this.nameSpace = options.topThis.nameSpace;
 		if( options.subModName ){
