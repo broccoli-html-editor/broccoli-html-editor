@@ -1,0 +1,35 @@
+{
+    "name": "あとから追加されたフィールド",
+    "interface": {
+        "fields": {
+            "text": {
+                "fieldType": "input",
+                "type": "multitext",
+                "label": "あとから追加されたテキストフィールド"
+            },
+            "module": {
+                "fieldType": "module",
+                "label": "あとから追加されたモジュールフィールド"
+            },
+            "loop": {
+                "fieldType": "loop",
+                "label": "あとから追加されたループフィールド"
+            }
+        },
+        "subModule": {
+            "loop": {
+                "fields": {
+                    "subtext": {
+                        "fieldType": "input",
+                        "type": "multitext",
+                        "label": "あとから追加されたテキストフィールド"
+                    },
+                    "submodule": {
+                        "fieldType": "module",
+                        "label": "あとから追加されたモジュールフィールド"
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1782,6 +1782,12 @@
                         },
                         "anchor": "",
                         "dec": ""
+                    },
+                    {
+                        "modId": "testMod1:errors/addedfields",
+                        "fields": [],
+                        "anchor": "",
+                        "dec": ""
                     }
                 ]
             },
