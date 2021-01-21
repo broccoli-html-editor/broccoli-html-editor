@@ -3793,6 +3793,9 @@ module.exports = function(broccoli){
 							case 'module':
 							case 'loop':
 								var $ul = $('<ul>');
+								if(!data.fields[field.name]){
+									data.fields[field.name] = {};
+								}
 								it79.ary(
 									data.fields[field.name],
 									function(it2, childData, idx2){
