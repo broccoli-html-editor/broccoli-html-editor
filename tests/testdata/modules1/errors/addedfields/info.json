@@ -14,6 +14,10 @@
             "loop": {
                 "fieldType": "loop",
                 "label": "あとから追加されたループフィールド"
+            },
+            "loop_undefined_submod": {
+                "fieldType": "loop",
+                "label": "あとから追加されたsubModuleのないループフィールド"
             }
         },
         "subModule": {
