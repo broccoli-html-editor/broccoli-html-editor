@@ -20,7 +20,10 @@ module.exports = function(broccoli){
 			xhtml: true
 		});
 
-		if(typeof(fieldData)===typeof('')){
+		if(typeof(fieldData)===typeof({}) && fieldData.src ){
+			rtn = utils79.toStr(fieldData.src);
+			rtn = marked(rtn);
+		}else if(typeof(fieldData)===typeof('')){
 			rtn = utils79.toStr(fieldData);
 			rtn = marked(rtn);
 		}

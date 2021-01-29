@@ -16,7 +16,7 @@ class select extends \broccoliHtmlEditor\fieldBase{
 	 */
 	public function bind( $fieldData, $mode, $mod ){
 		$rtn = '';
-		if( is_null($fieldData) && @$mod->default ){
+		if( is_null($fieldData) && property_exists($mod, 'default') && $mod->default ){
 			// 値が undefined の場合は、defaultの値を参照する。
 			// このケースは、既に使用されたモジュールに、
 			// 後からselectフィールドを追加した場合などに発生する。
@@ -24,7 +24,7 @@ class select extends \broccoliHtmlEditor\fieldBase{
 		}
 		$rtn = $fieldData;
 
-		if( !strlen($rtn) && @$mod->options ){
+		if( !strlen($rtn) && property_exists($mod, 'options') && $mod->options ){
 			$isHit = false;
 			foreach( $mod->options as $idx=>$val ){
 				if( $rtn == @$val->value ){

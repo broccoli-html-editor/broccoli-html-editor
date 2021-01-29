@@ -7,17 +7,20 @@ module.exports = function(broccoli){
 	 */
 	this.bind = function( fieldData, mode, mod, callback ){
 		var rtn = '';
-		if(typeof(fieldData)===typeof('')){
+		if(typeof(fieldData)===typeof({}) && fieldData.src ){
+			rtn = utils79.toStr(fieldData.src);
+			rtn = php.htmlspecialchars( rtn );
+			rtn = rtn.replace(new RegExp('\r\n|\r|\n','g'), '<br />');
+		}else if(typeof(fieldData)===typeof('')){
 			rtn = utils79.toStr(fieldData);
-			rtn = php.htmlspecialchars( rtn ); // ←HTML特殊文字変換
-			rtn = rtn.replace(new RegExp('\r\n|\r|\n','g'), '<br />'); // ← 改行コードは改行タグに変換
+			rtn = php.htmlspecialchars( rtn );
+			rtn = rtn.replace(new RegExp('\r\n|\r|\n','g'), '<br />');
 		}
 		if( mode == 'canvas' && !rtn.length ){
 			rtn = '';
 		}
-		// setTimeout(function(){
-			callback(rtn);
-		// }, 0);
+
+		callback(rtn);
 		return;
 	}
 

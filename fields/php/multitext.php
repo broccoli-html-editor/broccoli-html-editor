@@ -27,7 +27,7 @@ class multitext extends \broccoliHtmlEditor\fieldBase{
 	 */
 	public function bind( $fieldData, $mode, $mod ){
 		$rtn = '';
-		if(is_array($fieldData) && is_string(@$fieldData['src'])){
+		if(is_array($fieldData) && array_key_exists('src', $fieldData) && is_string($fieldData['src'])){
 			$rtn = ''.$fieldData['src'];
 
 			switch( $fieldData['editor'] ){

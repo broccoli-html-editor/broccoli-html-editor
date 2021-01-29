@@ -31,7 +31,9 @@ class fieldBase{
 	 */
 	public function bind( $fieldData, $mode, $mod ){
 		$rtn = '';
-		if( is_string($fieldData) || is_null($fieldData) || is_int($fieldData) || is_float($fieldData) ){
+		if(is_array($fieldData) && array_key_exists('src', $fieldData) && is_string($fieldData['src'])){
+			$rtn = ''.$fieldData['src'];
+		}elseif( is_string($fieldData) || is_null($fieldData) || is_int($fieldData) || is_float($fieldData) ){
 			$rtn = ''.$fieldData;
 		}
 		if( $mode == 'canvas' && !strlen($rtn) ){

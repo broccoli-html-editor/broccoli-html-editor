@@ -16,11 +16,16 @@ class datetime extends \broccoliHtmlEditor\fieldBase{
 	 */
 	public function bind( $fieldData, $mode, $mod ){
 		$rtn = '';
-		if( is_string($fieldData) && strlen($fieldData) ){
-			$format = 'Y-m-d H:i:s';
-			if( property_exists($mod, 'format') && strlen($mod->format) ){
-				$format = $mod->format;
-			}
+		$format = 'Y-m-d H:i:s';
+		if( property_exists($mod, 'format') && strlen($mod->format) ){
+			$format = $mod->format;
+		}
+		if(is_array($fieldData) && array_key_exists('src', $fieldData) && is_string($fieldData['src'])){
+			$time = strtotime($fieldData['src']);
+			$rtn = date( $format, $time ); // ←日付フォーマット
+			$rtn = htmlspecialchars( $rtn ); // ←HTML特殊文字変換
+			$rtn = preg_replace('/\r\n|\r|\n/s', '<br />', $rtn); // ← 改行コードは改行タグに変換
+		}elseif( is_string($fieldData) && strlen($fieldData) ){
 			$time = strtotime($fieldData);
 			$rtn = date( $format, $time ); // ←日付フォーマット
 			$rtn = htmlspecialchars( $rtn ); // ←HTML特殊文字変換
