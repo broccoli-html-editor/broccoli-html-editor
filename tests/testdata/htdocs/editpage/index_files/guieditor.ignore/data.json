@@ -23,10 +23,18 @@
                                             {
                                                 "modId": "testMod1:dev/select1",
                                                 "fields": {
-                                                    "select-test-1": "",
-                                                    "select-test-2": "",
-                                                    "select-test-3": ""
-                                                }
+                                                    "select-test-1": {
+                                                        "src": "default1"
+                                                    },
+                                                    "select-test-2": {
+                                                        "src": "select1"
+                                                    },
+                                                    "select-test-3": {
+                                                        "src": "radio1"
+                                                    }
+                                                },
+                                                "anchor": "",
+                                                "dec": ""
                                             }
                                         ],
                                         "select2": "1"

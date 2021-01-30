@@ -6,6 +6,11 @@ module.exports = function(broccoli){
 	 */
 	this.mkEditor = function( mod, data, elm, callback ){
 
+		var presetString = data;
+		if( typeof(presetString) === typeof({}) && presetString.src !== undefined ){
+			presetString = presetString.src;
+		}
+
 		var $select = $('<select>');
 		if( mod.options ){
 			if(mod.display == 'radio'){
@@ -32,7 +37,7 @@ module.exports = function(broccoli){
 							.text(label)
 						)
 					;
-					if( data==mod.options[idx].value ){
+					if( presetString==mod.options[idx].value ){
 						$option.find('input').attr({
 							'checked': 'checked'
 						});
@@ -70,7 +75,7 @@ module.exports = function(broccoli){
 						})
 						.text(label)
 					;
-					if( data==mod.options[idx].value ){
+					if( presetString==mod.options[idx].value ){
 						$option.attr({
 							'selected': 'selected'
 						});
@@ -112,8 +117,13 @@ module.exports = function(broccoli){
 			src = $dom.find('select').val();
 		}
 		src = JSON.parse( JSON.stringify(src) );
+
+		var finData = {
+			"src": src
+		};
+
 		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
-			callback(src);
+			callback(finData);
 		}); });
 		return;
 	}
