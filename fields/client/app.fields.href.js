@@ -6,7 +6,7 @@ module.exports = function(broccoli){
 	this.mkEditor = function( mod, data, elm, callback ){
 
 		var presetString = data;
-		if( typeof(presetString) === typeof({}) && presetString.src ){
+		if( typeof(presetString) === typeof({}) && presetString.src !== undefined ){
 			presetString = presetString.src;
 		}
 

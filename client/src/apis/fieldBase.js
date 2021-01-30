@@ -83,7 +83,7 @@ module.exports = function(broccoli){
 			$formElm
 		;
 		var presetString = data;
-		if( typeof(presetString) === typeof({}) && presetString.src ){
+		if( typeof(presetString) === typeof({}) && presetString.src !== undefined ){
 			presetString = presetString.src;
 		}
 
