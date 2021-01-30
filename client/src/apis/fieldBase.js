@@ -44,7 +44,7 @@ module.exports = function(broccoli){
 						rtn = utils79.toStr(fieldData);
 					}
 				} catch (e) {
-					rtn = '[error]'
+					rtn = '[error]';
 				}
 				rlv();
 

@@ -1,7 +1,73 @@
 module.exports = function(broccoli){
 
 	var _this = this;
+	var $ = require('jquery');
+	var utils79 = require('utils79');
 	var Pickr = require('@simonwep/pickr/dist/pickr.es5.min');
+	var Promise = require('es6-promise').Promise;
+
+
+	/**
+	 * プレビュー用の簡易なHTMLを生成する (Client Side)
+	 * InstanceTreeViewで利用する。
+	 */
+	this.mkPreviewHtml = function( fieldData, mod, callback ){
+		var value = '';
+		var rtn = '';
+		new Promise(function(rlv){rlv();})
+			.then(function(){ return new Promise(function(rlv, rjt){
+
+				// サーバーサイドの bind() に相当する処理
+				try {
+					if( typeof(fieldData)===typeof({}) && fieldData.src ){
+						value = utils79.toStr(fieldData.src);
+					}else{
+						value = utils79.toStr(fieldData);
+					}
+				} catch (e) {
+					console.error('color field: Unable to read value.', fieldData, e);
+					value = '[error]';
+				}
+				rlv();
+
+			}); })
+			.then(function(){ return new Promise(function(rlv, rjt){
+
+				// console.log(value);
+
+				var $rtn = $('<div>');
+
+				var $colorChip = $('<span>')
+					.css({
+						"display": "inline-block",
+						"background-color": value,
+						"border": "1px solid #fff",
+						"width": "4em",
+						"height": "1.5em",
+						"margin-right": "0.5em"
+					});
+				$rtn.append($colorChip);
+
+				var $content = $('<span>').append(value);
+				$content.find('*').each(function(){
+					$(this)
+						.removeAttr('style') //スタイル削除しちゃう
+					;
+				});
+				$content.find('style').remove(); // styleタグも削除しちゃう
+
+				$rtn.append($content);
+
+				rtn = $rtn.html();
+				rlv();
+
+			}); })
+			.then(function(){ return new Promise(function(rlv, rjt){
+				callback( rtn );
+			}); })
+		;
+		return;
+	}
 
 	/**
 	 * エディタUIを生成 (Client Side)
