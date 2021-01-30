@@ -4,11 +4,17 @@ module.exports = function(broccoli){
 	 * エディタUIを生成 (Client Side)
 	 */
 	this.mkEditor = function( mod, data, elm, callback ){
-		var $input = $('<input class="form-control">')
+
+		var presetString = data;
+		if( typeof(presetString) === typeof({}) && presetString.src ){
+			presetString = presetString.src;
+		}
+
+		var $input = $('<input type="text" class="form-control">')
 			.attr({
 				"name":mod.name
 			})
-			.val(data)
+			.val(presetString)
 			.css({'width':'100%','height':'auto'})
 		;
 		var rtn = $('<div>')
@@ -30,8 +36,12 @@ module.exports = function(broccoli){
 		var src = $dom.find('input').val();
 		src = JSON.parse( JSON.stringify(src) );
 
+		var finData = {
+			"src": src
+		};
+
 		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
-			callback(src);
+			callback(finData);
 		}); });
 		return;
 	}

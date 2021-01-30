@@ -46,6 +46,7 @@
             "multitext_required": {
                 "fieldType": "input",
                 "type": "multitext",
+                "description": "値 customvalidation しか通しません。",
                 "validate": [
                     "required",
                     "customValidation1:30"

@@ -4519,7 +4519,11 @@ module.exports = function(broccoli){
 
 				// サーバーサイドの bind() に相当する処理
 				try {
-					rtn = utils79.toStr(fieldData);
+					if( typeof(fieldData)===typeof({}) && fieldData.src ){
+						rtn = utils79.toStr(fieldData.src);
+					}else{
+						rtn = utils79.toStr(fieldData);
+					}
 				} catch (e) {
 					rtn = '[error]'
 				}
@@ -4545,7 +4549,7 @@ module.exports = function(broccoli){
 				callback( rtn );
 			}); })
 		;
-		return this;
+		return;
 	}
 
 	/**
@@ -4559,20 +4563,24 @@ module.exports = function(broccoli){
 		var $rtn = $('<div>'),
 			$formElm
 		;
+		var presetString = data;
+		if( typeof(presetString) === typeof({}) && presetString.src ){
+			presetString = presetString.src;
+		}
 
 		if( rows == 1 ){
 			$formElm = $('<input type="text" class="form-control">')
 				.attr({
 					"name": mod.name
 				})
-				.val(data)
+				.val(presetString)
 				.css({'width':'100%'})
 			;
 			$rtn.append( $formElm );
 
 		}else if( editorLib == 'ace' ){
 			$formElm = $('<div>')
-				.text(data)
+				.text(presetString)
 				.css({
 					'position': 'relative',
 					'width': '100%',
@@ -4627,7 +4635,7 @@ module.exports = function(broccoli){
 					"name": mod.name,
 					"rows": rows
 				})
-				.val(data)
+				.val(presetString)
 				.css({'width':'100%','height':'auto'})
 			;
 			$rtn.append( $formElm );
@@ -4638,7 +4646,7 @@ module.exports = function(broccoli){
 		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 			callback();
 		}); });
-		return this;
+		return;
 	}
 
 	/**
@@ -4650,7 +4658,7 @@ module.exports = function(broccoli){
 		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 			callback();
 		}); });
-		return this;
+		return;
 	}
 
 	/**
@@ -4664,7 +4672,7 @@ module.exports = function(broccoli){
 		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 			callback(data);
 		}); });
-		return this;
+		return;
 	}
 
 	/**
@@ -4676,7 +4684,7 @@ module.exports = function(broccoli){
 		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 			callback(data);
 		}); });
-		return this;
+		return;
 	}
 
 
@@ -4702,7 +4710,7 @@ module.exports = function(broccoli){
 		broccoli.validate(attr, src, rules, mod, function(errorMsgs){
 			callback( errorMsgs );
 		});
-		return this;
+		return;
 	}
 
 	/**
@@ -4712,7 +4720,7 @@ module.exports = function(broccoli){
 		options = options || {};
 		options.message = options.message || function(msg){};//ユーザーへのメッセージテキストを送信
 		var $dom = $(elm);
-		var src;
+		var src = '';
 		if( $dom.find('input[type=text]').length ){
 			src = $dom.find('input[type=text]').val();
 		}else if( editorLib == 'ace' && mod.aceEditor ){
@@ -4725,7 +4733,7 @@ module.exports = function(broccoli){
 		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 			callback(src);
 		}); });
-		return this;
+		return;
 	}
 
 	/**
@@ -4744,7 +4752,7 @@ module.exports = function(broccoli){
 				callback(result);
 			}
 		);
-		return this;
+		return;
 	}
 
 }
@@ -7380,11 +7388,17 @@ module.exports = function(broccoli){
 	 * エディタUIを生成 (Client Side)
 	 */
 	this.mkEditor = function( mod, data, elm, callback ){
-		var $input = $('<input class="form-control">')
+
+		var presetString = data;
+		if( typeof(presetString) === typeof({}) && presetString.src ){
+			presetString = presetString.src;
+		}
+
+		var $input = $('<input type="text" class="form-control">')
 			.attr({
 				"name":mod.name
 			})
-			.val(data)
+			.val(presetString)
 			.css({'width':'100%','height':'auto'})
 		;
 		var rtn = $('<div>')
@@ -7406,8 +7420,12 @@ module.exports = function(broccoli){
 		var src = $dom.find('input').val();
 		src = JSON.parse( JSON.stringify(src) );
 
+		var finData = {
+			"src": src
+		};
+
 		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
-			callback(src);
+			callback(finData);
 		}); });
 		return;
 	}
@@ -7416,6 +7434,34 @@ module.exports = function(broccoli){
 
 },{}],21:[function(require,module,exports){
 module.exports = function(broccoli){
+
+	/**
+	 * エディタUIで編集した内容を保存 (Client Side)
+	 */
+	this.saveEditorContent = function( elm, data, mod, callback, options ){
+		options = options || {};
+		options.message = options.message || function(msg){};//ユーザーへのメッセージテキストを送信
+		var $dom = $(elm);
+		var src = '';
+		if( $dom.find('input[type=text]').length ){
+			src = $dom.find('input[type=text]').val();
+		}else if( window.ace && mod.aceEditor ){
+			src = mod.aceEditor.getValue();
+		}else if( $dom.find('textarea').length ){
+			src = $dom.find('textarea').val();
+		}
+		src = JSON.parse( JSON.stringify(src) );
+
+        var finData = {
+            "src": src
+        };
+
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+			callback(finData);
+		}); });
+		return;
+	}
+
 }
 
 },{}],22:[function(require,module,exports){

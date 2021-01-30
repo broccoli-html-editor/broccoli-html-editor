@@ -307,6 +307,52 @@
                     {
                         "modId": "testMod1:dev/validate_test",
                         "fields": {
+                            "html_required": {
+                                "src": "test1@example.com"
+                            },
+                            "markdown_required": {
+                                "src": "test1@example.com"
+                            },
+                            "multitext_required": {
+                                "src": "customvalidation",
+                                "editor": "markdown"
+                            },
+                            "html_attr_text_required": {
+                                "src": "test1@example.com"
+                            },
+                            "href_required": {
+                                "src": "test1@example.com"
+                            },
+                            "text": {
+                                "src": ""
+                            },
+                            "text_required": {
+                                "src": "test1@example.com"
+                            }
+                        },
+                        "anchor": "",
+                        "dec": ""
+                    },
+                    {
+                        "modId": "testMod1:dev/validate_test",
+                        "fields": {
+                            "text": "あああ",
+                            "text_required": "あああ",
+                            "html_required": "あああ",
+                            "html_attr_text_required": "test1@example.com",
+                            "href_required": "あああ",
+                            "markdown_required": "あああ",
+                            "multitext_required": {
+                                "src": "customvalidation",
+                                "editor": "markdown"
+                            }
+                        },
+                        "anchor": "",
+                        "dec": ""
+                    },
+                    {
+                        "modId": "testMod1:dev/validate_test",
+                        "fields": {
                             "text": "",
                             "text_required": "",
                             "html_required": "",

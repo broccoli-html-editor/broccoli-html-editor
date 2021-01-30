@@ -16896,8 +16896,12 @@ window.main = new (function(){
 								'options': JSON.stringify(options)
 							},
 							"success": function(data){
-								// console.log(data);
-								res = JSON.parse(data);
+								// console.info('-- GPI return', data);
+								try{
+									res = JSON.parse(data);
+								}catch(e){
+									console.error(e);
+								}
 								// console.log(res);
 							},
 							"error": function(error){

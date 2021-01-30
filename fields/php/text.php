@@ -18,7 +18,7 @@ class text extends \broccoliHtmlEditor\fieldBase{
 		$rtn = '';
 		if(is_array($fieldData) && array_key_exists('src', $fieldData) && is_string($fieldData['src'])){
 			$rtn = ''.$fieldData['src'];
-			$rtn = htmlspecialchars( $fieldData );
+			$rtn = htmlspecialchars( $rtn );
 			$rtn = preg_replace('/\r\n|\r|\n/s', '<br />', $rtn);
 		}elseif( is_string($fieldData) ){
 			$rtn = htmlspecialchars( $fieldData );
