@@ -11,6 +11,12 @@ module.exports = function(broccoli){
 		if( mod.rows ){
 			rows = mod.rows;
 		}
+
+		var presetString = data;
+		if( typeof(presetString) === typeof({}) && presetString.src !== undefined ){
+			presetString = presetString.src;
+		}
+
 		var $formElm;
 		var $Cleared = $('<a>');
 		var $PickrW = $('<div>');
@@ -46,7 +52,7 @@ module.exports = function(broccoli){
 			.attr({
 				"name": mod.name
 			})
-			.val(data)
+			.val(presetString)
 		;
 
 		$(elm).append($formElm);
@@ -57,7 +63,7 @@ module.exports = function(broccoli){
 			el: $Pickr.get(0),
 			container: $wrapper_c1.get(0),
 			theme: 'classic', // or 'monolith', or 'nano'
-			default: (data || '#ffffff00'),
+			default: (presetString || '#ffffff00'),
 			autoReposition: false,
 			closeOnScroll: true,
 			inline: false,
@@ -160,8 +166,12 @@ module.exports = function(broccoli){
 		var src = $dom.find('input[type=hidden]').val();
 		src = JSON.parse( JSON.stringify(src) );
 
+		var finData = {
+			"src": src
+		};
+
 		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
-			callback(src);
+			callback(finData);
 		}); });
 		return;
 	}

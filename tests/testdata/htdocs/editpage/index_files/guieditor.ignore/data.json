@@ -1380,12 +1380,24 @@
                     {
                         "modId": "testMod1:dev/texts",
                         "fields": {
-                            "text": "テキスト入力しています。\n<b>テキスト</b>です。",
-                            "text-1liner": "1行<b>テキスト</b>です。",
-                            "html": "<p>HTML入力です。</p>\n<p>HTMLソースを入力しています。</p>",
-                            "html-1liner": "<p>1行HTML入力です。</p>",
-                            "markdown": "マークダウンです。\n\n- markdown 1\n- markdown 2",
-                            "markdown-1liner": "- 1行マークダウンです",
+                            "text": {
+                                "src": "テキスト入力しています。\n<b>テキスト</b>です。"
+                            },
+                            "text-1liner": {
+                                "src": "1行<b>テキスト</b>です。"
+                            },
+                            "html": {
+                                "src": "<p>HTML入力です。</p>\n<p>HTMLソースを入力しています。</p>"
+                            },
+                            "html-1liner": {
+                                "src": "<p>1行HTML入力です。</p>"
+                            },
+                            "markdown": {
+                                "src": "マークダウンです。\n\n- markdown 1\n- markdown 2"
+                            },
+                            "markdown-1liner": {
+                                "src": "- 1行マークダウンです"
+                            },
                             "multitext": {
                                 "src": "## MultiText\n\n<strong>マルチテキスト</strong>です。\n\n- list 1\n- list 2",
                                 "editor": "markdown"
@@ -1394,14 +1406,28 @@
                                 "src": "- 1行マルチテキストです。",
                                 "editor": "text"
                             },
-                            "color": "#C09FB0",
-                            "date": "2020-04-29 00:00",
+                            "color": {
+                                "src": "#C09FB0"
+                            },
+                            "date": {
+                                "src": "2020-04-29 00:00"
+                            },
                             "time": "22:15",
-                            "datetime": "2020-04-14 18:20",
-                            "datetimesec": "2024-02-07 11:18:03",
-                            "f_date": "2020-04-23 00:00",
-                            "f_datetime": "2016-02-01 22:05",
-                            "f_datetimesec": "2008-03-09 12:07:01"
+                            "datetime": {
+                                "src": "2020-04-14 18:20"
+                            },
+                            "datetimesec": {
+                                "src": "2024-02-07 11:18:03"
+                            },
+                            "f_date": {
+                                "src": "2020-04-23 00:00"
+                            },
+                            "f_datetime": {
+                                "src": "2016-02-01 22:05"
+                            },
+                            "f_datetimesec": {
+                                "src": "2008-03-09 12:07:01"
+                            }
                         },
                         "anchor": "",
                         "dec": ""

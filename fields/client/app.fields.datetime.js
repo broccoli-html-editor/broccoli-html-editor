@@ -4,15 +4,21 @@ module.exports = function(broccoli){
 	 * エディタUIを生成 (Client Side)
 	 */
 	this.mkEditor = function( mod, data, elm, callback ){
+
+		var presetString = data;
+		if( typeof(presetString) === typeof({}) && presetString.src !== undefined ){
+			presetString = presetString.src;
+		}
+
 		mod.step = mod.step || "min";
 		var $rtn = $('<div>');
 		$rtn.css({'display': 'flex'});
 
 		var valDate, valTime;
-		if( data ){
-			valDate = dateFormat('Y-m-d', data);
-			valTime = dateFormat('H:i', data);
-			valTimeSec = dateFormat('H:i:s', data);
+		if( presetString ){
+			valDate = dateFormat('Y-m-d', presetString);
+			valTime = dateFormat('H:i', presetString);
+			valTimeSec = dateFormat('H:i:s', presetString);
 		}
 
 		var $date = $('<input type="date" class="form-control">')
@@ -61,8 +67,12 @@ module.exports = function(broccoli){
 		}
 		src = JSON.parse( JSON.stringify(src) );
 
+		var finData = {
+			"src": src
+		};
+
 		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
-			callback(src);
+			callback(finData);
 		}); });
 		return this;
 	}
