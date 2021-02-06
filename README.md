@@ -356,7 +356,7 @@ $ composer test
 
 ## 更新履歴 - Change log
 
-### broccoli-html-editor v0.4.0 (リリース日未定)
+### broccoli-html-editor v0.4.0 (2021年2月6日)
 
 - モジュールのマルチ言語化に対応した。
 - あとからモジュールに追加した moduleフィールド または loopフィールドがある場合に、編集ウィンドウで起きる不具合を修正。
