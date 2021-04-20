@@ -41,28 +41,17 @@
         "phpunit/phpunit": "^4.1.0"
     },
     "autoload": {
+        "psr-4": {
+            "broccoliHtmlEditor\\": [
+                "php",
+                "php/fncs",
+                "php/helper"
+            ],
+            "broccoliHtmlEditor\\fields\\": [
+                "fields/php"
+            ]
+        },
         "files": [
-            "php/main.php",
-            "php/fieldBase.php",
-            "php/resourceMgr.php",
-            "php/classModule.php",
-            "php/buildModuleResources.php",
-            "php/buildBowl.php",
-            "php/gpi.php",
-            "php/userStorage.php",
-            "fields/php/href.php",
-            "fields/php/html_attr_text.php",
-            "fields/php/html.php",
-            "fields/php/image.php",
-            "fields/php/markdown.php",
-            "fields/php/multitext.php",
-            "fields/php/script.php",
-            "fields/php/select.php",
-            "fields/php/text.php",
-            "fields/php/color.php",
-            "fields/php/datetime.php",
-            "php/fncs/readme.php",
-            "php/helper/twig.php",
             "php/simple_html_dom.php"
         ]
     }
