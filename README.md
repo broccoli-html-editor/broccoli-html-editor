@@ -358,6 +358,7 @@ $ composer test
 
 ### broccoli-html-editor v0.4.1 (リリース日未定)
 
+- `scssphp/scssphp` への対応を追加。
 - 内部コードの細かい修正。
 
 ### broccoli-html-editor v0.4.0 (2021年2月6日)
