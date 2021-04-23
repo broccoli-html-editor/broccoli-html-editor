@@ -23,8 +23,7 @@
     "config": {
         "process-timeout": 0
     },
-    "minimum-stability": "stable",
-    "prefer-stable": true,
+    "minimum-stability": "dev",
     "repositories": [
     ],
     "require": {
@@ -37,7 +36,11 @@
         "twig/twig": ">=1.35",
         "leafo/scssphp": ">=0.7.6"
     },
+    "suggest": {
+        "scssphp/scssphp": "This is the successor package to \"leafo/scssphp\"."
+    },
     "require-dev": {
+        "scssphp/scssphp": "~1.4.1",
         "phpunit/phpunit": "^4.1.0"
     },
     "autoload": {
