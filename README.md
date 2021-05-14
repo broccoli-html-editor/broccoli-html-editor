@@ -356,6 +356,10 @@ $ composer test
 
 ## 更新履歴 - Change log
 
+### broccoli-html-editor v0.4.2 (リリース日未定)
+
+- 画像ファイルを直接ドロップしたあとに起きるスクリプトエラーを修正。
+
 ### broccoli-html-editor v0.4.1 (2021年4月23日)
 
 - `scssphp/scssphp` への対応を追加。

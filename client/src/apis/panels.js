@@ -582,9 +582,7 @@ module.exports = function(broccoli){
 						broccoli.message('ファイルを挿入しました。');
 						broccoli.redraw(function(){
 							broccoli.closeProgress(function(){
-								broccoli.selectInstance(newInstancePath, function(){
-									callback();
-								});
+								callback();
 							});
 						});
 					});
@@ -925,18 +923,6 @@ module.exports = function(broccoli){
 					}
 					broccoli.resourceMgr.setResourceDb(tmpResourceDb, function(result){
 						callback();
-						// broccoli.unselectInstance(function(){
-						// 	broccoli.saveContents(function(){
-						// 		broccoli.message('クリップモジュールを挿入しました。');
-						// 		broccoli.redraw(function(){
-						// 			broccoli.closeProgress(function(){
-						// 				broccoli.selectInstance(newInstancePath, function(){
-						// 					callback();
-						// 				});
-						// 			});
-						// 		});
-						// 	});
-						// });
 					});
 				});
 			}
