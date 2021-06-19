@@ -189,7 +189,7 @@ window.main = new (function(){
 								try{
 									res = JSON.parse(data);
 								}catch(e){
-									console.error(e);
+									console.error(e, data);
 								}
 								// console.log(res);
 							},

@@ -279,16 +279,16 @@ class gpi{
 				default:
 					return array(
 						'result' => false,
-						'message' => 'Unknown GPI function. ('.$api.')',
+						'errors' => array('Unknown GPI function. ('.$api.')'),
 					);
 			}
 
-		} catch( Exception $e ) {
+		} catch( \Exception $e ) {
 
 			$this->broccoli->log( $e->getMessage() );
 			return array(
 				'result' => false,
-				'message' => $e->getMessage(),
+				'errors' => array($e->getMessage()),
 			);
 
 		}

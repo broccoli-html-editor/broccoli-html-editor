@@ -705,11 +705,9 @@
 		this.gpi = function(api, options, callback){
 			options = options || {};
 			options.lang = options.lang || this.options.lang;
-			this.options.gpiBridge(api, options, function(result,a,b,c){
+			this.options.gpiBridge(api, options, function(result){
 				if(typeof(result) == typeof({}) && result.errors && result.errors.length){
-					for(var i in result.errors){
-						console.error(result.errors[i]);
-					}
+					console.error(result.errors);
 				}
 				callback(result);
 			});
