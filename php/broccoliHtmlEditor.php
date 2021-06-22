@@ -784,7 +784,7 @@ class broccoliHtmlEditor{
 
 		$dataJson->bowl = (property_exists($dataJson, 'bowl') ? $dataJson->bowl : json_decode('{}'));
 
-		if( !array_key_exists('bowlList', $options) && !$options['bowlList']){
+		if( !array_key_exists('bowlList', $options) || !$options['bowlList']){
 			$options['bowlList'] = array();
 		}
 		if( count($options['bowlList']) ){
