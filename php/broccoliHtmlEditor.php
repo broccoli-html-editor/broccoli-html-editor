@@ -778,14 +778,18 @@ class broccoliHtmlEditor{
 	public function buildHtml( $options = array() ){
 		$dataJson = file_get_contents($this->realpathDataDir.'/data.json');
 		$dataJson = json_decode($dataJson);
+		if( !is_object($dataJson) ){
+			$dataJson = (object) $dataJson;
+		}
 
 		$dataJson->bowl = (@$dataJson->bowl ? $dataJson->bowl : json_decode('{}'));
-		if(!@$options['bowlList']){
+
+		if( !array_key_exists('bowlList', $options) && !$options['bowlList']){
 			$options['bowlList'] = array();
 		}
 		if( count($options['bowlList']) ){
 			foreach( $options['bowlList'] as $idx=>$row  ){
-				if( !@$dataJson->bowl->{$options['bowlList'][$idx]} ){
+				if( !isset($dataJson->bowl->{$options['bowlList'][$idx]}) || !$dataJson->bowl->{$options['bowlList'][$idx]} ){
 					$tmpBowlVal = array(
 						"modId" => "_sys/root",
 						"fields" => array(

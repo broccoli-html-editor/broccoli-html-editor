@@ -358,6 +358,7 @@ $ composer test
 
 ### broccoli-html-editor v0.4.3 (リリース日未定)
 
+- ブランクのコンテンツから制作を始めたときに起きる不具合を修正。
 - 内部エラー処理に関する修正。
 
 ### broccoli-html-editor v0.4.2 (2021年5月25日)
