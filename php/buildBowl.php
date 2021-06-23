@@ -111,16 +111,18 @@ class buildBowl{
 					}
 
 					if( $this->options['mode'] == 'canvas' ){
-						$tmpopt = json_decode( json_encode($opt), true );
-						if(!is_array($fieldData[$field->name])){ $fieldData[$field->name] = array(); }
-						$tmpopt['instancePath'] .= '@'.(count($fieldData[$field->name]));
-						$tmp_tplDataObj .= $this->mkAppender(
-							'module',
-							array(
-								'modId' => $mod->id,
-								'instancePath' => $tmpopt['instancePath']
-							)
-						);
+						if( !count($fieldData[$field->name]) ){ // Appenderの表示数を減らす。
+							$tmpopt = json_decode( json_encode($opt), true );
+							if(!is_array($fieldData[$field->name])){ $fieldData[$field->name] = array(); }
+							$tmpopt['instancePath'] .= '@'.(count($fieldData[$field->name]));
+							$tmp_tplDataObj .= $this->mkAppender(
+								'module',
+								array(
+									'modId' => $mod->id,
+									'instancePath' => $tmpopt['instancePath']
+								)
+							);
+						}
 					}
 
 					$tplDataObj[$field->name] = $tmp_tplDataObj;
@@ -227,12 +229,14 @@ class buildBowl{
 						echo $appender;
 
 					}elseif($mod->fields->{$fieldNameFor}->fieldType == 'module'){
-						$appender = $this->mkAppender('module', array(
-							'modId' => $this->data->modId,
-							'subModName' => null,
-							'instancePath' => $this->options['instancePath'].'/fields.'.$fieldNameFor.'@'.count($fieldData[$fieldNameFor]),
-						));
-						echo $appender;
+						if( !count($fieldData[$fieldNameFor]) ){ // Appenderの表示数を減らす。
+							$appender = $this->mkAppender('module', array(
+								'modId' => $this->data->modId,
+								'subModName' => null,
+								'instancePath' => $this->options['instancePath'].'/fields.'.$fieldNameFor.'@'.count($fieldData[$fieldNameFor]),
+							));
+							echo $appender;
+						}
 
 					}
 					return;
@@ -326,13 +330,15 @@ class buildBowl{
 						$tmpopt = json_decode( json_encode($opt), true );
 						if(!is_array(@$fieldData[$field->module->name])){ $fieldData[$field->module->name] = array(); }
 						$tmpopt['instancePath'] .= '@'.(count($fieldData[$field->module->name]));
-						$tmpVal .= $this->mkAppender(
-							'module',
-							array(
-								'modId' => $mod->id,
-								'instancePath' => $tmpopt['instancePath']
-							)
-						);
+						if( !count($fieldData[$field->module->name]) ){ // Appenderの表示数を減らす。
+							$tmpVal .= $this->mkAppender(
+								'module',
+								array(
+									'modId' => $mod->id,
+									'instancePath' => $tmpopt['instancePath']
+								)
+							);
+						}
 					}
 
 					if( !@$field->module->hidden ){//← "hidden": true だったら、非表示(=出力しない)

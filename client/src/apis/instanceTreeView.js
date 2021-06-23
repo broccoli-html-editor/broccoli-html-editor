@@ -102,6 +102,13 @@ module.exports = function(broccoli){
 								return;
 							} ,
 							function(){
+								if( data.fields[idx] && data.fields[idx].length ){
+									// Appenderの表示数を減らす。
+									$ul.append( $li );
+									it1.next();
+									return;
+								}
+
 								var instancePath = parentInstancePath+'/fields.'+idx+'@'+(data.fields[idx]?data.fields[idx].length:0);
 
 								var $appender = $('<div>')

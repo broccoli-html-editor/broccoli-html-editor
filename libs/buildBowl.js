@@ -321,13 +321,15 @@ module.exports = function(broccoli, data, options, callback){
 														var tmpopt = JSON.parse( JSON.stringify(opt) );
 														if(typeof(fieldData[field.name]) != typeof([])){ fieldData[field.name] = []; }
 														tmpopt.instancePath += '@'+(fieldData[field.name].length);
-														tmp_tplDataObj += mkAppender(
-															'module',
-															{
-																'modId': mod.id,
-																'instancePath': tmpopt.instancePath
-															}
-														);
+														if( !fieldData[field.name].length ){ // Appenderの表示数を減らす。
+															tmp_tplDataObj += mkAppender(
+																'module',
+																{
+																	'modId': mod.id,
+																	'instancePath': tmpopt.instancePath
+																}
+															);
+														}
 													}
 
 													tplDataObj[field.name] = tmp_tplDataObj;
@@ -451,11 +453,13 @@ module.exports = function(broccoli, data, options, callback){
 												return $appender;
 
 											}else if(mod.fields[fieldNameFor].fieldType == 'module'){
-												var $appender = mkAppender('module', {
-													'modId': data.modId,
-													'subModName': null,
-													'instancePath': options.instancePath+'/fields.'+fieldNameFor+'@'+count(fieldData[fieldNameFor].length)
-												});
+												if( !fieldData[fieldNameFor].length ){ // Appenderの表示数を減らす。
+													var $appender = mkAppender('module', {
+														'modId': data.modId,
+														'subModName': null,
+														'instancePath': options.instancePath+'/fields.'+fieldNameFor+'@'+count(fieldData[fieldNameFor].length)
+													});
+												}
 												return $appender;
 
 											}
@@ -580,13 +584,15 @@ module.exports = function(broccoli, data, options, callback){
 										var tmpopt = JSON.parse( JSON.stringify(opt) );
 										if(typeof(fieldData[field.module.name]) != typeof([])){ fieldData[field.module.name] = []; }
 										tmpopt.instancePath += '@'+(fieldData[field.module.name].length);
-										tmpVal += mkAppender(
-											'module',
-											{
-												'modId': mod.id,
-												'instancePath': tmpopt.instancePath
-											}
-										);
+										if( !fieldData[field.module.name].length ){ // Appenderの表示数を減らす。
+											tmpVal += mkAppender(
+												'module',
+												{
+													'modId': mod.id,
+													'instancePath': tmpopt.instancePath
+												}
+											);
+										}
 									}
 
 									if( !field.module.hidden ){//← "hidden": true だったら、非表示(=出力しない)
