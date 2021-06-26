@@ -356,7 +356,7 @@ $ composer test
 
 ## 更新履歴 - Change log
 
-### broccoli-html-editor v0.4.3 (リリース日未定)
+### broccoli-html-editor v0.4.3 (2021年6月26日)
 
 - UIの改善: アペンダーの表示量を少なくした。
 - ブランクのコンテンツから制作を始めたときに起きる不具合を修正。
