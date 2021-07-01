@@ -321,7 +321,8 @@ module.exports = function(broccoli, data, options, callback){
 														var tmpopt = JSON.parse( JSON.stringify(opt) );
 														if(typeof(fieldData[field.name]) != typeof([])){ fieldData[field.name] = []; }
 														tmpopt.instancePath += '@'+(fieldData[field.name].length);
-														if( !fieldData[field.name].length ){ // Appenderの表示数を減らす。
+														var tmpDepth = tmpopt.instancePath.split('/');
+														if( tmpDepth.length <= 3 || !fieldData[field.name].length ){ // Appenderの表示数を減らす。
 															tmp_tplDataObj += mkAppender(
 																'module',
 																{
@@ -584,7 +585,8 @@ module.exports = function(broccoli, data, options, callback){
 										var tmpopt = JSON.parse( JSON.stringify(opt) );
 										if(typeof(fieldData[field.module.name]) != typeof([])){ fieldData[field.module.name] = []; }
 										tmpopt.instancePath += '@'+(fieldData[field.module.name].length);
-										if( !fieldData[field.module.name].length ){ // Appenderの表示数を減らす。
+										var tmpDepth = tmpopt.instancePath.split('/');
+										if( tmpDepth.length <= 3 || !fieldData[field.module.name].length ){ // Appenderの表示数を減らす。
 											tmpVal += mkAppender(
 												'module',
 												{
