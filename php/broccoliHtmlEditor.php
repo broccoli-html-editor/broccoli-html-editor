@@ -116,7 +116,7 @@ class broccoliHtmlEditor{
 		if( !$options['pathHtml'] || !$options['pathResourceDir'] || !$options['realpathDataDir'] ){
 			// 必須項目
 			// var_dump($options);
-			var_dump('[ERROR] $options[\'pathHtml\'], $options[\'pathResourceDir\'], and $options[\'realpathDataDir\'] are required.');
+			trigger_error('[ERROR] $options[\'pathHtml\'], $options[\'pathResourceDir\'], and $options[\'realpathDataDir\'] are required.');
 			return;
 		}
 
@@ -318,6 +318,9 @@ class broccoliHtmlEditor{
 
 		$modules = $this->paths_module_template;
 		$rtn = array();
+		if( !is_array( $modules ) || !count($modules) ){
+			return $rtn;
+		}
 
 		$fncFindLang = function( $lb, $key, $default ){
 			$tmpName = $lb->get($key);
