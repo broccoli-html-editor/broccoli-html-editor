@@ -172,6 +172,7 @@ class buildBowl{
 				$tplDataObj['_ENV'] = array(
 					"mode" => $this->options['mode'],
 					"vars" => array(),
+					"lang" => $this->broccoli->lb()->lang,
 				);
 				foreach( $this->nameSpace['varsFinalized'] as $tmpKey=>$tmpRow ){
 					$tplDataObj['_ENV']["vars"][$tmpKey] = $tmpRow['val'];

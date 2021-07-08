@@ -396,7 +396,8 @@ module.exports = function(broccoli, data, options, callback){
 									// Twig: 環境変数登録
 									tplDataObj._ENV = {
 										"mode": options.mode,
-										"vars": {}
+										"vars": {},
+										"lang": broccoli.lb.lang,
 									};
 									for(var tmpIdx in _this.nameSpace.varsFinalized){
 										tplDataObj._ENV.vars[tmpIdx] = _this.nameSpace.varsFinalized[tmpIdx].val;
