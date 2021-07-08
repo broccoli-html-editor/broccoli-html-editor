@@ -398,6 +398,7 @@ module.exports = function(broccoli, data, options, callback){
 										"mode": options.mode,
 										"vars": {},
 										"lang": broccoli.lb.lang,
+										"data": data,
 									};
 									for(var tmpIdx in _this.nameSpace.varsFinalized){
 										tplDataObj._ENV.vars[tmpIdx] = _this.nameSpace.varsFinalized[tmpIdx].val;
