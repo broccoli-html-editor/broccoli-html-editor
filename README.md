@@ -356,7 +356,7 @@ $ composer test
 
 ## 更新履歴 - Change log
 
-### broccoli-html-editor v0.4.4 (リリース日未定)
+### broccoli-html-editor v0.4.4 (2021年7月10日)
 
 - UIの改善: アペンダーの表示量を調整した。一番浅い階層だけは、内容がセットされていても常に表示されるようになった。
 - Twigテンプレートで作成したモジュールで、 `_ENV.lang` と `_ENV.data` を利用できるようになった。
