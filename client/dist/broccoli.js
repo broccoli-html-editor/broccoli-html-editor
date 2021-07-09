@@ -4203,6 +4203,7 @@ module.exports = function(broccoli){
 									// 編集内容を保存する
 									// console.log( data );
 									// console.log( mod );
+									broccoli.px2style.loading();
 									formErrorMessage([]);
 
 									_this.lock();//フォームをロック
@@ -4212,11 +4213,13 @@ module.exports = function(broccoli){
 											// エラーがあるため次へ進めない
 											_this.unlock();
 											broccoli.closeProgress();
+											broccoli.px2style.closeLoading();
 											return;
 										}
 										saveInstance(instancePath, mod, data, function(res){
 											broccoli.progressMessage('');
 											broccoli.closeProgress();
+											broccoli.px2style.closeLoading();
 											callback(res);
 										});
 									});
@@ -4456,21 +4459,34 @@ module.exports = function(broccoli){
 	 */
 	this.lock = function(callback){
 		callback = callback || function(){};
-		$editWindow.find('.broccoli__edit-window-builtin-fields').find('input, textarea').attr({'disabled': true});
-		$editWindow.find('.broccoli__edit-window-form-buttons').find('button').attr({'disabled': true});
+		var $formElms = $editWindow.find('input,select,textarea,button');
+		$formElms.each(function(idx, elm){
+			var $elm = $(elm);
+			var isDisabled = !!$elm.attr('disabled');
+			if( !isDisabled ){
+				$elm.attr({
+					'data-broccoli-html-editor--locked': true,
+					'disabled': true
+				});
+			}
+		});
 		callback();
-		return this;
+		return;
+
 	}
 
 	/**
 	 * フォーム操作の凍結を解除する
 	 */
 	this.unlock = function(callback){
-		callback = callback || function(){};
-		$editWindow.find('.broccoli__edit-window-builtin-fields').find('input, textarea').attr({'disabled': false});
-		$editWindow.find('.broccoli__edit-window-form-buttons').find('button').attr({'disabled': false});
+		var $formElms = $editWindow.find('[data-broccoli-html-editor--locked]');
+		$formElms
+			.removeAttr('data-broccoli-html-editor--locked')
+			.removeAttr('disabled')
+		;
 		callback();
-		return this;
+		return;
+
 	}
 
 	return;
