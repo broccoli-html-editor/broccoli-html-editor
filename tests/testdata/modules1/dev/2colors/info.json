@@ -1,0 +1,17 @@
+{
+	"name": "2つの色選択",
+	"interface": {
+		"fields":{
+			"bgcolor":{
+				"type":"color",
+				"label":"背景色"
+			} ,
+			"color":{
+				"type":"color",
+				"label":"文字色"
+			}
+		},
+		"subModule": {
+		}
+	}
+}

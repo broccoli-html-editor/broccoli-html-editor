@@ -22,7 +22,11 @@ module.exports = function(broccoli){
 	this.bind = function( fieldData, mode, mod, callback ){
 		var rtn = '';
 		try {
-			rtn = utils79.toStr(fieldData);
+			if( typeof(fieldData) === typeof({}) && fieldData.src ){
+				rtn = utils79.toStr(fieldData.src);
+			}else{
+				rtn = utils79.toStr(fieldData);
+			}
 		} catch (e) {
 			rtn = '[error]'
 		}

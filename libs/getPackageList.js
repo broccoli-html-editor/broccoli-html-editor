@@ -8,11 +8,20 @@ module.exports = function(broccoli, callback){
 	callback = callback || function(){};
 
 	var it79 = require('iterate79');
+	var LangBank = require('langbank');
 	var path = require('path');
 	var php = require('phpjs');
 	var fs = require('fs');
 	var $modules = broccoli.paths_module_template;
 	var rtn = {};
+
+	function fncFindLang( $lb, $key, $default ){
+		var $tmpName = $lb.get($key);
+		if( $tmpName.length && $tmpName !== '---' ){
+			return $tmpName;
+		}
+		return $default;
+	};
 
 	it79.fnc(
 		{},
@@ -22,22 +31,31 @@ module.exports = function(broccoli, callback){
 					$modules,
 					function(it1, row, idx){
 						var realpath = row;
-						var infoJson = {};
-						try {
-							infoJson = JSON.parse(fs.readFileSync( realpath+'info.json' ));
-						} catch (e) {
-							infoJson = {};
-						}
-						rtn[idx] = {
-							'packageId': idx,
-							'packageName': (infoJson.name || idx),
-							'realpath': realpath,
-							'infoJson': infoJson,
-							'deprecated': (infoJson.deprecated || false)
-						};
-						broccoli.getModuleListByPackageId(idx, function(modList){
-							rtn[idx].categories = modList.categories;
-							it1.next();
+						var lb = new LangBank(path.resolve( realpath, 'language.csv' ), function(){
+							lb.setLang(broccoli.lb.lang);
+
+							var infoJson = {};
+							try {
+								infoJson = JSON.parse(fs.readFileSync( realpath+'info.json' ));
+							} catch (e) {
+								infoJson = {};
+							}
+							rtn[idx] = {
+								'packageId': idx,
+								'packageName': (infoJson.name || idx),
+								'realpath': realpath,
+								'infoJson': infoJson,
+								'deprecated': (infoJson.deprecated || false)
+							};
+
+							// Multi Language
+							infoJson.name = fncFindLang(lb, 'name', infoJson.name);
+							rtn[idx].packageName = fncFindLang(lb, 'name', rtn[idx].packageName);
+
+							broccoli.getModuleListByPackageId(idx, function(modList){
+								rtn[idx].categories = modList.categories;
+								it1.next();
+							});
 						});
 					} ,
 					function(){

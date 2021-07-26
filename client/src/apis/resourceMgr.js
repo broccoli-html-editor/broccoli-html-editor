@@ -33,14 +33,10 @@ module.exports = function(broccoli){
 	/**
 	 * Save resources DB
 	 * 
-	 * このメソッドは、現在は使われていません。
-	 * パフォーマンス改善の一環で、リソース全体の送受信を廃止したためです。
-	 * 
 	 * @param  {Function} cb Callback function.
 	 * @return {boolean}     Always true.
 	 */
 	this.save = function( callback ){
-		console.error('resourceDb save method: called.');
 		callback = callback || function(){};
 		it79.fnc({}, [
 			function(it1, data){
@@ -48,35 +44,11 @@ module.exports = function(broccoli){
 					'resourceMgr.save',
 					{'resourceDb': _resourceDb} ,
 					function(rtn){
-						console.error('resourceDb save method: done.');
 						callback(rtn);
 					}
 				);
 			}
 		]);
-		return;
-	}
-
-	/**
-	 * get resource DB
-	 */
-	this.getResourceDb = function( callback ){
-		callback = callback || function(){};
-		callback(_resourceDb);
-		return;
-	}
-
-	/**
-	 * get resource DB
-	 */
-	this.setResourceDb = function( newResourceDb, callback ){
-		callback = callback || function(){};
-		if( typeof(newResourceDb) !== typeof({}) ){
-			callback(false);
-			return;
-		}
-		_resourceDb = newResourceDb;
-		callback(true);
 		return;
 	}
 
@@ -100,6 +72,29 @@ module.exports = function(broccoli){
 				);
 			}
 		]);
+		return;
+	}
+
+	/**
+	 * get resource DB
+	 */
+	this.getResourceDb = function( callback ){
+		callback = callback || function(){};
+		callback(_resourceDb);
+		return;
+	}
+
+	/**
+	 * set resource DB
+	 */
+	this.setResourceDb = function( newResourceDb, callback ){
+		callback = callback || function(){};
+		if( typeof(newResourceDb) !== typeof({}) ){
+			callback(false);
+			return;
+		}
+		_resourceDb = newResourceDb;
+		callback(true);
 		return;
 	}
 

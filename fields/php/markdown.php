@@ -27,7 +27,10 @@ class markdown extends \broccoliHtmlEditor\fieldBase{
 	 */
 	public function bind( $fieldData, $mode, $mod ){
 		$rtn = '';
-		if( is_string($fieldData) ){
+		if(is_array($fieldData) && array_key_exists('src', $fieldData) && is_string($fieldData['src'])){
+			$rtn = ''.$fieldData['src'];
+			$rtn = $this->broccoli->markdown($rtn);
+		}elseif( is_string($fieldData) ){
 			$rtn = $this->broccoli->markdown($fieldData);
 		}
 		if( $mode == 'canvas' && !strlen(trim($rtn)) ){

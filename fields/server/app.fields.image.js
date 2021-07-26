@@ -18,6 +18,8 @@ module.exports = function(broccoli){
 			rtn = fieldData;
 		}
 
+		var is_image_uploaded = true;
+
 		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 
 			if( rtn.resType == 'web' ){
@@ -33,6 +35,19 @@ module.exports = function(broccoli){
 						function(it1, data){
 							_resMgr.getResource( rtn.resKey, function(res){
 								data.resourceInfo = res;
+								if( !data.resourceInfo ){
+									is_image_uploaded = false;
+								}else if( data.resourceInfo ){
+									if( !data.resourceInfo.base64 ){
+										is_image_uploaded = false;
+									}else if( !data.resourceInfo.size ){
+										is_image_uploaded = false;
+									}
+								}
+								if( mode != 'canvas' && !is_image_uploaded ){
+									callback('');
+									return;
+								}
 								it1.next(data);
 							} );
 							return;

@@ -5,9 +5,145 @@
             "fields": {
                 "main": [
                     {
-                        "modId": "testMod1:dev/parse_error_1",
+                        "modId": "testMod1:dev/multilang",
                         "fields": {
-                            "__error__": ""
+                            "text1": {
+                                "src": "",
+                                "editor": "markdown"
+                            },
+                            "loop1": [
+                                {
+                                    "modId": "testMod1:dev/multilang",
+                                    "fields": {
+                                        "text2": {
+                                            "src": "",
+                                            "editor": "markdown"
+                                        },
+                                        "module2": [
+                                            {
+                                                "modId": "testMod1:dev/select1",
+                                                "fields": {
+                                                    "select-test-1": {
+                                                        "src": "default1"
+                                                    },
+                                                    "select-test-2": {
+                                                        "src": "select1"
+                                                    },
+                                                    "select-test-3": {
+                                                        "src": "radio1"
+                                                    }
+                                                },
+                                                "anchor": "",
+                                                "dec": ""
+                                            }
+                                        ],
+                                        "select2": "1"
+                                    },
+                                    "subModName": "loop1",
+                                    "anchor": "",
+                                    "dec": ""
+                                }
+                            ],
+                            "module1": []
+                        },
+                        "anchor": "",
+                        "dec": ""
+                    },
+                    {
+                        "modId": "testMod1:units/cols2",
+                        "fields": {
+                            "column1": [
+                                {
+                                    "modId": "PlainHTMLElements:PlainHTML/MultiText",
+                                    "fields": {
+                                        "main": {
+                                            "src": "Left 1",
+                                            "editor": "markdown"
+                                        }
+                                    },
+                                    "anchor": "",
+                                    "dec": ""
+                                },
+                                {
+                                    "modId": "PlainHTMLElements:PlainHTML/MultiText",
+                                    "fields": {
+                                        "main": {
+                                            "src": "Left 2",
+                                            "editor": "markdown"
+                                        }
+                                    },
+                                    "anchor": "",
+                                    "dec": ""
+                                },
+                                {
+                                    "modId": "PlainHTMLElements:PlainHTML/MultiText",
+                                    "fields": {
+                                        "main": {
+                                            "src": "Left 3",
+                                            "editor": "markdown"
+                                        }
+                                    },
+                                    "anchor": "",
+                                    "dec": ""
+                                },
+                                {
+                                    "modId": "PlainHTMLElements:PlainHTML/MultiText",
+                                    "fields": {
+                                        "main": {
+                                            "src": "Left 4",
+                                            "editor": "markdown"
+                                        }
+                                    },
+                                    "anchor": "",
+                                    "dec": ""
+                                }
+                            ],
+                            "column2": [
+                                {
+                                    "modId": "PlainHTMLElements:PlainHTML/MultiText",
+                                    "fields": {
+                                        "main": {
+                                            "src": "Right 1",
+                                            "editor": "markdown"
+                                        }
+                                    },
+                                    "anchor": "",
+                                    "dec": ""
+                                },
+                                {
+                                    "modId": "PlainHTMLElements:PlainHTML/MultiText",
+                                    "fields": {
+                                        "main": {
+                                            "src": "Right 2",
+                                            "editor": "markdown"
+                                        }
+                                    },
+                                    "anchor": "",
+                                    "dec": ""
+                                },
+                                {
+                                    "modId": "PlainHTMLElements:PlainHTML/MultiText",
+                                    "fields": {
+                                        "main": {
+                                            "src": "Right 3",
+                                            "editor": "markdown"
+                                        }
+                                    },
+                                    "anchor": "",
+                                    "dec": ""
+                                },
+                                {
+                                    "modId": "PlainHTMLElements:PlainHTML/MultiText",
+                                    "fields": {
+                                        "main": {
+                                            "src": "Right 4",
+                                            "editor": "markdown"
+                                        }
+                                    },
+                                    "anchor": "",
+                                    "dec": ""
+                                }
+                            ]
                         },
                         "anchor": "",
                         "dec": ""
@@ -104,6 +240,32 @@
                                                             "subModName": "sample_loop3",
                                                             "anchor": "",
                                                             "dec": ""
+                                                        },
+                                                        {
+                                                            "modId": "testMod1:dev/mod_in_loop",
+                                                            "fields": {
+                                                                "multitext_src3": {
+                                                                    "src": "loop element 2",
+                                                                    "editor": "markdown"
+                                                                },
+                                                                "main": []
+                                                            },
+                                                            "subModName": "sample_loop3",
+                                                            "anchor": "",
+                                                            "dec": ""
+                                                        },
+                                                        {
+                                                            "modId": "testMod1:dev/mod_in_loop",
+                                                            "fields": {
+                                                                "multitext_src3": {
+                                                                    "src": "loop element 3",
+                                                                    "editor": "markdown"
+                                                                },
+                                                                "main": []
+                                                            },
+                                                            "subModName": "sample_loop3",
+                                                            "anchor": "",
+                                                            "dec": ""
                                                         }
                                                     ]
                                                 },
@@ -153,6 +315,52 @@
                     {
                         "modId": "testMod1:dev/validate_test",
                         "fields": {
+                            "html_required": {
+                                "src": "test1@example.com"
+                            },
+                            "markdown_required": {
+                                "src": "test1@example.com"
+                            },
+                            "multitext_required": {
+                                "src": "customvalidation",
+                                "editor": "markdown"
+                            },
+                            "html_attr_text_required": {
+                                "src": "test1@example.com"
+                            },
+                            "href_required": {
+                                "src": "test1@example.com"
+                            },
+                            "text": {
+                                "src": ""
+                            },
+                            "text_required": {
+                                "src": "test1@example.com"
+                            }
+                        },
+                        "anchor": "",
+                        "dec": ""
+                    },
+                    {
+                        "modId": "testMod1:dev/validate_test",
+                        "fields": {
+                            "text": "あああ",
+                            "text_required": "あああ",
+                            "html_required": "あああ",
+                            "html_attr_text_required": "test1@example.com",
+                            "href_required": "あああ",
+                            "markdown_required": "あああ",
+                            "multitext_required": {
+                                "src": "customvalidation",
+                                "editor": "markdown"
+                            }
+                        },
+                        "anchor": "",
+                        "dec": ""
+                    },
+                    {
+                        "modId": "testMod1:dev/validate_test",
+                        "fields": {
                             "text": "",
                             "text_required": "",
                             "html_required": "",
@@ -185,11 +393,11 @@
                                         "href": "",
                                         "image_src": {
                                             "resKey": "259c0dd8b8365f6a3fd399aa47ce6196",
-                                            "path": "./index_files/resources/otosan.jpg",
+                                            "path": "./index_files/resources/flowers.jpg",
                                             "resType": "",
                                             "webUrl": ""
                                         },
-                                        "alt_text": ""
+                                        "alt_text": "たくさんの花"
                                     },
                                     "anchor": "",
                                     "dec": ""
@@ -260,13 +468,13 @@
                                                 "type": "image/png",
                                                 "base64": "iVBORw0KGgoAAAANSUhEUgAAAF0AAAAiCAMAAAAK2yXlAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAEOUExURb+/v0BAQO/v78HdmevyxxAQEH9/f/jvyiAgIDAwMN/f38/Pz9jlso+Pj2BgYJ+fn7HUgHBwcFBQUPz9+urx1vr79ebuufT46q+vr/bqvO/04NXksN7puerz3eLsx+/vxNnmsuDqwtXou9rnt+DquvXqvLzakdznuPX57v789snfot3ovODuzPr89svgo9XkrtDiqv7++/r028Pdmu3z27TVg+nwwuXuvb7alMviqu703OTtwPz57bzZj+fvwejwwfnx09rou/LtwPjwzvDuv8HblejvvefvvefvxefuvevuvvX44/j67PD11eXuzPTz0fv35PbswfXtwMbfovXpuOTttNXjrazRdwAAAP///8/Stw4AAAIxSURBVHjatNfXYpswFAZgoQSCMRjbiUdGM5qmaZqOdO+mI+neFUh6/xfpkRCysTAFjM8NMuAP+HXAGPGceuifjngThcxVo8MYanewDH1wEKvaWG9aX9+IJ+VvNatv+XGmDkbN6aPT2Kgf1eLHoZevD3bjvPKrxN9jDOXpmcCzdVg+fmuO/jYuqOeZi0cI4Yo6vXl3nn38ejXZx4Hv4g4T1RE+DK1kS4sxh3OWlqnT7h0/z97/FEUTPbQV4AKP4UOgNojDFOmUPj0z5/TaMNI6YsxmrTH2QJOcWAE90k4WHCG4hgCCy9UpfbCdxXc+R1FGZy2cjsZJj1gyl/A/uSfVnY7/+EkUzeqqnSHyvphhF07WScYldEofpfHvv1B29PGn1i2uh65YilBsOQnldEpfnenAZe0drRk6T+dOTMFELKFTerm9c57aX/4QUqBjpq6ivE5XUvvDO0IK9b44d6eWPrzYJPk6DFtiGcIq4Ns19L0jQmZ0G+ue6cDCs6HTHXWkavoqIYYuTdkqkrHkzerqbBx189bVWd/jOLCTFldnjXTbBDDFiLfr6uljRt6z7TTxHlMt78ltdl3dQq78fg/rJ6O6ZXtylDzlautwxmEw9/kOBxo7YzOZbpH+3uz3ar/aN57N1Tfv31tU5/zK9Xz9zQnni+uc3+qa+trLqX0X0vntqzP671+ZfRfTIf6/U7oOvLm3VBm/1L+fLOMNG+IH/fG35by/Q/wrw6+N/Dv4J8AArkzcPsPp4BQAAAAASUVORK5CYII="
                                             },
-                                            "path": "./index_files/resources/i-love-coffee.png",
+                                            "path": "./index_files/resources/i-love-coffee.jpg",
                                             "resKey": "fe97281abfb0badd97668226cb50b6f3",
                                             "resType": "",
                                             "webUrl": ""
                                         },
-                                        "alt": "pxt",
-                                        "caption": "pxt"
+                                        "alt": "コーヒーとサラダ",
+                                        "caption": "コーヒーとサラダ"
                                     },
                                     "subModName": "thumb_loop",
                                     "anchor": "",
@@ -282,13 +490,13 @@
                                                 "type": "image/svg+xml",
                                                 "base64": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9InB4dF9sb2dvIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiDQoJIHk9IjBweCIgd2lkdGg9IjIzMnB4IiBoZWlnaHQ9IjEwNnB4IiB2aWV3Qm94PSIwIDAgMjMyIDEwNiIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMjMyIDEwNiIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+DQo8Zz4NCgk8Zz4NCgkJPHBhdGggZD0iTTExMC45Miw0My45MjFjMC01LjY4LTAuMDkxLTEwLjI2LTAuMzY2LTE0LjQ3NGg3LjIzN2wwLjQ1OCw3LjYwNGgwLjE4M2MzLjIwNi01LjQ5Niw4LjUyLTguNjExLDE1LjY2NC04LjYxMQ0KCQkJYzEwLjgxLDAsMTguODcxLDkuMDY5LDE4Ljg3MSwyMi41MzVjMCwxNS45MzgtOS44MDIsMjMuODE3LTIwLjE1MywyMy44MTdjLTUuOTU0LDAtMTAuOTkyLTIuNTY2LTEzLjY0OC02Ljk2M2gtMC4xODR2MjQuMDkyDQoJCQloLTguMDYyVjQzLjkyMXogTTExOC45ODEsNTUuNzM3YzAsMS4xLDAuMDkyLDIuMjkxLDAuMzY2LDMuMjk5YzEuMzc0LDUuNTg2LDYuMzIxLDkuNDM0LDEyLDkuNDM0DQoJCQljOC41MiwwLDEzLjQ2Ni02Ljk2MSwxMy40NjYtMTcuMTI5YzAtOC44ODYtNC41OC0xNi40ODgtMTMuMDk5LTE2LjQ4OGMtNS40OTcsMC0xMC43MTgsMy44NDctMTIuMjc1LDkuODkzDQoJCQljLTAuMTg0LDEuMS0wLjQ1OCwyLjI5LTAuNDU4LDMuMjk4VjU1LjczN3oiLz4NCgkJPHBhdGggZD0iTTE2Ni4wNjQsMjkuNDQ3bDYuMzIsOS40MzZjMS42NDksMi41NjQsMy4wMjMsNC43NjQsNC40ODgsNy4yMzZoMC4yNzVjMS40NjYtMi41NjQsMi45MzItNC44NTQsNC40ODgtNy4yMzZsNi4xMzgtOS40MzYNCgkJCWg4Ljc5NGwtMTUuMTE0LDIxLjQzNmwxNS40OCwyMi45MDFoLTkuMTZsLTYuNTA0LTkuOTg2Yy0xLjc0LTIuNTY0LTMuMjA2LTUuMDM3LTQuNzY0LTcuNjkzaC0wLjE4Mw0KCQkJYy0xLjQ2NiwyLjY1Ni0zLjAyMyw1LjAzNy00LjY3Miw3LjY5M2wtNi40MTIsOS45ODZoLTguODg2bDE1Ljc1Ni0yMi42MjdsLTE1LjAyMy0yMS43MUgxNjYuMDY0eiIvPg0KCQk8cGF0aCBkPSJNMjE5LjE5NCwxOC44MjF2MTAuNjI2aDExLjU0MnY2LjEzOGgtMTEuNTQydjIzLjkwOGMwLDUuNDk2LDEuNTU4LDguNjExLDYuMDQ2LDguNjExYzIuMTk4LDAsMy40ODEtMC4xODQsNC42NzItMC41NTENCgkJCWwwLjM2Niw2LjEzOWMtMS41NTcsMC41NDktNC4wMywxLjEtNy4xNDUsMS4xYy0zLjc1NiwwLTYuNzc5LTEuMjgzLTguNzAzLTMuMzkxYy0yLjE5OC0yLjQ3My0zLjExNC02LjQxMi0zLjExNC0xMS42MzNWMzUuNTg1DQoJCQloLTYuODd2LTYuMTM4aDYuODd2LTguMTUyTDIxOS4xOTQsMTguODIxeiIvPg0KCTwvZz4NCgk8Zz4NCgkJPHBhdGggZmlsbD0iI0U0RURCNCIgZD0iTTQ2LjIzNSwxMDMuOTExYzEuNzg2LTEuMDMxLDEyLjk3OS03LjQ5NCwxMy42MDUtNy44NTVjMC0wLjc5OSwwLTM0LjE3NiwwLTM0LjE3Ng0KCQkJYzAtMC4yNTIsMC4xMzQtMC40ODYsMC4zNTQtMC42MTNjMCwwLDAuMDIxLTAuMDEyLDAuMDUxLTAuMDI5bDAuMDkyLTAuMDUzYzAuMDQyLTAuMDIzLDAuMDkxLTAuMDUzLDAuMTUxLTAuMDg4bDQuMTU4LTIuNA0KCQkJYzAuMDUyLTAuMDI5LDAuMTA1LTAuMDYxLDAuMTU5LTAuMDkybDI0Ljk4NS0xNC40MjRjMC0wLjcyNCwwLTEzLjY0OSwwLTE1LjcxMWMtMC45NzksMC41NjQtMTEuMjEsNi40NzItMjEuNTExLDEyLjQxOQ0KCQkJTDQ2LjIzNSw1My42MzJDNDYuMjM1LDU0Ljg0Nyw0Ni4yMzUsMTAxLjYwNCw0Ni4yMzUsMTAzLjkxMXoiLz4NCgkJPHBhdGggZmlsbD0iI0Y1RTlCOCIgZD0iTTg5Ljc5MSw0NS44MTNjLTAuMjUyLDAuMTQ1LTAuOTA2LDAuNTIyLTEuODUzLDEuMDY5Yy0wLjE1MywwLjA4OS0wLjMxMiwwLjE4MS0wLjQ3NSwwLjI3NA0KCQkJYy0wLjE0OCwwLjA4Ni0wLjMwMiwwLjE3NC0wLjQ2MiwwLjI2NmMtMC4wNDcsMC4wMjctMC4wOTMsMC4wNTUtMC4xNDIsMC4wODJjLTAuMzE5LDAuMTg1LTAuNjYsMC4zODItMS4wMTksMC41ODkNCgkJCWMtOC4zMDksNC43OTYtMjQuMDc5LDEzLjkwMS0yNC41ODcsMTQuMTk0YzAsMC43MDUsMCwyNi45MzYsMCwzMi45NTFjMS45NS0xLjEyNywyNy44NzEtMTYuMDkyLDI4LjUzNi0xNi40NzcNCgkJCUM4OS43OTEsNzcuOTk1LDg5Ljc5MSw0OC4wNjUsODkuNzkxLDQ1LjgxM3oiLz4NCgkJPHBhdGggZmlsbD0iI0FDRDE3NyIgZD0iTTEuMjY0LDc4Ljc2M2MwLjY4MSwwLjM5Myw0MS41NTEsMjMuOTU5LDQzLjU1NywyNS4xMTVWNTMuNjE2TDEuMjY0LDI4LjQ3DQoJCQlDMS4yNjQsMzAuNzkyLDEuMjY0LDc3Ljk3OCwxLjI2NCw3OC43NjN6Ii8+DQoJCTxwYXRoIGZpbGw9IiNENUUzQUQiIGQ9Ik02Ny43MTIsMzkuNTgzQzc3Ljk1OSwzMy42Niw4OC4wOTcsMjcuOCw4OS4wNywyNy4yMzZDODcuMDY1LDI2LjA3OCw0Ni4xOTQsMi40ODEsNDUuNTE0LDIuMDg5DQoJCQljLTAuNjgsMC4zOTMtNDEuNTE4LDI0LTQzLjUyOCwyNS4xNjNsNDMuNTcsMjUuMTIzTDY3LjcxMiwzOS41ODN6Ii8+DQoJPC9nPg0KPC9nPg0KPC9zdmc+"
                                             },
-                                            "path": "./index_files/resources/i-love-md8.png",
+                                            "path": "./index_files/resources/i-love-md8.jpg",
                                             "resKey": "060cc839a391baf81779188e7dfa553d",
                                             "resType": "",
                                             "webUrl": ""
                                         },
-                                        "alt": "pxt",
-                                        "caption": "こまった。"
+                                        "alt": "ティーバッグ",
+                                        "caption": "ティーバッグ"
                                     },
                                     "subModName": "thumb_loop",
                                     "anchor": "",
@@ -323,7 +531,9 @@
                                     "modId": "testMod1:parts/text",
                                     "fields": {
                                         "text_src": "ただのテキスト。<br />\nHTMLエンティティ変換される、はず。\n\n- でも、markdownの書式は使えない、はず。\n\nあー、改行が反映されない、か。\n\nスクロール位置は？\n\nちょうどいいじゃないですか。"
-                                    }
+                                    },
+                                    "anchor": "",
+                                    "dec": ""
                                 }
                             ],
                             "column3": [
@@ -763,12 +973,12 @@
                                                 "type": "image/png",
                                                 "base64": "iVBORw0KGgoAAAANSUhEUgAAAjsAAABuCAMAAAD21CIEAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo2M0MxRUI3NTJCMjA2ODExOTJCMEM4Qjk2MkE5Q0ZCOSIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpCNEM4RDVFQjY3MTYxMUUzOTNBMEQ1N0Q1MkQ3N0U5MSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpCNEM4RDVFQTY3MTYxMUUzOTNBMEQ1N0Q1MkQ3N0U5MSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjAzODAxMTc0MDcyMDY4MTE4NzFGRTZDQjZBMEE0MjYzIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjYzQzFFQjc1MkIyMDY4MTE5MkIwQzhCOTYyQTlDRkI5Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+yJEOWwAAAEhQTFRFf8/yv+f57/n9QLjs3/P8z+36EKbon9v2MLLrP7fsr+H3YMTvIKzpj9X0UL7uD6bncMrxL7LrX8PvH6zpb8nxT73uAKDm////6oPOcAAAABh0Uk5T//////////////////////////////8AzRMu6gAAEPtJREFUeNrsndmCoyoQQItFMbjEbOb///RqFKWgUEzsudMTeJjp7hg3jrVTwjONNN4bkG5BGomdNBI7aSR20kjspGFGxtI9SOzsG1KVQoiie42qgYRQYicOnLbqvCFKgJoldtJYGVp04VHpxE4a5OCqybv1UYhS8cROGg45sAXONPIssZOGPepIcgZ4WpbYSWM2kBuMR8k5Yywzrjq4yqzgiZ00CHVVCcImzuri2+FJ7BBCB1GRBxWSLPOvhiex40uU3LJk6lpGCqhcJ3YSOpaVE6HeFtHDEjtfbuvMUeQqjoXFrM5lYuer0ZltnTr6O9pIqiKx882jeSfgx823ysTOF49JhBQ71U85waMSO187yncdbiN5dGLnS8fkNOX7YzXGxP4mezmxY48JgHeSm5mp7EnsfOWo93pYhMzqssTON/rno9hp3vz6VCXWJna+cKhx8vln6BWJnS8cxYcGC/uMvcTO7x3yY2NXxLrpuuw5LeBwn0wC/MES2MSOq7Ka9/fA4oLLak6ZFU19JD+vNO5WbEpCU/PEzrGjDGTDeS0Ecr0y0eUQFjwb0SHmLNk50LZuIth98XVMiXViZ0tl8VeaAtw/tGHRtZqYaP21FoddQhVhcDXHRaESO47Y0TQP+fKHOjxDI38r95QXRK38YRnUmDqiaZvEzpGjcxkxd8idEFiZoQ2LiUTnuCTYtDv4lK/Ezlsqy78f2r3Z9RY7YkNhDHVlLWN6XqycH+QbFRFx8cTO8YMHp71w5NEoPKrnfnaYW1em8ghJsTdGsM6FSOz8kM6ibods8q6xHRMOFf5DLDuNV1c2FUe7mpIVXVXuF0ZthC0jjsu6JXY22dnt6YgNfaH8oJIm5NN+Rxoi/DZItvLhQx/Cjgirs7lMQxB+dUv52ruddxURMILj4gKJHXRPP70d5dpDrai61NbnSRqzaG/MmUVcA3waPE/sBOyA+hAC19UFp9w40qTOfowdSOwcHt5hf4Ad0vei2KmeiZ3fMLJjTMhVdsh0AMHOtFhjv61cR3DBEjtHD3aMCdnSsWlbLUawMywWLBh/k9zEzv9iKn+cIizW9iKo7FVLBXi4fqs2o3S4kK3wokSrdSKSAUBQ3DGnOuiH2GFsaXX0Rezw1dymIB75qVB1x4G5bgUwDaADB2iRCitIdqjj6bJaWYhvWn6Idobrh9h5Heb0i9hRh7CjVhUCxU65Mylh9/wpV5WiWejMonx0bvcS8huAZKrwE//DSfPTazgHuQ5bPZxdjFv+QnbuG2fODqnDaladNcLegX1RQN6uFm/YB2B5t8KOy6p0EvxV9iSjBigy/trJ5fWHK97dmQhG3DsCqF/BzmnDjzrEhOTrtVfW1Goh2mx+mD10uGoaqk+d2yXcmWKrblB1gQAjJfyI2hBcueoed1z9Cotvd6ZiVjgIeotdsP+XsnP7WXbYelhmYcd5jt3DjlPpwZP5rVdx9cYiUyC4b5KdSZzlvTGsSr8U1oBYVKhQ9rUTSUi3a+fLmCx6Eclfys6WzmqOYKdZd4MEmlqyc0JNSyPi3QRYy+opr8qbcP8pih2GrJxJf0nHe3z1BmHCysmNOxmV1t1XWRgUoHTb72DnEcXOh2urNoTXkoaskeLh9Px2pCE+TBzAbNkKQu4tZi9Rx9ES5+gED8aC7NqZzek0LXsJLNBvvsrCCuoSXSH517GzhT07Iieh1+/PkpOQ+WpbeJqdxu67ystuJRG20rqMsJU9cQmYSoZAYJVZJTL+K73c29Uc31JakjCLfhc7sHHGn1UOTxZnkL96me25zRzZgpesz9IOaoVvXGFVSDf3JW5E4+ooialkgcsCW6TffZVli/GaeHY5qwGYjGInY8OLg8iA6cpH41EAtHUrmeoPSuqX4ROdheYNNiLCnxnL5UblhJ1+4K9XcolWh41qZ7YKpyEZYVyV3VqMJsiOb13hiZcBMw5sXXrzVZattHyVpS7TRjfgG+zI+81se3furryeyd2YWy0nIXhTeHM3IvVkj2k/56sk523FQxSfs7O1np11a9kunx1O+P/WdQ3FzljhWe9rCjZp9dnxrTTpoDteWMNpdrgjJa/LWVyDKiu7WJif9Ro7/B50SvnV/uQMHjtqkYGn/vStX/FU88eK38u2zBn4eKkU2yrYYrERDkruEMla6TYObwK+u6/6wBPJlljRru7VNI+A/BBAKutyQ7C4KkuRwUaSHXlxtr3M15adgx9Nu7U/fDyvIWvQ3RHWrTKOHfGx2IEtuNh77EAEeIu9E74OX3nPsWrxGoVvrMwCrUCwAgLhgq6yviMldcKiSXuxBhViR569bS8hdCx4JkmEPnzgbc8yyKADz1YRJ/uUnXazXquOzXuE2cki/Lz1K/XzWYE3Eyo67lwsjRCAVKcjNDKz54Bjk8jwcAGAkzuRmB1upM75dLrgiZ2psj6auYp5d9UdG2O9xQRwpZZbbpV2yQ+Lv9R2k9xmp70jfTs4Smuudmr15SvNDtbe3DLD5z4OgC2c2so9XKb/z/bNueNA7Xl8NtjZUVLoV7BNXQ5ny/M/2Vbv+NEiUWc+5GBqL7Jm2E82ffOGj1HbKvLmpVPWbnz+UXBQRSwtL2LxpOI7Yh87QXh8doB6E6q3/kxar10pMsyOth75zMyDrbQeSGiOp3nOsMaQFDvSUUX9zJqflaNdjPUtbXYUio50Z46wG3/jZ/TUT5JOOUmJ2/aEsU8U1kY+PI9lpyQ2jNFZLOKNXn7h6+T+NabLb/8j3aBneX2qlQu1IjrSUlkGoiuhsq7O5NRYKtnsjHu7ccuz4kjR2OHHs7UfJzh5w1oBJeGUY+FkSPkZdk7bhuZ7jdnjWnqLWHaItRPTDa5j2KnWzkZ49k5mZL1km0+O9vNZjtK6zTO/KC1HZZ1dpXBGk2WzcwtGbCUSJF6gybFawIkRXCx2Hq6BcHI10HWLHf12BQ8Xcd3go9mhapizCMFm6knLFSlIxLGqPV7CVBeUIXYWpZUtT+CitPDsZF7y9IEu12JHhqsfqEC1Jf46KjS+zP/dYufsipna1UCwlcWV761r6e9FEfkigfITdiaNJ7eNLjFTWsaxI7YsvcyuJqpnOsCdNW4mhS+MXM1EXjBoJ1jGCU2WNc3Mz9Hj2ccS6brsh2Tn7igZtijUi3U6V1fEw2bUuHrLWJ5f3bf9DgqIXe1J6SyrgmM7RqXDnXiC7IRvzqtuCHCAGzA7swlzs8yMy6QnNJ4LCLjMBDsrWcgTYf9Zm5PsAMUOC5wO4PlYZ6fZbyxLKHa8LxRic/XkIkDtyRIJLORDVcH36hD1yuDl8zlap1ASflCN2ckm0zTzvRs9gSV/gp3nH2GHRUZlo43l7NXoNlyE8wE7DanccifJ2Xr7WpibSwxVRPw8c3b8KvAqPfOa21szzM5k1PK7LbvlpLQcg+JIdqjrr3+EHRZhZZDyQ1naEITwC/ii1nBC7JoI2qie73mlecbqyk9uW/JqLl4vSX0oKEOsK2ompfKi2qZwSFm/PR12RmjUDXnGo9JyVJaxW8EdMmTvXMP2jtpl70DY3rl5p8NsuwQ2emFPTn8uWgD7nLK62opu51GaLpqdijaqiWaFImhj8wA8ZE11ufrczRnFEqC1XnwAnuxy6tlr64/S2TTst3h+1pkH/YIT4Wfxfez4IYN3BhmSl2I7MdLErWKE2Hf7FXQbDOnXujdh/2xOI9SEbytoWgMNNAu6TBq8uH1HFf54de+3dafEj+9A+Eln3qVdnjvZeRzRxQJRwi0fY23sqNqItndCPQG9NTYOhxqHdUpKNtH1Anq1iN67CW5cedYhDiYX8kTvnuDRMsAO4PTFkDFQyOCxQs6ZnVvYwY5yyjeGSsTP2Mni0Nnzdsg61kcPbsjLVXAdH4pT7ASS+cubuu2MVQCe3MlnYRmjvQtxpIx0cQKbDsTOlGs6syWfZb43CdmLxOjcnnvZmYTbwrI+42dya42Ny04RlOVIZexKYYw6JyL6yMMtEew1xZUmmVNOlg38k6DeTKmWPVfgPhFIc4tpovGO52IJCqgHYed2j/Es9MWmw8mjG/quwzEzlAmbynHO9+Ej5hRP7GFnErqX8dfs4Sr6GHbMQ10J0+8B+2+FeLlYQ4FUORjiu3s1sNhy+iFUHZRomQZohnWlPnOVk4nofUKhfcWX08gPXRJEQzVJGL4GY1VYVc6zDJSwxEbwhdStc1HO7XQ6nd2KIzxTJ+KRlXgvVNHWHnbmesJzfzo3/4xj2Mm8bxm3GNgR/YiHVhNl5EqM9w7IFdQ/+Q4kfFZAGa/42VAdue6NqPhTtNyhCFHhvVyf77BDHOO6U+743ZHbL3zr+Q7b/0koLbwEi3d0BwO3CPkcrDl1ytDRpvwUjCvsYsepmXf1fDw7uVenK5xH244TZaUoeWJnUVpO3OYRKqIAW2g8Qn7WKK0t/787IVOttvdycg3uaHacY1zYczc7lYmusmnxV+5deYZfgKTeawz4T7IjqU48Oti6hqvHOPEXZ83VK6qLRf2yqXerAx+NsWEr9YdDxQxFssczvY743K6MzCpsKJ/WcUP93g3mBRAlUucFT+y8a0DJAzbdsZcNH+X9XnW1ExvzFqkrHFlR70R5Ejv/5s1wMkUuO9L+nNsL1IrEzpcPC4ZcL16Ck9urxp6OxRR5Kw57p1Bi5xePiZVKmThGRVS89X6YlRpQUxA4sfPto3D8Kqe7iJ7VU7mUtIydjhI7yeDBtQ/g2DL5XF5XzM5Y87XGcmLHN3gAyx0realnr2rQVC904MB3NiZ2fvEwi+OEEK/y3Nyt31NzaJC3r3RyeURbZjfIoJ2axz9z7Vli55MhnZSG73+PcWVjEY1VwQc76O++PetDPyHvEjuHzNvkXRE1m5ld/1LFLpHYM6o5gPSHRS5L7HwylhaSL4uYev4by636kaAyHPMm2MTOHx7T4kuTH/GXK4xtr42oKX8CnsTObzaWS6TCEDqzb87bUs7ttrPEThpjxY4p2Mk8dpoZnclHH9tCHFqFAe80VDiCneFyZGLn7aHs8i/lsgM2OuNP2eH2cq8I87wQaj4mlgdyTTwMb+oz79bTcx6OL00iS9HM36+HOIShRXb5cFUisfOhp1VbQqhzTWlmLbqsjZ9+4H0UeGmM6PetcnNKurLsq7oSw6KGao4wybyrKuMFvpK4dSOHIDgzGjcXS263vxRWzEtyupxV+64jsUMqLbmIncqxhgRq+9k/utmbfXtW5E7RiHmtadv/NoeUhjMQsyAayMntOpFymPtmAkB0xRCwKodouPm4/yGbE3RV13Q2SbFroxM7gTHXDuaVt35upIRPCmvcsmDlwew4tnI7HmUGST6VnK2v/mR64ccMWq9NDRs9+nKoGhmQ4RNNYhQ3y2MimC1w92nexI4zNL0YyDypYzfH0daxV0uqH2Onn+EyW5Sm7GVJM5/rq8cXexpdkw/tBkwZbk8ViP5ke4UnDHnNS3TJZc9YWe8r20/suKNaWba70DLWM+ddd8D7b3x2nM5J3DK4Wl3MQq6e2JGGnbardNYU1pXk2iJbDc1v8/nrAknLXmLl+6INiR06xBPoycTwimzTXODQZCjgSAvY3bwVWjvSjOzUmWGHo/yaeqEvLIVaoICCQA9GT1j/LOyJNiR2fHhyVJVM+PDLHR5fHHxsMrTGckcKWx/qslS10VlZ03tfGvjoTY1fFsJq2j+sHeMAy+50I5aVJZnz1iA2+IwisfPJ4LVxkxUZQRGN/Z6yGg5eNsqh/l8MvZfe1UnuHDCDR635+XdHYieNxE4aiZ00EjtpJHbSSCOxk8ax4z8BBgAm7TQ/ZUwwJAAAAABJRU5ErkJggg=="
                                             },
-                                            "path": "./index_files/resources/father.png",
+                                            "path": "./index_files/resources/steps.jpg",
                                             "resKey": "622fa7072c4db45402b7aa5cfa87ae8c",
                                             "resType": "",
                                             "webUrl": ""
                                         },
-                                        "alt_text": "テスト",
+                                        "alt_text": "階段",
                                         "href": "/plans/gui_spec/"
                                     },
                                     "dec": "",
@@ -783,12 +993,12 @@
                                                 "type": "image/gif",
                                                 "base64": "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"
                                             },
-                                            "path": "./index_files/resources/everyone.png",
+                                            "path": "./index_files/resources/sky.jpg",
                                             "resKey": "a70f514b03f4ccf52c12cc073d2e4c78",
                                             "resType": "",
                                             "webUrl": ""
                                         },
-                                        "alt_text": "pxt logo",
+                                        "alt_text": "空",
                                         "href": ""
                                     },
                                     "anchor": "",
@@ -1170,12 +1380,24 @@
                     {
                         "modId": "testMod1:dev/texts",
                         "fields": {
-                            "text": "テキスト入力しています。\n<b>テキスト</b>です。",
-                            "text-1liner": "1行<b>テキスト</b>です。",
-                            "html": "<p>HTML入力です。</p>\n<p>HTMLソースを入力しています。</p>",
-                            "html-1liner": "<p>1行HTML入力です。</p>",
-                            "markdown": "マークダウンです。\n\n- markdown 1\n- markdown 2",
-                            "markdown-1liner": "- 1行マークダウンです",
+                            "text": {
+                                "src": "テキスト入力しています。\n<b>テキスト</b>です。"
+                            },
+                            "text-1liner": {
+                                "src": "1行<b>テキスト</b>です。"
+                            },
+                            "html": {
+                                "src": "<p>HTML入力です。</p>\n<p>HTMLソースを入力しています。</p>"
+                            },
+                            "html-1liner": {
+                                "src": "<p>1行HTML入力です。</p>"
+                            },
+                            "markdown": {
+                                "src": "マークダウンです。\n\n- markdown 1\n- markdown 2"
+                            },
+                            "markdown-1liner": {
+                                "src": "- 1行マークダウンです"
+                            },
                             "multitext": {
                                 "src": "## MultiText\n\n<strong>マルチテキスト</strong>です。\n\n- list 1\n- list 2",
                                 "editor": "markdown"
@@ -1184,14 +1406,28 @@
                                 "src": "- 1行マルチテキストです。",
                                 "editor": "text"
                             },
-                            "color": "#c09fb0",
-                            "date": "2020-04-29 00:00",
+                            "color": {
+                                "src": "#C09FB0"
+                            },
+                            "date": {
+                                "src": "2020-04-29 00:00"
+                            },
                             "time": "22:15",
-                            "datetime": "2020-04-14 18:20",
-                            "datetimesec": "2024-02-07 11:18:03",
-                            "f_date": "2020-04-23 00:00",
-                            "f_datetime": "2016-02-01 22:05",
-                            "f_datetimesec": "2008-03-09 12:07:01"
+                            "datetime": {
+                                "src": "2020-04-14 18:20"
+                            },
+                            "datetimesec": {
+                                "src": "2024-02-07 11:18:03"
+                            },
+                            "f_date": {
+                                "src": "2020-04-23 00:00"
+                            },
+                            "f_datetime": {
+                                "src": "2016-02-01 22:05"
+                            },
+                            "f_datetimesec": {
+                                "src": "2008-03-09 12:07:01"
+                            }
                         },
                         "anchor": "",
                         "dec": ""
@@ -1618,6 +1854,20 @@
                                 }
                             ]
                         }
+                    },
+                    {
+                        "modId": "testMod1:dev/parse_error_1",
+                        "fields": {
+                            "__error__": ""
+                        },
+                        "anchor": "",
+                        "dec": ""
+                    },
+                    {
+                        "modId": "testMod1:errors/addedfields",
+                        "fields": [],
+                        "anchor": "",
+                        "dec": ""
                     }
                 ]
             },
@@ -1708,12 +1958,18 @@
                                     }
                                 }
                             ]
-                        }
+                        },
+                        "anchor": "",
+                        "dec": ""
                     }
                 ]
             },
             "anchor": "",
             "dec": ""
+        },
+        "thirdly": {
+            "modId": "_sys/root",
+            "fields": []
         }
     }
 }

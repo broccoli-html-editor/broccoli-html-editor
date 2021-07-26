@@ -20,14 +20,24 @@ module.exports = function(broccoli){
 		_moduleInternalIdMap[_modTpls[idx].internalId] = idx;
 	}
 
+	var _resourceDbReloadRequest =false;
+
 	/**
 	 * 初期化
 	 */
 	this.init = function( callback ){
 		_this.history = new (require('./history.js'))(broccoli);
+		var resourceDb;
 		it79.fnc(
 			{},
 			[
+				function(it1, data){
+					// コンテンツデータを整理
+					broccoli.resourceMgr.getResourceDb(function(res){
+						resourceDb = res;
+						it1.next(data);
+					});
+				} ,
 				function(it1, data){
 					// コンテンツデータを整理
 					_contentsSourceData.bowl = _contentsSourceData.bowl||{};
@@ -39,6 +49,7 @@ module.exports = function(broccoli){
 					// ヒストリーマネージャーの初期化
 					_this.history.init(
 						_contentsSourceData,
+						resourceDb,
 						function(){
 							it1.next(data);
 						}
@@ -51,7 +62,7 @@ module.exports = function(broccoli){
 			]
 		);
 
-		return this;
+		return;
 	}// init()
 
 	/**
@@ -60,7 +71,7 @@ module.exports = function(broccoli){
 	this.get = function( containerInstancePath, data ){
 		data = data || _contentsSourceData;
 
-		// console.log( containerInstancePath );
+		// console.log( '=-=-=-=-=-=-=-=-=-=-=-=-=-=', containerInstancePath );
 		if( containerInstancePath === undefined || !containerInstancePath.length ){
 			return data;
 		}
@@ -84,11 +95,14 @@ module.exports = function(broccoli){
 		if( container == 'bowl' ){
 			return this.get( aryPath, data.bowl[fieldName] );
 		}
+		if( !modTpl || !modTpl.fields || !modTpl.fields[fieldName] ){
+			return false;
+		}
 
 		modTpl.fields[fieldName].fieldType = modTpl.fields[fieldName].fieldType || 'input';
 		if( !aryPath.length ){
 			// ここが最後のインスタンスだったら
-			if( !data.fields ){
+			if( !data.fields || isArray(data.fields) ){
 				data.fields = {};
 			}
 			if( !data.fields[fieldName] ){
@@ -146,20 +160,20 @@ module.exports = function(broccoli){
 			}
 		}
 		callback(rtn);
-		return this;
+		return;
 	}
 
 	/**
 	 * インスタンスを追加する (非同期)
 	 */
 	this.addInstance = function( modId, containerInstancePath, cb, subModName ){
-		// console.log( '----- addInstance: '+modId+': '+containerInstancePath );
+		// console.log( '----- addInstance: '+(modId.modId || modId)+': '+containerInstancePath );
 		cb = cb||function(){};
 
 		if( containerInstancePath.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
 			broccoli.message('bowl に追加することはできません。アペンダーに追加してください。');
 			cb();
-			return this;
+			return;
 		}
 
 		var newData = {};
@@ -201,7 +215,7 @@ module.exports = function(broccoli){
 		// console.log( aryPath );
 
 		function set_r( aryPath, data, newData ){
-			// console.log( data );
+			// console.log( '=-=-=-=-=-=-=-=-=-=-=-=', aryPath, data );
 			var cur = aryPath.shift();
 			var idx = null;
 			var tmpSplit = cur.split('@');
@@ -222,7 +236,7 @@ module.exports = function(broccoli){
 
 			if( !aryPath.length ){
 				// ここが最後のインスタンスだったら
-				if( !data.fields ){
+				if( !data.fields || isArray(data.fields) ){
 					data.fields = {};
 				}
 				if( !data.fields[fieldName] ){
@@ -239,7 +253,7 @@ module.exports = function(broccoli){
 						broccoli.message('モジュールの数が最大件数 '+modTpl.fields[fieldName]['maxLength']+' に達しています。');
 						return false;
 					}
-					if(newDataModTpl.info.enabledParents.length){
+					if( newDataModTpl && newDataModTpl.info && newDataModTpl.info.enabledParents && newDataModTpl.info.enabledParents.length ){
 						var tmpIsEnabledParent = false;
 						for(var tmpIdx in newDataModTpl.info.enabledParents){
 							if(newDataModTpl.info.enabledParents[tmpIdx] == modTpl.id){
@@ -267,7 +281,7 @@ module.exports = function(broccoli){
 							return false;
 						}
 					}
-					if(newDataModTpl.info.enabledBowls.length){
+					if(newDataModTpl && newDataModTpl.info && newDataModTpl.info.enabledBowls && newDataModTpl.info.enabledBowls.length){
 						var tmpIsEnabledBowl = false;
 						for(var tmpIdx in newDataModTpl.info.enabledBowls){
 							if( containerInstancePath.match( new RegExp('^\\/bowl\\.' + (newDataModTpl.info.enabledBowls[tmpIdx]) + '\\/') ) ){
@@ -315,8 +329,8 @@ module.exports = function(broccoli){
 
 		cb(result);
 
-		return this;
-	}// addInstance()
+		return;
+	} // addInstance()
 
 	/**
 	 * インスタンスを更新する
@@ -356,7 +370,7 @@ module.exports = function(broccoli){
 			modTpl.fields[fieldName].fieldType = modTpl.fields[fieldName].fieldType || 'input';
 			if( !aryPath.length ){
 				// ここが最後のインスタンスだったら
-				if( !data.fields ){
+				if( !data.fields || isArray(data.fields) ){
 					data.fields = {};
 				}
 				if( !data.fields[fieldName] ){
@@ -395,7 +409,7 @@ module.exports = function(broccoli){
 
 		cb(result);
 
-		return this;
+		return;
 	}// updateInstance()
 
 	/**
@@ -413,12 +427,12 @@ module.exports = function(broccoli){
 		if( isBowlRoot(fromContainerInstancePath) ){
 			broccoli.message('bowl を移動することはできません。');
 			cb(false);
-			return this;
+			return;
 		}
 		if( isBowlRoot(toContainerInstancePath) ){
 			broccoli.message('bowl への移動はできません。アペンダーへドロップしてください。');
 			cb(false);
-			return this;
+			return;
 		}
 
 		function parseInstancePath(path){
@@ -454,7 +468,7 @@ module.exports = function(broccoli){
 			if( fromParsed.num == toParsed.num ){
 				// to と from が一緒だったら何もしない。
 				cb(false);
-				return this;
+				return;
 			}
 			if( fromParsed.num < toParsed.num ){
 				// 上から1つ以上下へ
@@ -502,7 +516,7 @@ module.exports = function(broccoli){
 			} );
 		}
 
-		return this;
+		return;
 	} // moveInstanceTo()
 
 	/**
@@ -514,10 +528,14 @@ module.exports = function(broccoli){
 		callback = callback || function(){};
 		options = options || {};
 		var _this = this;
-		var supplementModPackage = options.supplementModPackage;
+		var supplementModPackage = options.supplementModPackage || '';
 		var parsedModId = broccoli.parseModuleId(objInstance.modId);
 		if( parsedModId.package === null ){
-			objInstance.modId = supplementModPackage + ':' + parsedModId.category + '/' + parsedModId.module;
+			if( parsedModId.category == '_sys' ){
+				objInstance.modId = parsedModId.category + '/' + parsedModId.module;
+			}else{
+				objInstance.modId = supplementModPackage + ':' + parsedModId.category + '/' + parsedModId.module;
+			}
 		}
 
 		var newData = JSON.parse( JSON.stringify( objInstance ) );
@@ -581,7 +599,7 @@ module.exports = function(broccoli){
 				});
 			}
 		);
-		return this;
+		return;
 	} // duplicateInstance()
 
 	/**
@@ -653,7 +671,7 @@ module.exports = function(broccoli){
 				});
 			}
 		);
-		return this;
+		return;
 	}// extractResourceId()
 
 	/**
@@ -688,7 +706,7 @@ module.exports = function(broccoli){
 			modTpl.fields[fieldName].fieldType = modTpl.fields[fieldName].fieldType || 'input';
 			if( !aryPath.length ){
 				// ここが最後のインスタンスだったら
-				if( !data.fields ){
+				if( !data.fields || isArray(data.fields) ){
 					data.fields = {};
 				}
 				if( !data.fields[fieldName] ){
@@ -723,7 +741,7 @@ module.exports = function(broccoli){
 
 		cb();
 
-		return this;
+		return;
 	}// removeInstance()
 
 	/**
@@ -828,50 +846,180 @@ module.exports = function(broccoli){
 	}
 
 	/**
+	 * 次回のコンテンツ保存時に、resourceDb 全体の更新(ダウンロード)実行を要求する
+	 *
+	 * ここに要求が出されている場合、次回のコンテンツ保存時にresourceDbが更新されます。
+	 */
+	this.resourceDbReloadRequest = function(){
+		_resourceDbReloadRequest = true;
+		return true;
+	}
+
+	/**
 	 * history: 取り消し (非同期)
 	 */
-	this.historyBack = function( cb ){
-		cb = cb || function(){};
-		this.history.back(function(data){
-			if( data === false ){
-				cb(false);
-				return;
-			}
-			_contentsSourceData = data;
-			cb(true);
-			return;
-		});
-		return this;
+	this.historyBack = function( callback ){
+		this.historyBackOrGo(-1, callback);
+		return;
 	}
 
 	/**
 	 * history: やりなおし (非同期)
 	 */
-	this.historyGo = function( cb ){
-		cb = cb || function(){};
-		this.history.go(function(data){
-			if( data === false ){
-				cb(false);
+	this.historyGo = function( callback ){
+		this.historyBackOrGo(1, callback);
+		return;
+	}
+
+	/**
+	 * history: 戻る、または やりなおし (非同期)
+	 */
+	var historyStepStock = 0;
+	var historyTimer;
+	var historyLock = false;
+	this.historyBackOrGo = function( step, callback ){
+		callback = callback || function(){};
+		var resourceDb;
+
+		if(historyLock){
+			callback(false);
+			return;
+		}
+
+		broccoli.indicator.saveProgress();
+		clearTimeout(historyTimer);
+
+		historyStepStock += step;
+		// console.log(historyStepStock);
+		(function(){
+			if( historyStepStock > 0 ){
+				var message = '進む';
+				if( historyStepStock > 1 ){
+					message += ': ' + Math.abs(historyStepStock) + ' step';
+				}
+				broccoli.progressMessage(message);
+			}else if( historyStepStock < 0 ){
+				var message = '戻る';
+				if( historyStepStock < -1 ){
+					message += ': ' + Math.abs(historyStepStock) + ' step';
+				}
+				broccoli.progressMessage(message);
+			}else{
+				broccoli.closeProgress();
+			}
+		})();
+		broccoli.setUiState('standby'); // これがないと、戻る/進む の連続入力ができない。
+
+
+		var doHistoryCommand = function(step){
+			if(!step){
+				broccoli.indicator.saveCompleted();
+				historyLock = false;
+				historyStepStock = 0;
+				callback(true);
 				return;
 			}
-			_contentsSourceData = data;
-			cb(true);
-			return;
-		});
-		return this;
-	}
+			it79.fnc(
+				{},
+				[
+					function( it1, data ){
+						// historyからコンテンツデータを復元する
+						if( typeof(step) == typeof(0) && ( step > 0 || step < 0 ) ){
+							_this.history.step(step, function(data){
+								if( data === false ){
+									broccoli.indicator.saveCompleted();
+									historyLock = false;
+									historyStepStock = 0;
+									callback(false);
+									return;
+								}
+								_contentsSourceData = data.contents;
+								resourceDb = data.resources;
+								it1.next(data);
+								return;
+							});
+							return;
+						}
+						console.error('無効な引数です。', step);
+						broccoli.indicator.saveCompleted();
+						historyLock = false;
+						historyStepStock = 0;
+						callback(false);
+						return;
+					} ,
+					function( it1, data ){
+						// historyからリソースデータを復元する
+						broccoli.resourceMgr.setResourceDb(resourceDb, function(result){
+							if(!result){
+								alert('resourceDb の更新に失敗しました。');
+							}
+							it1.next(data);
+						});
+						return;
+					} ,
+					function( it1, data ){
+						// コンテンツデータを保存する
+						broccoli.gpi(
+							'saveContentsData',
+							{
+								'data': _contentsSourceData
+									// ↑保存するたびに、コンテンツデータの全量が送られる。(ただし画像等のリソースはここに含まない)
+							},
+							function(){
+								it1.next(data);
+							}
+						);
+					} ,
+					function(it1, data){
+						// resourceDbを保存する
+						broccoli.resourceMgr.save(function(res){
+							it1.next(data);
+						});
+						return;
+					} ,
+					function(it1, data){
+						// コンテンツを更新
+						broccoli.gpi(
+							'updateContents',
+							{} ,
+							function(result){
+								// console.log('------ gpi.updateContents result --', result);
+								it1.next(data);
+							}
+						);
+					} ,
+					function(it1, data){
+						broccoli.indicator.saveCompleted();
+						historyLock = false;
+						historyStepStock = 0;
+						callback(true);
+						return;
+					}
+				]
+			);
+		}
+		historyTimer = setTimeout(function(){
+			historyLock = true;
+			doHistoryCommand(historyStepStock);
+		}, 500);
+		return;
+	} // historyBackOrGo()
+
 
 	/**
 	 * データを保存する(非同期)
 	 */
 	this.save = function(callback){
 		var _this = this;
+		var resourceDb;
 		callback = callback||function(){};
 		// console.log('-------- saving contentsSourceData ---', _contentsSourceData);
 		it79.fnc(
 			{},
 			[
 				function( it1, data ){
+					// コンテンツデータを保存する
+					broccoli.progressMessage('コンテンツデータを保存しています...');
 					broccoli.gpi(
 						'saveContentsData',
 						{
@@ -883,18 +1031,35 @@ module.exports = function(broccoli){
 						}
 					);
 				} ,
-				function( it1, data ){
-					// 履歴に追加
-					var historyInfo = _this.history.getHistory();
-					if(historyInfo.index === 0){
-						_this.history.put( _contentsSourceData, function(){
-							it1.next(data);
-						} );
-						return;
-					}else{
+				function(it1, data){
+					// resourceDbを再取得
+					// (リロード要求が出されていたら実行する)
+					if( !_resourceDbReloadRequest ){
 						it1.next(data);
 						return;
 					}
+					broccoli.progressMessage('リソースデータを同期しています...');
+					broccoli.resourceMgr.reload(function(resourceDb){
+						// console.log(resourceDb);
+						_resourceDbReloadRequest = false;
+						it1.next(data);
+					});
+					return;
+				} ,
+				function( it1, data ){
+					// リソース全体を取り出す
+					broccoli.resourceMgr.getResourceDb(function(res){
+						resourceDb = res;
+						it1.next(data);
+					});
+				} ,
+				function( it1, data ){
+					// 履歴に追加
+					broccoli.progressMessage('履歴に追加しています...');
+					_this.history.put( _contentsSourceData, resourceDb, function(){
+						it1.next(data);
+					} );
+					return;
 				} ,
 				function( it1, data ){
 					callback();
@@ -902,7 +1067,16 @@ module.exports = function(broccoli){
 				}
 			]
 		);
-		return this;
+		return;
 	}
 
+	/**
+	 * 値が、配列型か調べる
+	 */
+	function isArray(value){
+		if( typeof(value) !== typeof({}) || typeof(value.length) !== typeof(0) || typeof(value.splice) !== 'function' || value.propertyIsEnumerable('length') ){
+			return false;
+		}
+		return true;
+	}
 }

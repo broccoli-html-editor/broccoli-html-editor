@@ -27,6 +27,9 @@ class broccoliHtmlEditor{
 	/** Resource Manager */
 	private $resourceMgr;
 
+	/** User Storage Manager */
+	private $userStorage;
+
 	/** BaseClass of Fields */
 	private $fieldBase;
 
@@ -80,6 +83,14 @@ class broccoliHtmlEditor{
 	}
 
 	/**
+	 * $userStorage
+	 * @return object User Storage Object.
+	 */
+	public function userStorage(){
+		return $this->userStorage;
+	}
+
+	/**
 	 * Initialize
 	 * @param array $options オプション
 	 */
@@ -101,10 +112,11 @@ class broccoliHtmlEditor{
 		$options['log'] = (@$options['log'] ? $options['log'] : function($msg){
 			var_dump($msg);
 		});
+		$options['userStorage'] = (@$options['userStorage'] ? $options['userStorage'] : null);
 		if( !$options['pathHtml'] || !$options['pathResourceDir'] || !$options['realpathDataDir'] ){
 			// 必須項目
 			// var_dump($options);
-			var_dump('[ERROR] $options[\'pathHtml\'], $options[\'pathResourceDir\'], and $options[\'realpathDataDir\'] are required.');
+			trigger_error('[ERROR] $options[\'pathHtml\'], $options[\'pathResourceDir\'], and $options[\'realpathDataDir\'] are required.');
 			return;
 		}
 
@@ -115,6 +127,10 @@ class broccoliHtmlEditor{
 		$options['pathHtml'] = $this->fs->normalize_path( $this->fs->get_realpath($options['pathHtml']) );
 		$options['pathResourceDir'] = $this->fs->normalize_path( $this->fs->get_realpath($options['pathResourceDir']) );
 
+		if( !array_key_exists('fieldConfig', $options) || !$options['fieldConfig'] ){
+			$options['fieldConfig'] = array();
+		}
+
 		$this->paths_module_template = $options['paths_module_template'];
 		$this->realpathHtml = $this->fs->normalize_path($this->fs->get_realpath( $options['documentRoot'].'/'.$options['pathHtml'] ));
 		$this->realpathResourceDir = $this->fs->normalize_path($this->fs->get_realpath( $options['documentRoot'].'/'.$options['pathResourceDir'].'/' ));
@@ -122,6 +138,7 @@ class broccoliHtmlEditor{
 		$this->options = $options;
 
 		$this->resourceMgr = new resourceMgr($this);
+		$this->userStorage = new userStorage($this);
 		$this->fieldBase = new fieldBase($this);
 		$this->fieldDefinitions = array();
 
@@ -152,7 +169,7 @@ class broccoliHtmlEditor{
 		$this->fieldDefinitions['color'] = $loadFieldDefinition('color');
 		$this->fieldDefinitions['datetime'] = $loadFieldDefinition('datetime');
 
-		if( $this->options['customFields'] ){
+		if( array_key_exists('customFields', $this->options) && $this->options['customFields'] ){
 			foreach( $this->options['customFields'] as $idx=>$className ){
 				$this->fieldDefinitions[$idx] = $loadFieldDefinition( $idx, $this->options['customFields'][$idx] );
 			}
@@ -161,10 +178,10 @@ class broccoliHtmlEditor{
 
 	/**
 	 * 汎用API
-	 * @param  {[type]}   api      [description]
-	 * @param  {[type]}   options  [description]
-	 * @param  {Function} callback [description]
-	 * @return {[type]}            [description]
+	 *
+	 * @param  string $api 呼び出すAPIの種類
+	 * @param  array|object $options オプション
+	 * @return mixed 実行したAPIの返却値
 	 */
 	public function gpi($api, $options){
 		$gpi = new gpi($this);
@@ -176,11 +193,11 @@ class broccoliHtmlEditor{
 	}
 
 	/**
-	 * アプリケーションの実行モード設定を取得する (同期)
+	 * アプリケーションの実行モード設定を取得する
 	 * @return string 'web'|'desktop'
 	 */
 	public function getAppMode(){
-		$rtn = @$this->options['appMode'];
+		$rtn = $this->options['appMode'];
 		switch($rtn){
 			case 'web':
 			case 'desktop':
@@ -189,6 +206,15 @@ class broccoliHtmlEditor{
 				$rtn = 'web';
 				break;
 		}
+		return $rtn;
+	}
+
+	/**
+	 * フィールド設定を取得する
+	 * @return array フィールド設定
+	 */
+	public function getFieldConfig(){
+		$rtn = $this->options['fieldConfig'];
 		return $rtn;
 	}
 
@@ -292,13 +318,34 @@ class broccoliHtmlEditor{
 
 		$modules = $this->paths_module_template;
 		$rtn = array();
+		if( !is_array( $modules ) || !count($modules) ){
+			return $rtn;
+		}
+
+		$fncFindLang = function( $lb, $key, $default ){
+			$tmpName = $lb->get($key);
+			if( strlen($tmpName) && $tmpName !== '---' ){
+				return $tmpName;
+			}
+			return $default;
+		};
 
 		foreach( $modules as $idx=>$row ){
 			$realpath = $row;
+
+			$lb = new \tomk79\LangBank($realpath.'/language.csv');
+			$lb->setLang( $this->lb()->lang );
+
 			$infoJson = json_decode('{}');
 			if( is_file($realpath.'/info.json') ){
 				$infoJson = json_decode(file_get_contents( $realpath.'/info.json' ));
 			}
+			if( !property_exists( $infoJson, 'name' ) ){
+				$infoJson->name = null;
+			}
+
+			// Multi Language
+			$infoJson->name = $fncFindLang($lb, 'name', $infoJson->name);
 
 			$rtn[$idx] = array(
 				'packageId' => $idx,
@@ -321,6 +368,14 @@ class broccoliHtmlEditor{
 	public function getModuleListByPackageId($packageId){
 
 		$rtn = array();
+
+		$fncFindLang = function( $lb, $key, $default ){
+			$tmpName = $lb->get($key);
+			if( strlen($tmpName) && $tmpName !== '---' ){
+				return $tmpName;
+			}
+			return $default;
+		};
 
 		$sortModuleDirectoryNames = function($dirNames, $sortBy){
 			if( !is_array($sortBy) ){ return $dirNames; }
@@ -377,19 +432,30 @@ class broccoliHtmlEditor{
 			$realpath = $this->fs->normalize_path($this->fs->get_realpath($rtn['realpath'].'/'.$row));
 			if( is_dir($realpath) ){
 				$realpath .= '/';
+
+				$lb = new \tomk79\LangBank($realpath.'/language.csv');
+				$lb->setLang( $this->lb()->lang );
+
 				$rtn['categories'][$row] = array();
 				$rtn['categories'][$row]['categoryId'] = $row;
 				$rtn['categories'][$row]['categoryInfo'] = @json_decode(file_get_contents( $realpath.'/info.json' ));
 				if( is_null($rtn['categories'][$row]['categoryInfo']) ){
-					$rtn['categories'][$row]['categoryInfo'] = array();
+					$rtn['categories'][$row]['categoryInfo'] = new \stdClass();
+				}
+				if( !property_exists($rtn['categories'][$row]['categoryInfo'], 'name') ){
+					$rtn['categories'][$row]['categoryInfo']->name = null;
 				}
 				$rtn['categories'][$row]['categoryName'] = (@$rtn['categories'][$row]['categoryInfo']->name ? $rtn['categories'][$row]['categoryInfo']->name : $row);
 				$rtn['categories'][$row]['realpath'] = $realpath;
 				$rtn['categories'][$row]['deprecated'] = (@$rtn['categories'][$row]['categoryInfo']->deprecated ? true : false);
+
+				// Multi Language
+				$rtn['categories'][$row]['categoryInfo']->name = $fncFindLang( $lb, 'name', $rtn['categories'][$row]['categoryInfo']->name );
+				$rtn['categories'][$row]['categoryName'] = $fncFindLang( $lb, 'name', $rtn['categories'][$row]['categoryName'] );
+
 				$rtn['categories'][$row]['modules'] = array();
 			}
 		}
-
 
 		foreach($rtn['categories'] as $idx=>$row){
 			$fileList = $this->fs->ls( $rtn['categories'][$idx]['realpath'] );
@@ -404,6 +470,9 @@ class broccoliHtmlEditor{
 					continue;
 				}
 
+				$lb = new \tomk79\LangBank($realpath.'/language.csv');
+				$lb->setLang( $this->lb()->lang );
+
 				$rtn['categories'][$idx]['modules'][$row2] = array();
 
 				// moduleId
@@ -417,6 +486,9 @@ class broccoliHtmlEditor{
 					if(!is_object($rtn['categories'][$idx]['modules'][$row2]['moduleInfo'])){
 						$rtn['categories'][$idx]['modules'][$row2]['moduleInfo'] = json_decode('{}');
 					}
+				}
+				if( !property_exists( $rtn['categories'][$idx]['modules'][$row2]['moduleInfo'], 'name' ) ){
+					$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->name = null;
 				}
 				$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->enabledParents = $this->normalizeEnabledParentsOrChildren(@$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->enabledParents, $moduleId);
 				if( is_string(@$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->enabledBowls)  ){
@@ -455,6 +527,9 @@ class broccoliHtmlEditor{
 
 				$rtn['categories'][$idx]['modules'][$row2]['readme'] = $readme;
 
+				// Multi Language
+				$rtn['categories'][$idx]['modules'][$row2]['moduleName'] = $fncFindLang( $lb, 'name', $rtn['categories'][$idx]['modules'][$row2]['moduleName'] );
+				$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->name = $fncFindLang( $lb, 'name', $rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->name );
 
 				$modInstance = $this->getModule($moduleId, null);
 				$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->interface = (@$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->interface ? $rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->interface : $modInstance->fields());
@@ -536,6 +611,7 @@ class broccoliHtmlEditor{
 		$data['tmp']['_sys/root'] = $this->getModule('_sys/root');
 		$data['tmp']['_sys/unknown'] = $this->getModule('_sys/unknown');
 		$data['tmp']['_sys/html'] = $this->getModule('_sys/html');
+		$data['tmp']['_sys/image'] = $this->getModule('_sys/image');
 
 		foreach( $list as $pkgId=>$pkg ){
 			foreach( $list[$pkgId]['categories'] as $catId=>$cat ){
@@ -556,6 +632,7 @@ class broccoliHtmlEditor{
 			$data['rtn'][$modId]->isClipModule = $obj->isClipModule;
 			$data['rtn'][$modId]->templateType = $obj->templateType;
 			$data['rtn'][$modId]->template = $obj->template;
+			$data['rtn'][$modId]->languageCsv = $obj->languageCsv;
 			$data['rtn'][$modId]->info = $obj->info;
 			if($obj->subModule){
 				$data['rtn'][$modId]->subModule = json_decode('{}');
@@ -572,11 +649,12 @@ class broccoliHtmlEditor{
 					$data['rtn'][$modId]->subModule->{$idx}->isClipModule = $obj->subModule->{$idx}->isClipModule;
 					$data['rtn'][$modId]->subModule->{$idx}->templateType = $obj->subModule->{$idx}->templateType;
 					$data['rtn'][$modId]->subModule->{$idx}->template = $obj->subModule->{$idx}->template;
+					$data['rtn'][$modId]->subModule->{$idx}->languageCsv = $obj->subModule->{$idx}->languageCsv;
 					$data['rtn'][$modId]->subModule->{$idx}->info = $obj->subModule->{$idx}->info;
 				}
 			}
 		}
-	
+
 		return $data['rtn'];
 	}
 
@@ -703,14 +781,18 @@ class broccoliHtmlEditor{
 	public function buildHtml( $options = array() ){
 		$dataJson = file_get_contents($this->realpathDataDir.'/data.json');
 		$dataJson = json_decode($dataJson);
+		if( !is_object($dataJson) ){
+			$dataJson = (object) $dataJson;
+		}
 
-		$dataJson->bowl = (@$dataJson->bowl ? $dataJson->bowl : json_decode('{}'));
-		if(!@$options['bowlList']){
+		$dataJson->bowl = (property_exists($dataJson, 'bowl') ? $dataJson->bowl : json_decode('{}'));
+
+		if( !array_key_exists('bowlList', $options) || !$options['bowlList']){
 			$options['bowlList'] = array();
 		}
 		if( count($options['bowlList']) ){
 			foreach( $options['bowlList'] as $idx=>$row  ){
-				if( !@$dataJson->bowl->{$options['bowlList'][$idx]} ){
+				if( !isset($dataJson->bowl->{$options['bowlList'][$idx]}) || !$dataJson->bowl->{$options['bowlList'][$idx]} ){
 					$tmpBowlVal = array(
 						"modId" => "_sys/root",
 						"fields" => array(

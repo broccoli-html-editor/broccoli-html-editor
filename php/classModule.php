@@ -30,8 +30,10 @@ class classModule{
 			$isSubModule,
 			$isClipModule,
 			$deprecated,
+			$template,
 			$templateFilename,
 			$templateType,
+			$languageCsv,
 			$info,
 			$id,
 			$internalId,
@@ -39,7 +41,8 @@ class classModule{
 			$subModule,
 			$topThis,
 			$finalize,
-			$thumb;
+			$thumb,
+			$lb;
 
 	/**
 	 * Constructor
@@ -66,6 +69,7 @@ class classModule{
 		$this->fields = json_decode('{}');
 		$this->subModule = json_decode('{}');
 		$this->templateType = 'broccoli';
+		$this->languageCsv = null;
 		$this->finalize = function($html, $data){ return $html; };
 
 		$this->info = array(
@@ -77,13 +81,30 @@ class classModule{
 			'deprecated' => false
 		);
 
+		if($this->isSystemModule){
+			if($this->id == '_sys/root'){
+				$this->info['name'] = 'ルート';
+			}elseif($this->id == '_sys/unknown'){
+				$this->info['name'] = '不明なモジュール';
+			}elseif($this->id == '_sys/html'){
+				$this->info['name'] = 'HTML';
+			}elseif($this->id == '_sys/image'){
+				$this->info['name'] = '画像';
+			}
+		}
+
+
 		if( array_key_exists('topThis', $this->options) && $this->options['topThis'] ){
 			$this->topThis = $this->options['topThis'];
 			$this->templateType = $this->topThis->templateType;
-			$this->info['name'] = '- ' . ($this->topThis->info['name'] ? $this->topThis->info['name'] : 'null');
+			$this->info['name'] = ($this->topThis->info['name'] ? $this->topThis->info['name'] : 'null');
 			$this->isSubModule = true;
 			if( $options['modName'] ){
-				$this->info['name'] = '- ' . $options['modName'];
+				$this->info['name'] = $options['modName'];
+			}
+			$this->info['name'] = $this->info['name'].' *';
+			if( $this->topThis->languageCsv ){
+				$this->languageCsv = $this->topThis->languageCsv;
 			}
 			// $this->nameSpace = $this->options['topThis']->nameSpace;
 			if( $options['subModName'] ){
@@ -108,12 +129,17 @@ class classModule{
 			return false;
 		}
 
+		$this->lb = new \tomk79\LangBank($this->realpath.'/language.csv');
+		$this->lb->setLang( $this->broccoli->lb()->lang );
+
 		if( $this->id == '_sys/root' ){
-			return $this->parseTpl( '{&{"module":{"name":"main"}}&}', $this );
+			return $this->parseTpl( '{&{"module":{"name":"main","label":"コンテンツエリア"}}&}', $this );
 		}elseif( $this->id == '_sys/unknown' ){
-			return $this->parseTpl( '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;">[ERROR] 未知のモジュールテンプレートです。<!-- .error --></div>'."\n", $this );
+			return $this->parseTpl( '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;" data-broccoli-error-message="未知のモジュールテンプレートです。">[ERROR] 未知のモジュールテンプレートです。<!-- .error --></div>'."\n", $this );
 		}elseif( $this->id == '_sys/html' ){
-			return $this->parseTpl( '{&{"input":{"type":"html","name":"main"}}&}', $this );
+			return $this->parseTpl( '{&{"input":{"type":"html","name":"main","label":"HTML"}}&}', $this );
+		}elseif( $this->id == '_sys/image' ){
+			return $this->parseTpl( '<img src="{&{"input":{"type":"image","name":"src","label":"画像"}}&}" alt="{&{"input":{"type":"html_attr_text","name":"alt","label":"代替テキスト","rows":1}}&}" />', $this );
 		}elseif( is_string(@$this->options['src']) ){
 			return $this->parseTpl( $this->options['src'], $this->options['topThis'] );
 		}elseif( $this->topThis->templateType != 'broccoli' && is_string($this->subModName) ){
@@ -128,6 +154,11 @@ class classModule{
 			if( is_file( $this->realpath.'/clip.json' ) ){
 				$this->isClipModule = true;
 			}
+
+			if( is_file( $this->realpath.'/language.csv' ) ){
+				$this->languageCsv = file_get_contents( $this->realpath.'/language.csv' );
+			}
+
 			if( is_file( $this->realpath.'/template.html' ) ){
 				$this->templateFilename = $this->realpath.'/template.html';
 				$this->templateType = 'broccoli';
@@ -213,6 +244,7 @@ class classModule{
 			@$this->fields->{$field->input->name} = $field->input;
 			@$this->fields->{$field->input->name}->fieldType = 'input';
 			@$this->fields->{$field->input->name}->description = $this->normalizeDescription(@$this->fields->{$field->input->name}->description);
+			@$this->fields->{$field->input->name} = $this->applyFieldConfig( @$this->fields->{$field->input->name} );
 
 			return $this->parseBroccoliTemplate( $src, $_topThis );
 		}elseif( @$field->module ){
@@ -230,7 +262,7 @@ class classModule{
 
 			$tmpSearchResult = $this->searchEndTag( $src, 'loop' );
 			$src = $tmpSearchResult['nextSrc'];
-			if( !is_array($this->subModule) ){
+			if( !is_object($this->subModule) ){
 				$this->subModule = json_decode('{}');
 			}
 			// var_dump(' <------- ');
@@ -280,7 +312,7 @@ class classModule{
 					continue;
 				}
 				return $rtn;
-			}elseif( @$field->{$fieldType} ){
+			}elseif( property_exists($field, $fieldType) ){
 				$depth ++;
 				$rtn['content'] .= '{&'.$fieldSrc.'&}';
 				continue;
@@ -321,7 +353,7 @@ class classModule{
 					$this->internalId = $this->broccoli->getModuleInternalId($this->id, $tmpJson->id);
 				}
 
-				if( !strlen($this->info['name']) && @$tmpJson->name ){
+				if( !strlen($this->info['name']) && property_exists($tmpJson, 'name') ){
 					$this->info['name'] = $tmpJson->name;
 				}
 				if( @$tmpJson->areaSizeDetection ){
@@ -336,24 +368,44 @@ class classModule{
 
 
 				if( @$tmpJson->interface ){
-					if( @$tmpJson->interface->fields ){
-						// $this->fields = $tmpJson->interface->fields;
+					if( @$tmpJson->interface->fields && !$this->isSubModule ){
+						if( !$this->fields ){
+							$this->fields = json_decode('{}');
+						}
 						foreach( $tmpJson->interface->fields as $tmpIdx=>$tmpRow  ){
 							@$this->fields->{$tmpIdx} = $tmpRow;
+
 							// name属性を自動補完
 							@$this->fields->{$tmpIdx}->name = $tmpIdx;
+
+							// Multi Language
+							if( !property_exists($this->fields->{$tmpIdx}, 'label') ){
+								$this->fields->{$tmpIdx}->label = null;
+							}
+							$this->fields->{$tmpIdx}->label = $this->findLang('fields.'.$tmpIdx.':label', $this->fields->{$tmpIdx}->label);
+
+							@$this->fields->{$tmpIdx} = $this->applyFieldConfig( @$this->fields->{$tmpIdx} );
 						}
 					}
 					if( @$tmpJson->interface->subModule ){
 						// $this->subModule = $tmpJson->interface->subModule;
 						foreach( $tmpJson->interface->subModule as $tmpIdx=>$tmpRow  ){
 							@$this->subModule->{$tmpIdx} = json_decode(json_encode($tmpRow));
-							@$this->subModule->{$tmpIdx}->fields = array();
-							if( property_exists($tmpRow, 'fields') && (is_object($tmpRow->fields) || is_array($tmpRow->fields)) ){
+							@$this->subModule->{$tmpIdx}->fields = json_decode('{}');
+							if( property_exists($tmpRow, 'fields') && is_object($tmpRow->fields) ){
 								foreach( $tmpRow->fields as $tmpIdx2=>$tmpRow2 ){
-									@$this->subModule->{$tmpIdx}->fields[$tmpIdx2] = $tmpRow2;
+									@$this->subModule->{$tmpIdx}->fields->{$tmpIdx2} = $tmpRow2;
+
 									// name属性を自動補完
-									@$this->subModule->{$tmpIdx}->fields[$tmpIdx2]->name = $tmpIdx2;
+									@$this->subModule->{$tmpIdx}->fields->{$tmpIdx2}->name = $tmpIdx2;
+
+									// Multi Language
+									if( !property_exists($this->subModule->{$tmpIdx}->fields->{$tmpIdx2}, 'label') ){
+										$this->subModule->{$tmpIdx}->fields->{$tmpIdx2}->label = null;
+									}
+									$this->subModule->{$tmpIdx}->fields->{$tmpIdx2}->label = $this->findLang('subModule.'.$tmpIdx.'.'.$tmpIdx2.':label', $this->subModule->{$tmpIdx}->fields->{$tmpIdx2}->label);
+
+									@$this->subModule->{$tmpIdx}->fields->{$tmpIdx2} = $this->applyFieldConfig( @$this->subModule->{$tmpIdx}->fields->{$tmpIdx2} );
 								}
 							}
 						}
@@ -371,6 +423,9 @@ class classModule{
 				$this->thumb = 'data:image/png;base64,'.$tmpBase64;
 			}
 		}
+
+		// Multi Language
+		$this->info['name'] = $this->findLang('name', $this->info['name']);
 
 		if( $src ){
 			// 単一のルート要素を持っているかどうか判定。
@@ -421,11 +476,13 @@ class classModule{
 				}
 
 				if( @$this->fields->{$tmpFieldName}->fieldType == 'loop' ){
-					@$this->subModule = ($this->subModule ? $this->subModule : json_decode('{}'));
-
+					if( !is_object($this->subModule) ){
+						$this->subModule = json_decode('{}');
+					}
 					@$_topThis->subModule->{$tmpFieldName} = $this->broccoli->createModuleInstance( $this->id, array(
 						"src" => '',
 						"subModName" => $tmpFieldName,
+						"modName" => (property_exists($this->fields->{$tmpFieldName}, 'label') && $this->fields->{$tmpFieldName}->label ? $this->fields->{$tmpFieldName}->label : $this->fields->{$tmpFieldName}->name),
 						"topThis" => $_topThis
 					) );
 					$_topThis->subModule->{$tmpFieldName}->init();
@@ -497,4 +554,32 @@ class classModule{
 		return $rtn;
 	}
 
+	/**
+	 * フィールド設定を反映する
+	 */
+	private function applyFieldConfig( $field ){
+		if( !is_object($field) || !property_exists($field, 'fieldType') || $field->fieldType != 'input' ){
+			return $field;
+		}
+		$fieldConf = $this->broccoli->getFieldConfig();
+		if( array_key_exists($field->type, $fieldConf) ){
+			foreach( $fieldConf[$field->type] as $key=>$val ){
+				if( !property_exists( $field, $key ) ){
+					$field->{$key} = $val;
+				}
+			}
+		}
+		return $field;
+	}
+
+	/**
+	 * LangBank を検索し、対訳を返す
+	 */
+	private function findLang( $key, $default ){
+		$tmpName = $this->lb->get($key);
+		if( strlen($tmpName) && $tmpName !== '---' ){
+			return $tmpName;
+		}
+		return $default;
+	}
 }

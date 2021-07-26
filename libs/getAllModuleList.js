@@ -21,6 +21,7 @@ module.exports = function(broccoli, callback){
 					data.tmp['_sys/root'] = broccoli.createModuleInstance('_sys/root');
 					data.tmp['_sys/unknown'] = broccoli.createModuleInstance('_sys/unknown');
 					data.tmp['_sys/html'] = broccoli.createModuleInstance('_sys/html');
+					data.tmp['_sys/image'] = broccoli.createModuleInstance('_sys/image');
 					for(var pkgId in list){
 						for(var catId in list[pkgId].categories){
 							for(var modId in list[pkgId].categories[catId].modules){
@@ -46,6 +47,7 @@ module.exports = function(broccoli, callback){
 							data.rtn[modId].isClipModule = obj.isClipModule;
 							data.rtn[modId].templateType = obj.templateType;
 							data.rtn[modId].template = obj.template;
+							data.rtn[modId].languageCsv = obj.languageCsv;
 							data.rtn[modId].info = obj.info;
 							if(obj.subModule){
 								data.rtn[modId].subModule = {};
@@ -61,6 +63,7 @@ module.exports = function(broccoli, callback){
 									data.rtn[modId].subModule[idx].isClipModule = obj.subModule[idx].isClipModule;
 									data.rtn[modId].subModule[idx].templateType = obj.subModule[idx].templateType;
 									data.rtn[modId].subModule[idx].template = obj.subModule[idx].template;
+									data.rtn[modId].subModule[idx].languageCsv = obj.subModule[idx].languageCsv;
 									data.rtn[modId].subModule[idx].info = obj.subModule[idx].info;
 								}
 							}

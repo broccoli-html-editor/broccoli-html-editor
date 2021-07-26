@@ -1,0 +1,61 @@
+{
+    "name": "多言語対応モジュール",
+    "interface": {
+        "fields": {
+            "text1": {
+                "type": "multitext",
+                "label": "テキスト入力1"
+            },
+            "select1": {
+                "type": "select",
+                "label": "選択入力1",
+                "options": [
+                    {
+                        "label": "選択肢1",
+                        "value": "1"
+                    },
+                    {
+                        "label": "選択肢2",
+                        "value": "2"
+                    }
+                ]
+            },
+            "loop1": {
+                "fieldType": "loop",
+                "label": "ループフィールド1"
+            },
+            "module1": {
+                "fieldType": "module",
+                "label": "モジュールフィールド1"
+            }
+        },
+        "subModule": {
+            "loop1": {
+                "fields": {
+                    "text2": {
+                        "type": "multitext",
+                        "label": "テキスト入力2"
+                    },
+                    "select2": {
+                        "type": "select",
+                        "label": "選択入力2",
+                        "options": [
+                            {
+                                "label": "選択肢1",
+                                "value": "1"
+                            },
+                            {
+                                "label": "選択肢2",
+                                "value": "2"
+                            }
+                        ]
+                    },
+                   "module2": {
+                        "fieldType": "module",
+                        "label": "モジュールフィールド2"
+                    }
+                }
+            }
+        }
+    }
+}

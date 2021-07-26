@@ -654,6 +654,14 @@ module.exports = function(broccoli){
 				});
 			}); })
 			.then(function(){ return new Promise(function(rlv, rjt){
+				var isImageUpdated = false;
+				if( $img.attr('data-is-updated') == 'yes' ){
+					isImageUpdated = true;
+				}
+				var isFilenameChanged = false;
+				if( !resourceDb[resKey] || resourceDb[resKey].publicFilename !== filename ){
+					isFilenameChanged = true;
+				}
 				for( var idx in resourceDb ){
 					if( resourceDb[idx].isPrivateMaterial ){
 						// 非公開リソースにファイル名は与えられない
@@ -661,6 +669,10 @@ module.exports = function(broccoli){
 					}
 					if( idx == resKey ){
 						// 自分
+						continue;
+					}
+					if( !isImageUpdated && !isFilenameChanged ){
+						// 画像もファイル名も変更されていなければ、重複チェックをスキップ
 						continue;
 					}
 					if( resType === '' && filename !== '' && resourceDb[idx].publicFilename == filename ){

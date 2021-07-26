@@ -159,22 +159,26 @@ module.exports = function(broccoli, data, options, callback){
 				var $ = cheerio.load($d_html, {decodeEntities: false});
 				var $1stElm = $('*').eq(0);
 				$1stElm.attr({ 'data-broccoli-instance-path': options.instancePath });
+				var moduleName = (mod.info.name||mod.id);
 				if( options.subModName ){
+					moduleName = options.subModName;
 					$1stElm.attr({ 'data-broccoli-sub-mod-name': options.subModName });
 				}
 				$1stElm.attr({ 'data-broccoli-area-size-detection': (mod.info.areaSizeDetection||'shallow') });
-				$1stElm.attr({ 'data-broccoli-module-name': (mod.info.name||mod.id) });
+				$1stElm.attr({ 'data-broccoli-module-name': moduleName });
 				$d_html = $.html();
 			}else{
 				var html = '';
 				html += '<div';
 				html += ' data-broccoli-instance-path="'+php.htmlspecialchars(options.instancePath)+'"';
+				var moduleName = (mod.info.name||mod.id);
 				if( options.subModName ){
+					moduleName = options.subModName;
 					html += ' data-broccoli-sub-mod-name="'+php.htmlspecialchars(options.subModName)+'"';
 				}
 				html += ' data-broccoli-area-size-detection="'+php.htmlspecialchars((mod.info.areaSizeDetection||'shallow'))+'"';
 				// html += ' data-broccoli-is-single-root-element="'+(isSingleRootElement?'yes':'no')+'"';
-				html += ' data-broccoli-module-name="'+php.htmlspecialchars((mod.info.name||mod.id))+'"';
+				html += ' data-broccoli-module-name="'+php.htmlspecialchars(moduleName)+'"';
 				html += '>';
 				html += $d_html;
 				html += '</div>';
@@ -317,13 +321,16 @@ module.exports = function(broccoli, data, options, callback){
 														var tmpopt = JSON.parse( JSON.stringify(opt) );
 														if(typeof(fieldData[field.name]) != typeof([])){ fieldData[field.name] = []; }
 														tmpopt.instancePath += '@'+(fieldData[field.name].length);
-														tmp_tplDataObj += mkAppender(
-															'module',
-															{
-																'modId': mod.id,
-																'instancePath': tmpopt.instancePath
-															}
-														);
+														var tmpDepth = tmpopt.instancePath.split('/');
+														if( tmpDepth.length <= 3 || !fieldData[field.name].length ){ // Appenderの表示数を減らす。
+															tmp_tplDataObj += mkAppender(
+																'module',
+																{
+																	'modId': mod.id,
+																	'instancePath': tmpopt.instancePath
+																}
+															);
+														}
 													}
 
 													tplDataObj[field.name] = tmp_tplDataObj;
@@ -389,7 +396,9 @@ module.exports = function(broccoli, data, options, callback){
 									// Twig: 環境変数登録
 									tplDataObj._ENV = {
 										"mode": options.mode,
-										"vars": {}
+										"vars": {},
+										"lang": broccoli.lb.lang,
+										"data": data,
 									};
 									for(var tmpIdx in _this.nameSpace.varsFinalized){
 										tplDataObj._ENV.vars[tmpIdx] = _this.nameSpace.varsFinalized[tmpIdx].val;
@@ -447,11 +456,13 @@ module.exports = function(broccoli, data, options, callback){
 												return $appender;
 
 											}else if(mod.fields[fieldNameFor].fieldType == 'module'){
-												var $appender = mkAppender('module', {
-													'modId': data.modId,
-													'subModName': null,
-													'instancePath': options.instancePath+'/fields.'+fieldNameFor+'@'+count(fieldData[fieldNameFor].length)
-												});
+												if( !fieldData[fieldNameFor].length ){ // Appenderの表示数を減らす。
+													var $appender = mkAppender('module', {
+														'modId': data.modId,
+														'subModName': null,
+														'instancePath': options.instancePath+'/fields.'+fieldNameFor+'@'+count(fieldData[fieldNameFor].length)
+													});
+												}
 												return $appender;
 
 											}
@@ -576,13 +587,16 @@ module.exports = function(broccoli, data, options, callback){
 										var tmpopt = JSON.parse( JSON.stringify(opt) );
 										if(typeof(fieldData[field.module.name]) != typeof([])){ fieldData[field.module.name] = []; }
 										tmpopt.instancePath += '@'+(fieldData[field.module.name].length);
-										tmpVal += mkAppender(
-											'module',
-											{
-												'modId': mod.id,
-												'instancePath': tmpopt.instancePath
-											}
-										);
+										var tmpDepth = tmpopt.instancePath.split('/');
+										if( tmpDepth.length <= 3 || !fieldData[field.module.name].length ){ // Appenderの表示数を減らす。
+											tmpVal += mkAppender(
+												'module',
+												{
+													'modId': mod.id,
+													'instancePath': tmpopt.instancePath
+												}
+											);
+										}
 									}
 
 									if( !field.module.hidden ){//← "hidden": true だったら、非表示(=出力しない)

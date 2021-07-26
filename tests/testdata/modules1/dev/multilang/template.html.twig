@@ -1,0 +1,16 @@
+<div class="mod-multi-language">
+    <p>編集画面が多言語対応したモジュールのサンプルです。</p>
+    <div>{{ text1 }}</div>
+{% for loopRow in loop1 %}
+{{ loopitem_start('loop1') }}
+<div>
+    <div>{{ loopRow.text2 }}</div>
+    <div>{{ loopRow.select2 }}</div>
+    <div>{{ loopRow.module2 }}</div>
+</div>
+{{ loopitem_end() }}
+{% endfor %}
+{{ appender('loop1') }}
+
+    <div>{{ module1 }}</div>
+</div>

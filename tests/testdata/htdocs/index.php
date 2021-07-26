@@ -4,6 +4,14 @@
 		<meta charset="utf-8">
 		<title>Broccoli TEST</title>
 		<link rel="stylesheet" href="./index_files/css.css" />
+		<style>
+:root {
+	--px2-main-color: #00a0e6;
+	--px2-text-color: #333;
+	--px2-background-color: #f9f9f9;
+}
+
+		</style>
 	</head>
 	<body>
 		<div class="instanceTreeView"></div>

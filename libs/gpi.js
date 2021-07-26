@@ -21,41 +21,69 @@ module.exports = function(broccoli, api, options, callback){
 			case "getBootupInfomations":
 				// broccoli の初期起動時に必要なすべての情報を取得する
 				var $bootup = {};
-				$bootup.conf = {};
-				$bootup.conf.appMode = broccoli.getAppMode();
-				$bootup['languageCsv'] = fs.readFileSync( __dirname+'/../data/language.csv' ).toString();
 
-				broccoli.getAllModuleList(function(allModuleList){
-					$bootup.allModuleList = allModuleList;
+				it79.fnc(
+					{},
+					[
+						function(it1){
+							$bootup.conf = {};
+							$bootup.conf.appMode = broccoli.getAppMode();
+							$bootup.languageCsv = fs.readFileSync( __dirname+'/../data/language.csv' ).toString();
+							it1.next();
+						},
+						function(it1){
+							broccoli.getAllModuleList(function(allModuleList){
+								$bootup.allModuleList = allModuleList;
+								$bootup.contentsDataJson = {};
+								try {
+									$bootup.contentsDataJson = fs.readFileSync(broccoli.realpathDataDir+'/data.json');
+									$bootup.contentsDataJson = JSON.parse( $bootup.contentsDataJson );
+								} catch (e) {
+									broccoli.log('[ERROR] FAILED to load data.json - '+broccoli.realpathDataDir+'/data.json');
+									$bootup.contentsDataJson = {};
+								}
 
+								it1.next();
 
-					$bootup.contentsDataJson = {};
-					try {
-						$bootup.contentsDataJson = fs.readFileSync(broccoli.realpathDataDir+'/data.json');
-						$bootup.contentsDataJson = JSON.parse( $bootup.contentsDataJson );
-					} catch (e) {
-						broccoli.log('[ERROR] FAILED to load data.json - '+broccoli.realpathDataDir+'/data.json');
-						$bootup.contentsDataJson = {};
-					}
+							});
+						},
+						function(it1){
+							broccoli.resourceMgr.getResourceDb( function(resourceDb){
+								// console.log(resourceDb);
+								$bootup.resourceDb = resourceDb;
+								var resourceList = [];
+								for(var resKey in resourceDb){
+									resourceList.push(resKey);
+								}
+								$bootup.resourceList = resourceList;
 
-					broccoli.resourceMgr.getResourceDb( function(resourceDb){
-						// console.log(resourceDb);
-						$bootup.resourceDb = resourceDb;
-						var resourceList = [];
-						for(var resKey in resourceDb){
-							resourceList.push(resKey);
-						}
-						$bootup.resourceList = resourceList;
+								it1.next();
 
-						broccoli.getPackageList(function(modulePackageList){
-							$bootup.modulePackageList = modulePackageList;
+							} );
+						},
+						function(it1){
+							broccoli.getPackageList(function(modulePackageList){
+								$bootup.modulePackageList = modulePackageList;
+								it1.next();
+							});
+						},
+						function(it1){
+							$bootup.userData = {};
+							broccoli.userStorage.load('modPaletteCondition', function(data){
+								$bootup.userData.modPaletteCondition = data;
+								it1.next();
+							});
+						},
+						function(it1){
 							$bootup.errors = broccoli.get_errors();
+							it1.next();
+						},
+						function(it1){
 							callback($bootup);
-						});
+						}
+					]
+				);
 
-					} );
-
-				});
 				break;
 
 			case "getConfig":
@@ -399,6 +427,31 @@ module.exports = function(broccoli, api, options, callback){
 					function(result){
 						callback(result);
 					}
+				);
+				break;
+
+			case "saveUserData":
+				// TODO: 開発中
+				var result = true;
+				it79.fnc(
+					{},
+					[
+						function(it1){
+							if( options.modPaletteCondition ){
+								broccoli.userStorage.save('modPaletteCondition', options.modPaletteCondition, function(result){
+									if( !result ){
+										result = false;
+									}
+									it1.next();
+								});
+								return;
+							}
+							it1.next();
+						},
+						function(it1){
+							callback(result);
+						}
+					]
 				);
 				break;
 

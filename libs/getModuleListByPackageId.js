@@ -10,6 +10,7 @@ module.exports = function(broccoli, packageId, callback){
 	var path = require('path');
 	var fs = require('fs');
 	var Promise = require('es6-promise').Promise;
+	var LangBank = require('langbank');
 	var FncsReadme = require('./fncs/readme.js');
 	var rtn = {};
 
@@ -59,6 +60,14 @@ module.exports = function(broccoli, packageId, callback){
 		}
 		return rtn;
 	}
+	function fncFindLang( $lb, $key, $default ){
+		var $tmpName = $lb.get($key);
+		if( $tmpName.length && $tmpName !== '---' ){
+			return $tmpName;
+		}
+		return $default;
+	};
+
 
 	new Promise(function(rlv){rlv();})
 		.then(function(){ return new Promise(function(rlv, rjt){
@@ -92,17 +101,27 @@ module.exports = function(broccoli, packageId, callback){
 						var realpath = path.resolve(rtn.realpath, row);
 						if( fs.statSync(realpath).isDirectory() ){
 							realpath += '/';
-							rtn.categories[row] = {};
-							rtn.categories[row].categoryId = row;
-							try {
-								rtn.categories[row].categoryInfo = JSON.parse(fs.readFileSync( path.resolve( realpath, 'info.json' ) ));
-							} catch (e) {
-								rtn.categories[row].categoryInfo = {};
-							}
-							rtn.categories[row].categoryName = rtn.categories[row].categoryInfo.name||row;
-							rtn.categories[row].realpath = realpath;
-							rtn.categories[row].deprecated = (rtn.categories[row].categoryInfo.deprecated || false)
-							rtn.categories[row].modules = {};
+							var lb = new LangBank(path.resolve( realpath, 'language.csv' ), function(){
+								lb.setLang(broccoli.lb.lang);
+								rtn.categories[row] = {};
+								rtn.categories[row].categoryId = row;
+								try {
+									rtn.categories[row].categoryInfo = JSON.parse(fs.readFileSync( path.resolve( realpath, 'info.json' ) ));
+								} catch (e) {
+									rtn.categories[row].categoryInfo = {};
+								}
+								rtn.categories[row].categoryName = rtn.categories[row].categoryInfo.name||row;
+								rtn.categories[row].realpath = realpath;
+								rtn.categories[row].deprecated = (rtn.categories[row].categoryInfo.deprecated || false)
+
+								// Multi Language
+								rtn.categories[row].categoryInfo.name = fncFindLang( lb, 'name', rtn.categories[row].categoryInfo.name );
+								rtn.categories[row].categoryName = fncFindLang( lb, 'name', rtn.categories[row].categoryName );
+
+								rtn.categories[row].modules = {};
+								it1.next();
+							});
+							return;
 						}
 						it1.next();
 					} ,
@@ -128,75 +147,82 @@ module.exports = function(broccoli, packageId, callback){
 							fileList,
 							function( it2, row2, idx2 ){
 								var realpath = path.resolve(rtn.categories[idx].realpath, row2);
-								if( !fs.statSync(realpath).isDirectory() ){
+								if( !realpath || !fs.statSync(realpath).isDirectory() ){
 									it2.next();
 									return;
 								}
 
-								realpath += '/';
-								rtn.categories[idx].modules[row2] = {};
+								var lb = new LangBank(path.resolve( realpath, 'language.csv' ), function(){
+									lb.setLang(broccoli.lb.lang);
 
-								// moduleId
-								var moduleId = rtn.packageId+':'+rtn.categories[idx].categoryId+'/'+row2;
-								rtn.categories[idx].modules[row2].moduleId = moduleId;
+									realpath += '/';
+									rtn.categories[idx].modules[row2] = {};
 
-								// info.json
-								try {
-									rtn.categories[idx].modules[row2].moduleInfo = JSON.parse(fs.readFileSync( path.resolve( realpath, 'info.json' ) ));
-									rtn.categories[idx].modules[row2].moduleInfo.enabledParents = broccoli.normalizeEnabledParentsOrChildren(rtn.categories[idx].modules[row2].moduleInfo.enabledParents, moduleId);
-									if( typeof(rtn.categories[idx].modules[row2].moduleInfo.enabledBowls) == typeof('') ){
-										rtn.categories[idx].modules[row2].moduleInfo.enabledBowls = [rtn.categories[idx].modules[row2].moduleInfo.enabledBowls];
+									// moduleId
+									var moduleId = rtn.packageId+':'+rtn.categories[idx].categoryId+'/'+row2;
+									rtn.categories[idx].modules[row2].moduleId = moduleId;
+
+									// info.json
+									try {
+										rtn.categories[idx].modules[row2].moduleInfo = JSON.parse(fs.readFileSync( path.resolve( realpath, 'info.json' ) ));
+										rtn.categories[idx].modules[row2].moduleInfo.enabledParents = broccoli.normalizeEnabledParentsOrChildren(rtn.categories[idx].modules[row2].moduleInfo.enabledParents, moduleId);
+										if( typeof(rtn.categories[idx].modules[row2].moduleInfo.enabledBowls) == typeof('') ){
+											rtn.categories[idx].modules[row2].moduleInfo.enabledBowls = [rtn.categories[idx].modules[row2].moduleInfo.enabledBowls];
+										}
+									} catch (e) {
+										rtn.categories[idx].modules[row2].moduleInfo = {};
 									}
-								} catch (e) {
-									rtn.categories[idx].modules[row2].moduleInfo = {};
-								}
-								rtn.categories[idx].modules[row2].deprecated = (rtn.categories[idx].modules[row2].moduleInfo.deprecated||false);
+									rtn.categories[idx].modules[row2].deprecated = (rtn.categories[idx].modules[row2].moduleInfo.deprecated||false);
 
-								// moduleInternalId
-								rtn.categories[idx].modules[row2].moduleInternalId = moduleId;
-								if( typeof(rtn.categories[idx].modules[row2].moduleInfo) == typeof({}) && rtn.categories[idx].modules[row2].moduleInfo.id ){
-									rtn.categories[idx].modules[row2].moduleInternalId = broccoli.getModuleInternalId(moduleId, rtn.categories[idx].modules[row2].moduleInfo.id);
-								}
-				
-								// clip.json
-								rtn.categories[idx].modules[row2].clip = false;
-								try {
-									if( isFile( path.resolve( realpath, 'clip.json' ) ) ){
-										rtn.categories[idx].modules[row2].clip = true;
+									// moduleInternalId
+									rtn.categories[idx].modules[row2].moduleInternalId = moduleId;
+									if( typeof(rtn.categories[idx].modules[row2].moduleInfo) == typeof({}) && rtn.categories[idx].modules[row2].moduleInfo.id ){
+										rtn.categories[idx].modules[row2].moduleInternalId = broccoli.getModuleInternalId(moduleId, rtn.categories[idx].modules[row2].moduleInfo.id);
 									}
-								} catch (e) {
+					
+									// clip.json
 									rtn.categories[idx].modules[row2].clip = false;
-								}
-
-								// moduleName
-								rtn.categories[idx].modules[row2].moduleName = rtn.categories[idx].modules[row2].moduleInfo.name||moduleId;
-
-								// realpath
-								rtn.categories[idx].modules[row2].realpath = realpath;
-
-								// thumb.png
-								var realpathThumb = path.resolve( realpath, 'thumb.png' );
-								rtn.categories[idx].modules[row2].thumb = null;
-								try{
-									if( isFile(realpathThumb) ){
-										rtn.categories[idx].modules[row2].thumb = 'data:image/png;base64,'+base64_encode( fs.readFileSync( realpathThumb ) );
+									try {
+										if( isFile( path.resolve( realpath, 'clip.json' ) ) ){
+											rtn.categories[idx].modules[row2].clip = true;
+										}
+									} catch (e) {
+										rtn.categories[idx].modules[row2].clip = false;
 									}
-								} catch (e) {
+
+									// moduleName
+									rtn.categories[idx].modules[row2].moduleName = rtn.categories[idx].modules[row2].moduleInfo.name||moduleId;
+
+									// realpath
+									rtn.categories[idx].modules[row2].realpath = realpath;
+
+									// thumb.png
+									var realpathThumb = path.resolve( realpath, 'thumb.png' );
 									rtn.categories[idx].modules[row2].thumb = null;
-								}
+									try{
+										if( isFile(realpathThumb) ){
+											rtn.categories[idx].modules[row2].thumb = 'data:image/png;base64,'+base64_encode( fs.readFileSync( realpathThumb ) );
+										}
+									} catch (e) {
+										rtn.categories[idx].modules[row2].thumb = null;
+									}
 
-								// README.md (html)
-								var readmeHelper = new FncsReadme(broccoli);
-								var readme = readmeHelper.get_html(realpath);
+									// README.md (html)
+									var readmeHelper = new FncsReadme(broccoli);
+									var readme = readmeHelper.get_html(realpath);
 
-								rtn.categories[idx].modules[row2].readme = readme;
+									rtn.categories[idx].modules[row2].readme = readme;
+
+									// Multi Language
+									rtn.categories[idx].modules[row2].moduleName = fncFindLang( lb, 'name', rtn.categories[idx].modules[row2].moduleName );
+									rtn.categories[idx].modules[row2].moduleInfo.name = fncFindLang( lb, 'name', rtn.categories[idx].modules[row2].moduleInfo.name );
 
 
-								broccoli.getModule(moduleId, null, function(modInstance){
-									rtn.categories[idx].modules[row2].moduleInfo.interface = rtn.categories[idx].modules[row2].moduleInfo.interface || modInstance.fields;
-									it2.next();
+									broccoli.getModule(moduleId, null, function(modInstance){
+										rtn.categories[idx].modules[row2].moduleInfo.interface = rtn.categories[idx].modules[row2].moduleInfo.interface || modInstance.fields;
+										it2.next();
+									});
 								});
-								// it2.next();
 								return;
 							} ,
 							function(){

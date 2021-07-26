@@ -68,6 +68,11 @@ class testHelper{
 			'customFields' => array(
 				'custom1' => 'test_php_field_custom1'
 			) ,
+			'fieldConfig' => array(
+				'image' => array(
+					'filenameAutoSetter' => 'ifEmpty',
+				),
+			),
 			'bindTemplate' => function($htmls){
 				$fin = '';
 				$fin .= '<!DOCTYPE html>'."\n";
@@ -93,6 +98,10 @@ class testHelper{
 				$fin .= '        <div class="contents" data-contents="secondly">'."\n";
 				$fin .= $htmls['secondly']."\n";
 				$fin .= '        </div><!-- /secondly -->'."\n";
+				$fin .= '        <h2>thirdly</h2>'."\n";
+				$fin .= '        <div class="contents" data-contents="thirdly">'."\n";
+				$fin .= $htmls['thirdly']."\n";
+				$fin .= '        </div><!-- /thirdly -->'."\n";
 				$fin .= '        <footer>'."\n";
 				$fin .= '            <a href="../editpage/">top</a>, <a href="https://www.pxt.jp/" target="_blank">pxt</a>'."\n";
 				$fin .= '            <form action="javascript:alert(\'form submit done.\');">'."\n";
@@ -105,6 +114,7 @@ class testHelper{
 				$fin .= '<script data-broccoli-receive-message="yes">'."\n";
 				$fin .= 'window.addEventListener(\'message\',(function() {'."\n";
 				$fin .= 'return function f(event) {'."\n";
+				$fin .= 'if(!event.data.scriptUrl){return;}'."\n";
 				$fin .= 'if(event.origin!=\'http://127.0.0.1:8088\'){return;}// <- check your own server\'s origin.'."\n";
 				$fin .= 'var s=document.createElement(\'script\');'."\n";
 				$fin .= 'document.querySelector(\'body\').appendChild(s);s.src=event.data.scriptUrl;'."\n";

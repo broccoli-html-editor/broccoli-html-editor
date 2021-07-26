@@ -23,6 +23,11 @@ $broccoli->init(
 		'customFields' => array(
 			'custom1' => 'test_php_field_custom1'
 		) ,
+		'fieldConfig' => array(
+			'image' => array(
+				'filenameAutoSetter' => 'ifEmpty',
+			),
+		),
 		'bindTemplate' => function($htmls){
 			$fin = '';
 			$fin .= '<!DOCTYPE html>'."\n";
@@ -48,6 +53,10 @@ $broccoli->init(
 			$fin .= '        <div class="contents" data-contents="secondly">'."\n";
 			$fin .= $htmls['secondly']."\n";
 			$fin .= '        </div><!-- /secondly -->'."\n";
+			$fin .= '        <h2>thirdly</h2>'."\n";
+			$fin .= '        <div class="contents" data-contents="thirdly">'."\n";
+			$fin .= $htmls['thirdly']."\n";
+			$fin .= '        </div><!-- /thirdly -->'."\n";
 			$fin .= '        <footer>'."\n";
 			$fin .= '            <a href="../editpage/">top</a>, <a href="https://www.pxt.jp/" target="_blank">pxt</a>'."\n";
 			$fin .= '            <form action="javascript:alert(\'form submit done.\');">'."\n";
@@ -60,6 +69,7 @@ $broccoli->init(
 			$fin .= '<script data-broccoli-receive-message="yes">'."\n";
 			$fin .= 'window.addEventListener(\'message\',(function() {'."\n";
 			$fin .= 'return function f(event) {'."\n";
+			$fin .= 'if(!event.data.scriptUrl){return;}'."\n";
 			$fin .= 'if(event.origin!=\'http://127.0.0.1:8088\'){return;}// <- check your own server\'s origin.'."\n";
 			$fin .= 'var s=document.createElement(\'script\');'."\n";
 			$fin .= 'document.querySelector(\'body\').appendChild(s);s.src=event.data.scriptUrl;'."\n";
@@ -72,6 +82,21 @@ $broccoli->init(
 		},
 		'log' => function($msg){
 			// var_dump('[ERROR HANDLED]'.$msg);
+		},
+		'userStorage' => function($key, $val = null){
+			// ユーザー固有の情報を読み書きします。
+			$args = func_get_args();
+			if( count($args) == 1 ){
+				// 読み取りとしてコールされる場合、引数が1つだけ提供されます。
+				$path = __DIR__.'/user_storage/'.urlencode($key).'.json';
+				if( !is_file($path) ){
+					touch($path);
+				}
+				return file_get_contents(__DIR__.'/user_storage/'.urlencode($key).'.json');
+			}else{
+				// 書き込みの要求の場合、引数が2つ提供されます。
+				return file_put_contents(__DIR__.'/user_storage/'.urlencode($key).'.json', $val);
+			}
 		}
 	)
 );

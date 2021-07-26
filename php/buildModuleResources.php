@@ -48,7 +48,15 @@ class buildModuleResources{
 
 				if( preg_match( '/\.scss$/i', $path ) ){
 					// var_dump($tmp_bin);
-					$scss = new \Leafo\ScssPhp\Compiler();
+					$scss = null;
+					if (class_exists('\ScssPhp\ScssPhp\Compiler')) {
+						$scss = new \ScssPhp\ScssPhp\Compiler();
+					} elseif (class_exists('\Leafo\ScssPhp\Compiler')) {
+						$scss = new \Leafo\ScssPhp\Compiler();
+					}else{
+						trigger_error('SCSS Proccessor is NOT available.');
+						continue;
+					}
 					$tmp_bin = $scss->compile( $tmp_bin );
 				}
 

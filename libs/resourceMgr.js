@@ -179,13 +179,7 @@ module.exports = function(broccoli){
 		// console.log(_resourcesPublishDirPath);
 
 		// 使われていないリソースを削除
-		var jsonSrc = fs.readFileSync( _dataJsonPath );
-		jsonSrc = JSON.parse( JSON.stringify(jsonSrc.toString()) );
-		for( var resKey in _resourceDb ){
-			if( !jsonSrc.match(resKey) ){// TODO: JSONファイルを文字列として検索しているが、この方法は完全ではない。
-				this.removeResource(resKey);
-			}
-		}
+		collectGarbage();
 
 		// リソースデータの保存と公開領域への設置
 		it79.ary(
@@ -388,6 +382,7 @@ module.exports = function(broccoli){
 	 */
 	this.getResourceDb = function( callback ){
 		callback = callback || function(){};
+
 		new Promise(function(rlv){rlv();})
 			.then(function(){ return new Promise(function(rlv, rjt){
 				callback(_resourceDb);
@@ -637,6 +632,18 @@ module.exports = function(broccoli){
 		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 			callback(true);
 		}); });
+		return;
+	}
+
+	// 使われていないリソースを削除
+	function collectGarbage(){
+		var jsonSrc = fs.readFileSync( _dataJsonPath );
+		jsonSrc = JSON.parse( JSON.stringify(jsonSrc.toString()) );
+		for( var resKey in _resourceDb ){
+			if( !jsonSrc.match(resKey) ){// TODO: JSONファイルを文字列として検索しているが、この方法は完全ではない。
+				_this.removeResource(resKey);
+			}
+		}
 		return;
 	}
 

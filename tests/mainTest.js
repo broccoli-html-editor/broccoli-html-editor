@@ -49,6 +49,11 @@ function makeDefaultBroccoli(options, callback){
 
 				}
 			} ,
+			'fieldConfig': {
+				'image': {
+					'filenameAutoSetter': 'ifEmpty'
+				}
+			},
 			'bindTemplate': function(htmls, callback){
 				var fin = '';
 				fin += '<!DOCTYPE html>'+"\n";
@@ -74,6 +79,10 @@ function makeDefaultBroccoli(options, callback){
 				fin += '        <div class="contents" data-contents="secondly">'+"\n";
 				fin += htmls['secondly']+"\n";
 				fin += '        </div><!-- /secondly -->'+"\n";
+				fin += '        <h2>thirdly</h2>'+"\n";
+				fin += '        <div class="contents" data-contents="thirdly">'+"\n";
+				fin += htmls['thirdly']+"\n";
+				fin += '        </div><!-- /thirdly -->'+"\n";
 				fin += '        <footer>'+"\n";
 				fin += '            <a href="../editpage/">top</a>, <a href="https://www.pxt.jp/" target="_blank">pxt</a>'+"\n";
 				fin += '            <form action="javascript:alert(\'form submit done.\');">'+"\n";
@@ -86,6 +95,7 @@ function makeDefaultBroccoli(options, callback){
 				fin += '<script data-broccoli-receive-message="yes">'+"\n";
 				fin += 'window.addEventListener(\'message\',(function() {'+"\n";
 				fin += 'return function f(event) {'+"\n";
+				fin += 'if(!event.data.scriptUrl){return;}'+"\n";
 				fin += 'if(event.origin!=\'http://127.0.0.1:8088\'){return;}// <- check your own server\'s origin.'+"\n";
 				fin += 'var s=document.createElement(\'script\');'+"\n";
 				fin += 'document.querySelector(\'body\').appendChild(s);s.src=event.data.scriptUrl;'+"\n";
@@ -104,6 +114,105 @@ function makeDefaultBroccoli(options, callback){
 	);
 	return;
 }
+
+describe('Clientside Utilities', function() {
+
+	it("utils.getInstancePathWhichWasAffectedRemovingInstance()", function(done) {
+		this.timeout(60*1000);
+
+		var utils = new (require(__dirname+'/../client/src/apis/utils.js'))();
+
+		assert.equal(
+			utils.getInstancePathWhichWasAffectedRemovingInstance(
+				'/fields.main@1',
+				'/fields.main@2'
+			),
+			'/fields.main@1'
+		);
+		assert.equal(
+			utils.getInstancePathWhichWasAffectedRemovingInstance(
+				'/fields.main@4',
+				'/fields.main@1'
+			),
+			'/fields.main@3'
+		);
+		assert.equal(
+			utils.getInstancePathWhichWasAffectedRemovingInstance(
+				'/fields.main@4',
+				'/fields.main@1/fields.main@3'
+			),
+			'/fields.main@4'
+		);
+		assert.equal(
+			utils.getInstancePathWhichWasAffectedRemovingInstance(
+				'/fields.main@1/fields.main@3',
+				'/fields.main@4'
+			),
+			'/fields.main@1/fields.main@3'
+		);
+		assert.equal(
+			utils.getInstancePathWhichWasAffectedRemovingInstance(
+				'/fields.main@4/fields.main@3',
+				'/fields.main@1'
+			),
+			'/fields.main@3/fields.main@3'
+		);
+
+		done();
+	});
+
+	it("utils.getInstancePathWhichWasAffectedInsertingInstance()", function(done) {
+		this.timeout(60*1000);
+
+		var utils = new (require(__dirname+'/../client/src/apis/utils.js'))();
+
+		assert.equal(
+			utils.getInstancePathWhichWasAffectedInsertingInstance(
+				'/fields.main@1',
+				'/fields.main@2'
+			),
+			'/fields.main@1'
+		);
+		assert.equal(
+			utils.getInstancePathWhichWasAffectedInsertingInstance(
+				'/fields.main@4',
+				'/fields.main@4'
+			),
+			'/fields.main@5'
+		);
+		assert.equal(
+			utils.getInstancePathWhichWasAffectedInsertingInstance(
+				'/fields.main@4',
+				'/fields.main@1'
+			),
+			'/fields.main@5'
+		);
+		assert.equal(
+			utils.getInstancePathWhichWasAffectedInsertingInstance(
+				'/fields.main@4',
+				'/fields.main@1/fields.main@3'
+			),
+			'/fields.main@4'
+		);
+		assert.equal(
+			utils.getInstancePathWhichWasAffectedInsertingInstance(
+				'/fields.main@1/fields.main@3',
+				'/fields.main@4'
+			),
+			'/fields.main@1/fields.main@3'
+		);
+		assert.equal(
+			utils.getInstancePathWhichWasAffectedInsertingInstance(
+				'/fields.main@4/fields.main@3',
+				'/fields.main@1'
+			),
+			'/fields.main@5/fields.main@3'
+		);
+
+		done();
+	});
+
+});
 
 describe('インスタンス初期化', function() {
 
@@ -233,7 +342,7 @@ describe('パッケージ一覧の取得', function() {
 			broccoli.getPackageList(function(list){
 				// console.log( list );
 				assert.equal(list['testMod1'].packageId, 'testMod1');
-				assert.equal(list['testMod1'].packageName, 'テストモジュール1');
+				assert.equal(list['testMod1'].packageName, 'テストモジュール1(en)');
 				assert.equal(list['testMod1'].categories.units.modules.cols2.moduleId, 'testMod1:units/cols2');
 				assert.equal(list['testMod1'].categories.units.modules.cols2.realpath, path.resolve(__dirname, 'testdata/modules1/units/cols2/')+'/');
 				done();

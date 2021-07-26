@@ -19,6 +19,7 @@
 		// console.log(__dirname);
 
 		var _this = this;
+		var broccoli = this;
 		var it79 = require('iterate79');
 		var _ = require('underscore');
 		var $ = require('jquery');
@@ -33,6 +34,11 @@
 		var uiState;
 		var timer_redraw,
 			timer_onPreviewLoad;
+		this.utils = new (require('./utils.js'))(_this);
+		this.indicator = new (require('./indicator.js'))(_this);
+
+		this.px2style = new (require('px2style'))();
+		this.px2style.setConfig('additionalClassName', 'broccoli');
 
 		/**
 		 * broccoli-client を初期化する
@@ -50,6 +56,7 @@
 			options.contents_area_selector = options.contents_area_selector || '.contents';
 			options.contents_bowl_name_by = options.contents_bowl_name_by || 'id';
 			options.gpiBridge = options.gpiBridge || function(){};
+			options.droppedFileOperator = options.droppedFileOperator || {};
 			options.onClickContentsLink = options.onClickContentsLink || function(){};
 			options.onMessage = options.onMessage || function(){};
 			options.lang = options.lang || 'en';
@@ -69,95 +76,6 @@
 			$(options.elmInstanceTreeView).html('...');
 			$(options.elmModulePalette).html('...');
 
-			$canvas = $(options.elmCanvas);
-			$canvas
-				.addClass('broccoli')
-				.addClass('broccoli--canvas')
-				.append( $('<iframe>')
-					.css({'border': 'none'})
-				)
-				.append( $('<div class="broccoli--panels">')
-				)
-			;
-			$canvas.find('iframe')
-				.bind('load', function(){
-					var contWin = $canvas.find('iframe').get(0).contentWindow;
-					try{
-						if(contWin.location.href == 'about:blank'){
-							return;
-						}
-						console.log('broccoli: preview loaded:', contWin.location.href);
-					}catch(e){}
-					_this.setUiState('standby');
-					onPreviewLoad( callback );
-				})
-			;
-			// this.options.elmIframeWindow = $canvas.find('iframe').get(0).contentWindow;
-			this.options.elmPanels = $canvas.find('.broccoli--panels').get(0);
-			// this.options.elmInstancePathView = $canvas.find('.broccoli--instance-path-view').get(0);
-
-			this.clipboard = new (require('./clipboard.js'))(this);
-			this.postMessenger = new (require('./postMessenger.js'))(this, $canvas.find('iframe').get(0));
-			this.resourceMgr = new (require('./resourceMgr.js'))(this);
-			this.panels = new (require( './panels.js' ))(this);
-			this.contextmenu = new (require( './contextmenu.js' ))(this);
-			this.instancePathView = new (require( './instancePathView.js' ))(this);
-			this.instanceTreeView = new (require( './instanceTreeView.js' ))(this);
-			this.editWindow = new (require( './editWindow.js' ))(this);
-			this.fieldBase = new (require('./fieldBase.js'))(this);
-			this.valiidator = new (require('./validator.js'))(this);
-			this.findWindow = new (require( './findWindow.js' ))(this);
-			this.fieldDefinitions = {};
-			function loadFieldDefinition(){
-				function loadFieldDefinition(fieldId, mod){
-					var rtn = _.defaults( new (mod)(_this), _this.fieldBase );
-					rtn.__fieldId__ = fieldId;
-					return rtn;
-				}
-				_this.fieldDefinitions.href = loadFieldDefinition('href', require('./../../../fields/client/app.fields.href.js'));
-				_this.fieldDefinitions.html = loadFieldDefinition('html', require('./../../../fields/client/app.fields.html.js'));
-				_this.fieldDefinitions.html_attr_text = loadFieldDefinition('html_attr_text', require('./../../../fields/client/app.fields.html_attr_text.js'));
-				_this.fieldDefinitions.image = loadFieldDefinition('image', require('./../../../fields/client/app.fields.image.js'));
-				_this.fieldDefinitions.markdown = loadFieldDefinition('markdown', require('./../../../fields/client/app.fields.markdown.js'));
-				_this.fieldDefinitions.multitext = loadFieldDefinition('multitext', require('./../../../fields/client/app.fields.multitext.js'));
-				_this.fieldDefinitions.script = loadFieldDefinition('script', require('./../../../fields/client/app.fields.script.js'));
-				_this.fieldDefinitions.select = loadFieldDefinition('select', require('./../../../fields/client/app.fields.select.js'));
-				_this.fieldDefinitions.text = loadFieldDefinition('text', require('./../../../fields/client/app.fields.text.js'));
-				_this.fieldDefinitions.color = loadFieldDefinition('color', require('./../../../fields/client/app.fields.color.js'));
-				_this.fieldDefinitions.datetime = loadFieldDefinition('datetime', require('./../../../fields/client/app.fields.datetime.js'));
-
-				if( _this.options.customFields ){
-					for( var idx in _this.options.customFields ){
-						_this.fieldDefinitions[idx] = loadFieldDefinition( idx, _this.options.customFields[idx] );
-					}
-				}
-
-				return true;
-			}
-			loadFieldDefinition();
-
-			function bindDropCancel(elm){
-				$(elm)
-					.bind('dragover', function(e){
-						e.stopPropagation();
-						e.preventDefault();
-						return;
-					})
-					.bind('drop', function(e){
-						// var event = e.originalEvent;
-						// var fileInfo = event.dataTransfer.files[0];
-						e.stopPropagation();
-						e.preventDefault();
-						return;
-					})
-				;
-			}
-			bindDropCancel($canvas);
-			bindDropCancel(options.elmInstancePathView);
-			bindDropCancel(options.elmInstanceTreeView);
-			bindDropCancel(options.elmModulePalette);
-
-
 			it79.fnc(
 				{},
 				[
@@ -165,14 +83,13 @@
 						// リソースファイルの読み込み
 						var css = [
 							__dirname+'/libs/bootstrap/dist/css/bootstrap.css',
-							__dirname+'/libs/px2style/dist/styles.css',
 							__dirname+'/broccoli.css',
 						];
 						$('head *[data-broccoli-resource]').remove(); // 一旦削除
 						it79.ary(
 							css,
 							function(it2, row, idx){
-								_this.progressMessage('リソースを読み込んでいます...。 ('+(Number(idx)+1)+'/'+(css.length)+')');
+								console.log('リソースを読み込んでいます...。 ('+(Number(idx)+1)+'/'+(css.length)+')');
 								var link = document.createElement('link');
 								link.addEventListener('load', function(){
 									it2.next();
@@ -186,6 +103,103 @@
 								it1.next(data);
 							}
 						);
+					} ,
+					function(it1, data){
+						// DOMの整備
+						$canvas = $(options.elmCanvas);
+						$canvas
+							.addClass('broccoli')
+							.addClass('broccoli--canvas')
+							.append( $('<iframe>')
+								.css({'border': 'none'})
+								.attr({'scrolling': 'no'})
+							)
+							.append( $('<div class="broccoli--panels">')
+							)
+						;
+						$canvas.find('iframe')
+							.bind('load', function(){
+								var contWin = $canvas.find('iframe').get(0).contentWindow;
+								try{
+									if(contWin.location.href == 'about:blank'){
+										return;
+									}
+									console.log('broccoli: preview loaded:', contWin.location.href);
+								}catch(e){}
+								_this.setUiState();
+								onPreviewLoad( callback );
+							})
+						;
+						// _this.options.elmIframeWindow = $canvas.find('iframe').get(0).contentWindow;
+						_this.options.elmPanels = $canvas.find('.broccoli--panels').get(0);
+						// _this.options.elmInstancePathView = $canvas.find('.broccoli--instance-path-view').get(0);
+
+						_this.clipboard = new (require('./clipboard.js'))(_this);
+						_this.postMessenger = new (require('./postMessenger.js'))(_this, $canvas.find('iframe').get(0));
+						_this.resourceMgr = new (require('./resourceMgr.js'))(_this);
+						_this.panels = new (require( './panels.js' ))(_this);
+						_this.contextmenu = new (require( './contextmenu.js' ))(_this);
+						_this.instancePathView = new (require( './instancePathView.js' ))(_this);
+						_this.instanceTreeView = new (require( './instanceTreeView.js' ))(_this);
+						_this.editWindow = new (require( './editWindow.js' ))(_this);
+						_this.fieldBase = new (require('./fieldBase.js'))(_this);
+						_this.valiidator = new (require('./validator.js'))(_this);
+						_this.findWindow = new (require( './findWindow.js' ))(_this);
+						_this.fieldDefinitions = {};
+						function loadFieldDefinition(){
+							function loadFieldDefinition(fieldId, mod){
+								var rtn = _.defaults( new (mod)(_this), _this.fieldBase );
+								rtn.__fieldId__ = fieldId;
+								return rtn;
+							}
+							_this.fieldDefinitions.href = loadFieldDefinition('href', require('./../../../fields/client/app.fields.href.js'));
+							_this.fieldDefinitions.html = loadFieldDefinition('html', require('./../../../fields/client/app.fields.html.js'));
+							_this.fieldDefinitions.html_attr_text = loadFieldDefinition('html_attr_text', require('./../../../fields/client/app.fields.html_attr_text.js'));
+							_this.fieldDefinitions.image = loadFieldDefinition('image', require('./../../../fields/client/app.fields.image.js'));
+							_this.fieldDefinitions.markdown = loadFieldDefinition('markdown', require('./../../../fields/client/app.fields.markdown.js'));
+							_this.fieldDefinitions.multitext = loadFieldDefinition('multitext', require('./../../../fields/client/app.fields.multitext.js'));
+							_this.fieldDefinitions.script = loadFieldDefinition('script', require('./../../../fields/client/app.fields.script.js'));
+							_this.fieldDefinitions.select = loadFieldDefinition('select', require('./../../../fields/client/app.fields.select.js'));
+							_this.fieldDefinitions.text = loadFieldDefinition('text', require('./../../../fields/client/app.fields.text.js'));
+							_this.fieldDefinitions.color = loadFieldDefinition('color', require('./../../../fields/client/app.fields.color.js'));
+							_this.fieldDefinitions.datetime = loadFieldDefinition('datetime', require('./../../../fields/client/app.fields.datetime.js'));
+
+							if( _this.options.customFields ){
+								for( var idx in _this.options.customFields ){
+									_this.fieldDefinitions[idx] = loadFieldDefinition( idx, _this.options.customFields[idx] );
+								}
+							}
+
+							return true;
+						}
+						loadFieldDefinition();
+
+						function bindDropCancel(elm){
+							$(elm)
+								.bind('dragover', function(e){
+									e.stopPropagation();
+									e.preventDefault();
+									return;
+								})
+								.bind('drop', function(e){
+									// var event = e.originalEvent;
+									// var fileInfo = event.dataTransfer.files[0];
+									e.stopPropagation();
+									e.preventDefault();
+									return;
+								})
+							;
+						}
+						bindDropCancel($canvas);
+						bindDropCancel(options.elmInstancePathView);
+						bindDropCancel(options.elmInstanceTreeView);
+						bindDropCancel(options.elmModulePalette);
+
+						_this.indicator.putElement($('body'));
+						_this.indicator.putElement($canvas);
+						_this.indicator.putElement(options.elmInstanceTreeView);
+
+						it1.next(data);
 					} ,
 					function(it1, data){
 						// プログレスを表示
@@ -218,18 +232,19 @@
 						});
 					},
 					function(it1, data){
-						_this.progressMessage('コンテンツデータを初期化しています...。');
-						_this.contentsSourceData = new (require('./contentsSourceData.js'))(_this).init(
-							function(){
-								it1.next(data);
-							}
-						);
-					} ,
-					function(it1, data){
 						_this.progressMessage('リソースマネージャを初期化しています...。');
 						_this.resourceMgr.init(function(){
 							it1.next(data);
 						});
+					} ,
+					function(it1, data){
+						_this.progressMessage('コンテンツデータを初期化しています...。');
+						_this.contentsSourceData = new (require('./contentsSourceData.js'))(_this);
+						_this.contentsSourceData.init(
+							function(){
+								it1.next(data);
+							}
+						);
 					} ,
 					function(it1, data){
 						_this.progressMessage('モジュールパレットを生成しています...。');
@@ -284,15 +299,6 @@
 						});
 					} ,
 					function(it1, data){
-						// キーイベント
-						$(window).on('keydown', function(e){
-							if( e.keyCode == 27 ){ // ESC
-								_this.esc();
-							}
-						});
-						it1.next(data);
-					} ,
-					function(it1, data){
 						console.log('broccoli: init done.');
 
 						clearTimeout(timer_onPreviewLoad);
@@ -316,44 +322,110 @@
 		 */
 		this.setUiState = function( state ){
 			uiState = state;
-			var $window = $(window)
+			var $window = $(window);
+			var $broccoli = $('.broccoli');
 			$window
-				.off('copy')
-				.off('cut')
-				.off('paste')
+				.off('copy.broccoli-html-editor')
+				.off('cut.broccoli-html-editor')
+				.off('paste.broccoli-html-editor')
+				.off('keydown.broccoli-html-editor')
+			;
+			$broccoli
+				.off('keydown.broccoli-html-editor')
 			;
 
+			if( !uiState ){
+				if( this.isProgress() ){
+					uiState = 'progress';
+				}else if( this.isLightboxOpened() ){
+					uiState = 'lightbox';
+				}else{
+					uiState = 'standby';
+				}
+			}
+
+			$window.on('keydown.broccoli-html-editor', function(e){
+				if( e.keyCode == 27 ){ // ESC
+					_this.esc();
+				}
+			});
+
 			if( uiState == 'standby' ){
+				// --------------------------------------
+				// 待機画面
+				// = ドラッグ・アンド・ドロップする画面
 				$window
-					.on('copy', function(e){
+					.on('copy.broccoli-html-editor', function(e){
 						switch(e.target.tagName.toLowerCase()){
 							case 'textarea': case 'input': return;break;
 						}
 						e.stopPropagation();
 						e.preventDefault();
-						_this.copy();
+						// console.debug(e.originalEvent.clipboardData);
+						_this.copy(function(){}, e.originalEvent);
 						return;
 					})
-					.on('cut', function(e){
+					.on('cut.broccoli-html-editor', function(e){
 						switch(e.target.tagName.toLowerCase()){
 							case 'textarea': case 'input': return;break;
 						}
 						e.stopPropagation();
 						e.preventDefault();
-						_this.cut();
+						_this.cut(function(){}, e.originalEvent);
 						return;
 					})
-					.on('paste', function(e){
+					.on('paste.broccoli-html-editor', function(e){
 						switch(e.target.tagName.toLowerCase()){
 							case 'textarea': case 'input': return;break;
 						}
 						e.stopPropagation();
 						e.preventDefault();
-						_this.paste();
+						_this.paste(function(){}, e.originalEvent);
 						return;
 					})
 				;
+				$broccoli
+					.on('keydown.broccoli-html-editor', function(e){
+						switch(e.target.tagName.toLowerCase()){
+							case 'textarea': case 'input': return;break;
+						}
+						var cmdKey = ( e.originalEvent.metaKey || e.originalEvent.ctrlKey );
+						var pressedKey = e.originalEvent.key.toLowerCase();
+						// console.log('keydown:', e);
+						if(cmdKey){
+							if(pressedKey == 'z'){
+								e.stopPropagation();
+								e.preventDefault();
+								_this.historyBack();
+								return;
+							}else if(pressedKey == 'y'){
+								e.stopPropagation();
+								e.preventDefault();
+								_this.historyGo();
+								return;
+							}
+						}
+						if(pressedKey == 'delete' || pressedKey == 'backspace'){
+							e.stopPropagation();
+							e.preventDefault();
+							_this.remove();
+							return;
+						}
+						return;
+					})
+				;
+
+			}else if( uiState == 'lightbox' ){
+				// --------------------------------------
+				// モーダルウィンドウが開いている状態
+				// モジュール説明画面、インスタンス編集画面など。
+
+			}else if( uiState == 'progress' ){
+				// --------------------------------------
+				// プログレス表示中
+
 			}
+
 			return;
 		}
 
@@ -529,13 +601,19 @@
 					function( it1, data ){
 						// iframeのサイズ合わせ
 						_this.progressMessage('画面を調整しています...。');
-						$canvas.find('iframe').width( '100%' );
+						$canvas.find('iframe')
+							.width( '100%' )
+							.attr({'scrolling': 'no'})
+						;
 						_this.postMessenger.send(
 							'getHtmlContentHeightWidth',
 							{},
 							function(hw){
-								// console.log(height);
-								$canvas.find('iframe').height( hw.h + 0 ).width( hw.w + 0 );
+								// console.log(hw);
+								$canvas.find('iframe')
+									.height( hw.h + 16 )
+									// .removeAttr('scrolling')
+								;
 								it1.next(data);
 							}
 						);
@@ -596,6 +674,9 @@
 					function(it1, data){
 						_this.progressMessage('完了');
 						callback();
+						setTimeout(function(){
+							_this.closeProgress();
+						}, 500);
 						it1.next();
 					}
 				]
@@ -624,11 +705,9 @@
 		this.gpi = function(api, options, callback){
 			options = options || {};
 			options.lang = options.lang || this.options.lang;
-			this.options.gpiBridge(api, options, function(result,a,b,c){
+			this.options.gpiBridge(api, options, function(result){
 				if(typeof(result) == typeof({}) && result.errors && result.errors.length){
-					for(var i in result.errors){
-						console.error(result.errors[i]);
-					}
+					console.error(result.errors);
 				}
 				callback(result);
 			});
@@ -650,8 +729,18 @@
 			var broccoli = this;
 			broccoli.selectInstance(instancePath, function(){
 				broccoli.lightbox( function( lbElm ){
+					$(lbElm).addClass('broccoli__lightbox-inner--edit-window-mode');
 					broccoli.drawEditWindow( instancePath, lbElm, function(isSave, callback){
 						callback = callback || function(){};
+						if( !isSave ){
+							broccoli.closeLightbox(function(){
+								broccoli.closeProgress(function(){
+									console.log('editInstance canceled.');
+									callback();
+								});
+							});
+							return;
+						}
 						// console.log(callback);
 						it79.fnc({},[
 							function(it1, data){
@@ -677,13 +766,13 @@
 								});
 							} ,
 							function(it1, data){
-								// 画面を再描画
-								_this.redraw(function(){
+								broccoli.closeLightbox(function(){
 									it1.next(data);
 								});
 							} ,
 							function(it1, data){
-								broccoli.closeLightbox(function(){
+								// 画面を再描画
+								_this.redraw(function(){
 									it1.next(data);
 								});
 							} ,
@@ -778,6 +867,21 @@
 				});
 			});
 			return;
+		}
+
+		/**
+		 * インスタンスが選択状態にあるか調べる
+		 */
+		this.isInstanceSelected = function(instancePath){
+			if(selectedInstance == instancePath){
+				return true;
+			}
+			for(var idx in selectedInstanceRegion){
+				if( selectedInstanceRegion[idx] == instancePath ){
+					return true;
+				}
+			}
+			return false;
 		}
 
 		/**
@@ -910,7 +1014,7 @@
 		/**
 		 * 選択したインスタンスをクリップボードへコピーする
 		 */
-		this.copy = function(callback){
+		this.copy = function(callback, event){
 			callback = callback||function(){};
 			var instancePath = this.getSelectedInstance();
 			// console.log(instancePath);
@@ -920,14 +1024,18 @@
 				return;
 			}
 
+			_this.progressMessage('コピーしています。');
+
 			this.selectedInstanceToJsonString(function(jsonStr){
 				if(jsonStr === false){
 					_this.message('インスタンスのコピーに失敗しました。');
 					callback(false);
 					return;
 				}
-				_this.clipboard.set( jsonStr );
+				_this.clipboard.set( jsonStr, null, event );
+				_this.progressMessage('インスタンスをコピーしました。');
 				_this.message('インスタンスをコピーしました。');
+				_this.closeProgress();
 				callback(true);
 			});
 			return;
@@ -936,7 +1044,7 @@
 		/**
 		 * 選択したインスタンスをクリップボードへコピーして削除する
 		 */
-		this.cut = function(callback){
+		this.cut = function(callback, event){
 			callback = callback||function(){};
 			var instancePath = this.getSelectedInstance();
 			// console.log(instancePath);
@@ -946,13 +1054,15 @@
 				return;
 			}
 
+			_this.contentsSourceData.resourceDbReloadRequest() // 削除したインスタンスにリソースが含まれている可能性があるので、リロードを要求する。
+
 			this.selectedInstanceToJsonString(function(jsonStr){
 				if(jsonStr === false){
 					_this.message('インスタンスのコピーに失敗しました。');
 					callback(false);
 					return;
 				}
-				_this.clipboard.set( jsonStr );
+				_this.clipboard.set( jsonStr, null, event );
 
 				_this.remove(function(){
 					_this.message('インスタンスをカットしました。');
@@ -965,101 +1075,103 @@
 		/**
 		 * クリップボードの内容を選択したインスタンスの位置に挿入する
 		 */
-		this.paste = function(callback){
+		this.paste = function(callback, event){
 			var broccoli = this;
 			callback = callback||function(){};
 			var selectedInstance = this.getSelectedInstance();
 			if( typeof(selectedInstance) !== typeof('') ){
-				console.log(selectedInstance);
+				// console.log(selectedInstance);
 				_this.message('インスタンスを選択した状態でペーストしてください。');
 				callback(false);
 				return;
 			}
 			// console.log(selectedInstance);
 
-			var data = this.clipboard.get();
-			try {
-				data = JSON.parse( data );
-			} catch (e) {
-				_this.message('クリップボードのデータをデコードできませんでした。');
-				console.log('FAILED to decode clipboard.', data);
-				callback(false);
-				return;
-			}
-			// console.log(data);
+			this.clipboard.get( null, event, function(data){
 
-			var isValid = (function(){
-				var php = require('phpjs');
-				var dataToParent = broccoli.contentsSourceData.get(php.dirname(selectedInstance));
-				var modToParent = broccoli.contentsSourceData.getModule(dataToParent.modId);//subModuleの全量を知りたいので、第2引数は渡さない。
-				var currentInstanceTo = php.basename(selectedInstance).split('.')[1].split('@');
-				// console.log(modToParent);
-				// console.log(currentInstanceTo);
-				// console.log(dataToParent);
-				var typeTo = 'module';
-				if( modToParent.subModule && modToParent.subModule[currentInstanceTo[0]] ){
-					typeTo = 'loop';
+				try {
+					data = JSON.parse( data );
+				} catch (e) {
+					_this.message('クリップボードのデータをデコードできませんでした。');
+					console.error('FAILED to decode clipboard.', data);
+					callback(false);
+					return;
 				}
+				// console.log(data);
 
-				var modFrom = broccoli.contentsSourceData.getModule(data.data[0].modId, data.data[0].subModName);
-				// console.log(modFrom);
-				var typeFrom = 'module';
-				if( modFrom.subModName ){
-					typeFrom = 'loop';
-				}
+				var isValid = (function(){
+					var php = require('phpjs');
+					var dataToParent = broccoli.contentsSourceData.get(php.dirname(selectedInstance));
+					var modToParent = broccoli.contentsSourceData.getModule(dataToParent.modId);//subModuleの全量を知りたいので、第2引数は渡さない。
+					var currentInstanceTo = php.basename(selectedInstance).split('.')[1].split('@');
+					// console.log(modToParent);
+					// console.log(currentInstanceTo);
+					// console.log(dataToParent);
+					var typeTo = 'module';
+					if( modToParent.subModule && modToParent.subModule[currentInstanceTo[0]] ){
+						typeTo = 'loop';
+					}
 
-				if( typeTo != typeFrom ){
-					// loopフィールドとmoduleフィールド間の相互のコピペは禁止。
-					return false;
-				}
-				if( typeTo == 'loop' ){
-					// loopフィールドの場合、型が一致しないフィールドへのコピペは禁止。
-					if( dataToParent.modId != data.data[0].modId || currentInstanceTo[0] != data.data[0].subModName ){
+					var modFrom = broccoli.contentsSourceData.getModule(data.data[0].modId, data.data[0].subModName);
+					// console.log(modFrom);
+					var typeFrom = 'module';
+					if( modFrom.subModName ){
+						typeFrom = 'loop';
+					}
+
+					if( typeTo != typeFrom ){
+						// loopフィールドとmoduleフィールド間の相互のコピペは禁止。
 						return false;
 					}
+					if( typeTo == 'loop' ){
+						// loopフィールドの場合、型が一致しないフィールドへのコピペは禁止。
+						if( dataToParent.modId != data.data[0].modId || currentInstanceTo[0] != data.data[0].subModName ){
+							return false;
+						}
+					}
+
+					return true;
+				})();
+				if( !isValid ){
+					_this.message('ここにはペーストできません。');
+					callback(false);
+					return;
 				}
 
-				return true;
-			})();
-			if( !isValid ){
-				_this.message('ここにはペーストできません。');
-				callback(false);
-				return;
-			}
+				broccoli.progress(function(){
+					it79.ary(
+						data.data ,
+						function(it1, row1, idx1){
+							_this.contentsSourceData.duplicateInstance(data.data[idx1], data.resources, {}, function(newData){
+								// console.log(newData);
 
-			broccoli.progress(function(){
-				it79.ary(
-					data.data ,
-					function(it1, row1, idx1){
-						_this.contentsSourceData.duplicateInstance(data.data[idx1], data.resources, {}, function(newData){
-							// console.log(newData);
+								_this.contentsSourceData.addInstance( newData, selectedInstance, function(result){
+									// 上から順番に挿入していくので、
+									// moveTo を1つインクリメントしなければいけない。
+									// (そうしないと、天地逆さまに積み上げられることになる。)
+									selectedInstance = _this.incrementInstancePath(selectedInstance);
+									it1.next();
+								} );
 
-							_this.contentsSourceData.addInstance( newData, selectedInstance, function(result){
-								// 上から順番に挿入していくので、
-								// moveTo を1つインクリメントしなければいけない。
-								// (そうしないと、天地逆さまに積み上げられることになる。)
-								selectedInstance = _this.incrementInstancePath(selectedInstance);
-								it1.next();
-							} );
+							});
 
-						});
-
-					} ,
-					function(){
-						_this.saveContents(function(result){
-							// 画面を再描画
-							_this.redraw(function(){
-								_this.selectInstance(selectedInstance, function(){
-									_this.message('インスタンスをペーストしました。');
-									broccoli.closeProgress(function(){
-										callback(true);
+						} ,
+						function(){
+							_this.saveContents(function(result){
+								// 画面を再描画
+								_this.redraw(function(){
+									_this.selectInstance(selectedInstance, function(){
+										_this.message('インスタンスをペーストしました。');
+										broccoli.closeProgress(function(){
+											callback(true);
+										});
 									});
 								});
 							});
-						});
-					}
-				);
-			});
+						}
+					);
+				});
+			} );
 
 			return;
 		}
@@ -1098,7 +1210,7 @@
 				return;
 			}
 			if( selectedInstance.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
-				_this.message('bowlを削除することはできません。');
+				_this.message('ルートインスタンスを削除することはできません。');
 				callback(false);
 				return;
 			}
@@ -1109,6 +1221,8 @@
 			}
 			selectedInstanceRegion = JSON.parse( JSON.stringify(selectedInstanceRegion) );
 			selectedInstanceRegion.reverse();//先頭から削除すると添字がリアルタイムに変わってしまうので、逆順に削除する。
+
+			broccoli.contentsSourceData.resourceDbReloadRequest() // 削除したインスタンスにリソースが含まれている可能性があるので、リロードを要求する。
 
 			broccoli.progress(function(){
 				it79.ary(
@@ -1145,19 +1259,20 @@
 			_this.progress(function(){
 				_this.contentsSourceData.historyBack(function(result){
 					if(result === false){
+						_this.message('これ以上戻れません。');
 						_this.closeProgress(function(){
 							callback();
 						});
 						return;
 					}
-					_this.saveContents(function(){
-						// 画面を再描画
-						_this.redraw(function(){
-							_this.closeProgress(function(){
-								callback();
-							});
+
+					// 画面を再描画
+					_this.redraw(function(){
+						_this.closeProgress(function(){
+							callback();
 						});
 					});
+
 				});
 			});
 			return;
@@ -1170,15 +1285,21 @@
 			callback = callback||function(){};
 			_this.progress(function(){
 				_this.contentsSourceData.historyGo(function(result){
-					if(result === false){callback();return;}
-					_this.saveContents(function(){
-						// 画面を再描画
-						_this.redraw(function(){
-							_this.closeProgress(function(){
-								callback();
-							});
+					if(result === false){
+						_this.message('これ以上進められません。');
+						_this.closeProgress(function(){
+							callback();
+						});
+						return;
+					}
+
+					// 画面を再描画
+					_this.redraw(function(){
+						_this.closeProgress(function(){
+							callback();
 						});
 					});
+
 				});
 			});
 			return;
@@ -1227,7 +1348,6 @@
 		 */
 		this.lightbox = function( callback ){
 			callback = callback||function(){};
-			this.setUiState('lightbox');
 
 			var $dom = $('<div>')
 				.addClass('broccoli__lightbox-inner')
@@ -1251,6 +1371,7 @@
 				)
 			;
 
+			this.setUiState();
 			callback( $dom.get(0) );
 			return;
 		}
@@ -1278,11 +1399,11 @@
 						$('.broccoli *').removeAttr('tabindex');
 						$('.broccoli .broccoli--panel').attr({'tabindex':'1'});
 						$('.broccoli .broccoli--instance-tree-view-panel-item').attr({'tabindex':'1'});
+						_this.setUiState();
 						callback();
 					}
 				)
 			;
-			this.setUiState('standby');
 			return;
 		}
 
@@ -1303,6 +1424,7 @@
 				)
 			;
 			var dom = $('body').find('.px2-loading').get(0);
+			_this.setUiState();
 			callback(dom);
 			return;
 		}
@@ -1313,26 +1435,48 @@
 		 */
 		this.progressMessage = function(str){
 			console.log(str);
+			if( !this.isProgress() ){
+				this.progress(function(){
+					var $userMessage = $('.broccoli__progress-comment');
+					$userMessage.text(str);
+					_this.setUiState();
+				});
+				return;
+			}
 			var $userMessage = $('.broccoli__progress-comment');
 			$userMessage.text(str);
+			_this.setUiState();
 			return;
+		}
+
+		/**
+		 * プログレス表示中か調べる
+		 */
+		this.isProgress = function(){
+			var $progress = $('body').find('.broccoli__progress');
+			if( !$progress.length ){
+				return false;
+			}
+			return true;
 		}
 
 		/**
 		 * プログレスを閉じる
 		 */
 		this.closeProgress = function( callback ){
-			callback = callback||function(){};
+			callback = callback || function(){};
 			var $progress = $('body').find('.broccoli__progress');
 			if( !$progress.length ){
+				_this.setUiState();
 				callback();
-				return this;
+				return;
 			}
 			$progress
 				.fadeOut(
 					'fast',
 					function(){
 						$(this).remove();
+						_this.setUiState();
 						callback();
 					}
 				)
@@ -1381,6 +1525,7 @@
 				function(it1, data){
 					// コンテンツを保存
 					_this.progressMessage('コンテンツデータを保存しています...');
+					_this.indicator.saveProgress();
 					_this.contentsSourceData.save(function(){
 						it1.next(data);
 					});
@@ -1411,7 +1556,8 @@
 				function(it1, data){
 					// console.log('editInstance done.');
 					_this.progressMessage('コンテンツを保存しました。');
-					_this.message('コンテンツを保存しました。');
+					_this.indicator.saveCompleted();
+					// _this.message('コンテンツを保存しました。');
 					callback(true);
 					it1.next(data);
 				}

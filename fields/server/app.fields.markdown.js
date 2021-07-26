@@ -10,15 +10,20 @@ module.exports = function(broccoli){
 		marked.setOptions({
 			renderer: new marked.Renderer(),
 			gfm: true,
+			headerIds: false,
 			tables: true,
 			breaks: false,
 			pedantic: false,
 			sanitize: false,
 			smartLists: true,
-			smartypants: false
+			smartypants: false,
+			xhtml: true
 		});
 
-		if(typeof(fieldData)===typeof('')){
+		if(typeof(fieldData)===typeof({}) && fieldData.src ){
+			rtn = utils79.toStr(fieldData.src);
+			rtn = marked(rtn);
+		}else if(typeof(fieldData)===typeof('')){
 			rtn = utils79.toStr(fieldData);
 			rtn = marked(rtn);
 		}

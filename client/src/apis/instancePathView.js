@@ -31,10 +31,19 @@ module.exports = function(broccoli){
 
 		var $ul = $('<ul>');
 		var instPathMemo = [];
+
 		for( var idx in instPath ){
 			instPathMemo.push(instPath[idx]);
-			if( instPathMemo.length <= 1 ){ continue; }
-			var contData = broccoli.contentsSourceData.get(instPathMemo.join('/'));
+			if( instPathMemo.length <= 1 ){
+				continue;
+			}
+			var contData;
+			try{
+				contData = broccoli.contentsSourceData.get(instPathMemo.join('/'));
+			}catch(e){
+				console.error(e);
+				break;
+			}
 			if( !contData ){
 				// appender を選択した場合に、
 				// 存在しない instance が末尾に含まれた状態で送られてくる。
@@ -47,6 +56,7 @@ module.exports = function(broccoli){
 			if(instPathMemo.length==2){
 				// bowl自体だったら
 				label = instPathMemo[instPathMemo.length-1];
+				label = '編集エリア: ' + label.replace(/^bowl\./, '') + '';
 			}
 			$ul.append( $('<li>')
 				.append( $('<a href="javascript:;">')

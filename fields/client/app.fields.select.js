@@ -6,6 +6,11 @@ module.exports = function(broccoli){
 	 */
 	this.mkEditor = function( mod, data, elm, callback ){
 
+		var presetString = data;
+		if( typeof(presetString) === typeof({}) && presetString.src !== undefined ){
+			presetString = presetString.src;
+		}
+
 		var $select = $('<select>');
 		if( mod.options ){
 			if(mod.display == 'radio'){
@@ -14,6 +19,7 @@ module.exports = function(broccoli){
 					.css({'max-width':'100%'})
 				;
 				for( var idx in mod.options ){
+					var label = mod.lb.get('options.'+idx+'.label', mod.options[idx].label);
 					var $option = $('<label>')
 						.css({
 							'display': 'inline-block',
@@ -28,10 +34,10 @@ module.exports = function(broccoli){
 							})
 						)
 						.append( $('<span>')
-							.text(mod.options[idx].label)
+							.text(label)
 						)
 					;
-					if( data==mod.options[idx].value ){
+					if( presetString==mod.options[idx].value ){
 						$option.find('input').attr({
 							'checked': 'checked'
 						});
@@ -62,13 +68,14 @@ module.exports = function(broccoli){
 					})
 				;
 				for( var idx in mod.options ){
+					var label = mod.lb.get('options.'+idx+'.label', mod.options[idx].label);
 					var $option = $('<option>')
 						.attr({
 							'value':mod.options[idx].value
 						})
-						.text(mod.options[idx].label)
+						.text(label)
 					;
-					if( data==mod.options[idx].value ){
+					if( presetString==mod.options[idx].value ){
 						$option.attr({
 							'selected': 'selected'
 						});
@@ -110,8 +117,13 @@ module.exports = function(broccoli){
 			src = $dom.find('select').val();
 		}
 		src = JSON.parse( JSON.stringify(src) );
+
+		var finData = {
+			"src": src
+		};
+
 		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
-			callback(src);
+			callback(finData);
 		}); });
 		return;
 	}

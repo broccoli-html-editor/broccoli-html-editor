@@ -18,6 +18,7 @@ module.exports = function(broccoli){
 
 	var selectedInstance;
 	var focusedInstance;
+	var isOnDragging = false;
 
 	/**
 	 * 各パネルを描画する
@@ -111,12 +112,13 @@ module.exports = function(broccoli){
 		e.stopPropagation();
 		e.preventDefault();
 		var event = e.originalEvent;
+		// console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=', event);
 		$(elm).removeClass('broccoli--panel__drag-entered');
 		$(elm).removeClass('broccoli--panel__drag-entered-u');
 		$(elm).removeClass('broccoli--panel__drag-entered-d');
 
 		var ud = getUd(e, elm);
-		console.info(ud);
+		// console.info(ud);
 
 		var transferData = event.dataTransfer.getData("text/json");
 		try {
@@ -130,27 +132,42 @@ module.exports = function(broccoli){
 		var isAppenderFrom = (transferData["data-broccoli-is-appender"] == 'yes');
 		var isAppender = ($(elm).attr('data-broccoli-is-appender') == 'yes');
 		var moveFrom = transferData["data-broccoli-instance-path"] || '';
+		var moveFroms = [];
 		var moveTo = $(elm).attr('data-broccoli-instance-path');
 		var isInstanceTreeView = $(elm).attr('data-broccoli-is-instance-tree-view') == 'yes';
 		var isEditWindow = $(elm).attr('data-broccoli-is-edit-window') == 'yes';
 
+		if( !moveFrom ){
+			moveFroms = [];
+		}else if( broccoli.isInstanceSelected(moveFrom) ){
+			moveFroms = broccoli.getSelectedInstanceRegion();
+		}else{
+			moveFroms = [moveFrom];
+		}
+
 		if( !isAppender && ud.y == 'd' ){
 			moveTo = (function(moveTo){
-				console.log(moveTo);
+				// console.log(moveTo);
 				if(!moveTo.match(/^([\S]+)\@([0-9]+)$/)){
 					console.error('FATAL: Instance path has an illegal format.');
 					return moveTo;
 				}
 
 				var moveToPath = RegExp.$1;
-				var moveToIdx = RegExp.$2;
+				var moveToIdx = Number(RegExp.$2);
 
-				return moveToPath + '@' + (Number(moveToIdx)+1);
+				return moveToPath + '@' + (moveToIdx + 1);
 			})(moveTo);
 		}
 
-		if( moveFrom === moveTo ){
-			// 移動元と移動先が同一の場合、キャンセルとみなす
+		if( event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files.length ){
+			console.log('外部からファイルがドロップされました。', event.dataTransfer.files);
+			return onDropFile(e, moveTo, callback);
+		}
+
+		if( moveFroms[0] === moveTo || ( broccoli.isInstanceSelected( moveTo ) && method === 'moveTo' ) ){
+			// 移動元と移動先が同一の場合、
+			// または、移動先が選択状態の場合キャンセルとみなす
 			$(elm).removeClass('broccoli--panel__drag-entered');
 			$(elm).removeClass('broccoli--panel__drag-entered-u');
 			$(elm).removeClass('broccoli--panel__drag-entered-d');
@@ -158,39 +175,49 @@ module.exports = function(broccoli){
 			return;
 		}
 
-		var newInstancePath = (function(moveFrom, moveTo){
-			// 移動・挿入後の選択状態を更新する際、
-			// 移動元が抜けることで移動先の番号が変わる場合に、選択状態が乱れる。
-			// この関数では、移動先のパスを計算し直し、移動したインスタンス自身の新しいパスを返す。
-			// これを `broccoli.selectInstance()` すれば、移動・挿入成功後の選択状態を自然な結果にできる。
-			if(!moveFrom){
-				// 新規の場合
-				return moveTo;
-			}
-			if(!moveFrom.match(/^([\S]+)\@([0-9]+)$/)){
-				console.error('FATAL: Instance path has an illegal format.');
-				return moveTo;
-			}
+		// 処理後の選択状態に影響します。
+		var newInstancePath = moveFroms[0];
 
-			var moveFromPath = RegExp.$1;
-			var moveFromIdx = RegExp.$2;
+		var fncMoveWhile = function(moveFroms, moveTo){
+			// console.log('length:', moveFroms.length);
+			// console.log('====== move from, to', moveFroms, moveTo);
+			var currentMoveFrom = moveFroms.shift();
+			// console.log('*** currentMoveFrom:', currentMoveFrom);
+			broccoli.contentsSourceData.moveInstanceTo( currentMoveFrom, moveTo, function(result){
+				if(!result){
+					console.error('移動に失敗しました。', currentMoveFrom, moveTo, result);
+				}
 
-			var idx = moveTo.indexOf(moveFromPath+'@');
-			if( idx !== 0 ){
-				return moveTo;
-			}
-			var tmpMoveToStr = moveTo.substring((moveFromPath+'@').length);
-			if(!tmpMoveToStr.match(/^([0-9]+)([\S]*)$/)){
-				return moveTo;
-			}
-			var moveToIdx = RegExp.$1;
-			var moveToPath = RegExp.$2;
-			if( moveToIdx > moveFromIdx ){
-				return moveFromPath + '@' + (moveToIdx-1) + moveToPath;
-			}
+				newInstancePath = broccoli.utils.getInstancePathWhichWasAffectedRemovingInstance(newInstancePath, currentMoveFrom);
 
-			return moveTo;
-		})(moveFrom, moveTo);
+				if( moveFroms.length ){
+					for(var idx in moveFroms){
+						moveFroms[idx] = broccoli.utils.getInstancePathWhichWasAffectedRemovingInstance(moveFroms[idx], currentMoveFrom);
+						moveFroms[idx] = broccoli.utils.getInstancePathWhichWasAffectedInsertingInstance(moveFroms[idx], moveTo);
+					}
+
+					currentMoveFrom = broccoli.utils.getInstancePathWhichWasAffectedInsertingInstance(currentMoveFrom, moveTo);
+					moveTo = broccoli.utils.getInstancePathWhichWasAffectedRemovingInstance(moveTo, currentMoveFrom);
+					moveTo = broccoli.utils.getInstancePathWhichWasAffectedInsertingInstance(moveTo, moveTo);
+					// console.log('====-- move from, to', moveFroms, moveTo);
+					fncMoveWhile(moveFroms, moveTo);
+				}else{
+					// コンテンツを保存
+					broccoli.unselectInstance(function(){
+						broccoli.saveContents(function(){
+							// alert('インスタンスを移動しました。');
+							broccoli.redraw(function(){
+								broccoli.closeProgress(function(){
+									broccoli.selectInstance(newInstancePath, function(){
+										callback();
+									});
+								});
+							});
+						});
+					});
+				}
+			} );
+		}
 
 		if( subModNameFrom.length ){ // ドロップ元のインスタンスがサブモジュールだったら
 
@@ -201,7 +228,7 @@ module.exports = function(broccoli){
 				function removeNum(str){
 					return str.replace(new RegExp('[0-9]+$'),'');
 				}
-				if( removeNum(moveFrom) !== removeNum(moveTo) ){
+				if( removeNum(moveFroms[0]) !== removeNum(moveTo) ){
 					broccoli.message('並べ替え以外の移動操作はできません。');
 					$(elm).removeClass('broccoli--panel__drag-entered');
 					$(elm).removeClass('broccoli--panel__drag-entered-u');
@@ -211,27 +238,8 @@ module.exports = function(broccoli){
 				}
 
 				broccoli.progress(function(){
-					broccoli.contentsSourceData.moveInstanceTo( moveFrom, moveTo, function(result){
-						if(!result){
-							broccoli.closeProgress(function(){
-								callback();
-							});
-							return;
-						}
-						// コンテンツを保存
-						broccoli.unselectInstance(function(){
-							broccoli.saveContents(function(){
-								// alert('インスタンスを移動しました。');
-								broccoli.redraw(function(){
-									broccoli.closeProgress(function(){
-										broccoli.selectInstance(newInstancePath, function(){
-											callback();
-										});
-									});
-								});
-							});
-						});
-					} );
+					newInstancePath = moveTo;
+					fncMoveWhile(moveFroms, moveTo);
 				});
 				return;
 			}
@@ -249,30 +257,14 @@ module.exports = function(broccoli){
 				return;
 			}
 			broccoli.progress(function(){
-				broccoli.contentsSourceData.moveInstanceTo( moveFrom, moveTo, function(result){
-					if(!result){
-						broccoli.closeProgress(function(){
-							callback();
-						});
-						return;
-					}
-					// コンテンツを保存
-					broccoli.unselectInstance(function(){
-						broccoli.saveContents(function(){
-							// alert('インスタンスを移動しました。');
-							broccoli.redraw(function(){
-								broccoli.closeProgress(function(){
-									broccoli.selectInstance(newInstancePath, function(){
-										callback();
-									});
-								});
-							});
-						});
-					});
-				} );
+				newInstancePath = moveTo;
+				fncMoveWhile(moveFroms, moveTo);
 			});
 			return;
 		}
+
+		newInstancePath = broccoli.utils.getInstancePathWhichWasAffectedRemovingInstance(moveTo, newInstancePath);
+
 		if( subModName && method === 'add' ){
 			// loopフィールドのサブモジュールに新しいモジュールを追加しようとした場合の処理
 			broccoli.message('loopフィールドに新しいモジュールを追加することはできません。');
@@ -300,14 +292,10 @@ module.exports = function(broccoli){
 			} catch (e) {
 				modClip = false;
 			}
-			// console.log(modId);
-			// console.log(modClip);
+
 			if( modClip !== false ){
 				console.log('クリップがドロップされました。');
-				// console.log(modId);
-				// console.log(modClip);
 				var parsedModId = broccoli.parseModuleId(modId);
-				// console.log(parsedModId.package);
 
 				broccoli.gpi(
 					'getClipModuleContents',
@@ -374,6 +362,7 @@ module.exports = function(broccoli){
 			}else{
 				broccoli.contentsSourceData.addInstance( modInternalId, moveTo, function(result){
 					if(!result){
+						console.error('Failed addInstance()', modInternalId, moveTo);
 						broccoli.closeProgress(function(){
 							callback();
 						});
@@ -402,6 +391,209 @@ module.exports = function(broccoli){
 	} // onDrop()
 
 	/**
+	 * パネルの ondrop イベントハンドラ: ファイルを受け取った場合の処理
+	 */
+	function onDropFile(e, moveTo, callback){
+		callback = callback || function(){};
+		var event = e.originalEvent;
+		if( !event.dataTransfer || !event.dataTransfer.files || !event.dataTransfer.files.length ){
+			broccoli.message('外部からドロップされたファイルが取得できません。');
+			console.error('外部からドロップされたファイルが取得できません。', event);
+			callback();
+			return;
+		}
+
+		// console.info( event.dataTransfer.files );
+
+		it79.ary(
+			event.dataTransfer.files,
+			function( it1, fileInfo, idx ){
+				// console.log(idx, fileInfo);
+
+				var mimetype = fileInfo.type;
+				if( !mimetype ){
+					it1.next();
+					return;
+				}
+
+				broccoli.progressMessage( fileInfo.name + ' を処理中...' );
+
+				var originalFileSize = fileInfo.size;
+				var originalFileName = fileInfo.name;
+				var originalFileFirstname = originalFileName;
+				var originalFileExt = 'png';
+				if( originalFileName.match( /^(.*)\.([a-zA-Z0-9\_]+)$/i ) ){
+					originalFileFirstname = RegExp.$1;
+					originalFileExt = RegExp.$2;
+					originalFileExt = originalFileExt.toLowerCase();
+				}
+
+				var customFunc = false;
+				if( typeof(broccoli.options.droppedFileOperator[mimetype]) == typeof(function(){}) ){
+					// mimetypeで登録されていたら、そちらへ転送
+					customFunc = broccoli.options.droppedFileOperator[mimetype];
+				}else if( typeof(broccoli.options.droppedFileOperator[originalFileExt]) == typeof(function(){}) ){
+					// 拡張子で登録されていたら、そちらへ転送
+					customFunc = broccoli.options.droppedFileOperator[originalFileExt];
+				}
+				if(customFunc){
+					customFunc( fileInfo, function(clipContents){
+						if( typeof(clipContents) == typeof({}) && clipContents.data && clipContents.resources ){
+							insertClipModule(clipContents, moveTo, {}, function(){
+								it1.next();
+							});
+							return;
+						}
+					} );
+					return;
+				}
+
+				var reader = new FileReader();
+				reader.onload = function(evt) {
+					// console.log(evt.target);
+					var content = evt.target.result;
+					// console.log(content);
+
+					switch( mimetype ){
+
+						// --------------------------------------
+						// JSON形式のファイルドロップを処理
+						case 'text/json':
+						case 'application/json':
+							var jsonContents = false;
+							try{
+								jsonContents = JSON.parse(content);
+							}catch(e){
+								console.error(e);
+								broccoli.message('JSON形式をデコードできません。');
+								it1.next();
+								return;
+							}
+							// console.log(jsonContents);
+							if( jsonContents && jsonContents.data && jsonContents.resources ){
+								// クリップモジュール形式と評価される場合は、
+								// クリップモジュールドロップと同様の挿入処理をする。
+
+								if(!confirm('クリップデータを挿入しますか？')){
+									it1.next();
+									return;
+								}
+
+								insertClipModule(jsonContents, moveTo, {}, function(){
+									it1.next();
+								});
+
+								return;
+							}
+
+							broccoli.message('対応していないJSON形式です。');
+							it1.next();
+							return;
+							break;
+
+						// --------------------------------------
+						// 画像ファイルのドロップを処理
+						// _sys/image に当てはめて挿入します。
+						case 'image/jpeg':
+						case 'image/png':
+						case 'image/gif':
+						case 'image/svg+xml':
+							originalFileFirstname = originalFileFirstname.split(/[^a-zA-Z0-9]/).join('_');
+
+							var base64 = content.replace(/^data\:[a-zA-Z0-9]+\/[a-zA-Z0-9]+\;base64\,/i, '');
+							var clipContents = {
+								'data': [
+									{
+										"modId": "_sys/image",
+										"fields": {
+											"src": {
+												"resKey": "___dropped_local_image___",
+												"path": "",
+												"resType": "",
+												"webUrl": ""
+											}
+										}
+									}
+								],
+								'resources': {
+									"___dropped_local_image___": {
+										"ext": originalFileExt,
+										"type": mimetype,
+										"size": originalFileSize,
+										"base64": base64,
+										"isPrivateMaterial": false,
+										"publicFilename": originalFileFirstname,
+										"md5": "",
+										"field": "image",
+										"fieldNote": {}
+									}
+								}
+							};
+							insertClipModule(clipContents, moveTo, {}, function(){
+								it1.next();
+							});
+							return;
+							break;
+
+						// --------------------------------------
+						// 対応していないファイル形式
+						default:
+							broccoli.message('対応していないファイル形式です。');
+							console.error('対応していないファイル形式です。', fileInfo.type);
+							it1.next();
+							return;
+							break;
+					}
+					it1.next();
+					return;
+				}
+
+				switch( mimetype ){
+					case 'image/jpeg':
+					case 'image/png':
+					case 'image/gif':
+					case 'image/svg+xml':
+						reader.readAsDataURL(fileInfo);
+						break;
+					case 'text/plain':
+					case 'text/json':
+					case 'application/json':
+					case 'text/html':
+					case 'text/markdown':
+						reader.readAsText(fileInfo);
+						break;
+					default:
+						broccoli.message('処理できないファイルです。');
+						console.error('処理できないファイルです。', mimetype);
+						it1.next();
+						break;
+				}
+			},
+			function(){
+
+				broccoli.contentsSourceData.resourceDbReloadRequest();
+					// 複数のリソースファイルを同時に挿入したあとに、
+					// 末尾の画像がロードされない場合があるので、
+					// resourceDb をリロードするようにした。
+
+
+				broccoli.unselectInstance(function(){
+					broccoli.saveContents(function(){
+						broccoli.message('ファイルを挿入しました。');
+						broccoli.redraw(function(){
+							broccoli.closeProgress(function(){
+								callback();
+							});
+						});
+					});
+				});
+			}
+		);
+
+		return;
+	} // onDropFile()
+
+	/**
 	 * パネルの ondblclick イベントハンドラ
 	 * このメソッドは、 this.setPanelEventHandlers() の他、
 	 * editWindow からもコールされています。
@@ -424,7 +616,9 @@ module.exports = function(broccoli){
 				}
 				broccoli.saveContents(function(){
 					broccoli.redraw(function(){
-						callback();
+						broccoli.closeProgress(function(){
+							callback();
+						});
 					});
 				});
 			}, subModName );
@@ -471,13 +665,16 @@ module.exports = function(broccoli){
 				'tabindex': 1
 			})
 			.on('click', function(e){
+				if(isOnDragging){
+					return;
+				}
 				e.preventDefault();
 				e.stopPropagation();
 				// console.log(e);
 				clearTimeout(timerFocus);
 				var $this = $(this);
 				var instancePath = $this.attr('data-broccoli-instance-path');
-				var selectedInstancePath = broccoli.getSelectedInstance();
+				// var selectedInstancePath = broccoli.getSelectedInstance();
 
 				if( e.shiftKey ){
 					broccoli.selectInstanceRegion( instancePath, function(){
@@ -487,13 +684,14 @@ module.exports = function(broccoli){
 
 				broccoli.selectInstance( instancePath, function(){
 					if( $this.hasClass('broccoli--instance-tree-view-panel-item') ){
-						// インスタンスツリービュー上での処理
+						// インスタンスツリービュー上でインスタンスクリックした場合の処理
 						broccoli.focusInstance( instancePath );
 						return;
 					}
-					// プレビューカンヴァス上での処理
+					// プレビューカンヴァス上でインスタンスクリックした場合の処理
 					broccoli.instanceTreeView.focusInstance( instancePath, function(){} );
 				} );
+				return;
 			})
 			.on('contextmenu', function(e){
 				e.preventDefault();
@@ -584,6 +782,7 @@ module.exports = function(broccoli){
 				}
 			})
 			.on('dragstart', function(e){
+				isOnDragging = true;
 				e.stopPropagation();
 				var event = e.originalEvent;
 				var transferData = {
@@ -602,6 +801,9 @@ module.exports = function(broccoli){
 					console.log('drop event done.');
 				});
 				return;
+			})
+			.on('dragend', function(e){
+				isOnDragging = false;
 			})
 		;
 		return $panel;
@@ -688,6 +890,44 @@ module.exports = function(broccoli){
 		// this.updateInstancePathView();
 		callback();
 		return this;
+	}
+
+	/**
+	 * クリップモジュールを挿入する
+	 */
+	function insertClipModule(clipContents, moveTo, options, callback){
+		options = options || {};
+		options.packageId = options.packageId || undefined;
+
+		it79.ary(
+			clipContents.data ,
+			function(it1, row1, idx1){
+				broccoli.contentsSourceData.duplicateInstance(clipContents.data[idx1], clipContents.resources, {'supplementModPackage': options.packageId}, function(newData){
+					// console.log(newData, moveTo);
+
+					broccoli.contentsSourceData.addInstance( newData, moveTo, function(result){
+						// 上から順番に挿入していくので、
+						// moveTo を1つインクリメントしなければいけない。
+						// (そうしないと、天地逆さまに積み上げられることになる。)
+
+						moveTo = broccoli.incrementInstancePath(moveTo);
+						it1.next();
+					} );
+
+				});
+			} ,
+			function(){
+				broccoli.resourceMgr.getResourceDb(function(tmpResourceDb){
+					for( var resKey in clipContents.resources ){
+						tmpResourceDb[resKey] = clipContents.resources[resKey];
+					}
+					broccoli.resourceMgr.setResourceDb(tmpResourceDb, function(result){
+						callback();
+					});
+				});
+			}
+		);
+		return;
 	}
 
 	/**

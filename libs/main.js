@@ -71,6 +71,7 @@ module.exports = function(){
 		options.log = options.log || function(msg){
 			console.error(msg);
 		};
+		options.userStorage = options.userStorage || null;
 		if( !options.pathHtml || !options.pathResourceDir || !options.realpathDataDir ){
 			// 必須項目
 			// console.log(options);
@@ -85,6 +86,8 @@ module.exports = function(){
 		options.pathHtml = utils79.normalize_path( path.resolve(options.pathHtml) );
 		options.pathResourceDir = utils79.normalize_path( path.resolve(options.pathResourceDir) );
 
+		options.fieldConfig = options.fieldConfig || {};
+
 		this.paths_module_template = options.paths_module_template;
 		this.realpathHtml = path.resolve( options.documentRoot, './'+options.pathHtml );
 		this.realpathResourceDir = path.resolve( options.documentRoot, './'+options.pathResourceDir )+'/';
@@ -92,6 +95,7 @@ module.exports = function(){
 		this.options = options;
 
 		this.resourceMgr = new (require('./resourceMgr.js'))(this);
+		this.userStorage = new (require('./userStorage.js'))(this);
 		this.fieldBase = new (require('./fieldBase.js'))(this);
 		this.fieldDefinitions = {};
 
@@ -123,10 +127,11 @@ module.exports = function(){
 
 	/**
 	 * 汎用API
-	 * @param  {[type]}   api      [description]
-	 * @param  {[type]}   options  [description]
-	 * @param  {Function} callback [description]
-	 * @return {[type]}            [description]
+	 *
+	 * @param  {String}   api      呼び出すAPIの種類
+	 * @param  {Object}   options  オプション
+	 * @param  {Function} callback コールバック関数
+	 * @return {Mixed}             実行したAPIの返却値
 	 */
 	this.gpi = function(api, options, callback){
 		var gpi = require( __dirname+'/gpi.js' );
@@ -155,6 +160,15 @@ module.exports = function(){
 				rtn = 'web';
 				break;
 		}
+		return rtn;
+	}
+
+	/**
+	 * フィールド設定を取得する (同期)
+	 * @return object フィールド設定
+	 */
+	this.getFieldConfig = function(){
+		var rtn = this.options.fieldConfig;
 		return rtn;
 	}
 
@@ -476,12 +490,14 @@ module.exports = function(){
 		marked.setOptions({
 			renderer: new marked.Renderer(),
 			gfm: true,
+			headerIds: false,
 			tables: true,
 			breaks: false,
 			pedantic: false,
 			sanitize: false,
 			smartLists: true,
-			smartypants: false
+			smartypants: false,
+			xhtml: true
 		});
 
 		if(typeof(md)===typeof('')){

@@ -52,6 +52,20 @@ class image extends \broccoliHtmlEditor\fieldBase{
 			$resMgr = $this->broccoli->resourceMgr();
 			$data->resourceInfo = $resMgr->getResource( $rtn['resKey'] );
 
+			$is_image_uploaded = true;
+			if( $data->resourceInfo === false ){
+				$is_image_uploaded = false;
+			}elseif( is_object($data->resourceInfo) ){
+				if( !property_exists($data->resourceInfo, 'base64') || !strlen($data->resourceInfo->base64) ){
+					$is_image_uploaded = false;
+				}elseif( property_exists($data->resourceInfo, 'size') && !$data->resourceInfo->size ){
+					$is_image_uploaded = false;
+				}
+			}
+			if( $mode != 'canvas' && !$is_image_uploaded ){
+				return '';
+			}
+
 			$realpath = $resMgr->getResourcePublicRealpath( $rtn['resKey'] );
 			$data->publicRealpath = $realpath;
 
@@ -81,7 +95,7 @@ class image extends \broccoliHtmlEditor\fieldBase{
 			return $data->path;
 		}
 
-		return;
+		return '';
 	}
 
 	// /**

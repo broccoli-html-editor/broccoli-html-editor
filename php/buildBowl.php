@@ -112,15 +112,18 @@ class buildBowl{
 
 					if( $this->options['mode'] == 'canvas' ){
 						$tmpopt = json_decode( json_encode($opt), true );
-						if(!is_array($fieldData[$field->name])){ $fieldData[$field->name] = array(); }
-						$tmpopt['instancePath'] .= '@'.(count($fieldData[$field->name]));
-						$tmp_tplDataObj .= $this->mkAppender(
-							'module',
-							array(
-								'modId' => $mod->id,
-								'instancePath' => $tmpopt['instancePath']
-							)
-						);
+						$tmpDepth = explode('/', $tmpopt['instancePath']);
+						if( count($tmpDepth) <= 3 || !count($fieldData[$field->name]) ){ // Appenderの表示数を減らす。
+							if(!is_array($fieldData[$field->name])){ $fieldData[$field->name] = array(); }
+							$tmpopt['instancePath'] .= '@'.(count($fieldData[$field->name]));
+							$tmp_tplDataObj .= $this->mkAppender(
+								'module',
+								array(
+									'modId' => $mod->id,
+									'instancePath' => $tmpopt['instancePath']
+								)
+							);
+						}
 					}
 
 					$tplDataObj[$field->name] = $tmp_tplDataObj;
@@ -169,6 +172,8 @@ class buildBowl{
 				$tplDataObj['_ENV'] = array(
 					"mode" => $this->options['mode'],
 					"vars" => array(),
+					"lang" => $this->broccoli->lb()->lang,
+					"data" => $this->data,
 				);
 				foreach( $this->nameSpace['varsFinalized'] as $tmpKey=>$tmpRow ){
 					$tplDataObj['_ENV']["vars"][$tmpKey] = $tmpRow['val'];
@@ -227,12 +232,14 @@ class buildBowl{
 						echo $appender;
 
 					}elseif($mod->fields->{$fieldNameFor}->fieldType == 'module'){
-						$appender = $this->mkAppender('module', array(
-							'modId' => $this->data->modId,
-							'subModName' => null,
-							'instancePath' => $this->options['instancePath'].'/fields.'.$fieldNameFor.'@'.count($fieldData[$fieldNameFor]),
-						));
-						echo $appender;
+						if( !count($fieldData[$fieldNameFor]) ){ // Appenderの表示数を減らす。
+							$appender = $this->mkAppender('module', array(
+								'modId' => $this->data->modId,
+								'subModName' => null,
+								'instancePath' => $this->options['instancePath'].'/fields.'.$fieldNameFor.'@'.count($fieldData[$fieldNameFor]),
+							));
+							echo $appender;
+						}
 
 					}
 					return;
@@ -326,13 +333,16 @@ class buildBowl{
 						$tmpopt = json_decode( json_encode($opt), true );
 						if(!is_array(@$fieldData[$field->module->name])){ $fieldData[$field->module->name] = array(); }
 						$tmpopt['instancePath'] .= '@'.(count($fieldData[$field->module->name]));
-						$tmpVal .= $this->mkAppender(
-							'module',
-							array(
-								'modId' => $mod->id,
-								'instancePath' => $tmpopt['instancePath']
-							)
-						);
+						$tmpDepth = explode('/', $tmpopt['instancePath']);
+						if( count($tmpDepth) <= 3 || !count($fieldData[$field->module->name]) ){ // Appenderの表示数を減らす。
+							$tmpVal .= $this->mkAppender(
+								'module',
+								array(
+									'modId' => $mod->id,
+									'instancePath' => $tmpopt['instancePath']
+								)
+							);
+						}
 					}
 
 					if( !@$field->module->hidden ){//← "hidden": true だったら、非表示(=出力しない)
@@ -770,11 +780,13 @@ class buildBowl{
 					$simple_html_dom_ret = $simple_html_dom->find('>*');
 
 					$simple_html_dom_ret[0]->{'data-broccoli-instance-path'} = $options['instancePath'];
+					$moduleName = (@$mod->info['name'] ? $mod->info['name'] : $mod->id);
 					if( @$options['subModName'] ){
+						$moduleName = $options['subModName'];
 						$simple_html_dom_ret[0]->{'data-broccoli-sub-mod-name'} = $options['subModName'];
 					}
 					$simple_html_dom_ret[0]->{'data-broccoli-area-size-detection'} = (@$mod->info['areaSizeDetection'] ? $mod->info['areaSizeDetection'] : 'shallow');
-					$simple_html_dom_ret[0]->{'data-broccoli-module-name'} = (@$mod->info['name'] ? $mod->info['name'] : $mod->id);
+					$simple_html_dom_ret[0]->{'data-broccoli-module-name'} = $moduleName;
 					$d_html = $simple_html_dom->outertext;
 				}
 
@@ -782,12 +794,14 @@ class buildBowl{
 				$tmp_html = '';
 				$tmp_html .= '<div';
 				$tmp_html .= ' data-broccoli-instance-path="'.htmlspecialchars($options['instancePath']).'"';
+				$moduleName = (@$mod->info['name'] ? $mod->info['name'] : $mod->id);
 				if( @$options['subModName'] ){
+					$moduleName = $options['subModName'];
 					$tmp_html .= ' data-broccoli-sub-mod-name="'.htmlspecialchars($options['subModName']).'"';
 				}
 				$tmp_html .= ' data-broccoli-area-size-detection="'.htmlspecialchars((@$mod->info['areaSizeDetection'] ? $mod->info['areaSizeDetection'] : 'shallow')).'"';
 				// $tmp_html .= ' data-broccoli-is-single-root-element="'+(isSingleRootElement?'yes':'no').'"';
-				$tmp_html .= ' data-broccoli-module-name="'.htmlspecialchars((@$mod->info['name'] ? $mod->info['name'] : $mod->id)).'"';
+				$tmp_html .= ' data-broccoli-module-name="'.htmlspecialchars($moduleName).'"';
 				$tmp_html .= '>';
 				$tmp_html .= $d_html;
 				$tmp_html .= '</div>';

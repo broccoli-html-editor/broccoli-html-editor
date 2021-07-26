@@ -38,9 +38,13 @@ module.exports = function(broccoli){
 
 				// サーバーサイドの bind() に相当する処理
 				try {
-					rtn = utils79.toStr(fieldData);
+					if( typeof(fieldData)===typeof({}) && fieldData.src ){
+						rtn = utils79.toStr(fieldData.src);
+					}else{
+						rtn = utils79.toStr(fieldData);
+					}
 				} catch (e) {
-					rtn = '[error]'
+					rtn = '[error]';
 				}
 				rlv();
 
@@ -64,7 +68,7 @@ module.exports = function(broccoli){
 				callback( rtn );
 			}); })
 		;
-		return this;
+		return;
 	}
 
 	/**
@@ -78,20 +82,24 @@ module.exports = function(broccoli){
 		var $rtn = $('<div>'),
 			$formElm
 		;
+		var presetString = data;
+		if( typeof(presetString) === typeof({}) && presetString.src !== undefined ){
+			presetString = presetString.src;
+		}
 
 		if( rows == 1 ){
 			$formElm = $('<input type="text" class="form-control">')
 				.attr({
 					"name": mod.name
 				})
-				.val(data)
+				.val(presetString)
 				.css({'width':'100%'})
 			;
 			$rtn.append( $formElm );
 
 		}else if( editorLib == 'ace' ){
 			$formElm = $('<div>')
-				.text(data)
+				.text(presetString)
 				.css({
 					'position': 'relative',
 					'width': '100%',
@@ -123,13 +131,30 @@ module.exports = function(broccoli){
 				mod.aceEditor.getSession().setMode("ace/mode/plain_text");
 			}
 
+			// 編集中のコンテンツ量に合わせて、
+			// AceEditor編集欄のサイズを広げる
+			var updateAceHeight = function() {
+				var h =
+					mod.aceEditor.getSession().getScreenLength()
+					* mod.aceEditor.renderer.lineHeight
+					+ mod.aceEditor.renderer.scrollBar.getWidth()
+				;
+				if( h < mod.aceEditor.renderer.lineHeight * rows ){
+					h = mod.aceEditor.renderer.lineHeight * rows;
+				}
+				$formElm.eq(0).height(h.toString() + "px");
+				mod.aceEditor.resize();
+			};
+			mod.aceEditor.getSession().on('change', updateAceHeight);
+			setTimeout(updateAceHeight, 200);
+
 		}else{
 			$formElm = $('<textarea class="form-control">')
 				.attr({
 					"name": mod.name,
 					"rows": rows
 				})
-				.val(data)
+				.val(presetString)
 				.css({'width':'100%','height':'auto'})
 			;
 			$rtn.append( $formElm );
@@ -140,7 +165,7 @@ module.exports = function(broccoli){
 		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 			callback();
 		}); });
-		return this;
+		return;
 	}
 
 	/**
@@ -152,7 +177,7 @@ module.exports = function(broccoli){
 		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 			callback();
 		}); });
-		return this;
+		return;
 	}
 
 	/**
@@ -166,7 +191,7 @@ module.exports = function(broccoli){
 		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 			callback(data);
 		}); });
-		return this;
+		return;
 	}
 
 	/**
@@ -178,7 +203,7 @@ module.exports = function(broccoli){
 		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 			callback(data);
 		}); });
-		return this;
+		return;
 	}
 
 
@@ -204,7 +229,7 @@ module.exports = function(broccoli){
 		broccoli.validate(attr, src, rules, mod, function(errorMsgs){
 			callback( errorMsgs );
 		});
-		return this;
+		return;
 	}
 
 	/**
@@ -214,7 +239,7 @@ module.exports = function(broccoli){
 		options = options || {};
 		options.message = options.message || function(msg){};//ユーザーへのメッセージテキストを送信
 		var $dom = $(elm);
-		var src;
+		var src = '';
 		if( $dom.find('input[type=text]').length ){
 			src = $dom.find('input[type=text]').val();
 		}else if( editorLib == 'ace' && mod.aceEditor ){
@@ -227,7 +252,7 @@ module.exports = function(broccoli){
 		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 			callback(src);
 		}); });
-		return this;
+		return;
 	}
 
 	/**
@@ -246,7 +271,7 @@ module.exports = function(broccoli){
 				callback(result);
 			}
 		);
-		return this;
+		return;
 	}
 
 }

@@ -1,0 +1,25 @@
+<div class="errors-newloop">
+	<p>あとから追加されたフィールドのテスト</p>
+	<div>{{ text }}</div>
+	<div>{{ module }}</div>
+
+{% for loopRow in loop %}
+{{ loopitem_start('loop') }}
+<div>
+    <div>{{ loopRow.subtext }}</div>
+    <div>{{ loopRow.submodule }}</div>
+</div>
+{{ loopitem_end() }}
+{% endfor %}
+{{ appender('loop') }}
+
+{% for loopRow in loop_undefined_submod %}
+{{ loopitem_start('loop_undefined_submod') }}
+<div>
+    <div>{{ loopRow.subtext }}</div>
+    <div>{{ loopRow.submodule }}</div>
+</div>
+{{ loopitem_end() }}
+{% endfor %}
+{{ appender('loop_undefined_submod') }}
+</div>

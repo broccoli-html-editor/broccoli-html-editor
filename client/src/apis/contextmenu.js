@@ -46,8 +46,8 @@ module.exports = function(broccoli){
 							$a
 								.text(menu.label)
 								.attr({"href": "javascript:;"})
-								.on('click', function(){
-									menu.function();
+								.on('click', function(e){
+									menu.function(e.originalEvent);
 									_this.close();
 								})
 							;
@@ -106,20 +106,20 @@ module.exports = function(broccoli){
 		if( isCopyable ){
 			menu.push({
 				"label": "コピー",
-				"function": function(){
+				"function": function(event){
 					broccoli.copy(function(){
 						// nothing to do.
-					});
+					}, event);
 				}
 			});
 		}
 
 		menu.push({
 			"label": "この直前にペースト",
-			"function": function(){
+			"function": function(event){
 				broccoli.paste(function(){
 					// nothing to do.
-				});
+				}, event);
 			}
 		});
 
@@ -129,7 +129,7 @@ module.exports = function(broccoli){
 			});
 			menu.push({
 				"label": "削除する",
-				"function": function(){
+				"function": function(event){
 					broccoli.remove(function(){
 						// nothing to do.
 					});
