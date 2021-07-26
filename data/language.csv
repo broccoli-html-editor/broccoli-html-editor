@@ -4,7 +4,7 @@ ui_label.cancel,Cancel,キャンセル,取消,取消
 ui_label.close,Close,閉じる,关闭,關閉
 ui_label.anchor,Anchor,アンカー,,
 ui_label.embed_comment,"Embed Comment",埋め込みコメント入力欄,,
-ui_label.remove_this_module,"Remove This Instance",このインスタンスを削除する,,
+ui_label.remove_this_module,"Remove",削除する,,
 ui_label.show_advanced_setting,"Show Advanced",詳細設定を表示する,,
 ui_label.hide_advanced_setting,"Hide Advanced",詳細設定を隠す,,
 ui_label.drop_a_module_here,"Drop a module here",ここにモジュールをドラッグしてください,,

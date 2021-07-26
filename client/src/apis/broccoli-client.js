@@ -729,6 +729,7 @@
 			var broccoli = this;
 			broccoli.selectInstance(instancePath, function(){
 				broccoli.lightbox( function( lbElm ){
+					$(lbElm).addClass('broccoli__lightbox-inner--edit-window-mode');
 					broccoli.drawEditWindow( instancePath, lbElm, function(isSave, callback){
 						callback = callback || function(){};
 						if( !isSave ){

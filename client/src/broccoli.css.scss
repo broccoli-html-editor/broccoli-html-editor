@@ -655,18 +655,19 @@
 	overflow: auto;
 	-webkit-overflow-scrolling: touch;
 	overflow-scrolling: touch;
-	background-color: rgba(0, 0, 0, 0.5);
+	background-color: rgba(0, 0, 0, 0.2);
 
 	&-inner{
-		width: 100%;
+		width: auto;
 		max-width: calc(100% - 40px);
+		min-width: 480px;
 		height: auto;
 		max-height: calc(100% - 5px);
 		overflow: auto;
 
 		background-color:#fff;
 		padding: 1em;
-		margin: 20px auto 20px;
+		margin: 20px auto 20px auto;
 		border-radius: 5px;
 		box-shadow: 0 10px 40px 20px rgba(0,0,0,0.3);
 		&::after{
@@ -676,6 +677,19 @@
 			height: 10px;
 			overflow: hidden;
 		}
+	}
+	&-inner--edit-window-mode {
+		width: 40%;
+		height: 100%;
+		margin: 20px 20px 20px auto;
+	}
+
+	@media all and (max-width: 600px) {
+		&-inner{
+			width: 100%;
+			min-width: 0;
+		}
+
 	}
 }
 
@@ -731,20 +745,38 @@
 	font-size:11px;
 	box-sizing: border-box;
 	word-wrap: break-word;
-	word-break: break-all;
+	word-break: break-word;
+
 
 	.broccoli--module-info-content{
 		font-size: 11px;
 		*{
 			font-size: inherit;
 		}
-		h1{ font-size:14px; font-weight: bold; }
-		h2{ font-size:12px; font-weight: bold; }
-		h3,h4,h5,h6{ font-size:11px; font-weight: bold; }
-		h1:first-of-type{ margin:0; }
+		h1{
+			font-size:14px;
+			font-weight: bold;
+		}
+		h2{
+			font-size:12px;
+			font-weight: bold;
+		}
+		h3,
+		h4,
+		h5,
+		h6{
+			font-size:11px;
+			font-weight: bold;
+		}
+		h1:first-of-type{
+			margin:0;
+		}
 	}
 }
 .broccoli--module-info-content{
+
+	word-wrap: break-word;
+	word-break: break-word;
 
 	&-thumb{
 		width:200px;

@@ -203,9 +203,6 @@ module.exports = function(broccoli, targetElm, callback){
 				var moduleId = $this.attr('data-id');
 				broccoli.lightbox(function(elm){
 					$(elm)
-						.css({
-							'max-width': 570
-						})
 						.append( $html )
 						.append( $('<button class="px2-btn">')
 							.text('閉じる')
