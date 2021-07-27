@@ -60,6 +60,7 @@ module.exports = function(broccoli){
 			}else{
 				// デフォルトはselectタグ
 				$select = $('<select>')
+					.addClass('px2-input')
 					.attr({
 						"name":mod.name
 					})
