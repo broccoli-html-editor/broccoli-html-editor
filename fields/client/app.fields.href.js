@@ -10,7 +10,7 @@ module.exports = function(broccoli){
 			presetString = presetString.src;
 		}
 
-		var $input = $('<input type="text" class="form-control">')
+		var $input = $('<input type="text" class="px2-input px2-input--block">')
 			.attr({
 				"name":mod.name
 			})

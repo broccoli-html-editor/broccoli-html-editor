@@ -4581,7 +4581,7 @@ module.exports = function(broccoli){
 		}
 
 		if( rows == 1 ){
-			$formElm = $('<input type="text" class="form-control">')
+			$formElm = $('<input type="text" class="px2-input px2-input--block">')
 				.attr({
 					"name": mod.name
 				})
@@ -4642,7 +4642,7 @@ module.exports = function(broccoli){
 			setTimeout(updateAceHeight, 200);
 
 		}else{
-			$formElm = $('<textarea class="form-control">')
+			$formElm = $('<textarea class="px2-input px2-input--block">')
 				.attr({
 					"name": mod.name,
 					"rows": rows
@@ -7402,11 +7402,11 @@ module.exports = function(broccoli){
 			valTimeSec = dateFormat('H:i:s', presetString);
 		}
 
-		var $date = $('<input type="date" class="form-control">')
+		var $date = $('<input type="date" class="px2-input">')
 			.attr({ "name": mod.name + "__date" })
 			.val(valDate)
 			.css({'width':'180px', 'max-width': '100%'});
-		var $time = $('<input type="time" class="form-control">')
+		var $time = $('<input type="time" class="px2-input">')
 			.attr({ "name": mod.name + "__time" })
 			.val(valTime)
 			.css({'width':'130px', 'max-width': '100%'});
@@ -7484,7 +7484,7 @@ module.exports = function(broccoli){
 			presetString = presetString.src;
 		}
 
-		var $input = $('<input type="text" class="form-control">')
+		var $input = $('<input type="text" class="px2-input px2-input--block">')
 			.attr({
 				"name":mod.name
 			})
@@ -7675,9 +7675,9 @@ module.exports = function(broccoli){
 		}
 		// if( typeof(data.original) !== typeof({}) ){ data.original = {}; }
 		var $img = $('<img>');
-		var $inputImageName = $('<input class="form-control" style="margin: 0 5px;">');
+		var $inputImageName = $('<input class="px2-input px2-input--block" style="margin: 0 5px;">');
 		var $displayExtension = $('<span>');
-		var $inputWebUrl = $('<input class="form-control">');
+		var $inputWebUrl = $('<input class="px2-input px2-input--block">');
 		var confFilenameAutoSetter = mod.filenameAutoSetter || 'ifEmpty';
 
 		function selectResourceType(){
@@ -8395,7 +8395,7 @@ module.exports = function(broccoli){
 		;
 
 		if( rows == 1 ){
-			$formElm = $('<input type="text" class="form-control">')
+			$formElm = $('<input type="text" class="px2-input px2-input--block">')
 				.attr({
 					"name": mod.name
 				})
@@ -8456,7 +8456,7 @@ module.exports = function(broccoli){
 			setTimeout(updateAceHeight, 200);
 
 		}else{
-			$formElm = $('<textarea class="form-control">')
+			$formElm = $('<textarea class="px2-input px2-input--block">')
 				.attr({
 					"name": mod.name,
 					"rows": rows
@@ -8613,7 +8613,7 @@ module.exports = function(broccoli){
 		;
 
 		if( rows == 1 ){
-			$formElm = $('<input type="text" class="form-control">')
+			$formElm = $('<input type="text" class="px2-input px2-input--block">')
 				.attr({
 					"name": mod.name
 				})
@@ -8677,7 +8677,7 @@ module.exports = function(broccoli){
 			setTimeout(updateAceHeight, 200);
 
 		}else{
-			$formElm = $('<textarea class="form-control">')
+			$formElm = $('<textarea class="px2-input px2-input--block">')
 				.attr({
 					"name": mod.name,
 					"rows": rows
@@ -8777,7 +8777,7 @@ module.exports = function(broccoli){
 			presetString = presetString.src;
 		}
 
-		var $select = $('<select>');
+		var $select = $('<select>').addClass('px2-input');
 		if( mod.options ){
 			if(mod.display == 'radio'){
 				// ラジオボタン
