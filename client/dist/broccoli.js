@@ -6513,6 +6513,7 @@ module.exports = function(broccoli){
  */
 module.exports = function(broccoli, iframe){
 	var $ = require('jquery');
+	var it79 = require('iterate79');
 
 	var __dirname = broccoli.__dirname;
 	// console.log(__dirname);
@@ -6544,21 +6545,60 @@ module.exports = function(broccoli, iframe){
 		// console.log(targetWindowOrigin);
 
 		var win = $(iframe).get(0).contentWindow;
-		$.ajax({
-			"url": __dirname+'/broccoli-preview-contents.js',
-			"dataType": "text",
-			"complete": function(XMLHttpRequest, textStatus){
-				var base64 = new Buffer(XMLHttpRequest.responseText).toString('base64');
-				win.postMessage({'scriptUrl':'data:text/javascript;base64,'+base64}, targetWindowOrigin);
+		// console.log(win);
+
+		it79.fnc({}, [
+			function(it1){
+				try {
+					if(!win.document.querySelector('script[data-broccoli-receive-message="yes"]')){
+						win.addEventListener('message',(function() {
+							return function f(event) {
+								if(!event.data.scriptUrl){return;}
+								var s=document.createElement('script');
+								win.document.querySelector('body').appendChild(s);s.src=event.data.scriptUrl;
+								win.removeEventListener('message', f, false);
+							}
+						})(),false);
+					}
+
+				} catch(e){}
+				it1.next();
+			},
+			function(it1){
 				setTimeout(function(){
 					// TODO: より確実な方法が欲しい。
 					// 子ウィンドウに走らせるスクリプトの準備が整うまで若干のタイムラグが生じる。
 					// 一旦 50ms あけて callback するようにしたが、より確実に完了を拾える方法が必要。
-					callback();
+					it1.next();
+				}, 1000);
+			},
+			function(it1){
+				$.ajax({
+					"url": __dirname+'/broccoli-preview-contents.js',
+					"dataType": "text",
+					"complete": function(XMLHttpRequest, textStatus){
+						var base64 = new Buffer(XMLHttpRequest.responseText).toString('base64');
+						win.postMessage({'scriptUrl':'data:text/javascript;base64,'+base64}, targetWindowOrigin);
+						it1.next();
+					}
+				});
+				it1.next();
+			},
+			function(it1){
+				setTimeout(function(){
+					// TODO: より確実な方法が欲しい。
+					// 子ウィンドウに走らせるスクリプトの準備が整うまで若干のタイムラグが生じる。
+					// 一旦 50ms あけて callback するようにしたが、より確実に完了を拾える方法が必要。
+					it1.next();
 				}, 50);
-			}
-		});
-		return this;
+			},
+			function(){
+				callback();
+			},
+		]);
+
+
+		return;
 	}
 
 	/**
@@ -6582,7 +6622,7 @@ module.exports = function(broccoli, iframe){
 		var win = $(iframe).get(0).contentWindow;
 		var targetWindowOrigin = getTargetOrigin(iframe);
 		win.postMessage(message, targetWindowOrigin);
-		return this;
+		return;
 	}
 
 	/**
@@ -6621,7 +6661,7 @@ module.exports = function(broccoli, iframe){
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":37,"jquery":126}],14:[function(require,module,exports){
+},{"buffer":37,"iterate79":124,"jquery":126}],14:[function(require,module,exports){
 /**
  * resourceMgr.js
  */
