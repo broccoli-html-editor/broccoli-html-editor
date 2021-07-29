@@ -359,6 +359,7 @@ $ composer test
 ### broccoli-html-editor v0.4.5 (リリース日未定)
 
 - UIの改善: モーダルボックスのサイズを調整した。
+- その他、細かい不具合の修正と安定性の向上。
 
 ### broccoli-html-editor v0.4.4 (2021年7月10日)
 

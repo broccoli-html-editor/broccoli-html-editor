@@ -5,6 +5,7 @@
 module.exports = function(broccoli, iframe){
 	var $ = require('jquery');
 	var it79 = require('iterate79');
+	var _this = this;
 
 	var __dirname = broccoli.__dirname;
 	// console.log(__dirname);
@@ -52,16 +53,18 @@ module.exports = function(broccoli, iframe){
 						})(),false);
 					}
 
-				} catch(e){}
+				} catch(e){
+					console.log('postMessenger.init(): プレビューの直接のDOM操作は行われません。');
+				}
 				it1.next();
 			},
 			function(it1){
 				setTimeout(function(){
 					// TODO: より確実な方法が欲しい。
 					// 子ウィンドウに走らせるスクリプトの準備が整うまで若干のタイムラグが生じる。
-					// 一旦 50ms あけて callback するようにしたが、より確実に完了を拾える方法が必要。
+					// 一旦 200ms あけて callback するようにしたが、より確実に完了を拾える方法が必要。
 					it1.next();
-				}, 1000);
+				}, 200);
 			},
 			function(it1){
 				$.ajax({
@@ -73,7 +76,6 @@ module.exports = function(broccoli, iframe){
 						it1.next();
 					}
 				});
-				it1.next();
 			},
 			function(it1){
 				setTimeout(function(){
@@ -82,6 +84,25 @@ module.exports = function(broccoli, iframe){
 					// 一旦 50ms あけて callback するようにしたが、より確実に完了を拾える方法が必要。
 					it1.next();
 				}, 50);
+			},
+			function(it1){
+				// 接続を確認
+				var timeout = setTimeout(function(){
+					console.error('postMessenger: ping error: Timeout');
+				}, 5000);
+				_this.send('ping', {}, function(res){
+					try {
+						console.log('postMessenger: ping:', res);
+						if( !res.result ){
+							console.error('postMessenger: ping got a error', res);
+						}
+
+					} catch(e) {
+						console.error('postMessenger: ping problem:', e);
+					}
+					clearTimeout(timeout);
+					it1.next();
+				});
 			},
 			function(){
 				callback();
