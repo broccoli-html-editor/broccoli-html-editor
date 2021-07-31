@@ -6294,6 +6294,13 @@ module.exports = function(broccoli){
 	 */
 	this.init = function(domElm, callback){
 		$panels = $(domElm);
+		$panels
+			.css({
+				"height": $panels.parent().find('iframe').height(),
+			})
+			.on('click', function(){
+				broccoli.unselectInstance();
+			});
 		it79.fnc(
 			{},
 			[
