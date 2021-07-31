@@ -34,7 +34,7 @@ class markdown extends \broccoliHtmlEditor\fieldBase{
 			$rtn = $this->broccoli->markdown($fieldData);
 		}
 		if( $mode == 'canvas' && !strlen(trim($rtn)) ){
-			$rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてマークダウンを編集してください)</span>';
+			$rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;">(ダブルクリックしてマークダウンを編集してください)</span>';
 		}
 
 		return $rtn;

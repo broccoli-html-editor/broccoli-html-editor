@@ -28,7 +28,7 @@ module.exports = function(broccoli){
 			rtn = marked(rtn);
 		}
 		if( mode == 'canvas' && !rtn.length ){
-			rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてマークダウンを編集してください)</span>';
+			rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;">(ダブルクリックしてマークダウンを編集してください)</span>';
 		}
 		// setTimeout(function(){
 			callback(rtn);
