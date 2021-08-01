@@ -33,7 +33,8 @@
 		var bootupInfomations;
 		var uiState;
 		var timer_redraw,
-			timer_onPreviewLoad;
+			timer_onPreviewLoad,
+			onPreviewLoad_done = false;
 		this.utils = new (require('./utils.js'))(_this);
 		this.indicator = new (require('./indicator.js'))(_this);
 
@@ -436,6 +437,13 @@
 			callback = callback || function(){};
 			if(_this.postMessenger===undefined){return;}// broccoli.init() の実行前
 			clearTimeout(timer_onPreviewLoad);
+
+			if( onPreviewLoad_done ){
+				// 1度しか実行しない。
+				console.error('broccoli: onPreviewLoad(): すでに実行されているため、スキップします。');
+				return;
+			}
+			onPreviewLoad_done = true;
 
 			it79.fnc(
 				{},
