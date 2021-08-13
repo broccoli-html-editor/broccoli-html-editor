@@ -544,7 +544,6 @@ module.exports = function(broccoli){
 							return;
 							break;
 					}
-					it1.next();
 					return;
 				}
 
@@ -817,6 +816,14 @@ module.exports = function(broccoli){
 	 */
 	this.init = function(domElm, callback){
 		$panels = $(domElm);
+		$panels
+			.css({
+				"height": $panels.parent().find('iframe').height(),
+			})
+			.on('click', function(){
+				broccoli.unselectInstance();
+			});
+
 		it79.fnc(
 			{},
 			[
@@ -847,12 +854,12 @@ module.exports = function(broccoli){
 					// $contentsElements.each(drawPanel);
 					it1.next(data);
 				} ,
-				function( it1, data ){
+				function(){
 					callback();
-					it1.next(data);
 				}
 			]
 		);
+		return;
 	}
 
 	/**
@@ -876,7 +883,7 @@ module.exports = function(broccoli){
 			// this.updateInstancePathView();
 			callback();
 		});
-		return this;
+		return;
 	}
 
 	/**
@@ -889,7 +896,7 @@ module.exports = function(broccoli){
 		;
 		// this.updateInstancePathView();
 		callback();
-		return this;
+		return;
 	}
 
 	/**
@@ -986,7 +993,7 @@ module.exports = function(broccoli){
 			.addClass('broccoli--panel__focused')
 		;
 		callback();
-		return this;
+		return;
 
 	}
 
@@ -1002,7 +1009,7 @@ module.exports = function(broccoli){
 			.removeClass('broccoli--panel__focused')
 		;
 		callback();
-		return this;
+		return;
 	}
 
 	/**
@@ -1022,7 +1029,7 @@ module.exports = function(broccoli){
 			$panels.html('');
 		}
 		callback();
-		return this;
+		return;
 	}
 
 	return;

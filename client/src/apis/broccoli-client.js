@@ -33,7 +33,8 @@
 		var bootupInfomations;
 		var uiState;
 		var timer_redraw,
-			timer_onPreviewLoad;
+			timer_onPreviewLoad,
+			onPreviewLoad_done = false;
 		this.utils = new (require('./utils.js'))(_this);
 		this.indicator = new (require('./indicator.js'))(_this);
 
@@ -403,6 +404,11 @@
 								e.preventDefault();
 								_this.historyGo();
 								return;
+							}else if(pressedKey == 'a'){
+								e.stopPropagation();
+								e.preventDefault();
+								_this.selectAllInstance();
+								return;
 							}
 						}
 						if(pressedKey == 'delete' || pressedKey == 'backspace'){
@@ -436,6 +442,13 @@
 			callback = callback || function(){};
 			if(_this.postMessenger===undefined){return;}// broccoli.init() の実行前
 			clearTimeout(timer_onPreviewLoad);
+
+			if( onPreviewLoad_done ){
+				// 1度しか実行しない。
+				console.error('broccoli: onPreviewLoad(): すでに実行されているため、スキップします。');
+				return;
+			}
+			onPreviewLoad_done = true;
 
 			it79.fnc(
 				{},
@@ -819,6 +832,46 @@
 					});
 				});
 			});
+			return;
+		}
+
+		/**
+		 * すべて選択する
+		 */
+		this.selectAllInstance = function( callback ){
+			callback = callback || function(){};
+			var selectedInstancePath = broccoli.getSelectedInstance();
+			var firstInstancePath = selectedInstancePath.replace(/\@[0-9]*$/, '@0');
+			// console.log(selectedInstancePath, firstInstancePath);
+
+			it79.fnc({}, [
+				function(it1){
+					broccoli.selectInstance(firstInstancePath, function(){
+						it1.next();
+					});
+				},
+				function(it1){
+					broccoli.selectInstanceRegion(selectedInstancePath, function(){
+						it1.next();
+					});
+				},
+				function(it1){
+					var parentInstancePath = firstInstancePath.replace(/(?:\/fields\.([a-zA-Z0-9\_\-]+)\@[0-9]*)$/, '');
+					var fieldName = RegExp.$1;
+					// console.log(parentInstancePath, fieldName);
+					var data = broccoli.contentsSourceData.get(parentInstancePath);
+					// console.log(data);
+					var lastInstanceIdx = data.fields[fieldName].length - 1;
+					var lastInstancePath = firstInstancePath.replace(/\@[0-9]*$/, '@'+lastInstanceIdx);
+					// console.log(lastInstancePath);
+					broccoli.selectInstanceRegion(lastInstancePath, function(){
+						it1.next();
+					});
+				},
+				function(){
+					callback();
+				},
+			]);
 			return;
 		}
 

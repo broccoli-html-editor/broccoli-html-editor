@@ -32,7 +32,7 @@ class datetime extends \broccoliHtmlEditor\fieldBase{
 			$rtn = preg_replace('/\r\n|\r|\n/s', '<br />', $rtn); // ← 改行コードは改行タグに変換
 		}
 		if( $mode == 'canvas' && !strlen($rtn) ){
-			$rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックして編集してください)</span>';
+			$rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;">(ダブルクリックして編集してください)</span>';
 		}
 		return $rtn;
 	}

@@ -25,7 +25,7 @@ class text extends \broccoliHtmlEditor\fieldBase{
 			$rtn = preg_replace('/\r\n|\r|\n/s', '<br />', $rtn);
 		}
 		if( $mode == 'canvas' && !strlen($rtn) ){
-			$rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてテキストを編集してください)</span>';
+			$rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;">(ダブルクリックしてテキストを編集してください)</span>';
 		}
 		return $rtn;
 	}

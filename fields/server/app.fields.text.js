@@ -17,7 +17,7 @@ module.exports = function(broccoli){
 			rtn = rtn.replace(new RegExp('\r\n|\r|\n','g'), '<br />');
 		}
 		if( mode == 'canvas' && !rtn.length ){
-			rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてテキストを編集してください)</span>';
+			rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;">(ダブルクリックしてテキストを編集してください)</span>';
 		}
 		// setTimeout(function(){
 			callback(rtn);

@@ -47,7 +47,13 @@
 		var data=event.data;
 		_origin = event.origin;
 
-		if(data.api == 'updateHtml'){
+		if(data.api == 'ping'){
+			callbackMessage(data.callback, {
+				"result": true,
+				"message": "OK"
+			});
+			return;
+		}else if(data.api == 'updateHtml'){
 			// console.log(data);
 			var htmls = data.options.htmls;
 			$iframeWindow

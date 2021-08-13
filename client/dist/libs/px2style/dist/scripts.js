@@ -10968,6 +10968,8 @@ module.exports = function(Px2style){
 				.addClass('px2-header__shoulder-global-menu')
 				.prependTo($shoulderMenuUl);
 		}
+		var $shoulderGlobalMenuLis = $shoulderMenuUl.find('>li.px2-header__shoulder-global-menu');
+		$shoulderGlobalMenuLis.eq($shoulderGlobalMenuLis.length-1).addClass('px2-header__shoulder-global-menu--last');
 
 
 		$globalMenuUl.find('li').removeClass('px2-header__global-menu-group');

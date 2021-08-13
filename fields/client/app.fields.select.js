@@ -11,7 +11,7 @@ module.exports = function(broccoli){
 			presetString = presetString.src;
 		}
 
-		var $select = $('<select>');
+		var $select = $('<select>').addClass('px2-input');
 		if( mod.options ){
 			if(mod.display == 'radio'){
 				// ラジオボタン
@@ -60,6 +60,7 @@ module.exports = function(broccoli){
 			}else{
 				// デフォルトはselectタグ
 				$select = $('<select>')
+					.addClass('px2-input')
 					.attr({
 						"name":mod.name
 					})

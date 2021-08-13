@@ -428,6 +428,9 @@ class broccoliHtmlEditor{
 		// var_dump($rtn['packageInfo']->sort);
 		$rtn['categories'] = array();
 		$fileList = $sortModuleDirectoryNames($fileList, @$rtn['packageInfo']->sort);
+		if( !$fileList ){
+			$fileList = array();
+		}
 		foreach($fileList as $idx=>$row){
 			$realpath = $this->fs->normalize_path($this->fs->get_realpath($rtn['realpath'].'/'.$row));
 			if( is_dir($realpath) ){

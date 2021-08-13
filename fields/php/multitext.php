@@ -44,7 +44,7 @@ class multitext extends \broccoliHtmlEditor\fieldBase{
 			}
 		}
 		if( $mode == 'canvas' && !strlen(trim($rtn)) ){
-			$rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてテキストを編集してください)</span>';
+			$rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;">(ダブルクリックしてテキストを編集してください)</span>';
 		}
 		return $rtn;
 	}

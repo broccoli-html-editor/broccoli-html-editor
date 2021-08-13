@@ -34,7 +34,8 @@
 		var bootupInfomations;
 		var uiState;
 		var timer_redraw,
-			timer_onPreviewLoad;
+			timer_onPreviewLoad,
+			onPreviewLoad_done = false;
 		this.utils = new (require('./utils.js'))(_this);
 		this.indicator = new (require('./indicator.js'))(_this);
 
@@ -404,6 +405,11 @@
 								e.preventDefault();
 								_this.historyGo();
 								return;
+							}else if(pressedKey == 'a'){
+								e.stopPropagation();
+								e.preventDefault();
+								_this.selectAllInstance();
+								return;
 							}
 						}
 						if(pressedKey == 'delete' || pressedKey == 'backspace'){
@@ -437,6 +443,13 @@
 			callback = callback || function(){};
 			if(_this.postMessenger===undefined){return;}// broccoli.init() の実行前
 			clearTimeout(timer_onPreviewLoad);
+
+			if( onPreviewLoad_done ){
+				// 1度しか実行しない。
+				console.error('broccoli: onPreviewLoad(): すでに実行されているため、スキップします。');
+				return;
+			}
+			onPreviewLoad_done = true;
 
 			it79.fnc(
 				{},
@@ -820,6 +833,46 @@
 					});
 				});
 			});
+			return;
+		}
+
+		/**
+		 * すべて選択する
+		 */
+		this.selectAllInstance = function( callback ){
+			callback = callback || function(){};
+			var selectedInstancePath = broccoli.getSelectedInstance();
+			var firstInstancePath = selectedInstancePath.replace(/\@[0-9]*$/, '@0');
+			// console.log(selectedInstancePath, firstInstancePath);
+
+			it79.fnc({}, [
+				function(it1){
+					broccoli.selectInstance(firstInstancePath, function(){
+						it1.next();
+					});
+				},
+				function(it1){
+					broccoli.selectInstanceRegion(selectedInstancePath, function(){
+						it1.next();
+					});
+				},
+				function(it1){
+					var parentInstancePath = firstInstancePath.replace(/(?:\/fields\.([a-zA-Z0-9\_\-]+)\@[0-9]*)$/, '');
+					var fieldName = RegExp.$1;
+					// console.log(parentInstancePath, fieldName);
+					var data = broccoli.contentsSourceData.get(parentInstancePath);
+					// console.log(data);
+					var lastInstanceIdx = data.fields[fieldName].length - 1;
+					var lastInstancePath = firstInstancePath.replace(/\@[0-9]*$/, '@'+lastInstanceIdx);
+					// console.log(lastInstancePath);
+					broccoli.selectInstanceRegion(lastInstancePath, function(){
+						it1.next();
+					});
+				},
+				function(){
+					callback();
+				},
+			]);
 			return;
 		}
 
@@ -4590,7 +4643,7 @@ module.exports = function(broccoli){
 		}
 
 		if( rows == 1 ){
-			$formElm = $('<input type="text" class="form-control">')
+			$formElm = $('<input type="text" class="px2-input px2-input--block">')
 				.attr({
 					"name": mod.name
 				})
@@ -4651,7 +4704,7 @@ module.exports = function(broccoli){
 			setTimeout(updateAceHeight, 200);
 
 		}else{
-			$formElm = $('<textarea class="form-control">')
+			$formElm = $('<textarea class="px2-input px2-input--block">')
 				.attr({
 					"name": mod.name,
 					"rows": rows
@@ -6244,7 +6297,6 @@ module.exports = function(broccoli){
 							return;
 							break;
 					}
-					it1.next();
 					return;
 				}
 
@@ -6517,6 +6569,14 @@ module.exports = function(broccoli){
 	 */
 	this.init = function(domElm, callback){
 		$panels = $(domElm);
+		$panels
+			.css({
+				"height": $panels.parent().find('iframe').height(),
+			})
+			.on('click', function(){
+				broccoli.unselectInstance();
+			});
+
 		it79.fnc(
 			{},
 			[
@@ -6547,12 +6607,12 @@ module.exports = function(broccoli){
 					// $contentsElements.each(drawPanel);
 					it1.next(data);
 				} ,
-				function( it1, data ){
+				function(){
 					callback();
-					it1.next(data);
 				}
 			]
 		);
+		return;
 	}
 
 	/**
@@ -6576,7 +6636,7 @@ module.exports = function(broccoli){
 			// this.updateInstancePathView();
 			callback();
 		});
-		return this;
+		return;
 	}
 
 	/**
@@ -6589,7 +6649,7 @@ module.exports = function(broccoli){
 		;
 		// this.updateInstancePathView();
 		callback();
-		return this;
+		return;
 	}
 
 	/**
@@ -6686,7 +6746,7 @@ module.exports = function(broccoli){
 			.addClass('broccoli--panel__focused')
 		;
 		callback();
-		return this;
+		return;
 
 	}
 
@@ -6702,7 +6762,7 @@ module.exports = function(broccoli){
 			.removeClass('broccoli--panel__focused')
 		;
 		callback();
-		return this;
+		return;
 	}
 
 	/**
@@ -6722,7 +6782,7 @@ module.exports = function(broccoli){
 			$panels.html('');
 		}
 		callback();
-		return this;
+		return;
 	}
 
 	return;
@@ -6736,6 +6796,8 @@ module.exports = function(broccoli){
  */
 module.exports = function(broccoli, iframe){
 	var $ = require('jquery');
+	var it79 = require('iterate79');
+	var _this = this;
 
 	var __dirname = broccoli.__dirname;
 	// console.log(__dirname);
@@ -6767,21 +6829,80 @@ module.exports = function(broccoli, iframe){
 		// console.log(targetWindowOrigin);
 
 		var win = $(iframe).get(0).contentWindow;
-		$.ajax({
-			"url": __dirname+'/broccoli-preview-contents.js',
-			"dataType": "text",
-			"complete": function(XMLHttpRequest, textStatus){
-				var base64 = new Buffer(XMLHttpRequest.responseText).toString('base64');
-				win.postMessage({'scriptUrl':'data:text/javascript;base64,'+base64}, targetWindowOrigin);
+		// console.log(win);
+
+		it79.fnc({}, [
+			function(it1){
+				try {
+					if(!win.document.querySelector('script[data-broccoli-receive-message="yes"]')){
+						win.addEventListener('message',(function() {
+							return function f(event) {
+								if(!event.data.scriptUrl){return;}
+								var s=document.createElement('script');
+								win.document.querySelector('body').appendChild(s);s.src=event.data.scriptUrl;
+								win.removeEventListener('message', f, false);
+							}
+						})(),false);
+					}
+
+				} catch(e){
+					console.log('postMessenger.init(): プレビューの直接のDOM操作は行われません。');
+				}
+				it1.next();
+			},
+			function(it1){
+				setTimeout(function(){
+					// TODO: より確実な方法が欲しい。
+					// 子ウィンドウに走らせるスクリプトの準備が整うまで若干のタイムラグが生じる。
+					// 一旦 200ms あけて callback するようにしたが、より確実に完了を拾える方法が必要。
+					it1.next();
+				}, 200);
+			},
+			function(it1){
+				$.ajax({
+					"url": __dirname+'/broccoli-preview-contents.js',
+					"dataType": "text",
+					"complete": function(XMLHttpRequest, textStatus){
+						var base64 = new Buffer(XMLHttpRequest.responseText).toString('base64');
+						win.postMessage({'scriptUrl':'data:text/javascript;base64,'+base64}, targetWindowOrigin);
+						it1.next();
+					}
+				});
+			},
+			function(it1){
 				setTimeout(function(){
 					// TODO: より確実な方法が欲しい。
 					// 子ウィンドウに走らせるスクリプトの準備が整うまで若干のタイムラグが生じる。
 					// 一旦 50ms あけて callback するようにしたが、より確実に完了を拾える方法が必要。
-					callback();
+					it1.next();
 				}, 50);
-			}
-		});
-		return this;
+			},
+			function(it1){
+				// 接続を確認
+				var timeout = setTimeout(function(){
+					console.error('postMessenger: ping error: Timeout');
+				}, 5000);
+				_this.send('ping', {}, function(res){
+					try {
+						console.log('postMessenger: ping:', res);
+						if( !res.result ){
+							console.error('postMessenger: ping got a error', res);
+						}
+
+					} catch(e) {
+						console.error('postMessenger: ping problem:', e);
+					}
+					clearTimeout(timeout);
+					it1.next();
+				});
+			},
+			function(){
+				callback();
+			},
+		]);
+
+
+		return;
 	}
 
 	/**
@@ -6805,7 +6926,7 @@ module.exports = function(broccoli, iframe){
 		var win = $(iframe).get(0).contentWindow;
 		var targetWindowOrigin = getTargetOrigin(iframe);
 		win.postMessage(message, targetWindowOrigin);
-		return this;
+		return;
 	}
 
 	/**
@@ -6844,7 +6965,7 @@ module.exports = function(broccoli, iframe){
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":38,"jquery":127}],15:[function(require,module,exports){
+},{"buffer":38,"iterate79":125,"jquery":127}],15:[function(require,module,exports){
 /**
  * resourceMgr.js
  */
@@ -7625,11 +7746,11 @@ module.exports = function(broccoli){
 			valTimeSec = dateFormat('H:i:s', presetString);
 		}
 
-		var $date = $('<input type="date" class="form-control">')
+		var $date = $('<input type="date" class="px2-input">')
 			.attr({ "name": mod.name + "__date" })
 			.val(valDate)
 			.css({'width':'180px', 'max-width': '100%'});
-		var $time = $('<input type="time" class="form-control">')
+		var $time = $('<input type="time" class="px2-input">')
 			.attr({ "name": mod.name + "__time" })
 			.val(valTime)
 			.css({'width':'130px', 'max-width': '100%'});
@@ -7707,7 +7828,7 @@ module.exports = function(broccoli){
 			presetString = presetString.src;
 		}
 
-		var $input = $('<input type="text" class="form-control">')
+		var $input = $('<input type="text" class="px2-input px2-input--block">')
 			.attr({
 				"name":mod.name
 			})
@@ -7898,9 +8019,9 @@ module.exports = function(broccoli){
 		}
 		// if( typeof(data.original) !== typeof({}) ){ data.original = {}; }
 		var $img = $('<img>');
-		var $inputImageName = $('<input class="form-control" style="margin: 0 5px;">');
+		var $inputImageName = $('<input class="px2-input px2-input--block" style="margin: 0 5px;">');
 		var $displayExtension = $('<span>');
-		var $inputWebUrl = $('<input class="form-control">');
+		var $inputWebUrl = $('<input class="px2-input px2-input--block">');
 		var confFilenameAutoSetter = mod.filenameAutoSetter || 'ifEmpty';
 
 		function selectResourceType(){
@@ -8618,7 +8739,7 @@ module.exports = function(broccoli){
 		;
 
 		if( rows == 1 ){
-			$formElm = $('<input type="text" class="form-control">')
+			$formElm = $('<input type="text" class="px2-input px2-input--block">')
 				.attr({
 					"name": mod.name
 				})
@@ -8679,7 +8800,7 @@ module.exports = function(broccoli){
 			setTimeout(updateAceHeight, 200);
 
 		}else{
-			$formElm = $('<textarea class="form-control">')
+			$formElm = $('<textarea class="px2-input px2-input--block">')
 				.attr({
 					"name": mod.name,
 					"rows": rows
@@ -8836,7 +8957,7 @@ module.exports = function(broccoli){
 		;
 
 		if( rows == 1 ){
-			$formElm = $('<input type="text" class="form-control">')
+			$formElm = $('<input type="text" class="px2-input px2-input--block">')
 				.attr({
 					"name": mod.name
 				})
@@ -8900,7 +9021,7 @@ module.exports = function(broccoli){
 			setTimeout(updateAceHeight, 200);
 
 		}else{
-			$formElm = $('<textarea class="form-control">')
+			$formElm = $('<textarea class="px2-input px2-input--block">')
 				.attr({
 					"name": mod.name,
 					"rows": rows
@@ -9000,7 +9121,7 @@ module.exports = function(broccoli){
 			presetString = presetString.src;
 		}
 
-		var $select = $('<select>');
+		var $select = $('<select>').addClass('px2-input');
 		if( mod.options ){
 			if(mod.display == 'radio'){
 				// ラジオボタン
@@ -9049,6 +9170,7 @@ module.exports = function(broccoli){
 			}else{
 				// デフォルトはselectタグ
 				$select = $('<select>')
+					.addClass('px2-input')
 					.attr({
 						"name":mod.name
 					})
@@ -60268,6 +60390,8 @@ module.exports = function(Px2style){
 				.addClass('px2-header__shoulder-global-menu')
 				.prependTo($shoulderMenuUl);
 		}
+		var $shoulderGlobalMenuLis = $shoulderMenuUl.find('>li.px2-header__shoulder-global-menu');
+		$shoulderGlobalMenuLis.eq($shoulderGlobalMenuLis.length-1).addClass('px2-header__shoulder-global-menu--last');
 
 
 		$globalMenuUl.find('li').removeClass('px2-header__global-menu-group');

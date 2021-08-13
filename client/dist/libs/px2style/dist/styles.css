@@ -466,6 +466,7 @@
 .broccoli .px2-editor-type {
   display: inline-block;
   font-size: 12px;
+  font-family: sans-serif;
   line-height: 1;
   padding: 0.4em 1em;
   text-align: center;
@@ -474,6 +475,7 @@
 .broccoli .px2-editor-type__html, .broccoli .px2-editor-type--html {
   display: inline-block;
   font-size: 12px;
+  font-family: sans-serif;
   line-height: 1;
   padding: 0.4em 1em;
   text-align: center;
@@ -486,6 +488,7 @@
 .broccoli .px2-editor-type__html-gui, .broccoli .px2-editor-type--html-gui {
   display: inline-block;
   font-size: 12px;
+  font-family: sans-serif;
   line-height: 1;
   padding: 0.4em 1em;
   text-align: center;
@@ -493,11 +496,12 @@
   background-color: #9f5b75; }
 
 .broccoli .px2-editor-type__html-gui:before, .broccoli .px2-editor-type--html-gui:before {
-  content: "GUI"; }
+  content: "Block"; }
 
 .broccoli .px2-editor-type__txt, .broccoli .px2-editor-type--txt {
   display: inline-block;
   font-size: 12px;
+  font-family: sans-serif;
   line-height: 1;
   padding: 0.4em 1em;
   text-align: center;
@@ -510,6 +514,7 @@
 .broccoli .px2-editor-type__md, .broccoli .px2-editor-type--md {
   display: inline-block;
   font-size: 12px;
+  font-family: sans-serif;
   line-height: 1;
   padding: 0.4em 1em;
   text-align: center;
@@ -522,6 +527,7 @@
 .broccoli .px2-editor-type__jade, .broccoli .px2-editor-type--jade {
   display: inline-block;
   font-size: 12px;
+  font-family: sans-serif;
   line-height: 1;
   padding: 0.4em 1em;
   text-align: center;
@@ -534,6 +540,7 @@
 .broccoli .px2-editor-type__not-exists, .broccoli .px2-editor-type--not-exists {
   display: inline-block;
   font-size: 12px;
+  font-family: sans-serif;
   line-height: 1;
   padding: 0.4em 1em;
   text-align: center;
@@ -546,6 +553,7 @@
 .broccoli .px2-editor-type__page-not-exists, .broccoli .px2-editor-type--page-not-exists {
   display: inline-block;
   font-size: 12px;
+  font-family: sans-serif;
   line-height: 1;
   padding: 0.4em 1em;
   text-align: center;
@@ -558,6 +566,7 @@
 .broccoli .px2-editor-type__alias, .broccoli .px2-editor-type--alias {
   display: inline-block;
   font-size: 12px;
+  font-family: sans-serif;
   line-height: 1;
   padding: 0.4em 1em;
   text-align: center;
@@ -1021,7 +1030,9 @@
   .broccoli .px2-header__global-menu ul {
     display: none; }
   .broccoli .px2-header .px2-header__shoulder-global-menu {
-    display: block; } }
+    display: block; }
+  .broccoli .px2-header .px2-header__shoulder-global-menu--last {
+    border-bottom: 5px solid #aaa; } }
 
 .broccoli input[type=text].px2-input,
 .broccoli input[type=password].px2-input,
@@ -1261,6 +1272,10 @@
   padding: 0.4em 1em;
   width: 70%;
   border: 1px solid #999999; }
+
+.broccoli .px2-form-input-list ul.px2-form-input-list__ul li.px2-form-input-list__li p, .broccoli .px2-form-input-list ul.px2-form-input-list__ul li.px2-form-input-list__li .px2-p {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em; }
 
 .broccoli .px2-form-input-list ul.px2-form-input-list__ul li.px2-form-input-list__li--required .px2-form-input-list__label::after {
   content: "*";

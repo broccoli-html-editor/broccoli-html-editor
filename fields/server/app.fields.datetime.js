@@ -25,7 +25,7 @@ module.exports = function(broccoli){
 		}
 
 		if( mode == 'canvas' && !rtn.length ){
-			rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックして編集してください)</span>';
+			rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;">(ダブルクリックして編集してください)</span>';
 		}
 
 		callback(rtn);

@@ -61,6 +61,7 @@ module.exports = function(broccoli, data, options, callback){
 				rtn += ' data-broccoli-is-appender="yes"';
 				rtn += ' style="';
 				rtn +=     'height:auto;';
+				rtn +=     'max-height:calc('+style['font-size']+' * 6px);';
 				rtn +=     'overflow:hidden;';
 				rtn +=     'padding:'+style['padding']+'px;';
 				rtn +=     'background-color:'+style['background-color']+';';
@@ -87,6 +88,8 @@ module.exports = function(broccoli, data, options, callback){
 				rtn += ' data-broccoli-sub-mod-name="'+php.htmlspecialchars(param.subModName)+'"';
 				rtn += ' data-broccoli-is-appender="yes"';
 				rtn += ' style="';
+				rtn +=     'height:auto;';
+				rtn +=     'max-height:calc(9 * 6px);';
 				rtn +=     'overflow:hidden;';
 				rtn +=     'padding:5px 15px;';
 				rtn +=     'background-color:#dfe;';

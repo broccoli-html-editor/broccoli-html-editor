@@ -88,7 +88,7 @@ module.exports = function(broccoli){
 		}
 
 		if( rows == 1 ){
-			$formElm = $('<input type="text" class="form-control">')
+			$formElm = $('<input type="text" class="px2-input px2-input--block">')
 				.attr({
 					"name": mod.name
 				})
@@ -149,7 +149,7 @@ module.exports = function(broccoli){
 			setTimeout(updateAceHeight, 200);
 
 		}else{
-			$formElm = $('<textarea class="form-control">')
+			$formElm = $('<textarea class="px2-input px2-input--block">')
 				.attr({
 					"name": mod.name,
 					"rows": rows

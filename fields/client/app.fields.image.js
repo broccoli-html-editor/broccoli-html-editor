@@ -116,9 +116,9 @@ module.exports = function(broccoli){
 		}
 		// if( typeof(data.original) !== typeof({}) ){ data.original = {}; }
 		var $img = $('<img>');
-		var $inputImageName = $('<input class="form-control" style="margin: 0 5px;">');
+		var $inputImageName = $('<input class="px2-input px2-input--block" style="margin: 0 5px;">');
 		var $displayExtension = $('<span>');
-		var $inputWebUrl = $('<input class="form-control">');
+		var $inputWebUrl = $('<input class="px2-input px2-input--block">');
 		var confFilenameAutoSetter = mod.filenameAutoSetter || 'ifEmpty';
 
 		function selectResourceType(){

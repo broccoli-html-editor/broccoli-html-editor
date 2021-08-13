@@ -21,11 +21,11 @@ module.exports = function(broccoli){
 			valTimeSec = dateFormat('H:i:s', presetString);
 		}
 
-		var $date = $('<input type="date" class="form-control">')
+		var $date = $('<input type="date" class="px2-input">')
 			.attr({ "name": mod.name + "__date" })
 			.val(valDate)
 			.css({'width':'180px', 'max-width': '100%'});
-		var $time = $('<input type="time" class="form-control">')
+		var $time = $('<input type="time" class="px2-input">')
 			.attr({ "name": mod.name + "__time" })
 			.val(valTime)
 			.css({'width':'130px', 'max-width': '100%'});
