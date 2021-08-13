@@ -805,12 +805,15 @@
 
 	&-result{
 		overflow: auto;
+		height: 400px;
 		max-height: 400px;
 		a{
 			display: block;
 			padding: 1em;
 			margin: 1px 0;
-			border-top: 1px solid #ddd
+			border-top: 1px solid #ddd;
+			word-wrap: break-word;
+			overflow-wrap: break-word;
 		}
 	}
 }

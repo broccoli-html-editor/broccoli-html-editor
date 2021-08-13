@@ -26,24 +26,7 @@ module.exports = function(broccoli){
 				+ '	</div>'
 				+ '	<div class="broccoli__find-window-result"></div>'
 				+ '	<div class="broccoli__find-window-form-buttons">'
-				+ '		<div class="container-fluid">'
-				+ '			<div class="row">'
-				+ '				<div class="col-sm-4">'
-				+ '					<div class="btn-group btn-group-justified" role="group" style="margin-top:20px;">'
-				+ '						<div class="btn-group">'
-				+ '							<button disabled="disabled" type="button" class="px2-btn px2-btn--sm px2-btn--block broccoli__find-window-btn-cancel"><%= lb.get(\'ui_label.cancel\') %></button>'
-				+ '						</div>'
-				+ '					</div>'
-				+ '				</div>'
-				+ '				<div class="col-sm-4 col-sm-offset-4">'
-				+ '					<div class="btn-group btn-group-justified" role="group" style="margin-top:20px;">'
-				+ '						<div class="btn-group">'
-				// + '							<button disabled="disabled" type="button" class="px2-btn px2-btn--danger px2-btn--sm px2-btn--block broccoli__find-window-btn-remove"><span class="glyphicon glyphicon-trash"></span> <%= lb.get(\'ui_label.remove_this_module\') %></button>'
-				+ '						</div>'
-				+ '					</div>'
-				+ '				</div>'
-				+ '			</div>'
-				+ '		</div>'
+				+ '		<p style="text-align: center;"><button disabled="disabled" type="button" class="px2-btn broccoli__find-window-btn-cancel"><%= lb.get(\'ui_label.cancel\') %></button></p>'
 				+ '	</div>'
 				+ '</div>'
 	;
@@ -94,11 +77,13 @@ module.exports = function(broccoli){
 						function(result){
 							// console.log(result);
 							function parseModuleRecursive(instancePath, instance){
-								console.log(instancePath, instance);
+								// console.log(instancePath, instance);
 								var data = {};
 								data.instancePath = instancePath;
 								data.modId = instance.modId;
 								data.content = '';
+								data.data = null;
+								data.label = null;
 								contentsElements.push(data);
 
 								var mod = moduleList[instance.modId];
@@ -117,10 +102,20 @@ module.exports = function(broccoli){
 											}
 
 										}else{
+											data.data = instance.fields[fieldName];
 											if( typeof(instance.fields[fieldName]) == typeof('') ){
 												data.content += instance.fields[fieldName];
 											}else{
 												data.content += JSON.stringify(instance.fields[fieldName]);
+											}
+
+											data.label = data.content;
+											if( typeof(data.data) == typeof('') ){
+												data.label = data.data;
+											}else if( typeof(data.data) == typeof({}) && data.data.src ){
+												data.label = data.data.src;
+											}else if( typeof(data.data) == typeof([]) && data.data[0] && data.data.length ){
+												data.label = JSON.stringify(data.data[0]);
 											}
 										}
 										// instance.fields[fieldName];
@@ -146,6 +141,7 @@ module.exports = function(broccoli){
 
 				function( it1, data ){
 					broccoli.lightbox( function( lbElm ){
+						$(lbElm).addClass('broccoli__lightbox-inner--edit-window-mode');
 						$findWindow = $(lbElm);
 						$findWindow.html('').append( broccoli.bindEjs(tplFrame, {'lb':broccoli.lb}) );
 
@@ -192,7 +188,7 @@ module.exports = function(broccoli){
 			}
 
 			var $instance = $('<a>');
-			$instance.text(instance.content);
+			$instance.text(instance.label);
 			$instance.attr({
 				'href':'javascript:;',
 				'data-broccoli-instance-path': instance.instancePath

@@ -2543,12 +2543,15 @@
     display: none; }
   .broccoli__find-window-result {
     overflow: auto;
+    height: 400px;
     max-height: 400px; }
     .broccoli__find-window-result a {
       display: block;
       padding: 1em;
       margin: 1px 0;
-      border-top: 1px solid #ddd; }
+      border-top: 1px solid #ddd;
+      word-wrap: break-word;
+      overflow-wrap: break-word; }
 
 .broccoli__lightbox {
   position: fixed;

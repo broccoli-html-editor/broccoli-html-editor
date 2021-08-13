@@ -410,6 +410,11 @@
 								e.preventDefault();
 								_this.selectAllInstance();
 								return;
+							}else if(pressedKey == 'f'){
+								e.stopPropagation();
+								e.preventDefault();
+								_this.find();
+								return;
 							}
 						}
 						if(pressedKey == 'delete' || pressedKey == 'backspace'){
