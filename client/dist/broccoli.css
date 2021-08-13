@@ -2203,6 +2203,17 @@
     top: auto;
     bottom: -8px; }
 
+.broccoli__insert-window h2 {
+  font-weight: bold;
+  text-align: center;
+  margin: 1em; }
+
+.broccoli__insert-window-list {
+  margin: 0;
+  padding: 0; }
+  .broccoli__insert-window-list li {
+    list-style-type: none; }
+
 .broccoli__edit-window h2 {
   font-weight: bold;
   text-align: center;

@@ -397,6 +397,22 @@
 }
 
 
+// insert window
+.broccoli__insert-window {
+	h2{
+		font-weight: bold;
+		text-align: center;
+		margin: 1em;
+	}
+	&-list {
+		margin: 0;
+		padding: 0;
+		li {
+			list-style-type: none;
+		}
+	}
+}
+
 // edit window
 .broccoli__edit-window{
 	h2{

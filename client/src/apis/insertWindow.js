@@ -18,7 +18,7 @@ module.exports = function(broccoli){
 		+ '<h2>モジュールを挿入します</h2>'
 		+ '<p>挿入するモジュールを選択してください。</p>'
 		+ '<div class="broccoli__insert-window-body"></div>'
-		+ '<p><button class="px2-btn" type="button">キャンセル</button></p>'
+		+ '<p style="text-align: center;"><button class="px2-btn" type="button">キャンセル</button></p>'
 		+ '</div>'
 	;
 
@@ -122,10 +122,11 @@ module.exports = function(broccoli){
 				function(it1, data){
 					$insertWindowBody
 						.html('loading...')
-						.removeClass('broccoli').addClass('broccoli')
 					;
 					data.$ul = $('<ul class="broccoli__insert-window-list">');
-					it1.next(data);
+					setTimeout(function(){
+						it1.next(data);
+					}, 10);
 				} ,
 				function(it1, data){
 					// パッケージの階層を描画
