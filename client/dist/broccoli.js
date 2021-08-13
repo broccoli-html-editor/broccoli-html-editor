@@ -5329,9 +5329,9 @@ module.exports = function(broccoli){
 	 */
 	function generateModuleButton( mod, depth ){
 		depth = depth || 0;
-		var $button = $('<a class="broccoli__insert-window--draggablebutton">');
+		var $button = $('<a class="broccoli__insert-window--module">');
 		if(depth){
-			$button.addClass('broccoli__insert-window--draggablebutton-children');
+			$button.addClass('broccoli__insert-window--module-children');
 		}
 		$button
 			.html((function(d){
@@ -5342,59 +5342,60 @@ module.exports = function(broccoli){
 					thumb = d.thumb;
 				}
 				if(thumb){
-					rtn += '<span class="broccoli__insert-window--draggablebutton-thumb"><img src="'+php.htmlspecialchars( thumb )+'" alt="'+php.htmlspecialchars( label )+'" /></span>';
+					rtn += '<span class="broccoli__insert-window--module-thumb"><img src="'+php.htmlspecialchars( thumb )+'" alt="'+php.htmlspecialchars( label )+'" /></span>';
 				}else{
-					rtn += '<span class="broccoli__insert-window--draggablebutton-thumb"></span>';
+					rtn += '<span class="broccoli__insert-window--module-thumb"></span>';
 				}
-				rtn += '<span class="broccoli__insert-window--draggablebutton-label">'+php.htmlspecialchars( label )+'</span>';
+				rtn += '<span class="broccoli__insert-window--module-label">'+php.htmlspecialchars( label )+'</span>';
 				return rtn;
 			})(mod))
 			.attr({
-				// 'title': (function(d){
-				// 	return (d.moduleName ? d.moduleName+' ('+d.moduleId+')' : d.moduleId);
-				// })(mod),
 				'data-id': mod.moduleId,
 				'data-internal-id': mod.moduleInternalId,
 				'data-name': mod.moduleName,
 				'data-readme': mod.readme,
 				'data-clip': JSON.stringify(mod.clip),
 				'data-insert-instance-to': instanceInsertTo,
-				'draggable': true, //←HTML5のAPI http://www.htmq.com/dnd/
 				'href': 'javascript:;'
 			})
 
 			.on('click', function(e){
 				var modInternalId = $(this).attr('data-internal-id');
 				var moveTo = $(this).attr('data-insert-instance-to');
+				$(this).addClass('broccoli__insert-window--module-selected');
+				lock();
 
-				broccoli.progress(function(){});
+				broccoli.progress(function(){
 
-				broccoli.contentsSourceData.addInstance( modInternalId, moveTo, function(result){
-					if(!result){
-						console.error('Failed addInstance()', modInternalId, moveTo);
-						broccoli.closeProgress(function(){
-							latestCallback();
-						});
-						return;
-					}
+					broccoli.contentsSourceData.addInstance( modInternalId, moveTo, function(result){
+						if(!result){
+							console.error('Failed addInstance()', modInternalId, moveTo);
+							broccoli.closeProgress(function(){
+								unlock();
+								latestCallback();
+							});
+							return;
+						}
 
-					// コンテンツを保存
-					broccoli.unselectInstance(function(){
-						broccoli.saveContents(function(){
-							// alert('インスタンスを追加しました。');
-							broccoli.redraw(function(){
-								broccoli.closeProgress(function(){
-									broccoli.selectInstance(moveTo, function(){
-										latestCallback();
+						// コンテンツを保存
+						broccoli.unselectInstance(function(){
+							broccoli.saveContents(function(){
+								// alert('インスタンスを追加しました。');
+								broccoli.redraw(function(){
+									broccoli.closeProgress(function(){
+										broccoli.selectInstance(moveTo, function(){
+											unlock();
+											latestCallback();
+										});
 									});
 								});
 							});
 						});
-					});
-				} );
+					} );
+
+				});
 				return;
 			})
-			// .tooltip({'placement':'left'})
 		;
 		return $button;
 	}
@@ -5423,6 +5424,15 @@ module.exports = function(broccoli){
 			appendModuleChildren($ul, childrenIndex[mod.moduleId][modId], depth + 1, previouslies);
 		}
 		return;
+	}
+
+	function lock(){
+		$insertWindow.find('a').attr({
+			'disabled': true,
+		});
+	}
+	function unlock(){
+		$insertWindow.find('a').removeAttr('disabled');
 	}
 
 	return;
