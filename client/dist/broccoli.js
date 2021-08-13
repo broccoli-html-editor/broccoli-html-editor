@@ -5036,6 +5036,7 @@ module.exports = function(broccoli){
 	var _this = this;
 
 	var it79 = require('iterate79');
+	var php = require('phpjs');
 	var LangBank = require('langbank');
 	var $ = require('jquery');
 
@@ -5044,27 +5045,372 @@ module.exports = function(broccoli){
 		+ '<div class="broccoli__insert-window">'
 		+ '<h2>モジュールを挿入します</h2>'
 		+ '<p>挿入するモジュールを選択してください。</p>'
-		+ '<p>この機能は開発中です。</p>'
+		+ '<div class="broccoli__insert-window-body"></div>'
 		+ '<p><button class="px2-btn" type="button">キャンセル</button></p>'
 		+ '</div>'
 	;
+
+	var moduleList = {};
+
+	var btIconClosed = '<span class="glyphicon glyphicon-menu-right"></span> ';
+	var btIconOpened = '<span class="glyphicon glyphicon-menu-down"></span> ';
+
+	var hasParents = {};
+	var hasSystemParents = {};
+	var childrenIndex = {};
+
+	var modulePaletteCondition = {};
+	try{
+		modulePaletteCondition = JSON.parse( broccoli.getBootupInfomations().userData.modPaletteCondition );
+	}catch(e){
+		console.error(e);
+	}
+	if( !modulePaletteCondition ){
+		modulePaletteCondition = {};
+	}
+	if( !modulePaletteCondition.cond ){
+		modulePaletteCondition.cond = {};
+	}
+
+
 
 	/**
 	 * 初期化
 	 */
 	this.init = function(instancePath, elmInsertWindow, callback){
-		$insertWindow = $(elmInsertWindow);
-		$insertWindow.html(tplFrame);
-		$insertWindow.find('.px2-btn').on('click', function(){
+		var $elmInsertWindow = $(elmInsertWindow);
+		$elmInsertWindow.html(tplFrame);
+		$elmInsertWindow.find('.px2-btn').on('click', function(){
 			callback(false);
 		});
+
+		$insertWindow = $elmInsertWindow.find('.broccoli__insert-window-body');
+
+		it79.fnc(
+			{},
+			[
+				function(it1, data){
+					// モジュールパッケージの一覧を取得
+					moduleList = broccoli.getBootupInfomations().modulePackageList;
+					it1.next(data);
+				} ,
+				function(it1, data){
+					// モジュールパッケージの親子関係を抽出
+					for(var pkgId in moduleList){
+						var pkg = moduleList[pkgId];
+						for( var catId in pkg.categories ){
+							var cat = pkg.categories[catId];
+							for( var modId in cat.modules ){
+								var mod = cat.modules[modId];
+								try{
+									if(mod.moduleInfo.enabledParents.length){
+										// 親の制約がある場合
+										hasParents[mod.moduleId] = true;
+										for( var idx in mod.moduleInfo.enabledParents ){
+											var parentModId = mod.moduleInfo.enabledParents[idx];
+											var parsedParentModuleId = broccoli.parseModuleId(parentModId);
+											childrenIndex[parentModId] = childrenIndex[parentModId] || {};
+											childrenIndex[parentModId][mod.moduleId] = mod;
+
+											if( parentModId.match(/^_sys\//) ){
+												hasSystemParents[mod.moduleId] = true;
+											}
+										}
+									}
+								}catch(e){
+								}
+
+								for( var fieldName in mod.moduleInfo.interface ){
+									var field = mod.moduleInfo.interface[fieldName];
+									if(field.fieldType == 'module'){
+										try{
+											if(field.enabledChildren.length){
+												// 子の制約がある場合
+												childrenIndex[mod.moduleId] = childrenIndex[mod.moduleId] || {};
+												for(var idx in field.enabledChildren){
+													var parsedModuleId = broccoli.parseModuleId(field.enabledChildren[idx]);
+													childrenIndex[mod.moduleId][field.enabledChildren[idx]] = moduleList[parsedModuleId.package].categories[parsedModuleId.category].modules[parsedModuleId.module];
+												}
+											}
+										}catch(e){
+										}
+			
+									}
+								}
+							}
+						}
+					}
+					it1.next(data);
+				} ,
+				function(it1, data){
+					$insertWindow
+						.html('loading...')
+						.removeClass('broccoli').addClass('broccoli')
+					;
+					data.$ul = $('<ul class="broccoli__insert-window-list">');
+					it1.next(data);
+				} ,
+				function(it1, data){
+					// パッケージの階層を描画
+console.log('--- moduleList:', moduleList);
+					it79.ary(
+						moduleList ,
+						function(it2, pkg, packageId){
+console.log(packageId);
+							if( pkg.deprecated ){
+								// 非推奨のパッケージは非表示
+								it2.next();
+								return;
+							}
+
+							var isOpened = true;
+							try{
+								if( modulePaletteCondition.cond[packageId] == 'closed' ){
+									isOpened = false;
+								}
+							}catch(e){}
+
+							var $li = $('<li>');
+							var $ulCat = $('<ul>');
+							var $a = $('<a class="broccoli__insert-window--buttongroups">')
+								.append( btIconOpened )
+								.append( $('<span>').text( pkg.packageName ) )
+								.attr({
+									'href':'javascript:;',
+									'data-broccoli-module-package-id': packageId
+								})
+								.on('click', function(){
+									var $pkgId = $(this).attr('data-broccoli-module-package-id');
+									$(this).toggleClass('broccoli__insert-window__closed');
+									$ulCat.toggle(100);
+									if( $(this).hasClass('broccoli__insert-window__closed') ){
+										$(this).find('.glyphicon').get(0).outerHTML = btIconClosed;
+									}else{
+										$(this).find('.glyphicon').get(0).outerHTML = btIconOpened;
+									}
+									return false;
+								})
+							;
+							if( !isOpened ){
+								$a.addClass('broccoli__insert-window__closed');
+								$a.find('.glyphicon').get(0).outerHTML = btIconClosed;
+								$ulCat.hide(0);
+							}
+							$li.append( $a );
+console.log('-- $li:', $li);
+
+							drawCategories(
+								packageId,
+								pkg.categories,
+								$ulCat,
+								function(){
+console.log('-- drawCategories(): responced');
+									$li.append($ulCat);
+									data.$ul.append( $li );
+									it2.next();
+								}
+							);
+						} ,
+						function(){
+							it1.next(data);
+						}
+					);
+				} ,
+				function(it1, data){
+					console.log('Insert Window: standby');
+					$insertWindow.html('').append(data.$ul);
+					// callback();
+				},
+			]
+		);
+
+		return;
+	}
+
+
+	// カテゴリの階層を描画
+	function drawCategories(packageId, categories, $ul, callback){
+		it79.ary(
+			categories ,
+			function(it1, category, categoryId){
+				if( category.deprecated ){
+					// 非推奨のカテゴリは非表示
+					it1.next();return;
+				}
+
+				var isOpened = true;
+				try{
+					if( modulePaletteCondition.cond[packageId + ':' + categoryId] == 'closed' ){
+						isOpened = false;
+					}
+				}catch(e){}
+
+				var $liCat = $('<li>');
+				var $ulMod = $('<ul>');
+				var $a = $('<a class="broccoli__insert-window--buttongroups">')
+					.append( btIconOpened )
+					.append( $('<span>').text(category.categoryName)  )
+					.attr({
+						'href':'javascript:;',
+						'data-broccoli-module-category-id': packageId + ':' + categoryId
+					})
+					.on('click', function(){
+						var $categoryId = $(this).attr('data-broccoli-module-category-id');
+						$(this).toggleClass('broccoli__insert-window__closed');
+						$ulMod.toggle(100)
+						if( $(this).hasClass('broccoli__insert-window__closed') ){
+							$(this).find('.glyphicon').get(0).outerHTML = btIconClosed;
+						}else{
+							$(this).find('.glyphicon').get(0).outerHTML = btIconOpened;
+						}
+					})
+				;
+				if( !isOpened ){
+					$a.addClass('broccoli__insert-window__closed');
+					$a.find('.glyphicon').get(0).outerHTML = btIconClosed;
+					$ulMod.hide(0);
+				}
+				$liCat.append( $a );
+				$ul.append( $liCat );
+
+				drawModules(
+					packageId,
+					categoryId,
+					category.modules,
+					$ulMod,
+					function(){
+						$liCat.append($ulMod);
+						it1.next();
+					}
+				);
+			} ,
+			function(){
+				callback();
+			}
+		);
+		return;
+	}
+
+	// モジュールの階層を描画
+	function drawModules(packageId, categoryId, modules, $ul, callback){
+		it79.ary(
+			modules ,
+			function(it1, mod, moduleId){
+				if( mod.deprecated ){
+					// 非推奨のモジュールは非表示
+					it1.next();
+					return;
+				}
+				if( hasParents[mod.moduleId] && !hasSystemParents[mod.moduleId] ){
+					// 親指定を持っている場合は非表示
+					it1.next();
+					return;
+				}
+				var $liMod = $('<li>');
+				$liMod.append( generateModuleButton(mod) );
+				$ul.append( $liMod );
+
+				// 子モジュールを追加
+				appendModuleChildren($ul, mod);
+
+				it1.next();
+			} ,
+			function(){
+				callback();
+			}
+		);
+		return;
+	}
+
+	/**
+	 * モジュールのボタンを生成する
+	 */
+	function generateModuleButton( mod, depth ){
+		var timerTouchStart;
+		var isTouchStartHold = false;
+
+		depth = depth || 0;
+		var $button = $('<a class="broccoli__insert-window--draggablebutton">');
+		if(depth){
+			$button.addClass('broccoli__insert-window--draggablebutton-children');
+		}
+		$button
+			.html((function(d){
+				var rtn = '';
+				var label = d.moduleName;
+				var thumb = null;
+				if(d.thumb){
+					thumb = d.thumb;
+				}
+				if(thumb){
+					rtn += '<span class="broccoli__insert-window--draggablebutton-thumb"><img src="'+php.htmlspecialchars( thumb )+'" alt="'+php.htmlspecialchars( label )+'" /></span>';
+				}else{
+					rtn += '<span class="broccoli__insert-window--draggablebutton-thumb"></span>';
+				}
+				rtn += '<span class="broccoli__insert-window--draggablebutton-label">'+php.htmlspecialchars( label )+'</span>';
+				return rtn;
+			})(mod))
+			.attr({
+				// 'title': (function(d){
+				// 	return (d.moduleName ? d.moduleName+' ('+d.moduleId+')' : d.moduleId);
+				// })(mod),
+				'data-id': mod.moduleId,
+				'data-internal-id': mod.moduleInternalId,
+				'data-name': mod.moduleName,
+				'data-readme': mod.readme,
+				'data-clip': JSON.stringify(mod.clip),
+				'draggable': true, //←HTML5のAPI http://www.htmq.com/dnd/
+				'href': 'javascript:;'
+			})
+
+			.on('touchstart', function(e){
+				// タッチデバイス向けの処理
+				clearTimeout(timerTouchStart);
+				if( isTouchStartHold ){
+					$(this).dblclick();
+					return;
+				}
+				isTouchStartHold = true;
+				timerTouchStart = setTimeout(function(){
+					isTouchStartHold = false;
+				}, 250);
+				return;
+			})
+			// .tooltip({'placement':'left'})
+		;
+		return $button;
+	}
+
+	/**
+	 * モジュールに、子の関係に当たるモジュール群を追記する
+	 */
+	function appendModuleChildren($ul, mod, depth, previouslies){
+		previouslies = previouslies || {};
+		if(!childrenIndex[mod.moduleId]){
+			// 子の関係に当たるモジュールが1つもない
+			return;
+		}
+		if(previouslies[mod.moduleId]){
+			// 既出
+			return;
+		}
+		previouslies[mod.moduleId] = true;
+		depth = depth || 0;
+		for(var modId in childrenIndex[mod.moduleId]){
+			var $liMod = $('<li>');
+			$liMod.append( generateModuleButton(childrenIndex[mod.moduleId][modId], depth + 1) );
+			$ul.append( $liMod );
+
+			// 再帰処理
+			appendModuleChildren($ul, childrenIndex[mod.moduleId][modId], depth + 1, previouslies);
+		}
 		return;
 	}
 
 	return;
 }
 
-},{"iterate79":125,"jquery":127,"langbank":128}],11:[function(require,module,exports){
+},{"iterate79":125,"jquery":127,"langbank":128,"phpjs":137}],11:[function(require,module,exports){
 /**
  * instancePathView.js
  */
