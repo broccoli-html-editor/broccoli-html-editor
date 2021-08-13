@@ -405,6 +405,11 @@
 								e.preventDefault();
 								_this.historyGo();
 								return;
+							}else if(pressedKey == 'a'){
+								e.stopPropagation();
+								e.preventDefault();
+								_this.selectAllInstance();
+								return;
 							}
 						}
 						if(pressedKey == 'delete' || pressedKey == 'backspace'){
@@ -828,6 +833,46 @@
 					});
 				});
 			});
+			return;
+		}
+
+		/**
+		 * すべて選択する
+		 */
+		this.selectAllInstance = function( callback ){
+			callback = callback || function(){};
+			var selectedInstancePath = broccoli.getSelectedInstance();
+			var firstInstancePath = selectedInstancePath.replace(/\@[0-9]*$/, '@0');
+			// console.log(selectedInstancePath, firstInstancePath);
+
+			it79.fnc({}, [
+				function(it1){
+					broccoli.selectInstance(firstInstancePath, function(){
+						it1.next();
+					});
+				},
+				function(it1){
+					broccoli.selectInstanceRegion(selectedInstancePath, function(){
+						it1.next();
+					});
+				},
+				function(it1){
+					var parentInstancePath = firstInstancePath.replace(/(?:\/fields\.([a-zA-Z0-9\_\-]+)\@[0-9]*)$/, '');
+					var fieldName = RegExp.$1;
+					// console.log(parentInstancePath, fieldName);
+					var data = broccoli.contentsSourceData.get(parentInstancePath);
+					// console.log(data);
+					var lastInstanceIdx = data.fields[fieldName].length - 1;
+					var lastInstancePath = firstInstancePath.replace(/\@[0-9]*$/, '@'+lastInstanceIdx);
+					// console.log(lastInstancePath);
+					broccoli.selectInstanceRegion(lastInstancePath, function(){
+						it1.next();
+					});
+				},
+				function(){
+					callback();
+				},
+			]);
 			return;
 		}
 
