@@ -5071,6 +5071,8 @@ module.exports = function(broccoli){
 	if( !modulePaletteCondition.cond ){
 		modulePaletteCondition.cond = {};
 	}
+	var instanceInsertTo;
+	var latestCallback;
 
 
 
@@ -5078,13 +5080,16 @@ module.exports = function(broccoli){
 	 * 初期化
 	 */
 	this.init = function(instancePath, elmInsertWindow, callback){
-		var $elmInsertWindow = $(elmInsertWindow);
-		$elmInsertWindow.html(tplFrame);
-		$elmInsertWindow.find('.px2-btn').on('click', function(){
-			callback(false);
+		instanceInsertTo = instancePath;
+		$insertWindow = $(elmInsertWindow);
+		$insertWindow.html(tplFrame);
+		latestCallback = callback || function(){};
+
+		$insertWindow.find('.px2-btn').on('click', function(){
+			latestCallback(false);
 		});
 
-		$insertWindow = $elmInsertWindow.find('.broccoli__insert-window-body');
+		var $insertWindowBody = $insertWindow.find('.broccoli__insert-window-body');
 
 		it79.fnc(
 			{},
@@ -5143,7 +5148,7 @@ module.exports = function(broccoli){
 					it1.next(data);
 				} ,
 				function(it1, data){
-					$insertWindow
+					$insertWindowBody
 						.html('loading...')
 						.removeClass('broccoli').addClass('broccoli')
 					;
@@ -5152,11 +5157,9 @@ module.exports = function(broccoli){
 				} ,
 				function(it1, data){
 					// パッケージの階層を描画
-console.log('--- moduleList:', moduleList);
 					it79.ary(
 						moduleList ,
 						function(it2, pkg, packageId){
-console.log(packageId);
 							if( pkg.deprecated ){
 								// 非推奨のパッケージは非表示
 								it2.next();
@@ -5197,14 +5200,12 @@ console.log(packageId);
 								$ulCat.hide(0);
 							}
 							$li.append( $a );
-console.log('-- $li:', $li);
 
 							drawCategories(
 								packageId,
 								pkg.categories,
 								$ulCat,
 								function(){
-console.log('-- drawCategories(): responced');
 									$li.append($ulCat);
 									data.$ul.append( $li );
 									it2.next();
@@ -5218,7 +5219,7 @@ console.log('-- drawCategories(): responced');
 				} ,
 				function(it1, data){
 					console.log('Insert Window: standby');
-					$insertWindow.html('').append(data.$ul);
+					$insertWindowBody.html('').append(data.$ul);
 					// callback();
 				},
 			]
@@ -5326,9 +5327,6 @@ console.log('-- drawCategories(): responced');
 	 * モジュールのボタンを生成する
 	 */
 	function generateModuleButton( mod, depth ){
-		var timerTouchStart;
-		var isTouchStartHold = false;
-
 		depth = depth || 0;
 		var $button = $('<a class="broccoli__insert-window--draggablebutton">');
 		if(depth){
@@ -5359,21 +5357,40 @@ console.log('-- drawCategories(): responced');
 				'data-name': mod.moduleName,
 				'data-readme': mod.readme,
 				'data-clip': JSON.stringify(mod.clip),
+				'data-insert-instance-to': instanceInsertTo,
 				'draggable': true, //←HTML5のAPI http://www.htmq.com/dnd/
 				'href': 'javascript:;'
 			})
 
-			.on('touchstart', function(e){
-				// タッチデバイス向けの処理
-				clearTimeout(timerTouchStart);
-				if( isTouchStartHold ){
-					$(this).dblclick();
-					return;
-				}
-				isTouchStartHold = true;
-				timerTouchStart = setTimeout(function(){
-					isTouchStartHold = false;
-				}, 250);
+			.on('click', function(e){
+				var modInternalId = $(this).attr('data-internal-id');
+				var moveTo = $(this).attr('data-insert-instance-to');
+
+				broccoli.progress(function(){});
+
+				broccoli.contentsSourceData.addInstance( modInternalId, moveTo, function(result){
+					if(!result){
+						console.error('Failed addInstance()', modInternalId, moveTo);
+						broccoli.closeProgress(function(){
+							latestCallback();
+						});
+						return;
+					}
+
+					// コンテンツを保存
+					broccoli.unselectInstance(function(){
+						broccoli.saveContents(function(){
+							// alert('インスタンスを追加しました。');
+							broccoli.redraw(function(){
+								broccoli.closeProgress(function(){
+									broccoli.selectInstance(moveTo, function(){
+										latestCallback();
+									});
+								});
+							});
+						});
+					});
+				} );
 				return;
 			})
 			// .tooltip({'placement':'left'})
