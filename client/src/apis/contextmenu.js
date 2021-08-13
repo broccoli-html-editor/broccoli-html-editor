@@ -91,16 +91,28 @@ module.exports = function(broccoli){
 		var instancePath = broccoli.getSelectedInstance();
 		var selectedInstanceRegion = broccoli.getSelectedInstanceRegion();
 		var menu = [];
+		var isEditable = false;
 		var isDeletable = true;
 		var isCopyable = true;
 
-		// 選択されたインスタンスが1つのみで、
-		// かつ、それが Appender だったら。
 		if( selectedInstanceRegion.length === 1 ){
 			if( !broccoli.contentsSourceData.get(instancePath) ){
+				// 選択されたインスタンスが1つのみで、
+				// かつ、それが Appender だったら。
 				isDeletable = false;
 				isCopyable = false;
+			}else{
+				isEditable = true;
 			}
+		}
+
+		if( isEditable ){
+			menu.push({
+				"label": "編集",
+				"function": function(event){
+					broccoli.editInstance(instancePath);
+				}
+			});
 		}
 
 		if( isCopyable ){
@@ -120,6 +132,13 @@ module.exports = function(broccoli){
 				broccoli.paste(function(){
 					// nothing to do.
 				}, event);
+			}
+		});
+
+		menu.push({
+			"label": "この直前に挿入",
+			"function": function(event){
+				broccoli.insertInstance(instancePath);
 			}
 		});
 

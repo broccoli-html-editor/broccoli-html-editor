@@ -721,7 +721,7 @@ module.exports = function(broccoli){
 				);
 			}
 		]);
-		return this;
+		return;
 	}
 
 	/**

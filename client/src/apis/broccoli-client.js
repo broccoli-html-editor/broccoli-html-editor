@@ -120,7 +120,7 @@
 							)
 						;
 						$canvas.find('iframe')
-							.bind('load', function(){
+							.on('load', function(){
 								var contWin = $canvas.find('iframe').get(0).contentWindow;
 								try{
 									if(contWin.location.href == 'about:blank'){
@@ -143,6 +143,7 @@
 						_this.contextmenu = new (require( './contextmenu.js' ))(_this);
 						_this.instancePathView = new (require( './instancePathView.js' ))(_this);
 						_this.instanceTreeView = new (require( './instanceTreeView.js' ))(_this);
+						_this.insertWindow = new (require( './insertWindow.js' ))(_this);
 						_this.editWindow = new (require( './editWindow.js' ))(_this);
 						_this.fieldBase = new (require('./fieldBase.js'))(_this);
 						_this.valiidator = new (require('./validator.js'))(_this);
@@ -732,6 +733,23 @@
 		 */
 		this.getBootupInfomations = function(){
 			return bootupInfomations;
+		}
+
+		/**
+		 * インスタンスを挿入する
+		 */
+		this.insertInstance = function( instancePath ){
+			console.log('Insert before:', instancePath);
+			broccoli.selectInstance(instancePath, function(){
+				broccoli.lightbox( function( lbElm ){
+					broccoli.drawInsertWindow( instancePath, lbElm, function(isInsert, callback){
+						callback = callback || function(){};
+						console.log('Insert module: done.');
+						broccoli.closeLightbox();
+					} );
+				} );
+			});
+			return;
 		}
 
 		/**
@@ -1376,6 +1394,14 @@
 		 */
 		this.drawPanels = function(callback){
 			this.panels.init(this.options.elmPanels, callback);
+			return;
+		}
+
+		/**
+		 * 挿入ウィンドウを描画する
+		 */
+		this.drawInsertWindow = function(instancePath, elmEditWindow, callback){
+			this.insertWindow.init(instancePath, elmEditWindow, callback);
 			return;
 		}
 
