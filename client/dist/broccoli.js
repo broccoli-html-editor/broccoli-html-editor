@@ -8495,6 +8495,12 @@ module.exports = function(broccoli){
 		}
 		// if( typeof(data.original) !== typeof({}) ){ data.original = {}; }
 		var $img = $('<img>');
+		var $imgNotImage = $('<div>').css({
+			'padding': '3em',
+			'font-weight': 'bold',
+			'font-size': '24px',
+			'color': '#aaa',
+		});
 		var $inputImageName = $('<input class="px2-input px2-input--block" style="margin: 0 5px;">');
 		var $displayExtension = $('<span>');
 		var $inputWebUrl = $('<input class="px2-input px2-input--block">');
@@ -8538,6 +8544,15 @@ module.exports = function(broccoli){
 			return randomFileName;
 		}
 
+		/**
+		 * 画像としてプレビューできる種類か評価する
+		 */
+		function canPreviewAsImage(mimetype){
+			if( mimetype.match(/^image\//) ){
+				return true;
+			}
+			return false;
+		}
 
 		/**
 		 * fileAPIからファイルを取り出して反映する
@@ -8571,11 +8586,12 @@ module.exports = function(broccoli){
 			// mod.filename
 			readSelectedLocalFile(fileInfo, function(dataUri){
 				$displayExtension.text('.'+getExtension( fileInfo.name ));
+				var ext = getExtension( fileInfo.name );
 				$img
 					.attr({
 						"src": dataUri ,
 						"data-size": fileInfo.size ,
-						"data-extension": getExtension( fileInfo.name ),
+						"data-extension": ext,
 						"data-mime-type": fileInfo.type ,
 						"data-base64": (function(dataUri){
 							dataUri = dataUri.replace(new RegExp('^data\\:[^\\;]*\\;base64\\,'), '');
@@ -8585,6 +8601,14 @@ module.exports = function(broccoli){
 						"data-is-updated": 'yes'
 					})
 				;
+				$imgNotImage.text('.'+ext);
+				if( canPreviewAsImage(fileInfo.type) ){
+					$img.show();
+					$imgNotImage.hide();
+				}else{
+					$img.hide();
+					$imgNotImage.show();
+				}
 			});
 		}
 
@@ -8658,7 +8682,8 @@ module.exports = function(broccoli){
 					'margin': '10px auto',
 					'background': '#fff',
 					'outline': 'none',
-					'border-radius': 5
+					'border-radius': 5,
+					'text-align': 'center',
 				})
 				.addClass('broccoli__user-selectable')
 				.on('paste', function(e){
@@ -8703,9 +8728,10 @@ module.exports = function(broccoli){
 						'min-height':'1px',
 						'max-height':'200px',
 						'user-select': 'none',
-						'pointer-events': 'none'
+						'pointer-events': 'none',
 					})
 				)
+				.append( $imgNotImage.hide() )
 				.on('dragleave', function(e){
 					e.stopPropagation();
 					e.preventDefault();
@@ -8804,11 +8830,12 @@ module.exports = function(broccoli){
 											// 失敗を伝えるが、反映はしてみることにする。
 											break;
 									}
+									var ext = getExtension( params.url );
 									$img
 										.attr({
 											"src": dataUri ,
 											"data-size": result.responseHeaders['content-length'] ,
-											"data-extension": getExtension( params.url ),
+											"data-extension": ext,
 											"data-mime-type": result.responseHeaders['content-type'] ,
 											"data-base64": (function(dataUri){
 												dataUri = dataUri.replace(new RegExp('^data\\:[^\\;]*\\;base64\\,'), '');
@@ -8818,6 +8845,14 @@ module.exports = function(broccoli){
 											"data-is-updated": 'yes'
 										})
 									;
+									$imgNotImage.text('.'+ext);
+									if( canPreviewAsImage(result.responseHeaders['content-type']) ){
+										$img.show();
+										$imgNotImage.hide();
+									}else{
+										$img.hide();
+										$imgNotImage.show();
+									}
 									if( !$inputImageName.val() ){
 										// アップした画像名をプリセット
 										// ただし、既に名前がセットされている場合は変更しない
