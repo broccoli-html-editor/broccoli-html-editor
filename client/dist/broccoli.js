@@ -8480,6 +8480,7 @@ module.exports = function(broccoli){
 	this.mkEditor = function( mod, data, elm, callback ){
 		var rtn = $('<div>');
 		var $uiImageResource = $('<div>');
+		var $imagePreviewArea = $('<div>');
 		var $uiNoImage = $('<div>');
 		var $uiWebResource = $('<div>');
 		var _this = this;
@@ -8547,9 +8548,22 @@ module.exports = function(broccoli){
 		/**
 		 * 画像としてプレビューできる種類か評価する
 		 */
-		function canPreviewAsImage(mimetype){
-			if( mimetype.match(/^image\//) ){
-				return true;
+		function canPreviewAsImage(mimetype, ext){
+			if( mimetype ){
+				if( mimetype.match(/^image\//) ){
+					return true;
+				}
+			}else if( ext ){
+				switch( ext ){
+					case 'jpg':
+					case 'jpeg':
+					case 'jpe':
+					case 'png':
+					case 'gif':
+					case 'webp':
+						return true;
+						break;
+				}
 			}
 			return false;
 		}
@@ -8586,30 +8600,43 @@ module.exports = function(broccoli){
 			// mod.filename
 			readSelectedLocalFile(fileInfo, function(dataUri){
 				$displayExtension.text('.'+getExtension( fileInfo.name ));
-				var ext = getExtension( fileInfo.name );
-				$img
-					.attr({
-						"src": dataUri ,
-						"data-size": fileInfo.size ,
-						"data-extension": ext,
-						"data-mime-type": fileInfo.type ,
-						"data-base64": (function(dataUri){
-							dataUri = dataUri.replace(new RegExp('^data\\:[^\\;]*\\;base64\\,'), '');
-							// console.log(dataUri);
-							return dataUri;
-						})(dataUri),
-						"data-is-updated": 'yes'
-					})
-				;
-				$imgNotImage.text('.'+ext);
-				if( canPreviewAsImage(fileInfo.type) ){
-					$img.show();
-					$imgNotImage.hide();
-				}else{
-					$img.hide();
-					$imgNotImage.show();
-				}
+				setImagePreview({
+					'src': dataUri,
+					'size': fileInfo.size,
+					'ext': getExtension( fileInfo.name ),
+					'mimeType': fileInfo.type,
+					'base64': (function(dataUri){
+						dataUri = dataUri.replace(new RegExp('^data\\:[^\\;]*\\;base64\\,'), '');
+						// console.log(dataUri);
+						return dataUri;
+					})(dataUri),
+				});
 			});
+		}
+
+		/**
+		 * 画像プレビューを更新する
+		 */
+		function setImagePreview(fileInfo){
+			$img
+				.attr({
+					"src": fileInfo.src ,
+					"data-size": fileInfo.size ,
+					"data-extension": fileInfo.ext,
+					"data-mime-type": fileInfo.mimeType ,
+					"data-base64": fileInfo.base64,
+					"data-is-updated": 'yes'
+				})
+			;
+			$imgNotImage.text( fileInfo.ext );
+			if( canPreviewAsImage(fileInfo.mimeType, fileInfo.ext) ){
+				$img.show();
+				$imgNotImage.hide();
+			}else{
+				$img.hide();
+				$imgNotImage.show();
+			}
+			return;
 		}
 
 		_resMgr.getResource( data.resKey, function(res){
@@ -8675,7 +8702,7 @@ module.exports = function(broccoli){
 				)
 			);
 
-			$uiImageResource.append( $('<div>')
+			$uiImageResource.append( $imagePreviewArea
 				.css({
 					'border':'1px solid #999',
 					'padding': 10,
@@ -8731,7 +8758,10 @@ module.exports = function(broccoli){
 						'pointer-events': 'none',
 					})
 				)
-				.append( $imgNotImage.hide() )
+				.append( $imgNotImage
+					.text(res.ext)
+					.hide()
+				)
 				.on('dragleave', function(e){
 					e.stopPropagation();
 					e.preventDefault();
@@ -8752,6 +8782,15 @@ module.exports = function(broccoli){
 					applyFile(fileInfo);
 				})
 			);
+
+			if( canPreviewAsImage(res.type, res.ext) ){
+				$img.show();
+				$imgNotImage.hide();
+			}else{
+				$img.hide();
+				$imgNotImage.show();
+			}
+
 			$uiImageResource.append(
 				$('<p>')
 					.append( $('<label>')
@@ -8830,29 +8869,19 @@ module.exports = function(broccoli){
 											// 失敗を伝えるが、反映はしてみることにする。
 											break;
 									}
-									var ext = getExtension( params.url );
-									$img
-										.attr({
-											"src": dataUri ,
-											"data-size": result.responseHeaders['content-length'] ,
-											"data-extension": ext,
-											"data-mime-type": result.responseHeaders['content-type'] ,
-											"data-base64": (function(dataUri){
-												dataUri = dataUri.replace(new RegExp('^data\\:[^\\;]*\\;base64\\,'), '');
-												// console.log(dataUri);
-												return dataUri;
-											})(dataUri),
-											"data-is-updated": 'yes'
-										})
-									;
-									$imgNotImage.text('.'+ext);
-									if( canPreviewAsImage(result.responseHeaders['content-type']) ){
-										$img.show();
-										$imgNotImage.hide();
-									}else{
-										$img.hide();
-										$imgNotImage.show();
-									}
+
+									setImagePreview({
+										'src': dataUri,
+										'size': result.responseHeaders['content-length'],
+										'ext': getExtension( params.url ),
+										'mimeType': result.responseHeaders['content-type'],
+										'base64': (function(dataUri){
+											dataUri = dataUri.replace(new RegExp('^data\\:[^\\;]*\\;base64\\,'), '');
+											// console.log(dataUri);
+											return dataUri;
+										})(dataUri),
+									});
+
 									if( !$inputImageName.val() ){
 										// アップした画像名をプリセット
 										// ただし、既に名前がセットされている場合は変更しない
@@ -8864,6 +8893,24 @@ module.exports = function(broccoli){
 									return;
 								}
 							);
+						})
+					)
+					.append( $('<button>')
+						.text('名前を付けて保存する')
+						.attr({'type': 'button'})
+						.addClass('px2-btn')
+						.on('click', function(){
+							var base64 = $img.attr('data-base64');
+							var ext = $img.attr('data-extension');
+							if( !base64 || !ext ){
+								alert('ファイルがセットされていません。');
+								return;
+							}
+							var anchor = document.createElement("a");
+							anchor.href = 'data:application/octet-stream;base64,'+base64;
+							anchor.download = "bin."+ext;
+							anchor.click();
+							return;
 						})
 					)
 			);
