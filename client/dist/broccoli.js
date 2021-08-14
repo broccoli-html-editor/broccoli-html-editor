@@ -2972,7 +2972,7 @@ module.exports = function(broccoli){
 					$ul.append( $li );
 				}
 				$contextmenu.append($ul);
-			}, 600);
+			}, 210);
 
 			callback();
 		});
@@ -3005,13 +3005,24 @@ module.exports = function(broccoli){
 	function mkAutoMenu(){
 		var instancePath = broccoli.getSelectedInstance();
 		var selectedInstanceRegion = broccoli.getSelectedInstanceRegion();
+		var panelElement = broccoli.panels.getPanelElement( instancePath );
+		// var contentsData = broccoli.contentsSourceData.get(instancePath);
 		var menu = [];
 		var isEditable = false;
 		var isDeletable = true;
 		var isCopyable = true;
+		var isLoopField = false;
+		var isAppender = false;
+
+		if( $(panelElement).attr('data-broccoli-sub-mod-name') ){
+			isLoopField = true;
+		}
+		if( $(panelElement).attr('data-broccoli-is-appender') == 'yes' ){
+			isAppender = true;
+		}
 
 		if( selectedInstanceRegion.length === 1 ){
-			if( !broccoli.contentsSourceData.get(instancePath) ){
+			if( isAppender ){
 				// 選択されたインスタンスが1つのみで、
 				// かつ、それが Appender だったら。
 				isDeletable = false;
@@ -3050,12 +3061,14 @@ module.exports = function(broccoli){
 			}
 		});
 
-		menu.push({
-			"label": "この直前に挿入",
-			"function": function(event){
-				broccoli.insertInstance(instancePath);
-			}
-		});
+		if( !isLoopField ){
+			menu.push({
+				"label": "この直前に挿入",
+				"function": function(event){
+					broccoli.insertInstance(instancePath);
+				}
+			});
+		}
 
 		if( isDeletable ){
 			menu.push({
@@ -7229,6 +7242,9 @@ module.exports = function(broccoli){
 	 * 指定したInstancePathのパネルの要素を得る
 	 */
 	this.getPanelElement = function(instancePath){
+		if( !instancePath ){
+			return false;
+		}
 		var $rtn = $panels.find('[data-broccoli-instance-path="'+php.htmlspecialchars(instancePath)+'"]');
 		return $rtn.get(0);
 	}

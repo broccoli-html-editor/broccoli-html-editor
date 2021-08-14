@@ -1017,6 +1017,9 @@ module.exports = function(broccoli){
 	 * 指定したInstancePathのパネルの要素を得る
 	 */
 	this.getPanelElement = function(instancePath){
+		if( !instancePath ){
+			return false;
+		}
 		var $rtn = $panels.find('[data-broccoli-instance-path="'+php.htmlspecialchars(instancePath)+'"]');
 		return $rtn.get(0);
 	}

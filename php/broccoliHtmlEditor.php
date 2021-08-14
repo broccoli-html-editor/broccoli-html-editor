@@ -707,7 +707,7 @@ class broccoliHtmlEditor{
 			return $rtn;
 		}
 		if( is_string($subModName) ){
-			if( !$rtn->subModule || !$rtn->subModule->{$subModName} ){
+			if( !isset($rtn->subModule->{$subModName}) || !$rtn->subModule->{$subModName} ){
 				// var_dump('Undefined subModule "'.$subModName.'" was called.');
 				return false;
 			}
