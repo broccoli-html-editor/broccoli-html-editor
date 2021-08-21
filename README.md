@@ -1,6 +1,6 @@
 # broccoli-html-editor
 
-_broccoli-html-editor_ は、GUIベースのHTMLエディタライブラリです。
+_broccoli-html-editor_ は、GUIベースでHTMLを編集するブロックエディタライブラリです。
 断片化されたHTMLの部品(モジュール)をドラッグ＆ドロップ操作で組み合わせて、ウェブページを構成できます。
 
 ## インストール - Install
@@ -357,7 +357,7 @@ $ composer test
 
 ## 更新履歴 - Change log
 
-### broccoli-html-editor v0.4.5 (リリース日未定)
+### broccoli-html-editor v0.4.5 (2021年8月21日)
 
 - UIの改善: レイアウトビュー上の、編集領域のない箇所をクリックして、インスタンスの選択を解除できるようになった。
 - UIの改善: モーダルボックスのサイズを調整した。
