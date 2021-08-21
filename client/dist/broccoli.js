@@ -8340,54 +8340,61 @@ module.exports = function(broccoli){
 	 */
 	this.mkPreviewHtml = function( fieldData, mod, callback ){
 		var cheerio = require('cheerio');
-		var rtn = {}
-		if( typeof(fieldData) === typeof({}) ){
-			rtn = fieldData;
+		var rtn = '';
+		if( typeof(fieldData) !== typeof({}) ){
+			fieldData = {};
 		}
 
-		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+		new Promise(function(rlv){rlv();})
+			.then(function(){ return new Promise(function(rlv, rjt){
 
-			if( rtn.resType == 'web' ){
-				var $ = cheerio.load('<img>', {decodeEntities: false});
-				$('img')
-					.attr({'src': rtn.webUrl})
-					.css({
-						'max-width': '80px',
-						'max-height': '80px'
-					})
-				;
-				callback( $.html() );
+				if( fieldData.resType == 'web' ){
+					rtn = '<p>'+fieldData.webUrl+'</p>';
+					rlv();
+					return;
+				}else if( fieldData.resType == 'none' ){
+					rtn = '<p>No File</p>';
+					rlv();
+					return;
+				}else{
+					_resMgr.getResourceDb( function(resDb){
+						var res, imagePath;
+						try {
+							res = resDb[fieldData.resKey];
+							if( res.type.match(/^image\//) ){
+								imagePath = 'data:'+res.type+';base64,' + '{broccoli-html-editor-resource-baser64:{'+fieldData.resKey+'}}';
+								// var imagePath = 'data:'+res.type+';base64,' + res.base64;
+
+								if( !imagePath || !res.base64 ){
+									// ↓ ダミーの Sample Image
+									imagePath = _imgDummy;
+								}
+								var $ = cheerio.load('<img>', {decodeEntities: false});
+								$('img')
+									.attr({'src': imagePath})
+									.css({
+										'max-width': '80px',
+										'max-height': '80px'
+									})
+								;
+								rtn = $.html();
+							}else{
+								rtn = '<p>.'+res.ext+'</p>';
+							}
+						} catch (e) {
+							rtn = '<p>Not Set</p>';
+						}
+						rlv();
+					} );
+					return;
+				}
 				return;
-			}else if( rtn.resType == 'none' ){
-				callback( 'No File' );
+			}); })
+			.then(function(){ return new Promise(function(rlv, rjt){
+				callback( rtn );
 				return;
-			}else{
-				_resMgr.getResourceDb( function(resDb){
-					var res, imagePath;
-					try {
-						res = resDb[rtn.resKey];
-						imagePath = 'data:'+res.type+';base64,' + '{broccoli-html-editor-resource-baser64:{'+rtn.resKey+'}}';
-						// var imagePath = 'data:'+res.type+';base64,' + res.base64;
-					} catch (e) {
-					}
-					if( !imagePath || !res.base64 ){
-						// ↓ ダミーの Sample Image
-						imagePath = _imgDummy;
-					}
-					var $ = cheerio.load('<img>', {decodeEntities: false});
-					$('img')
-						.attr({'src': imagePath})
-						.css({
-							'max-width': '80px',
-							'max-height': '80px'
-						})
-					;
-					callback( $.html() );
-				} );
-				return;
-			}
-			return;
-		}); });
+			}); })
+		;
 		return;
 	}// mkPreviewHtml()
 
@@ -9274,54 +9281,77 @@ module.exports = function(broccoli){
 	 */
 	this.mkPreviewHtml = function( fieldData, mod, callback ){
 		var cheerio = require('cheerio');
-		var rtn = {}
-		if( typeof(fieldData) === typeof({}) ){
-			rtn = fieldData;
+		var rtn = '';
+		if( typeof(fieldData) !== typeof({}) ){
+			fieldData = {};
 		}
 
-		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+		new Promise(function(rlv){rlv();})
+			.then(function(){ return new Promise(function(rlv, rjt){
 
-			if( rtn.resType == 'web' ){
-				var $ = cheerio.load('<img>', {decodeEntities: false});
-				$('img')
-					.attr({'src': rtn.webUrl})
-					.css({
-						'max-width': '80px',
-						'max-height': '80px'
-					})
-				;
-				callback( $.html() );
-				return;
-			}else if( rtn.resType == 'none' ){
-				callback( 'No Image' );
-				return;
-			}else{
-				_resMgr.getResourceDb( function(resDb){
-					var res, imagePath;
-					try {
-						res = resDb[rtn.resKey];
-						imagePath = 'data:'+res.type+';base64,' + '{broccoli-html-editor-resource-baser64:{'+rtn.resKey+'}}';
-						// var imagePath = 'data:'+res.type+';base64,' + res.base64;
-					} catch (e) {
-					}
-					if( !imagePath || !res.base64 ){
-						// ↓ ダミーの Sample Image
-						imagePath = _imgDummy;
-					}
+				if( fieldData.resType == 'web' ){
 					var $ = cheerio.load('<img>', {decodeEntities: false});
 					$('img')
-						.attr({'src': imagePath})
+						.attr({'src': rtn.webUrl})
 						.css({
 							'max-width': '80px',
 							'max-height': '80px'
 						})
 					;
-					callback( $.html() );
-				} );
+					rtn = $.html();
+					rlv();
+					return;
+				}else if( fieldData.resType == 'none' ){
+					rtn = '<p>No File</p>';
+					rlv();
+					return;
+				}else{
+					_resMgr.getResourceDb( function(resDb){
+						var res, imagePath;
+						try {
+							res = resDb[fieldData.resKey];
+							if( res.type.match(/^image\//) ){
+								imagePath = 'data:'+res.type+';base64,' + '{broccoli-html-editor-resource-baser64:{'+fieldData.resKey+'}}';
+								// var imagePath = 'data:'+res.type+';base64,' + res.base64;
+
+								if( !imagePath || !res.base64 ){
+									// ↓ ダミーの Sample Image
+									imagePath = _imgDummy;
+								}
+								var $ = cheerio.load('<img>', {decodeEntities: false});
+								$('img')
+									.attr({'src': imagePath})
+									.css({
+										'max-width': '80px',
+										'max-height': '80px'
+									})
+								;
+								rtn = $.html();
+							}else{
+								rtn = '<p>.'+res.ext+'</p>';
+							}
+						} catch (e) {
+							var $ = cheerio.load('<img>', {decodeEntities: false});
+							$('img')
+								.attr({'src': _imgDummy})
+								.css({
+									'max-width': '80px',
+									'max-height': '80px'
+								})
+							;
+							rtn = $.html();
+						}
+						rlv();
+					} );
+					return;
+				}
 				return;
-			}
-			return;
-		}); });
+			}); })
+			.then(function(){ return new Promise(function(rlv, rjt){
+				callback( rtn );
+				return;
+			}); })
+		;
 		return;
 	}// mkPreviewHtml()
 
