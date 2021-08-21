@@ -652,23 +652,11 @@ module.exports = function(broccoli){
 		var rules = mod.validate || [];
 		if(typeof(rules) == typeof('')){rules = [rules];}
 		var rulesIsRequired = false;
-		var rulesMaxHeight = null;
-		var rulesMinHeight = 0;
-		var rulesMaxWidth = null;
-		var rulesMinWidth = 0;
 		var rulesMaxFileSize = null;
 		var rulesMinFileSize = 0;
 		for(var idx in rules){
 			if(rules[idx] == 'required'){
 				rulesIsRequired = true;
-			}else if(rules[idx].match(/^max\-height\:([0-9]*)?$/)){
-				rulesMaxHeight = Number(RegExp.$1);
-			}else if(rules[idx].match(/^min\-height\:([0-9]*)?$/)){
-				rulesMinHeight = Number(RegExp.$1);
-			}else if(rules[idx].match(/^max\-width\:([0-9]*)?$/)){
-				rulesMaxWidth = Number(RegExp.$1);
-			}else if(rules[idx].match(/^min\-width\:([0-9]*)?$/)){
-				rulesMinWidth = Number(RegExp.$1);
 			}else if(rules[idx].match(/^max\-filesize\:([0-9]*)?$/)){
 				rulesMaxFileSize = Number(RegExp.$1);
 			}else if(rules[idx].match(/^min\-filesize\:([0-9]*)?$/)){
@@ -714,18 +702,6 @@ module.exports = function(broccoli){
 				nW = $img.get(0).naturalWidth;
 				// console.log(nH, nW, filesize);
 
-				if( rulesMaxHeight && nH > rulesMaxHeight ){
-					errorMsgs.push('高さが '+rulesMaxHeight+'px より小さい画像を選択してください。');
-				}
-				if( rulesMinHeight && nH < rulesMinHeight ){
-					errorMsgs.push('高さが '+rulesMinHeight+'px より大きい画像を選択してください。');
-				}
-				if( rulesMaxWidth && nW > rulesMaxWidth ){
-					errorMsgs.push('幅が '+rulesMaxWidth+'px より小さい画像を選択してください。');
-				}
-				if( rulesMinWidth && nW < rulesMinWidth ){
-					errorMsgs.push('幅が '+rulesMinWidth+'px より大きい画像を選択してください。');
-				}
 				if( rulesMaxFileSize && filesize > rulesMaxFileSize ){
 					errorMsgs.push('ファイルサイズが '+rulesMaxFileSize+'バイト より小さいファイルを選択してください。');
 				}
