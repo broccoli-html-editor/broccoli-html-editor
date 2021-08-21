@@ -169,6 +169,25 @@
                         "dec": ""
                     },
                     {
+                        "modId": "testMod1:dev/button-file-download",
+                        "fields": {
+                            "targetFile": {
+                                "resKey": "2a8ff2e1a49ad86cf671e5ee0d226633",
+                                "path": "./index_files/resources/sample-data.xlsx",
+                                "resType": "",
+                                "webUrl": ""
+                            },
+                            "downloadFilename": {
+                                "src": "sample-data.xlsx"
+                            },
+                            "label": {
+                                "src": "ファイルをダウンロードするサンプル"
+                            }
+                        },
+                        "anchor": "",
+                        "dec": ""
+                    },
+                    {
                         "modId": "testMod1:dev/loop_and_echo",
                         "fields": {
                             "sample_txt": "Echo Sample String",

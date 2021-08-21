@@ -30,6 +30,7 @@ module.exports = function(){
 		_this.fieldDefinitions.html = loadFieldDefinition('html', require('../fields/server/app.fields.html.js'));
 		_this.fieldDefinitions.html_attr_text = loadFieldDefinition('html_attr_text', require('../fields/server/app.fields.html_attr_text.js'));
 		_this.fieldDefinitions.image = loadFieldDefinition('image', require('../fields/server/app.fields.image.js'));
+		_this.fieldDefinitions.file = loadFieldDefinition('file', require('../fields/server/app.fields.file.js'));
 		_this.fieldDefinitions.markdown = loadFieldDefinition('markdown', require('../fields/server/app.fields.markdown.js'));
 		_this.fieldDefinitions.multitext = loadFieldDefinition('multitext', require('../fields/server/app.fields.multitext.js'));
 		_this.fieldDefinitions.script = loadFieldDefinition('script', require('../fields/server/app.fields.script.js'));

@@ -158,6 +158,7 @@
 							_this.fieldDefinitions.html = loadFieldDefinition('html', require('./../../../fields/client/app.fields.html.js'));
 							_this.fieldDefinitions.html_attr_text = loadFieldDefinition('html_attr_text', require('./../../../fields/client/app.fields.html_attr_text.js'));
 							_this.fieldDefinitions.image = loadFieldDefinition('image', require('./../../../fields/client/app.fields.image.js'));
+							_this.fieldDefinitions.file = loadFieldDefinition('file', require('./../../../fields/client/app.fields.file.js'));
 							_this.fieldDefinitions.markdown = loadFieldDefinition('markdown', require('./../../../fields/client/app.fields.markdown.js'));
 							_this.fieldDefinitions.multitext = loadFieldDefinition('multitext', require('./../../../fields/client/app.fields.multitext.js'));
 							_this.fieldDefinitions.script = loadFieldDefinition('script', require('./../../../fields/client/app.fields.script.js'));

@@ -1,0 +1,24 @@
+{
+    "name": "ダウンロードボタン - Download Button",
+    "interface": {
+        "fields": {
+            "targetFile": {
+                "fieldType": "input",
+                "type": "file",
+                "label": "ダウンロードファイル"
+            },
+            "downloadFilename": {
+                "fieldType": "input",
+                "type": "html_attr_text",
+                "label": "ダウンロードファイル名",
+                "rows": 1
+            },
+            "label": {
+                "fieldType": "input",
+                "type": "text",
+                "label": "ラベル",
+                "rows": 1
+            }
+        }
+    }
+}
