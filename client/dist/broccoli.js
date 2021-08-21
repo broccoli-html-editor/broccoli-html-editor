@@ -4603,6 +4603,7 @@ module.exports = function(broccoli){
 	 * フォーム操作の凍結を解除する
 	 */
 	this.unlock = function(callback){
+		callback = callback || function(){};
 		var $formElms = $editWindow.find('[data-broccoli-html-editor--locked]');
 		$formElms
 			.removeAttr('data-broccoli-html-editor--locked')
