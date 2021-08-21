@@ -239,18 +239,24 @@ module.exports = function(broccoli){
 		 * 画像プレビューを更新する
 		 */
 		function setImagePreview(fileInfo){
+			var fileSrc = fileInfo.src;
+			var fileMimeType = fileInfo.mimeType;
+			if( !fileInfo.src || !fileInfo.ext || !fileInfo.size){
+				fileSrc = _imgDummy;
+				fileMimeType = 'image/png';
+			}
 			$img
 				.attr({
-					"src": fileInfo.src ,
+					"src": fileSrc ,
 					"data-size": fileInfo.size ,
 					"data-extension": fileInfo.ext,
-					"data-mime-type": fileInfo.mimeType ,
+					"data-mime-type": fileMimeType ,
 					"data-base64": fileInfo.base64,
 					"data-is-updated": 'yes'
 				})
 			;
 			$imgNotImage.text( fileInfo.ext );
-			if( canPreviewAsImage(fileInfo.mimeType, fileInfo.ext) ){
+			if( canPreviewAsImage(fileMimeType, fileInfo.ext) ){
 				$img.show();
 				$imgNotImage.hide();
 			}else{
@@ -404,13 +410,13 @@ module.exports = function(broccoli){
 				})
 			);
 
-			if( canPreviewAsImage(res.type, res.ext) ){
-				$img.show();
-				$imgNotImage.hide();
-			}else{
-				$img.hide();
-				$imgNotImage.show();
-			}
+			setImagePreview({
+				'src': path,
+				'size': res.size,
+				'ext': res.ext,
+				'mimeType': res.type,
+				'base64': res.base64,
+			});
 
 			$uiImageResource.append(
 				$('<p>')

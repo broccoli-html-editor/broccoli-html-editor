@@ -63,7 +63,7 @@ module.exports = function(broccoli){
 				callback( $.html() );
 				return;
 			}else if( rtn.resType == 'none' ){
-				callback( 'No Image' );
+				callback( 'No File' );
 				return;
 			}else{
 				_resMgr.getResourceDb( function(resDb){
@@ -239,18 +239,24 @@ module.exports = function(broccoli){
 		 * 画像プレビューを更新する
 		 */
 		function setImagePreview(fileInfo){
+			var fileSrc = fileInfo.src;
+			var fileMimeType = fileInfo.mimeType;
+			if( !fileInfo.src || !fileInfo.ext || !fileInfo.size){
+				fileSrc = _imgDummy;
+				fileMimeType = 'image/png';
+			}
 			$img
 				.attr({
-					"src": fileInfo.src ,
+					"src": fileSrc ,
 					"data-size": fileInfo.size ,
 					"data-extension": fileInfo.ext,
-					"data-mime-type": fileInfo.mimeType ,
+					"data-mime-type": fileMimeType ,
 					"data-base64": fileInfo.base64,
 					"data-is-updated": 'yes'
 				})
 			;
 			$imgNotImage.text( fileInfo.ext );
-			if( canPreviewAsImage(fileInfo.mimeType, fileInfo.ext) ){
+			if( canPreviewAsImage(fileMimeType, fileInfo.ext) ){
 				$img.show();
 				$imgNotImage.hide();
 			}else{
@@ -290,7 +296,7 @@ module.exports = function(broccoli){
 								"checked": (data.resType=='')
 							})
 						)
-						.append( $( '<span>' ).text('画像アップロード') )
+						.append( $( '<span>' ).text('ファイルアップロード') )
 					)
 				)
 				.append( $( '<li>' )
@@ -404,18 +410,18 @@ module.exports = function(broccoli){
 				})
 			);
 
-			if( canPreviewAsImage(res.type, res.ext) ){
-				$img.show();
-				$imgNotImage.hide();
-			}else{
-				$img.hide();
-				$imgNotImage.show();
-			}
+			setImagePreview({
+				'src': path,
+				'size': res.size,
+				'ext': res.ext,
+				'mimeType': res.type,
+				'base64': res.base64,
+			});
 
 			$uiImageResource.append(
 				$('<p>')
 					.append( $('<label>')
-						.text('画像ファイルを選択する')
+						.text('ファイルを選択する')
 						.addClass('px2-btn')
 						.append( $('<input>')
 							.attr({
@@ -441,7 +447,7 @@ module.exports = function(broccoli){
 						.attr({'type': 'button'})
 						.addClass('px2-btn')
 						.on('click', function(){
-							var url = prompt('指定のURLから画像ファイルを取得して保存します。'+"\n"+'画像ファイルのURLを入力してください。');
+							var url = prompt('指定のURLからファイルを取得して保存します。'+"\n"+'ファイルのURLを入力してください。');
 							if( !url ){
 								return;
 							}
@@ -465,7 +471,7 @@ module.exports = function(broccoli){
 											// 成功
 											break;
 										case 404:
-											alert('画像が見つかりません。 ('+result.status+')');
+											alert('ファイルが見つかりません。 ('+result.status+')');
 											return; // この場合は反映させない
 											break;
 										case 400:
@@ -559,7 +565,7 @@ module.exports = function(broccoli){
 				$fileNameDisplay.css({'display': 'none'});
 			}
 			$uiWebResource.append(
-				$('<p>').text('このモードでは、画像リソースを URL で指定します。画像は取得して保存されることはありません。指定したURLが直接参照されます。')
+				$('<p>').text('このモードでは、ファイルリソースを URL で指定します。画像は取得して保存されることはありません。指定したURLが直接参照されます。')
 			);
 			$uiWebResource.append(
 				$('<div>')
@@ -673,7 +679,7 @@ module.exports = function(broccoli){
 		new Promise(function(rlv){rlv();})
 			.then(function(){ return new Promise(function(rlv, rjt){
 				// Validate required
-				var msgRequired = '画像を必ず選択してください。';
+				var msgRequired = 'ファイルを必ず選択してください。';
 				if(rulesIsRequired){
 					if(resType == 'none'){
 						errorMsgs.push(msgRequired);
@@ -692,7 +698,7 @@ module.exports = function(broccoli){
 			.then(function(){ return new Promise(function(rlv, rjt){
 				// Validate image src
 				if(!$img.get(0)){
-					errorMsgs.push('[FATAL] イメージを取得できませんでした。');
+					errorMsgs.push('[FATAL] ファイルを取得できませんでした。');
 					rlv();
 					return;
 				}
@@ -721,10 +727,10 @@ module.exports = function(broccoli){
 					errorMsgs.push('幅が '+rulesMinWidth+'px より大きい画像を選択してください。');
 				}
 				if( rulesMaxFileSize && filesize > rulesMaxFileSize ){
-					errorMsgs.push('ファイルサイズが '+rulesMaxFileSize+'バイト より小さい画像を選択してください。');
+					errorMsgs.push('ファイルサイズが '+rulesMaxFileSize+'バイト より小さいファイルを選択してください。');
 				}
 				if( rulesMinFileSize && filesize < rulesMinFileSize ){
-					errorMsgs.push('ファイルサイズが '+rulesMinFileSize+'バイト より大きい画像を選択してください。');
+					errorMsgs.push('ファイルサイズが '+rulesMinFileSize+'バイト より大きいファイルを選択してください。');
 				}
 
 				rlv();
@@ -758,7 +764,7 @@ module.exports = function(broccoli){
 						continue;
 					}
 					if( resType === '' && filename !== '' && resourceDb[idx].publicFilename == filename ){
-						errorMsgs.push('イメージのファイル名が重複しています。');
+						errorMsgs.push('ファイル名が重複しています。');
 						continue;
 					}
 				}
