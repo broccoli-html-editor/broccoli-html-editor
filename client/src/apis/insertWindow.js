@@ -325,17 +325,95 @@ module.exports = function(broccoli){
 				'data-id': mod.moduleId,
 				'data-internal-id': mod.moduleInternalId,
 				'data-name': mod.moduleName,
-				'data-readme': mod.readme,
+				// 'data-readme': mod.readme,
 				'data-clip': JSON.stringify(mod.clip),
 				'data-insert-instance-to': instanceInsertTo,
 				'href': 'javascript:;'
 			})
 
 			.on('click', function(e){
-				var modInternalId = $(this).attr('data-internal-id');
-				var moveTo = $(this).attr('data-insert-instance-to');
-				$(this).addClass('broccoli__insert-window--module-selected');
+				var $this = $(this);
+				var modId = $this.attr('data-id');
+				var modInternalId = $this.attr('data-internal-id');
+				var moveTo = $this.attr('data-insert-instance-to');
+				var modClip = $this.attr('data-clip');
+				try {
+					modClip = JSON.parse(modClip);
+				} catch (e) {
+					modClip = false;
+				}
+				$this.addClass('broccoli__insert-window--module-selected');
 				lock();
+
+				if( modClip ){
+					console.log('クリップが選択されました。');
+					var parsedModId = broccoli.parseModuleId(modId);
+					var newInstancePath = moveTo;
+
+					broccoli.gpi(
+						'getClipModuleContents',
+						{
+							'moduleId': modId,
+							'resourceMode': 'temporaryHash'
+						} ,
+						function(clipContents){
+							// console.log('------ clipModuleContents --', clipContents);
+
+							it79.ary(
+								clipContents.data ,
+								function(it1, row1, idx1){
+									broccoli.contentsSourceData.duplicateInstance(clipContents.data[idx1], clipContents.resources, {'supplementModPackage': parsedModId.package}, function(newData){
+										// console.log(newData);
+
+										broccoli.contentsSourceData.addInstance( newData, moveTo, function(result){
+											// 上から順番に挿入していくので、
+											// moveTo を1つインクリメントしなければいけない。
+											// (そうしないと、天地逆さまに積み上げられることになる。)
+											moveTo = broccoli.incrementInstancePath(moveTo);
+											it1.next();
+										} );
+
+									});
+								} ,
+								function(){
+									broccoli.gpi(
+										'replaceClipModuleResources',
+										{
+											'moduleId': modId
+										} ,
+										function(affectedResources){
+											// console.log(affectedResources);
+											broccoli.resourceMgr.getResourceDb(function(tmpResourceDb){
+												for( var resKey in affectedResources ){
+													tmpResourceDb[resKey] = affectedResources[resKey];
+												}
+												broccoli.resourceMgr.setResourceDb(tmpResourceDb, function(result){
+													broccoli.unselectInstance(function(){
+														broccoli.saveContents(function(){
+															broccoli.message('クリップを挿入しました。');
+															broccoli.redraw(function(){
+																broccoli.closeProgress(function(){
+																	broccoli.selectInstance(newInstancePath, function(){
+																		unlock();
+																		latestCallback();
+																	});
+																});
+															});
+														});
+													});
+												});
+											});
+
+										}
+									);
+								}
+							);
+
+						}
+					);
+
+					return;
+				}
 
 				broccoli.progress(function(){
 
