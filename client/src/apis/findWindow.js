@@ -41,6 +41,9 @@ module.exports = function(broccoli){
 	this.init = function(){
 		// console.log( '=-=-=-=-=-=-=-=-= Initialize EditWindow.' );
 		// callback = callback || function(){};
+
+		contentsElements = []; // クリア
+
 		it79.fnc(
 			{},
 			[
