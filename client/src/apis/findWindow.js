@@ -198,9 +198,12 @@ module.exports = function(broccoli){
 				.on('click', function(){
 					var instancePath = $(this).attr('data-broccoli-instance-path');
 					// alert(instancePath);
-					broccoli.selectInstance(instancePath);
-					broccoli.focusInstance(instancePath);
-					broccoli.instanceTreeView.focusInstance(instancePath);
+					broccoli.instanceTreeView.focusInstance(instancePath, function(){
+						broccoli.selectInstance(instancePath, function(){
+							broccoli.focusInstance(instancePath, function(){
+							});
+						});
+					});
 				})
 			;
 			$elmResult.append($instance);

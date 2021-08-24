@@ -5106,9 +5106,12 @@ module.exports = function(broccoli){
 				.on('click', function(){
 					var instancePath = $(this).attr('data-broccoli-instance-path');
 					// alert(instancePath);
-					broccoli.selectInstance(instancePath);
-					broccoli.focusInstance(instancePath);
-					broccoli.instanceTreeView.focusInstance(instancePath);
+					broccoli.instanceTreeView.focusInstance(instancePath, function(){
+						broccoli.selectInstance(instancePath, function(){
+							broccoli.focusInstance(instancePath, function(){
+							});
+						});
+					});
 				})
 			;
 			$elmResult.append($instance);
@@ -5831,12 +5834,12 @@ module.exports = function(broccoli){
 					.attr({
 						'data-broccoli-instance-path': instPathMemo.join('/')
 					})
-					.bind('dblclick', function(e){
+					.on('dblclick', function(e){
 						clearTimeout(timer);
 						var instancePath = $(this).attr('data-broccoli-instance-path');
 						broccoli.editInstance( instancePath );
 					} )
-					.bind('click', function(e){
+					.on('click', function(e){
 						var dataPath = $(this).attr('data-broccoli-instance-path');
 						timer = setTimeout(function(){
 							broccoli.selectInstance( dataPath, function(){
@@ -5865,23 +5868,23 @@ module.exports = function(broccoli){
 							.attr({
 								'data-broccoli-instance-path': children[child]
 							})
-							.bind('mouseover', function(e){
+							.on('mouseover', function(e){
 								var dataPath = $(this).attr('data-broccoli-instance-path');
 								broccoli.focusInstance( dataPath, function(){
 									broccoli.instanceTreeView.focusInstance( dataPath, function(){} );
 								} );
 							} )
-							.bind('mouseout', function(e){
+							.on('mouseout', function(e){
 								broccoli.unfocusInstance();
 							} )
-							.bind('dblclick', function(e){
+							.on('dblclick', function(e){
 								var dataPath = $(this).attr('data-broccoli-instance-path');
 								clearTimeout(timer);
 								broccoli.selectInstance( dataPath, function(){
 									broccoli.editInstance( dataPath );
 								} );
 							} )
-							.bind('click', function(e){
+							.on('click', function(e){
 								broccoli.unfocusInstance();
 								var dataPath = $(this).attr('data-broccoli-instance-path');
 								timer = setTimeout(function(){
