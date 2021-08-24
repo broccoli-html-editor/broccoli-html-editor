@@ -598,7 +598,8 @@
   -ms-flex-line-pack: center;
   align-content: center;
   text-align: center;
-  padding: 80px; }
+  padding: 80px;
+  z-index: 1010000; }
 
 .broccoli .px2-loading::before {
   display: block;

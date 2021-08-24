@@ -11534,7 +11534,7 @@ module.exports = function(Px2style){
 				"justify-content": "center",
 				"flex-direction": "column",
 				"align-items": "center",
-				"z-index": 1000000
+				"z-index": 1010000
 			});
 
 			$(window).on('resize.px2-loading', function(){
