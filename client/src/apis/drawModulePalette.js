@@ -201,49 +201,45 @@ module.exports = function(broccoli, targetElm, callback){
 				var html = generateModuleInfoHtml(this);
 				var $html = $(html);
 				var moduleId = $this.attr('data-id');
-				broccoli.lightbox(function(elm){
-					$(elm)
-						.append( $html )
-						.append( $('<button class="px2-btn">')
-							.text('閉じる')
-							.bind('click', function(){
-								broccoli.closeLightbox();
-							})
-						)
-					;
 
-					// モジュールの詳細な情報を取得して補完する
-					broccoli.gpi(
-						'getModule',
-						{
-							'moduleId': moduleId
-						} ,
-						function(result){
-							// console.log('------ moduleInfo --', result);
-							var $pics = $html.find('.broccoli--module-info-content-pics');
-							var pics = result.pics;
-							if( !pics.length ){
-								$pics.remove();
-							}else{
-								var html = '';
-								// html += '<hr />';
-								html += '<p>参考イメージ</p>';
-								html += '<ul>';
-								for( var idx in pics ){
-									// console.log(pics[idx]);
-									html += '<li><img src="'+ pics[idx] +'" /></li>';
-								}
-								html += '</ul>';
-								$pics.append(html);
+				// モジュールの詳細な情報を取得
+				broccoli.gpi(
+					'getModule',
+					{
+						'moduleId': moduleId
+					} ,
+					function(result){
+						// console.log('------ moduleInfo --', result);
+
+						var $pics = $html.find('.broccoli--module-info-content-pics');
+						var pics = result.pics;
+						if( !pics.length ){
+							$pics.remove();
+						}else{
+							var html = '';
+							// html += '<hr />';
+							html += '<p>参考イメージ</p>';
+							html += '<ul>';
+							for( var idx in pics ){
+								// console.log(pics[idx]);
+								html += '<li><img src="'+ pics[idx] +'" /></li>';
 							}
-							var $readme = $html.find('.broccoli__module-readme');
-							if( result.readme ){
-								$readme.html(result.readme);
-								$this.attr({'data-readme': result.readme});
-							}
+							html += '</ul>';
+							$pics.append(html);
 						}
-					);
-				});
+						var $readme = $html.find('.broccoli__module-readme');
+						if( result.readme ){
+							$readme.html(result.readme);
+							$this.attr({'data-readme': result.readme});
+						}
+
+						broccoli.px2style.modal({
+							'title': (result.name || moduleId),
+							'body': $html,
+						});
+
+					}
+				);
 			})
 			.on('touchstart', function(e){
 				// タッチデバイス向けの処理
@@ -300,9 +296,9 @@ module.exports = function(broccoli, targetElm, callback){
 		if( $img.length ){
 			html += '<div class="broccoli--module-info-content-thumb"><img src="'+$img.attr('src')+'" /></div>';
 		}
-		html += '<h1 class="broccoli--module-info-content-h1"></h1>';
+		// html += '<h1 class="broccoli--module-info-content-h1"></h1>';
 		html += '<p class="broccoli--module-info-content-id"></p>';
-		html += '<hr />';
+		// html += '<hr />';
 		html += '<div class="broccoli--module-info-content-readme"><article class="broccoli__module-readme"></article></div>';
 
 		// ↓picsが多くなるとモジュールパレットが重くなるため、

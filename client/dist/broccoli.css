@@ -2668,6 +2668,9 @@
 .broccoli--module-info-content {
   word-wrap: break-word;
   word-break: break-word; }
+  .broccoli--module-info-content-id {
+    color: #999;
+    border-bottom: 1px solid #999; }
   .broccoli--module-info-content-thumb {
     width: 200px;
     max-width: 20%;
