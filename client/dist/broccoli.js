@@ -4933,6 +4933,7 @@ module.exports = function(broccoli){
 				+ '	<div class="broccoli__find-window-result"></div>'
 				+ '</div>'
 	;
+	var instancePath;
 
 	/**
 	 * 初期化
@@ -4942,6 +4943,7 @@ module.exports = function(broccoli){
 		// callback = callback || function(){};
 
 		contentsElements = []; // クリア
+		instancePath = broccoli.getSelectedInstance();
 
 		it79.fnc(
 			{},
@@ -5056,6 +5058,18 @@ module.exports = function(broccoli){
 									broccoli.px2style.closeModal();
 								})
 						],
+						'onclose': function(){
+							if( instancePath ){
+								setTimeout(function(){
+									broccoli.selectInstance(instancePath, function(){
+										broccoli.instanceTreeView.focusInstance(instancePath, function(){
+											broccoli.focusInstance(instancePath, function(){
+											});
+										});
+									});
+								}, 200);
+							}
+						},
 					});
 
 					it1.next(data);
@@ -5104,7 +5118,7 @@ module.exports = function(broccoli){
 					'data-broccoli-instance-path': instance.instancePath
 				})
 				.on('click', function(){
-					var instancePath = $(this).attr('data-broccoli-instance-path');
+					instancePath = $(this).attr('data-broccoli-instance-path');
 					// alert(instancePath);
 					broccoli.instanceTreeView.focusInstance(instancePath, function(){
 						broccoli.selectInstance(instancePath, function(){
@@ -6321,7 +6335,7 @@ module.exports = function(broccoli){
  */
 module.exports = function(broccoli){
 	// delete(require.cache[require('path').resolve(__filename)]);
-	if(!window){ callback(); return false; }
+	if(!window){ return false; }
 
 	var _this = this;
 
