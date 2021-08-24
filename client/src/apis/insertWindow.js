@@ -15,10 +15,8 @@ module.exports = function(broccoli){
 	var $insertWindow;
 	var tplFrame = ''
 		+ '<div class="broccoli__insert-window">'
-		+ '<h2>モジュールを挿入します</h2>'
 		+ '<p>挿入するモジュールを選択してください。</p>'
 		+ '<div class="broccoli__insert-window-body"></div>'
-		+ '<p style="text-align: center;"><button class="px2-btn" type="button">キャンセル</button></p>'
 		+ '</div>'
 	;
 

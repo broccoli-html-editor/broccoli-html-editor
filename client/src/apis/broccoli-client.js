@@ -744,17 +744,30 @@
 		/**
 		 * インスタンスを挿入する
 		 */
-		this.insertInstance = function( instancePath ){
+		this.insertInstance = function( instancePath, callback ){
 			console.log('Insert before:', instancePath);
-			broccoli.selectInstance(instancePath, function(){
-				broccoli.lightbox( function( lbElm ){
-					broccoli.drawInsertWindow( instancePath, lbElm, function(isInsert, callback){
-						callback = callback || function(){};
-						console.log('Insert module: done.');
-						broccoli.closeLightbox();
-					} );
-				} );
+			callback = callback || function(){};
+
+			var $lbElm = $('<div>');
+			broccoli.px2style.modal({
+				'title': 'モジュールを挿入します',
+				'body': $lbElm,
+				'buttons': [],
+				'buttonsSecondary': [
+					$('<button class="px2-btn">').text('キャンセル').on('click', function(){
+						broccoli.px2style.closeModal();
+					})
+				],
 			});
+			broccoli.drawInsertWindow(
+				instancePath,
+				$lbElm,
+				function(isInsert, callback){
+					callback = callback || function(){};
+					console.log('Insert module: done.');
+					broccoli.px2style.closeModal();
+				}
+			);
 			return;
 		}
 

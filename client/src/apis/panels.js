@@ -628,8 +628,9 @@ module.exports = function(broccoli){
 		if( $this.attr('data-broccoli-is-appender') == 'yes' ){
 			// broccoli.message('編集できません。ここには、モジュールをドロップして追加または移動することができます。');
 			// instancePath = php.dirname(instancePath);
-			broccoli.insertInstance(instancePath);
-			callback();
+			broccoli.insertInstance(instancePath, function(){
+				callback();
+			});
 			return;
 		}
 		broccoli.editInstance( instancePath );

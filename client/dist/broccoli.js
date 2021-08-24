@@ -745,17 +745,30 @@
 		/**
 		 * インスタンスを挿入する
 		 */
-		this.insertInstance = function( instancePath ){
+		this.insertInstance = function( instancePath, callback ){
 			console.log('Insert before:', instancePath);
-			broccoli.selectInstance(instancePath, function(){
-				broccoli.lightbox( function( lbElm ){
-					broccoli.drawInsertWindow( instancePath, lbElm, function(isInsert, callback){
-						callback = callback || function(){};
-						console.log('Insert module: done.');
-						broccoli.closeLightbox();
-					} );
-				} );
+			callback = callback || function(){};
+
+			var $lbElm = $('<div>');
+			broccoli.px2style.modal({
+				'title': 'モジュールを挿入します',
+				'body': $lbElm,
+				'buttons': [],
+				'buttonsSecondary': [
+					$('<button class="px2-btn">').text('キャンセル').on('click', function(){
+						broccoli.px2style.closeModal();
+					})
+				],
 			});
+			broccoli.drawInsertWindow(
+				instancePath,
+				$lbElm,
+				function(isInsert, callback){
+					callback = callback || function(){};
+					console.log('Insert module: done.');
+					broccoli.px2style.closeModal();
+				}
+			);
 			return;
 		}
 
@@ -5281,10 +5294,8 @@ module.exports = function(broccoli){
 	var $insertWindow;
 	var tplFrame = ''
 		+ '<div class="broccoli__insert-window">'
-		+ '<h2>モジュールを挿入します</h2>'
 		+ '<p>挿入するモジュールを選択してください。</p>'
 		+ '<div class="broccoli__insert-window-body"></div>'
-		+ '<p style="text-align: center;"><button class="px2-btn" type="button">キャンセル</button></p>'
 		+ '</div>'
 	;
 
@@ -6932,8 +6943,9 @@ module.exports = function(broccoli){
 		if( $this.attr('data-broccoli-is-appender') == 'yes' ){
 			// broccoli.message('編集できません。ここには、モジュールをドロップして追加または移動することができます。');
 			// instancePath = php.dirname(instancePath);
-			broccoli.insertInstance(instancePath);
-			callback();
+			broccoli.insertInstance(instancePath, function(){
+				callback();
+			});
 			return;
 		}
 		broccoli.editInstance( instancePath );
