@@ -4916,35 +4916,26 @@ module.exports = function(broccoli){
 	var _this = this;
 
 	var it79 = require('iterate79');
-	var php = require('phpjs');
 	var $ = require('jquery');
 	var moduleList = {};
 	var contentsElements = [];
 	var timerFormWatcher;
 
-	var $findWindow;
+	var $findWindow = $('<div>');
 	var $elmResult;
 	var tplFrame = ''
 				+ '<div class="broccoli__find-window">'
-				+ '	<h2 class="broccoli__find-window-module-name">検索</h2>'
 				+ '	<div class="broccoli__find-window-search">'
 				+ '		<form action="javascript:;">'
-				+ '			<input type="text" name="search-keyword" class="form-control" />'
+				+ '			<input type="text" name="search-keyword" class="px2-input px2-input--block" />'
 				+ '		</form>'
 				+ '	</div>'
 				+ '	<div class="broccoli__find-window-result"></div>'
-				+ '	<div class="broccoli__find-window-form-buttons">'
-				+ '		<p style="text-align: center;"><button disabled="disabled" type="button" class="px2-btn broccoli__find-window-btn-cancel"><%= lb.get(\'ui_label.cancel\') %></button></p>'
-				+ '	</div>'
 				+ '</div>'
 	;
 
 	/**
 	 * 初期化
-	 * @param  {String}   instancePath  [description]
-	 * @param  {Object}   elmEditWindow [description]
-	 * @param  {Function} callback      [description]
-	 * @return {Void}                 [description]
 	 */
 	this.init = function(){
 		// console.log( '=-=-=-=-=-=-=-=-= Initialize EditWindow.' );
@@ -5051,16 +5042,23 @@ module.exports = function(broccoli){
 				} ,
 
 				function( it1, data ){
-					broccoli.lightbox( function( lbElm ){
-						$(lbElm).addClass('broccoli__lightbox-inner--edit-window-mode');
-						$findWindow = $(lbElm);
-						$findWindow.html('').append( broccoli.bindEjs(tplFrame, {'lb':broccoli.lb}) );
 
-						$findWindow.find('.broccoli__find-window-btn-cancel').removeAttr('disabled').on('click', function(){
-							broccoli.closeLightbox( function(){} );
-						});
-						it1.next(data);
-					} );
+					$findWindow.html('').append( broccoli.bindEjs(tplFrame, {'lb':broccoli.lb}) );
+
+					broccoli.px2style.modal({
+						'title': '検索',
+						'body': $findWindow,
+						'buttons': [],
+						'buttonsSecondary': [
+							$('<button class="px2-btn">')
+								.text(broccoli.lb.get('ui_label.cancel'))
+								.on('click', function(){
+									broccoli.px2style.closeModal();
+								})
+						],
+					});
+
+					it1.next(data);
 				} ,
 				function( it1, data ){
 					$elmResult = $findWindow.find('.broccoli__find-window-result');
@@ -5068,7 +5066,7 @@ module.exports = function(broccoli){
 				} ,
 				function( it1, data ){
 					var $keywordForm = $findWindow.find('input[name=search-keyword]');
-					$keywordForm.on('change keyup', function(){
+					$keywordForm.on('change.broccoli-html-editor keyup.broccoli-html-editor', function(){
 						clearTimeout(timerFormWatcher);
 						timerFormWatcher = setTimeout(function(){
 							var keyword = $keywordForm.val();
@@ -5084,7 +5082,7 @@ module.exports = function(broccoli){
 				}
 			]
 		);
-		return this;
+		return;
 	}
 
 	/**
@@ -5099,18 +5097,20 @@ module.exports = function(broccoli){
 			}
 
 			var $instance = $('<a>');
-			$instance.text(instance.label);
-			$instance.attr({
-				'href':'javascript:;',
-				'data-broccoli-instance-path': instance.instancePath
-			});
-			$instance.on('click', function(){
-				var instancePath = $(this).attr('data-broccoli-instance-path');
-				// alert(instancePath);
-				broccoli.selectInstance(instancePath);
-				broccoli.focusInstance(instancePath);
-				broccoli.instanceTreeView.focusInstance(instancePath);
-			});
+			$instance
+				.text(instance.label)
+				.attr({
+					'href':'javascript:;',
+					'data-broccoli-instance-path': instance.instancePath
+				})
+				.on('click', function(){
+					var instancePath = $(this).attr('data-broccoli-instance-path');
+					// alert(instancePath);
+					broccoli.selectInstance(instancePath);
+					broccoli.focusInstance(instancePath);
+					broccoli.instanceTreeView.focusInstance(instancePath);
+				})
+			;
 			$elmResult.append($instance);
 		}
 	}
@@ -5118,7 +5118,7 @@ module.exports = function(broccoli){
 	return;
 }
 
-},{"iterate79":127,"jquery":129,"phpjs":139}],9:[function(require,module,exports){
+},{"iterate79":127,"jquery":129}],9:[function(require,module,exports){
 /**
  * history.js
  */
@@ -5288,7 +5288,6 @@ module.exports = function(broccoli){
 
 	var it79 = require('iterate79');
 	var php = require('phpjs');
-	var LangBank = require('langbank');
 	var $ = require('jquery');
 
 	var $insertWindow;
@@ -5309,17 +5308,6 @@ module.exports = function(broccoli){
 	var childrenIndex = {};
 
 	var modulePaletteCondition = {};
-	try{
-		modulePaletteCondition = JSON.parse( broccoli.getBootupInfomations().userData.modPaletteCondition );
-	}catch(e){
-		console.error(e);
-	}
-	if( !modulePaletteCondition ){
-		modulePaletteCondition = {};
-	}
-	if( !modulePaletteCondition.cond ){
-		modulePaletteCondition.cond = {};
-	}
 	var instanceInsertTo;
 	var latestCallback;
 
@@ -5329,6 +5317,18 @@ module.exports = function(broccoli){
 	 * 初期化
 	 */
 	this.init = function(instancePath, elmInsertWindow, callback){
+		try{
+			modulePaletteCondition = JSON.parse( broccoli.getBootupInfomations().userData.modPaletteCondition );
+		}catch(e){
+			console.error(e);
+		}
+		if( !modulePaletteCondition ){
+			modulePaletteCondition = {};
+		}
+		if( !modulePaletteCondition.cond ){
+			modulePaletteCondition.cond = {};
+		}
+
 		instanceInsertTo = instancePath;
 		$insertWindow = $(elmInsertWindow);
 		$insertWindow.html(tplFrame);
@@ -5765,7 +5765,7 @@ module.exports = function(broccoli){
 	return;
 }
 
-},{"iterate79":127,"jquery":129,"langbank":130,"phpjs":139}],12:[function(require,module,exports){
+},{"iterate79":127,"jquery":129,"phpjs":139}],12:[function(require,module,exports){
 /**
  * instancePathView.js
  */

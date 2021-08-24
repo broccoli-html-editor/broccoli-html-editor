@@ -795,17 +795,13 @@
 		margin: 1em;
 	}
 
-	&-form-buttons{
-		margin-top: 1em;
-	}
-
 	&-field-error-message{
 		display: none;
 	}
 
 	&-result{
 		overflow: auto;
-		height: 400px;
+		height: calc(100vh - 226px);
 		max-height: 400px;
 		a{
 			display: block;

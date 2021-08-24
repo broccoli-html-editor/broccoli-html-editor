@@ -9,7 +9,6 @@ module.exports = function(broccoli){
 
 	var it79 = require('iterate79');
 	var php = require('phpjs');
-	var LangBank = require('langbank');
 	var $ = require('jquery');
 
 	var $insertWindow;
@@ -30,17 +29,6 @@ module.exports = function(broccoli){
 	var childrenIndex = {};
 
 	var modulePaletteCondition = {};
-	try{
-		modulePaletteCondition = JSON.parse( broccoli.getBootupInfomations().userData.modPaletteCondition );
-	}catch(e){
-		console.error(e);
-	}
-	if( !modulePaletteCondition ){
-		modulePaletteCondition = {};
-	}
-	if( !modulePaletteCondition.cond ){
-		modulePaletteCondition.cond = {};
-	}
 	var instanceInsertTo;
 	var latestCallback;
 
@@ -50,6 +38,18 @@ module.exports = function(broccoli){
 	 * 初期化
 	 */
 	this.init = function(instancePath, elmInsertWindow, callback){
+		try{
+			modulePaletteCondition = JSON.parse( broccoli.getBootupInfomations().userData.modPaletteCondition );
+		}catch(e){
+			console.error(e);
+		}
+		if( !modulePaletteCondition ){
+			modulePaletteCondition = {};
+		}
+		if( !modulePaletteCondition.cond ){
+			modulePaletteCondition.cond = {};
+		}
+
 		instanceInsertTo = instancePath;
 		$insertWindow = $(elmInsertWindow);
 		$insertWindow.html(tplFrame);

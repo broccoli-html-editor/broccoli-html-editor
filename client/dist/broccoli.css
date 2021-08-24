@@ -2538,13 +2538,11 @@
     font-weight: bold;
     text-align: center;
     margin: 1em; }
-  .broccoli__find-window-form-buttons {
-    margin-top: 1em; }
   .broccoli__find-window-field-error-message {
     display: none; }
   .broccoli__find-window-result {
     overflow: auto;
-    height: 400px;
+    height: calc(100vh - 226px);
     max-height: 400px; }
     .broccoli__find-window-result a {
       display: block;
