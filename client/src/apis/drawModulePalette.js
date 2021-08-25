@@ -190,7 +190,15 @@ module.exports = function(broccoli, targetElm, callback){
 				updateModuleInfoPreview(null, {'elm': this}, function(){});
 			})
 			.on('mouseover', function(e){
-				var html = generateModuleInfoHtml(this);
+				var htmlBody = generateModuleInfoHtml(this);
+				var $heading = $('<p>')
+					.text( $(this).attr('data-name') || $(this).attr('data-id') )
+					.css({
+						'font-size': '160%',
+						'font-weight': 'bold',
+						'margin': '0',
+					});
+				var html = $heading.prop('outerHTML') + htmlBody;
 				updateModuleInfoPreview(html, {'elm': this}, function(){});
 			})
 			.on('mouseout', function(e){
