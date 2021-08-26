@@ -475,12 +475,14 @@ module.exports = function(broccoli){
 	}
 
 	function lock(){
-		$insertWindow.find('a').attr({
+		broccoli.px2style.loading();
+		$insertWindow.find('a, button').attr({
 			'disabled': true,
 		});
 	}
 	function unlock(){
-		$insertWindow.find('a').removeAttr('disabled');
+		$insertWindow.find('a, button').removeAttr('disabled');
+		broccoli.px2style.closeLoading();
 	}
 
 	return;

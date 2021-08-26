@@ -3325,6 +3325,9 @@ module.exports = function(broccoli, targetElm, callback){
 					function(result){
 						// console.log('------ moduleInfo --', result);
 
+						var $heading = $('<span>')
+							.text( result.name || moduleId );
+
 						var $pics = $html.find('.broccoli--module-info-content-pics');
 						var pics = result.pics;
 						if( !pics.length ){
@@ -3348,7 +3351,7 @@ module.exports = function(broccoli, targetElm, callback){
 						}
 
 						broccoli.px2style.modal({
-							'title': (result.name || moduleId),
+							'title': $heading,
 							'body': $html,
 						});
 
@@ -5779,12 +5782,14 @@ module.exports = function(broccoli){
 	}
 
 	function lock(){
-		$insertWindow.find('a').attr({
+		broccoli.px2style.loading();
+		$insertWindow.find('a, button').attr({
 			'disabled': true,
 		});
 	}
 	function unlock(){
-		$insertWindow.find('a').removeAttr('disabled');
+		$insertWindow.find('a, button').removeAttr('disabled');
+		broccoli.px2style.closeLoading();
 	}
 
 	return;

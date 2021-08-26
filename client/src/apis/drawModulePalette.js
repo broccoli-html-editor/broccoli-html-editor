@@ -219,6 +219,9 @@ module.exports = function(broccoli, targetElm, callback){
 					function(result){
 						// console.log('------ moduleInfo --', result);
 
+						var $heading = $('<span>')
+							.text( result.name || moduleId );
+
 						var $pics = $html.find('.broccoli--module-info-content-pics');
 						var pics = result.pics;
 						if( !pics.length ){
@@ -242,7 +245,7 @@ module.exports = function(broccoli, targetElm, callback){
 						}
 
 						broccoli.px2style.modal({
-							'title': (result.name || moduleId),
+							'title': $heading,
 							'body': $html,
 						});
 
