@@ -780,7 +780,7 @@
 			var broccoli = this;
 			broccoli.selectInstance(instancePath, function(){
 				broccoli.lightbox( function( lbElm ){
-					$(lbElm).addClass('broccoli__lightbox-inner--edit-window-mode');
+					$('.broccoli__lightbox-inner').addClass('broccoli__lightbox-inner--edit-window-mode');
 					broccoli.drawEditWindow( instancePath, lbElm, function(isSave, callback){
 						callback = callback || function(){};
 						if( !isSave ){
@@ -1449,7 +1449,7 @@
 			callback = callback||function(){};
 
 			var $dom = $('<div>')
-				.addClass('broccoli__lightbox-inner')
+				.addClass('broccoli__lightbox-inner-body')
 			;
 
 			$('body').find('.broccoli__lightbox').remove();//一旦削除
@@ -1457,16 +1457,19 @@
 			$('body')
 				.append( $('<div class="broccoli broccoli__lightbox">')
 					// dropイベントをキャンセル
-					.bind('dragover', function(e){
+					.on('dragover', function(e){
 						e.stopPropagation();
 						e.preventDefault();
 						return;
-					}).bind('drop', function(e){
+					}).on('drop', function(e){
 						e.stopPropagation();
 						e.preventDefault();
 						return;
 					})
-					.append( $dom )
+					.append( $('<div>')
+						.addClass('broccoli__lightbox-inner')
+						.append( $dom )
+					)
 				)
 			;
 
@@ -3759,6 +3762,11 @@ module.exports = function(broccoli){
 				+ '				</div>'
 				+ '			</div>'
 				+ '		</div>'
+				+ '		<div class="broccoli__edit-window-sticky-footer">'
+				+ '			<div class="broccoli__edit-window-sticky-footer-main">'
+				+ '				<button disabled="disabled" type="submit" class="px2-btn px2-btn--primary"><span class="glyphicon glyphicon-ok"></span> <%= lb.get(\'ui_label.ok\') %></button>'
+				+ '			</div>'
+				+ '		</div>'
 				+ '	</form>'
 				+ '</div>'
 	;
@@ -4341,6 +4349,9 @@ module.exports = function(broccoli){
 							$editWindow.find('.broccoli__edit-window-form-buttons button')
 								.removeAttr('disabled')
 							;
+							$editWindow.find('.broccoli__edit-window-sticky-footer button')
+								.removeAttr('disabled')
+							;
 							$editWindow.find('form')
 								.removeAttr('disabled')
 								.on('submit', function(){
@@ -4425,7 +4436,33 @@ module.exports = function(broccoli){
 						});
 					}
 				);
-			}
+			},
+			function(it1){
+				var $innerBody = $('.broccoli__lightbox-inner-body');
+				var $btnOk = $editWindow.find('.broccoli__edit-window-form-buttons button[type=submit]');
+				var $stickyBar = $editWindow.find('.broccoli__edit-window-sticky-footer');
+				var lastVisibilityVisible = null;
+				$innerBody.on('scroll', function(){
+					var btnOffsetScrollTop = $btnOk.offset().top - $innerBody.offset().top;
+					// console.log($innerBody.scrollTop(), $btnOk.offset().top);
+					// console.log(btnOffsetScrollTop, $innerBody.innerHeight());
+					var visibilityVisible = null;
+					if( btnOffsetScrollTop > $innerBody.innerHeight() ){
+						visibilityVisible = true;
+					}else{
+						visibilityVisible = false;
+					}
+					if( lastVisibilityVisible !== visibilityVisible ){
+						$stickyBar.css({
+							'opacity': ( visibilityVisible ? 1 : 0 ),
+							'pointer-events': ( visibilityVisible ? 'auto' : 'none' ),
+						});
+					}
+					lastVisibilityVisible = visibilityVisible;
+				});
+				$innerBody.trigger('scroll');
+				it1.next();
+			},
 		]);
 		return;
 	}

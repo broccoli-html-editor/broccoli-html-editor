@@ -546,6 +546,7 @@
 
 // edit window
 .broccoli__edit-window{
+
 	h2{
 		font-weight: bold;
 		text-align: center;
@@ -553,16 +554,21 @@
 	}
 
 	&-fields{
-		margin: 0.5em 0 3em 30px;
+		margin: 0.5em 0 3em 0;
 	}
 	&-field{
-		margin: 1em 0 2em;
+		margin: 1em 16px 2em 16px;
+		border: 1px solid #e3e3e3;
+		background-color: #fefefe;
+		box-shadow: 0 3px 12px 6px rgba(0, 0, 0, 0.02);
+		border-radius: 5px;
+		overflow: hidden;
 	}
 	h3{
-		padding: 0 0 0 10px;
-		border-left: 3px solid #999;
-		margin: 0.5em 0 0.5em -30px;
-		background-color: #fff;
+		padding: 0.8em 18px 5px 18px;
+		margin: 0;
+		border-bottom: 1px solid #e3e3e3;
+		background-color: #fefefe;
 		font-weight: bold;
 		position: relative;
 		small {
@@ -582,6 +588,12 @@
 			margin-right: 0.5em;
 			font-size: 80%;
 		}
+	}
+	&-field-description{
+		margin: 0.5em 18px;
+	}
+	&-field-content{
+		margin: 1em 18px;
 	}
 	&-message-field{
 		display: none;
@@ -783,6 +795,27 @@
 		display: none;
 	}
 
+	&-sticky-footer {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		background: #999999aa;
+		width: calc(100% - 18px - 18px);
+		box-sizing: border-box;
+		margin: 0 18px 18px;
+		border: 1px solid #e3e3e3;
+		overflow: hidden;
+		border-radius: 5px;
+		display: flex;
+		text-align: center;
+		box-shadow: 0 3px 12px 6px rgba(0, 0, 0, 0.05);
+		transition: opacity 0.3s;
+		opacity: 0;
+		&-main {
+			padding: 10px;
+			flex-grow: 10;
+		}
+	}
 }
 
 // find window
@@ -834,18 +867,25 @@
 	background-color: rgba(0, 0, 0, 0.2);
 
 	&-inner{
+		position: relative;
 		width: 580px;
 		max-width: calc(100% - 40px);
 		min-width: 480px;
 		height: auto;
-		max-height: calc(100% - 5px);
-		overflow: auto;
+		max-height: calc(100% - 40px);
+		box-sizing: border-box;
 
-		background-color:#fff;
-		padding: 1em;
-		margin: 20px auto 20px auto;
-		border-radius: 5px;
+		border-radius: 10px;
 		box-shadow: 0 10px 40px 20px rgba(0,0,0,0.3);
+		margin: 20px auto 20px auto;
+		background-color: var(--px2-background-color);
+	}
+	&-inner-body{
+		overflow: auto;
+		padding: 1em;
+		height: 100%;
+		max-height: calc(100%);
+		box-sizing: border-box;
 		&::after{
 			display: block;
 			clear: both;

@@ -779,7 +779,7 @@
 			var broccoli = this;
 			broccoli.selectInstance(instancePath, function(){
 				broccoli.lightbox( function( lbElm ){
-					$(lbElm).addClass('broccoli__lightbox-inner--edit-window-mode');
+					$('.broccoli__lightbox-inner').addClass('broccoli__lightbox-inner--edit-window-mode');
 					broccoli.drawEditWindow( instancePath, lbElm, function(isSave, callback){
 						callback = callback || function(){};
 						if( !isSave ){
@@ -1448,7 +1448,7 @@
 			callback = callback||function(){};
 
 			var $dom = $('<div>')
-				.addClass('broccoli__lightbox-inner')
+				.addClass('broccoli__lightbox-inner-body')
 			;
 
 			$('body').find('.broccoli__lightbox').remove();//一旦削除
@@ -1456,16 +1456,19 @@
 			$('body')
 				.append( $('<div class="broccoli broccoli__lightbox">')
 					// dropイベントをキャンセル
-					.bind('dragover', function(e){
+					.on('dragover', function(e){
 						e.stopPropagation();
 						e.preventDefault();
 						return;
-					}).bind('drop', function(e){
+					}).on('drop', function(e){
 						e.stopPropagation();
 						e.preventDefault();
 						return;
 					})
-					.append( $dom )
+					.append( $('<div>')
+						.addClass('broccoli__lightbox-inner')
+						.append( $dom )
+					)
 				)
 			;
 

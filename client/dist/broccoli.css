@@ -2324,16 +2324,21 @@
   margin: 1em; }
 
 .broccoli__edit-window-fields {
-  margin: 0.5em 0 3em 30px; }
+  margin: 0.5em 0 3em 0; }
 
 .broccoli__edit-window-field {
-  margin: 1em 0 2em; }
+  margin: 1em 16px 2em 16px;
+  border: 1px solid #e3e3e3;
+  background-color: #fefefe;
+  box-shadow: 0 3px 12px 6px rgba(0, 0, 0, 0.02);
+  border-radius: 5px;
+  overflow: hidden; }
 
 .broccoli__edit-window h3 {
-  padding: 0 0 0 10px;
-  border-left: 3px solid #999;
-  margin: 0.5em 0 0.5em -30px;
-  background-color: #fff;
+  padding: 0.8em 18px 5px 18px;
+  margin: 0;
+  border-bottom: 1px solid #e3e3e3;
+  background-color: #fefefe;
   font-weight: bold;
   position: relative; }
   .broccoli__edit-window h3 small {
@@ -2350,6 +2355,12 @@
   color: #f33;
   margin-right: 0.5em;
   font-size: 80%; }
+
+.broccoli__edit-window-field-description {
+  margin: 0.5em 18px; }
+
+.broccoli__edit-window-field-content {
+  margin: 1em 18px; }
 
 .broccoli__edit-window-message-field {
   display: none;
@@ -2529,6 +2540,28 @@
 .broccoli__edit-window-field-error-message {
   display: none; }
 
+.broccoli__edit-window-sticky-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background: #999999aa;
+  width: calc(100% - 18px - 18px);
+  box-sizing: border-box;
+  margin: 0 18px 18px;
+  border: 1px solid #e3e3e3;
+  overflow: hidden;
+  border-radius: 5px;
+  display: -ms-flexbox;
+  display: flex;
+  text-align: center;
+  box-shadow: 0 3px 12px 6px rgba(0, 0, 0, 0.05);
+  transition: opacity 0.3s;
+  opacity: 0; }
+  .broccoli__edit-window-sticky-footer-main {
+    padding: 10px;
+    -ms-flex-positive: 10;
+        flex-grow: 10; }
+
 .broccoli__find-window {
   display: -ms-flexbox;
   display: flex;
@@ -2572,18 +2605,24 @@
   overflow-scrolling: touch;
   background-color: rgba(0, 0, 0, 0.2); }
   .broccoli__lightbox-inner {
+    position: relative;
     width: 580px;
     max-width: calc(100% - 40px);
     min-width: 480px;
     height: auto;
-    max-height: calc(100% - 5px);
-    overflow: auto;
-    background-color: #fff;
-    padding: 1em;
+    max-height: calc(100% - 40px);
+    box-sizing: border-box;
+    border-radius: 10px;
+    box-shadow: 0 10px 40px 20px rgba(0, 0, 0, 0.3);
     margin: 20px auto 20px auto;
-    border-radius: 5px;
-    box-shadow: 0 10px 40px 20px rgba(0, 0, 0, 0.3); }
-    .broccoli__lightbox-inner::after {
+    background-color: var(--px2-background-color); }
+  .broccoli__lightbox-inner-body {
+    overflow: auto;
+    padding: 1em;
+    height: 100%;
+    max-height: calc(100%);
+    box-sizing: border-box; }
+    .broccoli__lightbox-inner-body::after {
       display: block;
       clear: both;
       content: ' ';

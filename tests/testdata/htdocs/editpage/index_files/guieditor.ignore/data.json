@@ -44,7 +44,10 @@
                                     "dec": ""
                                 }
                             ],
-                            "module1": []
+                            "module1": [],
+                            "select1": {
+                                "src": "1"
+                            }
                         },
                         "anchor": "",
                         "dec": ""

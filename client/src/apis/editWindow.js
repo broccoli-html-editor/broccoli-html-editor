@@ -53,6 +53,11 @@ module.exports = function(broccoli){
 				+ '				</div>'
 				+ '			</div>'
 				+ '		</div>'
+				+ '		<div class="broccoli__edit-window-sticky-footer">'
+				+ '			<div class="broccoli__edit-window-sticky-footer-main">'
+				+ '				<button disabled="disabled" type="submit" class="px2-btn px2-btn--primary"><span class="glyphicon glyphicon-ok"></span> <%= lb.get(\'ui_label.ok\') %></button>'
+				+ '			</div>'
+				+ '		</div>'
 				+ '	</form>'
 				+ '</div>'
 	;
@@ -635,6 +640,9 @@ module.exports = function(broccoli){
 							$editWindow.find('.broccoli__edit-window-form-buttons button')
 								.removeAttr('disabled')
 							;
+							$editWindow.find('.broccoli__edit-window-sticky-footer button')
+								.removeAttr('disabled')
+							;
 							$editWindow.find('form')
 								.removeAttr('disabled')
 								.on('submit', function(){
@@ -719,7 +727,33 @@ module.exports = function(broccoli){
 						});
 					}
 				);
-			}
+			},
+			function(it1){
+				var $innerBody = $('.broccoli__lightbox-inner-body');
+				var $btnOk = $editWindow.find('.broccoli__edit-window-form-buttons button[type=submit]');
+				var $stickyBar = $editWindow.find('.broccoli__edit-window-sticky-footer');
+				var lastVisibilityVisible = null;
+				$innerBody.on('scroll', function(){
+					var btnOffsetScrollTop = $btnOk.offset().top - $innerBody.offset().top;
+					// console.log($innerBody.scrollTop(), $btnOk.offset().top);
+					// console.log(btnOffsetScrollTop, $innerBody.innerHeight());
+					var visibilityVisible = null;
+					if( btnOffsetScrollTop > $innerBody.innerHeight() ){
+						visibilityVisible = true;
+					}else{
+						visibilityVisible = false;
+					}
+					if( lastVisibilityVisible !== visibilityVisible ){
+						$stickyBar.css({
+							'opacity': ( visibilityVisible ? 1 : 0 ),
+							'pointer-events': ( visibilityVisible ? 'auto' : 'none' ),
+						});
+					}
+					lastVisibilityVisible = visibilityVisible;
+				});
+				$innerBody.trigger('scroll');
+				it1.next();
+			},
 		]);
 		return;
 	}
