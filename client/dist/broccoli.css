@@ -2332,6 +2332,7 @@
   background-color: #fefefe;
   box-shadow: 0 3px 12px 6px rgba(0, 0, 0, 0.02);
   border-radius: 5px;
+  position: relative;
   overflow: hidden; }
 
 .broccoli__edit-window h3 {
@@ -2556,7 +2557,8 @@
   text-align: center;
   box-shadow: 0 3px 12px 6px rgba(0, 0, 0, 0.05);
   transition: opacity 0.3s;
-  opacity: 0; }
+  opacity: 0;
+  z-index: 1000; }
   .broccoli__edit-window-sticky-footer-main {
     padding: 10px;
     -ms-flex-positive: 10;

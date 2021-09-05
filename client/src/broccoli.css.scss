@@ -562,6 +562,7 @@
 		background-color: #fefefe;
 		box-shadow: 0 3px 12px 6px rgba(0, 0, 0, 0.02);
 		border-radius: 5px;
+		position: relative;
 		overflow: hidden;
 	}
 	h3{
@@ -811,6 +812,7 @@
 		box-shadow: 0 3px 12px 6px rgba(0, 0, 0, 0.05);
 		transition: opacity 0.3s;
 		opacity: 0;
+		z-index: 1000;
 		&-main {
 			padding: 10px;
 			flex-grow: 10;
