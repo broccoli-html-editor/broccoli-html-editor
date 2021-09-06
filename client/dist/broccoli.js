@@ -4441,6 +4441,7 @@ module.exports = function(broccoli){
 				var $innerBody = $('.broccoli__lightbox-inner-body');
 				var $btnOk = $editWindow.find('.broccoli__edit-window-form-buttons button[type=submit]');
 				var $stickyBar = $editWindow.find('.broccoli__edit-window-sticky-footer');
+				var $stickyBarBtns = $editWindow.find('.broccoli__edit-window-sticky-footer button');
 				var lastVisibilityVisible = null;
 				$innerBody.on('scroll', function(){
 					var btnOffsetScrollTop = $btnOk.offset().top - $innerBody.offset().top;
@@ -4455,6 +4456,8 @@ module.exports = function(broccoli){
 					if( lastVisibilityVisible !== visibilityVisible ){
 						$stickyBar.css({
 							'opacity': ( visibilityVisible ? 1 : 0 ),
+						});
+						$stickyBarBtns.css({
 							'pointer-events': ( visibilityVisible ? 'auto' : 'none' ),
 						});
 					}

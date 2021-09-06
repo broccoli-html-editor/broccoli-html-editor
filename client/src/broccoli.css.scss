@@ -813,6 +813,7 @@
 		transition: opacity 0.3s;
 		opacity: 0;
 		z-index: 1000;
+		pointer-events: none;
 		&-main {
 			padding: 10px;
 			flex-grow: 10;

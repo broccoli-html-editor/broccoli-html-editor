@@ -2558,7 +2558,8 @@
   box-shadow: 0 3px 12px 6px rgba(0, 0, 0, 0.05);
   transition: opacity 0.3s;
   opacity: 0;
-  z-index: 1000; }
+  z-index: 1000;
+  pointer-events: none; }
   .broccoli__edit-window-sticky-footer-main {
     padding: 10px;
     -ms-flex-positive: 10;
