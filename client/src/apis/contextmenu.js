@@ -92,27 +92,31 @@ module.exports = function(broccoli){
 	 */
 	function mkAutoMenu( options ){
 		options = options || {};
-		var instancePath;
+		var selectedInstancePath = broccoli.getSelectedInstance();;
+		var instancePath = selectedInstancePath;
 		if( options.baseInstancePath ){
 			instancePath = options.baseInstancePath;
-		}else{
-			instancePath = broccoli.getSelectedInstance();
 		}
 		var selectedInstanceRegion = broccoli.getSelectedInstanceRegion();
-		var panelElement = broccoli.panels.getPanelElement( instancePath );
+		var panelElement = options.currentElement || broccoli.panels.getPanelElement( instancePath );
 		// var contentsData = broccoli.contentsSourceData.get(instancePath);
 		var menu = [];
 		var isEditable = false;
 		var isDeletable = true;
 		var isCopyable = true;
+		var isPastable = true;
 		var isLoopField = false;
 		var isAppender = false;
+		var isEditWindow = false;
 
 		if( $(panelElement).attr('data-broccoli-sub-mod-name') ){
 			isLoopField = true;
 		}
 		if( $(panelElement).attr('data-broccoli-is-appender') == 'yes' ){
 			isAppender = true;
+		}
+		if( $(panelElement).attr('data-broccoli-is-edit-window') == 'yes' ){
+			isEditWindow = true;
 		}
 
 		if( selectedInstanceRegion.length === 1 ){
@@ -124,6 +128,12 @@ module.exports = function(broccoli){
 			}else{
 				isEditable = true;
 			}
+		}
+		if( isEditWindow ){
+			// 編集ウィンドウ中の module/loop field から呼び出されている場合
+			isDeletable = false;
+			isCopyable = false;
+			isPastable = false;
 		}
 
 		if( isEditable ){
@@ -146,14 +156,16 @@ module.exports = function(broccoli){
 			});
 		}
 
-		menu.push({
-			"label": "この直前にペースト",
-			"function": function(event){
-				broccoli.paste(function(){
-					// nothing to do.
-				}, event);
-			}
-		});
+		if( isPastable ){
+			menu.push({
+				"label": "この直前にペースト",
+				"function": function(event){
+					broccoli.paste(function(){
+						// nothing to do.
+					}, event);
+				}
+			});
+		}
 
 		if( !isLoopField ){
 			menu.push({

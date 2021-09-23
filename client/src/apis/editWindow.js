@@ -383,6 +383,7 @@ module.exports = function(broccoli){
 													'data-broccoli-instance-path':appenderInstancePath,
 													'data-broccoli-is-appender':'yes',
 													// 'data-broccoli-is-instance-tree-view': 'yes',
+													'data-broccoli-is-edit-window': 'yes',
 													'draggable': false
 												})
 												.on('mouseover', function(e){
@@ -406,6 +407,7 @@ module.exports = function(broccoli){
 													'data-broccoli-sub-mod-name': field.name,
 													'data-broccoli-is-appender':'yes',
 													// 'data-broccoli-is-instance-tree-view': 'yes',
+													'data-broccoli-is-edit-window': 'yes',
 													'draggable': false
 												})
 												.on('click', function(e){

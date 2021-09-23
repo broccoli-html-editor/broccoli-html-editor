@@ -650,6 +650,7 @@ module.exports = function(broccoli){
 			{
 				x: e.clientX,
 				y: e.clientY,
+				currentElement: elm,
 				baseInstancePath: $(elm).attr('data-broccoli-instance-path'),
 			},
 			callback
