@@ -647,8 +647,11 @@ module.exports = function(broccoli){
 		callback = callback || function(){};
 		broccoli.contextmenu.show(
 			false,
-			e.clientX,
-			e.clientY,
+			{
+				x: e.clientX,
+				y: e.clientY,
+				baseInstancePath: $(elm).attr('data-broccoli-instance-path'),
+			},
 			callback
 		);
 		return;

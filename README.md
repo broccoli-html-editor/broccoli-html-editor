@@ -360,6 +360,7 @@ $ composer test
 ### broccoli-html-editor v0.4.7 (リリース日)
 
 - UIの改善: 編集ウィンドウの下に、スクロールに追従するOKボタンを追加。
+- コンテキストメニューからのモジュール挿入に関する不具合を修正。
 
 ### broccoli-html-editor v0.4.6 (2021年8月26日)
 

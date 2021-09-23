@@ -22,12 +22,15 @@ module.exports = function(broccoli){
 	/**
 	 * context menu を表示する
 	 */
-	this.show = function(menu, x, y, callback){
+	this.show = function(menu, options, callback){
+		options = options || {};
 		callback = callback || function(){};
+		var x = options.x;
+		var y = options.y;
 		_this.close(function(){
 			setTimeout(function(){
 				if( menu === false ){
-					menu = mkAutoMenu();
+					menu = mkAutoMenu(options);
 				}
 
 				$('body').append($contextmenu.html(''));
@@ -87,8 +90,14 @@ module.exports = function(broccoli){
 	/**
 	 * context menu の自動生成
 	 */
-	function mkAutoMenu(){
-		var instancePath = broccoli.getSelectedInstance();
+	function mkAutoMenu( options ){
+		options = options || {};
+		var instancePath;
+		if( options.baseInstancePath ){
+			instancePath = options.baseInstancePath;
+		}else{
+			instancePath = broccoli.getSelectedInstance();
+		}
 		var selectedInstanceRegion = broccoli.getSelectedInstanceRegion();
 		var panelElement = broccoli.panels.getPanelElement( instancePath );
 		// var contentsData = broccoli.contentsSourceData.get(instancePath);
