@@ -366,6 +366,7 @@ module.exports = function(broccoli){
 												});
 
 											})
+											.off('contextmenu')
 										;
 										$ul
 											.append($li)
@@ -448,6 +449,10 @@ module.exports = function(broccoli){
 											})
 											.off('dblclick')
 											.on('dblclick', function(e){
+												var isLoopField = $(this).attr('data-broccoli-sub-mod-name');
+												if( !isLoopField ){
+													return;
+												}
 												_this.lock();//フォームをロック
 												broccoli.panels.onDblClick(e, this, function(){
 													updateModuleAndLoopField( instancePath, function(){
@@ -456,6 +461,7 @@ module.exports = function(broccoli){
 													} );
 												});
 											})
+											.off('contextmenu')
 										;
 										$ul.append( $li.append($appender) );
 										$ul.css({'padding-top': 10});

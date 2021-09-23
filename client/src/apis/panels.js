@@ -604,28 +604,28 @@ module.exports = function(broccoli){
 		var $this = $(elm);
 		var instancePath = $this.attr('data-broccoli-instance-path');
 
-		if( $this.attr('data-broccoli-sub-mod-name') && $this.attr('data-broccoli-is-appender') == 'yes' ){
-			// loopモジュールの繰り返し要素を増やします。
-			var modInternalId = $this.attr("data-broccoli-mod-internal-id");
-			var subModName = $this.attr("data-broccoli-sub-mod-name");
-			broccoli.contentsSourceData.addInstance( modInternalId, instancePath, function(result){
-				if(!result){
-					callback();
-					return;
-				}
-				broccoli.saveContents(function(){
-					broccoli.redraw(function(){
-						broccoli.closeProgress(function(){
-							callback();
+		if( $this.attr('data-broccoli-is-appender') == 'yes' ){
+			if( $this.attr('data-broccoli-sub-mod-name') ){
+				// loopモジュールの繰り返し要素を増やします。
+				var modInternalId = $this.attr("data-broccoli-mod-internal-id");
+				var subModName = $this.attr("data-broccoli-sub-mod-name");
+				broccoli.contentsSourceData.addInstance( modInternalId, instancePath, function(result){
+					if(!result){
+						callback();
+						return;
+					}
+					broccoli.saveContents(function(){
+						broccoli.redraw(function(){
+							broccoli.closeProgress(function(){
+								callback();
+							});
 						});
 					});
-				});
-			}, subModName );
-			e.preventDefault();
-			return;
-		}
+				}, subModName );
+				e.preventDefault();
+				return;
+			}
 
-		if( $this.attr('data-broccoli-is-appender') == 'yes' ){
 			// broccoli.message('編集できません。ここには、モジュールをドロップして追加または移動することができます。');
 			// instancePath = php.dirname(instancePath);
 			broccoli.insertInstance(instancePath, function(){
@@ -744,6 +744,9 @@ module.exports = function(broccoli){
 				isTouchStartHold = true;
 				timerTouchStart = setTimeout(function(){
 					isTouchStartHold = false;
+					// timerTouchStart = setTimeout(function(){
+					// 	isTouchStartHold = false;
+					// }, 2000);
 				}, 250);
 				return;
 			})
