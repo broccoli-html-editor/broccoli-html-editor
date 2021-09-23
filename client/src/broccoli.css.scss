@@ -557,7 +557,7 @@
 		margin: 0.5em 0 3em 0;
 	}
 	&-field{
-		margin: 1em 16px 2em 16px;
+		margin: 1em 0 2em 0;
 		border: 1px solid #e3e3e3;
 		background-color: #fefefe;
 		box-shadow: 0 3px 12px 6px rgba(0, 0, 0, 0.02);
@@ -726,8 +726,10 @@
 		&-fluid {
 			display: flex;
 			align-items: stretch;
+			gap: 10px;
 			text-align: center;
 			padding: 10px 0;
+			margin: 10px 0;
 			@media all and (max-width:600px){
 				display: block;
 			}
@@ -735,7 +737,7 @@
 		&-ok {
 			text-align: center;
 			flex-grow: 1;
-			padding: 10px;
+			padding: 0;
 			button {
 				max-width: 100%;
 				width: 60%;
@@ -747,7 +749,7 @@
 		&-cancel {
 			text-align: left;
 			flex-grow: 1;
-			padding: 10px;
+			padding: 0;
 			width: 50%;
 			@media all and (max-width:600px){
 				text-align: center;
@@ -764,7 +766,7 @@
 		&-delete {
 			text-align: right;
 			flex-grow: 1;
-			padding: 10px;
+			padding: 0;
 			width: 50%;
 			@media all and (max-width:600px){
 				text-align: center;

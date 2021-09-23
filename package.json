@@ -41,7 +41,7 @@
     "utils79": "^0.0.5"
   },
   "devDependencies": {
-    "@simonwep/pickr": "^1.7.1",
+    "@simonwep/pickr": "^1.8.2",
     "biflora": "0.0.1-alpha.1",
     "bootstrap": "^3.4.1",
     "gulp": "^4.0.2",
