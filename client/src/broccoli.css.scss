@@ -1139,6 +1139,7 @@
 		text-overflow: ellipsis;
 		overflow: hidden;
 		cursor: move;
+		user-select: none;
 
 		&:after{
 			content: url("./images/clip.png");

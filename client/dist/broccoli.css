@@ -2840,7 +2840,11 @@
     text-decoration: none;
     text-overflow: ellipsis;
     overflow: hidden;
-    cursor: move; }
+    cursor: move;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none; }
     .broccoli__module-palette a.broccoli__module-palette--draggablebutton:after {
       content: url("./images/clip.png");
       width: 20px;
