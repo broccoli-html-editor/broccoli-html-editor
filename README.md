@@ -357,7 +357,7 @@ $ composer test
 
 ## 更新履歴 - Change log
 
-### broccoli-html-editor v0.4.7 (リリース日)
+### broccoli-html-editor v0.4.7 (2021年9月26日)
 
 - UIの改善: 編集ウィンドウの下に、スクロールに追従するOKボタンを追加。
 - 編集ウィンドウからのコンテキストメニューを廃止した。
