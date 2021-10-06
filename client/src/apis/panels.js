@@ -27,28 +27,6 @@ module.exports = function(broccoli){
 		if( !domElm.visible ){
 			return;
 		}
-		function calcHeight($me, idx){//パネルの高さを計算する
-			var $nextElm = (function(){
-				var instancePath = domElm.instancePath;
-				if( instancePath.match( /\@[0-9]*$/ ) ){
-					var instancePathNext = instancePath.replace( /([0-9]*)$/, '' );
-					instancePathNext += php.intval(RegExp.$1) + 1;
-					// console.log("from: "+ instancePath);
-					// console.log("to: "+instancePathNext);
-					$nextElm = $contentsElements[instancePathNext];
-					return $nextElm;
-				}
-				return null;
-			})();
-			if( !$nextElm ){
-				return $me.outerHeight;
-			}
-			var rtn = ($nextElm.offsetTop - $me.offsetTop);
-			if( $me.outerHeight > rtn ){
-				return $me.outerHeight;
-			}
-			return rtn;
-		}
 		var $this = domElm;
 		var $panel = $('<div>');
 		var isAppender = $this.isAppender;
@@ -65,7 +43,7 @@ module.exports = function(broccoli){
 		$panel
 			.css({
 				'width': $this.outerWidth,
-				'height': calcHeight($this, idx),
+				'height': drawPanelCalcHeight($this),
 				'position': 'absolute',
 				'left': $this.offsetLeft,
 				'top': $this.offsetTop
@@ -82,6 +60,27 @@ module.exports = function(broccoli){
 			.append( $('<div>')
 				.addClass('broccoli--panel-drop-to-insert-here')
 			)
+			.on('mouseover', function(e){
+				var $this = $(this);
+				var currentInstance = $this.attr('data-broccoli-instance-path');
+
+				// パネルが、実際の要素の座標からずれて表示されてしまう場合にも、
+				// 最新の座標情報を取得しなおして補正する。
+				broccoli.postMessenger.send(
+					'getAllInstance',
+					{},
+					function(_contentsElements){
+						var $contentsElements = _contentsElements[currentInstance];
+						$this.css({
+							'width': $contentsElements.outerWidth,
+							'height': drawPanelCalcHeight($contentsElements),
+							'position': 'absolute',
+							'left': $contentsElements.offsetLeft,
+							'top': $contentsElements.offsetTop
+						});
+					}
+				);
+			})
 		;
 		_this.setPanelEventHandlers($panel);
 		if( !isAppender ){
@@ -100,6 +99,32 @@ module.exports = function(broccoli){
 			;
 		}
 		return;
+	}
+
+	/**
+	 * パネルの高さを計算する
+	 */
+	function drawPanelCalcHeight($me){
+		var $nextElm = (function(){
+			var instancePath = $me.instancePath;
+			if( instancePath.match( /\@[0-9]*$/ ) ){
+				var instancePathNext = instancePath.replace( /([0-9]*)$/, '' );
+				instancePathNext += php.intval(RegExp.$1) + 1;
+				// console.log("from: "+ instancePath);
+				// console.log("to: "+instancePathNext);
+				$nextElm = $contentsElements[instancePathNext];
+				return $nextElm;
+			}
+			return null;
+		})();
+		if( !$nextElm ){
+			return $me.outerHeight;
+		}
+		var rtn = ($nextElm.offsetTop - $me.offsetTop);
+		if( $me.outerHeight > rtn ){
+			return $me.outerHeight;
+		}
+		return rtn;
 	}
 
 	/**
@@ -675,11 +700,9 @@ module.exports = function(broccoli){
 				}
 				e.preventDefault();
 				e.stopPropagation();
-				// console.log(e);
 				clearTimeout(timerFocus);
 				var $this = $(this);
 				var instancePath = $this.attr('data-broccoli-instance-path');
-				// var selectedInstancePath = broccoli.getSelectedInstance();
 
 				if( e.shiftKey ){
 					broccoli.selectInstanceRegion( instancePath, function(){
@@ -736,17 +759,12 @@ module.exports = function(broccoli){
 				// タッチデバイス向けの処理
 				clearTimeout(timerTouchStart);
 				if( isTouchStartHold ){
-					_this.onDblClick(e, this, function(){
-						// console.log('dblclick event done.');
-					});
+					_this.onDblClick(e, this, function(){});
 					return;
 				}
 				isTouchStartHold = true;
 				timerTouchStart = setTimeout(function(){
 					isTouchStartHold = false;
-					// timerTouchStart = setTimeout(function(){
-					// 	isTouchStartHold = false;
-					// }, 2000);
 				}, 250);
 				return;
 			})
@@ -769,9 +787,6 @@ module.exports = function(broccoli){
 				$(this).addClass('broccoli--panel__drag-entered');
 				if( $(this).attr('data-broccoli-is-instance-tree-view') == 'yes' ){
 					if(focusedInstance != instancePath){
-						// if( $(this).attr('data-broccoli-is-appender') == 'yes' ){
-						// 	instancePath = php.dirname(instancePath);
-						// }
 						dragOvered = instancePath;
 						broccoli.focusInstance( instancePath );
 					}
@@ -779,7 +794,6 @@ module.exports = function(broccoli){
 
 				if( $(this).attr('data-broccoli-is-appender') != 'yes' ){
 					var ud = getUd(e, this);
-					// console.info(ud);
 					if( ud.y == 'u' ){
 						$(this).addClass('broccoli--panel__drag-entered-u');
 						$(this).removeClass('broccoli--panel__drag-entered-d');
@@ -841,7 +855,6 @@ module.exports = function(broccoli){
 						'getAllInstance',
 						{},
 						function(_contentsElements){
-							// console.log(_contentsElements);
 							$contentsElements = _contentsElements;
 							it1.next(data);
 						}

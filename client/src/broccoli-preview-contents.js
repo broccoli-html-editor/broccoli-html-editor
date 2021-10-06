@@ -9,16 +9,16 @@
 
 
 	// クリックイベントを登録
-	$iframeWindow.bind('click', function(){
+	$iframeWindow.on('click', function(){
 		callbackMessage('unselectInstance');
 		callbackMessage('unfocusInstance');
 	});
 	// dropイベントをキャンセル
-	$iframeWindow.bind('dragover', function(e){
+	$iframeWindow.on('dragover', function(e){
 		e.stopPropagation();
 		e.preventDefault();
 		return;
-	}).bind('drop', function(e){
+	}).on('drop', function(e){
 		e.stopPropagation();
 		e.preventDefault();
 		return;
@@ -40,6 +40,51 @@
 
 	function tabCancel(){
 		$('body *').attr({'tabindex':'-1'}).css({'outline':'none'});
+	}
+
+	function getInstance($this){
+		var elm = {};
+		elm.instancePath = $this.attr('data-broccoli-instance-path');
+		elm.modId = $this.attr('data-broccoli-mod-id');// <- このidは、コンテンツデータ由来なので、実際にはinternalIdを扱っている。が、名前は id でよい。
+		elm.subModName = $this.attr('data-broccoli-sub-mod-name');
+		elm.isAppender = ($this.attr('data-broccoli-is-appender') == 'yes');
+		elm.areaSizeDetection = $this.attr('data-broccoli-area-size-detection');
+		elm.modName = $this.attr('data-broccoli-module-name');
+		elm.offsetLeft = $this.offset().left;
+		elm.offsetTop = $this.offset().top;
+		elm.outerWidth = elm.offsetLeft + $this.outerWidth();
+		elm.outerHeight = elm.offsetTop + $this.outerHeight();
+		if( elm.areaSizeDetection == 'deep' ){
+			$this.find('*').each(function(){
+				var $this = $(this);
+				if( $this.is(":hidden") ){
+					return;
+				}
+				var oL = $this.offset().left;
+				var oT = $this.offset().top;
+				var oW = oL + $this.outerWidth();
+				var oH = oT + $this.outerHeight();
+				if( elm.offsetLeft > oL ){
+					elm.offsetLeft = oL;
+				}
+				if( elm.offsetTop > oT ){
+					elm.offsetTop = oT;
+				}
+				if( elm.outerWidth < oW ){
+					elm.outerWidth = oW;
+				}
+				if( elm.outerHeight < oH ){
+					elm.outerHeight = oH;
+				}
+			});
+		}
+		elm.outerWidth = elm.outerWidth - elm.offsetLeft;
+		elm.outerHeight = elm.outerHeight - elm.offsetTop;
+		elm.visible = true;
+		if( $this.is(":hidden") ){
+			elm.visible = false;
+		}
+		return elm;
 	}
 
 	window.addEventListener('message',function(event){
@@ -78,47 +123,7 @@
 			var $instances = $iframeWindow.find('[data-broccoli-instance-path]');
 			$instances.each(function(){
 				var $this = $(this);
-				var elm = {};
-				elm.instancePath = $this.attr('data-broccoli-instance-path');
-				elm.modId = $this.attr('data-broccoli-mod-id');// <- このidは、コンテンツデータ由来なので、実際にはinternalIdを扱っている。が、名前は id でよい。
-				elm.subModName = $this.attr('data-broccoli-sub-mod-name');
-				elm.isAppender = ($this.attr('data-broccoli-is-appender') == 'yes');
-				elm.areaSizeDetection = $this.attr('data-broccoli-area-size-detection');
-				elm.modName = $this.attr('data-broccoli-module-name');
-				elm.offsetLeft = $this.offset().left;
-				elm.offsetTop = $this.offset().top;
-				elm.outerWidth = elm.offsetLeft + $this.outerWidth();
-				elm.outerHeight = elm.offsetTop + $this.outerHeight();
-				if( elm.areaSizeDetection == 'deep' ){
-					$this.find('*').each(function(){
-						var $this = $(this);
-						if( $this.is(":hidden") ){
-							return;
-						}
-						var oL = $this.offset().left;
-						var oT = $this.offset().top;
-						var oW = oL + $this.outerWidth();
-						var oH = oT + $this.outerHeight();
-						if( elm.offsetLeft > oL ){
-							elm.offsetLeft = oL;
-						}
-						if( elm.offsetTop > oT ){
-							elm.offsetTop = oT;
-						}
-						if( elm.outerWidth < oW ){
-							elm.outerWidth = oW;
-						}
-						if( elm.outerHeight < oH ){
-							elm.outerHeight = oH;
-						}
-					});
-				}
-				elm.outerWidth = elm.outerWidth - elm.offsetLeft;
-				elm.outerHeight = elm.outerHeight - elm.offsetTop;
-				elm.visible = true;
-				if( $this.is(":hidden") ){
-					elm.visible = false;
-				}
+				var elm = getInstance($this);
 				rtn[elm.instancePath] = elm;
 			});
 			callbackMessage(data.callback, rtn);
@@ -168,7 +173,7 @@
 		callbackMessage( 'onClickContentsLink', data );
 		return false;
 	});
-	$iframeWindow.find('form').bind("submit", function() {
+	$iframeWindow.find('form').on("submit", function() {
 		var data = {};
 		var $this = $(this);
 		data.url = $this.prop('action');
