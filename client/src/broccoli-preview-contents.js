@@ -118,6 +118,14 @@
 			callbackMessage(data.callback, true);
 			return;
 
+		}else if(data.api == 'getInstance'){
+			var rtn = {};
+			var $instance = $iframeWindow.find('[data-broccoli-instance-path="'+data.options.instancePath+'"]');
+			var elm = getInstance($instance);
+			rtn = elm;
+			callbackMessage(data.callback, rtn);
+			return;
+
 		}else if(data.api == 'getAllInstance'){
 			var rtn = {};
 			var $instances = $iframeWindow.find('[data-broccoli-instance-path]');

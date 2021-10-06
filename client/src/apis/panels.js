@@ -67,10 +67,11 @@ module.exports = function(broccoli){
 				// パネルが、実際の要素の座標からずれて表示されてしまう場合にも、
 				// 最新の座標情報を取得しなおして補正する。
 				broccoli.postMessenger.send(
-					'getAllInstance',
-					{},
-					function(_contentsElements){
-						var $contentsElements = _contentsElements[currentInstance];
+					'getInstance',
+					{
+						'instancePath': currentInstance,
+					},
+					function($contentsElements){
 						$this.css({
 							'width': $contentsElements.outerWidth,
 							'height': drawPanelCalcHeight($contentsElements),
