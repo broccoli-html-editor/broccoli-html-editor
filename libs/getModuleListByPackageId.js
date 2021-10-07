@@ -112,6 +112,7 @@ module.exports = function(broccoli, packageId, callback){
 								}
 								rtn.categories[row].categoryName = rtn.categories[row].categoryInfo.name||row;
 								rtn.categories[row].realpath = realpath;
+								rtn.categories[row].hidden = (rtn.categories[row].categoryInfo.hidden || false)
 								rtn.categories[row].deprecated = (rtn.categories[row].categoryInfo.deprecated || false)
 
 								// Multi Language
@@ -172,6 +173,7 @@ module.exports = function(broccoli, packageId, callback){
 									} catch (e) {
 										rtn.categories[idx].modules[row2].moduleInfo = {};
 									}
+									rtn.categories[idx].modules[row2].hidden = (rtn.categories[idx].modules[row2].moduleInfo.hidden||false);
 									rtn.categories[idx].modules[row2].deprecated = (rtn.categories[idx].modules[row2].moduleInfo.deprecated||false);
 
 									// moduleInternalId

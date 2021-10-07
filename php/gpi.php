@@ -100,6 +100,7 @@ class gpi{
 					$moduleInfo['isSubModule'] = $module->isSubModule;
 					$moduleInfo['isSingleRootElement'] = $module->isSingleRootElement;
 					$moduleInfo['isClipModule'] = $module->isClipModule;
+					$moduleInfo['hidden'] = $module->hidden;
 					$moduleInfo['deprecated'] = $module->deprecated;
 					$moduleInfo['pics'] = $module->getPics();
 					$moduleInfo['readme'] = $module->getReadme();

@@ -125,6 +125,7 @@ module.exports = function(broccoli, api, options, callback){
 					moduleInfo.isSubModule = module.isSubModule;
 					moduleInfo.isSingleRootElement = module.isSingleRootElement;
 					moduleInfo.isClipModule = module.isClipModule;
+					moduleInfo.hidden = module.hidden;
 					moduleInfo.deprecated = module.deprecated;
 					module.getPics(function(pics){
 						moduleInfo.pics = pics;

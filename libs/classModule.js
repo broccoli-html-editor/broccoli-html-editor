@@ -81,7 +81,8 @@ module.exports = function(broccoli, moduleId, options){
 		enabledParents: [],
 		enabledBowls: [],
 		interface: {},
-		deprecated: false
+		hidden: false,
+		deprecated: false,
 	};
 
 	if(this.isSystemModule){
@@ -245,10 +246,14 @@ module.exports = function(broccoli, moduleId, options){
 							}
 						}
 					}
+					if( tmpJson.hidden ){
+						_this.info.hidden = tmpJson.hidden;
+					}
 					if( tmpJson.deprecated ){
 						_this.info.deprecated = tmpJson.deprecated;
 					}
 				}
+				_this.hidden = (_this.info.hidden||false);
 				_this.deprecated = (_this.info.deprecated||false);
 				_this.thumb = null;
 				if( isFile( _this.realpath+'/thumb.png' ) ){

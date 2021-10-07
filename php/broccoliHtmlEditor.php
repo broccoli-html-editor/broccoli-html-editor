@@ -353,6 +353,7 @@ class broccoliHtmlEditor{
 				'packageName' => (@$infoJson->name ? $infoJson->name : $idx),
 				'realpath' => $realpath,
 				'infoJson' => $infoJson,
+				'hidden' => (@$infoJson->hidden ? true : false),
 				'deprecated' => (@$infoJson->deprecated ? true : false),
 			);
 			$modList = $this->getModuleListByPackageId($idx);
@@ -451,6 +452,7 @@ class broccoliHtmlEditor{
 				}
 				$rtn['categories'][$row]['categoryName'] = (@$rtn['categories'][$row]['categoryInfo']->name ? $rtn['categories'][$row]['categoryInfo']->name : $row);
 				$rtn['categories'][$row]['realpath'] = $realpath;
+				$rtn['categories'][$row]['hidden'] = (@$rtn['categories'][$row]['categoryInfo']->hidden ? true : false);
 				$rtn['categories'][$row]['deprecated'] = (@$rtn['categories'][$row]['categoryInfo']->deprecated ? true : false);
 
 				// Multi Language
@@ -498,6 +500,7 @@ class broccoliHtmlEditor{
 				if( is_string(@$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->enabledBowls)  ){
 					$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->enabledBowls = array($rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->enabledBowls);
 				}
+				$rtn['categories'][$idx]['modules'][$row2]['hidden'] = (@$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->hidden ? $rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->hidden : false);
 				$rtn['categories'][$idx]['modules'][$row2]['deprecated'] = (@$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->deprecated ? $rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->deprecated : false);
 
 				// moduleInternalId

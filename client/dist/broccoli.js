@@ -3170,7 +3170,7 @@ module.exports = function(broccoli, targetElm, callback){
 		it79.ary(
 			categories ,
 			function(it1, category, categoryId){
-				if( category.deprecated ){
+				if( category.hidden || category.deprecated ){
 					// 非推奨のカテゴリは非表示
 					it1.next();return;
 				}
@@ -3235,7 +3235,7 @@ module.exports = function(broccoli, targetElm, callback){
 		it79.ary(
 			modules ,
 			function(it1, mod, moduleId){
-				if( mod.deprecated ){
+				if( mod.hidden || mod.deprecated ){
 					// 非推奨のモジュールは非表示
 					it1.next();
 					return;
@@ -3597,7 +3597,7 @@ module.exports = function(broccoli, targetElm, callback){
 				it79.ary(
 					moduleList ,
 					function(it2, pkg, packageId){
-						if( pkg.deprecated ){
+						if( pkg.hidden || pkg.deprecated ){
 							// 非推奨のパッケージは非表示
 							it2.next();return;
 						}
@@ -5507,7 +5507,7 @@ module.exports = function(broccoli){
 					it79.ary(
 						moduleList ,
 						function(it2, pkg, packageId){
-							if( pkg.deprecated ){
+							if( pkg.hidden || pkg.deprecated ){
 								// 非推奨のパッケージは非表示
 								it2.next();
 								return;
@@ -5581,7 +5581,7 @@ module.exports = function(broccoli){
 		it79.ary(
 			categories ,
 			function(it1, category, categoryId){
-				if( category.deprecated ){
+				if( category.hidden || category.deprecated ){
 					// 非推奨のカテゴリは非表示
 					it1.next();return;
 				}
@@ -5644,7 +5644,7 @@ module.exports = function(broccoli){
 		it79.ary(
 			modules ,
 			function(it1, mod, moduleId){
-				if( mod.deprecated ){
+				if( mod.hidden || mod.deprecated ){
 					// 非推奨のモジュールは非表示
 					it1.next();
 					return;

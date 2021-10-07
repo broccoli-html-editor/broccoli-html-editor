@@ -45,7 +45,8 @@ module.exports = function(broccoli, callback){
 								'packageName': (infoJson.name || idx),
 								'realpath': realpath,
 								'infoJson': infoJson,
-								'deprecated': (infoJson.deprecated || false)
+								'hidden': (infoJson.hidden || false),
+								'deprecated': (infoJson.deprecated || false),
 							};
 
 							// Multi Language

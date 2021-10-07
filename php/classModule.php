@@ -29,6 +29,7 @@ class classModule{
 			$isSystemModule,
 			$isSubModule,
 			$isClipModule,
+			$hidden,
 			$deprecated,
 			$template,
 			$templateFilename,
@@ -78,7 +79,8 @@ class classModule{
 			'enabledParents' => array(),
 			'enabledBowls' => array(),
 			'interface' => array(),
-			'deprecated' => false
+			'hidden' => false, // Broccoli v0.4.8 追加
+			'deprecated' => false,
 		);
 
 		if($this->isSystemModule){
@@ -411,10 +413,14 @@ class classModule{
 						}
 					}
 				}
+				if( property_exists($tmpJson, 'hidden') && $tmpJson->hidden ){
+					$this->info['hidden'] = $tmpJson->hidden;
+				}
 				if( property_exists($tmpJson, 'deprecated') && $tmpJson->deprecated ){
 					$this->info['deprecated'] = $tmpJson->deprecated;
 				}
 			}
+			$this->hidden = ($this->info['hidden'] ? true : false);
 			$this->deprecated = ($this->info['deprecated'] ? true : false);
 			$this->thumb = null;
 			if( is_file( $this->realpath.'/thumb.png' ) ){
