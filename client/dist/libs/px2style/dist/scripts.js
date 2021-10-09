@@ -11305,20 +11305,25 @@ module.exports = function(Px2style){
 		}
 
 		this.close = function(callback){
+			var _this = this;
 			callback = callback||function(){};
-			try {
-				this.focusBackTo.focus();
-			} catch (e) {}
-			try {
-				this.$modal.remove();
-			} catch (e) {}
-			if(!modalLayers.length){
-				$(window).off('resize.px2-modal');
-				$(window).off('keydown.px2-modal');
-			}
-			callback(true);
-			this.options.onclose();
-			delete(this);
+			_this.$modal.addClass('px2-modal__dialog--closed');
+
+			setTimeout(function(){
+				try {
+					_this.focusBackTo.focus();
+				} catch (e) {}
+				try {
+					_this.$modal.remove();
+				} catch (e) {}
+				if(!modalLayers.length){
+					$(window).off('resize.px2-modal');
+					$(window).off('keydown.px2-modal');
+				}
+				callback(true);
+				_this.options.onclose();
+				delete(_this);
+			}, 300);
 		}
 
 	}
@@ -11335,8 +11340,10 @@ module.exports = function(Px2style){
 			callback(false);
 			return;
 		}
-		lastModal.close(callback);
-		lastModal = undefined;
+		lastModal.close(function(res){
+			callback(res);
+			lastModal = undefined;
+		});
 		return;
 	}
 
