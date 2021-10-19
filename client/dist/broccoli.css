@@ -2639,6 +2639,43 @@
     -ms-flex-positive: 10;
         flex-grow: 10; }
 
+.broccoli__edit-window-btn-close {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 1.4em;
+  height: 1.4em; }
+  .broccoli__edit-window-btn-close button {
+    position: absolute;
+    left: 0;
+    right: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    border-radius: 50%;
+    border: 1px solid #999;
+    background-color: #eee;
+    color: #999;
+    cursor: pointer; }
+    .broccoli__edit-window-btn-close button::before, .broccoli__edit-window-btn-close button::after {
+      content: "";
+      border-bottom: 1px solid #999;
+      width: 70%;
+      position: absolute;
+      top: 50%;
+      left: 15%; }
+    .broccoli__edit-window-btn-close button::before {
+      transform: rotate(45deg); }
+    .broccoli__edit-window-btn-close button::after {
+      transform: rotate(-45deg); }
+    .broccoli__edit-window-btn-close button:hover {
+      border: 1px solid #666;
+      background-color: #f9f9f9; }
+      .broccoli__edit-window-btn-close button:hover::before, .broccoli__edit-window-btn-close button:hover::after {
+        border-bottom: 1px solid #666; }
+
 .broccoli__find-window {
   display: -ms-flexbox;
   display: flex;

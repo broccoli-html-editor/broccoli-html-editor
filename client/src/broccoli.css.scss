@@ -545,7 +545,7 @@
 }
 
 // edit window
-.broccoli__edit-window{
+.broccoli__edit-window {
 
 	h2{
 		font-weight: bold;
@@ -819,6 +819,50 @@
 		&-main {
 			padding: 10px;
 			flex-grow: 10;
+		}
+	}
+
+	&-btn-close {
+		position: absolute;
+		top: 5px;
+		right: 5px;
+		width: 1.4em; height: 1.4em;
+		button {
+			position: absolute;
+			left: 0;
+			right: 0;
+			display: block;
+			width: 100%; height: 100%;
+			padding: 0;
+			margin: 0;
+			border-radius: 50%;
+			border: 1px solid #999;
+			background-color: #eee;
+			color: #999;
+			cursor: pointer;
+			&::before,
+			&::after {
+				content: "";
+				border-bottom: 1px solid #999;
+				width: 70%;
+				position: absolute;
+				top: 50%;
+				left: 15%;
+			}
+			&::before {
+				transform: rotate(45deg);
+			}
+			&::after {
+				transform: rotate(-45deg);
+			}
+			&:hover {
+				border: 1px solid #666;
+				background-color: #f9f9f9;
+				&::before,
+				&::after {
+					border-bottom: 1px solid #666;
+				}
+			}
 		}
 	}
 }

@@ -16,6 +16,7 @@ module.exports = function(broccoli){
 	var $editWindow;
 	var tplFrame = ''
 				+ '<div class="broccoli__edit-window">'
+				+ '	<div class="broccoli__edit-window-btn-close button"><button></button></div>'
 				+ '	<form action="javascript:;">'
 				+ '		<div class="broccoli__edit-window-logical-path">---</div>'
 				+ '		<h2 class="broccoli__edit-window-module-name">---</h2>'
@@ -678,6 +679,12 @@ module.exports = function(broccoli){
 										});
 									});
 
+								})
+							;
+							$editWindow.find('.broccoli__edit-window-btn-close button')
+								.on('click', function(){
+									_this.lock();
+									callback(false);
 								})
 							;
 							$editWindow.find('button.broccoli__edit-window-btn-cancel')
