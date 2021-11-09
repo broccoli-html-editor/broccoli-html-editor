@@ -2376,15 +2376,6 @@
   text-decoration: none;
   text-overflow: ellipsis;
   overflow: hidden; }
-  .broccoli__insert-window a.broccoli__insert-window--module:after {
-    content: url("./images/clip.png");
-    width: 20px;
-    height: 20px;
-    margin-left: 0.5em;
-    color: #669; }
-  .broccoli__insert-window a.broccoli__insert-window--module[data-clip="false"]:after {
-    content: "";
-    margin-left: 0; }
   .broccoli__insert-window a.broccoli__insert-window--module:hover {
     background-color: #ddd;
     text-decoration: none;
@@ -2966,15 +2957,6 @@
        -moz-user-select: none;
         -ms-user-select: none;
             user-select: none; }
-    .broccoli__module-palette a.broccoli__module-palette--draggablebutton:after {
-      content: url("./images/clip.png");
-      width: 20px;
-      height: 20px;
-      margin-left: 0.5em;
-      color: #669; }
-    .broccoli__module-palette a.broccoli__module-palette--draggablebutton[data-clip="false"]:after {
-      content: "";
-      margin-left: 0; }
     .broccoli__module-palette a.broccoli__module-palette--draggablebutton:hover {
       background-color: #ddd;
       background: linear-gradient(to bottom, #f9f9f9, #ddd);

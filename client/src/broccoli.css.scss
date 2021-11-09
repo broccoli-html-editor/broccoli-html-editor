@@ -485,19 +485,6 @@
 		text-overflow: ellipsis;
 		overflow: hidden;
 
-		&:after{
-			content: url("./images/clip.png");
-			width: 20px; height: 20px;
-			margin-left: 0.5em;
-			color: #669;
-		}
-		&[data-clip="false"]{
-			&:after{
-				content: "";
-				margin-left: 0;
-			}
-		}
-
 		&:hover{
 			background-color: #ddd;
 			text-decoration: none;
@@ -1184,19 +1171,6 @@
 		overflow: hidden;
 		cursor: move;
 		user-select: none;
-
-		&:after{
-			content: url("./images/clip.png");
-			width: 20px; height: 20px;
-			margin-left: 0.5em;
-			color: #669;
-		}
-		&[data-clip="false"]{
-			&:after{
-				content: "";
-				margin-left: 0;
-			}
-		}
 
 		&:hover{
 			background-color: #ddd;

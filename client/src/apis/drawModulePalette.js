@@ -181,7 +181,7 @@ module.exports = function(broccoli, targetElm, callback){
 						'method': 'add',
 						'modId': $this.attr('data-id'),
 						'modInternalId': $this.attr('data-internal-id'),
-						'modClip': $this.attr('data-clip')
+						'modClip': $this.attr('data-clip'),
 					};
 					event.dataTransfer.setData('text/json', JSON.stringify(transferData) );
 				});
@@ -321,6 +321,18 @@ module.exports = function(broccoli, targetElm, callback){
 		$html.html(html);
 		$html.find('h1.broccoli--module-info-content-h1').text($elm.attr('data-name'));
 		$html.find('.broccoli--module-info-content-id').text($elm.attr('data-internal-id'));
+		if( $elm.attr('data-clip') == 'true' ){
+			$html.find('.broccoli--module-info-content-id').append(
+				$('<img />')
+					.attr({
+						'src':broccoli.__dirname+'/images/clip.png',
+					})
+					.css({
+						'height': '1.2em',
+						'margin-left': '10px',
+					})
+			);
+		}
 		var readme = $elm.attr('data-readme');
 		$html.find('.broccoli__module-readme').html((readme ? readme : '<p style="text-align:center; margin: 100px auto;">-- no readme --</p>' ));
 
