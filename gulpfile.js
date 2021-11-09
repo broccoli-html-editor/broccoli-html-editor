@@ -21,16 +21,16 @@ gulp.task("client-libs:bootstrap-js", function() {
 		.pipe(gulp.dest( './client/dist/libs/bootstrap/dist/js/' ))
 	;
 });
-gulp.task("client-libs:px2style-scripts", function() {
-	return gulp.src(["node_modules/px2style/dist/scripts.js"])
-		.pipe(gulp.dest( './client/dist/libs/px2style/dist/' ))
-	;
-});
-gulp.task("client-libs:px2style-images", function() {
-	return gulp.src(["node_modules/px2style/dist/images/**/*"])
-		.pipe(gulp.dest( './client/dist/libs/px2style/dist/images/' ))
-	;
-});
+// gulp.task("client-libs:px2style-scripts", function() {
+// 	return gulp.src(["node_modules/px2style/dist/scripts.js"])
+// 		.pipe(gulp.dest( './client/dist/libs/px2style/dist/' ))
+// 	;
+// });
+// gulp.task("client-libs:px2style-images", function() {
+// 	return gulp.src(["node_modules/px2style/dist/images/**/*"])
+// 		.pipe(gulp.dest( './client/dist/libs/px2style/dist/images/' ))
+// 	;
+// });
 
 // src 中の *.css.scss を処理
 gulp.task('.css.scss', function(){
@@ -106,14 +106,20 @@ let _tasks = gulp.parallel(
 	'.css.scss',
 	'test/main.js',
 	'client-libs:bootstrap-fonts',
-	'client-libs:bootstrap-js',
-	'client-libs:px2style-scripts',
-	'client-libs:px2style-images'
+	'client-libs:bootstrap-js'
+	// 'client-libs:px2style-scripts',
+	// 'client-libs:px2style-images'
 );
 
 // src 中のすべての拡張子を監視して処理
 gulp.task("watch", function() {
-	return gulp.watch(["client/src/**/*","fields/client/**/*","fields/**/*","libs/**/*","tests/testdata/htdocs/index_files/main.src.js"], _tasks);
+	return gulp.watch([
+		"client/src/**/*",
+		"fields/client/**/*",
+		"fields/**/*",
+		"libs/**/*",
+		"tests/testdata/htdocs/index_files/main.src.js"
+	], _tasks);
 });
 
 // src 中のすべての拡張子を処理(default)
