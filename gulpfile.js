@@ -1,4 +1,6 @@
 let gulp = require('gulp');
+let webpack = require('webpack');
+let webpackStream = require('webpack-stream');
 let sass = require('gulp-sass');//CSSコンパイラ
 let autoprefixer = require("gulp-autoprefixer");//CSSにベンダープレフィックスを付与してくれる
 let minifyCss = require('gulp-minify-css');//CSSファイルの圧縮ツール
@@ -49,26 +51,49 @@ gulp.task('.css.scss', function(){
 
 // broccoli.js (frontend) を処理
 gulp.task("broccoli.js", function() {
-	return gulp.src(["client/src/broccoli.js"])
+	return webpackStream({
+		mode: 'production',
+		entry: "./client/src/broccoli.js",
+		devtool: 'source-map',
+		output: {
+			filename: "broccoli.js"
+		},
+		module:{
+			rules:[
+				{
+					test:/\.html$/,
+					use:['html-loader']
+				}
+			]
+		},
+		externals: {
+			fs: 'commonjs fs',
+		},
+	}, webpack)
 		.pipe(plumber())
-		.pipe(browserify({}))
-		.pipe(concat('broccoli.js'))
-		.pipe(gulp.dest( './client/dist/' ))
-		.pipe(concat('broccoli.min.js'))
-		.pipe(uglify())
 		.pipe(gulp.dest( './client/dist/' ))
 	;
 });
 
 // broccoli.js (frontend) を処理
 gulp.task("broccoli-preview-contents.js", function() {
-	return gulp.src(["client/src/broccoli-preview-contents.js"])
+	return webpackStream({
+		mode: 'production',
+		entry: "./client/src/broccoli-preview-contents.js",
+		devtool: 'source-map',
+		output: {
+			filename: "broccoli-preview-contents.js"
+		},
+		module:{
+			rules:[
+				{
+					test:/\.html$/,
+					use:['html-loader']
+				}
+			]
+		}
+	}, webpack)
 		.pipe(plumber())
-		.pipe(browserify({}))
-		.pipe(concat('broccoli-preview-contents.js'))
-		.pipe(gulp.dest( './client/dist/' ))
-		.pipe(concat('broccoli-preview-contents.min.js'))
-		.pipe(uglify())
 		.pipe(gulp.dest( './client/dist/' ))
 	;
 });

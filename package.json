@@ -58,6 +58,8 @@
     "md5": "^2.2.1",
     "mocha": "^2.1.0",
     "px2style": "git+https://github.com/pickles2/px2style.git#develop",
-    "validatorjs": "3.18.1"
+    "validatorjs": "3.18.1",
+    "webpack": "^4.39.2",
+    "webpack-stream": "^5.2.1"
   }
 }
