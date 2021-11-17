@@ -32,14 +32,9 @@ gulp.task('.css.scss', function(){
 		.pipe(rename({
 			extname: ''
 		}))
-		.pipe(rename({
-			extname: '.css'
-		}))
-		.pipe(gulp.dest( './client/dist/' ))
-
 		.pipe(minifyCss({compatibility: 'ie8'}))
 		.pipe(rename({
-			extname: '.min.css'
+			extname: '.css'
 		}))
 		.pipe(gulp.dest( './client/dist/' ))
 	;
