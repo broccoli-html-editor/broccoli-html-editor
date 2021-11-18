@@ -72,7 +72,15 @@ module.exports = function(broccoli, iframe){
 					"dataType": "text",
 					"complete": function(XMLHttpRequest, textStatus){
 						var base64 = new Buffer(XMLHttpRequest.responseText).toString('base64');
-						win.postMessage({'scriptUrl':'data:text/javascript;base64,'+base64}, targetWindowOrigin);
+
+						var event;
+						event = document.createEvent("Event");
+						event.initEvent("message", false, false);
+						event.data = {'scriptUrl':'data:text/javascript;base64,'+base64};
+						event.origin = targetWindowOrigin;
+						win.dispatchEvent(event);
+						// win.postMessage({'scriptUrl':'data:text/javascript;base64,'+base64}, targetWindowOrigin);
+
 						it1.next();
 					}
 				});
@@ -133,7 +141,15 @@ module.exports = function(broccoli, iframe){
 
 		var win = $(iframe).get(0).contentWindow;
 		var targetWindowOrigin = getTargetOrigin(iframe);
-		win.postMessage(message, targetWindowOrigin);
+
+		var event;
+		event = document.createEvent("Event");
+		event.initEvent("message", false, false);
+		event.data = message;
+		event.origin = targetWindowOrigin;
+		win.dispatchEvent(event);
+		// win.postMessage(message, targetWindowOrigin);
+
 		return;
 	}
 

@@ -9,7 +9,8 @@
     "up": "node ./tests/biflora/server.js",
     "submodules-update": "npm install; gulp;",
     "preview": "gulp preview;",
-    "test": "mocha --ui tdd ./tests/"
+    "test": "mocha --ui tdd ./tests/",
+    "testcafe": "./node_modules/.bin/testcafe firefox ./tests/testcafe/mainTest.js --skip-js-errors"
   },
   "repository": {
     "type": "git",
@@ -54,6 +55,7 @@
     "md5": "^2.2.1",
     "mocha": "^2.1.0",
     "px2style": "git+https://github.com/pickles2/px2style.git#develop",
+    "testcafe": "^1.17.1",
     "validatorjs": "3.18.1",
     "webpack": "^4.39.2",
     "webpack-stream": "^5.2.1"

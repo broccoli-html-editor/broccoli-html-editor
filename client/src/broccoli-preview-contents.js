@@ -29,13 +29,23 @@
 	function callbackMessage(callbackId, data){
 		if(!_origin){return;}
 		if(typeof(callbackId)!==typeof('')){return;}
-		window.parent.postMessage(
-			{
-				'api':callbackId ,
-				'options': data
-			},
-			_origin
-		);
+
+		var event;
+		event = document.createEvent("Event");
+		event.initEvent("message", false, false);
+		event.data = {
+			'api':callbackId ,
+			'options': data
+		};
+		event.origin = _origin;
+		window.parent.dispatchEvent(event);
+		// window.parent.postMessage(
+		// 	{
+		// 		'api':callbackId ,
+		// 		'options': data
+		// 	},
+		// 	_origin
+		// );
 	}
 
 	function tabCancel(){
