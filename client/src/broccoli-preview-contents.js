@@ -30,22 +30,25 @@
 		if(!_origin){return;}
 		if(typeof(callbackId)!==typeof('')){return;}
 
-		var event;
-		event = document.createEvent("Event");
-		event.initEvent("message", false, false);
-		event.data = {
-			'api':callbackId ,
-			'options': data
-		};
-		event.origin = _origin;
-		window.parent.dispatchEvent(event);
-		// window.parent.postMessage(
-		// 	{
-		// 		'api':callbackId ,
-		// 		'options': data
-		// 	},
-		// 	_origin
-		// );
+		try {
+			var event;
+			event = document.createEvent("Event");
+			event.initEvent("message", false, false);
+			event.data = {
+				'api':callbackId ,
+				'options': data
+			};
+			event.origin = _origin;
+			window.parent.dispatchEvent(event);
+		}catch(e){
+			window.parent.postMessage(
+				{
+					'api':callbackId ,
+					'options': data
+				},
+				_origin
+			);
+		}
 	}
 
 	function tabCancel(){

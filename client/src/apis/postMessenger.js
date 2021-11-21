@@ -73,13 +73,16 @@ module.exports = function(broccoli, iframe){
 					"complete": function(XMLHttpRequest, textStatus){
 						var base64 = new Buffer(XMLHttpRequest.responseText).toString('base64');
 
-						var event;
-						event = document.createEvent("Event");
-						event.initEvent("message", false, false);
-						event.data = {'scriptUrl':'data:text/javascript;base64,'+base64};
-						event.origin = targetWindowOrigin;
-						win.dispatchEvent(event);
-						// win.postMessage({'scriptUrl':'data:text/javascript;base64,'+base64}, targetWindowOrigin);
+						try {
+							var event;
+							event = document.createEvent("Event");
+							event.initEvent("message", false, false);
+							event.data = {'scriptUrl':'data:text/javascript;base64,'+base64};
+							event.origin = targetWindowOrigin;
+							win.dispatchEvent(event);
+						}catch(e){
+							win.postMessage({'scriptUrl':'data:text/javascript;base64,'+base64}, targetWindowOrigin);
+						}
 
 						it1.next();
 					}
