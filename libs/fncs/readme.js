@@ -44,27 +44,36 @@ module.exports = function(broccoli){
 	this.get_html = function($realpath_module){
 		var realpathReadme = path.resolve( $realpath_module, 'README' );
 		var readme = '';
+		var $langs = [
+			'-' + broccoli.lb.lang,
+			'',
+		];
 
 		try{
 			readme = '';
-			if( isFile(realpathReadme+'.html') ){
-				readme = fs.readFileSync( realpathReadme+'.html' ).toString();
-			}else if( isFile(realpathReadme+'.md') ){
-				readme = fs.readFileSync( realpathReadme+'.md' ).toString();
-				var marked = require('marked');
-				marked.setOptions({
-					renderer: new marked.Renderer(),
-					gfm: true,
-					headerIds: false,
-					tables: true,
-					breaks: false,
-					pedantic: false,
-					sanitize: false,
-					smartLists: true,
-					smartypants: false,
-					xhtml: true
-				});
-				readme = marked(readme);
+			for( var idx in $langs ){
+				var $lang_prefix = $langs[idx];
+				if( isFile(realpathReadme+$lang_prefix+'.html') ){
+					readme = fs.readFileSync( realpathReadme+$lang_prefix+'.html' ).toString();
+					break;
+				}else if( isFile(realpathReadme+$lang_prefix+'.md') ){
+					readme = fs.readFileSync( realpathReadme+$lang_prefix+'.md' ).toString();
+					var marked = require('marked');
+					marked.setOptions({
+						renderer: new marked.Renderer(),
+						gfm: true,
+						headerIds: false,
+						tables: true,
+						breaks: false,
+						pedantic: false,
+						sanitize: false,
+						smartLists: true,
+						smartypants: false,
+						xhtml: true
+					});
+					readme = marked(readme);
+					break;
+				}
 			}
 		} catch (e) {
 			readme = '';

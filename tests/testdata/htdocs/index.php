@@ -1,3 +1,9 @@
+<?php
+$lang = 'ja';
+if( isset($_REQUEST['lang']) ){
+	$lang = $_REQUEST['lang'];
+}
+?>
 <!DOCTYPE html>
 <html>
 	<head>
@@ -46,7 +52,8 @@
 		<script type="text/javascript">
 			$(window).on('load', function(){
 				main.init({
-					'serverType': 'php'
+					'serverType': 'php',
+					'lang': <?= var_export($lang, true) ?>
 				},function(){
 					console.log('TestPage: Initialize Broccoli: done');
 				});

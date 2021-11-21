@@ -28,11 +28,19 @@ class fncs_readme{
 	public function get_html($realpath_module){
 		$realpathReadme = $this->broccoli->fs()->normalize_path($this->broccoli->fs()->get_realpath( $realpath_module.'/README' ));
 		$readme = '';
-		if( is_file($realpathReadme.'.html') ){
-			$readme = file_get_contents( $realpathReadme.'.html' );
-		}elseif( is_file($realpathReadme.'.md') ){
-			$readme = file_get_contents( $realpathReadme.'.md' );
-			$readme = \Michelf\MarkdownExtra::defaultTransform($readme);
+		$langs = array(
+			'-'.$this->broccoli->lb()->lang,
+			'',
+		);
+		foreach( $langs as $lang_prefix ){
+			if( is_file($realpathReadme.$lang_prefix.'.html') ){
+				$readme = file_get_contents( $realpathReadme.$lang_prefix.'.html' );
+				break;
+			}elseif( is_file($realpathReadme.$lang_prefix.'.md') ){
+				$readme = file_get_contents( $realpathReadme.$lang_prefix.'.md' );
+				$readme = \Michelf\MarkdownExtra::defaultTransform($readme);
+				break;
+			}
 		}
 
 		$readme = $this->bind_images($readme, $realpath_module);
