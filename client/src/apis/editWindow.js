@@ -20,7 +20,7 @@ module.exports = function(broccoli){
 				+ '	<form action="javascript:;">'
 				+ '		<div class="broccoli__edit-window-logical-path">---</div>'
 				+ '		<h2 class="broccoli__edit-window-module-name">---</h2>'
-				+ '		<div class="broccoli__edit-window-module-readme-switch"><a href="javascript:;"><span class="glyphicon glyphicon-menu-right"></span> 説明を読む</a></div>'
+				+ '		<div class="broccoli__edit-window-module-readme-switch"><a href="javascript:;"><span class="glyphicon glyphicon-menu-right"></span> <%= lb.get(\'ui_label.show_readme\') %></a></div>'
 				+ '		<div class="broccoli__edit-window-module-readme"><div class="broccoli__edit-window-module-readme-inner"><article class="broccoli__module-readme"></article></div></div>'
 				+ '		<div class="broccoli__edit-window-message-field"></div>'
 				+ '		<div class="broccoli__edit-window-fields">'
@@ -109,7 +109,7 @@ module.exports = function(broccoli){
 		if(errCount){
 			var $err = $('<div class="broccoli__error-message-box">');
 			$elm.show().append(
-				$err.text( '入力エラーがあります。確認してください。' )
+				$err.text( broccoli.lb.get('ui_message.confirm_error') ) // 入力エラーがあります。確認してください。
 			);
 			$('.broccoli__lightbox').scrollTop(0);
 		}
@@ -176,10 +176,10 @@ module.exports = function(broccoli){
 					$editWindow.find('.broccoli__edit-window-module-readme').toggle('fast', function(){
 						if($(this).is(':visible')){
 							$this.addClass(className);
-							$this.html('<span class="glyphicon glyphicon-menu-down"></span> '+'説明を隠す')
+							$this.html('<span class="glyphicon glyphicon-menu-down"></span> '+broccoli.lb.get('ui_label.hide_readme'))
 						}else{
 							$this.removeClass(className);
-							$this.html('<span class="glyphicon glyphicon-menu-right"></span> '+'説明を読む')
+							$this.html('<span class="glyphicon glyphicon-menu-right"></span> '+broccoli.lb.get('ui_label.show_readme'))
 						}
 					});
 				});
@@ -634,7 +634,7 @@ module.exports = function(broccoli){
 						if(!fieldCount){
 							$fields
 								.append(
-									'<p style="text-align: center; margin: 7em 1em;">このモジュールにはオプションが定義されていません。</p>'
+									'<p style="text-align: center; margin: 7em 1em;">'+broccoli.lb.get('ui_message.this_module_has_no_options')+'</p>'
 								)
 							;
 						}
@@ -874,7 +874,7 @@ module.exports = function(broccoli){
 				if( isError ){
 					console.info('ERROR:', errors);
 					formErrorMessage(errors);
-					broccoli.message('入力エラーがあります。確認してください。');
+					broccoli.message( broccoli.lb.get('ui_message.confirm_error') ); // 入力エラーがあります。確認してください。
 				}
 				callback( !isError );
 				return;
@@ -901,19 +901,23 @@ module.exports = function(broccoli){
 					it2.next();return;
 				}
 				var fieldDefinition = broccoli.getFieldDefinition(field2.type);
-				broccoli.progressMessage('フィールド "'+fieldName2+'" を処理しています...');
+				var message = 'フィールド "'+fieldName2+'" を処理しています...';
+				if( broccoli.lb.getLang() == 'en' ){
+					message = 'Processing Field "'+fieldName2+'"...';
+				}
+				broccoli.progressMessage( message );
 				fieldDefinition.saveEditorContent($dom.get(0), data.fields[fieldName2], mod.fields[fieldName2], function(result){
 					data.fields[fieldName2] = result;
 					it2.next();
 				}, {
 					'message': function(msg){
-						broccoli.progressMessage(fieldName2+': '+msg);
+						broccoli.progressMessage( fieldName2+': '+msg );
 					}
 				});
 				return;
 			},
 			function(){
-				broccoli.progressMessage('データを送信しています...');
+				broccoli.progressMessage( broccoli.lb.get('ui_message.sending_data') ); // データを送信しています...
 				it79.fnc({},
 					[
 						function(it2, arg){
@@ -926,13 +930,13 @@ module.exports = function(broccoli){
 							// クライアントサイドにあるメモリ上のcontentsSourceDataに反映する。
 							// この時点で、まだサーバー側には送られていない。
 							// サーバー側に送るのは、callback() の先の仕事。
-							broccoli.progressMessage('インスタンス情報を更新しています...');
+							broccoli.progressMessage( broccoli.lb.get('ui_message.updating_instance') ); // インスタンス情報を更新しています...
 							broccoli.contentsSourceData.updateInstance(data, instancePath, function(){
 								it2.next(arg);
 							});
 						} ,
 						function(it2, arg){
-							broccoli.progressMessage('完了');
+							broccoli.progressMessage( broccoli.lb.get('ui_label.finished') ); // 完了
 							callback(true);
 							it2.next(arg);
 						}

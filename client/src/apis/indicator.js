@@ -31,9 +31,13 @@ module.exports = function(broccoli){
 	 * 保存を完了しました
 	 */
 	this.saveCompleted = function(){
-		console.info('保存を完了しました');
+		console.info( broccoli.lb.get('ui_message.save_completed') );
 		for( var idx in targetElements ){
-			$(targetElements[idx]).find('.broccoli__indicator').addClass('broccoli__indicator-completed').text('保存を完了しました').fadeOut(2000);
+			$(targetElements[idx])
+				.find('.broccoli__indicator')
+				.addClass('broccoli__indicator-completed')
+				.text( broccoli.lb.get('ui_message.save_completed') ) // 保存を完了しました
+				.fadeOut(2000);
 		}
 		timerForRemove = setTimeout(function(){
 			for( var idx in targetElements ){

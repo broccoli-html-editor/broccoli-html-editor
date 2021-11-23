@@ -85,13 +85,13 @@ class classModule{
 
 		if($this->isSystemModule){
 			if($this->id == '_sys/root'){
-				$this->info['name'] = 'ルート';
+				$this->info['name'] = $this->broccoli->lb()->get('system_module_label.root');
 			}elseif($this->id == '_sys/unknown'){
-				$this->info['name'] = '不明なモジュール';
+				$this->info['name'] = $this->broccoli->lb()->get('system_module_label.unknown_module');
 			}elseif($this->id == '_sys/html'){
 				$this->info['name'] = 'HTML';
 			}elseif($this->id == '_sys/image'){
-				$this->info['name'] = '画像';
+				$this->info['name'] = $this->broccoli->lb()->get('system_module_label.image');
 			}
 		}
 

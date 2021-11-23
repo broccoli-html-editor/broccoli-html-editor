@@ -87,13 +87,13 @@ module.exports = function(broccoli, moduleId, options){
 
 	if(this.isSystemModule){
 		if(this.id == '_sys/root'){
-			this.info['name'] = 'ルート';
+			this.info['name'] = broccoli.lb.get('system_module_label.root');
 		}else if(this.id == '_sys/unknown'){
-			this.info['name'] = '不明なモジュール';
+			this.info['name'] = broccoli.lb.get('system_module_label.unknown_module');
 		}else if(this.id == '_sys/html'){
 			this.info['name'] = 'HTML';
 		}else if(this.id == '_sys/image'){
-			this.info['name'] = '画像';
+			this.info['name'] = broccoli.lb.get('system_module_label.image');
 		}
 	}
 

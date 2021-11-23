@@ -37,7 +37,9 @@
                                                 "dec": ""
                                             }
                                         ],
-                                        "select2": "1"
+                                        "select2": {
+                                            "src": "1"
+                                        }
                                     },
                                     "subModName": "loop1",
                                     "anchor": "",

@@ -238,7 +238,7 @@ module.exports = function(broccoli){
 					var $bowl = $('<li>')
 						.append(
 							$('<span>')
-								.text( '編集エリア: ' + idx ) // ← bowl name
+								.text( broccoli.lb.get('ui_label.editable') + ': ' + idx ) // ← bowl name
 								.addClass('broccoli--instance-tree-view-bowlname')
 						)
 					;

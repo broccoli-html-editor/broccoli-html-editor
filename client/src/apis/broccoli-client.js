@@ -692,7 +692,7 @@
 						return;
 					} ,
 					function(it1, data){
-						_this.progressMessage('完了');
+						_this.progressMessage( broccoli.lb.get('ui_label.finished') ); // 完了
 						callback();
 						setTimeout(function(){
 							_this.closeProgress();

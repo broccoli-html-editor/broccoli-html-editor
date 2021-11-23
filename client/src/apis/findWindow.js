@@ -140,7 +140,7 @@ module.exports = function(broccoli){
 					$findWindow.html('').append( broccoli.bindEjs(tplFrame, {'lb':broccoli.lb}) );
 
 					broccoli.px2style.modal({
-						'title': '検索',
+						'title': broccoli.lb.get('ui_label.search'),
 						'body': $findWindow,
 						'buttons': [],
 						'buttonsSecondary': [
