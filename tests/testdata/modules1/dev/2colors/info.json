@@ -4,11 +4,13 @@
 		"fields":{
 			"bgcolor":{
 				"type":"color",
-				"label":"背景色"
+				"label":"背景色",
+				"description": "背景色を選択してください。"
 			} ,
 			"color":{
 				"type":"color",
-				"label":"文字色"
+				"label":"文字色",
+				"description": "文字の色を選択してください。"
 			}
 		},
 		"subModule": {

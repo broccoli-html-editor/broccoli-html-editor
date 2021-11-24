@@ -226,6 +226,7 @@ module.exports = function(broccoli, moduleId, options){
 
 								// Multi Language
 								_this.fields[tmpIdx].label = findLang('fields.'+tmpIdx+':label', _this.fields[tmpIdx].label);
+								_this.fields[tmpIdx].description = findLang('fields.'+tmpIdx+':description', _this.fields[tmpIdx].description);
 
 								_this.fields[tmpIdx] = applyFieldConfig(_this.fields[tmpIdx]);
 							}
@@ -240,6 +241,7 @@ module.exports = function(broccoli, moduleId, options){
 
 									// Multi Language
 									_this.subModule[tmpIdx].fields[tmpIdx2].label = findLang('subModule.'+tmpIdx+'.'+tmpIdx2+':label', _this.subModule[tmpIdx].fields[tmpIdx2].label);
+									_this.subModule[tmpIdx].fields[tmpIdx2].description = findLang('subModule.'+tmpIdx+'.'+tmpIdx2+':description', _this.subModule[tmpIdx].fields[tmpIdx2].description);
 
 									_this.subModule[tmpIdx].fields[tmpIdx2] = applyFieldConfig(_this.subModule[tmpIdx].fields[tmpIdx2]);
 								}

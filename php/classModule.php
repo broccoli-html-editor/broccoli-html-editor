@@ -385,6 +385,10 @@ class classModule{
 								$this->fields->{$tmpIdx}->label = null;
 							}
 							$this->fields->{$tmpIdx}->label = $this->findLang('fields.'.$tmpIdx.':label', $this->fields->{$tmpIdx}->label);
+							if( !property_exists($this->fields->{$tmpIdx}, 'description') ){
+								$this->fields->{$tmpIdx}->description = null;
+							}
+							$this->fields->{$tmpIdx}->description = $this->findLang('fields.'.$tmpIdx.':description', $this->fields->{$tmpIdx}->description);
 
 							@$this->fields->{$tmpIdx} = $this->applyFieldConfig( @$this->fields->{$tmpIdx} );
 						}
@@ -406,6 +410,10 @@ class classModule{
 										$this->subModule->{$tmpIdx}->fields->{$tmpIdx2}->label = null;
 									}
 									$this->subModule->{$tmpIdx}->fields->{$tmpIdx2}->label = $this->findLang('subModule.'.$tmpIdx.'.'.$tmpIdx2.':label', $this->subModule->{$tmpIdx}->fields->{$tmpIdx2}->label);
+									if( !property_exists($this->subModule->{$tmpIdx}->fields->{$tmpIdx2}, 'description') ){
+										$this->subModule->{$tmpIdx}->fields->{$tmpIdx2}->description = null;
+									}
+									$this->subModule->{$tmpIdx}->fields->{$tmpIdx2}->description = $this->findLang('subModule.'.$tmpIdx.'.'.$tmpIdx2.':description', $this->subModule->{$tmpIdx}->fields->{$tmpIdx2}->description);
 
 									@$this->subModule->{$tmpIdx}->fields->{$tmpIdx2} = $this->applyFieldConfig( @$this->subModule->{$tmpIdx}->fields->{$tmpIdx2} );
 								}
