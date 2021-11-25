@@ -78,7 +78,7 @@ class buildBowl{
 					}
 					$html = $fieldDef->bind( $tmp_bind_value, $this->options['mode'], $field );
 					$tmpVal .= $html;
-					$html = $fieldDef->bind( @$fieldData[$field->name], 'finalize', $field );
+					$html = $fieldDef->bind( $tmp_bind_value, 'finalize', $field );
 					$tmpValFin .= $html;
 					$tplDataObj[$field->name] = $tmpVal;
 					@$this->nameSpace['vars'][$field->name] = array(
