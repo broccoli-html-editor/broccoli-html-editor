@@ -187,8 +187,22 @@ module.exports = function(broccoli){
 		}
 
 		if( event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files.length ){
-			console.log('外部からファイルがドロップされました。', event.dataTransfer.files);
-			return onDropFile(e, moveTo, callback);
+			var isFileDropped = false;
+				// NOTE: 2021-11-25:
+				// Windows版 Chrome 96.0.4664.45 で、モジュールパレットのモジュールをドロップしたとき、
+				// event.dataTransfer.files[0] にデータが渡るようになったため、ここを通過する(誤動作)ようになった。
+				// このデータは、 `type` に 空白文字 がセットされているようなので、これを条件にして弾くように処理を追加した。
+			for( var idx in event.dataTransfer.files ){
+				var tmp_file = event.dataTransfer.files[idx];
+				if( tmp_file.type ){
+					isFileDropped = true;
+					break;
+				}
+			}
+			if( isFileDropped ){
+				console.log('外部からファイルがドロップされました。', event.dataTransfer.files);
+				return onDropFile(e, moveTo, callback);
+			}
 		}
 
 		if( moveFroms[0] === moveTo || ( broccoli.isInstanceSelected( moveTo ) && method === 'moveTo' ) ){
