@@ -1,0 +1,55 @@
+{
+ "data": [
+  {
+   "modId": "testMod1:dev/multilang",
+   "fields": {
+    "text1": {
+     "src": "",
+     "editor": "markdown"
+    },
+    "loop1": [
+     {
+      "modId": "testMod1:dev/multilang",
+      "fields": {
+       "text2": {
+        "src": "",
+        "editor": "markdown"
+       },
+       "module2": [
+        {
+         "modId": "testMod1:dev/select1",
+         "fields": {
+          "select-test-1": {
+           "src": "default1"
+          },
+          "select-test-2": {
+           "src": "select1"
+          },
+          "select-test-3": {
+           "src": "radio1"
+          }
+         },
+         "anchor": "",
+         "dec": ""
+        }
+       ],
+       "select2": {
+        "src": "1"
+       }
+      },
+      "subModName": "loop1",
+      "anchor": "",
+      "dec": ""
+     }
+    ],
+    "module1": [],
+    "select1": {
+     "src": "1"
+    }
+   },
+   "anchor": "",
+   "dec": ""
+  }
+ ],
+ "resources": {}
+}

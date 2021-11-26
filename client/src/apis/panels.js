@@ -187,13 +187,13 @@ module.exports = function(broccoli){
 		}
 
 		if( event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files.length ){
-			var isFileDropped = false;
+			var isFileDropped = true;
 				// NOTE: 2021-11-25:
 				// Windows版 Chrome 96.0.4664.45 で、モジュールパレットのモジュールをドロップしたとき、
 				// event.dataTransfer.files[0] にデータが渡るようになったため、ここを通過する(誤動作)ようになった。
 				// このデータは、 `type` に 空白文字 がセットされているようなので、これを条件にして弾くように処理を追加した。
-			if( event.dataTransfer.files.length == 0 && event.dataTransfer.files[0].type ){
-				isFileDropped = true;
+			if( event.dataTransfer.files.length == 1 && event.dataTransfer.files[0].type === '' ){
+				isFileDropped = false;
 			}
 			if( isFileDropped ){
 				console.log('外部からファイルがドロップされました。', event.dataTransfer.files);
