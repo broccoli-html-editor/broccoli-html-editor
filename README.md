@@ -357,7 +357,7 @@ $ composer test
 
 ## 更新履歴 - Change log
 
-### broccoli-html-editor v0.5.0 (リリース日未定)
+### broccoli-html-editor v0.5.0 (2021年11月26日)
 
 - モジュール、カテゴリ、パッケージの情報に `hidden` を追加。
 - UIの改善: 編集ウィンドウの右上に 閉じるボタン を追加。

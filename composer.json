@@ -23,7 +23,7 @@
     "config": {
         "process-timeout": 0
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "repositories": [
     ],
     "require": {
