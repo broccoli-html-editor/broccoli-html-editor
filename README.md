@@ -357,6 +357,10 @@ $ composer test
 
 ## 更新履歴 - Change log
 
+### broccoli-html-editor v0.5.1 (リリース日未定)
+
+- クロスオリジン環境で実行される場合に、初期化が正常に完了しない場合がある不具合を修正。
+
 ### broccoli-html-editor v0.5.0 (2021年11月26日)
 
 - モジュール、カテゴリ、パッケージの情報に `hidden` を追加。

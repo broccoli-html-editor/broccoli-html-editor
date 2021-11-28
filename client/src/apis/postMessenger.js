@@ -54,7 +54,7 @@ module.exports = function(broccoli, iframe){
 					}
 
 				} catch(e){
-					console.log('postMessenger.init(): プレビューの直接のDOM操作は行われません。');
+					console.info('postMessenger.init(): プレビューの直接のDOM操作は行われません。');
 				}
 				it1.next();
 			},
@@ -145,13 +145,16 @@ module.exports = function(broccoli, iframe){
 		var win = $(iframe).get(0).contentWindow;
 		var targetWindowOrigin = getTargetOrigin(iframe);
 
-		var event;
-		event = document.createEvent("Event");
-		event.initEvent("message", false, false);
-		event.data = message;
-		event.origin = targetWindowOrigin;
-		win.dispatchEvent(event);
-		// win.postMessage(message, targetWindowOrigin);
+		try {
+			var event;
+			event = document.createEvent("Event");
+			event.initEvent("message", false, false);
+			event.data = message;
+			event.origin = targetWindowOrigin;
+			win.dispatchEvent(event);
+		}catch(e){
+			win.postMessage(message, targetWindowOrigin);
+		}
 
 		return;
 	}
