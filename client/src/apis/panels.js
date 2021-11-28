@@ -8,9 +8,7 @@ module.exports = function(broccoli){
 	var _this = this;
 
 	var it79 = require('iterate79');
-	var path = require('path');
 	var php = require('phpjs');
-	var twig = require('twig');
 	var $ = require('jquery');
 
 	var $panels;

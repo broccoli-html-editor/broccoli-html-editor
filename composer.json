@@ -31,7 +31,7 @@
         "ext-json": "*",
         "ext-mbstring": "*",
         "tomk79/filesystem": "^1.0",
-        "tomk79/langbank": "^0.0.4",
+        "tomk79/langbank": "^0.1.0",
         "michelf/php-markdown": ">=1.8",
         "twig/twig": ">=1.35",
         "leafo/scssphp": ">=0.7.6"

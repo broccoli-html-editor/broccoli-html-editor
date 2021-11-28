@@ -137,7 +137,7 @@ module.exports = function(broccoli){
 
 				function( it1, data ){
 
-					$findWindow.html('').append( broccoli.bindEjs(tplFrame, {'lb':broccoli.lb}) );
+					$findWindow.html('').append( broccoli.bindTwig(tplFrame, {'lb':broccoli.lb}) );
 
 					broccoli.px2style.modal({
 						'title': broccoli.lb.get('ui_label.search'),

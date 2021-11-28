@@ -31,7 +31,7 @@
     "htmlparser": "^1.7.7",
     "iterate79": "^1.1.1",
     "jquery": "^3.4.1",
-    "langbank": "0.0.5",
+    "langbank": "^0.1.0",
     "marked": "^1.1.0",
     "mkdirp": "^0.5.1",
     "node-sass": "^4.12.0",

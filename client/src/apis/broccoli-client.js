@@ -1667,20 +1667,23 @@
 		}
 
 		/**
-		 * ejs テンプレートにデータをバインドする
+		 * Twig テンプレートにデータをバインドする
 		 */
-		this.bindEjs = function( tpl, data, options ){
-			var ejs = require('ejs');
+		this.bindTwig = function( tpl, data ){
 			var rtn = '';
-			try {
-				var template = ejs.compile(tpl.toString(), options);
-				rtn = template(data);
-			} catch (e) {
-				var errorMessage = 'TemplateEngine "EJS" Rendering ERROR.';
+			var Twig, twig;
+			try{
+				Twig = require('twig'), // Twig module
+				twig = Twig.twig;
+
+				rtn = new twig({
+					'data': tpl
+				}).render(data);
+			}catch(e){
+				var errorMessage = 'TemplateEngine "Twig" Rendering ERROR.';
 				console.error( errorMessage );
 				rtn = errorMessage;
 			}
-
 			return rtn;
 		}
 
