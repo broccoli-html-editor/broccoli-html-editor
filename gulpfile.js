@@ -52,6 +52,10 @@ gulp.task("broccoli.js", function() {
 		module:{
 			rules:[
 				{
+					test: /\.twig$/,
+					use: ['twig-loader']
+				},
+				{
 					test:/\.html$/,
 					use:['html-loader']
 				}
@@ -77,6 +81,10 @@ gulp.task("broccoli-preview-contents.js", function() {
 		},
 		module:{
 			rules:[
+				{
+					test: /\.twig$/,
+					use: ['twig-loader']
+				},
 				{
 					test:/\.html$/,
 					use:['html-loader']
