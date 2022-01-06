@@ -32,7 +32,7 @@ init:
 install:
   ## Set PHP.
   - ps: Set-Service wuauserv -StartupType Manual
-  - cinst php --version 7.1.3 -y
+  - cinst php --version 7.3.33 -y
   - SET PATH=C:\tools\php71\;%PATH%
   - cd C:\tools\php71
   - copy php.ini-production php.ini
