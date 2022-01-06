@@ -2,10 +2,10 @@
 /**
  * test for broccoli-html-editor/broccoli-html-editor
  */
-class mainTest extends PHPUnit_Framework_TestCase{
+class mainTest extends PHPUnit\Framework\TestCase{
 	private $fs;
 
-	public function setup(){
+	public function setup() : void{
 		mb_internal_encoding('UTF-8');
 		require_once(__DIR__.'/php_test_helper/helper.php');
 		testHelper::start_built_in_server();

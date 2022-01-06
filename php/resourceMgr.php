@@ -100,11 +100,11 @@ class resourceMgr{
 			}
 
 			$dotext = '';
-			if( property_exists($res, 'ext') && is_string($res->ext) && strlen($res->ext) ){
+			if( property_exists($res, 'ext') && is_string($res->ext) && strlen(''.$res->ext) ){
 				$dotext .= '.'.$res->ext;
 			}
 
-			if( !property_exists($res, 'base64') || !strlen($res->base64) ){
+			if( !property_exists($res, 'base64') || !strlen(''.$res->base64) ){
 				// base64がセットされていなかったら終わり
 				$save_res_json($resKey);
 				continue;
@@ -136,7 +136,7 @@ class resourceMgr{
 			}
 
 			$filename = $resKey;
-			if( property_exists($res, 'publicFilename') && is_string($res->publicFilename) && strlen($res->publicFilename) ){
+			if( property_exists($res, 'publicFilename') && is_string($res->publicFilename) && strlen(''.$res->publicFilename) ){
 				$filename = $res->publicFilename;
 			}
 
@@ -205,7 +205,7 @@ class resourceMgr{
 			json_encode( $this->resourceDb[$resKey], JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES )
 		);
 		$bin_basename = 'bin';
-		if( property_exists($this->resourceDb[$resKey], 'ext') && is_string($this->resourceDb[$resKey]->ext) && strlen($this->resourceDb[$resKey]->ext) ){
+		if( property_exists($this->resourceDb[$resKey], 'ext') && is_string($this->resourceDb[$resKey]->ext) && strlen(''.$this->resourceDb[$resKey]->ext) ){
 			$bin_basename .= '.'.$this->resourceDb[$resKey]->ext;
 		}
 		$this->broccoli->fs()->save_file(
@@ -354,7 +354,7 @@ class resourceMgr{
 
 		$bin = file_get_contents( $realpath );
 		$this->resourceDb[$resKey]->base64 = base64_encode($bin);
-		$this->resourceDb[$resKey]->size = strlen($bin);
+		$this->resourceDb[$resKey]->size = strlen(''.$bin);
 
 		$json_str = json_encode( $this->resourceDb[$resKey], JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES );
 		$json_str = preg_replace('/^(    )+/m', ' ', $json_str); // インデントを スペース1つ分 に変換
@@ -376,15 +376,15 @@ class resourceMgr{
 			return false;
 		}
 
-		if( is_string(@$res->publicFilename) && strlen(@$res->publicFilename) ){
+		if( is_string(@$res->publicFilename) && strlen(''.@$res->publicFilename) ){
 			$filename = $res->publicFilename;
 		}
 		$contentsPath = $this->broccoli->options['pathHtml'];
 		$resourcesPublishDirPath = $this->broccoli->options['pathResourceDir'];
 
-		if(!strlen($filename)){$filename = 'noname';}
+		if(!strlen(''.$filename)){$filename = 'noname';}
 		$ext = @$res->ext;
-		if(!strlen($ext)){$ext = 'unknown';}
+		if(!strlen(''.$ext)){$ext = 'unknown';}
 		$rtn = $this->broccoli->fs()->get_relatedpath('/'.$resourcesPublishDirPath.'/'.urlencode($filename.'.'.$ext), dirname($contentsPath));
 		$rtn = $this->broccoli->fs()->normalize_path($rtn);
 		$rtn = preg_replace('/\\\\/s', '/', $rtn); // <= convert Windows path to Linux path
@@ -402,18 +402,18 @@ class resourceMgr{
 			return false;
 		}
 
-		if( property_exists($res, 'publicFilename') && is_string($res->publicFilename) && strlen($res->publicFilename) ){
+		if( property_exists($res, 'publicFilename') && is_string($res->publicFilename) && strlen(''.$res->publicFilename) ){
 			$filename = $res->publicFilename;
 		}
 
-		if( !strlen($filename) ){
+		if( !strlen(''.$filename) ){
 			$filename = 'noname';
 		}
 		$ext = null;
-		if( property_exists($res, 'ext') && is_string($res->ext) && strlen($res->ext) ){
+		if( property_exists($res, 'ext') && is_string($res->ext) && strlen(''.$res->ext) ){
 			$ext = $res->ext;
 		}
-		if( !strlen($ext) ){
+		if( !strlen(''.$ext) ){
 			$ext = 'unknown';
 		}
 		$rtn = $this->broccoli->fs()->get_realpath($this->resourcesPublishDirPath.'/'.urlencode($filename.'.'.$ext));
@@ -432,7 +432,7 @@ class resourceMgr{
 			return false;
 		}
 		$bin_filename = 'bin';
-		if( property_exists($res, 'ext') && is_string($res->ext) && strlen($res->ext) ){
+		if( property_exists($res, 'ext') && is_string($res->ext) && strlen(''.$res->ext) ){
 			$bin_filename .= '.'.$res->ext;
 		}
 		$rtn = $this->broccoli->fs()->get_realpath($this->resourcesDirPath.'/'.urlencode($resKey).'/'.urlencode($bin_filename));

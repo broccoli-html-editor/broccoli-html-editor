@@ -250,11 +250,11 @@ class broccoliHtmlEditor{
 		if( !preg_match('/^(?:([0-9a-zA-Z\\_\\-\\.]*?)\\:)?([^\\/\\:\\s]*)\\/([^\\/\\:\\s]*)$/', $moduleId, $matched) ){
 			return false;
 		}
-		$rtn['package'] = (strlen($matched[1]) ? $matched[1] : null);
-		$rtn['category'] = (strlen($matched[2]) ? $matched[2] : null);
-		$rtn['module'] = (strlen($matched[3]) ? $matched[3] : null);
+		$rtn['package'] = (strlen(''.$matched[1]) ? $matched[1] : null);
+		$rtn['category'] = (strlen(''.$matched[2]) ? $matched[2] : null);
+		$rtn['module'] = (strlen(''.$matched[3]) ? $matched[3] : null);
 
-		if( !strlen($rtn['package']) ){
+		if( !strlen(''.$rtn['package']) ){
 			$rtn['package'] = null;
 		}
 		return $rtn;
@@ -325,7 +325,7 @@ class broccoliHtmlEditor{
 
 		$fncFindLang = function( $lb, $key, $default ){
 			$tmpName = $lb->get($key);
-			if( strlen($tmpName) && $tmpName !== '---' ){
+			if( strlen(''.$tmpName) && $tmpName !== '---' ){
 				return $tmpName;
 			}
 			return $default;
@@ -373,7 +373,7 @@ class broccoliHtmlEditor{
 
 		$fncFindLang = function( $lb, $key, $default ){
 			$tmpName = $lb->get($key);
-			if( strlen($tmpName) && $tmpName !== '---' ){
+			if( strlen(''.$tmpName) && $tmpName !== '---' ){
 				return $tmpName;
 			}
 			return $default;
@@ -589,13 +589,13 @@ class broccoliHtmlEditor{
 		$internalId = $targetModuleId;
 		$tmpParsedModuleInternalIdBefore = $this->parseModuleId($internalId);
 		$tmpParsedModuleInternalIdAfter = $this->parseModuleId($internalIdTemplate);
-		if( strlen($tmpParsedModuleInternalIdAfter['package']) ){
+		if( strlen(''.$tmpParsedModuleInternalIdAfter['package']) ){
 			$tmpParsedModuleInternalIdBefore['package'] = $tmpParsedModuleInternalIdAfter['package'];
 		}
-		if( strlen($tmpParsedModuleInternalIdAfter['category']) ){
+		if( strlen(''.$tmpParsedModuleInternalIdAfter['category']) ){
 			$tmpParsedModuleInternalIdBefore['category'] = $tmpParsedModuleInternalIdAfter['category'];
 		}
-		if( strlen($tmpParsedModuleInternalIdAfter['module']) ){
+		if( strlen(''.$tmpParsedModuleInternalIdAfter['module']) ){
 			$tmpParsedModuleInternalIdBefore['module'] = $tmpParsedModuleInternalIdAfter['module'];
 		}
 		$internalId = $tmpParsedModuleInternalIdBefore['package'].':'.$tmpParsedModuleInternalIdBefore['category'].'/'.$tmpParsedModuleInternalIdBefore['module'];
@@ -682,7 +682,7 @@ class broccoliHtmlEditor{
 	 * モジュールオブジェクトを取得する
 	 */
 	public function getModule($moduleId, $subModName = null){
-		if(!strlen($moduleId)){
+		if(!strlen(''.$moduleId)){
 			return false;
 		}
 		$rtn = null;
@@ -753,7 +753,7 @@ class broccoliHtmlEditor{
 	public function markdown($md, $options = array()){
 		$rtn = \Michelf\MarkdownExtra::defaultTransform($md);
 		$rtn = preg_replace('/(\r\n|\r|\n)+/s', "\n", $rtn);
-		if( !strlen(trim($rtn)) ){
+		if( !strlen(trim(''.$rtn)) ){
 			$rtn = '';
 		}
 		return $rtn;

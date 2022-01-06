@@ -27,7 +27,7 @@
     "repositories": [
     ],
     "require": {
-        "php": ">=5.4.0",
+        "php": ">=7.3.0",
         "ext-json": "*",
         "ext-mbstring": "*",
         "tomk79/filesystem": "^1.0",
@@ -40,7 +40,7 @@
         "scssphp/scssphp": "This is the successor package to \"leafo/scssphp\"."
     },
     "require-dev": {
-        "phpunit/phpunit": "^4.1.0"
+        "phpunit/phpunit": "~9.5"
     },
     "autoload": {
         "psr-4": {

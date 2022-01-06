@@ -4,3 +4,9 @@ node_modules
 package-lock.json
 composer.lock
 /vendor/
+
+# PHPUnit
+.phpunit.result.cache
+
+# PHP Documentor
+.phpdoc

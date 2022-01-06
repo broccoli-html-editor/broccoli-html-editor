@@ -351,11 +351,11 @@ class classModule{
 					$tmpJson = json_decode('{}');
 				}
 
-				if( property_exists($tmpJson, 'id') && strlen($tmpJson->id) ){
+				if( property_exists($tmpJson, 'id') && strlen(''.$tmpJson->id) ){
 					$this->internalId = $this->broccoli->getModuleInternalId($this->id, $tmpJson->id);
 				}
 
-				if( !strlen($this->info['name']) && property_exists($tmpJson, 'name') ){
+				if( !strlen(''.$this->info['name']) && property_exists($tmpJson, 'name') ){
 					$this->info['name'] = $tmpJson->name;
 				}
 				if( @$tmpJson->areaSizeDetection ){
@@ -452,7 +452,7 @@ class classModule{
 			$tplSrc = preg_replace( '/\t/s', '', $tplSrc );
 			$tplSrc = preg_replace( '/^[\s\r\n]*/', '', $tplSrc );
 			$tplSrc = preg_replace( '/[\s\r\n]*$/', '', $tplSrc );
-			if( strlen($tplSrc) && strpos($tplSrc, '<') === 0 && preg_match('/\\>$/s', $tplSrc) ){
+			if( strlen(''.$tplSrc) && strpos($tplSrc, '<') === 0 && preg_match('/\\>$/s', $tplSrc) ){
 				// HTMLをパース
 				$simple_html_dom = str_get_html(
 					$tplSrc ,
@@ -591,7 +591,7 @@ class classModule{
 	 */
 	private function findLang( $key, $default ){
 		$tmpName = $this->lb->get($key);
-		if( strlen($tmpName) && $tmpName !== '---' ){
+		if( strlen(''.$tmpName) && $tmpName !== '---' ){
 			return $tmpName;
 		}
 		return $default;

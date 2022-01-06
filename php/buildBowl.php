@@ -66,7 +66,7 @@ class buildBowl{
 			$tplDataObj = array();
 
 			foreach($mod->fields as $fieldName=>$field){
-				if( !property_exists($field, 'fieldType') || !strlen($field->fieldType) || $field->fieldType == 'input' ){
+				if( !property_exists($field, 'fieldType') || !strlen(''.$field->fieldType) || $field->fieldType == 'input' ){
 					// input field
 					$fieldDef = $this->broccoli->getFieldDefinition( $field->type ); // フィールドタイプ定義を呼び出す
 					$tmpVal = '';
@@ -672,7 +672,7 @@ class buildBowl{
 						$tmpValue = trim($matched[2]);
 
 						if( $tmpMethod == 'is_set' ){
-							if( !@$this->nameSpace['varsFinalized'][$tmpValue] || !strlen(trim(@$this->nameSpace['varsFinalized'][$tmpValue]['val'])) ){
+							if( !@$this->nameSpace['varsFinalized'][$tmpValue] || !strlen(trim(''.@$this->nameSpace['varsFinalized'][$tmpValue]['val'])) ){
 								$condBool = false;
 								break;
 							}
@@ -708,7 +708,7 @@ class buildBowl{
 			}
 		}
 
-		if( @$this->nameSpace['varsFinalized'][$ifField->is_set] && strlen(trim(@$this->nameSpace['varsFinalized'][$ifField->is_set]['val'])) ){
+		if( @$this->nameSpace['varsFinalized'][$ifField->is_set] && strlen(trim(''.@$this->nameSpace['varsFinalized'][$ifField->is_set]['val'])) ){
 			// is_set の評価
 			$boolResult = true;
 		}
@@ -734,7 +734,7 @@ class buildBowl{
 				$tplSrc = preg_replace( '/^[\s\r\n]*/s', '', $tplSrc );
 				$tplSrc = preg_replace( '/[\s\r\n]*$/s', '', $tplSrc );
 
-				if( strlen($tplSrc) && strpos($tplSrc, '<') === 0 && preg_match('/\>$/s', $tplSrc) ){
+				if( strlen(''.$tplSrc) && strpos($tplSrc, '<') === 0 && preg_match('/\>$/s', $tplSrc) ){
 					// HTMLをパース
 					$simple_html_dom = str_get_html(
 						$tplSrc ,

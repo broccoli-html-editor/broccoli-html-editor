@@ -151,7 +151,7 @@ class fncs_readme{
 
 			$attrs = ' '.trim($attributes);
 			$attrs = preg_replace('/\s+(?:on[a-zA-Z]*|data\-[\S]*|xmlns|style|class|challenge|allowpaymentrequest|formaction|form|for|name|crossorigin)(?:\=(\"|\')(?:.*?)\1)?/si', '', $attrs);
-			$attrs = trim($attrs);
+			$attrs = trim(''.$attrs);
 			if( strlen($attrs) ){
 				$attrs = ' '.$attrs;
 			}

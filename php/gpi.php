@@ -29,7 +29,7 @@ class gpi{
 		if( !array_key_exists('lang', $options) ){
 			$options['lang'] = null;
 		}
-		if( !strlen($options['lang']) ){
+		if( !strlen(''.$options['lang']) ){
 			$options['lang'] = 'en';
 		}
 
@@ -86,7 +86,7 @@ class gpi{
 					if( array_key_exists('moduleId', $options) ){
 						$moduleId = $options['moduleId'];
 					}
-					if( !strlen($moduleId) ){
+					if( !strlen(''.$moduleId) ){
 						return false;
 					}
 					$module = $this->broccoli->getModule($moduleId);
@@ -112,14 +112,14 @@ class gpi{
 					if( array_key_exists('moduleId', $options) ){
 						$moduleId = $options['moduleId'];
 					}
-					if( !strlen($moduleId) ){
+					if( !strlen(''.$moduleId) ){
 						return false;
 					}
 					$module = $this->broccoli->getModule($moduleId);
 					$clip = $module->getClipContents();
 					if( array_key_exists('resourceMode', $options) && $options['resourceMode'] == 'temporaryHash' ){
 						foreach($clip->resources as $resKey=>$resInfo){
-							if(!strlen($resKey)){continue;}
+							if(!strlen(''.$resKey)){continue;}
 							if(!is_object($resInfo)){continue;}
 							$resInfo->base64 = base64_encode('-----broccoli-resource-temporary-hash='.$resKey);
 						}
@@ -132,7 +132,7 @@ class gpi{
 					if( array_key_exists('moduleId', $options) ){
 						$moduleId = $options['moduleId'];
 					}
-					if( !strlen($moduleId) ){
+					if( !strlen(''.$moduleId) ){
 						return false;
 					}
 					$module = $this->broccoli->getModule($moduleId);
@@ -142,7 +142,7 @@ class gpi{
 					$tmpBase64Initial = 'LS0tLS1icm9jY29saS1yZXNvdXJjZS10ZW1wb3JhcnktaGFz';
 					$rtn = array();
 					foreach( $resourceDb as $resKey=>$resInfo ){
-						if(!strlen($resKey)){continue;}
+						if(!strlen(''.$resKey)){continue;}
 						if(!is_object($resInfo)){continue;}
 						if( property_exists($resInfo, 'base64') && preg_match('/^'.preg_quote($tmpBase64Initial,'/').'/', $resInfo->base64) ){
 							$bin = base64_decode($resInfo->base64);

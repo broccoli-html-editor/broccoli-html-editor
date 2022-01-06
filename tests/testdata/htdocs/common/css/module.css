@@ -197,27 +197,27 @@ ul > li > ul, ul > li > ol, ul > li > p {
   float: right;
   *margin-right: -10px; }
 
-@media (max-width: 520px) {
+@media all and (max-width: 520px) {
   .cols .cols-col.cols-3of4 {
     width: auto;
     float: none; } }
 
-@media (max-width: 520px) {
+@media all and (max-width: 520px) {
   .cols .cols-col.cols-1of2 {
     width: auto;
     float: none; } }
 
-@media (max-width: 520px) {
+@media all and (max-width: 520px) {
   .cols .cols-col.cols-2of3 {
     width: auto;
     float: none; } }
 
-@media (max-width: 520px) {
+@media all and (max-width: 520px) {
   .cols .cols-col.cols-1of3 {
     width: auto;
     float: none; } }
 
-@media (max-width: 520px) {
+@media all and (max-width: 520px) {
   .cols .cols-col.cols-1of4 {
     width: auto;
     float: none; } }

@@ -61,7 +61,7 @@ class buildModuleResources{
 				}
 
 				$tmp_bin = trim( $tmp_bin );
-				if( !strlen($tmp_bin) ){ continue; }
+				if( !strlen(''.$tmp_bin) ){ continue; }
 
 				$rtn .= '/**'."\n";
 				$rtn .= ' * module: '.$packageId.':'.$matched[1].'/'.$matched[2]."\n";
@@ -143,7 +143,7 @@ class buildModuleResources{
 
 			foreach( $array_files as $idx=>$row ){
 				$path = $array_files[$idx];
-				$bin = trim( file_get_contents( $path ) );
+				$bin = trim( ''.file_get_contents( $path ) );
 				if( !strlen($bin) ){continue;}
 
 				preg_match( '/\/([a-zA-Z0-9\.\-\_]+?)\/([a-zA-Z0-9\.\-\_]+?)\/[a-zA-Z0-9\.\-\_]+?$/i', $this->broccoli->fs()->normalize_path($path), $matched);
