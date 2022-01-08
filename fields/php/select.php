@@ -26,7 +26,7 @@ class select extends \broccoliHtmlEditor\fieldBase{
 		}
 		$rtn = $fieldData;
 
-		if( !strlen($rtn) && property_exists($mod, 'options') && $mod->options ){
+		if( !strlen(''.$rtn) && property_exists($mod, 'options') && $mod->options ){
 			$isHit = false;
 			foreach( $mod->options as $idx=>$val ){
 				if( $rtn == @$val->value ){
@@ -42,7 +42,7 @@ class select extends \broccoliHtmlEditor\fieldBase{
 				}
 			}
 		}
-		if( $mode == 'canvas' && !strlen($rtn) ){
+		if( $mode == 'canvas' && !strlen(''.$rtn) ){
 			// $rtn = '(ダブルクリックして選択してください)';
 				// ↑未選択時のダミー文はなしにした。
 				// 　クラス名の modifier 部分の拡張などに使用する場合に、

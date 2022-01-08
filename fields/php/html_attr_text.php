@@ -23,7 +23,7 @@ class html_attr_text extends \broccoliHtmlEditor\fieldBase{
 			$rtn = $fieldData;
 			$rtn = htmlspecialchars( $rtn );
 		}
-		if( $mode == 'canvas' && !strlen($rtn) ){
+		if( $mode == 'canvas' && !strlen(''.$rtn) ){
 			$rtn = '(ダブルクリックしてテキストを編集してください)';
 		}
 

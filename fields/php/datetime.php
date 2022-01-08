@@ -23,15 +23,15 @@ class datetime extends \broccoliHtmlEditor\fieldBase{
 		if(is_array($fieldData) && array_key_exists('src', $fieldData) && is_string($fieldData['src'])){
 			$time = strtotime($fieldData['src']);
 			$rtn = date( $format, $time ); // ←日付フォーマット
-			$rtn = htmlspecialchars( $rtn ); // ←HTML特殊文字変換
+			$rtn = htmlspecialchars( ''.$rtn ); // ←HTML特殊文字変換
 			$rtn = preg_replace('/\r\n|\r|\n/s', '<br />', $rtn); // ← 改行コードは改行タグに変換
-		}elseif( is_string($fieldData) && strlen($fieldData) ){
+		}elseif( is_string($fieldData) && strlen(''.$fieldData) ){
 			$time = strtotime($fieldData);
 			$rtn = date( $format, $time ); // ←日付フォーマット
-			$rtn = htmlspecialchars( $rtn ); // ←HTML特殊文字変換
+			$rtn = htmlspecialchars( ''.$rtn ); // ←HTML特殊文字変換
 			$rtn = preg_replace('/\r\n|\r|\n/s', '<br />', $rtn); // ← 改行コードは改行タグに変換
 		}
-		if( $mode == 'canvas' && !strlen($rtn) ){
+		if( $mode == 'canvas' && !strlen(''.$rtn) ){
 			$rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;">(ダブルクリックして編集してください)</span>';
 		}
 		return $rtn;

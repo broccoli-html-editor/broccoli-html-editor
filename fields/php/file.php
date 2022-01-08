@@ -56,7 +56,7 @@ class file extends \broccoliHtmlEditor\fieldBase{
 			if( $data->resourceInfo === false ){
 				$is_image_uploaded = false;
 			}elseif( is_object($data->resourceInfo) ){
-				if( !property_exists($data->resourceInfo, 'base64') || !strlen($data->resourceInfo->base64) ){
+				if( !property_exists($data->resourceInfo, 'base64') || !strlen(''.$data->resourceInfo->base64) ){
 					$is_image_uploaded = false;
 				}elseif( property_exists($data->resourceInfo, 'size') && !$data->resourceInfo->size ){
 					$is_image_uploaded = false;
@@ -132,7 +132,7 @@ class file extends \broccoliHtmlEditor\fieldBase{
 	// 	// MD5
 	// 	$resInfo->fieldNote->md5 = md5($bin);
 	// 	// size
-	// 	$resInfo->fieldNote->size = strlen($bin);
+	// 	$resInfo->fieldNote->size = strlen(''.$bin);
 
 
 	// 	return true;

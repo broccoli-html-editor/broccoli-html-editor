@@ -21,7 +21,7 @@ class href extends \broccoliHtmlEditor\fieldBase{
 		}elseif(is_string($fieldData)){
 			$rtn = htmlspecialchars( $fieldData );
 		}
-		if( $mode == 'canvas' && !strlen($rtn) ){
+		if( $mode == 'canvas' && !strlen(''.$rtn) ){
 			$rtn = '';
 		}
 

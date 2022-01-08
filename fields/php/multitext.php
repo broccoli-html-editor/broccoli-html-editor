@@ -43,7 +43,7 @@ class multitext extends \broccoliHtmlEditor\fieldBase{
 					break;
 			}
 		}
-		if( $mode == 'canvas' && !strlen(trim($rtn)) ){
+		if( $mode == 'canvas' && !strlen(trim(''.$rtn)) ){
 			$rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;">(ダブルクリックしてテキストを編集してください)</span>';
 		}
 		return $rtn;
