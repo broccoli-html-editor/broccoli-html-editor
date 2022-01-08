@@ -357,7 +357,7 @@ $ composer test
 
 ## 更新履歴 - Change log
 
-### broccoli-html-editor v0.6.0 (リリース日未定)
+### broccoli-html-editor v0.6.0 (2022年1月8日)
 
 - サポートするPHPのバージョンを `>=7.3.0` に変更。
 - PHP 8.1 に対応した。
