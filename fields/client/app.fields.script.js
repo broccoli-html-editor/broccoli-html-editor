@@ -1,6 +1,6 @@
 module.exports = function(broccoli){
+	var $ = require('jquery');
 	var php = require('phpjs');
-	var utils79 = require('utils79');
 	var editorLib = null;
 	try {
 		if(window.ace){

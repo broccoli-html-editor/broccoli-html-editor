@@ -1,6 +1,6 @@
 {
   "name": "broccoli-html-editor",
-  "version": "0.5.2",
+  "version": "0.6.1",
   "private": false,
   "description": "Block Editor Library.",
   "main": "libs/main.js",
@@ -8,6 +8,8 @@
     "start": "node ./tests/biflora/server.js",
     "up": "node ./tests/biflora/server.js",
     "submodules-update": "npm install; gulp;",
+    "watch": "gulp watch;",
+    "dev": "gulp;",
     "preview": "gulp preview;",
     "test": "mocha --ui tdd ./tests/",
     "testcafe": "./node_modules/.bin/testcafe firefox:headless ./tests/testcafe/mainTest.js --skip-js-errors --app \"php -S 127.0.0.1:8088 -t ./\""
@@ -36,7 +38,7 @@
     "mkdirp": "^0.5.1",
     "node-sass": "^4.12.0",
     "phpjs": "^1.3.2",
-    "twig": "^0.8.2",
+    "twig": "^1.10.5",
     "underscore": "^1.9.1",
     "url-parse": "^1.4.7",
     "utils79": "^0.0.5"

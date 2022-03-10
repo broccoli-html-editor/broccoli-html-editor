@@ -357,6 +357,10 @@ $ composer test
 
 ## 更新履歴 - Change log
 
+### broccoli-html-editor v0.6.1 (リリース日未定)
+
+- 外部ライブラリへの依存に関する問題を修正。
+
 ### broccoli-html-editor v0.6.0 (2022年1月8日)
 
 - サポートするPHPのバージョンを `>=7.3.0` に変更。

@@ -1,5 +1,7 @@
 module.exports = function(broccoli){
 
+	var $ = require('jquery');
+
 	/**
 	 * エディタUIで編集した内容を保存 (Client Side)
 	 */

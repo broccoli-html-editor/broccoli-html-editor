@@ -1,5 +1,7 @@
 module.exports = function(broccoli){
 
+	var $ = require('jquery');
+
 	/**
 	 * エディタUIを生成 (Client Side)
 	 */

@@ -1,5 +1,6 @@
 module.exports = function(broccoli){
-	var utils79 = require('utils79');
+
+	var $ = require('jquery');
 
 	/**
 	 * エディタUIを生成

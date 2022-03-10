@@ -1,6 +1,5 @@
 module.exports = function(broccoli){
 
-	var _this = this;
 	var $ = require('jquery');
 	var utils79 = require('utils79');
 	var Pickr = require('@simonwep/pickr/dist/pickr.es5.min');
