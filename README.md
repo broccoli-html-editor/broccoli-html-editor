@@ -360,6 +360,7 @@ $ composer test
 ### broccoli-html-editor v0.6.1 (リリース日未定)
 
 - 外部ライブラリへの依存に関する問題を修正。
+- その他、不具合の修正など。
 
 ### broccoli-html-editor v0.6.0 (2022年1月8日)
 

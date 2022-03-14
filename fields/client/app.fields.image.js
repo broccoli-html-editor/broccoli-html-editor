@@ -55,7 +55,7 @@ module.exports = function(broccoli){
 				if( fieldData.resType == 'web' ){
 					var $ = cheerio.load('<img>', {decodeEntities: false});
 					$('img')
-						.attr({'src': rtn.webUrl})
+						.attr({'src': fieldData.webUrl})
 						.css({
 							'max-width': '80px',
 							'max-height': '80px'
@@ -615,11 +615,11 @@ module.exports = function(broccoli){
 			);
 			$(elm).html(rtn);
 			selectResourceType();
-
-			new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
-				callback();
-			}); });
 		} );
+
+		new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
+			callback();
+		}); });
 		return;
 
 	} // this.mkEditor()

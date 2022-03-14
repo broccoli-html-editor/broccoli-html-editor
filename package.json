@@ -10,6 +10,7 @@
     "submodules-update": "npm install; gulp;",
     "watch": "gulp watch;",
     "dev": "gulp;",
+    "prod": "gulp;",
     "preview": "gulp preview;",
     "test": "mocha --ui tdd ./tests/",
     "testcafe": "./node_modules/.bin/testcafe firefox:headless ./tests/testcafe/mainTest.js --skip-js-errors --app \"php -S 127.0.0.1:8088 -t ./\""
