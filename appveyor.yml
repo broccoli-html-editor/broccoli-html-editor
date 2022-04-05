@@ -32,9 +32,9 @@ init:
 install:
   ## Set PHP.
   - ps: Set-Service wuauserv -StartupType Manual
-  - cinst php --version 7.3.33 -y
-  - SET PATH=C:\tools\php71\;%PATH%
-  - cd C:\tools\php71
+  - cinst php --version 8.1.4 -y
+  - SET PATH=C:\tools\php81\;%PATH%
+  - cd C:\tools\php81
   - copy php.ini-production php.ini
   - echo date.timezone="Asia/Tokyo" >> php.ini
   - echo extension_dir=ext >> php.ini
