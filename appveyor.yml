@@ -13,7 +13,7 @@ clone_folder: C:\projects\broccoliHtmlEditor
 # environments
 environment:
   oauthtoken:
-    secure: L7aFaHhJkScePf7T8vMrHn3xtwObmwfSjy36tXMOpb7qY8LXpSeieA6xx1oKiBk9
+    secure: Pqn9WKVpsBrDqhg5l2L7FeBGCdhmTipBkGOSb1Q3xb91KbnK8f8b/bYuc//y/Rte
 
 # branches
 branches:
