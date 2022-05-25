@@ -172,8 +172,6 @@ module.exports = function(broccoli, targetElm, callback){
 				'href': 'javascript:;'
 			})
 			.on('dragstart', function(e){
-				e.preventDefault();
-				e.stopPropagation();
 				var $this = $(this);
 				updateModuleInfoPreview(null, {'elm': this}, function(){
 					// console.log(e);
@@ -189,13 +187,9 @@ module.exports = function(broccoli, targetElm, callback){
 				});
 			})
 			.on('dragover', function(e){
-				e.preventDefault();
-				e.stopPropagation();
 				updateModuleInfoPreview(null, {'elm': this}, function(){});
 			})
 			.on('mouseover', function(e){
-				e.preventDefault();
-				e.stopPropagation();
 				var htmlBody = generateModuleInfoHtml(this);
 				var $heading = $('<p>')
 					.text( $(this).attr('data-name') || $(this).attr('data-id') )
@@ -208,8 +202,6 @@ module.exports = function(broccoli, targetElm, callback){
 				updateModuleInfoPreview(html, {'elm': this}, function(){});
 			})
 			.on('mouseout', function(e){
-				e.preventDefault();
-				e.stopPropagation();
 				updateModuleInfoPreview(null, {'elm': this}, function(){});
 			})
 			.on('dblclick', function(e){
