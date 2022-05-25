@@ -135,8 +135,8 @@ module.exports = function(broccoli, targetElm, callback){
 	 * モジュールのボタンを生成する
 	 */
 	function generateModuleButton( mod, depth ){
-		var timerTouchStart;
-		var isTouchStartHold = false;
+		// var timerTouchStart;
+		// var isTouchStartHold = false;
 
 		depth = depth || 0;
 		var $button = $('<a class="broccoli__module-palette--draggablebutton">');
@@ -172,6 +172,8 @@ module.exports = function(broccoli, targetElm, callback){
 				'href': 'javascript:;'
 			})
 			.on('dragstart', function(e){
+				e.preventDefault();
+				e.stopPropagation();
 				var $this = $(this);
 				updateModuleInfoPreview(null, {'elm': this}, function(){
 					// console.log(e);
@@ -187,9 +189,13 @@ module.exports = function(broccoli, targetElm, callback){
 				});
 			})
 			.on('dragover', function(e){
+				e.preventDefault();
+				e.stopPropagation();
 				updateModuleInfoPreview(null, {'elm': this}, function(){});
 			})
 			.on('mouseover', function(e){
+				e.preventDefault();
+				e.stopPropagation();
 				var htmlBody = generateModuleInfoHtml(this);
 				var $heading = $('<p>')
 					.text( $(this).attr('data-name') || $(this).attr('data-id') )
@@ -202,9 +208,13 @@ module.exports = function(broccoli, targetElm, callback){
 				updateModuleInfoPreview(html, {'elm': this}, function(){});
 			})
 			.on('mouseout', function(e){
+				e.preventDefault();
+				e.stopPropagation();
 				updateModuleInfoPreview(null, {'elm': this}, function(){});
 			})
 			.on('dblclick', function(e){
+				e.preventDefault();
+				e.stopPropagation();
 				var $this = $(this);
 				var html = generateModuleInfoHtml(this);
 				var $html = $(html);
@@ -252,19 +262,21 @@ module.exports = function(broccoli, targetElm, callback){
 					}
 				);
 			})
-			.on('touchstart', function(e){
-				// タッチデバイス向けの処理
-				clearTimeout(timerTouchStart);
-				if( isTouchStartHold ){
-					$(this).dblclick();
-					return;
-				}
-				isTouchStartHold = true;
-				timerTouchStart = setTimeout(function(){
-					isTouchStartHold = false;
-				}, 250);
-				return;
-			})
+			// .on('touchstart', function(e){
+			// 	// タッチデバイス向けの処理
+			// 	e.preventDefault();
+			// 	e.stopPropagation();
+			// 	clearTimeout(timerTouchStart);
+			// 	if( isTouchStartHold ){
+			// 		$(this).dblclick();
+			// 		return;
+			// 	}
+			// 	isTouchStartHold = true;
+			// 	timerTouchStart = setTimeout(function(){
+			// 		isTouchStartHold = false;
+			// 	}, 250);
+			// 	return;
+			// })
 			// .tooltip({'placement':'left'})
 		;
 		return $button;

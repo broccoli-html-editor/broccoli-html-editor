@@ -59,6 +59,7 @@ module.exports = function(broccoli){
 				.addClass('broccoli--panel-drop-to-insert-here')
 			)
 			.on('mouseover', function(e){
+				e.preventDefault();
 				var $this = $(this);
 				var currentInstance = $this.attr('data-broccoli-instance-path');
 
@@ -428,6 +429,8 @@ module.exports = function(broccoli){
 	 * パネルの ondrop イベントハンドラ: ファイルを受け取った場合の処理
 	 */
 	function onDropFile(e, moveTo, callback){
+		e.preventDefault();
+		e.stopPropagation();
 		callback = callback || function(){};
 		var event = e.originalEvent;
 		if( !event.dataTransfer || !event.dataTransfer.files || !event.dataTransfer.files.length ){
@@ -632,6 +635,8 @@ module.exports = function(broccoli){
 	 * editWindow からもコールされています。
 	 */
 	this.onDblClick = function(e, elm, callback){
+		e.preventDefault();
+		e.stopPropagation();
 		callback = callback || function(){};
 
 		e.stopPropagation();
@@ -677,7 +682,8 @@ module.exports = function(broccoli){
 	 * このメソッドは、 this.setPanelEventHandlers() からコールされています。
 	 */
 	function onContextMenu(e, elm, callback){
-		// console.log(e);
+		e.preventDefault();
+		e.stopPropagation();
 		callback = callback || function(){};
 		broccoli.contextmenu.show(
 			false,
@@ -696,19 +702,19 @@ module.exports = function(broccoli){
 	 * パネルにイベントハンドラをセットする
 	 */
 	this.setPanelEventHandlers = function($panel){
-		var timerTouchStart;
-		var isTouchStartHold = false;
+		// var timerTouchStart;
+		// var isTouchStartHold = false;
 		var timerFocus;
 		$panel
 			.attr({
 				'tabindex': 1
 			})
 			.on('click', function(e){
+				e.preventDefault();
+				e.stopPropagation();
 				if(isOnDragging){
 					return;
 				}
-				e.preventDefault();
-				e.stopPropagation();
 				clearTimeout(timerFocus);
 				var $this = $(this);
 				var instancePath = $this.attr('data-broccoli-instance-path');
@@ -764,19 +770,21 @@ module.exports = function(broccoli){
 				});
 				return;
 			})
-			.on('touchstart', function(e){
-				// タッチデバイス向けの処理
-				clearTimeout(timerTouchStart);
-				if( isTouchStartHold ){
-					_this.onDblClick(e, this, function(){});
-					return;
-				}
-				isTouchStartHold = true;
-				timerTouchStart = setTimeout(function(){
-					isTouchStartHold = false;
-				}, 250);
-				return;
-			})
+			// .on('touchstart', function(e){
+			// 	// タッチデバイス向けの処理
+			// 	e.preventDefault();
+			// 	e.stopPropagation();
+			// 	clearTimeout(timerTouchStart);
+			// 	if( isTouchStartHold ){
+			// 		_this.onDblClick(e, this, function(){});
+			// 		return;
+			// 	}
+			// 	isTouchStartHold = true;
+			// 	timerTouchStart = setTimeout(function(){
+			// 		isTouchStartHold = false;
+			// 	}, 250);
+			// 	return;
+			// })
 			.on('dragleave', function(e){
 				e.stopPropagation();
 				e.preventDefault();
@@ -828,6 +836,8 @@ module.exports = function(broccoli){
 				event.dataTransfer.setData("text/json", JSON.stringify(transferData) );
 			})
 			.on('drop', function(e){
+				e.preventDefault();
+				e.stopPropagation();
 				_this.onDrop(e, this, function(){
 					console.log('drop event done.');
 				});

@@ -357,6 +357,10 @@ $ composer test
 
 ## 更新履歴 - Change log
 
+### broccoli-html-editor v0.6.2 (リリース日未定)
+
+- Windowsタブレットでのタッチ操作の挙動に関する改善。
+
 ### broccoli-html-editor v0.6.1 (2022年5月2日)
 
 - 外部ライブラリへの依存に関する問題を修正。
