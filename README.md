@@ -360,6 +360,7 @@ $ composer test
 ### broccoli-html-editor v0.6.2 (リリース日未定)
 
 - Windowsタブレットでのタッチ操作の挙動に関する改善。
+- その他、不具合の修正など。
 
 ### broccoli-html-editor v0.6.1 (2022年5月2日)
 
