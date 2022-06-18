@@ -359,7 +359,7 @@ $ composer test
 
 ### broccoli-html-editor v0.6.3 (リリース日未定)
 
-- `module.js` の安定性に関する修正。
+- `module.js` の安定性に関する修正。スコープが分離されるようになった。
 
 ### broccoli-html-editor v0.6.2 (2022年6月5日)
 
