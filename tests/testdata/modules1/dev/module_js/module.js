@@ -1,3 +1,3 @@
-function module_js(){
+window.module_js = function(){
     alert('module_js()');
 }

@@ -1353,8 +1353,12 @@
                     {
                         "modId": "testMod1:dev/Dropdown",
                         "fields": {
-                            "Dropdown_id": "attr text id",
-                            "Dropdown_name": "attr text name",
+                            "Dropdown_id": {
+                                "src": "attr text id"
+                            },
+                            "Dropdown_name": {
+                                "src": "attr text name"
+                            },
                             "Dropdown_loop": [
                                 {
                                     "modId": "testMod1:dev/Dropdown",
@@ -1373,7 +1377,9 @@
                                             }
                                         ]
                                     },
-                                    "subModName": "Dropdown_loop"
+                                    "subModName": "Dropdown_loop",
+                                    "anchor": "",
+                                    "dec": ""
                                 },
                                 {
                                     "modId": "testMod1:dev/Dropdown",
