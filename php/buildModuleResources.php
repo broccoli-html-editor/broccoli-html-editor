@@ -155,7 +155,13 @@ class buildModuleResources{
 				$rtn .= ' * module: '.$packageId.':'.$matched[1].'/'.$matched[2]."\n";
 				$rtn .= ' */'."\n";
 
+				$rtn .= 'try{'."\n";
+				$rtn .= '	(function(){'."\n"."\n";
 				$rtn .= $bin."\n"."\n";
+				$rtn .= '	})();'."\n"."\n";
+				$rtn .= '}catch(err){'."\n";
+				$rtn .= '	console.error(\'Module Error:\', '.json_encode($packageId.':'.$matched[1].'/'.$matched[2], JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE).', err);'."\n";
+				$rtn .= '}'."\n"."\n"."\n";
 			}
 		}
 

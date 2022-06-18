@@ -186,7 +186,13 @@ module.exports = function(broccoli){
 				$rtn += ' * module: '+$packageId+':'+$matched[1]+'/'+$matched[2]+"\n";
 				$rtn += ' */'+"\n";
 
+				$rtn += 'try{'+"\n";
+				$rtn += '	(function(){'+"\n"+"\n";
 				$rtn += bin+"\n"+"\n";
+				$rtn += '	})();'+"\n"+"\n";
+				$rtn += '}catch(err){'+"\n";
+				$rtn += '	console.error(\'Module Error:\', '+JSON.stringify($packageId+':'+$matched[1]+'/'+$matched[2])+', err);'+"\n";
+				$rtn += '}'+"\n"+"\n"+"\n";
 			}
 		}
 

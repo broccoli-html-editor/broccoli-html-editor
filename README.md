@@ -357,6 +357,10 @@ $ composer test
 
 ## 更新履歴 - Change log
 
+### broccoli-html-editor v0.6.3 (リリース日未定)
+
+- `module.js` の安定性に関する修正。
+
 ### broccoli-html-editor v0.6.2 (2022年6月5日)
 
 - Windowsタブレットでのタッチ操作の挙動に関する改善。
