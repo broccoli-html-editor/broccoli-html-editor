@@ -57,7 +57,12 @@ class buildModuleResources{
 						trigger_error('SCSS Proccessor is NOT available.');
 						continue;
 					}
-					$tmp_bin = $scss->compile( $tmp_bin );
+					if( method_exists( $scss, 'compileString' ) ){
+						$tmp_bin = $scss->compileString( $tmp_bin )->getCss();
+					}elseif( method_exists( $scss, 'compile' ) ){
+						// 古い ScssPhp への対応
+						$tmp_bin = $scss->compile( $tmp_bin );
+					}
 				}
 
 				$tmp_bin = trim( $tmp_bin );
