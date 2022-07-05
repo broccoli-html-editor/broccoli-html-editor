@@ -318,7 +318,7 @@ oop.inherits(Mode, TextMode);
 (function() {
    
     this.lineCommentStart = "--";
-    this.blockComment = {start: "--[", end: "]--"};
+    this.blockComment = {start: "--[[", end: "--]]"};
     
     var indentKeywords = {
         "function": 1,
@@ -438,6 +438,7 @@ oop.inherits(Mode, TextMode);
     };
 
     this.$id = "ace/mode/lua";
+    this.snippetFileId = "ace/snippets/lua";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;

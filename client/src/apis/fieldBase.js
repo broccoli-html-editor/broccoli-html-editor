@@ -144,8 +144,29 @@ module.exports = function(broccoli){
 				}
 				$formElm.eq(0).height(h.toString() + "px");
 				mod.aceEditor.resize();
+
+				// スクロール位置の調整
+				var $lightbox = $formElm.closest('.broccoli__lightbox-inner-body');
+				var lightbox_scrollTop = $lightbox.scrollTop();
+				var lightbox_offsetTop = $lightbox.offset().top;
+				var lightbox_height = $lightbox.height();
+				var form_offsetTop = $formElm.offset().top;
+				var selection = mod.aceEditor.getSelection();
+				var cursorRow = selection.getSelectionAnchor().row;
+				var cursorTop = mod.aceEditor.renderer.lineHeight * cursorRow;
+				var cursorOffsetTop = form_offsetTop + cursorTop;
+				var form_position_top = lightbox_scrollTop - lightbox_offsetTop + form_offsetTop;
+				var focusBuffer = 120;
+				if( cursorOffsetTop < 60 ){
+					// 上へ行きすぎた
+					$lightbox.scrollTop( form_position_top + cursorTop - focusBuffer );
+				}else if( cursorOffsetTop > lightbox_height - 40 ){
+					// 下へ行きすぎた
+					$lightbox.scrollTop( form_position_top + cursorTop - lightbox_height + focusBuffer + 100 );
+				}
 			};
 			mod.aceEditor.getSession().on('change', updateAceHeight);
+			mod.aceEditor.getSelection().on('changeCursor', updateAceHeight);
 			setTimeout(updateAceHeight, 200);
 
 		}else{

@@ -784,6 +784,7 @@ oop.inherits(Mode, TextMode);
     };
 
     this.$id = "ace/mode/javascript";
+    this.snippetFileId = "ace/snippets/javascript";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
@@ -1316,6 +1317,7 @@ oop.inherits(Mode, TextMode);
     };
 
     this.$id = "ace/mode/css";
+    this.snippetFileId = "ace/snippets/css";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
@@ -2493,6 +2495,7 @@ oop.inherits(Mode, TextMode);
     };
 
     this.$id = "ace/mode/html";
+    this.snippetFileId = "ace/snippets/html";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
@@ -2818,7 +2821,7 @@ oop.inherits(Mode, TextMode);
 (function() {
    
     this.lineCommentStart = "--";
-    this.blockComment = {start: "--[", end: "]--"};
+    this.blockComment = {start: "--[[", end: "--]]"};
     
     var indentKeywords = {
         "function": 1,
@@ -2938,6 +2941,7 @@ oop.inherits(Mode, TextMode);
     };
 
     this.$id = "ace/mode/lua";
+    this.snippetFileId = "ace/snippets/lua";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
