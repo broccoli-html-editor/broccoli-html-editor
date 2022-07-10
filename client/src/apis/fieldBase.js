@@ -144,8 +144,10 @@ module.exports = function(broccoli){
 				}
 				$formElm.eq(0).height(h.toString() + "px");
 				mod.aceEditor.resize();
+			};
 
-				// スクロール位置の調整
+			// スクロール位置の調整
+			var updateAceScroll = function() {
 				var $lightbox = $formElm.closest('.broccoli__lightbox-inner-body');
 				var lightbox_scrollTop = $lightbox.scrollTop();
 				var lightbox_offsetTop = $lightbox.offset().top;
@@ -165,8 +167,14 @@ module.exports = function(broccoli){
 					$lightbox.scrollTop( form_position_top + cursorTop - lightbox_height + focusBuffer + 100 );
 				}
 			};
-			mod.aceEditor.getSession().on('change', updateAceHeight);
-			mod.aceEditor.getSelection().on('changeCursor', updateAceHeight);
+			mod.aceEditor.getSession().on('change', function(){
+				updateAceHeight();
+				updateAceScroll();
+			});
+			mod.aceEditor.getSelection().on('changeCursor', function(){
+				updateAceHeight();
+				updateAceScroll();
+			});
 			setTimeout(updateAceHeight, 200);
 
 		}else{
