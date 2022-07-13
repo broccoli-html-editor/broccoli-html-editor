@@ -39,7 +39,7 @@ mix
 				"fs": false,
 				"path": false,
 				"crypto": false,
-				"stream": false,
+				"stream": require.resolve("stream-browserify"),
 			}
 		}
 	})
