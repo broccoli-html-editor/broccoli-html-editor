@@ -14,9 +14,9 @@ module.exports = function(broccoli){
 	var fs = require('fs');
 	var sass;
 	try {
-		sass = require('node-sass');
+		sass = require('sass');
 	} catch (e) {
-		console.error('Failed to load "node-sass"', e);
+		console.error('Failed to load "sass"', e);
 	}
 
 	/**
