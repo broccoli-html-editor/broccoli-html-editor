@@ -502,7 +502,7 @@ module.exports = function(){
 		});
 
 		if(typeof(md)===typeof('')){
-			md = marked(md);
+			md = marked.parse(md);
 		}
 		new Promise(function(rlv){rlv();})
 			.then(function(){ return new Promise(function(rlv, rjt){

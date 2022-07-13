@@ -50,7 +50,7 @@ module.exports = function(broccoli, moduleId, options){
 			smartypants: false,
 			xhtml: true
 		});
-		str = marked(str);
+		str = marked.parse(str);
 		return str;
 	}
 

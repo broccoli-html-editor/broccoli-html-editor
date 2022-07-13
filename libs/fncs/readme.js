@@ -71,7 +71,7 @@ module.exports = function(broccoli){
 						smartypants: false,
 						xhtml: true
 					});
-					readme = marked(readme);
+					readme = marked.parse(readme);
 					break;
 				}
 			}
