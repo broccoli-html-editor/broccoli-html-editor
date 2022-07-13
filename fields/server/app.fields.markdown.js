@@ -22,10 +22,10 @@ module.exports = function(broccoli){
 
 		if(typeof(fieldData)===typeof({}) && fieldData.src ){
 			rtn = utils79.toStr(fieldData.src);
-			rtn = marked(rtn);
+			rtn = marked.parse(rtn);
 		}else if(typeof(fieldData)===typeof('')){
 			rtn = utils79.toStr(fieldData);
-			rtn = marked(rtn);
+			rtn = marked.parse(rtn);
 		}
 		if( mode == 'canvas' && !rtn.length ){
 			rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;">(ダブルクリックしてマークダウンを編集してください)</span>';

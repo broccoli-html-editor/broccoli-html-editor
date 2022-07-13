@@ -36,7 +36,7 @@ module.exports = function(broccoli){
 						smartypants: false,
 						xhtml: true
 					});
-					rtn = marked(rtn);
+					rtn = marked.parse(rtn);
 					break;
 				case 'html':
 				default:
