@@ -357,7 +357,7 @@ $ composer test
 
 ## 更新履歴 - Change log
 
-### broccoli-html-editor v0.6.3 (リリース日未定)
+### broccoli-html-editor v0.7.0 (2022年7月11日)
 
 - `module.js` の安定性に関する修正。スコープが分離されるようになった。
 - SCSSコンパイラのバージョン間の差異を吸収する処理を追加。
