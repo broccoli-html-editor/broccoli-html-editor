@@ -357,6 +357,10 @@ $ composer test
 
 ## 更新履歴 - Change log
 
+### broccoli-html-editor v0.7.1 (リリース日未定)
+
+- 編集ウィンドウ上での Ctrl + S 操作で、保存できるようになった。
+
 ### broccoli-html-editor v0.7.0 (2022年7月11日)
 
 - `module.js` の安定性に関する修正。スコープが分離されるようになった。

@@ -718,7 +718,7 @@ module.exports = function(broccoli){
 								var $start = $tabTargets.eq(0);
 								var $end = $tabTargets.eq(-1);
 								$start
-									.on('keydown', function(e){
+									.on('keydown.broccoli-html-editor', function(e){
 										if (e.keyCode == 9 && e.originalEvent.shiftKey) {
 											$end.focus();
 											e.preventDefault();
@@ -728,7 +728,7 @@ module.exports = function(broccoli){
 									})
 								;
 								$end
-									.on('keydown', function(e){
+									.on('keydown.broccoli-html-editor', function(e){
 										if (e.keyCode == 9 && !e.originalEvent.shiftKey) {
 											$start.focus();
 											e.preventDefault();
@@ -738,6 +738,21 @@ module.exports = function(broccoli){
 									})
 								;
 							})($editWindow);
+
+							$editWindow.on('keydown.broccoli-html-editor', function(e){
+								var cmdKey = ( e.originalEvent.metaKey || e.originalEvent.ctrlKey );
+								var pressedKey = e.originalEvent.key.toLowerCase();
+								// console.log('keydown:', e);
+								if(cmdKey){
+									if(pressedKey == 's'){
+										e.stopPropagation();
+										e.preventDefault();
+										$editWindow.find('form').submit();
+										return;
+									}
+								}
+							});
+
 							it1.next();
 						});
 					}
@@ -947,6 +962,7 @@ module.exports = function(broccoli){
 
 		return;
 	} // saveInstance()
+
 
 	/**
 	 * フォーム操作を凍結する
