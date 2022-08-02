@@ -124,14 +124,10 @@ module.exports = function(broccoli){
 	 * @return {Void}                 [description]
 	 */
 	this.init = function(instancePath, elmEditWindow, callback){
-		// console.log( '=-=-=-=-=-=-=-=-= Initialize EditWindow.' );
 		callback = callback || function(){};
 
 		var data = broccoli.contentsSourceData.get(instancePath);
-		// console.log( data );
 		var mod = initMod(data);
-		// console.log( data.modId, data.subModName );
-		// console.log( mod );
 
 		var $fields = $('<div>');
 		$editWindow = $(elmEditWindow);
@@ -158,7 +154,6 @@ module.exports = function(broccoli){
 
 		$editWindow.find('.broccoli__edit-window-module-readme').hide();
 		try{
-			// console.log(broccoli.getBootupInfomations().modulePackageList);
 			var modulePackageList = broccoli.getBootupInfomations().modulePackageList;
 			mod.id.match(/^([\s\S]*)\:([\s\S]*)\/([\s\S]*)$/i);
 			var parsedModId = {
@@ -167,7 +162,6 @@ module.exports = function(broccoli){
 				'module': RegExp.$3
 			};
 			var readme = modulePackageList[parsedModId.package].categories[parsedModId.category].modules[parsedModId.module].readme;
-			// console.log(readme);
 			if(readme){
 				$editWindow.find('.broccoli__edit-window-module-readme-inner .broccoli__module-readme').html(readme);
 				$editWindow.find('.broccoli__edit-window-module-readme-switch a').on('click', function(){
@@ -207,14 +201,10 @@ module.exports = function(broccoli){
 
 		// moduleフィールド、loopフィールドの内容を更新する
 		function updateModuleAndLoopField( instancePath, callbackOf_pdateModuleAndLoopField ){
-			console.log('updateModuleAndLoopField();');
 			callbackOf_pdateModuleAndLoopField = callbackOf_pdateModuleAndLoopField || function(res, callback){
 				callback = callback || function(){};
 				return;
 			};
-			// var data = broccoli.contentsSourceData.get(instancePath);
-			// // console.log( data );
-			// var mod = initMod(data);
 
 			broccoli.progress(function(){
 
@@ -243,10 +233,6 @@ module.exports = function(broccoli){
 									function(it2, childData, idx2){
 										var childMod = broccoli.contentsSourceData.getModuleByInternalId(childData.modId, childData.subModName);
 										var childInstancePath = instancePath + '/fields.'+field.name+'@'+idx2+''
-										// console.log(childInstancePath);
-										// console.log(childData);
-										// console.log(childMod);
-										// console.log(mod);
 										var label = childData.modId;
 										if( childMod.info && childMod.info.name ){
 											label = childMod.info.name;
@@ -278,8 +264,6 @@ module.exports = function(broccoli){
 												it79.ary(
 													childMod.fields,
 													function(itMkLabel, field, fieldName){
-														// console.log(field.fieldType);
-														// console.log(field.type);
 														var fieldType = field.fieldType;
 														var type = field.type;
 														if(fieldType == 'input'){
@@ -329,7 +313,6 @@ module.exports = function(broccoli){
 												broccoli.panels.onDrop(e, this, function(){
 													updateModuleAndLoopField( instancePath, function(){
 														_this.unlock();//フォームのロックを解除
-														console.log('drop event done.');
 													} );
 												});
 											})
@@ -360,7 +343,6 @@ module.exports = function(broccoli){
 														broccoli.saveContents(function(){
 															broccoli.panels.onDblClick(e, $this.get(0), function(){
 																broccoli.progressMessage('');
-																console.log('dblclick event done.');
 															});
 														});
 													});
@@ -444,7 +426,6 @@ module.exports = function(broccoli){
 												broccoli.panels.onDrop(e, this, function(){
 													updateModuleAndLoopField( instancePath, function(){
 														_this.unlock();//フォームのロックを解除
-														console.log('drop event done.');
 													} );
 												});
 											})
@@ -458,7 +439,6 @@ module.exports = function(broccoli){
 												broccoli.panels.onDblClick(e, this, function(){
 													updateModuleAndLoopField( instancePath, function(){
 														_this.unlock();//フォームのロックを解除
-														console.log('dblclick event done.');
 													} );
 												});
 											})
@@ -511,10 +491,7 @@ module.exports = function(broccoli){
 				});
 			},
 			function(it1){
-				// console.log(modLb);
-				// console.log(broccoli.lb.lang);
 				modLb.setLang(broccoli.lb.lang);
-				// console.log(modLb.getList());
 				it1.next();
 			},
 			function(it1){
@@ -527,8 +504,6 @@ module.exports = function(broccoli){
 							return;
 						}
 						fieldCount ++;
-						// console.log(fieldName);
-						// console.log(field);
 						field.fieldType = field.fieldType || 'input';
 						var $field = $(tplField)
 							.attr({
@@ -563,7 +538,6 @@ module.exports = function(broccoli){
 						}
 						$fields.append($field);
 
-						// console.log( broccoli.fieldDefinitions );
 						var elmFieldContent = $field.find('.broccoli__edit-window-field-content').get(0);
 						field.fieldType = field.fieldType || 'input';
 						switch( field.fieldType ){
@@ -571,7 +545,6 @@ module.exports = function(broccoli){
 								var fieldDefinition = broccoli.getFieldDefinition(field.type);
 								mod.fields[field.name].lb = new (function(lb, field){
 									this.get = function(key, defValue){
-										// console.log('=-=-=-=-=-=', field, data);
 										var rtn = '';
 										var fullkey = '';
 										if( data.subModName ){
@@ -583,7 +556,6 @@ module.exports = function(broccoli){
 										if( rtn == '' || rtn == '---' ){
 											rtn = defValue;
 										}
-										// console.log(fullkey, lb.getList(), rtn);
 										return rtn;
 									}
 								})(modLb, field);
@@ -656,8 +628,6 @@ module.exports = function(broccoli){
 								.removeAttr('disabled')
 								.on('submit', function(){
 									// 編集内容を保存する
-									// console.log( data );
-									// console.log( mod );
 									broccoli.px2style.loading();
 									formErrorMessage([]);
 
@@ -742,7 +712,6 @@ module.exports = function(broccoli){
 							$editWindow.on('keydown.broccoli-html-editor', function(e){
 								var cmdKey = ( e.originalEvent.metaKey || e.originalEvent.ctrlKey );
 								var pressedKey = e.originalEvent.key.toLowerCase();
-								// console.log('keydown:', e);
 								if(cmdKey){
 									if(pressedKey == 's'){
 										e.stopPropagation();
@@ -766,8 +735,6 @@ module.exports = function(broccoli){
 				var lastVisibilityVisible = null;
 				$innerBody.on('scroll', function(){
 					var btnOffsetScrollTop = $btnOk.offset().top - $innerBody.offset().top;
-					// console.log($innerBody.scrollTop(), $btnOk.offset().top);
-					// console.log(btnOffsetScrollTop, $innerBody.innerHeight());
 					var visibilityVisible = null;
 					if( btnOffsetScrollTop > $innerBody.innerHeight() ){
 						visibilityVisible = true;
@@ -798,8 +765,6 @@ module.exports = function(broccoli){
 		// パンくずを表示
 		var instPath = instancePath.split('/');
 		var timer;
-
-		// console.log(instPath);
 
 		var $ul = $('<ul>');
 		var instPathMemo = [];
@@ -903,7 +868,6 @@ module.exports = function(broccoli){
 	 * インスタンスの編集を保存する
 	 */
 	function saveInstance( instancePath, mod, data, callback ){
-		// console.log('=-=-=-= saveInstance:', data, mod, instancePath);
 		callback = callback || function(){};
 		if( data.fields && data.fields.length === 0 ){
 			data.fields = {};

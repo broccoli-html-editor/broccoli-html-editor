@@ -360,6 +360,7 @@ $ composer test
 ### broccoli-html-editor v0.7.1 (リリース日未定)
 
 - 編集ウィンドウ上での Ctrl + S 操作で、保存できるようになった。
+- アペンダーを選択してコピーすると応答しなくなる不具合を修正。
 
 ### broccoli-html-editor v0.7.0 (2022年7月11日)
 

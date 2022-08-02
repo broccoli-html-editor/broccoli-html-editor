@@ -15,9 +15,6 @@
 	})().replace(/\\/g, '/').replace(/\/[^\/]*\/?$/, '');
 
 	module.exports = function(){
-		// if(!window){delete(require.cache[require('path').resolve(__filename)]);}
-		// console.log(__dirname);
-
 		var _this = this;
 		var broccoli = this;
 		var it79 = require('iterate79');
@@ -90,7 +87,7 @@
 						it79.ary(
 							css,
 							function(it2, row, idx){
-								console.log('リソースを読み込んでいます...。 ('+(Number(idx)+1)+'/'+(css.length)+')');
+								// console.info('リソースを読み込んでいます...。 ('+(Number(idx)+1)+'/'+(css.length)+')');
 								var link = document.createElement('link');
 								link.addEventListener('load', function(){
 									it2.next();
@@ -125,7 +122,6 @@
 									if(contWin.location.href == 'about:blank'){
 										return;
 									}
-									console.log('broccoli: preview loaded:', contWin.location.href);
 								}catch(e){}
 								_this.setUiState();
 								onPreviewLoad( callback );
@@ -217,7 +213,6 @@
 							{} ,
 							function(_bootupInfomations){
 								bootupInfomations = _bootupInfomations;
-								// console.log('=----=----=', bootupInfomations);
 								serverConfig = bootupInfomations.conf;
 
 								it1.next(data);
@@ -228,9 +223,7 @@
 						// language bank
 						_this.progressMessage('言語データを設定しています...。');
 						_this.lb = new LangBank(bootupInfomations.languageCsv, function(){
-							console.log('broccoli: set language "'+options.lang+'"');
 							_this.lb.setLang( options.lang );
-							// console.log( _this.lb.get('ui_label.close') );
 							it1.next(data);
 						});
 					},
@@ -252,21 +245,18 @@
 					function(it1, data){
 						_this.progressMessage('モジュールパレットを生成しています...。');
 						_this.drawModulePalette(_this.options.elmModulePalette, function(){
-							console.log('broccoli: module palette standby.');
 							it1.next(data);
 						});
 					} ,
 					function(it1, data){
 						_this.progressMessage('インスタンスツリービューを初期化しています...。');
 						_this.instanceTreeView.init(_this.options.elmInstanceTreeView, function(){
-							console.log('broccoli: instanceTreeView standby.');
 							it1.next(data);
 						});
 					} ,
 					function(it1, data){
 						_this.progressMessage('インスタンスパスビューを初期化しています...。');
 						_this.instancePathView.init(_this.options.elmInstancePathView, function(){
-							console.log('broccoli: instancePathView standby.');
 							it1.next(data);
 						});
 					} ,
@@ -302,8 +292,6 @@
 						});
 					} ,
 					function(it1, data){
-						console.log('broccoli: init done.');
-
 						clearTimeout(timer_onPreviewLoad);
 						var timeout = 30;
 						timer_onPreviewLoad = setTimeout(function(){
@@ -394,7 +382,6 @@
 						}
 						var cmdKey = ( e.originalEvent.metaKey || e.originalEvent.ctrlKey );
 						var pressedKey = e.originalEvent.key.toLowerCase();
-						// console.log('keydown:', e);
 						if(cmdKey){
 							if(pressedKey == 'z'){
 								e.stopPropagation();
@@ -544,7 +531,6 @@
 						_this.progressMessage('リソースを取得しています...。');
 						_this.resourceMgr.getResourceDb(function(rDb){
 							resDb = rDb;
-							// console.log(resDb);
 							it1.next(data);
 						});
 					} ,
@@ -558,7 +544,6 @@
 								'contents_bowl_name_by': _this.options.contents_bowl_name_by
 							},
 							function(bowlList){
-								// console.log('bowlList:', bowlList);
 								if( typeof(bowlList)!==typeof([]) || !bowlList.length ){
 									_this.message('FAILED to list bowls.');
 									console.error('FAILED to list bowls - - - - - -', 'bowlList',  bowlList);
@@ -574,8 +559,6 @@
 									'buildHtml',
 									{'bowlList': bowlList},
 									function(htmls){
-										// console.log('htmls - - - - - - - -', htmls);
-
 										for(var idx in htmls){
 											htmls[idx] = (function(src){
 												for(var resKey in resDb){
@@ -592,7 +575,6 @@
 												return src;
 											})(htmls[idx]);
 										}
-										// console.log(htmls);
 
 										_this.progressMessage('再構成したHTMLで画面を更新しています...。');
 										_this.postMessenger.send(
@@ -603,7 +585,6 @@
 												'htmls': htmls
 											},
 											function(){
-												console.log('broccoli: HTML standby.');
 												it1.next(data);
 											}
 										);
@@ -629,10 +610,8 @@
 							'getHtmlContentHeightWidth',
 							{},
 							function(hw){
-								// console.log(hw);
 								$canvas.find('iframe')
 									.height( hw.h + 16 )
-									// .removeAttr('scrolling')
 								;
 								it1.next(data);
 							}
@@ -648,7 +627,6 @@
 						// パネル描画
 						_this.progressMessage('編集パネルを描画しています...。');
 						_this.drawPanels( function(){
-							console.log('broccoli: draggable panels standby.');
 							it1.next(data);
 						} );
 					} ,
@@ -667,7 +645,6 @@
 						// インスタンスツリービュー描画
 						_this.progressMessage('インスタンスツリービューを描画しています...。');
 						_this.instanceTreeView.update( function(){
-							console.log('broccoli: instanceTreeView redraw : done.');
 							it1.next(data);
 						} );
 					} ,
@@ -675,7 +652,6 @@
 						// インスタンスパスビューを更新
 						_this.progressMessage('インスタンスパスビューを描画しています...。');
 						_this.instancePathView.update( function(){
-							console.log('broccoli: instancePathView redraw : done.');
 							it1.next(data);
 						} );
 					} ,
@@ -745,7 +721,6 @@
 		 * インスタンスを挿入する
 		 */
 		this.insertInstance = function( instancePath, callback ){
-			console.log('Insert before:', instancePath);
 			callback = callback || function(){};
 
 			var $lbElm = $('<div>');
@@ -764,7 +739,6 @@
 				$lbElm,
 				function(isInsert, callback){
 					callback = callback || function(){};
-					console.log('Insert module: done.');
 					broccoli.px2style.closeModal();
 				}
 			);
@@ -775,7 +749,6 @@
 		 * インスタンスを編集する
 		 */
 		this.editInstance = function( instancePath ){
-			console.log("Edit: "+instancePath);
 			var broccoli = this;
 			broccoli.selectInstance(instancePath, function(){
 				broccoli.lightbox( function( lbElm ){
@@ -785,13 +758,11 @@
 						if( !isSave ){
 							broccoli.closeLightbox(function(){
 								broccoli.closeProgress(function(){
-									console.log('editInstance canceled.');
 									callback();
 								});
 							});
 							return;
 						}
-						// console.log(callback);
 						it79.fnc({},[
 							function(it1, data){
 								// プログレスを表示
@@ -833,7 +804,6 @@
 								});
 							} ,
 							function(it1, data){
-								console.log('editInstance done.');
 								callback();
 								it1.next(data);
 							}
@@ -848,7 +818,6 @@
 		 * インスタンスを選択する
 		 */
 		this.selectInstance = function( instancePath, callback ){
-			console.log("Select: "+instancePath);
 			callback = callback || function(){};
 			var broccoli = this;
 
@@ -862,7 +831,6 @@
 					broccoli.panels.updateInstanceSelection(function(){
 						broccoli.instanceTreeView.updateInstanceSelection(function(){
 							broccoli.instancePathView.update(function(){
-								// console.log("Selected: "+broccoli.getSelectedInstance());
 								callback();
 							});
 						});
@@ -879,7 +847,6 @@
 			callback = callback || function(){};
 			var selectedInstancePath = broccoli.getSelectedInstance();
 			var firstInstancePath = selectedInstancePath.replace(/\@[0-9]*$/, '@0');
-			// console.log(selectedInstancePath, firstInstancePath);
 
 			it79.fnc({}, [
 				function(it1){
@@ -895,12 +862,9 @@
 				function(it1){
 					var parentInstancePath = firstInstancePath.replace(/(?:\/fields\.([a-zA-Z0-9\_\-]+)\@[0-9]*)$/, '');
 					var fieldName = RegExp.$1;
-					// console.log(parentInstancePath, fieldName);
 					var data = broccoli.contentsSourceData.get(parentInstancePath);
-					// console.log(data);
 					var lastInstanceIdx = data.fields[fieldName].length - 1;
 					var lastInstancePath = firstInstancePath.replace(/\@[0-9]*$/, '@'+lastInstanceIdx);
-					// console.log(lastInstancePath);
 					broccoli.selectInstanceRegion(lastInstancePath, function(){
 						it1.next();
 					});
@@ -923,7 +887,6 @@
 				this.selectInstance(instancePathRegionTo, callback);
 				return;
 			}
-			console.log("Select Region: from "+selectedInstance+" to "+instancePathRegionTo);
 			selectedInstance.match(/^([\s\S]*?)([0-9]*)$/, '$1');
 			var commonLayer = RegExp.$1;
 			var startNumber = RegExp.$2;
@@ -942,17 +905,14 @@
 
 			// 数値にキャスト
 			var fromTo = [Number(startNumber), Number(endNumber)].sort();
-			// console.log(fromTo);
 
 			selectedInstanceRegion = [];
 			for( var i = fromTo[0]; i <= fromTo[1]; i ++ ){
 				selectedInstanceRegion.push( commonLayer+i );
 			}
-			// console.log(selectedInstanceRegion);
 
 			broccoli.panels.updateInstanceSelection(function(){
 				broccoli.instanceTreeView.updateInstanceSelection(function(){
-					// console.log("Selected: "+broccoli.getSelectedInstance());
 					callback();
 				});
 			});
@@ -1060,7 +1020,6 @@
 			var broccoli = this;
 			var instancePath = this.getSelectedInstance();
 			var instancePathRegion = this.getSelectedInstanceRegion();
-			// console.log(instancePath);
 			if( typeof(instancePath) !== typeof('') ){
 				callback(false);
 				return;
@@ -1075,8 +1034,8 @@
 			it79.ary(
 				data.data,
 				function(it1, row1, idx1){
+					if( !row1 ){ it1.next(); return; }
 					_this.contentsSourceData.extractResourceId(row1, function(resourceIdList){
-						// console.log(resourceIdList);
 						it79.ary(
 							resourceIdList ,
 							function(it2, row2, idx2){
@@ -1093,7 +1052,6 @@
 					});
 				} ,
 				function(){
-					// console.log(data);
 					data = JSON.stringify( data, null, 1 );
 					callback(data);
 				}
@@ -1107,7 +1065,6 @@
 		this.copy = function(callback, event){
 			callback = callback||function(){};
 			var instancePath = this.getSelectedInstance();
-			// console.log(instancePath);
 			if( typeof(instancePath) !== typeof('') ){
 				_this.message('インスタンスを選択した状態でコピーしてください。');
 				callback(false);
@@ -1137,7 +1094,6 @@
 		this.cut = function(callback, event){
 			callback = callback||function(){};
 			var instancePath = this.getSelectedInstance();
-			// console.log(instancePath);
 			if( typeof(instancePath) !== typeof('') ){
 				_this.message('インスタンスを選択した状態でカットしてください。');
 				callback(false);
@@ -1170,15 +1126,12 @@
 			callback = callback||function(){};
 			var selectedInstance = this.getSelectedInstance();
 			if( typeof(selectedInstance) !== typeof('') ){
-				// console.log(selectedInstance);
 				_this.message('インスタンスを選択した状態でペーストしてください。');
 				callback(false);
 				return;
 			}
-			// console.log(selectedInstance);
 
 			this.clipboard.get( null, event, function(data){
-
 				try {
 					data = JSON.parse( data );
 				} catch (e) {
@@ -1187,23 +1140,22 @@
 					callback(false);
 					return;
 				}
-				// console.log(data);
 
 				var isValid = (function(){
+					if( !data.data[0] ){
+						return false;
+					}
 					var php = require('phpjs');
 					var dataToParent = broccoli.contentsSourceData.get(php.dirname(selectedInstance));
 					var modToParent = broccoli.contentsSourceData.getModule(dataToParent.modId);//subModuleの全量を知りたいので、第2引数は渡さない。
 					var currentInstanceTo = php.basename(selectedInstance).split('.')[1].split('@');
-					// console.log(modToParent);
-					// console.log(currentInstanceTo);
-					// console.log(dataToParent);
+
 					var typeTo = 'module';
 					if( modToParent.subModule && modToParent.subModule[currentInstanceTo[0]] ){
 						typeTo = 'loop';
 					}
 
 					var modFrom = broccoli.contentsSourceData.getModule(data.data[0].modId, data.data[0].subModName);
-					// console.log(modFrom);
 					var typeFrom = 'module';
 					if( modFrom.subModName ){
 						typeFrom = 'loop';
@@ -1232,8 +1184,8 @@
 					it79.ary(
 						data.data ,
 						function(it1, row1, idx1){
+							if( !row1 ){ it1.next(); return; }
 							_this.contentsSourceData.duplicateInstance(data.data[idx1], data.resources, {}, function(newData){
-								// console.log(newData);
 
 								_this.contentsSourceData.addInstance( newData, selectedInstance, function(result){
 									// 上から順番に挿入していくので、
@@ -1293,7 +1245,7 @@
 
 			var selectedInstance = _this.getSelectedInstance();
 			var selectedInstanceRegion = _this.getSelectedInstanceRegion();
-			// console.log(selectedInstance);
+
 			if( typeof(selectedInstance) !== typeof('') ){
 				_this.message('インスタンスを選択した状態で削除してください。');
 				callback(false);
@@ -1319,7 +1271,6 @@
 					selectedInstanceRegion,
 					function(it1, selectedInstanceRow, idx){
 						_this.contentsSourceData.removeInstance(selectedInstanceRow, function(){
-							console.log(selectedInstanceRow + ' removed.');
 							it1.next();
 						});
 					},
@@ -1535,7 +1486,6 @@
 		 * プログレス表示中でなければ無視する。
 		 */
 		this.progressMessage = function(str){
-			console.log(str);
 			if( !this.isProgress() ){
 				this.progress(function(){
 					var $userMessage = $('.broccoli__progress-comment');
@@ -1649,16 +1599,13 @@
 						'updateContents',
 						{} ,
 						function(result){
-							// console.log('------ gpi.updateContents result --', result);
 							it1.next(data);
 						}
 					);
 				} ,
 				function(it1, data){
-					// console.log('editInstance done.');
 					_this.progressMessage('コンテンツを保存しました。');
 					_this.indicator.saveCompleted();
-					// _this.message('コンテンツを保存しました。');
 					callback(true);
 					it1.next(data);
 				}
