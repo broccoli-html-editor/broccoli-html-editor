@@ -703,7 +703,7 @@
 			options.lang = options.lang || this.options.lang;
 			this.options.gpiBridge(api, options, function(result){
 				if(typeof(result) == typeof({}) && result.errors && result.errors.length){
-					console.error(result.errors);
+					console.error('Broccoli GPI Error:', result.errors);
 				}
 				callback(result);
 			});
@@ -722,24 +722,11 @@
 		 */
 		this.insertInstance = function( instancePath, callback ){
 			callback = callback || function(){};
-
-			var $lbElm = $('<div>');
-			broccoli.px2style.modal({
-				'title': 'モジュールを挿入します',
-				'body': $lbElm,
-				'buttons': [],
-				'buttonsSecondary': [
-					$('<button class="px2-btn">').text('キャンセル').on('click', function(){
-						broccoli.px2style.closeModal();
-					})
-				],
-			});
 			broccoli.drawInsertWindow(
 				instancePath,
-				$lbElm,
-				function(isInsert, callback){
-					callback = callback || function(){};
+				function(isInsert){
 					broccoli.px2style.closeModal();
+					callback(isInsert);
 				}
 			);
 			return;
@@ -1379,8 +1366,27 @@
 		/**
 		 * 挿入ウィンドウを描画する
 		 */
-		this.drawInsertWindow = function(instancePath, elmEditWindow, callback){
-			this.insertWindow.init(instancePath, elmEditWindow, callback);
+		this.drawInsertWindow = function(instancePath, callback){
+			$(window).on('beforeunload.broccoli-html-editor', function(e){
+				e.preventDefault();
+				e.returnValue = '';
+			});
+
+			var $lbElm = $('<div>');
+			broccoli.px2style.modal({
+				'title': 'モジュールを挿入します',
+				'body': $lbElm,
+				'buttons': [],
+				'buttonsSecondary': [
+					$('<button class="px2-btn">').text('キャンセル').on('click', function(){
+						broccoli.px2style.closeModal();
+					})
+				],
+				'onclose': function(){
+					$(window).off('beforeunload.broccoli-html-editor');
+				},
+			});
+			this.insertWindow.init(instancePath, $lbElm, callback);
 			return;
 		}
 
@@ -1388,7 +1394,14 @@
 		 * 編集ウィンドウを描画する
 		 */
 		this.drawEditWindow = function(instancePath, elmEditWindow, callback){
-			this.editWindow.init(instancePath, elmEditWindow, callback);
+			$(window).on('beforeunload.broccoli-html-editor', function(e){
+				e.preventDefault();
+				e.returnValue = '';
+			});
+			this.editWindow.init(instancePath, elmEditWindow, function(result){
+				$(window).off('beforeunload.broccoli-html-editor');
+				callback(result);
+			});
 			return;
 		}
 

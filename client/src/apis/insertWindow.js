@@ -393,7 +393,7 @@ module.exports = function(broccoli){
 																broccoli.closeProgress(function(){
 																	broccoli.selectInstance(newInstancePath, function(){
 																		unlock();
-																		latestCallback();
+																		latestCallback(true);
 																	});
 																});
 															});
@@ -420,7 +420,7 @@ module.exports = function(broccoli){
 							console.error('Failed addInstance()', modInternalId, moveTo);
 							broccoli.closeProgress(function(){
 								unlock();
-								latestCallback();
+								latestCallback(false);
 							});
 							return;
 						}
@@ -433,7 +433,7 @@ module.exports = function(broccoli){
 									broccoli.closeProgress(function(){
 										broccoli.selectInstance(moveTo, function(){
 											unlock();
-											latestCallback();
+											latestCallback(true);
 										});
 									});
 								});
