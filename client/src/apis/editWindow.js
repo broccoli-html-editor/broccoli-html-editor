@@ -709,7 +709,7 @@ module.exports = function(broccoli){
 								;
 							})($editWindow);
 
-							$editWindow.on('keydown.broccoli-html-editor', function(e){
+							$(window).on('keydown.broccoli-html-editor', function(e){
 								var cmdKey = ( e.originalEvent.metaKey || e.originalEvent.ctrlKey );
 								var pressedKey = e.originalEvent.key.toLowerCase();
 								if(cmdKey){
