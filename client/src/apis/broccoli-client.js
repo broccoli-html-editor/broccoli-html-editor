@@ -1469,6 +1469,7 @@
 					}
 				)
 			;
+			$(window).off('beforeunload.broccoli-html-editor');
 			return;
 		}
 
