@@ -54,9 +54,4 @@ mix
 	// --------------------------------------
 	// DevScripts
 	.js('tests/testdata/htdocs/index_files/main.src.js', 'tests/testdata/htdocs/index_files/main.js')
-
-	// --------------------------------------
-	// Static Frontend Libraries
-	.copyDirectory('node_modules/bootstrap/dist/fonts', 'client/dist/libs/bootstrap/dist/fonts')
-	.copyDirectory('node_modules/bootstrap/dist/js', 'client/dist/libs/bootstrap/dist/js')
 ;

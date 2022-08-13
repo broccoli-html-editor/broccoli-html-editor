@@ -80,7 +80,6 @@
 					function(it1, data){
 						// リソースファイルの読み込み
 						var css = [
-							__dirname+'/libs/bootstrap/dist/css/bootstrap.css',
 							__dirname+'/broccoli.css',
 						];
 						$('head *[data-broccoli-resource]').remove(); // 一旦削除

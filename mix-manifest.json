@@ -2,13 +2,5 @@
     "/client/dist/broccoli.js": "/client/dist/broccoli.js",
     "/client/dist/broccoli-preview-contents.js": "/client/dist/broccoli-preview-contents.js",
     "/tests/testdata/htdocs/index_files/main.js": "/tests/testdata/htdocs/index_files/main.js",
-    "/client/dist/broccoli.css": "/client/dist/broccoli.css",
-    "/client/dist/libs/bootstrap/dist/fonts/glyphicons-halflings-regular.eot": "/client/dist/libs/bootstrap/dist/fonts/glyphicons-halflings-regular.eot",
-    "/client/dist/libs/bootstrap/dist/fonts/glyphicons-halflings-regular.svg": "/client/dist/libs/bootstrap/dist/fonts/glyphicons-halflings-regular.svg",
-    "/client/dist/libs/bootstrap/dist/fonts/glyphicons-halflings-regular.ttf": "/client/dist/libs/bootstrap/dist/fonts/glyphicons-halflings-regular.ttf",
-    "/client/dist/libs/bootstrap/dist/fonts/glyphicons-halflings-regular.woff": "/client/dist/libs/bootstrap/dist/fonts/glyphicons-halflings-regular.woff",
-    "/client/dist/libs/bootstrap/dist/fonts/glyphicons-halflings-regular.woff2": "/client/dist/libs/bootstrap/dist/fonts/glyphicons-halflings-regular.woff2",
-    "/client/dist/libs/bootstrap/dist/js/bootstrap.js": "/client/dist/libs/bootstrap/dist/js/bootstrap.js",
-    "/client/dist/libs/bootstrap/dist/js/bootstrap.min.js": "/client/dist/libs/bootstrap/dist/js/bootstrap.min.js",
-    "/client/dist/libs/bootstrap/dist/js/npm.js": "/client/dist/libs/bootstrap/dist/js/npm.js"
+    "/client/dist/broccoli.css": "/client/dist/broccoli.css"
 }
