@@ -461,13 +461,13 @@ module.exports = function(broccoli, moduleId, options){
 		_this.lb = new LangBank(_this.realpath+'language.csv', function(){
 			_this.lb.setLang( broccoli.lb.lang );
 			if( moduleId == '_sys/root' ){
-				parseTpl( '{&{"module":{"name":"main","label":"コンテンツエリア"}}&}', _this, _this, callback );
+				parseTpl( '{&{"module":{"name":"main","label":"'+broccoli.lb.get('system_module_label.contents_area')+'"}}&}', _this, _this, callback );
 			}else if( moduleId == '_sys/unknown' ){
-				parseTpl( '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;" data-broccoli-error-message="未知のモジュールテンプレートです。">[ERROR] 未知のモジュールテンプレートです。<!-- .error --></div>'+"\n", _this, _this, callback );
+				parseTpl( '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;" data-broccoli-error-message="'+broccoli.lb.get('ui_message.unknown_module_template')+'">[ERROR] '+broccoli.lb.get('ui_message.unknown_module_template')+'<!-- .error --></div>'+"\n", _this, _this, callback );
 			}else if( moduleId == '_sys/html' ){
 				parseTpl( '{&{"input":{"type":"html","name":"main","label":"HTML"}}&}', _this, _this, callback );
 			}else if( moduleId == '_sys/image' ){
-				parseTpl( '<img src="{&{"input":{"type":"image","name":"src","label":"画像"}}&}" alt="{&{"input":{"type":"html_attr_text","name":"alt","label":"代替テキスト","rows":1}}&}" />', _this, _this, callback );
+				parseTpl( '<img src="{&{"input":{"type":"image","name":"src","label":"'+broccoli.lb.get('system_module_label.image')+'"}}&}" alt="{&{"input":{"type":"html_attr_text","name":"alt","label":"'+broccoli.lb.get('system_module_label.image_alt_text')+'","rows":1}}&}" />', _this, _this, callback );
 			}else if( typeof(options.src) === typeof('') ){
 				parseTpl( options.src, _this, options.topThis, callback );
 			}else if( _this.topThis.templateType != 'broccoli' && typeof(_this.subModName) == typeof('') ){

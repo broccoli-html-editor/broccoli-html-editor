@@ -135,13 +135,13 @@ class classModule{
 		$this->lb->setLang( $this->broccoli->lb()->lang );
 
 		if( $this->id == '_sys/root' ){
-			return $this->parseTpl( '{&{"module":{"name":"main","label":"コンテンツエリア"}}&}', $this );
+			return $this->parseTpl( '{&{"module":{"name":"main","label":"'.$this->broccoli->lb()->get('system_module_label.contents_area').'"}}&}', $this );
 		}elseif( $this->id == '_sys/unknown' ){
-			return $this->parseTpl( '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;" data-broccoli-error-message="未知のモジュールテンプレートです。">[ERROR] 未知のモジュールテンプレートです。<!-- .error --></div>'."\n", $this );
+			return $this->parseTpl( '<div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;" data-broccoli-error-message="'.$this->broccoli->lb()->get('ui_message.unknown_module_template').'">[ERROR] '.$this->broccoli->lb()->get('ui_message.unknown_module_template').'<!-- .error --></div>'."\n", $this );
 		}elseif( $this->id == '_sys/html' ){
 			return $this->parseTpl( '{&{"input":{"type":"html","name":"main","label":"HTML"}}&}', $this );
 		}elseif( $this->id == '_sys/image' ){
-			return $this->parseTpl( '<img src="{&{"input":{"type":"image","name":"src","label":"画像"}}&}" alt="{&{"input":{"type":"html_attr_text","name":"alt","label":"代替テキスト","rows":1}}&}" />', $this );
+			return $this->parseTpl( '<img src="{&{"input":{"type":"image","name":"src","label":"'.$this->broccoli->lb()->get('system_module_label.image').'"}}&}" alt="{&{"input":{"type":"html_attr_text","name":"alt","label":"'.$this->broccoli->lb()->get('system_module_label.image_alt_text').'","rows":1}}&}" />', $this );
 		}elseif( is_string(@$this->options['src']) ){
 			return $this->parseTpl( $this->options['src'], $this->options['topThis'] );
 		}elseif( $this->topThis->templateType != 'broccoli' && is_string($this->subModName) ){

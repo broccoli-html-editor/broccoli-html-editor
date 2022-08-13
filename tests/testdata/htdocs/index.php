@@ -1,7 +1,7 @@
 <?php
 $lang = 'ja';
-if( isset($_REQUEST['lang']) ){
-	$lang = $_REQUEST['lang'];
+if( isset($_REQUEST['LANG']) ){
+	$lang = $_REQUEST['LANG'];
 }
 ?>
 <!DOCTYPE html>

@@ -784,7 +784,7 @@ module.exports = function(broccoli){
 			if(instPathMemo.length==2){
 				// bowl自体だったら
 				label = instPathMemo[instPathMemo.length-1];
-				label = '編集エリア: ' + label.replace(/^bowl\./, '') + '';
+				label = broccoli.lb.get('system_module_label.editable_area') + ': ' + label.replace(/^bowl\./, '') + '';
 			}
 			var isLastOne = false;
 			if( idx >= instPath.length-1 ){ isLastOne = true; }
