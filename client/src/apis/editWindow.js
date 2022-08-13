@@ -20,12 +20,12 @@ module.exports = function(broccoli){
 				+ '	<form action="javascript:;">'
 				+ '		<div class="broccoli__edit-window-logical-path">---</div>'
 				+ '		<h2 class="broccoli__edit-window-module-name">---</h2>'
-				+ '		<div class="broccoli__edit-window-module-readme-switch"><a href="javascript:;"><span class="glyphicon glyphicon-menu-right"></span> {{ lb.get(\'ui_label.show_readme\') }}</a></div>'
+				+ '		<div class="broccoli__edit-window-module-readme-switch"><a href="javascript:;">{{ lb.get(\'ui_label.show_readme\') }}</a></div>'
 				+ '		<div class="broccoli__edit-window-module-readme"><div class="broccoli__edit-window-module-readme-inner"><article class="broccoli__module-readme"></article></div></div>'
 				+ '		<div class="broccoli__edit-window-message-field"></div>'
 				+ '		<div class="broccoli__edit-window-fields">'
 				+ '		</div>'
-				+ '		<div class="broccoli__edit-window-builtin-fields-switch"><a href="javascript:;"><span class="glyphicon glyphicon-menu-right"></span> {{ lb.get(\'ui_label.show_advanced_setting\') }}</a></div>'
+				+ '		<div class="broccoli__edit-window-builtin-fields-switch"><a href="javascript:;">{{ lb.get(\'ui_label.show_advanced_setting\') }}</a></div>'
 				+ '		<div class="broccoli__edit-window-builtin-fields">'
 				+ '			<div class="form-group broccoli__edit-window-builtin-anchor-field-wrap">'
 				+ '				<label for="broccoli__edit-window-builtin-anchor-field">{{ lb.get(\'ui_label.anchor\') }}</label>'
@@ -42,7 +42,7 @@ module.exports = function(broccoli){
 				+ '		<div class="broccoli__edit-window-form-buttons">'
 				+ '			<div class="broccoli__edit-window-form-buttons-fluid">'
 				+ '				<div class="broccoli__edit-window-form-buttons-ok">'
-				+ '					<button disabled="disabled" type="submit" class="px2-btn px2-btn--primary px2-btn--lg"><span class="glyphicon glyphicon-ok"></span> {{ lb.get(\'ui_label.ok\') }}</button>'
+				+ '					<button disabled="disabled" type="submit" class="px2-btn px2-btn--primary px2-btn--lg"> {{ lb.get(\'ui_label.ok\') }}</button>'
 				+ '				</div>'
 				+ '			</div>'
 				+ '			<div class="broccoli__edit-window-form-buttons-fluid">'
@@ -50,13 +50,13 @@ module.exports = function(broccoli){
 				+ '					<button disabled="disabled" type="button" class="px2-btn px2-btn--sm broccoli__edit-window-btn-cancel">{{ lb.get(\'ui_label.cancel\') }}</button>'
 				+ '				</div>'
 				+ '				<div class="broccoli__edit-window-form-buttons-delete">'
-				+ '					<button disabled="disabled" type="button" class="px2-btn px2-btn--danger px2-btn--sm broccoli__edit-window-btn-remove"><span class="glyphicon glyphicon-trash"></span> {{ lb.get(\'ui_label.remove_this_module\') }}</button>'
+				+ '					<button disabled="disabled" type="button" class="px2-btn px2-btn--danger px2-btn--sm broccoli__edit-window-btn-remove">{{ lb.get(\'ui_label.remove_this_module\') }}</button>'
 				+ '				</div>'
 				+ '			</div>'
 				+ '		</div>'
 				+ '		<div class="broccoli__edit-window-sticky-footer">'
 				+ '			<div class="broccoli__edit-window-sticky-footer-main">'
-				+ '				<button disabled="disabled" type="submit" class="px2-btn px2-btn--primary"><span class="glyphicon glyphicon-ok"></span> {{ lb.get(\'ui_label.ok\') }}</button>'
+				+ '				<button disabled="disabled" type="submit" class="px2-btn px2-btn--primary"> {{ lb.get(\'ui_label.ok\') }}</button>'
 				+ '			</div>'
 				+ '		</div>'
 				+ '	</form>'
@@ -167,13 +167,12 @@ module.exports = function(broccoli){
 				$editWindow.find('.broccoli__edit-window-module-readme-switch a').on('click', function(){
 					var $this = $(this);
 					var className = 'broccoli__edit-window-module-readme-switch__on';
+					$this.toggleClass(className);
 					$editWindow.find('.broccoli__edit-window-module-readme').toggle('fast', function(){
 						if($(this).is(':visible')){
-							$this.addClass(className);
-							$this.html('<span class="glyphicon glyphicon-menu-down"></span> '+broccoli.lb.get('ui_label.hide_readme'))
+							$this.html(broccoli.lb.get('ui_label.hide_readme'))
 						}else{
-							$this.removeClass(className);
-							$this.html('<span class="glyphicon glyphicon-menu-right"></span> '+broccoli.lb.get('ui_label.show_readme'))
+							$this.html(broccoli.lb.get('ui_label.show_readme'))
 						}
 					});
 				});
@@ -188,13 +187,12 @@ module.exports = function(broccoli){
 		$editWindow.find('.broccoli__edit-window-builtin-fields-switch a').on('click', function(){
 			var $this = $(this);
 			var className = 'broccoli__edit-window-builtin-fields-switch__on';
+			$this.toggleClass(className);
 			$editWindow.find('.broccoli__edit-window-builtin-fields').toggle('fast', function(){
 				if($(this).is(':visible')){
-					$this.addClass(className);
-					$this.html('<span class="glyphicon glyphicon-menu-down"></span> '+broccoli.lb.get('ui_label.hide_advanced_setting'))
+					$this.html(''+broccoli.lb.get('ui_label.hide_advanced_setting'))
 				}else{
-					$this.removeClass(className);
-					$this.html('<span class="glyphicon glyphicon-menu-right"></span> '+broccoli.lb.get('ui_label.show_advanced_setting'))
+					$this.html(''+broccoli.lb.get('ui_label.show_advanced_setting'))
 				}
 			});
 		});

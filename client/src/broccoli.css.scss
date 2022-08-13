@@ -1,6 +1,6 @@
 @charset "utf-8";
 
-.broccoli{
+.broccoli {
 	/* http://www.softel.co.jp/blogs/tech/archives/2909 */
 	cursor: default;
 
@@ -35,6 +35,22 @@
 	clear:both;
 	white-space:nowrap;
 	outline: none;
+}
+
+.broccoli {
+	line-height: 1.7;
+	pre {
+		overflow: auto;
+		border: 1px solid #999;
+		border-radius: 5px;
+		padding: 13px 15px;
+		background-color: #f9f9f9;
+		color: #333;
+		line-height: 1.4;
+		> code {
+			display: block;
+		}
+	}
 }
 
 // Canvas
@@ -596,6 +612,24 @@
 			max-height: 400px;
 			overflow: auto;
 			margin: 0.5em 1em 2em;
+		}
+	}
+	&-builtin-fields-switch,
+	&-module-readme-switch{
+		a::before {
+			content: "";
+			display: inline-block;
+			width: 0.4em;
+			height: 0.4em;
+			margin-right: 0.7em;
+			border-top: 3px solid #666;
+			border-right: 3px solid #666;
+			transform: rotate(45deg);
+			transition: transform 0.08s linear;
+		}
+		a.broccoli__edit-window-builtin-fields-switch__on::before,
+		a.broccoli__edit-window-module-readme-switch__on::before {
+			transform: rotate(135deg);
 		}
 	}
 	&-module-readme-switch{
