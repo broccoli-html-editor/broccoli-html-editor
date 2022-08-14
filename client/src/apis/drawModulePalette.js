@@ -15,9 +15,6 @@ module.exports = function(broccoli, targetElm, callback){
 	var php = require('phpjs');
 	var $ = require('jquery');
 
-	var btIconClosed = '<span class="glyphicon glyphicon-menu-right"></span> ';
-	var btIconOpened = '<span class="glyphicon glyphicon-menu-down"></span> ';
-
 	var hasParents = {};
 	var hasSystemParents = {};
 	var childrenIndex = {};
@@ -55,7 +52,6 @@ module.exports = function(broccoli, targetElm, callback){
 				var $liCat = $('<li>');
 				var $ulMod = $('<ul>');
 				var $a = $('<a class="broccoli__module-palette--buttongroups">')
-					.append( btIconOpened )
 					.append( $('<span>').text(category.categoryName)  )
 					.attr({
 						'href':'javascript:;',
@@ -66,17 +62,14 @@ module.exports = function(broccoli, targetElm, callback){
 						$(this).toggleClass('broccoli__module-palette__closed');
 						$ulMod.toggle(100)
 						if( $(this).hasClass('broccoli__module-palette__closed') ){
-							$(this).find('.glyphicon').get(0).outerHTML = btIconClosed;
 							saveModPaletteCondition($categoryId, 'closed');
 						}else{
-							$(this).find('.glyphicon').get(0).outerHTML = btIconOpened;
 							saveModPaletteCondition($categoryId, 'opened');
 						}
 					})
 				;
 				if( !isOpened ){
 					$a.addClass('broccoli__module-palette__closed');
-					$a.find('.glyphicon').get(0).outerHTML = btIconClosed;
 					$ulMod.hide(0);
 				}
 				$liCat.append( $a );
@@ -498,7 +491,6 @@ module.exports = function(broccoli, targetElm, callback){
 						var $li = $('<li>');
 						var $ulCat = $('<ul>');
 						var $a = $('<a class="broccoli__module-palette--buttongroups">')
-							.append( btIconOpened )
 							.append( $('<span>').text( pkg.packageName ) )
 							.attr({
 								'href':'javascript:;',
@@ -509,10 +501,8 @@ module.exports = function(broccoli, targetElm, callback){
 								$(this).toggleClass('broccoli__module-palette__closed');
 								$ulCat.toggle(100);
 								if( $(this).hasClass('broccoli__module-palette__closed') ){
-									$(this).find('.glyphicon').get(0).outerHTML = btIconClosed;
 									saveModPaletteCondition($pkgId, 'closed');
 								}else{
-									$(this).find('.glyphicon').get(0).outerHTML = btIconOpened;
 									saveModPaletteCondition($pkgId, 'opened');
 								}
 								return false;
@@ -520,7 +510,6 @@ module.exports = function(broccoli, targetElm, callback){
 						;
 						if( !isOpened ){
 							$a.addClass('broccoli__module-palette__closed');
-							$a.find('.glyphicon').get(0).outerHTML = btIconClosed;
 							$ulCat.hide(0);
 						}
 						$li.append( $a );

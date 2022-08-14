@@ -21,9 +21,6 @@ module.exports = function(broccoli){
 
 	var moduleList = {};
 
-	var btIconClosed = '<span class="glyphicon glyphicon-menu-right"></span> ';
-	var btIconOpened = '<span class="glyphicon glyphicon-menu-down"></span> ';
-
 	var hasParents = {};
 	var hasSystemParents = {};
 	var childrenIndex = {};
@@ -147,7 +144,6 @@ module.exports = function(broccoli){
 							var $li = $('<li>');
 							var $ulCat = $('<ul>');
 							var $a = $('<a class="broccoli__insert-window--buttongroups">')
-								.append( btIconOpened )
 								.append( $('<span>').text( pkg.packageName ) )
 								.attr({
 									'href':'javascript:;',
@@ -157,17 +153,11 @@ module.exports = function(broccoli){
 									var $pkgId = $(this).attr('data-broccoli-module-package-id');
 									$(this).toggleClass('broccoli__insert-window__closed');
 									$ulCat.toggle(100);
-									if( $(this).hasClass('broccoli__insert-window__closed') ){
-										$(this).find('.glyphicon').get(0).outerHTML = btIconClosed;
-									}else{
-										$(this).find('.glyphicon').get(0).outerHTML = btIconOpened;
-									}
 									return false;
 								})
 							;
 							if( !isOpened ){
 								$a.addClass('broccoli__insert-window__closed');
-								$a.find('.glyphicon').get(0).outerHTML = btIconClosed;
 								$ulCat.hide(0);
 							}
 							$li.append( $a );
@@ -220,7 +210,6 @@ module.exports = function(broccoli){
 				var $liCat = $('<li>');
 				var $ulMod = $('<ul>');
 				var $a = $('<a class="broccoli__insert-window--buttongroups">')
-					.append( btIconOpened )
 					.append( $('<span>').text(category.categoryName)  )
 					.attr({
 						'href':'javascript:;',
@@ -230,16 +219,10 @@ module.exports = function(broccoli){
 						var $categoryId = $(this).attr('data-broccoli-module-category-id');
 						$(this).toggleClass('broccoli__insert-window__closed');
 						$ulMod.toggle(100)
-						if( $(this).hasClass('broccoli__insert-window__closed') ){
-							$(this).find('.glyphicon').get(0).outerHTML = btIconClosed;
-						}else{
-							$(this).find('.glyphicon').get(0).outerHTML = btIconOpened;
-						}
 					})
 				;
 				if( !isOpened ){
 					$a.addClass('broccoli__insert-window__closed');
-					$a.find('.glyphicon').get(0).outerHTML = btIconClosed;
 					$ulMod.hide(0);
 				}
 				$liCat.append( $a );
