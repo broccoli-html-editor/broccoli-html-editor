@@ -51,7 +51,7 @@ module.exports = function(broccoli, targetElm, callback){
 
 				var $liCat = $('<li>');
 				var $ulMod = $('<ul>');
-				var $a = $('<a class="broccoli__module-palette--buttongroups">')
+				var $a = $('<a class="broccoli__module-palette__buttongroups">')
 					.append( $('<span>').text(category.categoryName)  )
 					.attr({
 						'href':'javascript:;',
@@ -59,9 +59,9 @@ module.exports = function(broccoli, targetElm, callback){
 					})
 					.on('click', function(){
 						var $categoryId = $(this).attr('data-broccoli-module-category-id');
-						$(this).toggleClass('broccoli__module-palette__closed');
+						$(this).toggleClass('broccoli__module-palette__buttongroups--closed');
 						$ulMod.toggle(100)
-						if( $(this).hasClass('broccoli__module-palette__closed') ){
+						if( $(this).hasClass('broccoli__module-palette__buttongroups--closed') ){
 							saveModPaletteCondition($categoryId, 'closed');
 						}else{
 							saveModPaletteCondition($categoryId, 'opened');
@@ -69,7 +69,7 @@ module.exports = function(broccoli, targetElm, callback){
 					})
 				;
 				if( !isOpened ){
-					$a.addClass('broccoli__module-palette__closed');
+					$a.addClass('broccoli__module-palette__buttongroups--closed');
 					$ulMod.hide(0);
 				}
 				$liCat.append( $a );
@@ -490,7 +490,7 @@ module.exports = function(broccoli, targetElm, callback){
 
 						var $li = $('<li>');
 						var $ulCat = $('<ul>');
-						var $a = $('<a class="broccoli__module-palette--buttongroups">')
+						var $a = $('<a class="broccoli__module-palette__buttongroups">')
 							.append( $('<span>').text( pkg.packageName ) )
 							.attr({
 								'href':'javascript:;',
@@ -498,9 +498,9 @@ module.exports = function(broccoli, targetElm, callback){
 							})
 							.on('click', function(){
 								var $pkgId = $(this).attr('data-broccoli-module-package-id');
-								$(this).toggleClass('broccoli__module-palette__closed');
+								$(this).toggleClass('broccoli__module-palette__buttongroups--closed');
 								$ulCat.toggle(100);
-								if( $(this).hasClass('broccoli__module-palette__closed') ){
+								if( $(this).hasClass('broccoli__module-palette__buttongroups--closed') ){
 									saveModPaletteCondition($pkgId, 'closed');
 								}else{
 									saveModPaletteCondition($pkgId, 'opened');
@@ -509,7 +509,7 @@ module.exports = function(broccoli, targetElm, callback){
 							})
 						;
 						if( !isOpened ){
-							$a.addClass('broccoli__module-palette__closed');
+							$a.addClass('broccoli__module-palette__buttongroups--closed');
 							$ulCat.hide(0);
 						}
 						$li.append( $a );
@@ -552,7 +552,7 @@ module.exports = function(broccoli, targetElm, callback){
 					clearTimeout( changeTimer );
 					// console.log( keyword );
 
-					$(targetElm).find('a').removeClass('broccoli__module-palette__closed');
+					$(targetElm).find('a').removeClass('broccoli__module-palette__buttongroups--closed');
 					$(targetElm).find('ul').show();
 
 					changeTimer = setTimeout(function(){
