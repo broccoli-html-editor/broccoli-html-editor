@@ -486,7 +486,7 @@ module.exports = function(broccoli){
 		var fieldCount = 0;
 		it79.fnc({}, [
 			function(it1){
-				modLb = new LangBank(mod.languageCsv, function(){
+				modLb = new LangBank(mod.languageCsv || '', function(){
 					it1.next();
 				});
 			},
