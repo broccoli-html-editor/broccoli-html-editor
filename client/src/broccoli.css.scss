@@ -637,9 +637,28 @@
 	}
 	&-builtin-fields{
 		border: 1px solid #ddd;
-		padding: 1em;
+		padding: 0.7em 1em;
 		margin: 1em 0;
 		background: #f9f9f9;
+		&__row {
+			display: block;
+		}
+		&__title {
+			font-weight: bold;
+			margin: 0.5em 0 0.2em;
+		}
+		&__input {
+			display: flex;
+			margin-bottom: 0.3em;
+			> input,
+			> textarea,
+			> select {
+				flex-grow: 10;
+			}
+			> span {
+				padding: 0.375rem 0.75rem;
+			}
+		}
 	}
 	&-module-fields{
 		padding: 10px;
