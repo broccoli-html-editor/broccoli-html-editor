@@ -51,12 +51,13 @@ if( isset($_REQUEST['LANG']) ){
 		<link rel=stylesheet href="./index_files/libs/codemirror/theme/ttcn.css" />
 		<link rel=stylesheet href="./index_files/libs/codemirror/theme/monokai.css" />
 		<script src="./index_files/libs/codemirror/lib/codemirror.js"></script>
+		<script src="./index_files/libs/codemirror/mode/xml/xml.js"></script>
 		<script src="./index_files/libs/codemirror/mode/javascript/javascript.js"></script>
 		<script src="./index_files/libs/codemirror/mode/css/css.js"></script>
 		<script src="./index_files/libs/codemirror/mode/sass/sass.js"></script>
 		<script src="./index_files/libs/codemirror/mode/markdown/markdown.js"></script>
+		<script src="./index_files/libs/codemirror/mode/php/php.js"></script>
 		<script src="./index_files/libs/codemirror/mode/htmlmixed/htmlmixed.js"></script>
-		<script src="./index_files/libs/codemirror/addon/edit/matchbrackets.js"></script>
 
 		<!-- broccoli -->
 		<script src="./../../../client/dist/broccoli.js"></script>

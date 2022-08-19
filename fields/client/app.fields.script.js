@@ -172,7 +172,7 @@ module.exports = function(broccoli){
 				})
 				.css({
 					'width':'100%',
-					'height':'auto'
+					'height':'auto',
 				})
 				.val(data.src)
 			;
@@ -183,10 +183,10 @@ module.exports = function(broccoli){
 		if( !fixedLang ){
 			$rtn
 				.append( $('<p>')
-					.append($('<span style="margin-right: 10px;"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="javascript" /> JavaScript</label></span>'))
-					.append($('<span style="margin-right: 10px;"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="css" /> CSS</label></span>'))
-					.append($('<span style="margin-right: 10px;"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="php" /> PHP</label></span>'))
-					.append($('<span style="margin-right: 10px;"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="" /> その他</label></span>'))
+					.append($('<span style="display: inline-block; margin-right: 15px;"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="javascript" /> JavaScript</label></span>'))
+					.append($('<span style="display: inline-block; margin-right: 15px;"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="css" /> CSS</label></span>'))
+					.append($('<span style="display: inline-block; margin-right: 15px;"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="php" /> PHP</label></span>'))
+					.append($('<span style="display: inline-block; margin-right: 15px;"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="" /> その他</label></span>'))
 				)
 			;
 			$rtn.find('input[type=radio][name=editor-'+mod.name+'][value="'+data.lang+'"]').attr({'checked':'checked'});
@@ -200,7 +200,6 @@ module.exports = function(broccoli){
 				$formElm.get(0),
 				{
 					lineNumbers: true,
-					viewportMargin: Infinity,
 					mode: (function(ext){
 						switch(ext){
 							case 'javascript': case 'json': return 'javascript'; break;
@@ -212,19 +211,10 @@ module.exports = function(broccoli){
 					tabSize: 4,
 					indentUnit: 4,
 					indentWithTabs: true,
-					autoCloseBrackets: true,
 					styleActiveLine: true,
-					matchBrackets: true,
 					showCursorWhenSelecting: true,
 					lineWrapping : false,
 
-					foldGutter: true,
-					gutters: [
-						"CodeMirror-linenumbers",
-						"CodeMirror-foldgutter"
-					],
-
-					// keyMap: "sublime",
 					extraKeys: {
 						"Ctrl-E": "autocomplete",
 						"Ctrl-S": function(){
@@ -269,6 +259,50 @@ module.exports = function(broccoli){
 					mod.codeMirror.setOption("mode", "htmlmixed");
 				}
 			});
+
+			// 編集中のコンテンツ量に合わせて、
+			// CodeMirror編集欄のサイズを広げる
+			var updateCodeMirrorHeight = function() {
+				var h =
+					mod.codeMirror.getDoc().lineCount()
+					* mod.codeMirror.defaultTextHeight()
+				;
+				if( h < mod.codeMirror.defaultTextHeight() * rows ){
+					h = mod.codeMirror.defaultTextHeight() * rows;
+				}
+				mod.codeMirror.setSize(null, h.toString() + "px");
+				mod.codeMirror.refresh();
+			};
+
+			// スクロール位置の調整
+			var updateCodeMirrorScroll = function() {
+				var $lightbox = $formElm.closest('.broccoli__lightbox-inner-body');
+				var lightbox_scrollTop = $lightbox.scrollTop();
+				var lightbox_offsetTop = $lightbox.offset().top;
+				var lightbox_height = $lightbox.height();
+				var form_offsetTop = $formElm.offset().top;
+				var cursorTop = mod.codeMirror.cursorCoords().top;
+				var cursorOffsetTop = form_offsetTop + cursorTop;
+				var form_position_top = lightbox_scrollTop - lightbox_offsetTop + form_offsetTop;
+				var focusBuffer = 120;
+				if( cursorOffsetTop < 60 ){
+					// 上へ行きすぎた
+					$lightbox.scrollTop( form_position_top + cursorTop - focusBuffer );
+				}else if( cursorOffsetTop > lightbox_height - 40 ){
+					// 下へ行きすぎた
+					$lightbox.scrollTop( form_position_top + cursorTop - lightbox_height + focusBuffer + 100 );
+				}
+			};
+			mod.codeMirror.on('change', function(){
+				updateCodeMirrorHeight();
+				updateCodeMirrorScroll();
+				mod.codeMirror.save();
+			});
+			mod.codeMirror.on('cursorActivity', function(){
+				updateCodeMirrorHeight();
+				updateCodeMirrorScroll();
+			});
+			setTimeout(updateCodeMirrorHeight, 200);
 		}
 		else if( editorLib == 'ace' && mod.aceEditor ){
 			$rtn.find('input[type=radio][name=editor-'+mod.name+']').on('change', function(){
