@@ -48,12 +48,9 @@ if( isset($_REQUEST['LANG']) ){
 		<link rel=stylesheet href="./index_files/libs/codemirror/lib/codemirror.css" />
 		<link rel=stylesheet href="./index_files/libs/codemirror/theme/ambiance.css" />
 		<link rel=stylesheet href="./index_files/libs/codemirror/theme/mdn-like.css" />
-		<link rel=stylesheet href="./index_files/libs/codemirror/theme/ttcn.css" />
 		<link rel=stylesheet href="./index_files/libs/codemirror/theme/monokai.css" />
 		<link rel=stylesheet href="./index_files/libs/codemirror/theme/eclipse.css" />
 		<link rel=stylesheet href="./index_files/libs/codemirror/theme/elegant.css" />
-		<link rel=stylesheet href="./index_files/libs/codemirror/theme/neo.css" />
-		<link rel=stylesheet href="./index_files/libs/codemirror/theme/midnight.css" />
 		<script src="./index_files/libs/codemirror/lib/codemirror.js"></script>
 		<script src="./index_files/libs/codemirror/mode/xml/xml.js"></script>
 		<script src="./index_files/libs/codemirror/mode/javascript/javascript.js"></script>
