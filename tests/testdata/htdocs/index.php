@@ -44,6 +44,18 @@ if( isset($_REQUEST['LANG']) ){
 		<!-- Ace Editor (Optional) -->
 		<script src="./index_files/libs/ace-builds/src-noconflict/ace.js"></script>
 
+		<!-- CodeMirror (Optional) -->
+		<link rel=stylesheet href="./index_files/libs/codemirror/lib/codemirror.css" />
+		<link rel=stylesheet href="./index_files/libs/codemirror/theme/ambiance.css" />
+		<link rel=stylesheet href="./index_files/libs/codemirror/theme/mdn-like.css" />
+		<link rel=stylesheet href="./index_files/libs/codemirror/theme/ttcn.css" />
+		<link rel=stylesheet href="./index_files/libs/codemirror/theme/monokai.css" />
+		<script src="./index_files/libs/codemirror/lib/codemirror.js"></script>
+		<script src="./index_files/libs/codemirror/mode/javascript/javascript.js"></script>
+		<script src="./index_files/libs/codemirror/mode/css/css.js"></script>
+		<script src="./index_files/libs/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+		<script src="./index_files/libs/codemirror/addon/edit/matchbrackets.js"></script>
+
 		<!-- broccoli -->
 		<script src="./../../../client/dist/broccoli.js"></script>
 
