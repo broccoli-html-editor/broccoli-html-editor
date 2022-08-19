@@ -217,7 +217,7 @@ module.exports = function(broccoli){
 					theme: (function(ext){
 						switch(ext){
 							case 'text': return 'default';break;
-							case 'markdown': return 'ttcn';break;
+							case 'markdown': return 'mdn-like';break;
 						}
 						return 'monokai';
 					})(data.editor),
@@ -235,12 +235,13 @@ module.exports = function(broccoli){
 					mod.codeMirror.setOption("theme", "default");
 					mod.codeMirror.setOption("mode", "text");
 				}else if( val == 'markdown' ){
-					mod.codeMirror.setOption("theme", "ttcn");
+					mod.codeMirror.setOption("theme", "mdn-like");
 					mod.codeMirror.setOption("mode", "markdown");
 				}else{
 					mod.codeMirror.setOption("theme", "monokai");
 					mod.codeMirror.setOption("mode", "htmlmixed");
 				}
+				updateCodeMirrorHeight();
 			});
 
 			// 編集中のコンテンツ量に合わせて、

@@ -1463,6 +1463,33 @@
                         "dec": ""
                     },
                     {
+                        "modId": "testMod1:dev/script",
+                        "fields": {
+                            "sample_javascript": {
+                                "src": "function contTest (){\n\tvar abcdef = null;\n\treturn false;\n}",
+                                "lang": "javascript"
+                            },
+                            "sample_css": {
+                                "src": ".css {\n\t&--scss {\n\t\tborder: 1px solid #f00;\n\t}\n}",
+                                "lang": "css"
+                            },
+                            "sample_php": {
+                                "src": "<?php\n$abc = $hogefuga;\nreturn false;\n?>\necho",
+                                "lang": "php"
+                            },
+                            "sample_selectable": {
+                                "src": "common.script();\n$abc->setLang();\nfunction abc(){}\nsub abc(){}\n()=>{}\n<?php $ec = \"123\"; ?>\n",
+                                "lang": "javascript"
+                            },
+                            "sample_javascript_as_html_attr": {
+                                "src": "aaaaaaaaaaa();",
+                                "lang": "javascript"
+                            }
+                        },
+                        "anchor": "",
+                        "dec": ""
+                    },
+                    {
                         "modId": "testMod1:dev/same_type_of_field",
                         "fields": {
                             "sameType1": "フィールド1",

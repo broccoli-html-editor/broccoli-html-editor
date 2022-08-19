@@ -247,7 +247,8 @@ module.exports = function(broccoli){
 
 					theme: (function(ext){
 						switch(ext){
-							case 'markdown': return 'ttcn';break;
+							case 'text': return 'default';break;
+							case 'markdown': return 'mdn-like';break;
 						}
 						return 'monokai';
 					})(mod.type),

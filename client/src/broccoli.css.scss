@@ -55,6 +55,12 @@
 	* {
 		box-sizing: border-box;
 	}
+
+	// CodeMirror 拡張
+	.CodeMirror {
+		border: 1px solid #ddd;
+		border-radius: 5px;
+	}
 }
 
 // Canvas

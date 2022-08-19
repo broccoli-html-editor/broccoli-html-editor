@@ -227,11 +227,9 @@ module.exports = function(broccoli){
 
 					theme: (function(ext){
 						switch(ext){
-							case 'txt': case 'text': return 'default';break;
-							case 'js': case 'javascript': return 'ambiance';break;
-							case 'css': return 'mdn-like';break;
-							case 'md': case 'markdown': return 'ttcn';break;
-							case 'php': return 'ambiance';break;
+							case 'javascript': return 'ambiance';break;
+							case 'css': return 'eclipse';break;
+							case 'php': return 'elegant';break;
 						}
 						return 'monokai';
 					})(data.lang),
@@ -249,15 +247,16 @@ module.exports = function(broccoli){
 					mod.codeMirror.setOption("theme", "ambiance");
 					mod.codeMirror.setOption("mode", "javascript");
 				}else if( val == 'css' ){
-					mod.codeMirror.setOption("theme", "mdn-like");
+					mod.codeMirror.setOption("theme", "eclipse");
 					mod.codeMirror.setOption("mode", "sass");
 				}else if( val == 'php' ){
-					mod.codeMirror.setOption("theme", "ambiance");
-					mod.codeMirror.setOption("mode", "htmlmixed");
+					mod.codeMirror.setOption("theme", "elegant");
+					mod.codeMirror.setOption("mode", "php");
 				}else{
 					mod.codeMirror.setOption("theme", "monokai");
 					mod.codeMirror.setOption("mode", "htmlmixed");
 				}
+				updateCodeMirrorHeight();
 			});
 
 			// 編集中のコンテンツ量に合わせて、
