@@ -12,6 +12,8 @@ module.exports = function(broccoli){
 		var src = '';
 		if( $dom.find('input[type=text]').length ){
 			src = $dom.find('input[type=text]').val();
+		}else if( window.CodeMirror && mod.codeMirror ){
+			src = $dom.find('textarea').val();
 		}else if( window.ace && mod.aceEditor ){
 			src = mod.aceEditor.getValue();
 		}else if( $dom.find('textarea').length ){

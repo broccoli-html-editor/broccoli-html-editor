@@ -182,26 +182,9 @@ module.exports = function(broccoli){
 		;
 		$rtn.find('input[type=radio][name=editor-'+mod.name+'][value="'+data.editor+'"]').attr({'checked':'checked'});
 
-		if( editorLib == 'ace' && mod.aceEditor ){
-			$rtn.find('input[type=radio][name=editor-'+mod.name+']').on('change', function(){
-				var $this = $(this);
-				var val = $this.val();
-				if( val == 'text' ){
-					mod.aceEditor.setTheme("ace/theme/katzenmilch");
-					mod.aceEditor.getSession().setMode("ace/mode/plain_text");
-				}else if( val == 'markdown' ){
-					mod.aceEditor.setTheme("ace/theme/github");
-					mod.aceEditor.getSession().setMode("ace/mode/markdown");
-				}else{
-					mod.aceEditor.setTheme("ace/theme/monokai");
-					mod.aceEditor.getSession().setMode("ace/mode/html");
-				}
-			});
-		}
-
 		$(elm).html($rtn);
 
-		if( editorLib == 'codemirror' ){
+		if( editorLib == 'codemirror' && rows > 1 ){
 			// CodeMirror は、 textarea が DOMツリーに配置されたあとに初期化する。
 			mod.codeMirror = CodeMirror.fromTextArea(
 				$formElm.get(0),
@@ -210,14 +193,10 @@ module.exports = function(broccoli){
 					viewportMargin: Infinity,
 					mode: (function(ext){
 						switch(ext){
-							case 'css': return 'text/x-scss'; break;
-							case 'js': case 'json': return 'text/javascript'; break;
-							case 'php': return 'application/x-httpd-php'; break;
-							case 'html': return 'application/x-httpd-php'; break;
-							// case 'html': return 'htmlmixed'; break;
-							case 'md': case 'markdown': return 'markdown'; break;
+							case 'text': return 'text'; break;
+							case 'markdown': return 'markdown'; break;
 						}
-						return ext;
+						return 'htmlmixed';
 					})(data.editor),
 					tabSize: 4,
 					indentUnit: 4,
@@ -247,10 +226,8 @@ module.exports = function(broccoli){
 
 					theme: (function(ext){
 						switch(ext){
-							case 'txt': case 'text': return 'default';break;
-							case 'js': case 'javascript': return 'ambiance';break;
-							case 'css': return 'mdn-like';break;
-							case 'md': case 'markdown': return 'ttcn';break;
+							case 'text': return 'default';break;
+							case 'markdown': return 'ttcn';break;
 						}
 						return 'monokai';
 					})(data.editor),
@@ -260,6 +237,37 @@ module.exports = function(broccoli){
 				mod.codeMirror.save();
 			});
 			mod.codeMirror.setSize('100%', rows * 16);
+
+			$rtn.find('input[type=radio][name=editor-'+mod.name+']').on('change', function(){
+				var $this = $(this);
+				var val = $this.val();
+				if( val == 'text' ){
+					mod.codeMirror.setOption("theme", "default");
+					mod.codeMirror.setOption("mode", "text");
+				}else if( val == 'markdown' ){
+					mod.codeMirror.setOption("theme", "ttcn");
+					mod.codeMirror.setOption("mode", "markdown");
+				}else{
+					mod.codeMirror.setOption("theme", "monokai");
+					mod.codeMirror.setOption("mode", "htmlmixed");
+				}
+			});
+		}
+		else if( editorLib == 'ace' && mod.aceEditor ){
+			$rtn.find('input[type=radio][name=editor-'+mod.name+']').on('change', function(){
+				var $this = $(this);
+				var val = $this.val();
+				if( val == 'text' ){
+					mod.aceEditor.setTheme("ace/theme/katzenmilch");
+					mod.aceEditor.getSession().setMode("ace/mode/plain_text");
+				}else if( val == 'markdown' ){
+					mod.aceEditor.setTheme("ace/theme/github");
+					mod.aceEditor.getSession().setMode("ace/mode/markdown");
+				}else{
+					mod.aceEditor.setTheme("ace/theme/monokai");
+					mod.aceEditor.getSession().setMode("ace/mode/html");
+				}
+			});
 		}
 
 

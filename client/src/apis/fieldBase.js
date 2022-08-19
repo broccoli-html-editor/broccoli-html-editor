@@ -110,7 +110,7 @@ module.exports = function(broccoli){
 					'width':'100%',
 					'height':'auto'
 				})
-				.val(data.src)
+				.val(presetString)
 			;
 			$rtn.append( $formElm );
 
@@ -211,7 +211,7 @@ module.exports = function(broccoli){
 		}
 		$(elm).html($rtn);
 
-		if( editorLib == 'codemirror' ){
+		if( editorLib == 'codemirror' && rows > 1 ){
 			// CodeMirror は、 textarea が DOMツリーに配置されたあとに初期化する。
 			mod.codeMirror = CodeMirror.fromTextArea(
 				$formElm.get(0),
@@ -220,15 +220,12 @@ module.exports = function(broccoli){
 					viewportMargin: Infinity,
 					mode: (function(ext){
 						switch(ext){
-							case 'css': return 'text/x-scss'; break;
-							case 'js': case 'json': return 'text/javascript'; break;
-							case 'php': return 'application/x-httpd-php'; break;
-							case 'html': return 'application/x-httpd-php'; break;
-							// case 'html': return 'htmlmixed'; break;
-							case 'md': case 'markdown': return 'markdown'; break;
+							case 'php': return 'php'; break;
+							case 'html': return 'htmlmixed'; break;
+							case 'markdown': return 'markdown'; break;
 						}
-						return ext;
-					})(data.editor),
+						return 'text';
+					})(mod.type),
 					tabSize: 4,
 					indentUnit: 4,
 					indentWithTabs: true,
@@ -257,13 +254,10 @@ module.exports = function(broccoli){
 
 					theme: (function(ext){
 						switch(ext){
-							case 'txt': case 'text': return 'default';break;
-							case 'js': case 'javascript': return 'ambiance';break;
-							case 'css': return 'mdn-like';break;
-							case 'md': case 'markdown': return 'ttcn';break;
+							case 'markdown': return 'ttcn';break;
 						}
 						return 'monokai';
-					})(data.editor),
+					})(mod.type),
 				}
 			);
 			mod.codeMirror.on('blur',function(){
