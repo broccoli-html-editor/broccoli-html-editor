@@ -8,13 +8,11 @@ module.exports = function(broccoli){
 	var _this = this;
 
 	var it79 = require('iterate79');
-	var php = require('phpjs');
 	var $ = require('jquery');
 
 	var $panels;
 	var $contentsElements;
 
-	var selectedInstance;
 	var focusedInstance;
 	var isOnDragging = false;
 
@@ -28,11 +26,6 @@ module.exports = function(broccoli){
 		var $this = domElm;
 		var $panel = $('<div>');
 		var isAppender = $this.isAppender;
-
-		// if( $this.instancePath.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
-		// 		// bowl自体は選択も操作もできないので、パネルを描画しない。
-		// 	return;
-		// }
 
 		var modInfo = broccoli.contentsSourceData.getModuleByInternalId($this.modId);
 			//postMessageから得られるモジュールのidは、実際にはinternalIdを格納するため、ここで翻訳する。
@@ -109,9 +102,7 @@ module.exports = function(broccoli){
 			var instancePath = $me.instancePath;
 			if( instancePath.match( /\@[0-9]*$/ ) ){
 				var instancePathNext = instancePath.replace( /([0-9]*)$/, '' );
-				instancePathNext += php.intval(RegExp.$1) + 1;
-				// console.log("from: "+ instancePath);
-				// console.log("to: "+instancePathNext);
+				instancePathNext += Number(RegExp.$1) + 1;
 				$nextElm = $contentsElements[instancePathNext];
 				return $nextElm;
 			}
@@ -908,7 +899,6 @@ module.exports = function(broccoli){
 	 */
 	this.updateInstanceSelection = function( callback ){
 		callback = callback || function(){};
-		var instancePath = broccoli.getSelectedInstance();
 		var instancePathRegion = broccoli.getSelectedInstanceRegion();
 		this.unselectInstance(function(){
 			$panels.find('[data-broccoli-instance-path]')
@@ -921,7 +911,6 @@ module.exports = function(broccoli){
 				})
 				.addClass('broccoli--panel__selected')
 			;
-			// this.updateInstancePathView();
 			callback();
 		});
 		return;
@@ -935,7 +924,6 @@ module.exports = function(broccoli){
 		$panels.find('[data-broccoli-instance-path]')
 			.removeClass('broccoli--panel__selected')
 		;
-		// this.updateInstancePathView();
 		callback();
 		return;
 	}
@@ -993,7 +981,6 @@ module.exports = function(broccoli){
 			posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
 		}
 		var mousepos = { x : posx, y : posy };
-		// console.info(instancePath, mousepos);
 
 		var docScrolls = {
 			left : document.body.scrollLeft + document.documentElement.scrollLeft,
@@ -1004,7 +991,6 @@ module.exports = function(broccoli){
 			x : mousepos.x - bounds.left - docScrolls.left,
 			y : mousepos.y - bounds.top - docScrolls.top
 		};
-		// console.info(instancePath, relmousepos);
 
 		var ud = {};
 		if( relmousepos.y < $(elm).height()/2 ){
@@ -1043,7 +1029,6 @@ module.exports = function(broccoli){
 	 */
 	this.unfocusInstance = function(callback){
 		callback = callback || function(){};
-		selectedInstance = null;
 		focusedInstance = null;
 
 		$panels.find('.broccoli--panel__focused')
@@ -1060,7 +1045,7 @@ module.exports = function(broccoli){
 		if( !instancePath ){
 			return false;
 		}
-		var $rtn = $panels.find('[data-broccoli-instance-path="'+php.htmlspecialchars(instancePath)+'"]');
+		var $rtn = $panels.find('[data-broccoli-instance-path="'+(instancePath)+'"]');
 		return $rtn.get(0);
 	}
 

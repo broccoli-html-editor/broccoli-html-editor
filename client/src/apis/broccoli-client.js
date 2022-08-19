@@ -790,9 +790,17 @@
 								});
 							} ,
 							function(it1, data){
+								// 選択中の(編集した)インスタンスにフォーカスを移す
+								// (タブキーで操作できるように)
+								var selectedInstancePath = broccoli.getSelectedInstance();
+								$(broccoli.options.elmPanels).find('[data-broccoli-instance-path="'+(selectedInstancePath)+'"]').focus();
+
+								it1.next(data);
+							},
+							function(it1, data){
 								callback();
 								it1.next(data);
-							}
+							},
 						]);
 					} );
 				} );
