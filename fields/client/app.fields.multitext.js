@@ -176,7 +176,7 @@ module.exports = function(broccoli){
 		$rtn
 			.append( $('<p>')
 				.append($('<span style="display: inline-block; margin-right: 15px;"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="" /> HTML</label></span>'))
-				.append($('<span style="display: inline-block; margin-right: 15px;"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="text" /> テキスト</label></span>'))
+				.append($('<span style="display: inline-block; margin-right: 15px;"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="text" /> '+broccoli.lb.get('ui_label.plain_text')+'</label></span>'))
 				.append($('<span style="display: inline-block; margin-right: 15px;"><label><input type="radio" name="editor-'+php.htmlspecialchars(mod.name)+'" value="markdown" /> Markdown</label></span>'))
 			)
 		;

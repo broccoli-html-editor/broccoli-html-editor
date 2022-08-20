@@ -319,7 +319,7 @@ module.exports = function(broccoli){
 								"checked": (data.resType=='')
 							})
 						)
-						.append( $( '<span>' ).text('画像アップロード') )
+						.append( $( '<span>' ).text( broccoli.lb.get('ui_label.upload_image') ) )
 					)
 				)
 				.append( $( '<li>' )
@@ -333,7 +333,7 @@ module.exports = function(broccoli){
 								"checked": (data.resType=='web')
 							})
 						)
-						.append( $( '<span>' ).text('ウェブリソース') )
+						.append( $( '<span>' ).text( broccoli.lb.get('ui_label.web_resource') ) )
 					)
 				)
 				.append( $( '<li>' )
@@ -347,7 +347,7 @@ module.exports = function(broccoli){
 								"checked": (data.resType=='none')
 							})
 						)
-						.append( $( '<span>' ).text('なし') )
+						.append( $( '<span>' ).text( broccoli.lb.get('ui_label.none') ) )
 					)
 				)
 			);
@@ -444,7 +444,7 @@ module.exports = function(broccoli){
 			$uiImageResource.append(
 				$('<p>')
 					.append( $('<label>')
-						.text('画像ファイルを選択する')
+						.text( broccoli.lb.get('ui_label.select_image_file') )
 						.addClass('px2-btn')
 						.append( $('<input>')
 							.attr({
@@ -466,7 +466,7 @@ module.exports = function(broccoli){
 						)
 					)
 					.append( $('<button>')
-						.text('URLから取得する')
+						.text( broccoli.lb.get('ui_label.get_from_url') )
 						.attr({'type': 'button'})
 						.addClass('px2-btn')
 						.on('click', function(){
@@ -546,14 +546,14 @@ module.exports = function(broccoli){
 						})
 					)
 					.append( $('<button>')
-						.text('名前を付けて保存する')
+						.text( broccoli.lb.get('ui_label.save_file_as') )
 						.attr({'type': 'button'})
 						.addClass('px2-btn')
 						.on('click', function(){
 							var base64 = $img.attr('data-base64');
 							var ext = $img.attr('data-extension');
 							if( !base64 || !ext ){
-								alert('ファイルがセットされていません。');
+								alert( broccoli.lb.get('ui_message.file_is_not_set') );
 								return;
 							}
 							var anchor = document.createElement("a");
@@ -566,7 +566,7 @@ module.exports = function(broccoli){
 			);
 			var $fileNameDisplay = $('<div>')
 				.append( $('<span>')
-					.text('出力ファイル名:')
+					.text(broccoli.lb.get('ui_label.output_filename')+':')
 				)
 				.append( $inputImageName
 					.attr({
@@ -588,7 +588,7 @@ module.exports = function(broccoli){
 				$fileNameDisplay.css({'display': 'none'});
 			}
 			$uiWebResource.append(
-				$('<p>').text('このモードでは、画像リソースを URL で指定します。画像は取得して保存されることはありません。指定したURLが直接参照されます。')
+				$('<p>').text( broccoli.lb.get('ui_message.in_this_mode_you_specify_the_image_resource_by_url') )
 			);
 			$uiWebResource.append(
 				$('<div>')
@@ -787,7 +787,7 @@ module.exports = function(broccoli){
 						continue;
 					}
 					if( resType === '' && filename !== '' && resourceDb[idx].publicFilename == filename ){
-						errorMsgs.push('イメージのファイル名が重複しています。');
+						errorMsgs.push( broccoli.lb.get('ui_message.duplicate_image_file_name') );
 						continue;
 					}
 				}
@@ -827,7 +827,7 @@ module.exports = function(broccoli){
 				} ,
 				function(it1, data){
 					// console.log('saving image field data.');
-					options.message('リソース領域を初期化中...');
+					options.message( broccoli.lb.get('ui_message.initializing_resource_storage') );
 					_resMgr.getResource(data.resKey, function(result){
 						// console.log(result);
 						if( result === false ){
@@ -845,7 +845,7 @@ module.exports = function(broccoli){
 					});
 				} ,
 				function(it1, data){
-					options.message('リソース領域を初期化中... '+data.resKey);
+					options.message( broccoli.lb.get('ui_message.initializing_resource_storage') + ' '+data.resKey);
 					_resMgr.getResource(data.resKey, function(res){
 						// console.log(res);
 						resInfo = res;
@@ -870,9 +870,9 @@ module.exports = function(broccoli){
 					resInfo.isPrivateMaterial = (data.resType == 'web' ? true : false);
 					resInfo.publicFilename = $dom.find('input[name='+mod.name+'-publicFilename]').val();
 
-					options.message('リソースを更新中...');
+					options.message( broccoli.lb.get('ui_message.updating_resources') );
 					_resMgr.updateResource( data.resKey, resInfo, function(result){
-						options.message('リソースの公開パスを取得中...');
+						options.message( broccoli.lb.get('ui_message.getting_public_path_for_resource') );
 						_resMgr.getResourcePublicPath( data.resKey, function(publicPath){
 							data.path = publicPath;
 							it1.next(data);
@@ -882,7 +882,7 @@ module.exports = function(broccoli){
 
 				} ,
 				function(it1, data){
-					options.message('リソースの処理を完了しました。');
+					options.message( broccoli.lb.get('ui_message.completed_resource_processing') );
 					callback(data);
 					it1.next(data);
 				}
