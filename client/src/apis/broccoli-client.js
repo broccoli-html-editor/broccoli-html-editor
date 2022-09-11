@@ -35,7 +35,8 @@
 		this.utils = new (require('./utils.js'))(_this);
 		this.indicator = new (require('./indicator.js'))(_this);
 
-		this.px2style = new (require('px2style'))();
+		require('px2style/px2style/px2style.js');
+		this.px2style = window.px2style;
 		this.px2style.setConfig('additionalClassName', 'broccoli');
 
 		/**

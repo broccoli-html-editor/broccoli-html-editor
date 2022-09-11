@@ -19,7 +19,7 @@ module.exports = function(broccoli){
 				+ '<div class="broccoli__find-window">'
 				+ '	<div class="broccoli__find-window-search">'
 				+ '		<form action="javascript:;">'
-				+ '			<input type="text" name="search-keyword" class="px2-input px2-input--block" />'
+				+ '			<input type="search" name="search-keyword" class="px2-input px2-input--block" />'
 				+ '		</form>'
 				+ '	</div>'
 				+ '	<div class="broccoli__find-window-result"></div>'

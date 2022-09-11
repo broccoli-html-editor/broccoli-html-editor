@@ -537,7 +537,7 @@ module.exports = function(broccoli, targetElm, callback){
 				var lastKeyword = '';
 
 				html += '<div class="broccoli__module-palette-inner">';
-				html += '<div class="broccoli__module-palette-filter"><input type="text" style="width:100%;" placeholder="filter..." /></div>';
+				html += '<div class="broccoli__module-palette-filter"><input type="search" placeholder="filter..." class="px2-input" style="width:100%;" /></div>';
 				html += '</div>';
 				$wrap = $(html);
 				$wrap.append(data.$ul);

@@ -32,7 +32,7 @@
  */
 
 /*!
- * jQuery JavaScript Library v3.6.0
+ * jQuery JavaScript Library v3.6.1
  * https://jquery.com/
  *
  * Includes Sizzle.js
@@ -42,8 +42,10 @@
  * Released under the MIT license
  * https://jquery.org/license
  *
- * Date: 2021-03-02T17:08Z
+ * Date: 2022-08-26T17:52Z
  */
+
+/*! For license information please see px2style.js.LICENSE.txt */
 
 /*! NanoPop 2.1.0 MIT | https://github.com/Simonwep/nanopop */
 
