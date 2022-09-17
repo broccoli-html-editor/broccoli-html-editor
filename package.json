@@ -58,7 +58,7 @@
     "cheerio": "*",
     "codemirror": "^6.0.1",
     "csv-loader": "^3.0.3",
-    "laravel-mix": "^6.0.48",
+    "laravel-mix": "^6.0.49",
     "md5": "^2.2.1",
     "mocha": "^2.1.0",
     "postcss": "^8.1.14",

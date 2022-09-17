@@ -10,3 +10,6 @@ composer.lock
 
 # PHP Documentor
 .phpdoc
+
+# webpack
+/images/

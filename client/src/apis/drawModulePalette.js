@@ -132,9 +132,9 @@ module.exports = function(broccoli, targetElm, callback){
 		// var isTouchStartHold = false;
 
 		depth = depth || 0;
-		var $button = $('<a class="broccoli__module-palette--draggablebutton">');
+		var $button = $('<a class="broccoli__module-palette__draggablebutton">');
 		if(depth){
-			$button.addClass('broccoli__module-palette--draggablebutton-children');
+			$button.addClass('broccoli__module-palette__draggablebutton-children');
 		}
 		$button
 			.html((function(d){
@@ -145,11 +145,11 @@ module.exports = function(broccoli, targetElm, callback){
 					thumb = d.thumb;
 				}
 				if(thumb){
-					rtn += '<span class="broccoli__module-palette--draggablebutton-thumb"><img src="'+php.htmlspecialchars( thumb )+'" alt="'+php.htmlspecialchars( label )+'" /></span>';
+					rtn += '<span class="broccoli__module-palette__draggablebutton-thumb"><img src="'+php.htmlspecialchars( thumb )+'" alt="'+php.htmlspecialchars( label )+'" /></span>';
 				}else{
-					rtn += '<span class="broccoli__module-palette--draggablebutton-thumb"></span>';
+					rtn += '<span class="broccoli__module-palette__draggablebutton-thumb"></span>';
 				}
-				rtn += '<span class="broccoli__module-palette--draggablebutton-label">'+php.htmlspecialchars( label )+'</span>';
+				rtn += '<span class="broccoli__module-palette__draggablebutton-label">'+php.htmlspecialchars( label )+'</span>';
 				return rtn;
 			})(mod))
 			.attr({
@@ -556,7 +556,7 @@ module.exports = function(broccoli, targetElm, callback){
 					$(targetElm).find('ul').show();
 
 					changeTimer = setTimeout(function(){
-						$(targetElm).find('a.broccoli__module-palette--draggablebutton').each(function(){
+						$(targetElm).find('a.broccoli__module-palette__draggablebutton').each(function(){
 							var $this = $(this);
 							if( $this.attr('data-id').toLowerCase().match( keyword.toLowerCase() ) ){
 								$this.show().addClass('broccoli__module-palette__shown-module');
@@ -573,7 +573,7 @@ module.exports = function(broccoli, targetElm, callback){
 
 						$(targetElm).find('li').each(function(){
 							var $this = $(this);
-							var $btns = $this.find('a.broccoli__module-palette--draggablebutton.broccoli__module-palette__shown-module');
+							var $btns = $this.find('a.broccoli__module-palette__draggablebutton.broccoli__module-palette__shown-module');
 							if( !$btns.length ){
 								$this.css({'display':'none'});
 							}else{

@@ -31,8 +31,12 @@ mix
 				{
 					test:/\.twig$/,
 					use:['twig-loader']
-				}
-			]
+				},
+				{
+					test: /\.(png|jpe?g|gif|svg|eot|ttf|woff|woff2)$/i,
+					type: "asset/inline"
+				},
+			],
 		},
 		resolve: {
 			fallback: {

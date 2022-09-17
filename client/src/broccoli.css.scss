@@ -1027,35 +1027,39 @@
 			padding: 0;
 
 			a.broccoli__module-palette__buttongroups{
+				box-sizing: border-box;
 				display: block;
-				color: #eee;
-				border-top: 1px solid #666;
-				background-color: #333;
+				color: #000;
+				background-color: #f9f7f5;
 				padding: 0.3em 1em;
 				white-space: nowrap;
 				overflow: hidden;
 				text-overflow: ellipsis;
 				font-weight: bold;
 				font-size: 12px;
+				text-decoration: none;
 				&:active,
 				&:focus,
 				&:hover{
-					color: #fff;
+					color: #333;
 				}
 			}
 			a.broccoli__module-palette__buttongroups::before {
 				content: "";
 				display: inline-block;
-				border-top: 3px solid #fff;
-				border-right: 3px solid #fff;
-				width: 0.5em;
-				height: 0.5em;
+				// NOTE: url-loader も asset/inline も、base64 を正しく変換できなかったため、暫定的にbase64に手動変換した。
+				// background-image: url("./resources/chevron-down-x2.png");
+				background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAACNSURBVHgB7ZRRCYAwFEVvBCO8CItgBCPYwCo2MYo2MIIR9IkTRP1525wi98AFv3YOwgYQQgj5MJWu0xWIQ/w5DkbWgFnXR0SIbtRN/ttMfYgQ2BAvHxEoP0ZMxoMklXzHGSJcarklwhKaPOJx+Y7g+ovLXPK7iAbbTckmP0es8gHxD1ZwRPuWnBBC/sECNYYnnM4JpPcAAAAASUVORK5CYII=");
+				background-size: cover;
+				width: 16px;
+				height: 16px;
 				margin-right: 0.7em;
-				transform: rotate(135deg);
+				vertical-align: middle;
+				transform: rotate(0deg);
 				transition: transform 0.08s linear;
 			}
 			a.broccoli__module-palette__buttongroups--closed::before {
-				transform: rotate(45deg);
+				transform: rotate(-90deg);
 			}
 
 			ul{
@@ -1064,45 +1068,43 @@
 				font-size: small;
 				li{ // <- category
 					a.broccoli__module-palette__buttongroups{
+						box-sizing: border-box;
 						color: #000;
-						border-top: 1px solid #999;
-						background-color: #666;
-						color: #eee;
-						padding:0.3em 2em;
+						background-color: #f9f9f9;
+						color: #666;
 						font-weight: normal;
-						font-size: 11px;
+						font-size: 12px;
+						text-decoration: none;
 						&:active,
 						&:focus,
 						&:hover{
-							color: #fff;
+							color: #000;
 						}
 					}
 					ul{
 						margin: 0;
 						padding: 0;
-						font-size: small;
 						li{ // <- modoule
 							padding: 0;
+							border-bottom: 1px solid #e5e5e5;
 						}
 					}
 				}
 			}
 		}
 	}
-	a.broccoli__module-palette--draggablebutton{
+	a.broccoli__module-palette__draggablebutton{
 		box-sizing: border-box;
 		display: flex;
 		align-items: center;
 		width: 100%;
-		height: 42px;
-		border: 1px solid #999;
+		height: 50px;
 		text-align:left;
 		padding: 4px;
 		margin: 0;
-		background-color: #eee;
-		background: linear-gradient(to bottom, #eee, #ccc);
-		color: #333;
-		font-size: 11px;
+		background-color: #fff;
+		color: #000;
+		font-size: 14px;
 		line-height: 1;
 		vertical-align: middle;
 		overflow: hidden;
@@ -1114,14 +1116,13 @@
 		user-select: none;
 
 		&:hover{
-			background-color: #ddd;
-			background: linear-gradient(to bottom, #f9f9f9, #ddd);
+			background-color: #eee;
 			text-decoration: none;
 			color: #000;
 		}
 
 	}
-	span.broccoli__module-palette--draggablebutton-thumb{
+	span.broccoli__module-palette__draggablebutton-thumb{
 		text-overflow: ellipsis;
 		overflow: hidden;
 		background-color: #ccc;
@@ -1135,17 +1136,17 @@
 			height:100%;
 		}
 	}
-	span.broccoli__module-palette--draggablebutton-label{
+	span.broccoli__module-palette__draggablebutton-label{
 		text-overflow: ellipsis;
 		overflow: hidden;
 		padding-left: 8px;
 	}
 
 
-	a.broccoli__module-palette--draggablebutton-children{
+	a.broccoli__module-palette__draggablebutton-children{
 		padding-left: 24px;
 
-		span.broccoli__module-palette--draggablebutton-thumb{
+		span.broccoli__module-palette__draggablebutton-thumb{
 			width: 27px;
 			min-width: 27px;
 			height: 27px;
