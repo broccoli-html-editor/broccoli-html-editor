@@ -5,7 +5,10 @@
 	cursor: default;
 
 	[draggable=true]{
-		cursor: move;
+		cursor: grab;
+	}
+	[draggable=true]:active{
+		cursor: grabbing;
 	}
 	[draggable=false]{
 		cursor: default;
@@ -295,7 +298,10 @@
 	text-align: center;
 	background-color: transparent;
 	z-index: 0;
-	cursor: move;
+	cursor: grab;
+	&:active {
+		cursor: grabbing;
+	}
 
 	pointer-events: auto;
 	> *{
@@ -1115,9 +1121,11 @@
 		text-decoration: none;
 		text-overflow: ellipsis;
 		overflow: hidden;
-		cursor: move;
 		user-select: none;
-
+		cursor: grab;
+		&:active{
+			cursor: grabbing;
+		}
 		&:hover{
 			background-color: #eee;
 			text-decoration: none;
