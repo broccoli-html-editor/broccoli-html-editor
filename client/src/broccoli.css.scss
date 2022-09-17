@@ -956,36 +956,39 @@
 	word-wrap: break-word;
 	word-break: break-word;
 
-	&-id{
+	&-id {
+		margin-top: 4em;
 		color: #999;
-		border-bottom: 1px solid #999;
+		font-size: 10px;
+		border-top: 1px dotted #aaa;
 	}
-	&-thumb{
+	&-thumb {
 		width:200px;
 		max-width:20%;
 		float:right;
 		margin: 0 0 15px 15px;
+		background-color: #f9f7f5;
 		img{
 			width:100%;
 		}
 	}
-	&-pics{
+	&-pics {
 		clear: both;
 		text-align: center;
 		border-top: 1px solid #bbb;
 		padding: 2em 0;
 		margin: 10px 0;
-		ul{
+		ul {
 			margin: 1em 0;
 			padding: 0;
 			overflow: auto;
 			display: flex;
 			flex-wrap: wrap;
-			li{
+			li {
 				list-style-type: none;
 				margin: 1em;
 				padding: 0;
-				img{
+				img {
 					width:auto;
 					max-width:100%;
 					border:2px solid #999;
@@ -998,15 +1001,15 @@
 }
 
 // Module Palette
-.broccoli__module-palette{
+.broccoli__module-palette {
 	overflow: auto;
 	-webkit-overflow-scrolling: touch;
 	overflow-scrolling: touch;
 
-	div.broccoli__module-palette-inner{
+	div.broccoli__module-palette-inner {
 		overflow: hidden;
 	}
-	div.broccoli__module-palette-filter{
+	div.broccoli__module-palette-filter {
 		overflow: hidden;
 		padding: 3px 1px;
 		input{
@@ -1014,7 +1017,7 @@
 			border: 1px #999 solid;
 		}
 	}
-	ul.broccoli__module-palette-list{
+	ul.broccoli__module-palette-list {
 		margin: 0;
 		padding: 0;
 		font-size: small;
@@ -1022,11 +1025,11 @@
 		-webkit-overflow-scrolling: touch;
 		overflow-scrolling: touch;
 
-		li{ // <- package
+		li { // <- package
 			list-style-type: none;
 			padding: 0;
 
-			a.broccoli__module-palette__buttongroups{
+			a.broccoli__module-palette__buttongroups {
 				box-sizing: border-box;
 				display: block;
 				color: #000;
@@ -1125,7 +1128,7 @@
 	span.broccoli__module-palette__draggablebutton-thumb{
 		text-overflow: ellipsis;
 		overflow: hidden;
-		background-color: #ccc;
+		background-color: transparent;
 		padding: 0;
 		width: 35px;
 		min-width: 35px;
