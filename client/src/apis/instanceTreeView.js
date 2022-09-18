@@ -78,6 +78,12 @@ module.exports = function(broccoli){
 								$('<span class="broccoli--instance-tree-view-fieldpreview">')
 									.html('<span>'+html+'</span>')
 							);
+							$li.find('*').each(function(){
+								$(this).removeAttr('style'); // スタイルを削除
+							});
+							$li.find('style').remove(); // styleタグも削除
+							$li.find('script').remove(); // scriptタグも削除
+
 							$ul.append($li);
 							it1.next();
 						} );

@@ -5,6 +5,17 @@
             "fields": {
                 "main": [
                     {
+                        "modId": "PlainHTMLElements:PlainHTML/MultiText",
+                        "fields": {
+                            "main": {
+                                "src": "<style>\n\thtml, body{\n\t\tbackground-color: #f7f5f3 !important;\n\t}\n</style>",
+                                "editor": ""
+                            }
+                        },
+                        "anchor": "",
+                        "dec": ""
+                    },
+                    {
                         "modId": "testMod1:dev/multilang",
                         "fields": {
                             "text1": {
