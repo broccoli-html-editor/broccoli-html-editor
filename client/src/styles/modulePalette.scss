@@ -8,7 +8,6 @@
 		overflow: hidden;
 		background-color: #e5e5e5;
 		padding-left: 1px;
-		// padding-bottom: 1px;
 	}
 	div.broccoli__module-palette-filter {
 		display: flex;
@@ -76,9 +75,8 @@
 				li{ // <- category
 					a.broccoli__module-palette__buttongroups{
 						box-sizing: border-box;
-						color: #000;
-						background-color: #f9f9f9;
 						color: #666;
+						background-color: #f9f9f9;
 						font-weight: normal;
 						font-size: 12px;
 						text-decoration: none;
@@ -129,7 +127,6 @@
 			text-decoration: none;
 			color: #000;
 		}
-
 	}
 	span.broccoli__module-palette__draggablebutton-thumb{
 		text-overflow: ellipsis;

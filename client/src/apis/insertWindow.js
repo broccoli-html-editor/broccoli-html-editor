@@ -283,9 +283,9 @@ module.exports = function(broccoli){
 	 */
 	function generateModuleButton( mod, depth ){
 		depth = depth || 0;
-		var $button = $('<a class="broccoli__insert-window--module">');
+		var $button = $('<div class="broccoli__insert-window__module">');
 		if(depth){
-			$button.addClass('broccoli__insert-window--module-children');
+			$button.addClass('broccoli__insert-window__module-children');
 		}
 		$button
 			.html((function(d){
@@ -296,13 +296,16 @@ module.exports = function(broccoli){
 					thumb = d.thumb;
 				}
 				if(thumb){
-					rtn += '<span class="broccoli__insert-window--module-thumb"><img src="'+php.htmlspecialchars( thumb )+'" alt="'+php.htmlspecialchars( label )+'" /></span>';
+					rtn += '<span class="broccoli__insert-window__module-thumb"><img src="'+php.htmlspecialchars( thumb )+'" alt="'+php.htmlspecialchars( label )+'" /></span>';
 				}else{
-					rtn += '<span class="broccoli__insert-window--module-thumb"></span>';
+					rtn += '<span class="broccoli__insert-window__module-thumb"><img src="'+php.htmlspecialchars( broccoli.images["module-default-icon"] )+'" alt="" /></span>';
 				}
-				rtn += '<span class="broccoli__insert-window--module-label">'+php.htmlspecialchars( label )+'</span>';
+				rtn += '<span class="broccoli__insert-window__module-label">'+php.htmlspecialchars( label )+'</span>';
+				rtn += '<span class="broccoli__insert-window__module-button"><button type="button" class="px2-btn px2-btn--primary">'+broccoli.lb.get('ui_label.insert')+'</button></span>';
 				return rtn;
 			})(mod))
+		;
+		$button.find('button')
 			.attr({
 				'data-id': mod.moduleId,
 				'data-internal-id': mod.moduleInternalId,
@@ -312,7 +315,6 @@ module.exports = function(broccoli){
 				'data-insert-instance-to': instanceInsertTo,
 				'href': 'javascript:;'
 			})
-
 			.on('click', function(e){
 				var $this = $(this);
 				var modId = $this.attr('data-id');
@@ -324,7 +326,7 @@ module.exports = function(broccoli){
 				} catch (e) {
 					modClip = false;
 				}
-				$this.addClass('broccoli__insert-window--module-selected');
+				$this.addClass('broccoli__insert-window__module-selected');
 				lock();
 
 				if( modClip ){

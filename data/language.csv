@@ -22,6 +22,7 @@ ui_label.select_image_file,"Select image file","画像ファイルを選択す�
 ui_label.get_from_url,"Get from URL","URLから取得する",,
 ui_label.save_file_as,"Save file as...","名前を付けて保存する",,
 ui_label.output_filename,"Output File Name","出力ファイル名",,
+ui_label.insert,"Insert","挿入",,
 ui_label.insert_module,"Insert Module","モジュールを挿入",,
 ui_message.this_module_has_no_options,"This module has no options.","このモジュールにはオプションが定義されていません。",,
 ui_message.sending_data,"Sending data...","データを送信しています...",,
