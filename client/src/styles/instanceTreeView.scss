@@ -1,0 +1,146 @@
+.broccoli--instance-tree-view {
+	overflow: auto;
+	-webkit-overflow-scrolling: touch;
+	overflow-scrolling: touch;
+
+	ul{
+		margin:0; padding:0 0 0 5px;
+		display: table;
+		width: 100%;
+	}
+	li{
+		list-style:none;
+		display: table;
+		width: 100%;
+		font-size: small;
+	}
+
+	&-fields{
+		border:1px dotted #ddd;
+		background-color: #f5f5f5;
+	}
+	&-bowlname{
+		font-weight: bold;
+		margin: 1em 0 0.5em 0;
+		display: block;
+	}
+	&-modulename{
+		font-weight: bold;
+	}
+	&-fieldname{
+		font-weight: normal;
+		font-size: 85%;
+	}
+
+	[data-broccoli-instance-path]{
+		display: table;
+		width: 100%;
+		border:2px solid #666;
+		border-bottom-width: 0px;
+		background-color: #f9f9f9;
+		padding: 1px 1px 1px 5px;
+		margin: 0;
+		position: relative;
+		left:0; top:0;
+
+		&:nth-child(2){
+			border-radius: 5px 5px 0 0;
+			border-bottom-width: 0px;
+		}
+		&:last-child{
+			border-bottom-width: 2px;
+			border-radius: 0 0 5px 5px;
+		}
+		&:first-child:last-child{
+			border-radius: 5px;
+			border-width: 2px;
+		}
+
+		&[data-broccoli-is-appender]{
+			// moduleフィールド の appender
+			@include broccoli--appender();
+			font-size: 11px;
+			box-sizing: border-box;
+			clear: both;
+			white-space: nowrap;
+
+			&[data-broccoli-sub-mod-name]{
+				// loopフィールド の appender
+				padding: 5px 15px;
+				background-color: #F4FFFC;
+				color: #189AA3;
+				border-color: rgba(24, 154, 163, 0.5);
+				font-size: 9px;
+				text-align: center;
+				box-sizing: border-box;
+				clear: both;
+				white-space: nowrap;
+			}
+		}
+
+		&.broccoli__panel__hovered{
+			border-style: dotted;
+			border-color: #3871E0;
+			&[data-broccoli-sub-mod-name]{
+				border-color: #189AA3;
+			}
+			>.broccoli--instance-tree-view-fields{
+				// border:1px dotted #eee;
+				background-color: #f9f9f9;
+			}
+		}
+		&.broccoli__panel--selected {
+			border-style: solid;
+			border-color: #3871E0;
+			background-color: rgba(56, 113, 224, 0.05);
+			>.broccoli--instance-tree-view-modulename {
+				color: #3871E0;
+			}
+			&[data-broccoli-sub-mod-name]{
+				border-color: #189AA3;
+				background-color: rgba(24, 154, 163, 0.05);
+				>.broccoli--instance-tree-view-modulename {
+					color: #189AA3;
+				}
+			}
+		}
+
+		.broccoli--instance-tree-view-fieldname{
+			display: block;
+			border-left: 0.3em solid #d9d9d9;
+			padding-left: 0.5em;
+			margin: 3px 0;
+			font-size: 11px;
+		}
+
+		.broccoli--instance-tree-view-fieldpreview{
+			display: block;
+			height: auto;
+			padding: 2px 5px;
+			overflow: hidden;
+			max-height: 100px;
+			line-height: 1;
+
+			*{
+				margin: 0;
+				padding: 0;
+				font-size: 9px;
+				line-height: 1;
+				list-style-type: none;
+				font-weight: normal;
+				display: inline;
+				color: #999;
+				border: 0 none;
+				background: transparent none;
+			}
+		}
+
+	}
+
+	&-panel-item{
+		pointer-events: auto;
+		> *{
+			pointer-events: none;
+		}
+	}
+}

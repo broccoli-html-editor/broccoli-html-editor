@@ -175,12 +175,12 @@
 
 						function bindDropCancel(elm){
 							$(elm)
-								.bind('dragover', function(e){
+								.on('dragover', function(e){
 									e.stopPropagation();
 									e.preventDefault();
 									return;
 								})
-								.bind('drop', function(e){
+								.on('drop', function(e){
 									// var event = e.originalEvent;
 									// var fileInfo = event.dataTransfer.files[0];
 									e.stopPropagation();
@@ -1382,11 +1382,11 @@
 
 			var $lbElm = $('<div>');
 			broccoli.px2style.modal({
-				'title': 'モジュールを挿入します',
+				'title': broccoli.lb.get('ui_label.insert_module'),
 				'body': $lbElm,
 				'buttons': [],
 				'buttonsSecondary': [
-					$('<button class="px2-btn">').text('キャンセル').on('click', function(){
+					$('<button class="px2-btn">').text(broccoli.lb.get('ui_label.cancel')).on('click', function(){
 						broccoli.px2style.closeModal();
 					})
 				],

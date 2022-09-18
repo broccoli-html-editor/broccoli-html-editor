@@ -12,12 +12,6 @@ module.exports = function(broccoli){
 	var $ = require('jquery');
 
 	var $insertWindow;
-	var tplFrame = ''
-		+ '<div class="broccoli__insert-window">'
-		+ '<p>挿入するモジュールを選択してください。</p>'
-		+ '<div class="broccoli__insert-window-body"></div>'
-		+ '</div>'
-	;
 
 	var moduleList = {};
 
@@ -46,6 +40,13 @@ module.exports = function(broccoli){
 		if( !modulePaletteCondition.cond ){
 			modulePaletteCondition.cond = {};
 		}
+
+		var tplFrame = ''
+			+ '<div class="broccoli__insert-window">'
+			+ '<p>' + broccoli.lb.get('ui_message.please_select_a_module_to_insert') + '</p>'
+			+ '<div class="broccoli__insert-window-body"></div>'
+			+ '</div>'
+		;
 
 		instanceInsertTo = instancePath;
 		$insertWindow = $(elmInsertWindow);

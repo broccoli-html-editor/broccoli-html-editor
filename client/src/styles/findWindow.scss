@@ -1,0 +1,27 @@
+.broccoli__find-window{
+	display: flex;
+	flex-direction: column;
+	h2{
+		font-weight: bold;
+		text-align: center;
+		margin: 1em;
+	}
+
+	&-field-error-message{
+		display: none;
+	}
+
+	&-result{
+		overflow: auto;
+		height: calc(100vh - 226px);
+		max-height: 400px;
+		a{
+			display: block;
+			padding: 1em;
+			margin: 1px 0;
+			border-top: 1px solid #ddd;
+			word-wrap: break-word;
+			overflow-wrap: break-word;
+		}
+	}
+}

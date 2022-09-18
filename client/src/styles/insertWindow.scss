@@ -1,0 +1,146 @@
+.broccoli__insert-window {
+	h2{
+		font-weight: bold;
+		text-align: center;
+		margin: 1em;
+	}
+	&-list {
+		margin: 0;
+		padding: 0;
+		font-size: small;
+		overflow: auto;
+		-webkit-overflow-scrolling: touch;
+		overflow-scrolling: touch;
+
+		li{ // <- package
+			list-style-type: none;
+			padding: 0;
+
+			a.broccoli__insert-window__buttongroups{
+				display: block;
+				color: #eee;
+				border-top: 1px solid #666;
+				background-color: #333;
+				padding: 0.3em 1em;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				font-weight: bold;
+				font-size: 12px;
+				&:active,
+				&:focus,
+				&:hover{
+					color: #fff;
+				}
+			}
+			a.broccoli__insert-window__buttongroups::before {
+				content: "";
+				display: inline-block;
+				border-top: 3px solid #fff;
+				border-right: 3px solid #fff;
+				width: 0.5em;
+				height: 0.5em;
+				margin-right: 0.7em;
+				transform: rotate(135deg);
+				transition: transform 0.08s linear;
+			}
+			a.broccoli__insert-window__buttongroups--closed::before {
+				transform: rotate(45deg);
+			}
+			ul{
+				margin: 0;
+				padding: 0;
+				font-size: small;
+				li{ // <- category
+					a.broccoli__insert-window__buttongroups{
+						color: #000;
+						border-top: 1px solid #999;
+						background-color: #666;
+						color: #eee;
+						padding:0.3em 2em;
+						font-weight: normal;
+						font-size: 11px;
+						&:active,
+						&:focus,
+						&:hover{
+							color: #fff;
+						}
+					}
+					ul{
+						margin: 0;
+						padding: 0;
+						font-size: small;
+						li{ // <- modoule
+							padding: 0;
+						}
+					}
+				}
+			}
+		}
+	}
+	a.broccoli__insert-window--module{
+		box-sizing: border-box;
+		display: flex;
+		align-items: center;
+		width: 100%;
+		height: 42px;
+		border: 1px solid #999;
+		text-align:left;
+		padding: 4px;
+		margin: 0;
+		background-color: #eee;
+		color: #333;
+		font-size: 11px;
+		line-height: 1;
+		vertical-align: middle;
+		overflow: hidden;
+		white-space: nowrap;
+		text-decoration: none;
+		text-overflow: ellipsis;
+		overflow: hidden;
+
+		&:hover{
+			background-color: #ddd;
+			text-decoration: none;
+			color: #000;
+		}
+
+		&-selected ,
+		&-selected:hover {
+			background-color: #00a0e6;
+			color: #eee;
+		}
+	}
+	span.broccoli__insert-window--module-thumb{
+		text-overflow: ellipsis;
+		overflow: hidden;
+		background-color: #ccc;
+		padding: 0;
+		width: 35px;
+		min-width: 35px;
+		height: 35px;
+		min-height: 35px;
+		img{
+			width:100%;
+			height:100%;
+		}
+	}
+	span.broccoli__insert-window--module-label{
+		text-overflow: ellipsis;
+		overflow: hidden;
+		padding-left: 8px;
+	}
+
+
+	a.broccoli__insert-window--module-children{
+		padding-left: 24px;
+
+		span.broccoli__insert-window--module-thumb{
+			width: 27px;
+			min-width: 27px;
+			height: 27px;
+			min-height: 27px;
+		}
+	}
+
+}

@@ -1,0 +1,165 @@
+.broccoli__module-palette {
+	overflow: auto;
+	-webkit-overflow-scrolling: touch;
+	overflow-scrolling: touch;
+
+	div.broccoli__module-palette-inner {
+		box-sizing: border-box;
+		overflow: hidden;
+		background-color: #e5e5e5;
+		padding-left: 1px;
+		// padding-bottom: 1px;
+	}
+	div.broccoli__module-palette-filter {
+		display: flex;
+		box-sizing: border-box;
+		overflow: hidden;
+		height: 50px;
+		padding: 10px;
+		input[type=search]{
+			font-size: 12px;
+			border: none;
+		}
+	}
+	ul.broccoli__module-palette-list {
+		margin: 0;
+		padding: 0;
+		font-size: small;
+		overflow: auto;
+		-webkit-overflow-scrolling: touch;
+		overflow-scrolling: touch;
+
+		li { // <- package
+			list-style-type: none;
+			padding: 0;
+
+			a.broccoli__module-palette__buttongroups {
+				box-sizing: border-box;
+				display: block;
+				color: #000;
+				background-color: #f9f7f5;
+				padding: 0.3em 1em;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				font-weight: bold;
+				font-size: 12px;
+				text-decoration: none;
+				&:active,
+				&:focus,
+				&:hover{
+					color: #333;
+				}
+			}
+			a.broccoli__module-palette__buttongroups::before {
+				content: "";
+				display: inline-block;
+				// NOTE: url-loader も asset/inline も、base64 を正しく変換できなかったため、暫定的にbase64に手動変換した。
+				// background-image: url("./resources/chevron-down-x2.png");
+				background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAACNSURBVHgB7ZRRCYAwFEVvBCO8CItgBCPYwCo2MYo2MIIR9IkTRP1525wi98AFv3YOwgYQQgj5MJWu0xWIQ/w5DkbWgFnXR0SIbtRN/ttMfYgQ2BAvHxEoP0ZMxoMklXzHGSJcarklwhKaPOJx+Y7g+ovLXPK7iAbbTckmP0es8gHxD1ZwRPuWnBBC/sECNYYnnM4JpPcAAAAASUVORK5CYII=");
+				background-size: cover;
+				width: 16px;
+				height: 16px;
+				margin-right: 0.7em;
+				vertical-align: middle;
+				transform: rotate(0deg);
+				transition: transform 0.08s linear;
+			}
+			a.broccoli__module-palette__buttongroups--closed::before {
+				transform: rotate(-90deg);
+			}
+
+			ul{
+				margin: 0;
+				padding: 0;
+				font-size: small;
+				li{ // <- category
+					a.broccoli__module-palette__buttongroups{
+						box-sizing: border-box;
+						color: #000;
+						background-color: #f9f9f9;
+						color: #666;
+						font-weight: normal;
+						font-size: 12px;
+						text-decoration: none;
+						&:active,
+						&:focus,
+						&:hover{
+							color: #000;
+						}
+					}
+					ul{
+						margin: 0;
+						padding: 0;
+						li{ // <- modoule
+							padding: 0;
+							border-bottom: 1px solid #e5e5e5;
+						}
+					}
+				}
+			}
+		}
+	}
+	a.broccoli__module-palette__draggablebutton{
+		box-sizing: border-box;
+		display: flex;
+		align-items: center;
+		width: 100%;
+		height: 50px;
+		text-align:left;
+		padding: 4px;
+		margin: 0;
+		background-color: #fff;
+		color: #000;
+		font-size: 14px;
+		line-height: 1;
+		vertical-align: middle;
+		overflow: hidden;
+		white-space: nowrap;
+		text-decoration: none;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		user-select: none;
+		cursor: grab;
+		&:active{
+			cursor: grabbing;
+		}
+		&:hover{
+			background-color: #f5faff;
+			text-decoration: none;
+			color: #000;
+		}
+
+	}
+	span.broccoli__module-palette__draggablebutton-thumb{
+		text-overflow: ellipsis;
+		overflow: hidden;
+		background-color: transparent;
+		padding: 0;
+		width: 35px;
+		min-width: 35px;
+		height: 35px;
+		min-height: 35px;
+		img{
+			width:100%;
+			height:100%;
+		}
+	}
+	span.broccoli__module-palette__draggablebutton-label{
+		text-overflow: ellipsis;
+		overflow: hidden;
+		padding-left: 8px;
+	}
+
+
+	a.broccoli__module-palette__draggablebutton-children{
+		padding-left: 24px;
+
+		span.broccoli__module-palette__draggablebutton-thumb{
+			width: 27px;
+			min-width: 27px;
+			height: 27px;
+			min-height: 27px;
+		}
+	}
+}

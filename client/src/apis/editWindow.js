@@ -96,7 +96,7 @@ module.exports = function(broccoli){
 		$editWindow.find('.broccoli__edit-window-field-error-message').hide().html('');
 		$elm.hide().html('');
 		for( var idx in msgs ){
-			var $err = $('<div class="broccoli__inline-error-message">');
+			var $err = $('<div class="broccoli__edit-window-inline-error-message">');
 			var $errUl = $('<ul>');
 			var errCount = 0;
 			for( var idx2 in msgs[idx] ){
@@ -109,7 +109,7 @@ module.exports = function(broccoli){
 			$editWindow.find('[data-broccoli-edit-window-field-name='+idx+'] .broccoli__edit-window-field-error-message').show().append( $err.append($errUl) );
 		}
 		if(errCount){
-			var $err = $('<div class="broccoli__error-message-box">');
+			var $err = $('<div class="broccoli__edit-window-error-message-box">');
 			$elm.show().append(
 				$err.text( broccoli.lb.get('ui_message.confirm_error') ) // 入力エラーがあります。確認してください。
 			);
