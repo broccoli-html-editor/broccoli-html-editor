@@ -573,27 +573,25 @@ class buildBowl{
 
 		switch($fieldType){
 			case 'module':
-				$baseSize = 16;
+				$baseSize = 14;
 				$depth = count(explode('/', $param['instancePath'])) - 3;
-				if($depth<0){$depth=0;}
+				if($depth<1){$depth=1;}
 				$style = array();
-				// var_dump($depth);
 
-				// $obj['font-size'] = $baseSize;
-				$style['font-size'] = $baseSize * ( 100 - $depth*10 ) / 100;
+				$style['font-size'] = $baseSize * ( 100 - $depth*5 ) / 100;
 				$style['padding'] = 15 - $depth*2;
-				$style['background-color'] = '#fbfbff';
-				if($depth <= 0){
-					$style['background-color'] = '#eef';
-				}elseif($depth <= 1){
-					$style['background-color'] = '#f4f4ff';
-				}elseif($depth <= 2){
-					$style['background-color'] = '#f6f6ff';
-				}elseif($depth <= 3){
-					$style['background-color'] = '#f9f9ff';
-				}else{
-					$style['background-color'] = '#fbfbff';
-				}
+				$style['background-color'] = '#F5FAFF';
+				// if($depth <= 0){
+				// 	$style['background-color'] = '#F5FAFF';
+				// }elseif($depth <= 1){
+				// 	$style['background-color'] = '#F5FAFF';
+				// }elseif($depth <= 2){
+				// 	$style['background-color'] = '#F5FAFF';
+				// }elseif($depth <= 3){
+				// 	$style['background-color'] = '#F5FAFF';
+				// }else{
+				// 	$style['background-color'] = '#F5FAFF';
+				// }
 
 				$rtn .= '<div';
 				$rtn .= ' data-broccoli-instance-path="'.htmlspecialchars($param['instancePath']).'"';
@@ -606,10 +604,10 @@ class buildBowl{
 				$rtn .=     'padding:'.$style['padding'].'px;';
 				$rtn .=     'background-color:'.$style['background-color'].';';
 				$rtn .=     'border:3px solid transparent;';
-				$rtn .=     'border-radius:5px;';
+				$rtn .=     'border-radius:0px;';
 				$rtn .=     'font-family: &quot;YuGothic&quot;, &quot;Yu Gothic&quot;, Meiryo, &quot;Hiragino Kaku Gothic ProN&quot;, Verdana, sans-serif;';
 				$rtn .=     'font-size:'.$style['font-size'].'px;';
-				$rtn .=     'color:#000;';
+				$rtn .=     'color:#3871E0;';
 				$rtn .=     'text-align:center;';
 				$rtn .=     'box-sizing:border-box;';
 				$rtn .=     'clear:both;';
@@ -617,7 +615,7 @@ class buildBowl{
 				$rtn .=     'margin:10px 0;';
 				$rtn .= '"';
 				$rtn .= '>';
-				$rtn .= '(+) '.$this->broccoli->lb()->get('ui_label.drop_a_module_here');
+				$rtn .= $this->broccoli->lb()->get('ui_label.drop_a_module_here');
 				$rtn .= '</div>';
 				break;
 
@@ -632,12 +630,12 @@ class buildBowl{
 				$rtn .=     'max-height:calc(9 * 6px);';
 				$rtn .=     'overflow:hidden;';
 				$rtn .=     'padding:5px 15px;';
-				$rtn .=     'background-color:#dfe;';
+				$rtn .=     'background-color:#F4FFFC;';
 				$rtn .=     'border:3px solid transparent;';
-				$rtn .=     'border-radius:5px;';
+				$rtn .=     'border-radius:0px;';
 				$rtn .=     'font-family: &quot;YuGothic&quot;, &quot;Yu Gothic&quot;, Meiryo, &quot;Hiragino Kaku Gothic ProN&quot;, Verdana, sans-serif;';
-				$rtn .=     'font-size:9px;';
-				$rtn .=     'color:#000;';
+				$rtn .=     'font-size:14px;';
+				$rtn .=     'color:#189AA3;';
 				$rtn .=     'text-align:center;';
 				$rtn .=     'box-sizing:border-box;';
 				$rtn .=     'clear:both;';

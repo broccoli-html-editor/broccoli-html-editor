@@ -55,7 +55,8 @@ module.exports = function(broccoli, targetElm, callback){
 					.append( $('<span>').text(category.categoryName)  )
 					.attr({
 						'href':'javascript:;',
-						'data-broccoli-module-category-id': packageId + ':' + categoryId
+						'data-broccoli-module-category-id': packageId + ':' + categoryId,
+						'draggable': false,
 					})
 					.on('click', function(){
 						var $categoryId = $(this).attr('data-broccoli-module-category-id');
@@ -491,7 +492,8 @@ module.exports = function(broccoli, targetElm, callback){
 							.append( $('<span>').text( pkg.packageName ) )
 							.attr({
 								'href':'javascript:;',
-								'data-broccoli-module-package-id': packageId
+								'data-broccoli-module-package-id': packageId,
+								'draggable': false,
 							})
 							.on('click', function(){
 								var $pkgId = $(this).attr('data-broccoli-module-package-id');

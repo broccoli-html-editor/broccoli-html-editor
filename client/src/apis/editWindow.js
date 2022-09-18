@@ -254,7 +254,7 @@ module.exports = function(broccoli){
 												'draggable': true
 											})
 											.append( $('<div>')
-												.addClass('broccoli--panel-drop-to-insert-here')
+												.addClass('broccoli__panel-drop-to-insert-here')
 											)
 										;
 
@@ -362,7 +362,7 @@ module.exports = function(broccoli){
 										var $appender = $('<a>');
 										if( field.fieldType == 'module' ){
 											$appender
-												.text('(+) '+broccoli.lb.get('ui_label.drop_a_module_here'))
+												.text(broccoli.lb.get('ui_label.drop_a_module_here'))
 												.attr({
 													'data-broccoli-instance-path':appenderInstancePath,
 													'data-broccoli-is-appender':'yes',
@@ -372,13 +372,13 @@ module.exports = function(broccoli){
 												})
 												.on('mouseover', function(e){
 													e.stopPropagation();
-													$(this).addClass('broccoli--panel__hovered')
+													$(this).addClass('broccoli__panel__hovered')
 												})
 												.on('mouseout',function(e){
-													$(this).removeClass('broccoli--panel__hovered')
+													$(this).removeClass('broccoli__panel__hovered')
 												})
 												.append( $('<div>')
-													.addClass('broccoli--panel-drop-to-insert-here')
+													.addClass('broccoli__panel-drop-to-insert-here')
 												)
 											;
 										}else if( field.fieldType == 'loop' ){
@@ -408,13 +408,13 @@ module.exports = function(broccoli){
 												})
 												.on('mouseover', function(e){
 													e.stopPropagation();
-													$(this).addClass('broccoli--panel__hovered')
+													$(this).addClass('broccoli__panel__hovered')
 												})
 												.on('mouseout',function(e){
-													$(this).removeClass('broccoli--panel__hovered')
+													$(this).removeClass('broccoli__panel__hovered')
 												})
 												.append( $('<div>')
-													.addClass('broccoli--panel-drop-to-insert-here')
+													.addClass('broccoli__panel-drop-to-insert-here')
 												)
 											;
 										}

@@ -110,7 +110,7 @@ module.exports = function(broccoli){
 
 								var $appender = $('<div>')
 									.append( $('<span>')
-										.text('(+) '+broccoli.lb.get('ui_label.drop_a_module_here'))
+										.text(broccoli.lb.get('ui_label.drop_a_module_here'))
 									)
 									.addClass('broccoli--instance-tree-view-panel-item')
 									.attr({
@@ -121,13 +121,13 @@ module.exports = function(broccoli){
 									})
 									.on('mouseover', function(e){
 										e.stopPropagation();
-										$(this).addClass('broccoli--panel__hovered')
+										$(this).addClass('broccoli__panel__hovered')
 									})
 									.on('mouseout',function(e){
-										$(this).removeClass('broccoli--panel__hovered')
+										$(this).removeClass('broccoli__panel__hovered')
 									})
 									.append( $('<div>')
-										.addClass('broccoli--panel-drop-to-insert-here')
+										.addClass('broccoli__panel-drop-to-insert-here')
 									)
 								;
 								broccoli.panels.setPanelEventHandlers( $appender );
@@ -172,13 +172,13 @@ module.exports = function(broccoli){
 									})
 									.on('mouseover', function(e){
 										e.stopPropagation();
-										$(this).addClass('broccoli--panel__hovered')
+										$(this).addClass('broccoli__panel__hovered')
 									})
 									.on('mouseout',function(e){
-										$(this).removeClass('broccoli--panel__hovered')
+										$(this).removeClass('broccoli__panel__hovered')
 									})
 									.append( $('<div>')
-										.addClass('broccoli--panel-drop-to-insert-here')
+										.addClass('broccoli__panel-drop-to-insert-here')
 									)
 								;
 								broccoli.panels.setPanelEventHandlers( $appender );
@@ -208,13 +208,13 @@ module.exports = function(broccoli){
 						})
 						.on('mouseover', function(e){
 							e.stopPropagation();
-							$(this).addClass('broccoli--panel__hovered')
+							$(this).addClass('broccoli__panel__hovered')
 						})
 						.on('mouseout',function(e){
-							$(this).removeClass('broccoli--panel__hovered')
+							$(this).removeClass('broccoli__panel__hovered')
 						})
 						.append( $('<div>')
-							.addClass('broccoli--panel-drop-to-insert-here')
+							.addClass('broccoli__panel-drop-to-insert-here')
 						)
 						.append( $ul )
 					;
@@ -278,7 +278,7 @@ module.exports = function(broccoli){
 					}
 					return true;
 				})
-				.addClass('broccoli--panel__selected')
+				.addClass('broccoli__panel--selected')
 			;
 			callback();
 		});
@@ -291,7 +291,7 @@ module.exports = function(broccoli){
 	this.unselectInstance = function(callback){
 		callback = callback || function(){};
 		$instanceTreeView.find('[data-broccoli-instance-path]')
-			.removeClass('broccoli--panel__selected')
+			.removeClass('broccoli__panel--selected')
 		;
 		// this.updateInstancePathView();
 		callback();

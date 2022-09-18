@@ -11,7 +11,10 @@
 		cursor: grabbing;
 	}
 	[draggable=false]{
-		cursor: default;
+		cursor: auto;
+	}
+	a[draggable=false]{
+		cursor: pointer;
 	}
 	[tabindex]{
 		outline: none;
@@ -27,16 +30,15 @@
 
 // mixin: appender
 @mixin broccoli--appender(){
-	padding:9px;
-	background-color: #eef;
-	border-color: #8585d2;
-	font-family: "YuGothic", "Yu Gothic", Meiryo, "Hiragino Kaku Gothic ProN", Verdana, sans-serif;
+	padding: 9px;
+	color: #3871E0;
+	border-color: rgba(56, 113, 224, 0.5);
+	background-color: #F5FAFF;
 	font-size: 11px;
-	color:#000;
-	text-align:center;
-	box-sizing:border-box;
-	clear:both;
-	white-space:nowrap;
+	text-align: center;
+	box-sizing: border-box;
+	clear: both;
+	white-space: nowrap;
 	outline: none;
 }
 
@@ -83,7 +85,7 @@
 		border: 0px none;
 	}
 
-	.broccoli--panels{
+	.broccoli__panels{
 		position: absolute;
 		top: 0; left:0;
 		width: 100%;
@@ -203,24 +205,6 @@
 		position: relative;
 		left:0; top:0;
 
-		&.broccoli--panel__hovered{
-			border-style: dotted !important;
-			border-color: #6cf;
-			background-color: rgba(231,244,255, 0.5);
-			&[data-broccoli-sub-mod-name]{
-				border-color: #3c3;
-				background-color: rgba(232,255,231, 0.5);
-			}
-			>.broccoli--instance-tree-view-fields{
-				// border:1px dotted #eee !important;
-				background-color: #f9f9f9 !important;
-			}
-		}
-		&.broccoli--panel__selected{
-			background-color: #fff2f2;
-			border-color: #f33;
-		}
-
 		&:nth-child(2){
 			border-radius: 5px 5px 0 0;
 			border-bottom-width: 0px;
@@ -238,22 +222,48 @@
 			// moduleフィールド の appender
 			@include broccoli--appender();
 			font-size: 11px;
-			box-sizing:border-box;
-			clear:both;
-			white-space:nowrap;
+			box-sizing: border-box;
+			clear: both;
+			white-space: nowrap;
 
 			&[data-broccoli-sub-mod-name]{
 				// loopフィールド の appender
-				padding:5px 15px;
-				background-color:#dfe;
-				border-color:#6dcd9d;
-				font-family: "YuGothic", "Yu Gothic", Meiryo, "Hiragino Kaku Gothic ProN", Verdana, sans-serif;
-				font-size:9px;
-				text-align:center;
-				box-sizing:border-box;
-				clear:both;
-				white-space:nowrap;
+				padding: 5px 15px;
+				background-color: #F4FFFC;
+				color: #189AA3;
+				border-color: rgba(24, 154, 163, 0.5);
+				font-size: 9px;
+				text-align: center;
+				box-sizing: border-box;
+				clear: both;
+				white-space: nowrap;
+			}
+		}
 
+		&.broccoli__panel__hovered{
+			border-style: dotted;
+			border-color: #3871E0;
+			&[data-broccoli-sub-mod-name]{
+				border-color: #189AA3;
+			}
+			>.broccoli--instance-tree-view-fields{
+				// border:1px dotted #eee;
+				background-color: #f9f9f9;
+			}
+		}
+		&.broccoli__panel--selected {
+			border-style: solid;
+			border-color: #3871E0;
+			background-color: rgba(56, 113, 224, 0.05);
+			>.broccoli--instance-tree-view-modulename {
+				color: #3871E0;
+			}
+			&[data-broccoli-sub-mod-name]{
+				border-color: #189AA3;
+				background-color: rgba(24, 154, 163, 0.05);
+				>.broccoli--instance-tree-view-modulename {
+					color: #189AA3;
+				}
 			}
 		}
 
@@ -291,13 +301,14 @@
 }
 
 // Panels
-.broccoli--panel{
-	border-width:3px !important;
-	border-style:solid;
-	border-color:transparent;
+.broccoli__panel{
+	border-width: 2px;
+	border-style: solid;
+	border-color: transparent;
 	text-align: center;
 	background-color: transparent;
 	z-index: 0;
+	box-sizing: border-box;
 	cursor: grab;
 	&:active {
 		cursor: grabbing;
@@ -312,26 +323,89 @@
 		display:none;
 	}
 
-	&:hover{
-		border-style: dotted !important;
-		border-color: #6cf;
-		background-color: rgba(231,244,255, 0.5);
+	&.broccoli__panel--focused {
+		border-color: #ffcc33;
+		background-color: rgba(255,255,204, 0.4);
+	}
 
-		.broccoli--panel-module-name{
-			display:block;
-			position: absolute;
-			left: -5px; top: -5px;
-			border: 1px solid #000;
-			background: #fff;
-			color: #000;
-			padding: 2px 10px;
-			font-size: 8px;
-			font-weight: normal;
+	&:hover{
+		border-style: dotted;
+		border-color: #3871E0;
+		background-color: rgba(56, 113, 224, 0);
+
+		.broccoli__panel-module-name{
+			display: block;
+			position: sticky;
+			left: 0px; top: 0px;
+			text-align: left;
+			>div {
+				display: inline-block;
+				position: relative;
+				left: -2px; top: -2px;
+				border: 1px solid #3871E0;
+				background: #3871E0;
+				color: #fff;
+				padding: 2px 10px;
+				font-size: 10px;
+				font-weight: normal;
+				box-sizing: border-box;
+				max-width: calc(100% - 4px);
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
 		}
 
 		&[data-broccoli-sub-mod-name]{
-			border-color: #3c3;
-			background-color: rgba(232,255,231, 0.5);
+			border-color: #189AA3;
+			background-color: rgba(24,154,163, 0);
+			.broccoli__panel-module-name{
+				>div {
+					border: 1px solid #189AA3;
+					background: #189AA3;
+				}
+			}
+		}
+	}
+
+	&.broccoli__panel--selected {
+		border-style: solid;
+		border-color: #3871E0 !important;
+		background-color: rgba(56, 113, 224, 0.05);
+		&[data-broccoli-sub-mod-name]{
+			border-color: #189AA3 !important;
+			background-color: rgba(24, 154, 163, 0.05);
+		}
+	}
+	&.broccoli__panel--drag-entered {
+		border-style: dashed;
+		border-color: #3871E0;
+		background-color: rgba(56, 113, 224, 0.1);
+
+		&[data-broccoli-sub-mod-name]{
+			border-color: #189AA3;
+			background-color: rgba(24, 154, 163, 0.1);
+		}
+		>.broccoli__panel-drop-to-insert-here{
+			display: block;
+		}
+	}
+	&.broccoli__panel--drag-entered-u{
+		background: linear-gradient(rgba(56, 113, 224, 0.2), rgba(56, 113, 224, 0.0)) !important;
+		&[data-broccoli-sub-mod-name]{
+			background: linear-gradient(rgba(24, 154, 163, 0.2), rgba(24, 154, 163, 0.0)) !important;
+		}
+		>.broccoli__panel-drop-to-insert-here{
+			top: -8px; bottom: auto;
+		}
+	}
+	&.broccoli__panel--drag-entered-d{
+		background: linear-gradient(rgba(56, 113, 224, 0.0), rgba(56, 113, 224, 0.2)) !important;
+		&[data-broccoli-sub-mod-name]{
+			background: linear-gradient(rgba(24, 154, 163, 0.0), rgba(24, 154, 163, 0.2)) !important;
+		}
+		>.broccoli__panel-drop-to-insert-here{
+			top: auto; bottom:-8px;
 		}
 	}
 }
@@ -341,7 +415,7 @@
 		pointer-events: none;
 	}
 }
-.broccoli--panel-drop-to-insert-here{
+.broccoli__panel-drop-to-insert-here{
 	display:none;
 	border:none;
 	background-color:#f93;
@@ -351,8 +425,8 @@
 	margin:0 auto;
 	height:1px;
 	z-index: 100000000;
-	animation: broccoli--panel-drop-to-insert-here 0.5s infinite;
-	@keyframes broccoli--panel-drop-to-insert-here{
+	animation: broccoli__panel-drop-to-insert-here 0.5s infinite;
+	@keyframes broccoli__panel-drop-to-insert-here{
 		0%{
 			opacity: 1;
 		}
@@ -380,48 +454,6 @@
 		border-right-width:13px;
 		right:-5%;
 		left:auto;
-	}
-}
-.broccoli--panel__selected{
-	border-color: #f33 !important;
-	border-style: solid;
-	background-color: rgba(255,238,238, 0.2);
-	opacity: 1 !important;
-}
-.broccoli--panel__focused{
-	border: 1px dotted #ffcc33;
-	background-color: rgba(255,255,204, 0.4);
-	opacity: 1 !important;
-}
-.broccoli--panel__drag-entered{
-	border-style: dashed !important;
-	border-color: #6cf !important;
-	background-color: rgba(231,244,255, 0.5) !important;
-
-	&[data-broccoli-sub-mod-name]{
-		border-color: #3c3 !important;
-		background-color: rgba(232,255,231, 0.5) !important;
-	}
-	>.broccoli--panel-drop-to-insert-here{
-		display:block !important;
-	}
-}
-.broccoli--panel__drag-entered-u{
-	background: linear-gradient(rgba(231,244,255, 0.8), rgba(231,244,255, 0.0)) !important;
-	&[data-broccoli-sub-mod-name]{
-		background: linear-gradient(rgba(232,255,231, 0.8), rgba(232,255,231, 0.0)) !important;
-	}
-	>.broccoli--panel-drop-to-insert-here{
-		top:-8px; bottom: auto;
-	}
-}
-.broccoli--panel__drag-entered-d{
-	background: linear-gradient(rgba(231,244,255, 0.0), rgba(231,244,255, 0.8)) !important;
-	&[data-broccoli-sub-mod-name]{
-		background: linear-gradient(rgba(232,255,231, 0.0), rgba(232,255,231, 0.8)) !important;
-	}
-	>.broccoli--panel-drop-to-insert-here{
-		top: auto; bottom:-8px;
 	}
 }
 
@@ -590,21 +622,21 @@
 				// moduleフィールド の appender
 				@include broccoli--appender();
 				font-size: 11px;
-				box-sizing:border-box;
-				clear:both;
-				white-space:nowrap;
+				box-sizing: border-box;
+				clear: both;
+				white-space: nowrap;
 
 				&[data-broccoli-sub-mod-name]{
 					// loopフィールド の appender
-					padding:5px 15px;
-					background-color:#dfe;
-					border-color:#6dcd9d;
-					font-family: "YuGothic", "Yu Gothic", Meiryo, "Hiragino Kaku Gothic ProN", Verdana, sans-serif;
-					font-size:9px;
-					text-align:center;
-					box-sizing:border-box;
-					clear:both;
-					white-space:nowrap;
+					padding: 5px 15px;
+					background-color: #F4FFFC;
+					color: #189AA3;
+					border-color: rgba(24, 154, 163, 0.5);
+					font-size: 9px;
+					text-align: center;
+					box-sizing: border-box;
+					clear: both;
+					white-space: nowrap;
 
 				}
 			}
@@ -1013,14 +1045,21 @@
 	overflow-scrolling: touch;
 
 	div.broccoli__module-palette-inner {
+		box-sizing: border-box;
 		overflow: hidden;
+		background-color: #e5e5e5;
+		padding-left: 1px;
+		// padding-bottom: 1px;
 	}
 	div.broccoli__module-palette-filter {
+		display: flex;
+		box-sizing: border-box;
 		overflow: hidden;
-		padding: 3px 1px;
-		input{
-			font-size: 11px;
-			border: 1px #999 solid;
+		height: 50px;
+		padding: 10px;
+		input[type=search]{
+			font-size: 12px;
+			border: none;
 		}
 	}
 	ul.broccoli__module-palette-list {
@@ -1127,7 +1166,7 @@
 			cursor: grabbing;
 		}
 		&:hover{
-			background-color: #eee;
+			background-color: #f5faff;
 			text-decoration: none;
 			color: #000;
 		}

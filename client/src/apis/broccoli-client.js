@@ -112,7 +112,7 @@
 								.css({'border': 'none'})
 								.attr({'scrolling': 'no'})
 							)
-							.append( $('<div class="broccoli--panels">')
+							.append( $('<div class="broccoli__panels">')
 							)
 						;
 						$canvas.find('iframe')
@@ -128,7 +128,7 @@
 							})
 						;
 						// _this.options.elmIframeWindow = $canvas.find('iframe').get(0).contentWindow;
-						_this.options.elmPanels = $canvas.find('.broccoli--panels').get(0);
+						_this.options.elmPanels = $canvas.find('.broccoli__panels').get(0);
 						// _this.options.elmInstancePathView = $canvas.find('.broccoli--instance-path-view').get(0);
 
 						_this.clipboard = new (require('./clipboard.js'))(_this);
@@ -1470,7 +1470,7 @@
 					function(){
 						$(this).remove();
 						$('.broccoli *').removeAttr('tabindex');
-						$('.broccoli .broccoli--panel').attr({'tabindex':'1'});
+						$('.broccoli .broccoli__panel').attr({'tabindex':'1'});
 						$('.broccoli .broccoli--instance-tree-view-panel-item').attr({'tabindex':'1'});
 						_this.setUiState();
 						callback();

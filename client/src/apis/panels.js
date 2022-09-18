@@ -39,7 +39,7 @@ module.exports = function(broccoli){
 				'left': $this.offsetLeft,
 				'top': $this.offsetTop
 			})
-			.addClass('broccoli--panel')
+			.addClass('broccoli__panel')
 			.attr({
 				'data-broccoli-instance-path': $this.instancePath,
 				'data-broccoli-is-appender': 'no',
@@ -49,7 +49,7 @@ module.exports = function(broccoli){
 				'draggable': (isAppender ? false : true) // <- HTML5のAPI https://developer.mozilla.org/ja/docs/Web/API/HTML_Drag_and_Drop_API
 			})
 			.append( $('<div>')
-				.addClass('broccoli--panel-drop-to-insert-here')
+				.addClass('broccoli__panel-drop-to-insert-here')
 			)
 			.on('mouseover', function(e){
 				e.preventDefault();
@@ -79,12 +79,11 @@ module.exports = function(broccoli){
 		if( !isAppender ){
 			$panel
 				.append( $('<div>')
-					.addClass('broccoli--panel-module-name')
-					.text($this.modName)
+					.addClass('broccoli__panel-module-name')
+					.append( $('<div>').text($this.modName) )
 				)
 			;
-		}
-		if( isAppender ){
+		}else{
 			$panel
 				.attr({
 					'data-broccoli-is-appender': 'yes'
@@ -129,9 +128,9 @@ module.exports = function(broccoli){
 		e.preventDefault();
 		var event = e.originalEvent;
 		// console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=', event);
-		$(elm).removeClass('broccoli--panel__drag-entered');
-		$(elm).removeClass('broccoli--panel__drag-entered-u');
-		$(elm).removeClass('broccoli--panel__drag-entered-d');
+		$(elm).removeClass('broccoli__panel--drag-entered');
+		$(elm).removeClass('broccoli__panel--drag-entered-u');
+		$(elm).removeClass('broccoli__panel--drag-entered-d');
 
 		var ud = getUd(e, elm);
 		// console.info(ud);
@@ -194,9 +193,9 @@ module.exports = function(broccoli){
 		if( moveFroms[0] === moveTo || ( broccoli.isInstanceSelected( moveTo ) && method === 'moveTo' ) ){
 			// 移動元と移動先が同一の場合、
 			// または、移動先が選択状態の場合キャンセルとみなす
-			$(elm).removeClass('broccoli--panel__drag-entered');
-			$(elm).removeClass('broccoli--panel__drag-entered-u');
-			$(elm).removeClass('broccoli--panel__drag-entered-d');
+			$(elm).removeClass('broccoli__panel--drag-entered');
+			$(elm).removeClass('broccoli__panel--drag-entered-u');
+			$(elm).removeClass('broccoli__panel--drag-entered-d');
 			callback();
 			return;
 		}
@@ -256,9 +255,9 @@ module.exports = function(broccoli){
 				}
 				if( removeNum(moveFroms[0]) !== removeNum(moveTo) ){
 					broccoli.message('並べ替え以外の移動操作はできません。');
-					$(elm).removeClass('broccoli--panel__drag-entered');
-					$(elm).removeClass('broccoli--panel__drag-entered-u');
-					$(elm).removeClass('broccoli--panel__drag-entered-d');
+					$(elm).removeClass('broccoli__panel--drag-entered');
+					$(elm).removeClass('broccoli__panel--drag-entered-u');
+					$(elm).removeClass('broccoli__panel--drag-entered-d');
 					callback();
 					return;
 				}
@@ -276,9 +275,9 @@ module.exports = function(broccoli){
 		if( method === 'moveTo' ){
 			if(subModName){
 				broccoli.message('loopフィールドへの移動はできません。');
-				$(elm).removeClass('broccoli--panel__drag-entered');
-				$(elm).removeClass('broccoli--panel__drag-entered-u');
-				$(elm).removeClass('broccoli--panel__drag-entered-d');
+				$(elm).removeClass('broccoli__panel--drag-entered');
+				$(elm).removeClass('broccoli__panel--drag-entered-u');
+				$(elm).removeClass('broccoli__panel--drag-entered-d');
 				callback();
 				return;
 			}
@@ -779,9 +778,9 @@ module.exports = function(broccoli){
 			.on('dragleave', function(e){
 				e.stopPropagation();
 				e.preventDefault();
-				$(this).removeClass('broccoli--panel__drag-entered');
-				$(this).removeClass('broccoli--panel__drag-entered-u');
-				$(this).removeClass('broccoli--panel__drag-entered-d');
+				$(this).removeClass('broccoli__panel--drag-entered');
+				$(this).removeClass('broccoli__panel--drag-entered-u');
+				$(this).removeClass('broccoli__panel--drag-entered-d');
 			})
 			.on('dragover', function(e){
 				e.stopPropagation();
@@ -792,7 +791,7 @@ module.exports = function(broccoli){
 					return;
 				}
 
-				$(this).addClass('broccoli--panel__drag-entered');
+				$(this).addClass('broccoli__panel--drag-entered');
 				if( $(this).attr('data-broccoli-is-instance-tree-view') == 'yes' ){
 					if(focusedInstance != instancePath){
 						dragOvered = instancePath;
@@ -803,11 +802,11 @@ module.exports = function(broccoli){
 				if( $(this).attr('data-broccoli-is-appender') != 'yes' ){
 					var ud = getUd(e, this);
 					if( ud.y == 'u' ){
-						$(this).addClass('broccoli--panel__drag-entered-u');
-						$(this).removeClass('broccoli--panel__drag-entered-d');
+						$(this).addClass('broccoli__panel--drag-entered-u');
+						$(this).removeClass('broccoli__panel--drag-entered-d');
 					}else{
-						$(this).addClass('broccoli--panel__drag-entered-d');
-						$(this).removeClass('broccoli--panel__drag-entered-u');
+						$(this).addClass('broccoli__panel--drag-entered-d');
+						$(this).removeClass('broccoli__panel--drag-entered-u');
 					}
 				}
 			})
@@ -909,7 +908,7 @@ module.exports = function(broccoli){
 					}
 					return true;
 				})
-				.addClass('broccoli--panel__selected')
+				.addClass('broccoli__panel--selected')
 			;
 			callback();
 		});
@@ -922,7 +921,7 @@ module.exports = function(broccoli){
 	this.unselectInstance = function(callback){
 		callback = callback || function(){};
 		$panels.find('[data-broccoli-instance-path]')
-			.removeClass('broccoli--panel__selected')
+			.removeClass('broccoli__panel--selected')
 		;
 		callback();
 		return;
@@ -1017,7 +1016,7 @@ module.exports = function(broccoli){
 			.filter(function (index) {
 				return $(this).attr("data-broccoli-instance-path") == instancePath;
 			})
-			.addClass('broccoli--panel__focused')
+			.addClass('broccoli__panel--focused')
 		;
 		callback();
 		return;
@@ -1031,8 +1030,8 @@ module.exports = function(broccoli){
 		callback = callback || function(){};
 		focusedInstance = null;
 
-		$panels.find('.broccoli--panel__focused')
-			.removeClass('broccoli--panel__focused')
+		$panels.find('.broccoli__panel--focused')
+			.removeClass('broccoli__panel--focused')
 		;
 		callback();
 		return;
