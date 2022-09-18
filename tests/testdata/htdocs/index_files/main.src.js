@@ -212,6 +212,12 @@ window.main = new (function(){
 				'onMessage': function(message){
 					console.info('message: '+message);
 				},
+				'onEditWindowOpen': function(instancePath, elmEditWindow){
+					console.info('onEditWindowOpen():', instancePath, elmEditWindow);
+				},
+				'onEditWindowClose': function(instancePath, result){
+					console.info('onEditWindowClose():', instancePath, result);
+				},
 				'enableModuleAnchor': true, // モジュールごとのid属性入力の有効/無効 (デフォルトは `true`)
 				'enableModuleDec': true // DEC入力の有効/無効 (デフォルトは `true`)
 			} ,

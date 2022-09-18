@@ -66,6 +66,8 @@
 			options.droppedFileOperator = options.droppedFileOperator || {};
 			options.onClickContentsLink = options.onClickContentsLink || function(){};
 			options.onMessage = options.onMessage || function(){};
+			options.onEditWindowOpen = options.onEditWindowOpen || function(){};
+			options.onEditWindowClose = options.onEditWindowClose || function(){};
 			options.lang = options.lang || 'en';
 			options.clipboard = options.clipboard || {};
 			options.clipboard.set = options.clipboard.set || null;
@@ -1431,7 +1433,7 @@
 				.addClass('broccoli__lightbox-inner-body')
 			;
 
-			$('body').find('.broccoli__lightbox').remove();//一旦削除
+			$('body').find('.broccoli__lightbox').remove(); // 一旦削除
 			$('.broccoli *').attr({'tabindex':'-1'});
 			$('body')
 				.append( $('<div class="broccoli broccoli__lightbox">')

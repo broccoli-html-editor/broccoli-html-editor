@@ -205,6 +205,12 @@ broccoli.init(
             // 適切なメッセージ機能へ転送してください。
             yourOunCustomMessageMethod( message );
         },
+        'onEditWindowOpen': function(){
+            // インスタンスの編集ウィンドウを開いたときにコールされます。
+        },
+        'onEditWindowClose': function(){
+            // インスタンスの編集ウィンドウを閉じたときにコールされます。
+        },
         'enableModuleAnchor': true, // モジュールごとのid属性入力の有効/無効 (デフォルトは `true`)
         'enableModuleDec': true // DEC入力の有効/無効 (デフォルトは `true`)
     } ,
@@ -359,6 +365,7 @@ $ composer test
 
 ### broccoli-html-editor v0.7.1 (リリース日未定)
 
+- `onEditWindowOpen()`、 `onEditWindowClose()` オプションを追加。
 - 編集ウィンドウ上での Ctrl + S 操作で、保存できるようになった。
 - アペンダーを選択してコピーすると応答しなくなる不具合を修正。
 - 編集ウィンドウで編集中に、誤操作でウィンドウを閉じる前に確認するようになった。
