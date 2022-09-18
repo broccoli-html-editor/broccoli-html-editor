@@ -1,15 +1,15 @@
 .broccoli__edit-window {
 
-	h2{
+	h2 {
 		font-weight: bold;
 		text-align: center;
 		margin: 1em;
 	}
 
-	&-fields{
+	&-fields {
 		margin: 0.5em 0 3em 0;
 	}
-	&-field{
+	&-field {
 		margin: 1em 0 2em 0;
 		border: 1px solid #e3e3e3;
 		background-color: #fefefe;
@@ -18,7 +18,7 @@
 		position: relative;
 		overflow: hidden;
 	}
-	h3{
+	h3 {
 		padding: 0.8em 18px 5px 18px;
 		margin: 0;
 		border-bottom: 1px solid #e3e3e3;
@@ -32,10 +32,10 @@
 			margin: 0 2px;
 		}
 	}
-	.has-error h3{
+	.has-error h3 {
 		color: #a94442;
 	}
-	&-field-required{
+	&-field-required {
 		h3::before {
 			content: "*";
 			color: #f33;
@@ -43,18 +43,18 @@
 			font-size: 80%;
 		}
 	}
-	&-field-description{
+	&-field-description {
 		margin: 0.5em 18px;
 	}
-	&-field-content{
+	&-field-content {
 		margin: 1em 18px;
 	}
-	&-message-field{
+	&-message-field {
 		display: none;
 		margin: 10px;
 	}
-	&-module-readme{
-		&-inner{
+	&-module-readme {
+		&-inner {
 			border: 1px solid #ddd;
 			border-radius: 3px;
 			background-color: #f9f9f9;
@@ -65,7 +65,7 @@
 		}
 	}
 	&-builtin-fields-switch,
-	&-module-readme-switch{
+	&-module-readme-switch {
 		a::before {
 			content: "";
 			display: inline-block;
@@ -82,10 +82,10 @@
 			transform: rotate(135deg);
 		}
 	}
-	&-module-readme-switch{
+	&-module-readme-switch {
 		text-align: right;
 	}
-	&-builtin-fields{
+	&-builtin-fields {
 		border: 1px solid #ddd;
 		padding: 0.7em 1em;
 		margin: 1em 0;
@@ -110,48 +110,57 @@
 			}
 		}
 	}
-	&-module-fields{
-		padding: 10px;
+
+	// モジュールフィールド
+	// ループフィールド
+	&-module-fields {
+		display: flex;
 		overflow: auto;
 		-webkit-overflow-scrolling: touch;
 		overflow-scrolling: touch;
 		height: 320px;
-		border: 1px solid #bbb;
-		border-radius: 5px;
-		background: #fafafa;
-		display: flex;
 
-		&__instances{
+		&__instances {
 			width: 100%;
 			overflow: auto;
 			-webkit-overflow-scrolling: touch;
 			overflow-scrolling: touch;
-			.broccoli__edit-window-module-fields--fieldtype-module &{
+
+			.broccoli__edit-window-module-fields--fieldtype-module & {
 				padding-right: 5px;
 				margin-right: 5px;
 				width: 70%;
 			}
 
-			ul{
+			ul {
 				padding: 0;
-				li{
-					border-bottom: 1px solid #bbb;
+				li {
 					list-style-type: none;
+					border-top: 1px solid #e5e5e5;
 					margin: 0;
 					padding: 0;
+					&:first-child {
+						border-top: none;
+					}
 
-					a{
+					a {
 						display: block;
 						position: relative;
-						outline: none !important;
 						padding: 0.5em 1em;
 						margin: 0;
+						border: 1px solid #fff;
+						text-decoration: none;
+						color: #000;
 
-						&:hover{
-							background: #eee;
-						}
-						&:last-child{
-							border-bottom: none;
+						&:not([data-broccoli-is-appender]):hover {
+							border-style: dotted;
+							border-color: #3871E0;
+							background-color: #f5faff;
+
+							&[data-broccoli-sub-mod-name] {
+								border-color: #189AA3;
+								background-color: #F4FFFC;
+							}
 						}
 					}
 				}
@@ -164,8 +173,13 @@
 				box-sizing: border-box;
 				clear: both;
 				white-space: nowrap;
+				user-select: none;
 
-				&[data-broccoli-sub-mod-name]{
+				&:not([data-broccoli-sub-mod-name]) {
+					cursor: default;
+				}
+
+				&[data-broccoli-sub-mod-name] {
 					// loopフィールド の appender
 					padding: 5px 15px;
 					background-color: #F4FFFC;
@@ -176,7 +190,12 @@
 					box-sizing: border-box;
 					clear: both;
 					white-space: nowrap;
+					cursor: pointer;
 
+					&:hover {
+						border-style: dotted;
+						border-color: #189AA3;
+					}
 				}
 			}
 		}
