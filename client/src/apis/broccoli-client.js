@@ -755,6 +755,12 @@
 						if( !isSave ){
 							broccoli.closeLightbox(function(){
 								broccoli.closeProgress(function(){
+
+									// 選択中の(編集した)インスタンスにフォーカスを移す
+									// (タブキーで操作できるように)
+									var selectedInstancePath = broccoli.getSelectedInstance();
+									$(broccoli.options.elmPanels).find('[data-broccoli-instance-path="'+(selectedInstancePath)+'"]').focus();
+
 									callback();
 								});
 							});
