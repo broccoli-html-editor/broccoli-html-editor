@@ -1,4 +1,4 @@
-.broccoli__panel{
+.broccoli__panel {
 	border-width: 2px;
 	border-style: solid;
 	border-color: transparent;
@@ -25,7 +25,7 @@
 		background-color: rgba(255,255,204, 0.4);
 	}
 
-	&:hover{
+	&:hover {
 		border-style: dotted;
 		border-color: #3871E0;
 		background-color: rgba(56, 113, 224, 0);
@@ -67,7 +67,8 @@
 
 }
 
-.broccoli__panel--selected {
+.broccoli__panel--selected,
+.broccoli__panel--selected:hover {
 	border-style: solid;
 	border-color: #3871E0 !important;
 	background-color: rgba(56, 113, 224, 0.05);
