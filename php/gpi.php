@@ -35,9 +35,7 @@ class gpi{
 
 		try {
 
-			// var_dump('broccoli: set language "'.$options['lang'].'"');
 			$this->broccoli->lb()->setLang( $options['lang'] );
-			// var_dump( $this->broccoli->lb()->get('ui_label.close') );
 
 			switch($api){
 				case "getBootupInfomations":
@@ -167,7 +165,6 @@ class gpi{
 
 				case "saveContentsData":
 					$jsonString = json_encode( $options['data'], JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES );
-					// var_dump($jsonString);
 					$result = $this->broccoli->fs()->save_file(
 						$this->broccoli->realpathDataDir.'/data.json',
 						$jsonString
@@ -196,7 +193,6 @@ class gpi{
 
 				case "resourceMgr.getResource":
 					$resInfo = $this->broccoli->resourceMgr()->getResource( $options['resKey'] );
-					// var_dump($resInfo);
 					return $resInfo;
 
 				case "resourceMgr.duplicateResource":
@@ -232,26 +228,18 @@ class gpi{
 					return $publicPath;
 
 				case "resourceMgr.updateResource":
-					// var_dump('GPI resourceMgr.updateResource');
-					// var_dump(options);
 					$result = $this->broccoli->resourceMgr()->updateResource( $options['resKey'] , $options['resInfo'] );
 					return $result;
 
 				case "resourceMgr.resetBinFromBase64":
-					// var_dump('GPI resourceMgr.resetBinFromBase64');
-					// var_dump(options);
 					$result = $this->broccoli->resourceMgr()->resetBinFromBase64( $options['resKey'] );
 					return $result;
 
 				case "resourceMgr.resetBase64FromBin":
-					// var_dump('GPI resourceMgr.resetBase64FromBin');
-					// var_dump(options);
 					$result = $this->broccoli->resourceMgr()->resetBase64FromBin( $options['resKey'] );
 					return $result;
 
 				case "resourceMgr.save":
-					// var_dump('GPI resourceMgr.save');
-					// var_dump(options);
 					foreach( $options['resourceDb'] as $key=>$val ){
 						$options['resourceDb'][$key] = (object) $val;
 					}
@@ -259,8 +247,6 @@ class gpi{
 					return $result;
 
 				case "resourceMgr.removeResource":
-					// var_dump('GPI resourceMgr.save');
-					// var_dump(options);
 					$result = $this->broccoli->resourceMgr()->removeResource( $options['resKey'] );
 					return $result;
 

@@ -29,9 +29,6 @@ class buildBowl{
 	public function __construct($broccoli, $data, $options){
 		$this->broccoli = $broccoli;
 
-		// var_dump($data);
-		// var_dump($options);
-
 		$this->data = ($data ? json_decode(json_encode($data)) : json_decode('{}'));
 
 		$options = ($options ? $options : array());
@@ -57,12 +54,10 @@ class buildBowl{
 
 		$src = $mod->template;
 		$fieldData = json_decode(json_encode(@$this->data->fields), true);
-		// var_dump($mod->topThis->templateType);
 
 		if( $mod->topThis->templateType != 'broccoli' ){
 			// --------------------------------------
 			// テンプレートエンジン(Twigなど)利用の場合の処理
-			// var_dump($mod->id . ' - ' . $mod->subModName);
 			$tplDataObj = array();
 
 			foreach($mod->fields as $fieldName=>$field){
@@ -150,7 +145,6 @@ class buildBowl{
 							$tmpopt = json_decode( json_encode($opt), true );
 							$tmpopt['instancePath'] .= '@'.$idx;
 							$tmpopt['subModName'] = $field->name;
-							// var_dump($tmpopt);
 							$html = $this->broccoli->buildBowl($row, $tmpopt );
 							array_push($tplDataObj[$field->name], $html);
 						}
@@ -249,7 +243,6 @@ class buildBowl{
 				$tmp_twig_rtn = $twigHelper->bind($src, $tplDataObj, $tplFuncs);
 
 				if( !is_string($tmp_twig_rtn) ){
-					// var_dump( 'TemplateEngine Rendering ERROR.' );
 					$tmp_twig_rtn = '<div class="error">TemplateEngine Rendering ERROR.</div>';
 				}
 				$d->html = $tmp_twig_rtn;
@@ -323,7 +316,6 @@ class buildBowl{
 							$tmpopt['instancePath'] .= '@'.$idx;
 							$tmpopt['subModName'] = null;
 							unset($tmpopt['subModName']);
-							// var_dump($tmpopt);
 							$html = $this->broccoli->buildBowl($row, $tmpopt);
 							$tmpVal .= $html;
 						}
@@ -379,11 +371,8 @@ class buildBowl{
 							$this->nameSpace['varsFinalized'][$field->loop->index] = $this->nameSpace['vars'][$field->loop->index];
 						}
 						$tmpopt['nameSpace'] = $this->nameSpace;
-						// var_dump($tmpopt);
 						$html = $this->broccoli->buildBowl($row, $tmpopt);
-						// $tmpVal .= '<!-- ---- LOOP ---- -->';
 						$tmpVal .= $html;
-						// $tmpVal .= '<!-- ---- /LOOP ---- -->';
 					}
 
 					if( $this->options['mode'] == 'canvas' ){
@@ -491,7 +480,6 @@ class buildBowl{
 						return $contentList;
 					};
 					$tmpIfContentList = $tmpFncIfContentList($field, $tmpSearchResult['content']);
-					// var_dump($tmpIfContentList);
 
 					$src = '';
 					foreach($tmpIfContentList as $idx=>$row){
@@ -711,7 +699,7 @@ class buildBowl{
 			$boolResult = true;
 		}
 		return $boolResult;
-	} // evaluateIfFieldCond()
+	}
 
 	/**
 	 * モジュールインスタンスの仕上げ処理: パネル情報を埋め込む
@@ -719,7 +707,6 @@ class buildBowl{
 	private function finalize_module_instance_panel( $d_html, $mod, $options ){
 
 		if( is_string($d_html) && $options['mode'] == 'canvas' ){
-			// var_dump( $d_html );
 
 			$isSingleRootElement = function($tplSrc) use ($options){
 				if( preg_match('/^\/bowl\.[^\/]+$/s', $options['instancePath']) ){
@@ -750,8 +737,6 @@ class buildBowl{
 						$attr = 'data-dec';
 						$simple_html_dom_ret = $simple_html_dom->find('>*');
 						if( count($simple_html_dom_ret) == 1 ){
-							// var_dump('------------------------------------------------------');
-							// var_dump($tplSrc);
 							return true;
 						}
 					}

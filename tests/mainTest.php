@@ -145,9 +145,7 @@ class mainTest extends PHPUnit\Framework\TestCase{
 		// testMod1:units/cols2
 		$mod = $broccoli->createModuleInstance('testMod1:units/cols2', array());
 		$result = $mod->init();
-		// var_dump( $result );
 		$this->assertTrue($result);
-		// var_dump( $mod );
 		$this->assertSame(is_object($mod), true);
 		$this->assertSame($mod->getTemplateType(), 'broccoli');
 		$this->assertTrue($mod->isSingleRootElement);
@@ -155,9 +153,7 @@ class mainTest extends PHPUnit\Framework\TestCase{
 		// testMod1:dev/twig
 		$mod = $broccoli->createModuleInstance('testMod1:dev/twig', array());
 		$result = $mod->init();
-		// var_dump( $result );
 		$this->assertSame($result, true);
-		// var_dump( $mod );
 		$this->assertTrue(is_object($mod));
 		$this->assertSame($mod->getTemplateType(), 'twig');
 		$this->assertTrue($mod->isSingleRootElement);
@@ -165,9 +161,7 @@ class mainTest extends PHPUnit\Framework\TestCase{
 		// testMod1:units/thumb_list
 		$mod = $broccoli->createModuleInstance('testMod1:units/thumb_list', array());
 		$result = $mod->init();
-		// var_dump( $result );
 		$this->assertSame($result, true);
-		// var_dump( $mod );
 		$this->assertTrue(is_object($mod));
 		$this->assertSame($mod->getTemplateType(), 'broccoli');
 		$this->assertTrue($mod->isSingleRootElement);
@@ -176,9 +170,7 @@ class mainTest extends PHPUnit\Framework\TestCase{
 		// testMod1:dev/multitext
 		$mod = $broccoli->createModuleInstance('testMod1:dev/multitext', array());
 		$result = $mod->init();
-		// var_dump( $result );
 		$this->assertTrue($result);
-		// var_dump( $mod );
 		$this->assertTrue(is_object($mod));
 		$this->assertSame($mod->getTemplateType(), 'broccoli');
 		$this->assertFalse($mod->isSingleRootElement);
@@ -194,8 +186,6 @@ class mainTest extends PHPUnit\Framework\TestCase{
 
 		// 全モジュールの一覧を取得する
 		$modules = $broccoli->getAllModuleList();
-		// var_dump( $modules );
-		// var_dump( $modules['testMod1:units/unit'] );
 		$this->assertSame($modules['testMod1:units/unit']->isSystemModule, false);
 		$this->assertSame($modules['testMod1:units/unit']->fields->{'main'}->name, 'main');
 
@@ -210,21 +200,16 @@ class mainTest extends PHPUnit\Framework\TestCase{
 		// モジュールのCSSをビルドする
 		$src = $broccoli->buildModuleCss();
 		file_put_contents(__DIR__.'/testdata/htdocs/common/css/module.css', $src);
-		// var_dump( $src );
-
 
 		// モジュールのJavaScriptをビルドする
 		$src = $broccoli->buildModuleJs();
 		file_put_contents(__DIR__.'/testdata/htdocs/common/js/module.js', $src);
-		// var_dump( $src );
-
 
 		// editpageをfinalizeモードでビルドする
 		$broccoli = testHelper::makeDefaultBroccoli(array(
 			'contents_id' => 'editpage/index',
 		));
 		$data = json_decode( file_get_contents(__DIR__.'/testdata/htdocs/editpage/index_files/guieditor.ignore/data.json') );
-		// var_dump($data);
 		$dataBowlMain = @$data->bowl->main;
 		$html = $broccoli->buildBowl(
 			$dataBowlMain ,
@@ -233,15 +218,12 @@ class mainTest extends PHPUnit\Framework\TestCase{
 			)
 		);
 		file_put_contents(__DIR__.'/testdata/htdocs/test2/index.html', $html);
-		// var_dump( $html );
-
 
 		// editpageをcanvasモードでビルドする
 		$broccoli = testHelper::makeDefaultBroccoli(array(
 			'contents_id' => 'editpage/index',
 		));
 		$data = json_decode(file_get_contents(__DIR__.'/testdata/htdocs/editpage/index_files/guieditor.ignore/data.json'));
-		// var_dump($data);
 		$dataBowlMain = @$data->bowl->main;
 		$html = $broccoli->buildBowl(
 			$dataBowlMain ,
@@ -250,13 +232,10 @@ class mainTest extends PHPUnit\Framework\TestCase{
 			)
 		);
 		file_put_contents(__DIR__.'/testdata/htdocs/test2/index.canvas.html', $html);
-		// var_dump( $html );
-
 
 		// テストデータ1をfinalizeモードでビルドする
 		$broccoli = testHelper::makeDefaultBroccoli();
 		$data = json_decode(file_get_contents(__DIR__.'/testdata/htdocs/test1/test1_files/guieditor.ignore/data.json'));
-		// var_dump($data);
 		$html = $broccoli->buildBowl(
 			$data->bowl->main ,
 			array(
@@ -264,13 +243,10 @@ class mainTest extends PHPUnit\Framework\TestCase{
 			)
 		);
 		file_put_contents(__DIR__.'/testdata/htdocs/test1/test1.html', $html);
-		// var_dump( $html );
-
 
 		// テストデータ1をcanvasモードでビルドする
 		$broccoli = testHelper::makeDefaultBroccoli();
 		$data = json_decode(file_get_contents(__DIR__.'/testdata/htdocs/test1/test1_files/guieditor.ignore/data.json'));
-		// var_dump($data);
 		$html = $broccoli->buildBowl(
 			$data->bowl->main ,
 			array(
@@ -278,8 +254,6 @@ class mainTest extends PHPUnit\Framework\TestCase{
 			)
 		);
 		file_put_contents(__DIR__.'/testdata/htdocs/test1/test1.canvas.html', $html);
-		// var_dump( $html );
-
 
 
 		// テストデータ3-1 新規ブランクdata.json をfinalizeモードでビルドする
@@ -292,7 +266,6 @@ class mainTest extends PHPUnit\Framework\TestCase{
 				'bowlList' => array('main','secondly')
 			)
 		);
-		// var_dump( $htmls );
 		file_put_contents(__DIR__.'/testdata/htdocs/test3/1.main.html', $htmls['main'] );
 		file_put_contents(__DIR__.'/testdata/htdocs/test3/1.secondly.html', $htmls['secondly'] );
 
@@ -314,7 +287,6 @@ class mainTest extends PHPUnit\Framework\TestCase{
 		// 未定義のモジュールを含む場合のビルド
 		$broccoli = testHelper::makeDefaultBroccoli();
 		$data = json_decode(file_get_contents(__DIR__.'/testdata/htdocs/unknown_module/unknown_files/guieditor.ignore/data.json'));
-		// var_dump($data);
 		$html = $broccoli->buildBowl(
 			$data->bowl->main ,
 			array(
@@ -327,7 +299,6 @@ class mainTest extends PHPUnit\Framework\TestCase{
 		// 空のdata.jsonでビルド
 		$broccoli = testHelper::makeDefaultBroccoli();
 		$data = json_decode(file_get_contents(__DIR__.'/testdata/htdocs/unknown_module/empty_data_json_files/guieditor.ignore/data.json'));
-		// var_dump($data);
 		$html = $broccoli->buildBowl(
 			null ,
 			array(
@@ -337,12 +308,10 @@ class mainTest extends PHPUnit\Framework\TestCase{
 		file_put_contents(__DIR__.'/testdata/htdocs/unknown_module/empty_data_json.html', $html);
 
 
-
 		// editpageをビルドして更新する
 		$broccoli = testHelper::makeDefaultBroccoli(array('contents_id' => 'editpage/index'));
 		$result = $broccoli->updateContents();
 		$this->assertTrue($result);
-
 
 
 		// editpageのリソースを保存しなおす(imageフィールドの加工処理を含む)

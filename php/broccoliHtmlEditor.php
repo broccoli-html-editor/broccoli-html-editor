@@ -110,12 +110,10 @@ class broccoliHtmlEditor{
 			return $fin;
 		});
 		$options['log'] = (@$options['log'] ? $options['log'] : function($msg){
-			var_dump($msg);
 		});
 		$options['userStorage'] = (@$options['userStorage'] ? $options['userStorage'] : null);
 		if( !$options['pathHtml'] || !$options['pathResourceDir'] || !$options['realpathDataDir'] ){
 			// 必須項目
-			// var_dump($options);
 			trigger_error('[ERROR] $options[\'pathHtml\'], $options[\'pathResourceDir\'], and $options[\'realpathDataDir\'] are required.');
 			return;
 		}
@@ -426,8 +424,6 @@ class broccoliHtmlEditor{
 
 		// モジュールカテゴリをリスト化
 		$fileList = $this->fs->ls($rtn['realpath']);
-		// var_dump($fileList);
-		// var_dump($rtn['packageInfo']->sort);
 		$rtn['categories'] = array();
 		$fileList = $sortModuleDirectoryNames($fileList, @$rtn['packageInfo']->sort);
 		if( !$fileList ){
@@ -465,9 +461,6 @@ class broccoliHtmlEditor{
 
 		foreach($rtn['categories'] as $idx=>$row){
 			$fileList = $this->fs->ls( $rtn['categories'][$idx]['realpath'] );
-			// var_dump($fileList);
-			// var_dump($row['categoryInfo']->sort);
-
 			$fileList = $sortModuleDirectoryNames($fileList, @$row['categoryInfo']->sort);
 
 			foreach($fileList as $idx2=>$row2){
@@ -645,8 +638,6 @@ class broccoliHtmlEditor{
 				$data['rtn'][$modId]->subModule = json_decode('{}');
 				foreach( $obj->subModule as $idx=>$row ){
 					$data['rtn'][$modId]->subModule->{$idx} = json_decode('{}');
-					// var_dump($data['rtn'][$modId]->subModule->{$idx});
-					// var_dump($obj->subModule->{$idx});
 					$data['rtn'][$modId]->subModule->{$idx}->id = $obj->subModule->{$idx}->id;
 					$data['rtn'][$modId]->subModule->{$idx}->internalId = $obj->subModule->{$idx}->internalId;
 					$data['rtn'][$modId]->subModule->{$idx}->subModName = $obj->subModule->{$idx}->subModName;
@@ -672,8 +663,6 @@ class broccoliHtmlEditor{
 	 * @return object            module object
 	 */
 	public function createModuleInstance($moduleId, $options = array()){
-		// var_dump($moduleId);
-		// var_dump($options);
 		$rtn = new classModule($this, $moduleId, $options);
 		return $rtn;
 	}
@@ -712,7 +701,6 @@ class broccoliHtmlEditor{
 		}
 		if( is_string($subModName) ){
 			if( !isset($rtn->subModule->{$subModName}) || !$rtn->subModule->{$subModName} ){
-				// var_dump('Undefined subModule "'.$subModName.'" was called.');
 				return false;
 			}
 

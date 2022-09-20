@@ -75,7 +75,6 @@ class resourceMgr{
 		// 公開リソースディレクトリ 一旦削除して作成
 		$this->broccoli->fs()->rm($this->resourcesPublishDirPath);
 		$this->broccoli->fs()->mkdir_r($this->resourcesPublishDirPath);
-		// var_dump($this->resourcesPublishDirPath);
 
 		// 使われていないリソースを削除
 		$this->collectGarbage();

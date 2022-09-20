@@ -108,17 +108,14 @@ class classModule{
 			if( $this->topThis->languageCsv ){
 				$this->languageCsv = $this->topThis->languageCsv;
 			}
-			// $this->nameSpace = $this->options['topThis']->nameSpace;
 			if( $options['subModName'] ){
 				$this->subModName = $options['subModName'];
 				if( property_exists($this->topThis->subModule, $this->subModName) && $this->topThis->subModule->{$this->subModName} ){
-					// var_dump($this->topThis->subModule->{$this->subModName});
 					$this->fields = $this->topThis->subModule->{$this->subModName}->fields;
 				}
 			}
 		}else{
 			$this->topThis = $this;
-			// $this->nameSpace = array("vars" => array());
 		}
 	}
 
@@ -267,11 +264,6 @@ class classModule{
 			if( !is_object($this->subModule) ){
 				$this->subModule = json_decode('{}');
 			}
-			// var_dump(' <------- ');
-			// var_dump($field->loop->name);
-			// var_dump('on '.$_topThis->moduleId);
-			// var_dump($tmpSearchResult['content']);
-			// var_dump(' =======> ');
 			@$_topThis->subModule->{$field->loop->name} = $this->broccoli->createModuleInstance( $this->id, array(
 				"src" => $tmpSearchResult['content'],
 				"subModName" => $field->loop->name,
@@ -560,7 +552,6 @@ class classModule{
 				if( is_file($realpathPics.'/'.$piclist[$picIdx]) ){
 					$imgPath = base64_encode(file_get_contents( $realpathPics.'/'.$piclist[$picIdx] ));
 				}
-				// var_dump( $imgPath );
 				array_push($rtn, 'data:image/png;base64,'.$imgPath);
 			}
 		}

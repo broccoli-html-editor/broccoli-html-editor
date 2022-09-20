@@ -34,20 +34,15 @@ class buildModuleResources{
 			$array_files[$idx] = array_merge( $array_files[$idx], glob($module_templates[$idx]."**/**/module.css") );
 			$array_files[$idx] = array_merge( $array_files[$idx], glob($module_templates[$idx]."**/**/module.css.scss") );
 		}
-		// var_dump($array_files);
 
 		foreach($array_files as $packageId=>$array_files_row){
 			foreach($array_files_row as $idx=>$path){
 
 				preg_match('/\/([a-zA-Z0-9\.\-\_]+?)\/([a-zA-Z0-9\.\-\_]+?)\/[a-zA-Z0-9\.\-\_]+?$/i', $this->broccoli->fs()->normalize_path($path), $matched);
 
-				// var_dump($path);
-				// var_dump($matched);
-
 				$tmp_bin = file_get_contents( $path );
 
 				if( preg_match( '/\.scss$/i', $path ) ){
-					// var_dump($tmp_bin);
 					$scss = null;
 					if (class_exists('\ScssPhp\ScssPhp\Compiler')) {
 						$scss = new \ScssPhp\ScssPhp\Compiler();
@@ -77,7 +72,6 @@ class buildModuleResources{
 			}
 		}
 
-		// var_dump($rtn);
 		$rtn = trim($rtn)."\n";
 		return $rtn;
 	}
@@ -144,7 +138,6 @@ class buildModuleResources{
 		$module_templates = $this->broccoli->options['paths_module_template'];
 		foreach( $module_templates as $packageId=>$package  ){
 			$array_files = glob($module_templates[$packageId]."**/**/module.js");
-			// var_dump($array_files);
 
 			foreach( $array_files as $idx=>$row ){
 				$path = $array_files[$idx];
@@ -152,9 +145,6 @@ class buildModuleResources{
 				if( !strlen($bin) ){continue;}
 
 				preg_match( '/\/([a-zA-Z0-9\.\-\_]+?)\/([a-zA-Z0-9\.\-\_]+?)\/[a-zA-Z0-9\.\-\_]+?$/i', $this->broccoli->fs()->normalize_path($path), $matched);
-
-				// var_dump($path);
-				// var_dump($matched);
 
 				$rtn .= '/**'."\n";
 				$rtn .= ' * module: '.$packageId.':'.$matched[1].'/'.$matched[2]."\n";
