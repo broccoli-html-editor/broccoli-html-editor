@@ -593,7 +593,7 @@ class buildBowl{
 				$rtn .=     'background-color:'.$style['background-color'].';';
 				$rtn .=     'border:3px solid transparent;';
 				$rtn .=     'border-radius:0px;';
-				$rtn .=     'font-family: &quot;YuGothic&quot;, &quot;Yu Gothic&quot;, Meiryo, &quot;Hiragino Kaku Gothic ProN&quot;, Verdana, sans-serif;';
+				$rtn .=     'font-family: &quot;Hiragino Kaku Gothic ProN&quot;, Meiryo, Verdana, sans-serif;';
 				$rtn .=     'font-size:'.$style['font-size'].'px;';
 				$rtn .=     'color:#3871E0;';
 				$rtn .=     'text-align:center;';
@@ -621,7 +621,7 @@ class buildBowl{
 				$rtn .=     'background-color:#F4FFFC;';
 				$rtn .=     'border:3px solid transparent;';
 				$rtn .=     'border-radius:0px;';
-				$rtn .=     'font-family: &quot;YuGothic&quot;, &quot;Yu Gothic&quot;, Meiryo, &quot;Hiragino Kaku Gothic ProN&quot;, Verdana, sans-serif;';
+				$rtn .=     'font-family: &quot;Hiragino Kaku Gothic ProN&quot;, Meiryo, Verdana, sans-serif;';
 				$rtn .=     'font-size:14px;';
 				$rtn .=     'color:#189AA3;';
 				$rtn .=     'text-align:center;';
