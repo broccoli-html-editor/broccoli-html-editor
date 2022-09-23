@@ -1502,12 +1502,16 @@
 		 */
 		this.progress = function( callback ){
 			callback = callback||function(){};
-			$('body').find('.broccoli__progress').remove();//一旦削除
+			$('body').find('.broccoli--progress').remove();//一旦削除
 			$('body')
-				.append( $('<div class="broccoli broccoli__progress">')
-					.append( $('<div class="broccoli broccoli__progress-inner">')
-						.append( $('<div class="broccoli broccoli__progress-inner2">')
-							.append( $('<div class="px2-loading">') )
+				.append( $('<div class="broccoli broccoli--progress">')
+					.append( $('<div class="broccoli__progress">')
+						.append( $('<div class="broccoli__progress-inner">')
+							.append( $('<div class="broccoli__progress-loading-wrap">')
+								.append( $('<div class="px2-loading">')
+									.append( $('<div class="px2-loading__sign"></div>') )
+								)
+							)
 							.append( $('<div class="broccoli__progress-comment">') )
 						)
 					)

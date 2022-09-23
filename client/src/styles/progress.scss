@@ -7,17 +7,23 @@
 	height: 100%;
 	z-index: 1010000;
 	text-align: center;
+
 	&-inner{
 		position: absolute;
-		left: 0; top: 50%;
+		left: 0; top: 0;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
 		width: 100%;
-		height: 180px;
+		height: 100%;
 	}
-	&-inner2{
-		position: absolute;
-		left: 0; top: -50%;
-		width: 100%;
-		height: 180px;
+	&-loading-wrap{
+		width: 100px;
+		height: 100px;
+		margin: 0 auto;
+		.px2-loading {
+			position: relative;
+		}
 	}
 	&-comment{
 		color: #999;
