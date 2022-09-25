@@ -363,7 +363,7 @@ $ composer test
 
 ## 更新履歴 - Change log
 
-### broccoli-html-editor v0.7.1 (リリース日未定)
+### broccoli-html-editor v1.0.0 (2022年9月25日)
 
 - `onEditWindowOpen()`、 `onEditWindowClose()` オプションを追加。
 - 編集ウィンドウ上での Ctrl + S 操作で、保存できるようになった。
