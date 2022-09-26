@@ -45,7 +45,6 @@
 
 		require('px2style/px2style/px2style.js');
 		this.px2style = window.px2style;
-		this.px2style.setConfig('additionalClassName', 'broccoli');
 
 		/**
 		 * broccoli-client を初期化する

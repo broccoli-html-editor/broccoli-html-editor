@@ -1,5 +1,8 @@
 @charset "utf-8";
 
+// px2style
+@import '../../node_modules/px2style/px2style/px2style';
+
 .broccoli {
 	/* http://www.softel.co.jp/blogs/tech/archives/2909 */
 	cursor: default;
@@ -40,9 +43,6 @@
 
 	// Fields
 	@import '../../fields/client/app.fields.color';
-
-	// px2style
-	@import '../../node_modules/px2style/px2style/px2style';
 
 
 	// CodeMirror 拡張

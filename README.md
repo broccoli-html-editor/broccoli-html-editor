@@ -363,6 +363,10 @@ $ composer test
 
 ## 更新履歴 - Change log
 
+### broccoli-html-editor v1.0.1 (リリース日未定)
+
+- 依存ライブラリの更新。
+
 ### broccoli-html-editor v1.0.0 (2022年9月25日)
 
 - `onEditWindowOpen()`、 `onEditWindowClose()` オプションを追加。
