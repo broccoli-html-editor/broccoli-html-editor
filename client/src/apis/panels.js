@@ -492,7 +492,7 @@ module.exports = function(broccoli){
 								jsonContents = JSON.parse(content);
 							}catch(e){
 								console.error(e);
-								broccoli.message('JSON形式をデコードできません。');
+								broccoli.message( broccoli.lb.get('ui_message.failed_to_decode_json') );
 								it1.next();
 								return;
 							}
@@ -501,7 +501,7 @@ module.exports = function(broccoli){
 								// クリップモジュール形式と評価される場合は、
 								// クリップモジュールドロップと同様の挿入処理をする。
 
-								if(!confirm('クリップデータを挿入しますか？')){
+								if(!confirm( broccoli.lb.get('ui_message.insert_clip_data?') )){
 									it1.next();
 									return;
 								}
@@ -513,7 +513,7 @@ module.exports = function(broccoli){
 								return;
 							}
 
-							broccoli.message('対応していないJSON形式です。');
+							broccoli.message( broccoli.lb.get('ui_message.unsupported_json_format') );
 							it1.next();
 							return;
 							break;

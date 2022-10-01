@@ -366,6 +366,7 @@ $ composer test
 ### broccoli-html-editor v1.0.1 (リリース日未定)
 
 - 依存ライブラリの更新。
+- 一部UIの英訳を追加。
 
 ### broccoli-html-editor v1.0.0 (2022年9月25日)
 
