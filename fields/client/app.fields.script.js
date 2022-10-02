@@ -238,7 +238,7 @@ module.exports = function(broccoli){
 			mod.codeMirror.on('blur',function(){
 				mod.codeMirror.save();
 			});
-			mod.codeMirror.setSize('100%', rows * 16);
+			mod.codeMirror.setSize('100%', rows * mod.codeMirror.defaultTextHeight());
 
 			$rtn.find('input[type=radio][name=editor-'+mod.name+']').on('change', function(){
 				var $this = $(this);
@@ -262,14 +262,17 @@ module.exports = function(broccoli){
 			// 編集中のコンテンツ量に合わせて、
 			// CodeMirror編集欄のサイズを広げる
 			var updateCodeMirrorHeight = function() {
-				var h =
-					mod.codeMirror.getDoc().lineCount()
-					* mod.codeMirror.defaultTextHeight()
-				;
+				var h = (function(){
+					var h = 0;
+					for(var line = 0; line < mod.codeMirror.getDoc().lineCount(); line ++){
+						h += mod.codeMirror.getDoc().getLineHandle(line).height;
+					}
+					return h + 20;
+				})();
 				if( h < mod.codeMirror.defaultTextHeight() * rows ){
 					h = mod.codeMirror.defaultTextHeight() * rows;
 				}
-				mod.codeMirror.setSize(null, h.toString() + "px");
+				mod.codeMirror.setSize(null, h);
 				mod.codeMirror.refresh();
 			};
 
@@ -287,21 +290,31 @@ module.exports = function(broccoli){
 				if( cursorOffsetTop < 60 ){
 					// 上へ行きすぎた
 					$lightbox.scrollTop( form_position_top + cursorTop - focusBuffer );
-				}else if( cursorOffsetTop > lightbox_height - 40 ){
+				}else if( cursorOffsetTop > lightbox_height - 60 ){
 					// 下へ行きすぎた
-					$lightbox.scrollTop( form_position_top + cursorTop - lightbox_height + focusBuffer + 100 );
+					$lightbox.scrollTop( form_position_top + cursorTop - lightbox_height + focusBuffer + 120 );
 				}
 			};
+			var timerUpdateCodeMirror;
 			mod.codeMirror.on('change', function(){
-				updateCodeMirrorHeight();
-				updateCodeMirrorScroll();
 				mod.codeMirror.save();
+				clearTimeout(timerUpdateCodeMirror);
+				timerUpdateCodeMirror = setTimeout(function(){
+					updateCodeMirrorHeight();
+					updateCodeMirrorScroll();
+				}, 100);
 			});
 			mod.codeMirror.on('cursorActivity', function(){
+				clearTimeout(timerUpdateCodeMirror);
+				timerUpdateCodeMirror = setTimeout(function(){
+					updateCodeMirrorHeight();
+					updateCodeMirrorScroll();
+				}, 5);
+			});
+			timerUpdateCodeMirror = setTimeout(function(){
 				updateCodeMirrorHeight();
 				updateCodeMirrorScroll();
-			});
-			setTimeout(updateCodeMirrorHeight, 200);
+			}, 200);
 		}
 		else if( editorLib == 'ace' && mod.aceEditor ){
 			$rtn.find('input[type=radio][name=editor-'+mod.name+']').on('change', function(){
