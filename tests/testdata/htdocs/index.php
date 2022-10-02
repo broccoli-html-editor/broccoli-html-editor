@@ -35,6 +35,8 @@ if( isset($_REQUEST['LANG']) ){
 				<li><a href="javascript:window.main.broccoli.remove(function(res){console.log(res);alert('remove done.');});">remove</a></li>
 				<li><a href="javascript:window.main.broccoli.find();">find</a></li>
 				<li><a href="javascript:alert(window.main.broccoli.getSelectedInstance());">getSelectedInstance</a></li>
+				<li><a href="javascript:window.main.broccoli.editInstance();">editInstance</a></li>
+				<li><a href="javascript:window.main.broccoli.insertInstance();">insertInstance</a></li>
 			</ul>
 		</div>
 

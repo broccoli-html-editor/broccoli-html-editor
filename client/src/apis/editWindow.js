@@ -136,6 +136,11 @@ module.exports = function(broccoli){
 		var data = broccoli.contentsSourceData.get(instancePath);
 		var mod = initMod(data);
 
+		if( !instancePath || !elmEditWindow ){
+			editWindowInitCallback(false);
+			return;
+		}
+
 		var $fields = $('<div>');
 		$editWindow = $(elmEditWindow);
 		$editWindow.html('').append( broccoli.bindTwig(tplFrame, {'lb':broccoli.lb}) );

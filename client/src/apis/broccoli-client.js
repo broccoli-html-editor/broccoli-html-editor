@@ -731,7 +731,15 @@
 		 */
 		this.insertInstance = function( instancePath, callback ){
 			callback = callback || function(){};
-			broccoli.drawInsertWindow(
+			if( !instancePath ){
+				instancePath = broccoli.getSelectedInstance();
+			}
+			if( !instancePath ){
+				broccoli.message( broccoli.lb.get('ui_message.select_instance') );
+				callback(false);
+				return;
+			}
+			drawInsertWindow(
 				instancePath,
 				function(isInsert){
 					broccoli.px2style.closeModal();
@@ -744,13 +752,20 @@
 		/**
 		 * インスタンスを編集する
 		 */
-		this.editInstance = function( instancePath ){
-			var broccoli = this;
+		this.editInstance = function( instancePath, callback ){
+			callback = callback || function(){};
+			if( !instancePath ){
+				instancePath = broccoli.getSelectedInstance();
+			}
+			if( !instancePath ){
+				broccoli.message( broccoli.lb.get('ui_message.select_instance') );
+				callback(false);
+				return;
+			}
 			broccoli.selectInstance(instancePath, function(){
 				broccoli.lightbox( function( lbElm ){
 					$('.broccoli__lightbox-inner').addClass('broccoli__lightbox-inner--edit-window-mode');
-					broccoli.drawEditWindow( instancePath, lbElm, function(isSave, callback){
-						callback = callback || function(){};
+					drawEditWindow( instancePath, lbElm, function(isSave){
 						if( !isSave ){
 							broccoli.closeLightbox(function(){
 								broccoli.closeProgress(function(){
@@ -758,7 +773,7 @@
 									// 選択中の(編集した)インスタンスにフォーカスを移す
 									// (タブキーで操作できるように)
 									var selectedInstancePath = broccoli.getSelectedInstance();
-									$(broccoli.options.elmPanels).find('[data-broccoli-instance-path="'+(selectedInstancePath)+'"]').focus();
+									$(broccoli.options.elmPanels).find('[data-broccoli-instance-path="'+(selectedInstancePath)+'"]').trigger('focus');
 
 									callback();
 								});
@@ -1389,7 +1404,7 @@
 		/**
 		 * 挿入ウィンドウを描画する
 		 */
-		this.drawInsertWindow = function(instancePath, callback){
+		function drawInsertWindow(instancePath, callback){
 			$(window).on('beforeunload.broccoli-html-editor', function(e){
 				e.preventDefault();
 				e.returnValue = '';
@@ -1409,19 +1424,19 @@
 					$(window).off('beforeunload.broccoli-html-editor');
 				},
 			});
-			this.insertWindow.init(instancePath, $lbElm, callback);
+			broccoli.insertWindow.init(instancePath, $lbElm, callback);
 			return;
 		}
 
 		/**
 		 * 編集ウィンドウを描画する
 		 */
-		this.drawEditWindow = function(instancePath, elmEditWindow, callback){
+		function drawEditWindow(instancePath, elmEditWindow, callback){
 			$(window).on('beforeunload.broccoli-html-editor', function(e){
 				e.preventDefault();
 				e.returnValue = '';
 			});
-			this.editWindow.init(instancePath, elmEditWindow, function(result){
+			broccoli.editWindow.init(instancePath, elmEditWindow, function(result){
 				$(window).off('beforeunload.broccoli-html-editor');
 				callback(result);
 			});

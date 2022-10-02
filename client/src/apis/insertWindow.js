@@ -48,6 +48,11 @@ module.exports = function(broccoli){
 			+ '</div>'
 		;
 
+		if( !instancePath || !elmInsertWindow ){
+			callback(false);
+			return;
+		}
+
 		instanceInsertTo = instancePath;
 		$insertWindow = $(elmInsertWindow);
 		$insertWindow.html(tplFrame);
@@ -182,7 +187,6 @@ module.exports = function(broccoli){
 				function(it1, data){
 					console.log('Insert Window: standby');
 					$insertWindowBody.html('').append(data.$ul);
-					// callback();
 				},
 			]
 		);
