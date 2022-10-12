@@ -465,6 +465,16 @@ module.exports = function(broccoli){
 				}
 				if(customFunc){
 					customFunc( fileInfo, function(clipContents){
+						if(clipContents === false){
+							// ファイルを処理しない場合、
+							// clipContents に false を返してもらう。
+							broccoli.redraw(function(){
+								broccoli.closeProgress(function(){
+									callback();
+								});
+							});
+							return;
+						}
 						if( typeof(clipContents) == typeof({}) && clipContents.data && clipContents.resources ){
 							insertClipModule(clipContents, moveTo, {}, function(){
 								it1.next();

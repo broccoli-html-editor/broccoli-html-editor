@@ -189,6 +189,7 @@ broccoli.init(
 
                 // クリップモジュールと同様の形式のオブジェクトを生成して
                 // コールバックへ返却してください。
+                // ファイルを処理しない場合は false を返却してください。
                 callback(clipContents);
                 return;
             }
@@ -368,6 +369,7 @@ $ composer test
 - 依存ライブラリの更新。
 - 一部UIの英訳を追加。
 - CodeMirrorが適用されたフィールドの捜査官を改善。
+- `droppedFileOperator` コールバックが、処理しない場合に `false` を返せるようになった。
 - その他、細かいUIの改善、内部コードの修正など。
 
 ### broccoli-html-editor v1.0.0 (2022年9月25日)
