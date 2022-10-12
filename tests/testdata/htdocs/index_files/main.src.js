@@ -153,7 +153,13 @@ window.main = new (function(){
 
 						reader.readAsDataURL(fileInfo);
 						return;
-					}
+					},
+					'dropcancel': function(fileInfo, callback){
+						// ドロップ処理をキャンセルするテスト
+						// 拡張子 `*.dropcancel` のファイルドロップを処理します
+						console.log('------ *.dropcancel dropped;', fileInfo);
+						callback(false);
+					},
 				},
 				'gpiBridge': function(api, options, callback){
 					// General Purpose Interface Bridge

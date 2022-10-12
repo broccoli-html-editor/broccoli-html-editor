@@ -127,13 +127,11 @@ module.exports = function(broccoli){
 		e.stopPropagation();
 		e.preventDefault();
 		var event = e.originalEvent;
-		// console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=', event);
 		$(elm).removeClass('broccoli__panel--drag-entered');
 		$(elm).removeClass('broccoli__panel--drag-entered-u');
 		$(elm).removeClass('broccoli__panel--drag-entered-d');
 
 		var ud = getUd(e, elm);
-		// console.info(ud);
 
 		var transferData = event.dataTransfer.getData("text/json");
 		try {
@@ -141,7 +139,6 @@ module.exports = function(broccoli){
 		} catch (e) {}
 		var method = transferData.method;
 		// options.drop($(elm).attr('data-broccoli-instance-path'), method);
-		// console.log(method);
 		var subModNameFrom = transferData["data-broccoli-sub-mod-name"] || '';
 		var subModName = $(elm).attr('data-broccoli-sub-mod-name');
 		var isAppenderFrom = (transferData["data-broccoli-is-appender"] == 'yes');
@@ -181,11 +178,11 @@ module.exports = function(broccoli){
 				// Windows版 Chrome 96.0.4664.45 で、モジュールパレットのモジュールをドロップしたとき、
 				// event.dataTransfer.files[0] にデータが渡るようになったため、ここを通過する(誤動作)ようになった。
 				// このデータは、 `type` に 空白文字 がセットされているようなので、これを条件にして弾くように処理を追加した。
-			if( event.dataTransfer.files.length == 1 && event.dataTransfer.files[0].type === '' ){
+			if( event.dataTransfer.files.length == 1 && event.dataTransfer.files[0].type === '' && !event.dataTransfer.files[0].size ){
 				isFileDropped = false;
 			}
 			if( isFileDropped ){
-				console.log('外部からファイルがドロップされました。', event.dataTransfer.files);
+				// console.log('外部からファイルがドロップされました。', event.dataTransfer.files);
 				return onDropFile(e, moveTo, callback);
 			}
 		}
@@ -204,10 +201,7 @@ module.exports = function(broccoli){
 		var newInstancePath = moveFroms[0];
 
 		var fncMoveWhile = function(moveFroms, moveTo){
-			// console.log('length:', moveFroms.length);
-			// console.log('====== move from, to', moveFroms, moveTo);
 			var currentMoveFrom = moveFroms.shift();
-			// console.log('*** currentMoveFrom:', currentMoveFrom);
 			broccoli.contentsSourceData.moveInstanceTo( currentMoveFrom, moveTo, function(result){
 				if(!result){
 					console.error('移動に失敗しました。', currentMoveFrom, moveTo, result);
@@ -224,13 +218,11 @@ module.exports = function(broccoli){
 					currentMoveFrom = broccoli.utils.getInstancePathWhichWasAffectedInsertingInstance(currentMoveFrom, moveTo);
 					moveTo = broccoli.utils.getInstancePathWhichWasAffectedRemovingInstance(moveTo, currentMoveFrom);
 					moveTo = broccoli.utils.getInstancePathWhichWasAffectedInsertingInstance(moveTo, moveTo);
-					// console.log('====-- move from, to', moveFroms, moveTo);
 					fncMoveWhile(moveFroms, moveTo);
 				}else{
 					// コンテンツを保存
 					broccoli.unselectInstance(function(){
 						broccoli.saveContents(function(){
-							// alert('インスタンスを移動しました。');
 							broccoli.redraw(function(){
 								broccoli.closeProgress(function(){
 									broccoli.selectInstance(newInstancePath, function(){
@@ -244,7 +236,8 @@ module.exports = function(broccoli){
 			} );
 		}
 
-		if( subModNameFrom.length ){ // ドロップ元のインスタンスがサブモジュールだったら
+		if( subModNameFrom.length ){
+			// ドロップ元のインスタンスがサブモジュールだったら
 
 			if( method === 'moveTo' ){
 				// これはloop要素(=subModNameがある場合)を並べ替えるための moveTo です。
@@ -435,24 +428,22 @@ module.exports = function(broccoli){
 		it79.ary(
 			event.dataTransfer.files,
 			function( it1, fileInfo, idx ){
-				// console.log(idx, fileInfo);
-
-				var mimetype = fileInfo.type;
-				if( !mimetype ){
-					it1.next();
-					return;
-				}
-
 				broccoli.progressMessage( fileInfo.name + ' を処理中...' );
 
+				var mimetype = fileInfo.type;
 				var originalFileSize = fileInfo.size;
 				var originalFileName = fileInfo.name;
 				var originalFileFirstname = originalFileName;
 				var originalFileExt = 'png';
-				if( originalFileName.match( /^(.*)\.([a-zA-Z0-9\_]+)$/i ) ){
+				if( typeof(originalFileName) == typeof('') && originalFileName.match( /^(.*)\.([a-zA-Z0-9\_]+)$/i ) ){
 					originalFileFirstname = RegExp.$1;
 					originalFileExt = RegExp.$2;
 					originalFileExt = originalFileExt.toLowerCase();
+				}
+
+				if( !mimetype && !originalFileSize && !(''+originalFileName).length ){
+					it1.next();
+					return;
 				}
 
 				var customFunc = false;
@@ -463,6 +454,7 @@ module.exports = function(broccoli){
 					// 拡張子で登録されていたら、そちらへ転送
 					customFunc = broccoli.options.droppedFileOperator[originalFileExt];
 				}
+
 				if(customFunc){
 					customFunc( fileInfo, function(clipContents){
 						if(clipContents === false){
@@ -487,9 +479,7 @@ module.exports = function(broccoli){
 
 				var reader = new FileReader();
 				reader.onload = function(evt) {
-					// console.log(evt.target);
 					var content = evt.target.result;
-					// console.log(content);
 
 					switch( mimetype ){
 
