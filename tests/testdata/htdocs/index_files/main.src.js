@@ -217,6 +217,7 @@ window.main = new (function(){
 				},
 				'onMessage': function(message){
 					console.info('message: '+message);
+					px2style.flashMessage(message);
 				},
 				'onEditWindowOpen': function(instancePath, elmEditWindow){
 					console.info('onEditWindowOpen():', instancePath, elmEditWindow);

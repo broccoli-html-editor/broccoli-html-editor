@@ -417,13 +417,12 @@ module.exports = function(broccoli){
 		callback = callback || function(){};
 		var event = e.originalEvent;
 		if( !event.dataTransfer || !event.dataTransfer.files || !event.dataTransfer.files.length ){
-			broccoli.message('外部からドロップされたファイルが取得できません。');
-			console.error('外部からドロップされたファイルが取得できません。', event);
+			var error_message = broccoli.lb.get('ui_message.file_cannot_be_retrieved');
+			broccoli.message(error_message);
+			console.error(error_message, event);
 			callback();
 			return;
 		}
-
-		// console.info( event.dataTransfer.files );
 
 		it79.ary(
 			event.dataTransfer.files,
@@ -474,6 +473,11 @@ module.exports = function(broccoli){
 							return;
 						}
 					} );
+					return;
+				}
+
+				if( !mimetype ){
+					it1.next();
 					return;
 				}
 
@@ -589,8 +593,9 @@ module.exports = function(broccoli){
 						reader.readAsText(fileInfo);
 						break;
 					default:
-						broccoli.message('処理できないファイルです。');
-						console.error('処理できないファイルです。', mimetype);
+						var error_message = broccoli.lb.get('ui_message.file_cannot_be_processed'); // 処理できないファイルです。
+						broccoli.message(error_message);
+						console.error(error_message, mimetype);
 						it1.next();
 						break;
 				}
@@ -605,7 +610,8 @@ module.exports = function(broccoli){
 
 				broccoli.unselectInstance(function(){
 					broccoli.saveContents(function(){
-						broccoli.message('ファイルを挿入しました。');
+						var message = broccoli.lb.get('ui_message.file_inserted'); // ファイルを挿入しました。
+						broccoli.message(message);
 						broccoli.redraw(function(){
 							broccoli.closeProgress(function(){
 								callback();
