@@ -28,7 +28,7 @@ module.exports = function(broccoli){
 			rtn = marked.parse(rtn);
 		}
 		if( mode == 'canvas' && !rtn.length ){
-			rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;">(ダブルクリックしてマークダウンを編集してください)</span>';
+			rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;">('+broccoli.lb.get('ui_message.double_click_to_edit_markdown')+')</span>';
 		}
 		// setTimeout(function(){
 			callback(rtn);

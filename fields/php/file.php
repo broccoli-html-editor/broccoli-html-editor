@@ -98,46 +98,6 @@ class file extends \broccoliHtmlEditor\fieldBase{
 		return '';
 	}
 
-	// /**
-	//  * リソースを加工する (Server Side)
-	//  */
-	// public function resourceProcessor( $path_orig, $path_public, $resInfo ){
-
-	// 	$resInfo->fieldNote = (@$resInfo->fieldNote ? $resInfo->fieldNote : json_decode('{}'));
-
-	// 	if( @$resInfo->fieldNote->origMd5 == @$resInfo->md5 && $resInfo->fieldNote->base64 ){
-	// 		// console.log('変更されていないファイル =-=-=-=-=-=-=-=-=-=-=-=-=');
-	// 		$result = $this->broccoli->fs()->save_file(
-	// 			$path_public,
-	// 			base64_decode($resInfo->fieldNote->base64)
-	// 		);
-	// 		return $result;
-	// 	}
-
-	// 	// 公開ディレクトリに複製
-	// 	copy( $path_orig, $path_public );
-
-
-	// 	// オリジナルのMD5ハッシュを記録
-	// 	if( $resInfo->md5 ){
-	// 		$resInfo->fieldNote->origMd5 = $resInfo->md5;
-	// 	}else{
-	// 		$resInfo->fieldNote->origMd5 = md5_file($path_orig);
-	// 	}
-
-	// 	// 加工後のファイルの情報を記録
-	// 	$bin = file_get_contents( $path_public );
-	// 	// base64
-	// 	$resInfo->fieldNote->base64 = base64_encode($bin);
-	// 	// MD5
-	// 	$resInfo->fieldNote->md5 = md5($bin);
-	// 	// size
-	// 	$resInfo->fieldNote->size = strlen(''.$bin);
-
-
-	// 	return true;
-	// }
-
 	/**
 	 * GPI (Server Side)
 	 */

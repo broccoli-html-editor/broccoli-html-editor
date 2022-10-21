@@ -61,7 +61,7 @@ class script extends \broccoliHtmlEditor\fieldBase{
 			if( $is_escape ){
 				$rtn = '';
 			}else{
-				$rtn = '<span style="display:inline-block;color:#969800;background-color:#f0f1b3;border:1px solid #969800;font-size:10px;padding:0.2em 1em;max-width:100%;overflow:hidden;">SCRIPT (ダブルクリックしてスクリプトを記述してください)</span>';
+				$rtn = '<span style="display:inline-block;color:#969800;background-color:#f0f1b3;border:1px solid #969800;font-size:10px;padding:0.2em 1em;max-width:100%;overflow:hidden;">'.$this->broccoli->lb()->get('ui_message.double_click_to_edit_script').'</span>';
 			}
 		}
 		return $rtn;

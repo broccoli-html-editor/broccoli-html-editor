@@ -15,7 +15,7 @@ module.exports = function(broccoli){
 			rtn = php.htmlspecialchars( rtn );
 		}
 		if( mode == 'canvas' && !rtn.length ){
-			rtn = '(ダブルクリックしてテキストを編集してください)';
+			rtn = '('+broccoli.lb.get('ui_message.double_click_to_edit_text')+')';
 		}
 
 		callback(rtn);

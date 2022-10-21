@@ -11,6 +11,17 @@ namespace broccoliHtmlEditor\fields;
  */
 class html_attr_text extends \broccoliHtmlEditor\fieldBase{
 
+	/** $broccoli */
+	private $broccoli;
+
+	/**
+	 * Constructor
+	 */
+	public function __construct($broccoli){
+		$this->broccoli = $broccoli;
+		parent::__construct($broccoli);
+	}
+
 	/**
 	 * データをバインドする
 	 */
@@ -24,7 +35,7 @@ class html_attr_text extends \broccoliHtmlEditor\fieldBase{
 			$rtn = htmlspecialchars( $rtn );
 		}
 		if( $mode == 'canvas' && !strlen(''.$rtn) ){
-			$rtn = '(ダブルクリックしてテキストを編集してください)';
+			$rtn = '('.$this->broccoli->lb()->get('ui_message.double_click_to_edit_text').')';
 		}
 
 		return $rtn;
