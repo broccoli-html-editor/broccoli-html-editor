@@ -45,6 +45,7 @@ ui_message.unsupported_json_format,"Unsupported JSON format.","対応してい�
 ui_message.file_cannot_be_retrieved,"Files dropped externally cannot be retrieved.","外部からドロップされたファイルが取得できません。",,
 ui_message.file_cannot_be_processed,"This file cannot be processed.","処理できないファイルです。",,
 ui_message.file_inserted,"File inserted.","ファイルを挿入しました。",,
+ui_message.double_click_to_edit_HTML_code,"Double click to edit HTML code","ダブルクリックしてHTMLコードを編集してください",,
 system_module_label.root,"Root","ルート",,
 system_module_label.unknown_module,"Unknown Module","不明なモジュール",,
 system_module_label.image,"Image","画像",,

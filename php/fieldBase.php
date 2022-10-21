@@ -37,7 +37,7 @@ class fieldBase{
 			$rtn = ''.$fieldData;
 		}
 		if( $mode == 'canvas' && !strlen(''.$rtn) ){
-			$rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">(ダブルクリックしてHTMLコードを編集してください)</span>';
+			$rtn = '<span style="color:#999;background-color:#ddd;font-size:10px;padding:0 1em;max-width:100%;overflow:hidden;white-space:nowrap;">('.$this->broccoli->lb()->get('ui_message.double_click_to_edit_HTML_code').')</span>';
 		}
 		return $rtn;
 	}
