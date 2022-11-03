@@ -1091,22 +1091,23 @@
 			callback = callback||function(){};
 			var instancePath = this.getSelectedInstance();
 			if( typeof(instancePath) !== typeof('') ){
-				_this.message('インスタンスを選択した状態でコピーしてください。');
+				_this.message( broccoli.lb.get('ui_message.copy_with_instance_selected') ); // インスタンスを選択した状態でコピーしてください。
 				callback(false);
 				return;
 			}
 
-			_this.progressMessage('コピーしています。');
+			_this.progressMessage(broccoli.lb.get('ui_message.copying')); // コピーしています。
 
 			this.selectedInstanceToJsonString(function(jsonStr){
 				if(jsonStr === false){
-					_this.message('インスタンスのコピーに失敗しました。');
+					_this.message(broccoli.lb.get('ui_message.failed_to_copy_instance')); // インスタンスのコピーに失敗しました。
+					_this.closeProgress();
 					callback(false);
 					return;
 				}
 				_this.clipboard.set( jsonStr, null, event );
-				_this.progressMessage('インスタンスをコピーしました。');
-				_this.message('インスタンスをコピーしました。');
+				_this.progressMessage(broccoli.lb.get('ui_message.copied_instance')); // インスタンスをコピーしました。
+				_this.message(broccoli.lb.get('ui_message.copied_instance')); // インスタンスをコピーしました。
 				_this.closeProgress();
 				callback(true);
 			});
@@ -1120,23 +1121,28 @@
 			callback = callback||function(){};
 			var instancePath = this.getSelectedInstance();
 			if( typeof(instancePath) !== typeof('') ){
-				_this.message('インスタンスを選択した状態でカットしてください。');
+				_this.message(broccoli.lb.get('ui_message.cut_with_instance_selected')); // インスタンスを選択した状態でカットしてください。
 				callback(false);
 				return;
 			}
+
+			_this.progressMessage(broccoli.lb.get('ui_message.copying')); // コピーしています。
 
 			_this.contentsSourceData.resourceDbReloadRequest() // 削除したインスタンスにリソースが含まれている可能性があるので、リロードを要求する。
 
 			this.selectedInstanceToJsonString(function(jsonStr){
 				if(jsonStr === false){
-					_this.message('インスタンスのコピーに失敗しました。');
+					_this.message(broccoli.lb.get('ui_message.failed_to_copy_instance')); // インスタンスのコピーに失敗しました。
+					_this.closeProgress();
 					callback(false);
 					return;
 				}
 				_this.clipboard.set( jsonStr, null, event );
 
 				_this.remove(function(){
-					_this.message('インスタンスをカットしました。');
+					_this.progressMessage(broccoli.lb.get('ui_message.cut_instance')); // インスタンスをコピーしました。
+					_this.message(broccoli.lb.get('ui_message.cut_instance')); // インスタンスをカットしました。
+					_this.closeProgress();
 					callback(true);
 				});
 			});
@@ -1151,7 +1157,7 @@
 			callback = callback||function(){};
 			var selectedInstance = this.getSelectedInstance();
 			if( typeof(selectedInstance) !== typeof('') ){
-				_this.message('インスタンスを選択した状態でペーストしてください。');
+				_this.message(broccoli.lb.get('ui_message.paste_with_instance_selected')); // インスタンスを選択した状態でペーストしてください。
 				callback(false);
 				return;
 			}
@@ -1160,8 +1166,8 @@
 				try {
 					data = JSON.parse( data );
 				} catch (e) {
-					_this.message('クリップボードのデータをデコードできませんでした。');
-					console.error('FAILED to decode clipboard.', data);
+					_this.message(broccoli.lb.get('ui_message.failed_to_decode_clipboard_data')); // クリップボードのデータをデコードできませんでした。
+					console.error('FAILED to decode clipboard data.', data);
 					callback(false);
 					return;
 				}
@@ -1200,7 +1206,7 @@
 					return true;
 				})();
 				if( !isValid ){
-					_this.message('ここにはペーストできません。');
+					_this.message(broccoli.lb.get('ui_message.cannot_paste_here')); // ここにはペーストできません。
 					callback(false);
 					return;
 				}
@@ -1228,7 +1234,7 @@
 								// 画面を再描画
 								_this.redraw(function(){
 									_this.selectInstance(selectedInstance, function(){
-										_this.message('インスタンスをペーストしました。');
+										_this.message(broccoli.lb.get('ui_message.pasted_instance')); // インスタンスをペーストしました。
 										broccoli.closeProgress(function(){
 											callback(true);
 										});

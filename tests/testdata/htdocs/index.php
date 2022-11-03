@@ -1,5 +1,5 @@
 <?php
-$lang = 'ja';
+$lang = 'en';
 if( isset($_REQUEST['LANG']) ){
 	$lang = $_REQUEST['LANG'];
 }
