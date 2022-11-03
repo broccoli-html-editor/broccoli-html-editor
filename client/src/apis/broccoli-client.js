@@ -1272,12 +1272,12 @@
 			var selectedInstanceRegion = _this.getSelectedInstanceRegion();
 
 			if( typeof(selectedInstance) !== typeof('') ){
-				_this.message('インスタンスを選択した状態で削除してください。');
+				_this.message(broccoli.lb.get('ui_message.delete_instance_while_selected')); // インスタンスを選択した状態で削除してください。
 				callback(false);
 				return;
 			}
 			if( selectedInstance.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
-				_this.message('ルートインスタンスを削除することはできません。');
+				_this.message(broccoli.lb.get('ui_message.root_instance_cannot_be_deleted')); // ルートインスタンスを削除することはできません。
 				callback(false);
 				return;
 			}
@@ -1300,7 +1300,7 @@
 						});
 					},
 					function(){
-						_this.message('インスタンスを削除しました。');
+						_this.message(broccoli.lb.get('ui_message.delete_instance_done')); // インスタンスを削除しました。
 						_this.saveContents(function(result){
 							// 画面を再描画
 							_this.unselectInstance(function(){
@@ -1325,7 +1325,7 @@
 			_this.progress(function(){
 				_this.contentsSourceData.historyBack(function(result){
 					if(result === false){
-						_this.message('これ以上戻れません。');
+						_this.message(broccoli.lb.get('ui_message.cant_go_back_any_further')); // これ以上戻れません。
 						_this.closeProgress(function(){
 							callback();
 						});
@@ -1352,7 +1352,7 @@
 			_this.progress(function(){
 				_this.contentsSourceData.historyGo(function(result){
 					if(result === false){
-						_this.message('これ以上進められません。');
+						_this.message(broccoli.lb.get('ui_message.cant_go_forward_any_further')); // これ以上進められません。
 						_this.closeProgress(function(){
 							callback();
 						});

@@ -334,7 +334,7 @@ module.exports = function(broccoli){
 				lock();
 
 				if( modClip ){
-					console.log('クリップが選択されました。');
+					// console.log('Clip is selected.');
 					var parsedModId = broccoli.parseModuleId(modId);
 					var newInstancePath = moveTo;
 
@@ -378,7 +378,7 @@ module.exports = function(broccoli){
 												broccoli.resourceMgr.setResourceDb(tmpResourceDb, function(result){
 													broccoli.unselectInstance(function(){
 														broccoli.saveContents(function(){
-															broccoli.message('クリップを挿入しました。');
+															broccoli.message(broccoli.lb.get('ui_message.insert_clip_data_done')); // クリップを挿入しました。
 															broccoli.redraw(function(){
 																broccoli.closeProgress(function(){
 																	broccoli.selectInstance(newInstancePath, function(){
