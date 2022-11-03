@@ -919,7 +919,7 @@
 			var idx = instancePathRegionTo.indexOf(commonLayer);
 			if(idx !== 0){
 				// ずれた階層間での範囲選択はできません。
-				console.error('Error: It is not possible to select a range between shifted hierarchies.');
+				console.info('Info: It is not possible to select a range between shifted hierarchies.');
 				callback(false);
 				return;
 			}
@@ -1631,7 +1631,7 @@
 			it79.fnc({},[
 				function(it1, data){
 					// コンテンツを保存
-					_this.progressMessage('コンテンツデータを保存しています...');
+					_this.progressMessage(broccoli.lb.get('ui_message.saving_content_data')); // コンテンツデータを保存しています
 					_this.indicator.saveProgress();
 					_this.contentsSourceData.save(function(){
 						it1.next(data);
@@ -1649,7 +1649,7 @@
 				// } ,
 				function(it1, data){
 					// コンテンツを更新
-					_this.progressMessage('コンテンツを更新しています...');
+					_this.progressMessage(broccoli.lb.get('ui_message.updating_content')); // コンテンツを更新しています
 						// この処理は、サーバーサイドでHTMLやリソースのリビルドを実行しています。
 					_this.gpi(
 						'updateContents',
@@ -1660,7 +1660,7 @@
 					);
 				} ,
 				function(it1, data){
-					_this.progressMessage('コンテンツを保存しました。');
+					_this.progressMessage(broccoli.lb.get('ui_message.content_saved')); // コンテンツを保存しました。
 					_this.indicator.saveCompleted();
 					callback(true);
 					it1.next(data);
