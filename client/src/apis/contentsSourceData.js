@@ -171,7 +171,7 @@ module.exports = function(broccoli){
 		cb = cb||function(){};
 
 		if( containerInstancePath.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
-			broccoli.message('bowl に追加することはできません。アペンダーに追加してください。');
+			broccoli.message(broccoli.lb.get('ui_message.cannot_add_to_bowl_add_it_in_appender')); // bowl に追加することはできません。アペンダーに追加してください。
 			cb();
 			return;
 		}
@@ -425,12 +425,12 @@ module.exports = function(broccoli){
 			return false;
 		}
 		if( isBowlRoot(fromContainerInstancePath) ){
-			broccoli.message('bowl を移動することはできません。');
+			broccoli.message(broccoli.lb.get('ui_message.bowl_cannot_be_moved')); // bowl を移動することはできません。
 			cb(false);
 			return;
 		}
 		if( isBowlRoot(toContainerInstancePath) ){
-			broccoli.message('bowl への移動はできません。アペンダーへドロップしてください。');
+			broccoli.message(broccoli.lb.get('ui_message.cannot_move_to_bowl_drop_it_in_appender')); // bowl への移動はできません。アペンダーへドロップしてください。
 			cb(false);
 			return;
 		}
@@ -483,7 +483,7 @@ module.exports = function(broccoli){
 			});
 		}else if( toParsed.path.indexOf(fromParsed.path) === 0 ){
 			// 自分の子階層への移動
-			broccoli.message('自分の子階層へ移動することはできません。');
+			broccoli.message(broccoli.lb.get('ui_message.cannot_move_to_child_hierarchy')); // 自分の子階層へ移動することはできません。
 			cb(false);
 		}else if( fromParsed.path.indexOf(toParsed.container) === 0 ){
 			// 自分の親階層への移動
@@ -893,13 +893,13 @@ module.exports = function(broccoli){
 		// console.log(historyStepStock);
 		(function(){
 			if( historyStepStock > 0 ){
-				var message = '進む';
+				var message = broccoli.lb.get('ui_label.go'); // 進む
 				if( historyStepStock > 1 ){
 					message += ': ' + Math.abs(historyStepStock) + ' step';
 				}
 				broccoli.progressMessage(message);
 			}else if( historyStepStock < 0 ){
-				var message = '戻る';
+				var message = broccoli.lb.get('ui_label.back'); // 戻る
 				if( historyStepStock < -1 ){
 					message += ': ' + Math.abs(historyStepStock) + ' step';
 				}
@@ -940,7 +940,7 @@ module.exports = function(broccoli){
 							});
 							return;
 						}
-						console.error('無効な引数です。', step);
+						console.error('Error: Invalid argument.', step);
 						broccoli.indicator.saveCompleted();
 						historyLock = false;
 						historyStepStock = 0;
@@ -951,7 +951,7 @@ module.exports = function(broccoli){
 						// historyからリソースデータを復元する
 						broccoli.resourceMgr.setResourceDb(resourceDb, function(result){
 							if(!result){
-								alert('resourceDb の更新に失敗しました。');
+								alert(broccoli.lb.get('ui_message.failed_to_update_resourceDb')); // リソースデータベースの更新に失敗しました。
 							}
 							it1.next(data);
 						});
@@ -1013,13 +1013,13 @@ module.exports = function(broccoli){
 		var _this = this;
 		var resourceDb;
 		callback = callback||function(){};
-		// console.log('-------- saving contentsSourceData ---', _contentsSourceData);
+
 		it79.fnc(
 			{},
 			[
 				function( it1, data ){
 					// コンテンツデータを保存する
-					broccoli.progressMessage('コンテンツデータを保存しています...');
+					broccoli.progressMessage(broccoli.lb.get('ui_message.saving_content_data')); // コンテンツデータを保存しています
 					broccoli.gpi(
 						'saveContentsData',
 						{
@@ -1038,7 +1038,7 @@ module.exports = function(broccoli){
 						it1.next(data);
 						return;
 					}
-					broccoli.progressMessage('リソースデータを同期しています...');
+					broccoli.progressMessage(broccoli.lb.get('ui_message.synchronizing_resources')); // リソースデータを同期しています
 					broccoli.resourceMgr.reload(function(resourceDb){
 						// console.log(resourceDb);
 						_resourceDbReloadRequest = false;
@@ -1055,7 +1055,7 @@ module.exports = function(broccoli){
 				} ,
 				function( it1, data ){
 					// 履歴に追加
-					broccoli.progressMessage('履歴に追加しています...');
+					broccoli.progressMessage(broccoli.lb.get('ui_message.adding_to_history')); // 履歴に追加しています
 					_this.history.put( _contentsSourceData, resourceDb, function(){
 						it1.next(data);
 					} );
