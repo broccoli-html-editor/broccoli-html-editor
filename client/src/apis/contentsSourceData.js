@@ -215,14 +215,12 @@ module.exports = function(broccoli){
 		// console.log( aryPath );
 
 		function set_r( aryPath, data, newData ){
-			// console.log( '=-=-=-=-=-=-=-=-=-=-=-=', aryPath, data );
 			var cur = aryPath.shift();
 			var idx = null;
 			var tmpSplit = cur.split('@');
 			cur = tmpSplit[0];
 			if( tmpSplit.length >=2 ){
 				idx = Number(tmpSplit[1]);
-				// console.log(idx);
 			}
 			var tmpCur = cur.split('.');
 			var container = tmpCur[0];
@@ -250,7 +248,11 @@ module.exports = function(broccoli){
 					var newDataModTpl = _this.getModuleByInternalId( newData.modId );
 					if( modTpl.fields[fieldName]['maxLength'] && data.fields[fieldName].length >= modTpl.fields[fieldName]['maxLength'] ){
 						// 最大件数に達していたら、追加できない
-						broccoli.message('モジュールの数が最大件数 '+modTpl.fields[fieldName]['maxLength']+' に達しています。');
+						broccoli.message(broccoli.lb.get( // モジュールの数が最大件数 000 に達しています。
+							'ui_message.number_of_modules_has_reached_the_maximum_number_of_maxLength',
+							{
+								"maxLength": modTpl.fields[fieldName]['maxLength'],
+							}));
 						return false;
 					}
 					if( newDataModTpl && newDataModTpl.info && newDataModTpl.info.enabledParents && newDataModTpl.info.enabledParents.length ){
@@ -263,7 +265,7 @@ module.exports = function(broccoli){
 						}
 						if(!tmpIsEnabledParent){
 							// 挿入可能な親指定の条件に合致しないため、追加できない
-							broccoli.message('このモジュールは、指定されたモジュールの中には追加できません。');
+							broccoli.message(broccoli.lb.get('ui_message.module_cannot_be_added_among_the_specified_modules')); // このモジュールは、指定されたモジュールの中には追加できません。
 							return false;
 						}
 					}
@@ -277,7 +279,7 @@ module.exports = function(broccoli){
 						}
 						if(!tmpIsEnabledChild){
 							// 挿入可能な子指定の条件に合致しないため、追加できない
-							broccoli.message('このモジュールは追加できません。');
+							broccoli.message(broccoli.lb.get('ui_message.module_cannot_be_added')); // このモジュールは追加できません。
 							return false;
 						}
 					}
@@ -291,7 +293,7 @@ module.exports = function(broccoli){
 						}
 						if(!tmpIsEnabledBowl){
 							// 挿入可能なbowl指定の条件に合致しないため、追加できない
-							broccoli.message('このモジュールは、指定されたBowlの中には追加できません。');
+							broccoli.message(broccoli.lb.get('ui_message.module_cannot_be_added_inside_the_specified_bowl')); // このモジュールは、指定されたBowlの中には追加できません。
 							return false;
 						}
 					}
@@ -300,7 +302,11 @@ module.exports = function(broccoli){
 					data.fields[fieldName] = data.fields[fieldName]||[];
 					if( modTpl.fields[fieldName]['maxLength'] && data.fields[fieldName].length >= modTpl.fields[fieldName]['maxLength'] ){
 						// 最大件数に達していたら、追加できない
-						broccoli.message('モジュールの数が最大件数 '+modTpl.fields[fieldName]['maxLength']+' に達しています。');
+						broccoli.message(broccoli.lb.get( // モジュールの数が最大件数 000 に達しています。
+							'ui_message.number_of_modules_has_reached_the_maximum_number_of_maxLength',
+							{
+								"maxLength": modTpl.fields[fieldName]['maxLength'],
+							}));
 						return false;
 					}
 					data.fields[fieldName].splice( idx, 0, newData);
