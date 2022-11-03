@@ -216,7 +216,7 @@
 						});
 					} ,
 					function(it1, data){
-						_this.progressMessage('データを読み込んでいます...。');
+						_this.progressMessage('Loading data...');
 						_this.gpi(
 							'getBootupInfomations',
 							{} ,
@@ -230,20 +230,20 @@
 					},
 					function(it1, data){
 						// language bank
-						_this.progressMessage('言語データを設定しています...。');
+						_this.progressMessage('Setting language...');
 						_this.lb = new LangBank(bootupInfomations.languageCsv, function(){
 							_this.lb.setLang( options.lang );
 							it1.next(data);
 						});
 					},
 					function(it1, data){
-						_this.progressMessage('リソースマネージャを初期化しています...。');
+						_this.progressMessage('Initializing resource manager...');
 						_this.resourceMgr.init(function(){
 							it1.next(data);
 						});
 					} ,
 					function(it1, data){
-						_this.progressMessage('コンテンツデータを初期化しています...。');
+						_this.progressMessage('Initializing content data...');
 						_this.contentsSourceData = new (require('./contentsSourceData.js'))(_this);
 						_this.contentsSourceData.init(
 							function(){
@@ -252,26 +252,26 @@
 						);
 					} ,
 					function(it1, data){
-						_this.progressMessage('モジュールパレットを生成しています...。');
+						_this.progressMessage('Generating module palette...');
 						_this.drawModulePalette(_this.options.elmModulePalette, function(){
 							it1.next(data);
 						});
 					} ,
 					function(it1, data){
-						_this.progressMessage('インスタンスツリービューを初期化しています...。');
+						_this.progressMessage('Initializing instance tree view...');
 						_this.instanceTreeView.init(_this.options.elmInstanceTreeView, function(){
 							it1.next(data);
 						});
 					} ,
 					function(it1, data){
-						_this.progressMessage('インスタンスパスビューを初期化しています...。');
+						_this.progressMessage('Initializing instance path view...');
 						_this.instancePathView.init(_this.options.elmInstancePathView, function(){
 							it1.next(data);
 						});
 					} ,
 					function( it1, data ){
 						// 編集画面を初期化
-						_this.progressMessage('編集画面を初期化しています...。');
+						_this.progressMessage('Initializing editor...');
 						$canvas.find('iframe')
 							.attr({
 								'src': $canvas.attr('data-broccoli-preview')
@@ -448,7 +448,7 @@
 
 			if( onPreviewLoad_done ){
 				// 1度しか実行しない。
-				console.error('broccoli: onPreviewLoad(): すでに実行されているため、スキップします。');
+				console.error('broccoli: onPreviewLoad(): Skipping because it is already running.');
 				return;
 			}
 			onPreviewLoad_done = true;
@@ -464,14 +464,14 @@
 					} ,
 					function( it1, data ){
 						// postMessageの送受信を行う準備
-						_this.progressMessage('postMessage を初期化しています...。');
+						_this.progressMessage('Initializing postMessage...');
 						_this.postMessenger.init(function(){
 							it1.next(data);
 						});
 					} ,
 					function( it1, data ){
 						// 編集画面描画
-						_this.progressMessage('編集画面を描画しています...。');
+						_this.progressMessage('Drawing the editor...');
 						_this.redraw(function(){
 							it1.next(data);
 						});
@@ -530,14 +530,14 @@
 					} ,
 					function( it1, data ){
 						// 編集パネルを一旦消去
-						_this.progressMessage('編集パネルを消去しています...。');
+						_this.progressMessage(broccoli.lb.get('ui_message.clearing_edit_panel')); // 編集パネルを消去しています
 						_this.panels.clearPanels(function(){
 							it1.next(data);
 						});
 					} ,
 					function( it1, data ){
 						// リソースを呼び出し
-						_this.progressMessage('リソースを取得しています...。');
+						_this.progressMessage(broccoli.lb.get('ui_message.getting_resources')); // リソースを取得しています
 						_this.resourceMgr.getResourceDb(function(rDb){
 							resDb = rDb;
 							it1.next(data);
@@ -545,7 +545,7 @@
 					} ,
 					function( it1, data ){
 						// 編集画面描画
-						_this.progressMessage('HTMLを再構成しています...。');
+						_this.progressMessage(broccoli.lb.get('ui_message.restructuring_html')); // HTMLを再構成しています
 						_this.postMessenger.send(
 							'getBowlList',
 							{
@@ -585,7 +585,7 @@
 											})(htmls[idx]);
 										}
 
-										_this.progressMessage('再構成したHTMLで画面を更新しています...。');
+										_this.progressMessage(broccoli.lb.get('ui_message.updating_dom_with_reconstructed_html')); // 再構成したHTMLで画面を更新しています
 										_this.postMessenger.send(
 											'updateHtml',
 											{
@@ -610,7 +610,7 @@
 					} ,
 					function( it1, data ){
 						// iframeのサイズ合わせ
-						_this.progressMessage('画面を調整しています...。');
+						_this.progressMessage(broccoli.lb.get('ui_message.adjusting_ui')); // 画面を調整しています
 						$canvas.find('iframe')
 							.width( '100%' )
 							.attr({'scrolling': 'no'})
@@ -634,14 +634,14 @@
 					} ,
 					function( it1, data ){
 						// パネル描画
-						_this.progressMessage('編集パネルを描画しています...。');
+						_this.progressMessage(broccoli.lb.get('ui_message.drawing_edit_panel')); // 編集パネルを描画しています
 						_this.drawPanels( function(){
 							it1.next(data);
 						} );
 					} ,
 					function( it1, data ){
 						// モジュールパレットのサイズ合わせ
-						_this.progressMessage('モジュールパレットのサイズを合わせています...。');
+						_this.progressMessage(broccoli.lb.get('ui_message.adjusting_module_palette_size')); // モジュールパレットのサイズを合わせています
 						var $elm = $(_this.options.elmModulePalette).find('.broccoli__module-palette-inner');
 						var filterHeight = $elm.find('.broccoli__module-palette-filter').outerHeight();
 						$elm.find('.broccoli__module-palette-list').css({
@@ -652,21 +652,21 @@
 					} ,
 					function( it1, data ){
 						// インスタンスツリービュー描画
-						_this.progressMessage('インスタンスツリービューを描画しています...。');
+						_this.progressMessage(broccoli.lb.get('ui_message.drawing_instance_tree_view')); // インスタンスツリービューを描画しています
 						_this.instanceTreeView.update( function(){
 							it1.next(data);
 						} );
 					} ,
 					function( it1, data ){
 						// インスタンスパスビューを更新
-						_this.progressMessage('インスタンスパスビューを描画しています...。');
+						_this.progressMessage(broccoli.lb.get('ui_message.drawing_instance_path_view')); // インスタンスパスビューを描画しています
 						_this.instancePathView.update( function(){
 							it1.next(data);
 						} );
 					} ,
 					function(it1, data){
 						// 選択状態の復元
-						_this.progressMessage('選択状態を復元しています...。');
+						_this.progressMessage(broccoli.lb.get('ui_message.restoring_selection_state')); // 選択状態を復元しています
 						if( typeof(selectedInstance) == typeof('') ){
 							_this.selectInstance(selectedInstance, function(){
 								it1.next(data);
@@ -919,7 +919,7 @@
 			var idx = instancePathRegionTo.indexOf(commonLayer);
 			if(idx !== 0){
 				// ずれた階層間での範囲選択はできません。
-				console.error('ずれた階層間での範囲選択はできません。');
+				console.error('Error: It is not possible to select a range between shifted hierarchies.');
 				callback(false);
 				return;
 			}
