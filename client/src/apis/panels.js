@@ -427,13 +427,18 @@ module.exports = function(broccoli){
 		it79.ary(
 			event.dataTransfer.files,
 			function( it1, fileInfo, idx ){
+				if( typeof(fileInfo) != typeof({}) ){
+					it1.next();
+					return;
+				}
+
 				broccoli.progressMessage( fileInfo.name + ' を処理中...' );
 
 				var mimetype = fileInfo.type;
 				var originalFileSize = fileInfo.size;
 				var originalFileName = fileInfo.name;
 				var originalFileFirstname = originalFileName;
-				var originalFileExt = 'png';
+				var originalFileExt = '';
 				if( typeof(originalFileName) == typeof('') && originalFileName.match( /^(.*)\.([a-zA-Z0-9\_]+)$/i ) ){
 					originalFileFirstname = RegExp.$1;
 					originalFileExt = RegExp.$2;
@@ -459,11 +464,7 @@ module.exports = function(broccoli){
 						if(clipContents === false){
 							// ファイルを処理しない場合、
 							// clipContents に false を返してもらう。
-							broccoli.redraw(function(){
-								broccoli.closeProgress(function(){
-									callback();
-								});
-							});
+							it1.next();
 							return;
 						}
 						if( typeof(clipContents) == typeof({}) && clipContents.data && clipContents.resources ){
@@ -500,7 +501,6 @@ module.exports = function(broccoli){
 								it1.next();
 								return;
 							}
-							// console.log(jsonContents);
 							if( jsonContents && jsonContents.data && jsonContents.resources ){
 								// クリップモジュール形式と評価される場合は、
 								// クリップモジュールドロップと同様の挿入処理をする。
