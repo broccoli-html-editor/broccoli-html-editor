@@ -364,7 +364,7 @@ $ composer test
 
 ## 更新履歴 - Change log
 
-### broccoli-html-editor v1.0.3 (リリース日未定)
+### broccoli-html-editor v1.0.3 (2022年11月23日)
 
 - ファイルを直接ドロップ操作した際に、`droppedFileOperator` オプションが正しく選択されない問題を修正。
 - スタイリングに関する修正。
