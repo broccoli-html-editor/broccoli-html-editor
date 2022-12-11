@@ -346,6 +346,9 @@
 
 			$window.on('keydown.broccoli-html-editor', function(e){
 				if( e.keyCode == 27 ){ // ESC
+					if( px2style.getOpenedModalCount() ){ // px2style のモーダルが開いているとき、このイベントは px2style が処理するため、無視する
+						return;
+					}
 					_this.esc();
 				}
 			});
