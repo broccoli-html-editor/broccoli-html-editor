@@ -32,11 +32,11 @@ class buildBowl{
 		$this->data = ($data ? json_decode(json_encode($data)) : json_decode('{}'));
 
 		$options = ($options ? $options : array());
-		$options['instancePath'] = (@$options['instancePath'] ? $options['instancePath'] : '');
+		$options['instancePath'] = $options['instancePath'] ?? '';
 		$this->options = $options;
 
 		$this->nameSpace = array("vars" => array(), "varsFinalized" => array());
-		if( @$this->options['nameSpace'] ){
+		if( $this->options['nameSpace'] ?? null ){
 			$this->nameSpace = $this->options['nameSpace'];
 		}
 	}
@@ -47,13 +47,13 @@ class buildBowl{
 	public function build(){
 		$d = json_decode('{"html": ""}');
 
-		$mod = $this->broccoli->getModuleByInternalId( @$this->data->modId, @$this->options['subModName'] );
+		$mod = $this->broccoli->getModuleByInternalId( $this->data->modId ?? null, $this->options['subModName'] ?? null );
 		if($mod === false){
 			$mod = $this->broccoli->getModule( '_sys/unknown', null );
 		}
 
 		$src = $mod->template;
-		$fieldData = json_decode(json_encode(@$this->data->fields), true);
+		$fieldData = json_decode(json_encode($this->data->fields ?? null), true);
 
 		if( $mod->topThis->templateType != 'broccoli' ){
 			// --------------------------------------
@@ -76,12 +76,12 @@ class buildBowl{
 					$html = $fieldDef->bind( $tmp_bind_value, 'finalize', $field );
 					$tmpValFin .= $html;
 					$tplDataObj[$field->name] = $tmpVal;
-					@$this->nameSpace['vars'][$field->name] = array(
+					$this->nameSpace['vars'][$field->name] = array(
 						"fieldType" => "input",
 						"type" => $field->type,
 						"val" => $tmpVal
 					);
-					@$this->nameSpace['varsFinalized'][$field->name] = array(
+					$this->nameSpace['varsFinalized'][$field->name] = array(
 						'fieldType' => "input",
 						'type' => $field->type,
 						'val' => $tmpValFin
@@ -276,7 +276,7 @@ class buildBowl{
 					// end系：無視
 					continue;
 
-				}elseif( @$field->input ){
+				}elseif( $field->input ?? null ){
 					// input field
 					$tmpVal = '';
 					$tmpValFin = '';
@@ -287,29 +287,29 @@ class buildBowl{
 						// ↓未定義のフィールドタイプの場合のデフォルトの挙動
 						$fieldDef = $this->broccoli->fieldBase();
 					}
-					$html = $fieldDef->bind( @$fieldData[$field->input->name], $this->options['mode'], $field->input );
+					$html = $fieldDef->bind( $fieldData[$field->input->name] ?? null, $this->options['mode'], $field->input );
 					$tmpVal .= $html;
-					$html = $fieldDef->bind( @$fieldData[$field->input->name], 'finalize', $field->input );
+					$html = $fieldDef->bind( $fieldData[$field->input->name] ?? null, 'finalize', $field->input );
 					$tmpValFin .= $html;
 
-					if( !@$field->input->hidden ){//← "hidden": true だったら、非表示(=出力しない)
+					if( !($field->input->hidden ?? null) ){//← "hidden": true だったら、非表示(=出力しない)
 						$rtn .= $tmpVal;
 					}
-					@$this->nameSpace['vars'][$field->input->name] = array(
+					$this->nameSpace['vars'][$field->input->name] = array(
 						'fieldType' => "input", 'type' => $field->input->type, 'val' => $tmpVal
 					);
-					@$this->nameSpace['varsFinalized'][$field->input->name] = array(
+					$this->nameSpace['varsFinalized'][$field->input->name] = array(
 						'fieldType' => "input", 'type' => $field->input->type, 'val' => $tmpValFin
 					);
 
 					continue;
 
-				}elseif( @$field->module ){
+				}elseif( $field->module ?? null ){
 					// module field
 					$opt = json_decode( json_encode($this->options) );
 					$opt->instancePath .= '/fields.'.$field->module->name;
 					$tmpVal = '';
-					if(is_array(@$fieldData[$field->module->name])){
+					if(is_array($fieldData[$field->module->name] ?? null)){
 						foreach( $fieldData[$field->module->name] as $idx=>$row ){
 							// ネストされたモジュールの再帰処理
 							$tmpopt = json_decode( json_encode($opt), true );
@@ -323,7 +323,7 @@ class buildBowl{
 
 					if( $this->options['mode'] == 'canvas' ){
 						$tmpopt = json_decode( json_encode($opt), true );
-						if(!is_array(@$fieldData[$field->module->name])){ $fieldData[$field->module->name] = array(); }
+						if(!is_array($fieldData[$field->module->name] ?? null)){ $fieldData[$field->module->name] = array(); }
 						$tmpopt['instancePath'] .= '@'.(count($fieldData[$field->module->name]));
 						$tmpDepth = explode('/', $tmpopt['instancePath']);
 						if( count($tmpDepth) <= 3 || !count($fieldData[$field->module->name]) ){ // Appenderの表示数を減らす。
@@ -337,19 +337,19 @@ class buildBowl{
 						}
 					}
 
-					if( !@$field->module->hidden ){//← "hidden": true だったら、非表示(=出力しない)
+					if( !($field->module->hidden ?? null) ){//← "hidden": true だったら、非表示(=出力しない)
 						$rtn .= $tmpVal;
 					}
-					@$this->nameSpace['vars'][$field->module->name] = array(
+					$this->nameSpace['vars'][$field->module->name] = array(
 						"fieldType" => "module", "val" => $tmpVal
 					);
-					@$this->nameSpace['varsFinalized'][$field->module->name] = array(
+					$this->nameSpace['varsFinalized'][$field->module->name] = array(
 						"fieldType" => "module", "val" => $tmpVal
 					);
 
 					continue;
 
-				}elseif( @$field->loop ){
+				}elseif( $field->loop ?? null ){
 					// loop field
 					$tmpSearchResult = $mod->searchEndTag( $src, 'loop' );
 					$src = $tmpSearchResult['nextSrc'];
@@ -389,19 +389,19 @@ class buildBowl{
 						);
 					}
 
-					if( !@$field->loop->hidden ){//← "hidden": true だったら、非表示(=出力しない)
+					if( !($field->loop->hidden ?? null) ){//← "hidden": true だったら、非表示(=出力しない)
 						$rtn .= $tmpVal;
 					}
-					@$this->nameSpace['vars'][$field->loop->name] = array(
+					$this->nameSpace['vars'][$field->loop->name] = array(
 						'fieldType' => "loop", 'val' => $tmpVal
 					);
-					@$this->nameSpace['varsFinalized'][$field->loop->name] = array(
+					$this->nameSpace['varsFinalized'][$field->loop->name] = array(
 						'fieldType' => "loop", 'val' => $tmpVal
 					);
 
 					continue;
 
-				}elseif( @$field->if ){
+				}elseif( $field->if ?? null ){
 					// if field
 					// is_set に指定されたフィールドに値があったら、という評価ロジックを取り急ぎ実装。
 					// もうちょっとマシな条件の書き方がありそうな気がするが、あとで考える。
@@ -451,7 +451,7 @@ class buildBowl{
 							}elseif( is_string($subField) ){
 								// end系: 無視
 
-							}elseif( @$subField->elseif ){
+							}elseif( $subField->elseif ?? null ){
 								// elseifフィールド
 								$src = preg_replace('/^(?:\r\n|\r|\n)/s', '', $src);
 								array_push($contentList, array(
@@ -463,7 +463,7 @@ class buildBowl{
 								$currentField = $subField->elseif;
 								$currentSrc = '';
 
-							}elseif( @$subField->if ){
+							}elseif( $subField->if ?? null ){
 								// ネストされた ifフィールド
 								$currentSrc .= '{&'.$subFieldStr.'&}';
 								$tmpSearchResult = $mod->searchEndTag( $src, 'if' );
@@ -497,9 +497,9 @@ class buildBowl{
 
 					continue;
 
-				}elseif( @$field->echo ){
+				}elseif( $field->echo ?? null ){
 					// echo field
-					if( @$this->nameSpace['vars'][$field->echo->ref] && @$this->nameSpace['vars'][$field->echo->ref]['val'] ){
+					if( ($this->nameSpace['vars'][$field->echo->ref] ?? null) && ($this->nameSpace['vars'][$field->echo->ref]['val'] ?? null) ){
 						$rtn .= $this->nameSpace['vars'][$field->echo->ref]['val'];
 					}
 
@@ -645,7 +645,7 @@ class buildBowl{
 	 */
 	private function evaluateIfFieldCond( $ifField ){
 		$boolResult = false;
-		if( @$ifField->cond && is_array($ifField->cond) ){
+		if( ($ifField->cond ?? null) && is_array($ifField->cond) ){
 			// cond の評価
 			// cond に、2次元配列を受け取った場合。
 			// 1次元目は or 条件、2次元目は and 条件で評価する。
@@ -658,7 +658,7 @@ class buildBowl{
 						$tmpValue = trim($matched[2]);
 
 						if( $tmpMethod == 'is_set' ){
-							if( !@$this->nameSpace['varsFinalized'][$tmpValue] || !strlen(trim(''.@$this->nameSpace['varsFinalized'][$tmpValue]['val'])) ){
+							if( !($this->nameSpace['varsFinalized'][$tmpValue] ?? null) || !strlen(trim($this->nameSpace['varsFinalized'][$tmpValue]['val'] ?? '')) ){
 								$condBool = false;
 								break;
 							}
@@ -674,12 +674,12 @@ class buildBowl{
 						$tmpDiff = trim($matched[3]);
 						if( $tmpOpe == '==' ){
 							$condBool = false;
-							if( @$this->nameSpace['varsFinalized'][$tmpValue] && @trim($this->nameSpace['varsFinalized'][$tmpValue]['val']) == trim($tmpDiff) ){
+							if( ($this->nameSpace['varsFinalized'][$tmpValue] ?? null) && trim($this->nameSpace['varsFinalized'][$tmpValue]['val'] ?? '') == trim($tmpDiff) ){
 								$condBool = true;
 								break;
 							}
 						}elseif( $tmpOpe == '!=' ){
-							if( @$this->nameSpace['varsFinalized'][$tmpValue] && @trim($this->nameSpace['varsFinalized'][$tmpValue]['val']) == trim($tmpDiff) ){
+							if( ($this->nameSpace['varsFinalized'][$tmpValue] ?? null) && trim($this->nameSpace['varsFinalized'][$tmpValue]['val'] ?? '') == trim($tmpDiff) ){
 								$condBool = false;
 								break;
 							}
@@ -694,7 +694,7 @@ class buildBowl{
 			}
 		}
 
-		if( @$this->nameSpace['varsFinalized'][$ifField->is_set] && strlen(trim(''.@$this->nameSpace['varsFinalized'][$ifField->is_set]['val'])) ){
+		if( ($this->nameSpace['varsFinalized'][($ifField->is_set ?? null)] ?? null) && strlen(trim($this->nameSpace['varsFinalized'][($ifField->is_set ?? null)]['val'] ?? '')) ){
 			// is_set の評価
 			$boolResult = true;
 		}
@@ -766,12 +766,12 @@ class buildBowl{
 					$simple_html_dom_ret = $simple_html_dom->find('>*');
 
 					$simple_html_dom_ret[0]->{'data-broccoli-instance-path'} = $options['instancePath'];
-					$moduleName = (@$mod->info['name'] ? $mod->info['name'] : $mod->id);
-					if( @$options['subModName'] ){
+					$moduleName = (strlen($mod->info['name'] ?? '') ? $mod->info['name'] : $mod->id);
+					if( $options['subModName'] ?? null ){
 						$moduleName = $options['subModName'];
 						$simple_html_dom_ret[0]->{'data-broccoli-sub-mod-name'} = $options['subModName'];
 					}
-					$simple_html_dom_ret[0]->{'data-broccoli-area-size-detection'} = (@$mod->info['areaSizeDetection'] ? $mod->info['areaSizeDetection'] : 'shallow');
+					$simple_html_dom_ret[0]->{'data-broccoli-area-size-detection'} = (strlen($mod->info['areaSizeDetection'] ?? '') ? $mod->info['areaSizeDetection'] : 'shallow');
 					$simple_html_dom_ret[0]->{'data-broccoli-module-name'} = $moduleName;
 					$d_html = $simple_html_dom->outertext;
 				}
@@ -780,12 +780,12 @@ class buildBowl{
 				$tmp_html = '';
 				$tmp_html .= '<div';
 				$tmp_html .= ' data-broccoli-instance-path="'.htmlspecialchars($options['instancePath']).'"';
-				$moduleName = (@$mod->info['name'] ? $mod->info['name'] : $mod->id);
-				if( @$options['subModName'] ){
+				$moduleName = (strlen($mod->info['name'] ?? '') ? $mod->info['name'] : $mod->id);
+				if( $options['subModName'] ?? null ){
 					$moduleName = $options['subModName'];
 					$tmp_html .= ' data-broccoli-sub-mod-name="'.htmlspecialchars($options['subModName']).'"';
 				}
-				$tmp_html .= ' data-broccoli-area-size-detection="'.htmlspecialchars((@$mod->info['areaSizeDetection'] ? $mod->info['areaSizeDetection'] : 'shallow')).'"';
+				$tmp_html .= ' data-broccoli-area-size-detection="'.htmlspecialchars((strlen($mod->info['areaSizeDetection'] ?? '') ? $mod->info['areaSizeDetection'] : 'shallow')).'"';
 				// $tmp_html .= ' data-broccoli-is-single-root-element="'+(isSingleRootElement?'yes':'no').'"';
 				$tmp_html .= ' data-broccoli-module-name="'.htmlspecialchars($moduleName).'"';
 				$tmp_html .= '>';
@@ -804,7 +804,7 @@ class buildBowl{
 	private function finalize_module_instance_anchor( $d_html, $data ){
 
 		if(is_string($d_html)){
-			if( @$data->anchor ){
+			if( $data->anchor ?? null ){
 				// HTMLをパース
 				$simple_html_dom = str_get_html(
 					$d_html ,
@@ -839,7 +839,7 @@ class buildBowl{
 	private function finalize_module_instance_dec( $d_html, $data ){
 
 		if(is_string($d_html)){
-			if( @$data->dec ){
+			if( $data->dec ?? null ){
 				// HTMLをパース
 				$simple_html_dom = str_get_html(
 					$d_html ,

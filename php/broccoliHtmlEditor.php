@@ -96,22 +96,22 @@ class broccoliHtmlEditor{
 	 */
 	public function init( $options = array() ){
 		$options = (is_array($options) ? $options : array());
-		$options['appMode'] = (@$options['appMode'] ? $options['appMode'] : 'web'); // web | desktop
-		$options['paths_module_template'] = (@$options['paths_module_template'] ? $options['paths_module_template'] : array());
-		$options['documentRoot'] = (@$options['documentRoot'] ? $options['documentRoot'] : '.'); // current directory.
-		$options['pathHtml'] = (@$options['pathHtml'] ? $options['pathHtml'] : null);
-		$options['pathResourceDir'] = (@$options['pathResourceDir'] ? $options['pathResourceDir'] : null);
-		$options['realpathDataDir'] = (@$options['realpathDataDir'] ? $options['realpathDataDir'] : null);
-		$options['bindTemplate'] = (@$options['bindTemplate'] ? $options['bindTemplate'] : function($htmls){
+		$options['appMode'] = $options['appMode'] ?? 'web'; // web | desktop
+		$options['paths_module_template'] = $options['paths_module_template'] ?? array();
+		$options['documentRoot'] = $options['documentRoot'] ?? '.'; // current directory.
+		$options['pathHtml'] = $options['pathHtml'] ?? null;
+		$options['pathResourceDir'] = $options['pathResourceDir'] ?? null;
+		$options['realpathDataDir'] = $options['realpathDataDir'] ?? null;
+		$options['bindTemplate'] = $options['bindTemplate'] ?? function($htmls){
 			$fin = '';
 			foreach($htmls as $i=>$row){
 				$fin .= $htmls[$i];
 			}
 			return $fin;
-		});
-		$options['log'] = (@$options['log'] ? $options['log'] : function($msg){
-		});
-		$options['userStorage'] = (@$options['userStorage'] ? $options['userStorage'] : null);
+		};
+		$options['log'] = $options['log'] ?? function($msg){
+		};
+		$options['userStorage'] = $options['userStorage'] ?? null;
 		if( !$options['pathHtml'] || !$options['pathResourceDir'] || !$options['realpathDataDir'] ){
 			// 必須項目
 			trigger_error('[ERROR] $options[\'pathHtml\'], $options[\'pathResourceDir\'], and $options[\'realpathDataDir\'] are required.');
@@ -223,7 +223,7 @@ class broccoliHtmlEditor{
 	 * @return {Object}           inputフィールドの定義オブジェクト
 	 */
 	public function getFieldDefinition($fieldType){
-		if( @$this->fieldDefinitions[$fieldType] ){
+		if( $this->fieldDefinitions[$fieldType] ?? null ){
 			// 定義済みのフィールドを返す
 			$fieldDefinition = $this->fieldDefinitions[$fieldType];
 		}else{
@@ -280,7 +280,7 @@ class broccoliHtmlEditor{
 		if($parsedModuleId === false){
 			return false;
 		}
-		if(!@$this->paths_module_template[$parsedModuleId['package']]){
+		if(!($this->paths_module_template[$parsedModuleId['package']] ?? null)){
 			return false;
 		}
 		$realpath = $this->fs->get_realpath($this->paths_module_template[$parsedModuleId['package']]);
@@ -348,11 +348,11 @@ class broccoliHtmlEditor{
 
 			$rtn[$idx] = array(
 				'packageId' => $idx,
-				'packageName' => (@$infoJson->name ? $infoJson->name : $idx),
+				'packageName' => (($infoJson->name ?? null) ? $infoJson->name : $idx),
 				'realpath' => $realpath,
 				'infoJson' => $infoJson,
-				'hidden' => (@$infoJson->hidden ? true : false),
-				'deprecated' => (@$infoJson->deprecated ? true : false),
+				'hidden' => (($infoJson->hidden ?? null) ? true : false),
+				'deprecated' => (($infoJson->deprecated ?? null) ? true : false),
 			);
 			$modList = $this->getModuleListByPackageId($idx);
 			$rtn[$idx]['categories'] = $modList['categories'];
@@ -425,7 +425,7 @@ class broccoliHtmlEditor{
 		// モジュールカテゴリをリスト化
 		$fileList = $this->fs->ls($rtn['realpath']);
 		$rtn['categories'] = array();
-		$fileList = $sortModuleDirectoryNames($fileList, @$rtn['packageInfo']->sort);
+		$fileList = $sortModuleDirectoryNames($fileList, $rtn['packageInfo']->sort ?? null);
 		if( !$fileList ){
 			$fileList = array();
 		}
@@ -446,10 +446,10 @@ class broccoliHtmlEditor{
 				if( !property_exists($rtn['categories'][$row]['categoryInfo'], 'name') ){
 					$rtn['categories'][$row]['categoryInfo']->name = null;
 				}
-				$rtn['categories'][$row]['categoryName'] = (@$rtn['categories'][$row]['categoryInfo']->name ? $rtn['categories'][$row]['categoryInfo']->name : $row);
+				$rtn['categories'][$row]['categoryName'] = (($rtn['categories'][$row]['categoryInfo']->name ?? null) ? $rtn['categories'][$row]['categoryInfo']->name : $row);
 				$rtn['categories'][$row]['realpath'] = $realpath;
-				$rtn['categories'][$row]['hidden'] = (@$rtn['categories'][$row]['categoryInfo']->hidden ? true : false);
-				$rtn['categories'][$row]['deprecated'] = (@$rtn['categories'][$row]['categoryInfo']->deprecated ? true : false);
+				$rtn['categories'][$row]['hidden'] = (($rtn['categories'][$row]['categoryInfo']->hidden ?? null) ? true : false);
+				$rtn['categories'][$row]['deprecated'] = (($rtn['categories'][$row]['categoryInfo']->deprecated ?? null) ? true : false);
 
 				// Multi Language
 				$rtn['categories'][$row]['categoryInfo']->name = $fncFindLang( $lb, 'name', $rtn['categories'][$row]['categoryInfo']->name );
@@ -461,7 +461,7 @@ class broccoliHtmlEditor{
 
 		foreach($rtn['categories'] as $idx=>$row){
 			$fileList = $this->fs->ls( $rtn['categories'][$idx]['realpath'] );
-			$fileList = $sortModuleDirectoryNames($fileList, @$row['categoryInfo']->sort);
+			$fileList = $sortModuleDirectoryNames($fileList, $row['categoryInfo']->sort ?? null);
 
 			foreach($fileList as $idx2=>$row2){
 				$realpath = $this->fs->normalize_path($this->fs->get_realpath($rtn['categories'][$idx]['realpath'].'/'.$row2.'/'));
@@ -489,12 +489,12 @@ class broccoliHtmlEditor{
 				if( !property_exists( $rtn['categories'][$idx]['modules'][$row2]['moduleInfo'], 'name' ) ){
 					$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->name = null;
 				}
-				$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->enabledParents = $this->normalizeEnabledParentsOrChildren(@$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->enabledParents, $moduleId);
-				if( is_string(@$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->enabledBowls)  ){
-					$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->enabledBowls = array($rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->enabledBowls);
+				$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->enabledParents = $this->normalizeEnabledParentsOrChildren($rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->enabledParents ?? null, $moduleId);
+				if( is_string($rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->enabledBowls ?? null) ){
+					$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->enabledBowls = array($rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->enabledBowls ?? null);
 				}
-				$rtn['categories'][$idx]['modules'][$row2]['hidden'] = (@$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->hidden ? $rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->hidden : false);
-				$rtn['categories'][$idx]['modules'][$row2]['deprecated'] = (@$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->deprecated ? $rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->deprecated : false);
+				$rtn['categories'][$idx]['modules'][$row2]['hidden'] = $rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->hidden ?? false;
+				$rtn['categories'][$idx]['modules'][$row2]['deprecated'] = $rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->deprecated ?? false;
 
 				// moduleInternalId
 				$rtn['categories'][$idx]['modules'][$row2]['moduleInternalId'] = $moduleId;
@@ -509,7 +509,7 @@ class broccoliHtmlEditor{
 				}
 
 				// moduleName
-				$rtn['categories'][$idx]['modules'][$row2]['moduleName'] = (@$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->name ? $rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->name : $moduleId);
+				$rtn['categories'][$idx]['modules'][$row2]['moduleName'] = (strlen($rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->name ?? '') ? $rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->name : $moduleId);
 
 				// realpath
 				$rtn['categories'][$idx]['modules'][$row2]['realpath'] = $realpath;
@@ -532,7 +532,7 @@ class broccoliHtmlEditor{
 				$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->name = $fncFindLang( $lb, 'name', $rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->name );
 
 				$modInstance = $this->getModule($moduleId, null);
-				$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->interface = (@$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->interface ? $rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->interface : $modInstance->fields());
+				$rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->interface = $rtn['categories'][$idx]['modules'][$row2]['moduleInfo']->interface ?? $modInstance->fields();
 
 			}
 

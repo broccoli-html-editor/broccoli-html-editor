@@ -61,7 +61,7 @@ class classModule{
 		$this->isSingleRootElement = false;
 		$this->isClipModule = false;
 
-		if( !$this->isSystemModule && !is_string(@$options['src']) && !is_string($this->realpath) ){
+		if( !$this->isSystemModule && !is_string($options['src'] ?? null) && !is_string($this->realpath) ){
 			$moduleId = '_sys/unknown';
 			$this->isSystemModule = true;
 		}
@@ -139,7 +139,7 @@ class classModule{
 			return $this->parseTpl( '{&{"input":{"type":"html","name":"main","label":"HTML"}}&}', $this );
 		}elseif( $this->id == '_sys/image' ){
 			return $this->parseTpl( '<img src="{&{"input":{"type":"image","name":"src","label":"'.$this->broccoli->lb()->get('system_module_label.image').'"}}&}" alt="{&{"input":{"type":"html_attr_text","name":"alt","label":"'.$this->broccoli->lb()->get('system_module_label.image_alt_text').'","rows":1}}&}" />', $this );
-		}elseif( is_string(@$this->options['src']) ){
+		}elseif( is_string($this->options['src'] ?? null) ){
 			return $this->parseTpl( $this->options['src'], $this->options['topThis'] );
 		}elseif( $this->topThis->templateType != 'broccoli' && is_string($this->subModName) ){
 			return $this->parseTpl( null, $this->options['topThis'] );
@@ -239,35 +239,35 @@ class classModule{
 			// end系：無視
 			return $this->parseBroccoliTemplate( $src, $_topThis );
 
-		}elseif( @$field->input ){
-			@$this->fields->{$field->input->name} = $field->input;
-			@$this->fields->{$field->input->name}->fieldType = 'input';
-			@$this->fields->{$field->input->name}->description = $this->normalizeDescription(@$this->fields->{$field->input->name}->description);
-			@$this->fields->{$field->input->name} = $this->applyFieldConfig( @$this->fields->{$field->input->name} );
+		}elseif( $field->input ?? null ){
+			$this->fields->{$field->input->name} = $field->input;
+			$this->fields->{$field->input->name}->fieldType = 'input';
+			$this->fields->{$field->input->name}->description = $this->normalizeDescription($this->fields->{$field->input->name}->description ?? null);
+			$this->fields->{$field->input->name} = $this->applyFieldConfig( $this->fields->{$field->input->name} ?? null );
 
 			return $this->parseBroccoliTemplate( $src, $_topThis );
-		}elseif( @$field->module ){
-			@$this->fields->{$field->module->name} = $field->module;
-			@$this->fields->{$field->module->name}->fieldType = 'module';
-			@$this->fields->{$field->module->name}->description = $this->normalizeDescription(@$this->fields->{$field->module->name}->description);
+		}elseif( $field->module ?? null ){
+			$this->fields->{$field->module->name} = $field->module;
+			$this->fields->{$field->module->name}->fieldType = 'module';
+			$this->fields->{$field->module->name}->description = $this->normalizeDescription($this->fields->{$field->module->name}->description ?? null);
 
-			@$this->fields->{$field->module->name}->enabledChildren = $this->broccoli->normalizeEnabledParentsOrChildren(@$this->fields->{$field->module->name}->enabledChildren, $this->id);
+			$this->fields->{$field->module->name}->enabledChildren = $this->broccoli->normalizeEnabledParentsOrChildren($this->fields->{$field->module->name}->enabledChildren ?? null, $this->id);
 
 			return $this->parseBroccoliTemplate( $src, $_topThis );
-		}elseif( @$field->loop ){
-			@$this->fields->{$field->loop->name} = $field->loop;
-			@$this->fields->{$field->loop->name}->fieldType = 'loop';
-			@$this->fields->{$field->loop->name}->description = $this->normalizeDescription(@$this->fields->{$field->loop->name}->description);
+		}elseif( $field->loop ?? null ){
+			$this->fields->{$field->loop->name} = $field->loop;
+			$this->fields->{$field->loop->name}->fieldType = 'loop';
+			$this->fields->{$field->loop->name}->description = $this->normalizeDescription($this->fields->{$field->loop->name}->description ?? null);
 
 			$tmpSearchResult = $this->searchEndTag( $src, 'loop' );
 			$src = $tmpSearchResult['nextSrc'];
 			if( !is_object($this->subModule) ){
 				$this->subModule = json_decode('{}');
 			}
-			@$_topThis->subModule->{$field->loop->name} = $this->broccoli->createModuleInstance( $this->id, array(
+			$_topThis->subModule->{$field->loop->name} = $this->broccoli->createModuleInstance( $this->id, array(
 				"src" => $tmpSearchResult['content'],
 				"subModName" => $field->loop->name,
-				"modName" => ($field->loop->label ? $field->loop->label : $field->loop->name),
+				"modName" => (($field->loop->label ?? null) ? $field->loop->label : $field->loop->name),
 				"topThis" => $_topThis
 			));
 			$_topThis->subModule->{$field->loop->name}->init();
@@ -350,27 +350,27 @@ class classModule{
 				if( !strlen(''.$this->info['name']) && property_exists($tmpJson, 'name') ){
 					$this->info['name'] = $tmpJson->name;
 				}
-				if( @$tmpJson->areaSizeDetection ){
+				if( $tmpJson->areaSizeDetection ?? null ){
 					$this->info['areaSizeDetection'] = $tmpJson->areaSizeDetection;
 				}
-				$this->info['enabledParents'] = $this->broccoli->normalizeEnabledParentsOrChildren(@$tmpJson->enabledParents, $this->id);
-				if( is_string(@$tmpJson->enabledBowls) ){
+				$this->info['enabledParents'] = $this->broccoli->normalizeEnabledParentsOrChildren($tmpJson->enabledParents ?? null, $this->id);
+				if( is_string($tmpJson->enabledBowls ?? null) ){
 					$this->info['enabledBowls'] = [$tmpJson->enabledBowls];
-				}elseif( is_object(@$tmpJson->enabledBowls) || is_array(@$tmpJson->enabledBowls) ){
+				}elseif( is_object($tmpJson->enabledBowls ?? null) || is_array($tmpJson->enabledBowls ?? null) ){
 					$this->info['enabledBowls'] = $tmpJson->enabledBowls;
 				}
 
 
-				if( @$tmpJson->interface ){
-					if( @$tmpJson->interface->fields && !$this->isSubModule ){
+				if( $tmpJson->interface ?? null ){
+					if( ($tmpJson->interface->fields ?? null) && !$this->isSubModule ){
 						if( !$this->fields ){
 							$this->fields = json_decode('{}');
 						}
 						foreach( $tmpJson->interface->fields as $tmpIdx=>$tmpRow  ){
-							@$this->fields->{$tmpIdx} = $tmpRow;
+							$this->fields->{$tmpIdx} = $tmpRow;
 
 							// name属性を自動補完
-							@$this->fields->{$tmpIdx}->name = $tmpIdx;
+							$this->fields->{$tmpIdx}->name = $tmpIdx;
 
 							// Multi Language
 							if( !property_exists($this->fields->{$tmpIdx}, 'label') ){
@@ -382,20 +382,20 @@ class classModule{
 							}
 							$this->fields->{$tmpIdx}->description = $this->findLang('fields.'.$tmpIdx.':description', $this->fields->{$tmpIdx}->description);
 
-							@$this->fields->{$tmpIdx} = $this->applyFieldConfig( @$this->fields->{$tmpIdx} );
+							$this->fields->{$tmpIdx} = $this->applyFieldConfig( $this->fields->{$tmpIdx} ?? null );
 						}
 					}
-					if( @$tmpJson->interface->subModule ){
+					if( $tmpJson->interface->subModule ?? null ){
 						// $this->subModule = $tmpJson->interface->subModule;
 						foreach( $tmpJson->interface->subModule as $tmpIdx=>$tmpRow  ){
-							@$this->subModule->{$tmpIdx} = json_decode(json_encode($tmpRow));
-							@$this->subModule->{$tmpIdx}->fields = json_decode('{}');
+							$this->subModule->{$tmpIdx} = json_decode(json_encode($tmpRow));
+							$this->subModule->{$tmpIdx}->fields = json_decode('{}');
 							if( property_exists($tmpRow, 'fields') && is_object($tmpRow->fields) ){
 								foreach( $tmpRow->fields as $tmpIdx2=>$tmpRow2 ){
-									@$this->subModule->{$tmpIdx}->fields->{$tmpIdx2} = $tmpRow2;
+									$this->subModule->{$tmpIdx}->fields->{$tmpIdx2} = $tmpRow2;
 
 									// name属性を自動補完
-									@$this->subModule->{$tmpIdx}->fields->{$tmpIdx2}->name = $tmpIdx2;
+									$this->subModule->{$tmpIdx}->fields->{$tmpIdx2}->name = $tmpIdx2;
 
 									// Multi Language
 									if( !property_exists($this->subModule->{$tmpIdx}->fields->{$tmpIdx2}, 'label') ){
@@ -407,7 +407,7 @@ class classModule{
 									}
 									$this->subModule->{$tmpIdx}->fields->{$tmpIdx2}->description = $this->findLang('subModule.'.$tmpIdx.'.'.$tmpIdx2.':description', $this->subModule->{$tmpIdx}->fields->{$tmpIdx2}->description);
 
-									@$this->subModule->{$tmpIdx}->fields->{$tmpIdx2} = $this->applyFieldConfig( @$this->subModule->{$tmpIdx}->fields->{$tmpIdx2} );
+									$this->subModule->{$tmpIdx}->fields->{$tmpIdx2} = $this->applyFieldConfig( $this->subModule->{$tmpIdx}->fields->{$tmpIdx2} ?? null );
 								}
 							}
 						}
@@ -476,16 +476,16 @@ class classModule{
 			}
 
 			foreach( $this->fields as $tmpFieldName=>$row ){
-				$row->description = $this->normalizeDescription(@$row->description);
-				if( @$this->fields->{$tmpFieldName}->fieldType == 'module' ){
-					@$this->fields->{$tmpFieldName}->enabledChildren = $this->broccoli->normalizeEnabledParentsOrChildren(@$this->fields->{$tmpFieldName}->enabledChildren, $this->id);
+				$row->description = $this->normalizeDescription($row->description ?? null);
+				if( ($this->fields->{$tmpFieldName}->fieldType ?? null) == 'module' ){
+					$this->fields->{$tmpFieldName}->enabledChildren = $this->broccoli->normalizeEnabledParentsOrChildren($this->fields->{$tmpFieldName}->enabledChildren ?? null, $this->id);
 				}
 
-				if( @$this->fields->{$tmpFieldName}->fieldType == 'loop' ){
+				if( ($this->fields->{$tmpFieldName}->fieldType ?? null) == 'loop' ){
 					if( !is_object($this->subModule) ){
 						$this->subModule = json_decode('{}');
 					}
-					@$_topThis->subModule->{$tmpFieldName} = $this->broccoli->createModuleInstance( $this->id, array(
+					$_topThis->subModule->{$tmpFieldName} = $this->broccoli->createModuleInstance( $this->id, array(
 						"src" => '',
 						"subModName" => $tmpFieldName,
 						"modName" => (property_exists($this->fields->{$tmpFieldName}, 'label') && $this->fields->{$tmpFieldName}->label ? $this->fields->{$tmpFieldName}->label : $this->fields->{$tmpFieldName}->name),

@@ -364,6 +364,10 @@ $ composer test
 
 ## 更新履歴 - Change log
 
+### broccoli-html-editor v1.0.5 (リリース日未定)
+
+- 内部コードの細かい修正。
+
 ### broccoli-html-editor v1.0.4 (2022年12月28日)
 
 - px2style のモーダルが開いている間、 ESCキー操作のイベント処理を無視するようにした。
