@@ -1013,6 +1013,7 @@ class simple_html_dom
         'b'=>array('b'=>1),
 		'option'=>array('option'=>1),
     );
+    private $optional_closing_array = null;
 
     function __construct($str=null, $lowercase=true, $forceTagsClosed=true, $target_charset=DEFAULT_TARGET_CHARSET, $stripRN=true, $defaultBRText=DEFAULT_BR_TEXT, $defaultSpanText=DEFAULT_SPAN_TEXT)
     {
