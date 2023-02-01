@@ -362,7 +362,6 @@ module.exports = function(broccoli){
 					'border-radius': 5,
 					'text-align': 'center',
 				})
-				.addClass('broccoli__user-selectable')
 				.on('paste', function(e){
 					var items = e.originalEvent.clipboardData.items;
 					// console.log(items);
