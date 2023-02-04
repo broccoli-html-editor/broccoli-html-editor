@@ -9,15 +9,16 @@
 	line-height: 1.7;
 
 	pre {
-		overflow: auto;
-		border: 1px solid #999;
-		border-radius: 5px;
-		padding: 13px 15px;
-		background-color: #f9f9f9;
-		color: #333;
-		line-height: 1.4;
 		> code {
+			line-height: 1.4;
 			display: block;
+			overflow: auto;
+			background-color: #f9f7f5;
+			border: 1px solid #ddd;
+			border-radius: 5px;
+			padding: 10px 15px;
+			color: #333;
+			box-sizing: border-box;
 		}
 	}
 

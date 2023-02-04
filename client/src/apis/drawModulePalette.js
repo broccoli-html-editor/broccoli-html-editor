@@ -236,6 +236,7 @@ module.exports = function(broccoli, targetElm, callback){
 
 						broccoli.px2style.modal({
 							'title': result.name || moduleId,
+							'width': 780,
 							'body': $html,
 						});
 
@@ -279,7 +280,7 @@ module.exports = function(broccoli, targetElm, callback){
 		var $elm = $(elm);
 		var html = '';
 		var $img = $elm.find('img').eq(0);
-		html += '<article class="broccoli--module-info-content">';
+		html += '<article class="broccoli broccoli--module-info-content">';
 		if( $img.length ){
 			html += '<div class="broccoli--module-info-content-thumb"><img src="'+$img.attr('src')+'" /></div>';
 		}
