@@ -213,10 +213,6 @@ module.exports = function(broccoli, targetElm, callback){
 						'moduleId': moduleId
 					} ,
 					function(result){
-						// console.log('------ moduleInfo --', result);
-
-						var $heading = $('<span>')
-							.text( result.name || moduleId );
 
 						var $pics = $html.find('.broccoli--module-info-content-pics');
 						var pics = result.pics;
@@ -224,11 +220,9 @@ module.exports = function(broccoli, targetElm, callback){
 							$pics.remove();
 						}else{
 							var html = '';
-							// html += '<hr />';
 							html += '<p>参考イメージ</p>';
 							html += '<ul>';
 							for( var idx in pics ){
-								// console.log(pics[idx]);
 								html += '<li><img src="'+ pics[idx] +'" /></li>';
 							}
 							html += '</ul>';
@@ -241,29 +235,13 @@ module.exports = function(broccoli, targetElm, callback){
 						}
 
 						broccoli.px2style.modal({
-							'title': $heading,
+							'title': result.name || moduleId,
 							'body': $html,
 						});
 
 					}
 				);
 			})
-			// .on('touchstart', function(e){
-			// 	// タッチデバイス向けの処理
-			// 	e.preventDefault();
-			// 	e.stopPropagation();
-			// 	clearTimeout(timerTouchStart);
-			// 	if( isTouchStartHold ){
-			// 		$(this).dblclick();
-			// 		return;
-			// 	}
-			// 	isTouchStartHold = true;
-			// 	timerTouchStart = setTimeout(function(){
-			// 		isTouchStartHold = false;
-			// 	}, 250);
-			// 	return;
-			// })
-			// .tooltip({'placement':'left'})
 		;
 		return $button;
 	}
@@ -360,8 +338,6 @@ module.exports = function(broccoli, targetElm, callback){
 		if( options.elm ){
 			var $elm = $(options.elm);
 			var elmOffset = $elm.offset();
-			// console.log($elm.offset().top);
-			// console.log($elm.offset().left);
 			var left = elmOffset.left - $preview.outerWidth() - 10;
 			var top = elmOffset.top - 10;
 			if( top < 10 ){ top = 10; }
