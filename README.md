@@ -364,6 +364,10 @@ $ composer test
 
 ## 更新履歴 - Change log
 
+### broccoli-html-editor v1.0.5 (リリース日未定)
+
+- 細かいバグ修正。
+
 ### broccoli-html-editor v1.0.5 (2023年2月5日)
 
 - モジュールの説明ダイアログに、モジュール名が表示されない不具合を修正した。
