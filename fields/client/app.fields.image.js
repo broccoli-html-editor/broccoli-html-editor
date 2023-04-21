@@ -248,6 +248,12 @@ module.exports = function(broccoli){
 				var fileExt = getExtension( fileInfo.name );
 				it79.fnc({}, [
 					function(it){
+						if( !mod.format ){
+							// formatオプションの指定がなければ、
+							// リサイズを通さずそのまま使う
+							it.next();
+							return;
+						}
 						imageResizer.resizeImage(
 							dataUri,
 							mod.format || {},
