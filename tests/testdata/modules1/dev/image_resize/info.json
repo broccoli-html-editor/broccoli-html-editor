@@ -1,0 +1,16 @@
+{
+    "name": "Image Resizer",
+    "interface": {
+        "fields": {
+            "image": {
+                "fieldType": "input",
+                "type": "image",
+                "label": "Image",
+                "format": {
+                    "maxWidth": 160,
+                    "mimeType": "image/webp"
+                }
+            }
+        }
+    }
+}

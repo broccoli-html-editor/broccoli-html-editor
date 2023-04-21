@@ -25,7 +25,6 @@ module.exports = function(broccoli){
 		return ext;
 	}
 
-
 	/**
 	 * データを正規化する
 	 */
@@ -78,7 +77,6 @@ module.exports = function(broccoli){
 							res = resDb[fieldData.resKey];
 							if( res.type.match(/^image\//) ){
 								imagePath = 'data:'+res.type+';base64,' + '{broccoli-html-editor-resource-baser64:{'+fieldData.resKey+'}}';
-								// var imagePath = 'data:'+res.type+';base64,' + res.base64;
 
 								if( !imagePath || !res.base64 ){
 									// ↓ ダミーの Sample Image
@@ -141,7 +139,7 @@ module.exports = function(broccoli){
 		if( typeof(data.webUrl) !== typeof('') ){
 			data.webUrl = '';
 		}
-		// if( typeof(data.original) !== typeof({}) ){ data.original = {}; }
+
 		var $img = $('<img>');
 		var $imgNotImage = $('<div>').css({
 			'padding': '3em',
@@ -246,26 +244,29 @@ module.exports = function(broccoli){
 			}
 			// mod.filename
 			readSelectedLocalFile(fileInfo, function(dataUri){
+				var fileSize = fileInfo.size;
+				var fileExt = getExtension( fileInfo.name );
 				it79.fnc({}, [
 					function(it){
 						imageResizer.resizeImage(
 							dataUri,
-							{
-								mimeType: fileInfo.type,
-							},
+							mod.format || {},
 							function(result){
-								dataUri = result;
+								dataUri = result.dataUri;
+								fileSize = result.size;
+								fileExt = result.ext;
 								it.next();
 							}
 						);
 					},
 					function(it){
-						$displayExtension.text('.'+getExtension( fileInfo.name ));
+						$displayExtension.text('.'+fileExt);
+						var mimeType = (mod.format && mod.format.mimeType ? mod.format.mimeType : fileInfo.type);
 						setImagePreview({
 							'src': dataUri,
-							'size': fileInfo.size,
-							'ext': getExtension( fileInfo.name ),
-							'mimeType': fileInfo.type,
+							'size': fileSize,
+							'ext': fileExt,
+							'mimeType': mimeType,
 							'base64': (function(dataUri){
 								dataUri = dataUri.replace(new RegExp('^data\\:[^\\;]*\\;base64\\,'), '');
 								return dataUri;
@@ -309,7 +310,6 @@ module.exports = function(broccoli){
 		}
 
 		_resMgr.getResource( data.resKey, function(res){
-			// console.log(res);
 			if(res.ext){
 				$displayExtension.text( '.'+res.ext );
 			}
@@ -383,10 +383,8 @@ module.exports = function(broccoli){
 				})
 				.on('paste', function(e){
 					var items = e.originalEvent.clipboardData.items;
-					// console.log(items);
 					for (var i = 0 ; i < items.length ; i++) {
 						var item = items[i];
-						// console.log(item);
 						if(item.type.indexOf("image") != -1){
 							var file = item.getAsFile();
 							file.name = file.name||'clipboard.'+(function(type){
@@ -397,7 +395,6 @@ module.exports = function(broccoli){
 								if(type.match(/svg/i)){return 'svg';}
 								return 'txt';
 							})(file.type);
-							// console.log(file);
 							applyFile(file);
 						}
 					}
@@ -437,11 +434,9 @@ module.exports = function(broccoli){
 					$(this).css({'background': '#fff'});
 				})
 				.on('dragover', function(e){
-					// console.log(123478987654.123456);
 					e.stopPropagation();
 					e.preventDefault();
 					$(this).css({'background': '#eee'});
-					// console.log(event);
 				})
 				.on('drop', function(e){
 					e.stopPropagation();
@@ -473,7 +468,6 @@ module.exports = function(broccoli){
 							})
 							.css({'display': 'none'})
 							.on('change', function(e){
-								// console.log(e.target.files);
 								var fileInfo = e.target.files[0];
 								var realpathSelected = $(this).val();
 
@@ -544,7 +538,6 @@ module.exports = function(broccoli){
 										'mimeType': result.responseHeaders['content-type'],
 										'base64': (function(dataUri){
 											dataUri = dataUri.replace(new RegExp('^data\\:[^\\;]*\\;base64\\,'), '');
-											// console.log(dataUri);
 											return dataUri;
 										})(dataUri),
 									});
@@ -638,8 +631,7 @@ module.exports = function(broccoli){
 			callback();
 		}); });
 		return;
-
-	} // this.mkEditor()
+	}
 
 	/**
 	 * データを複製する (Client Side)
@@ -752,7 +744,6 @@ module.exports = function(broccoli){
 				var filesize = Number($img.attr('data-size'));
 				nH = $img.get(0).naturalHeight;
 				nW = $img.get(0).naturalWidth;
-				// console.log(nH, nW, filesize);
 
 				if( rulesMaxHeight && nH > rulesMaxHeight ){
 					errorMsgs.push('高さが '+rulesMaxHeight+'px より小さい画像を選択してください。');
@@ -822,7 +813,7 @@ module.exports = function(broccoli){
 	 */
 	this.saveEditorContent = function( elm, data, mod, callback, options ){
 		options = options || {};
-		options.message = options.message || function(msg){};//ユーザーへのメッセージテキストを送信
+		options.message = options.message || function(msg){}; // ユーザーへのメッセージテキストを送信
 
 		var resInfo;
 		var $dom = $(elm);
@@ -843,16 +834,11 @@ module.exports = function(broccoli){
 					return;
 				} ,
 				function(it1, data){
-					// console.log('saving image field data.');
 					options.message( broccoli.lb.get('ui_message.initializing_resource_storage') );
 					_resMgr.getResource(data.resKey, function(result){
-						// console.log(result);
 						if( result === false ){
-							// console.log('result is false');
 							_resMgr.addResource(function(newResKey){
-								// console.log('new Resource Key is: '+newResKey);
 								data.resKey = newResKey;
-								// console.log(data.resKey);
 								it1.next(data);
 							});
 							return;
@@ -864,7 +850,6 @@ module.exports = function(broccoli){
 				function(it1, data){
 					options.message( broccoli.lb.get('ui_message.initializing_resource_storage') + ' '+data.resKey);
 					_resMgr.getResource(data.resKey, function(res){
-						// console.log(res);
 						resInfo = res;
 						it1.next(data);
 					});
@@ -906,6 +891,5 @@ module.exports = function(broccoli){
 			]
 		);
 		return;
-	}// this.saveEditorContent()
-
+	}
 }

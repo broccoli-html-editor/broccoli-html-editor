@@ -66,6 +66,19 @@
                         "dec": ""
                     },
                     {
+                        "modId": "testMod1:dev/image_resize",
+                        "fields": {
+                            "image": {
+                                "resKey": "45aac1d72dea717a7308d9672787fdc2",
+                                "path": "./index_files/resources/resize_sample.webp",
+                                "resType": "",
+                                "webUrl": ""
+                            }
+                        },
+                        "anchor": "",
+                        "dec": ""
+                    },
+                    {
                         "modId": "testMod1:units/cols2",
                         "fields": {
                             "column1": [

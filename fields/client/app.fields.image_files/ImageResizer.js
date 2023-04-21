@@ -9,8 +9,8 @@ module.exports = function(){
 	this.resizeImage = function(imgData, conditions, callback) {
 		conditions = conditions || {};
 		conditions.mimeType = conditions.mimeType || "image/png";
-		conditions.maxWidth = conditions.maxWidth || 160;
-		conditions.maxHeight = conditions.maxHeight || 240;
+		conditions.maxWidth = conditions.maxWidth || 1600;
+		conditions.maxHeight = conditions.maxHeight || 2400;
 		callback = callback || function(){};
 
 		const canvas = document.createElement('canvas');
@@ -21,8 +21,28 @@ module.exports = function(){
 			var calcedImageSize = calcResizedWidthHeight(img.width, img.height, conditions);
 			canvas.width = calcedImageSize.w;
 			canvas.height = calcedImageSize.h;
+
+			// img要素をcanvasに転写する
 			ctx.drawImage(img, 0, 0, calcedImageSize.w, calcedImageSize.h);
-			callback( canvas.toDataURL(conditions.mimeType) );
+
+			var newDataUri = canvas.toDataURL(conditions.mimeType);
+
+			// fetch して リサイズ後の画像容量を取得する
+			fetch( newDataUri )
+				.then( function(res){
+					return res.blob();
+				} )
+				.then( function(blob){
+					callback( {
+						dataUri: newDataUri,
+						size: blob.size,
+						width: calcedImageSize.w,
+						height: calcedImageSize.h,
+						mimeType: conditions.mimeType,
+						ext: mimeTypeToExt(conditions.mimeType),
+					} );
+				} );
+
 		}
 		img.src = imgData;
 
@@ -55,5 +75,26 @@ module.exports = function(){
 		}
 
 		return rtn;
+	}
+
+	/**
+	 * mimeType から 拡張子を得る
+	 */
+	function mimeTypeToExt( mimeType ){
+		switch( mimeType ){
+			case 'image/png':
+				return 'png';
+			case 'image/jpeg':
+			case 'image/jpg':
+			case 'image/jpe':
+				return 'jpg';
+			case 'image/gif':
+				return 'gif';
+			case 'image/webp':
+				return 'webp';
+			case 'image/svg+xml':
+				return 'svg';
+		}
+		return 'unknown';
 	}
 }
