@@ -77,6 +77,7 @@ class fncs_readme{
 					case 'png': $mime = 'image/png'; break;
 					case 'gif': $mime = 'image/gif'; break;
 					case 'jpg': case 'jpeg': case 'jpe': $mime = 'image/jpeg'; break;
+					case 'webp': $mime = 'image/webp'; break;
 					case 'svg': $mime = 'image/svg+xml'; break;
 					// fonts
 					case 'eot': $mime = 'application/vnd.ms-fontobject'; break;

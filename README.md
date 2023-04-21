@@ -364,8 +364,9 @@ $ composer test
 
 ## 更新履歴 - Change log
 
-### broccoli-html-editor v1.0.5 (リリース日未定)
+### broccoli-html-editor v1.0.6 (リリース日未定)
 
+- imageフィールドに、登録した画像が自動的にリサイズされる機能を追加した。
 - 細かいバグ修正。
 
 ### broccoli-html-editor v1.0.5 (2023年2月5日)

@@ -68,6 +68,7 @@
     "sass-loader": "^12.6.0",
     "stream-browserify": "^2.0.2",
     "testcafe": "^1.17.1",
+    "text-loader": "^0.0.1",
     "twig-loader": "^0.5.5",
     "validatorjs": "3.18.1"
   }

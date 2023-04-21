@@ -358,6 +358,7 @@ module.exports = function(broccoli){
 								if(type.match(/png$/i)){return 'png';}
 								if(type.match(/gif$/i)){return 'gif';}
 								if(type.match(/(?:jpeg|jpg|jpe)$/i)){return 'jpg';}
+								if(type.match(/webp$/i)){return 'webp';}
 								if(type.match(/svg/i)){return 'svg';}
 								return 'txt';
 							})(file.type);

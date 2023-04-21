@@ -39,7 +39,8 @@
 	}
 
 	// Fields
-	@import '../../fields/client/app.fields.color';
+	@import '../../fields/client/app.fields.color_files/field_color';
+	@import '../../fields/client/app.fields.image_files/field_image';
 
 
 	// CodeMirror 拡張

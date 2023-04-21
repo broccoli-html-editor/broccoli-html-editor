@@ -528,6 +528,7 @@ module.exports = function(broccoli){
 						case 'image/jpeg':
 						case 'image/png':
 						case 'image/gif':
+						case 'image/webp':
 						case 'image/svg+xml':
 							originalFileFirstname = originalFileFirstname.split(/[^a-zA-Z0-9]/).join('_');
 
@@ -582,6 +583,7 @@ module.exports = function(broccoli){
 					case 'image/jpeg':
 					case 'image/png':
 					case 'image/gif':
+					case 'image/webp':
 					case 'image/svg+xml':
 						reader.readAsDataURL(fileInfo);
 						break;
