@@ -11,6 +11,7 @@ module.exports = function(){
 		conditions.mimeType = conditions.mimeType || "image/png";
 		conditions.maxWidth = conditions.maxWidth || 1600;
 		conditions.maxHeight = conditions.maxHeight || 2400;
+		conditions.quality = conditions.quality || 0.92;
 		callback = callback || function(){};
 
 		const canvas = document.createElement('canvas');
@@ -25,7 +26,7 @@ module.exports = function(){
 			// img要素をcanvasに転写する
 			ctx.drawImage(img, 0, 0, calcedImageSize.w, calcedImageSize.h);
 
-			var newDataUri = canvas.toDataURL(conditions.mimeType);
+			var newDataUri = canvas.toDataURL(conditions.mimeType, conditions.quality);
 
 			// fetch して リサイズ後の画像容量を取得する
 			fetch( newDataUri )

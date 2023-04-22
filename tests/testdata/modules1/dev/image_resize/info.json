@@ -8,7 +8,8 @@
                 "label": "Image",
                 "format": {
                     "maxWidth": 160,
-                    "mimeType": "image/webp"
+                    "mimeType": "image/webp",
+                    "quality": 0.2
                 }
             }
         }
