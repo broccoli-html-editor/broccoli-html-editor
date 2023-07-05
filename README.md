@@ -364,6 +364,10 @@ $ composer test
 
 ## 更新履歴 - Change log
 
+### broccoli-html-editor v1.0.7 (リリース日未定)
+
+- Markdownの処理で、複数の改行が丸められる問題を修正した。
+
 ### broccoli-html-editor v1.0.6 (2023年4月22日)
 
 - imageフィールドに、登録した画像が自動的にリサイズされる機能を追加した。

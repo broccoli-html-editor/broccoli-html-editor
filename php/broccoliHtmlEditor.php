@@ -740,8 +740,8 @@ class broccoliHtmlEditor{
 	 */
 	public function markdown($md, $options = array()){
 		$rtn = \Michelf\MarkdownExtra::defaultTransform($md);
-		$rtn = preg_replace('/(\r\n|\r|\n)+/s', "\n", $rtn);
-		if( !strlen(trim(''.$rtn)) ){
+		$rtn = preg_replace('/(\r\n|\r|\n)/s', "\n", $rtn);
+		if( !strlen(trim($rtn ?? '')) ){
 			$rtn = '';
 		}
 		return $rtn;
