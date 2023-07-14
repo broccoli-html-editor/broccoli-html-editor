@@ -364,7 +364,7 @@ $ composer test
 
 ## 更新履歴 - Change log
 
-### broccoli-html-editor v1.0.7 (リリース日未定)
+### broccoli-html-editor v1.0.7 (2023年7月14日)
 
 - Markdownの処理で、複数の改行が丸められる問題を修正した。
 
