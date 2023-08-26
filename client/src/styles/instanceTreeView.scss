@@ -34,7 +34,7 @@
 		font-size: 85%;
 	}
 
-	[data-broccoli-instance-path]{
+	[data-broccoli-instance-path] {
 		display: table;
 		box-sizing: border-box;
 		width: 100%;
@@ -46,20 +46,20 @@
 		position: relative;
 		left:0; top:0;
 
-		&:nth-child(2){
+		&:nth-child(2) {
 			border-radius: 5px 5px 0 0;
 			border-bottom-width: 0px;
 		}
-		&:last-child{
+		&:last-child {
 			border-bottom-width: 2px;
 			border-radius: 0 0 5px 5px;
 		}
-		&:first-child:last-child{
+		&:first-child:last-child {
 			border-radius: 5px;
 			border-width: 2px;
 		}
 
-		&[data-broccoli-is-appender]{
+		&[data-broccoli-is-appender] {
 			// moduleフィールド の appender
 			@include broccoli--appender();
 			font-size: 11px;
@@ -67,7 +67,7 @@
 			clear: both;
 			white-space: nowrap;
 
-			&[data-broccoli-sub-mod-name]{
+			&[data-broccoli-sub-mod-name] {
 				// loopフィールド の appender
 				padding: 5px 15px;
 				background-color: #F4FFFC;
@@ -81,13 +81,13 @@
 			}
 		}
 
-		&.broccoli__panel__hovered{
+		&.broccoli__panel__hovered {
 			border-style: dotted;
 			border-color: #3871E0;
-			&[data-broccoli-sub-mod-name]{
+			&[data-broccoli-sub-mod-name] {
 				border-color: #189AA3;
 			}
-			>.broccoli--instance-tree-view-fields{
+			>.broccoli--instance-tree-view-fields {
 				// border:1px dotted #eee;
 				background-color: #f9f9f9;
 			}
@@ -99,7 +99,7 @@
 			>.broccoli--instance-tree-view-modulename {
 				color: #3871E0;
 			}
-			&[data-broccoli-sub-mod-name]{
+			&[data-broccoli-sub-mod-name] {
 				border-color: #189AA3;
 				background-color: rgba(24, 154, 163, 0.05);
 				>.broccoli--instance-tree-view-modulename {
@@ -108,7 +108,7 @@
 			}
 		}
 
-		.broccoli--instance-tree-view-fieldname{
+		.broccoli--instance-tree-view-fieldname {
 			display: block;
 			border-left: 0.3em solid #d9d9d9;
 			padding-left: 0.5em;
@@ -116,15 +116,15 @@
 			font-size: 11px;
 		}
 
-		.broccoli--instance-tree-view-fieldpreview{
+		.broccoli--instance-tree-view-fieldpreview {
 			display: block;
 			height: auto;
 			padding: 2px 5px;
 			overflow: hidden;
-			max-height: 100px;
+			max-height: 80vh;
 			line-height: 1;
 
-			*{
+			* {
 				margin: 0;
 				padding: 0;
 				font-size: 9px;
@@ -135,6 +135,9 @@
 				color: #999;
 				border: 0 none;
 				background: transparent none;
+			}
+			img {
+				max-width: 180px;
 			}
 		}
 
