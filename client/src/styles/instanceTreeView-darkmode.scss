@@ -4,14 +4,26 @@
 		border:1px dotted #444;
 		background-color: #333;
 	}
+	&-bowlname{
+		color: #ddd;
+	}
+	&-modulename{
+		color: #ddd;
+	}
+	&-fieldname{
+		color: #ddd;
+	}
 
 	[data-broccoli-instance-path] {
 		border:2px solid #555;
 		background-color: #222;
 
 		&[data-broccoli-is-appender] {
+			// moduleフィールド の appender
+			@include broccoli--appender-darkmode();
+
 			&[data-broccoli-sub-mod-name] {
-				background-color: #455652;
+				background-color: #2a453e;
 				color: #189AA3;
 			}
 		}
