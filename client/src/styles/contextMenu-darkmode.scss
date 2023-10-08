@@ -1,0 +1,16 @@
+.broccoli--contextmenu{
+	background-color: #333;
+	border: 1px solid #666;
+
+	ul{
+		li{
+			a{
+				color: #ddd;
+			}
+			a:hover{
+				color: #eee;
+				background-color: #111;
+			}
+		}
+	}
+}

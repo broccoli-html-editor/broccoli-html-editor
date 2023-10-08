@@ -1,0 +1,53 @@
+.broccoli--instance-tree-view {
+
+	&-fields{
+		border:1px dotted #444;
+		background-color: #333;
+	}
+
+	[data-broccoli-instance-path] {
+		border:2px solid #555;
+		background-color: #222;
+
+		&[data-broccoli-is-appender] {
+			&[data-broccoli-sub-mod-name] {
+				background-color: #455652;
+				color: #189AA3;
+			}
+		}
+
+		&.broccoli__panel__hovered {
+			border-color: #3871E0;
+			&[data-broccoli-sub-mod-name] {
+				border-color: #189AA3;
+			}
+			>.broccoli--instance-tree-view-fields {
+				background-color: #111;
+			}
+		}
+		&.broccoli__panel--selected {
+			border-color: #3871E0;
+			background-color: rgba(56, 113, 224, 0.05);
+			>.broccoli--instance-tree-view-modulename {
+				color: #3871E0;
+			}
+			&[data-broccoli-sub-mod-name] {
+				border-color: #189AA3;
+				background-color: rgba(24, 154, 163, 0.05);
+				>.broccoli--instance-tree-view-modulename {
+					color: #189AA3;
+				}
+			}
+		}
+
+		.broccoli--instance-tree-view-fieldname {
+			border-left: 0.3em solid #222;
+		}
+
+		.broccoli--instance-tree-view-fieldpreview {
+			* {
+				color: #999;
+			}
+		}
+	}
+}

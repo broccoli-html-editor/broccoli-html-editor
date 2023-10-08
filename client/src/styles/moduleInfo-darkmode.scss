@@ -1,0 +1,43 @@
+.broccoli--module-info-preview{
+	background-color: rgba(30%, 30%, 30%, 0.9);
+	border: 5px solid #666;
+}
+.broccoli--module-info-content{
+
+	&-id {
+		color: #666;
+		border-top: 1px dotted #444;
+	}
+	&-thumb {
+		background-color: #111;
+	}
+	&-pics {
+		border-top: 1px solid #bbb;
+		ul {
+			li {
+				img {
+					border:2px solid #666;
+				}
+			}
+		}
+	}
+}
+
+// --------------------------------------
+// README
+.broccoli__module-readme{
+	color: #ddd;
+	h1{
+		color: #666;
+	}
+	h2{
+		color: #fff;
+		border-bottom: 1px solid #ddd;
+	}
+	h3{
+		color: #fff;
+	}
+	h4{
+		color: #fff;
+	}
+}

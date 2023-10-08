@@ -1,0 +1,47 @@
+.broccoli__module-palette {
+	div.broccoli__module-palette-inner {
+		background-color: #000;
+	}
+	ul.broccoli__module-palette-list {
+
+		li { // <- package
+
+			a.broccoli__module-palette__buttongroups {
+				color: #ddd;
+				background-color: #333;
+				&:active,
+				&:focus,
+				&:hover{
+					color: #999;
+				}
+			}
+
+			ul{
+				li{ // <- category
+					a.broccoli__module-palette__buttongroups{
+						color: #ddd;
+						background-color: #222;
+						&:active,
+						&:focus,
+						&:hover{
+							color: #999;
+						}
+					}
+					ul{
+						li{ // <- modoule
+							border-bottom: 1px solid #111;
+						}
+					}
+				}
+			}
+		}
+	}
+	a.broccoli__module-palette__draggablebutton{
+		background-color: #000;
+		color: #fff;
+		&:hover{
+			background-color: #111;
+			color: #ddd;
+		}
+	}
+}

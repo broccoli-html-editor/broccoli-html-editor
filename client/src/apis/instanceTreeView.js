@@ -45,9 +45,6 @@ module.exports = function(broccoli){
 			// console.log(mod);
 			var $ul = $('<ul>')
 				.addClass('broccoli--instance-tree-view-fields')
-				.css({
-					"border":"1px solid #eee"
-				})
 			;
 
 			it79.ary(

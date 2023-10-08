@@ -70,13 +70,13 @@ body {
 		<script src="./../../../client/dist/broccoli.js"></script>
 
 		<!-- darkmode -->
-		<style>
+		<!-- <style>
 			:root {
 				--px2-text-color: #ddd;
 				--px2-background-color: #333;
 			}
 		</style>
-		<link rel="stylesheet" href="./../../../client/dist/themes/darkmode.css"></script>
+		<link rel="stylesheet" href="./../../../client/dist/themes/darkmode.css"></script> -->
 
 		<!-- main.js -->
 		<script src="./index_files/main.js" type="text/javascript"></script>

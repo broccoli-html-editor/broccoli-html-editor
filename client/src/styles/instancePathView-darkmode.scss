@@ -1,0 +1,26 @@
+.broccoli--instance-path-view{
+
+	&-inner{
+		border-top: 1px solid #555;
+		background: #111;
+
+		>ul{
+
+			>li{
+
+				ul.broccoli--instance-path-view-children{
+					background: #333;
+					border: 1px solid #eee;
+
+					li{
+						a{
+							&:hover{
+								background-color: #111;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
