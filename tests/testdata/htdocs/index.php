@@ -67,6 +67,7 @@ body {
 		<script src="./index_files/libs/codemirror/mode/htmlmixed/htmlmixed.js"></script>
 
 		<!-- broccoli -->
+		<link rel="stylesheet" href="./../../../client/dist/broccoli.css" />
 		<script src="./../../../client/dist/broccoli.js"></script>
 
 		<!-- darkmode -->

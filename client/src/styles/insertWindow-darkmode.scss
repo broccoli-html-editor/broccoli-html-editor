@@ -1,0 +1,44 @@
+.broccoli__insert-window {
+	&-list {
+		li{ // <- package
+			a.broccoli__insert-window__buttongroups{
+				color: #ddd;
+				background-color: #333;
+				&:active,
+				&:focus,
+				&:hover{
+					color: #999;
+				}
+			}
+
+			ul{
+				li{ // <- category
+					a.broccoli__insert-window__buttongroups{
+						color: #ddd;
+						background-color: #222;
+						&:active,
+						&:focus,
+						&:hover{
+							color: #999;
+						}
+					}
+					ul{
+						li{ // <- modoule
+							border-bottom: 1px solid #111;
+						}
+					}
+				}
+			}
+		}
+	}
+	.broccoli__insert-window__module{
+		background-color: #000;
+		color: #fff;
+
+		&-selected ,
+		&-selected:hover {
+			background-color: #00a0e6;
+			color: #eee;
+		}
+	}
+}
