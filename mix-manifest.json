@@ -2,5 +2,6 @@
     "/client/dist/broccoli.js": "/client/dist/broccoli.js",
     "/client/dist/broccoli-preview-contents.js": "/client/dist/broccoli-preview-contents.js",
     "/tests/testdata/htdocs/index_files/main.js": "/tests/testdata/htdocs/index_files/main.js",
+    "/client/dist/themes/darkmode.css": "/client/dist/themes/darkmode.css",
     "/client/dist/broccoli.css": "/client/dist/broccoli.css"
 }

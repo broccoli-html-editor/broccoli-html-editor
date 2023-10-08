@@ -1,0 +1,115 @@
+.broccoli__edit-window {
+
+	&-field {
+		border: 1px solid #111;
+		background-color: #333;
+		box-shadow: 0 3px 12px 6px rgba(255, 255, 255, 0.02);
+	}
+	h3 {
+		border-bottom: 1px solid #111;
+		background-color: #333;
+	}
+	.has-error h3 {
+		color: #a94442;
+	}
+	&-field-required {
+		h3::before {
+			color: #f33;
+		}
+	}
+	&-module-readme {
+		&-inner {
+			border: 1px solid #222;
+			background-color: #333;
+		}
+	}
+	&-builtin-fields-switch,
+	&-module-readme-switch {
+		a::before {
+			border-top: 3px solid #aaa;
+			border-right: 3px solid #aaa;
+		}
+	}
+	&-builtin-fields {
+		border: 1px solid #222;
+		background: #333;
+	}
+
+	// モジュールフィールド
+	// ループフィールド
+	&-module-fields {
+		&__instances {
+			ul {
+				li {
+					border-top: 1px solid #111;
+					a {
+						border: 1px solid #000;
+						color: #eee;
+						&:not([data-broccoli-is-appender]):hover {
+							border-color: #3871E0;
+							background-color: #3a3d41;
+
+							&[data-broccoli-sub-mod-name] {
+								border-color: #189AA3;
+								background-color: #3a4341;
+							}
+						}
+					}
+				}
+			}
+
+			[data-broccoli-is-appender]{
+				&[data-broccoli-sub-mod-name] {
+					background-color: #3a4341;
+					color: #189AA3;
+					border-color: rgba(24, 154, 163, 0.5);
+
+					&:hover {
+						border-color: #189AA3;
+					}
+				}
+			}
+		}
+	}
+
+	&-field-preview {
+		*{
+			color: #aaa;
+		}
+	}
+
+	&-sticky-footer {
+		background-color: #9a9a9aab;
+		border: 1px solid #222;
+		box-shadow: 0 3px 12px 6px rgba(255, 255, 255, 0.05);
+	}
+
+	&-btn-close {
+		button {
+			color: #999;
+
+			&::before,
+			&::after {
+				border-bottom: 2px solid #999;
+			}
+			&:hover {
+				// background-color: #111;
+				&::before,
+				&::after {
+					border-bottom: 2px solid #ddd;
+				}
+			}
+		}
+	}
+
+	&-inline-error-message {
+		color: #a94442;
+	}
+
+	&-error-message-box {
+		border: 1px solid #533b3f;
+		color: #a94442;
+		background-color: #554b4b;
+	}
+
+}

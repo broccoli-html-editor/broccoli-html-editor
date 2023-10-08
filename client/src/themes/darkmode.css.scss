@@ -1,0 +1,82 @@
+@charset "utf-8";
+
+// px2style
+@import '../../../node_modules/px2style/dist/themes/darkmode.css';
+
+.broccoli {
+	pre {
+		> code {
+			background-color: #333;
+			border: 1px solid #222;
+			color: #f9f7f5;
+		}
+	}
+
+	// Fields
+	@import '../../../fields/client/app.fields.color_files/field_color';
+	@import '../../../fields/client/app.fields.image_files/field_image';
+
+
+	// CodeMirror 拡張
+	.CodeMirror {
+		border: 1px solid #222;
+	}
+}
+
+// mixin: appender
+@mixin broccoli--appender(){
+	color: #3871E0;
+	background-color: #F5FAFF;
+}
+
+
+// Canvas
+// @import "../styles/canvas";
+
+
+// Instance Path View
+// @import "../styles/instancePathView";
+
+
+// Instance Tree View
+// @import "../styles/instanceTreeView";
+
+
+// Panels
+// @import "../styles/panel";
+
+
+// edit window
+@import "../styles/editWindow-darkmode";
+
+
+// find window
+// @import "../styles/findWindow";
+
+
+// lightbox
+@import "../styles/lightbox-darkmode";
+
+
+// progress
+// @import "../styles/progress";
+
+
+// Module Info, and Readme
+// @import "../styles/moduleInfo";
+
+
+// Module Palette
+// @import "../styles/modulePalette";
+
+
+// Context Menu
+// @import "../styles/contextMenu";
+
+
+// Indicator
+// @import "../styles/indicator";
+
+
+// insert window
+@import "../styles/insertWindow";

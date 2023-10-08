@@ -16,6 +16,10 @@ if( isset($_REQUEST['LANG']) ){
 	--px2-text-color: #333;
 	--px2-background-color: #f9f9f9;
 }
+body {
+	color: var(--px2-text-color);
+	background-color: var(--px2-background-color);
+}
 
 		</style>
 	</head>
@@ -64,6 +68,15 @@ if( isset($_REQUEST['LANG']) ){
 
 		<!-- broccoli -->
 		<script src="./../../../client/dist/broccoli.js"></script>
+
+		<!-- darkmode -->
+		<style>
+			:root {
+				--px2-text-color: #ddd;
+				--px2-background-color: #333;
+			}
+		</style>
+		<link rel="stylesheet" href="./../../../client/dist/themes/darkmode.css"></script>
 
 		<!-- main.js -->
 		<script src="./index_files/main.js" type="text/javascript"></script>

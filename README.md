@@ -364,6 +364,10 @@ $ composer test
 
 ## 更新履歴 - Change log
 
+### broccoli-html-editor v1.0.9 (リリース日未定)
+
+- ダークモード用のスタイルをバンドルした。
+
 ### broccoli-html-editor v1.0.8 (2023年8月29日)
 
 - インスタンスツリービューのスタイリングの問題を修正。

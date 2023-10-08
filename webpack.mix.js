@@ -54,6 +54,7 @@ mix
 	.js('client/src/broccoli.js', 'client/dist/')
 	.js('client/src/broccoli-preview-contents.js', 'client/dist/')
 	.sass('client/src/broccoli.css.scss', 'client/dist/broccoli.css')
+	.sass('client/src/themes/darkmode.css.scss', 'client/dist/themes/darkmode.css')
 
 	// --------------------------------------
 	// DevScripts
