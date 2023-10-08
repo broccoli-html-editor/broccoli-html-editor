@@ -94,7 +94,7 @@ APIの一覧は[こちらを参照](docs/api_server.md)ください。
 
 #### PHPの要件
 
-- PHP 5.4 以上
+- PHP 7.3 以上
   - [mbstring](https://www.php.net/manual/ja/book.mbstring.php) PHP Extension
   - [JSON](https://www.php.net/manual/ja/book.json.php) PHP Extension
 
@@ -115,7 +115,8 @@ APIの一覧は[こちらを参照](docs/api_server.md)ください。
 <script src="/path/to/jquery/jquery.js"></script><!-- <- option; not required -->
 
 <!-- broccoli -->
-<script src="/path/to/broccoli-html-editor/broccoli.min.js"></script>
+<link rel="stylesheet" href="/path/to/broccoli-html-editor/client/dist/broccoli.css" />
+<script src="/path/to/broccoli-html-editor/client/dist/broccoli.js"></script>
 <script>
 var broccoli = new Broccoli();
 broccoli.init(
@@ -364,9 +365,10 @@ $ composer test
 
 ## 更新履歴 - Change log
 
-### broccoli-html-editor v1.0.9 (リリース日未定)
+### broccoli-html-editor v1.1.0 (リリース日未定)
 
 - ダークモード用のスタイルをバンドルした。
+- スタイルシートを自動的に読み込まないようになった。 呼び出し側で明示的に読み込む必要があります。
 
 ### broccoli-html-editor v1.0.8 (2023年8月29日)
 

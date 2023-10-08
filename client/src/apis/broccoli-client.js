@@ -88,30 +88,6 @@
 				{},
 				[
 					function(it1, data){
-						// リソースファイルの読み込み
-						var css = [
-							__dirname+'/broccoli.css',
-						];
-						$('head *[data-broccoli-resource]').remove(); // 一旦削除
-						it79.ary(
-							css,
-							function(it2, row, idx){
-								// console.info('リソースを読み込んでいます...。 ('+(Number(idx)+1)+'/'+(css.length)+')');
-								var link = document.createElement('link');
-								link.addEventListener('load', function(){
-									it2.next();
-								});
-								$('head').append(link);
-								link.rel = 'stylesheet';
-								link.href = row;
-								link.setAttribute('data-broccoli-resource', true);
-							},
-							function(){
-								it1.next(data);
-							}
-						);
-					} ,
-					function(it1, data){
 						// DOMの整備
 						$canvas = $(options.elmCanvas);
 						$canvas
@@ -136,9 +112,7 @@
 								onPreviewLoad( callback );
 							})
 						;
-						// _this.options.elmIframeWindow = $canvas.find('iframe').get(0).contentWindow;
 						_this.options.elmPanels = $canvas.find('.broccoli__panels').get(0);
-						// _this.options.elmInstancePathView = $canvas.find('.broccoli--instance-path-view').get(0);
 
 						_this.clipboard = new (require('./clipboard.js'))(_this);
 						_this.postMessenger = new (require('./postMessenger.js'))(_this, $canvas.find('iframe').get(0));
@@ -190,8 +164,6 @@
 									return;
 								})
 								.on('drop', function(e){
-									// var event = e.originalEvent;
-									// var fileInfo = event.dataTransfer.files[0];
 									e.stopPropagation();
 									e.preventDefault();
 									return;
