@@ -478,7 +478,8 @@ module.exports = function(broccoli){
 			_resourcesDirPath+'/'+resKey+'/res.json',
 			JSON.stringify( _resourceDb[resKey], null, 4 )
 		)){
-			return false;
+			callback(false);
+			return;
 		}
 
 		var bin = '';
@@ -491,7 +492,8 @@ module.exports = function(broccoli){
 			_resourcesDirPath+'/'+resKey+'/bin.'+_resourceDb[resKey].ext,
 			bin
 		)){
-			return false;
+			callback(false);
+			return;
 		}
 
 		new Promise(function(rlv){rlv();})
@@ -558,18 +560,20 @@ module.exports = function(broccoli){
 		callback = callback || function(){};
 		var filename = resKey;
 		this.getResource( resKey, function(res){
-			// console.log(res);
 			if( typeof(res.publicFilename) == typeof('') && res.publicFilename.length ){
 				filename = res.publicFilename;
 			}
-			// console.log(filename);
 			var contentsPath = broccoli.options.pathHtml;
 			var resourcesPublishDirPath = broccoli.options.pathResourceDir;
 
 			filename = utils79.toStr(filename);
-			if(!filename.length){filename = 'noname';}
+			if(!filename.length){
+				filename = 'noname';
+			}
 			var ext = utils79.toStr(res.ext);
-			if(!ext.length){ext = 'unknown';}
+			if(!ext.length){
+				ext = 'unknown';
+			}
 			var rtn = './' + path.relative(path.dirname(contentsPath), resourcesPublishDirPath+'/'+filename+'.'+ext);
 			rtn = rtn.replace(/\\/g, '/'); // <= convert Windows path to Linux path
 
@@ -585,16 +589,18 @@ module.exports = function(broccoli){
 		callback = callback || function(){};
 		var filename = resKey;
 		this.getResource( resKey, function(res){
-			// console.log(res);
 			if( typeof(res.publicFilename) == typeof('') && res.publicFilename.length ){
 				filename = res.publicFilename;
 			}
-			// console.log(filename);
 
 			filename = utils79.toStr(filename);
-			if(!filename.length){filename = 'noname';}
+			if(!filename.length){
+				filename = 'noname';
+			}
 			var ext = utils79.toStr(res.ext);
-			if(!ext.length){ext = 'unknown';}
+			if(!ext.length){
+				ext = 'unknown';
+			}
 			var rtn = path.resolve(_resourcesPublishDirPath+'/'+filename+'.'+ext);
 
 			callback(rtn);
@@ -637,7 +643,9 @@ module.exports = function(broccoli){
 		return;
 	}
 
-	// 使われていないリソースを削除
+	/**
+	 * 使われていないリソースを削除
+	 */
 	function collectGarbage(){
 		var jsonSrc = fs.readFileSync( _dataJsonPath );
 		jsonSrc = JSON.parse( JSON.stringify(jsonSrc.toString()) );
@@ -648,5 +656,4 @@ module.exports = function(broccoli){
 		}
 		return;
 	}
-
 }
