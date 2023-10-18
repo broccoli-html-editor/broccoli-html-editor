@@ -330,7 +330,10 @@ module.exports = function(broccoli, api, options, callback){
 				broccoli.resourceMgr.getResource(
 					options.resKey ,
 					function(resInfo){
-						callback(resInfo);
+						callback({
+							result: true,
+							resourceInfo: resInfo,
+						});
 					}
 				);
 				break;
@@ -347,7 +350,10 @@ module.exports = function(broccoli, api, options, callback){
 			case "resourceMgr.getResourceDb":
 				broccoli.resourceMgr.getResourceDb(
 					function(resourceDb){
-						callback(resourceDb);
+						callback({
+							result: true,
+							resourceDb: resourceDb,
+						});
 					}
 				);
 				break;
@@ -367,7 +373,10 @@ module.exports = function(broccoli, api, options, callback){
 			case "resourceMgr.addResource":
 				broccoli.resourceMgr.addResource(
 					function(newResKey){
-						callback(newResKey);
+						callback({
+							result: true,
+							newResourceKey: newResKey,
+						});
 					}
 				);
 				break;
@@ -385,7 +394,10 @@ module.exports = function(broccoli, api, options, callback){
 				broccoli.resourceMgr.getResourcePublicPath(
 					options.resKey ,
 					function(publicPath){
-						callback(publicPath);
+						callback({
+							"result": true,
+							"publicPath": publicPath,
+						});
 					}
 				);
 				break;

@@ -65,9 +65,9 @@ module.exports = function(broccoli){
 				broccoli.gpi(
 					'resourceMgr.getResourceDb',
 					{} ,
-					function(rtn){
-						_resourceDb = rtn;
-						callback(rtn);
+					function(resultData){
+						_resourceDb = resultData.resourceDb;
+						callback(resultData.resourceDb);
 					}
 				);
 			}
@@ -109,9 +109,9 @@ module.exports = function(broccoli){
 				broccoli.gpi(
 					'resourceMgr.addResource',
 					{} ,
-					function(newResKey){
-						// console.log('New Resource Key is created on resourceDb: '+newResKey);
-						_resourceDb[newResKey] = {};//予約
+					function(resultData){
+						var newResKey = resultData.newResourceKey;
+						_resourceDb[newResKey] = {}; // 予約
 						callback(newResKey);
 					}
 				);
@@ -154,8 +154,11 @@ module.exports = function(broccoli){
 			function(it1, data){
 				broccoli.gpi(
 					'resourceMgr.getResource',
-					{'resKey': resKey} ,
-					function(resInfo){
+					{
+						'resKey': resKey,
+					},
+					function(resultData){
+						var resInfo = resultData.resourceInfo;
 						if(resInfo && resInfo.base64 && resInfo.type && resInfo.size === undefined){
 							resInfo.size = 0;
 						}
@@ -293,9 +296,11 @@ module.exports = function(broccoli){
 				function(it1, data){
 					broccoli.gpi(
 						'resourceMgr.getResourcePublicPath',
-						{'resKey': resKey} ,
+						{
+							'resKey': resKey,
+						} ,
 						function(rtn){
-							callback(rtn);
+							callback(rtn.publicPath);
 						}
 					);
 				}

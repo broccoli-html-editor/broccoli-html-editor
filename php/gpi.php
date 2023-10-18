@@ -251,7 +251,10 @@ class gpi{
 
 				case "resourceMgr.getResource":
 					$resInfo = $this->broccoli->resourceMgr()->getResource( $options['resKey'] );
-					return $resInfo;
+					return (object) array(
+						"result" => true,
+						"resourceInfo" => $resInfo,
+					);
 
 				case "resourceMgr.duplicateResource":
 					$newResKey = $this->broccoli->resourceMgr()->duplicateResource( $options['resKey'] );
@@ -259,7 +262,10 @@ class gpi{
 
 				case "resourceMgr.getResourceDb":
 					$resourceDb = $this->broccoli->resourceMgr()->getResourceDb();
-					return $resourceDb;
+					return (object) array(
+						"result" => true,
+						'resourceDb' => $resourceDb,
+					);
 
 				case "resourceMgr.getResourceList":
 					$resourceDb = $this->broccoli->resourceMgr()->getResourceDb();
@@ -271,7 +277,10 @@ class gpi{
 
 				case "resourceMgr.addResource":
 					$newResKey = $this->broccoli->resourceMgr()->addResource();
-					return $newResKey;
+					return (object) array(
+						"result" => true,
+						"newResourceKey" => $newResKey,
+					);
 
 				case "resourceMgr.addNewResource":
 					$rtn = (object) $this->broccoli->resourceMgr()->addNewResource($options['resInfo']);
@@ -280,7 +289,10 @@ class gpi{
 
 				case "resourceMgr.getResourcePublicPath":
 					$publicPath = $this->broccoli->resourceMgr()->getResourcePublicPath( $options['resKey'] );
-					return $publicPath;
+					return (object) array(
+						"result" => true,
+						"publicPath" => $publicPath,
+					);
 
 				case "resourceMgr.getResourceOriginalRealpath":
 					$publicPath = $this->broccoli->resourceMgr()->getResourceOriginalRealpath( $options['resKey'] );
