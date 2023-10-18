@@ -187,7 +187,10 @@ class gpi{
 				case "getAllModuleList":
 					// 全モジュールの一覧を取得する
 					$list = $this->broccoli->getAllModuleList();
-					return $list;
+					return (object) array(
+						"result" => true,
+						"moduleList" => $list,
+					);
 
 				case "getContentsDataJson":
 					$dataJson = json_decode( file_get_contents($this->broccoli->realpathDataDir.'/data.json') );
@@ -225,11 +228,17 @@ class gpi{
 
 				case "buildModuleCss":
 					$css = $this->broccoli->buildModuleCss();
-					return $css;
+					return (object) array(
+						"result" => true,
+						"css" => $css,
+					);
 
 				case "buildModuleJs":
 					$js = $this->broccoli->buildModuleJs();
-					return $js;
+					return (object) array(
+						"result" => true,
+						"js" => $js,
+					);
 
 				case "updateContents":
 					$result = $this->broccoli->updateContents();
@@ -334,7 +343,7 @@ class gpi{
 					);
 
 				default:
-					return array(
+					return (object) array(
 						'result' => false,
 						'errors' => array('Unknown GPI function. ('.$api.')'),
 					);

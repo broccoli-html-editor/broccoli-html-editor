@@ -230,7 +230,10 @@ module.exports = function(broccoli, api, options, callback){
 			case "getAllModuleList":
 				// 全モジュールの一覧を取得する
 				broccoli.getAllModuleList(function(list){
-					callback(list);
+					callback({
+						result: true,
+						moduleList: list,
+					});
 				});
 				break;
 
@@ -294,13 +297,19 @@ module.exports = function(broccoli, api, options, callback){
 
 			case "buildModuleCss":
 				broccoli.buildModuleCss(function(css){
-					callback(css);
+					callback({
+						result: true,
+						css: css,
+					});
 				});
 				break;
 
 			case "buildModuleJs":
 				broccoli.buildModuleJs(function(js){
-					callback(js);
+					callback({
+						result: true,
+						js: js,
+					});
 				});
 				break;
 
@@ -321,7 +330,6 @@ module.exports = function(broccoli, api, options, callback){
 				broccoli.resourceMgr.getResource(
 					options.resKey ,
 					function(resInfo){
-						// console.log(resInfo);
 						callback(resInfo);
 					}
 				);
@@ -331,7 +339,6 @@ module.exports = function(broccoli, api, options, callback){
 				broccoli.resourceMgr.duplicateResource(
 					options.resKey ,
 					function(newResKey){
-						// console.log(newResKey);
 						callback(newResKey);
 					}
 				);
@@ -340,7 +347,6 @@ module.exports = function(broccoli, api, options, callback){
 			case "resourceMgr.getResourceDb":
 				broccoli.resourceMgr.getResourceDb(
 					function(resourceDb){
-						// console.log(resourceDb);
 						callback(resourceDb);
 					}
 				);
@@ -349,7 +355,6 @@ module.exports = function(broccoli, api, options, callback){
 			case "resourceMgr.getResourceList":
 				broccoli.resourceMgr.getResourceDb(
 					function(resourceDb){
-						// console.log(resourceDb);
 						var resourceList = [];
 						for(var resKey in resourceDb){
 							resourceList.push(resKey);
@@ -362,19 +367,15 @@ module.exports = function(broccoli, api, options, callback){
 			case "resourceMgr.addResource":
 				broccoli.resourceMgr.addResource(
 					function(newResKey){
-						// console.log(newResKey);
 						callback(newResKey);
 					}
 				);
 				break;
 
 			case "resourceMgr.addNewResource":
-				// console.log('GPI resourceMgr.addNewResource');
-				// console.log(options);
 				broccoli.resourceMgr.addNewResource(
 					options.resInfo ,
 					function(result){
-						// console.log(result);
 						callback(result);
 					}
 				);
@@ -498,7 +499,10 @@ module.exports = function(broccoli, api, options, callback){
 				break;
 
 			default:
-				callback(true);
+				callback({
+					'result': false,
+					'errors': ['Unknown GPI function. ('+$api+')'],
+				});
 				break;
 		}
 
