@@ -246,10 +246,11 @@ module.exports = function(broccoli){
 				function(it1, data){
 					broccoli.gpi(
 						'resourceMgr.resetBinFromBase64',
-						{'resKey': resKey} ,
+						{
+							'resKey': resKey,
+						},
 						function(rtn){
-							// console.log(rtn);
-							callback(rtn);
+							callback(rtn.result);
 						}
 					);
 				}
@@ -269,14 +270,13 @@ module.exports = function(broccoli){
 				function(it1, data){
 					broccoli.gpi(
 						'resourceMgr.resetBase64FromBin',
-						{'resKey': resKey} ,
+						{
+							'resKey': resKey,
+						},
 						function(rtn){
-							// console.log(rtn);
-							// console.log(_resourceDb[resKey]);
 							_this.getResource(resKey, function(resInfo){
-								// console.log(resInfo);
 								_resourceDb[resKey] = resInfo;
-								callback(rtn);
+								callback(rtn.result);
 							});
 						}
 					);

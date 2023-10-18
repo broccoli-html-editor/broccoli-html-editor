@@ -428,7 +428,12 @@ module.exports = function(broccoli, api, options, callback){
 				broccoli.resourceMgr.resetBinFromBase64(
 					options.resKey ,
 					function(result){
-						callback(result);
+						callback(result ? {
+							result: true,
+						} : {
+							result: false,
+							errors: ["Failed to reset binary from base64."],
+						});
 					}
 				);
 				break;
@@ -437,7 +442,12 @@ module.exports = function(broccoli, api, options, callback){
 				broccoli.resourceMgr.resetBase64FromBin(
 					options.resKey ,
 					function(result){
-						callback(result);
+						callback(result ? {
+							result: true,
+						} : {
+							result: false,
+							errors: ["Failed to reset base64 from binary."],
+						});
 					}
 				);
 				break;

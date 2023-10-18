@@ -311,11 +311,21 @@ class gpi{
 
 				case "resourceMgr.resetBinFromBase64":
 					$result = $this->broccoli->resourceMgr()->resetBinFromBase64( $options['resKey'] );
-					return $result;
+					return $result ? (object) array(
+						"result" => true,
+					) : (object) array(
+						"result" => false,
+						"errors" => array("Failed to reset binary from base64."),
+					);
 
 				case "resourceMgr.resetBase64FromBin":
 					$result = $this->broccoli->resourceMgr()->resetBase64FromBin( $options['resKey'] );
-					return $result;
+					return $result ? (object) array(
+						"result" => true,
+					) : (object) array(
+						"result" => false,
+						"errors" => array("Failed to reset base64 from binary."),
+					);
 
 				case "resourceMgr.save":
 					foreach( $options['resourceDb'] as $key=>$val ){
