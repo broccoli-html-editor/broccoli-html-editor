@@ -157,12 +157,12 @@ module.exports = function(broccoli){
 
 	/**
 	 * save resources
+	 *
 	 * @param  {Object} newResourceDb resource Database
 	 * @param  {Function} callback Callback function.
-	 * @return {boolean}	 Always true.
+	 * @return {boolean}	`callback()` の第1引数に、成功時に true, 失敗時に false を返します。
 	 */
 	this.save = function( newResourceDb, callback ){
-		// var logStartTime = Date.now(); // debug code
 		callback = callback || function(){};
 		_resourceDb = newResourceDb;
 
@@ -175,8 +175,7 @@ module.exports = function(broccoli){
 			}
 			return;
 		}
-		resetDirectory(_resourcesPublishDirPath);// 公開リソースディレクトリ 一旦削除して作成
-		// console.log(_resourcesPublishDirPath);
+		resetDirectory(_resourcesPublishDirPath); // 公開リソースディレクトリ 一旦削除して作成
 
 		// 使われていないリソースを削除
 		collectGarbage();
@@ -281,8 +280,6 @@ module.exports = function(broccoli){
 				return;
 			},
 			function(){
-				// console.log('resourceMgr.save() done.');
-				// console.log( (Date.now() - logStartTime)/1000 ); // debug code
 				new Promise(function(rlv){rlv();})
 					.then(function(){ return new Promise(function(rlv, rjt){
 						callback(true);
@@ -293,7 +290,7 @@ module.exports = function(broccoli){
 		);
 
 		return;
-	} // save()
+	}
 
 	/**
 	 * add resource
@@ -461,7 +458,7 @@ module.exports = function(broccoli){
 	 * <dt>publicFilename</dt><dd>公開時のファイル名</dd>
 	 * <dt>isPrivateMaterial</dt><dd>非公開ファイル。</dd>
 	 * </dl>
-	 * @return {boolean}		always true.
+	 * @return {boolean}	成功時に true, 失敗時に false を返します。
 	 */
 	this.updateResource = function( resKey, resInfo, callback ){
 		callback = callback || function(){};
@@ -477,20 +474,25 @@ module.exports = function(broccoli){
 		_resourceDb[resKey] = resInfo;
 
 		mkdir( _resourcesDirPath+'/'+resKey );
-		fs.writeFileSync(
+		if(!fs.writeFileSync(
 			_resourcesDirPath+'/'+resKey+'/res.json',
 			JSON.stringify( _resourceDb[resKey], null, 4 )
-		);
+		)){
+			return false;
+		}
+
 		var bin = '';
 		try {
 			bin = (new Buffer(_resourceDb[resKey].base64, 'base64'));
 		} catch (e) {
 			bin = '';
 		}
-		fs.writeFileSync(
+		if(!fs.writeFileSync(
 			_resourcesDirPath+'/'+resKey+'/bin.'+_resourceDb[resKey].ext,
 			bin
-		);
+		)){
+			return false;
+		}
 
 		new Promise(function(rlv){rlv();})
 			.then(function(){ return new Promise(function(rlv, rjt){

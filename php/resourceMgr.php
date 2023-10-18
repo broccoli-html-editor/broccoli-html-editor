@@ -61,10 +61,10 @@ class resourceMgr{
 	}
 
 	/**
-	 * save resources
-	 * @param  {Object} newResourceDb resource Database
-	 * @param  {Function} callback Callback function.
-	 * @return {boolean}	 Always true.
+	 * リソースDBを保存する
+	 *
+	 * @param  Object $newResourceDb resource Database
+	 * @return boolean	成功時に true, 失敗時に false を返します。
 	 */
 	public function save( $newResourceDb ){
 		clearstatcache();
@@ -163,7 +163,7 @@ class resourceMgr{
 		}
 
 		return true;
-	} // save()
+	}
 
 	/**
 	 * add resource
@@ -278,8 +278,8 @@ class resourceMgr{
 	 * このメソッドは、resKey が指すリソースの新しい情報を受け取り、更新します。
 	 * 保存されたファイル本体とJSONを上書き保存します。
 	 *
-	 * @param  {string} resKey  Resource Key
-	 * @param  {object} resInfo Resource Information.
+	 * @param  string $resKey  Resource Key
+	 * @param  object $resInfo Resource Information.
 	 * <dl>
 	 * <dt>ext</dt><dd>ファイル拡張子名。</dd>
 	 * <dt>type</dt><dd>mimeタイプ。</dd>
@@ -287,7 +287,7 @@ class resourceMgr{
 	 * <dt>publicFilename</dt><dd>公開時のファイル名</dd>
 	 * <dt>isPrivateMaterial</dt><dd>非公開ファイル。</dd>
 	 * </dl>
-	 * @return {boolean}		always true.
+	 * @return boolean	成功時に true, 失敗時に false を返します。
 	 */
 	public function updateResource( $resKey, $resInfo ){
 		clearstatcache();
@@ -302,10 +302,12 @@ class resourceMgr{
 		if( !file_exists( $realpath_dir ) ){
 			mkdir( $realpath_dir );
 		}
-		$this->broccoli->fs()->save_file(
+		if( !$this->broccoli->fs()->save_file(
 			$realpath_dir.'/res.json',
 			json_encode( $this->resourceDb[$resKey], JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES )
-		);
+		) ){
+			return false;
+		}
 
 		$bin = '';
 		if( property_exists( $this->resourceDb[$resKey], 'base64' ) ){
@@ -317,10 +319,12 @@ class resourceMgr{
 			$bin_filename .= '.'.$this->resourceDb[$resKey]->ext;
 		}
 
-		$this->broccoli->fs()->save_file(
+		if( !$this->broccoli->fs()->save_file(
 			$realpath_dir.'/'.urlencode($bin_filename),
 			$bin
-		);
+		) ){
+			return false;
+		}
 		return true;
 	}
 

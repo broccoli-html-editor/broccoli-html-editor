@@ -662,7 +662,7 @@
 				]
 			);
 			return;
-		} // redraw()
+		}
 
 		/**
 		 * field定義を取得する
@@ -677,7 +677,7 @@
 				fieldDefinition = this.fieldBase;
 			}
 			return fieldDefinition;
-		} // getFieldDefinition()
+		}
 
 		/**
 		 * GPIから値を得る
@@ -685,14 +685,18 @@
 		this.gpi = function(api, options, callback){
 			options = options || {};
 			options.lang = options.lang || this.options.lang;
-			this.options.gpiBridge(api, options, function(result){
-				if(typeof(result) == typeof({}) && result.errors && result.errors.length){
-					console.error('Broccoli GPI Error:', result.errors);
+			this.options.gpiBridge(api, options, function(data){
+				if(typeof(data) === typeof({})){
+					if(!data.result || (data.errors && data.errors.length)){
+						console.error('Broccoli GPI Error:', api, data);
+					}
+				}else{
+					console.error('Broccoli GPI Error:', api, "GPI returns is no object data.");
 				}
-				callback(result);
+				callback(data);
 			});
 			return;
-		} // gpi()
+		}
 
 		/**
 		 * 初期起動時にロードした情報を取得する

@@ -21,6 +21,7 @@ module.exports = function(broccoli, api, options, callback){
 			case "getBootupInfomations":
 				// broccoli の初期起動時に必要なすべての情報を取得する
 				var $bootup = {};
+				$bootup.result = true;
 
 				it79.fnc(
 					{},
@@ -76,6 +77,9 @@ module.exports = function(broccoli, api, options, callback){
 						},
 						function(it1){
 							$bootup.errors = broccoli.get_errors();
+							if( $bootup.errors && $bootup.errors.length ){
+								$bootup.result = false;
+							}
 							it1.next();
 						},
 						function(it1){
@@ -220,11 +224,11 @@ module.exports = function(broccoli, api, options, callback){
 
 			case "saveContentsData":
 				var jsonString = JSON.stringify( options.data, null, 4 );
-				// console.log(jsonString);
+				var result;
 				it79.fnc(
 					{},
 					[
-						function(it1, data){
+						result = function(it1, data){
 							// contentsSourceData を保存する
 							fs.writeFile(
 								broccoli.realpathDataDir+'/data.json' ,
@@ -235,7 +239,12 @@ module.exports = function(broccoli, api, options, callback){
 							);
 						} ,
 						function(it1, data){
-							callback(true);
+							callback(result ? {
+								"result": true,
+							} : {
+								"result": false,
+								"errors": ['Failed to save contents data.'],
+							});
 						}
 					]
 				);
@@ -269,8 +278,12 @@ module.exports = function(broccoli, api, options, callback){
 			case "updateContents":
 				broccoli.updateContents(
 					function(result){
-						// console.log(result);
-						callback(result);
+						callback(result ? {
+							result: true,
+						} : {
+							result: true,
+							errors: ["Failed to update contents data."],
+						});
 					}
 				);
 				break;
@@ -342,7 +355,6 @@ module.exports = function(broccoli, api, options, callback){
 				broccoli.resourceMgr.getResourcePublicPath(
 					options.resKey ,
 					function(publicPath){
-						// console.log(publicPath);
 						callback(publicPath);
 					}
 				);
@@ -352,77 +364,73 @@ module.exports = function(broccoli, api, options, callback){
 				broccoli.resourceMgr.getResourceOriginalRealpath(
 					options.resKey ,
 					function(publicPath){
-						// console.log(publicPath);
 						callback(publicPath);
 					}
 				);
 				break;
 
 			case "resourceMgr.updateResource":
-				// console.log('GPI resourceMgr.updateResource');
-				// console.log(options);
 				broccoli.resourceMgr.updateResource(
 					options.resKey ,
 					options.resInfo ,
 					function(result){
-						// console.log(result);
-						callback(result);
+						callback(result ? {
+							result: true,
+						} : {
+							result: false,
+							errors: ["Failed to update resource data."],
+						});
 					}
 				);
 				break;
 
 			case "resourceMgr.resetBinFromBase64":
-				// console.log('GPI resourceMgr.resetBinFromBase64');
-				// console.log(options);
 				broccoli.resourceMgr.resetBinFromBase64(
 					options.resKey ,
 					function(result){
-						// console.log(result);
 						callback(result);
 					}
 				);
 				break;
 
 			case "resourceMgr.resetBase64FromBin":
-				// console.log('GPI resourceMgr.resetBase64FromBin');
-				// console.log(options);
 				broccoli.resourceMgr.resetBase64FromBin(
 					options.resKey ,
 					function(result){
-						// console.log(result);
 						callback(result);
 					}
 				);
 				break;
 
 			case "resourceMgr.save":
-				// console.log('GPI resourceMgr.save');
-				// console.log(options);
 				broccoli.resourceMgr.save(
 					options.resourceDb ,
 					function(result){
-						// console.log(result);
-						callback(result);
+						callback(result ? {
+							result: true,
+						} : {
+							result: false,
+							errors: ["Failed to save resource DB."],
+						});
 					}
 				);
 				break;
 
 			case "resourceMgr.removeResource":
-				// console.log('GPI resourceMgr.save');
-				// console.log(options);
 				broccoli.resourceMgr.removeResource(
 					options.resKey ,
 					function(result){
-						// console.log(result);
-						callback(result);
+						callback(result ? {
+							result: true,
+						} : {
+							result: false,
+							errors: ["Failed to remove resource."],
+						});
 					}
 				);
 				break;
 
 			case "fieldGpi":
-				// console.log(api);
-				// console.log(options.__fieldId__);
-				// console.log(options.options);
 				broccoli.fieldDefinitions[options.__fieldId__].gpi(
 					options.options,
 					function(result){
@@ -432,7 +440,6 @@ module.exports = function(broccoli, api, options, callback){
 				break;
 
 			case "saveUserData":
-				// TODO: 開発中
 				var result = true;
 				it79.fnc(
 					{},
@@ -450,7 +457,12 @@ module.exports = function(broccoli, api, options, callback){
 							it1.next();
 						},
 						function(it1){
-							callback(result);
+							callback(result ? {
+								result: true,
+							} : {
+								result: false,
+								errors: ["Failed to save user data."],
+							});
 						}
 					]
 				);

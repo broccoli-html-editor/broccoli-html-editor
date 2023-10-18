@@ -41,6 +41,7 @@ class gpi{
 				case "getBootupInfomations":
 					// broccoli の初期起動時に必要なすべての情報を取得する
 					$bootup = array();
+					$bootup['result'] = true;
 					$bootup['conf'] = array();
 					$bootup['conf']['appMode'] = $this->broccoli->getAppMode();
 					$bootup['languageCsv'] = file_get_contents( __DIR__.'/../data/language.csv' );
@@ -59,6 +60,9 @@ class gpi{
 					$bootup['userData'] = json_decode('{}');
 					$bootup['userData']->modPaletteCondition = $this->broccoli->userStorage()->load('modPaletteCondition');
 					$bootup['errors'] = $this->broccoli->get_errors();
+					if( is_array($bootup['errors']) && count($bootup['errors']) ){
+						$bootup['result'] = false;
+					}
 					return $bootup;
 
 				case "getConfig":
@@ -110,7 +114,7 @@ class gpi{
 					if( array_key_exists('moduleId', $options) ){
 						$moduleId = $options['moduleId'];
 					}
-					if( !strlen(''.$moduleId) ){
+					if( !strlen($moduleId ?? '') ){
 						return false;
 					}
 					$module = $this->broccoli->getModule($moduleId);
@@ -130,7 +134,7 @@ class gpi{
 					if( array_key_exists('moduleId', $options) ){
 						$moduleId = $options['moduleId'];
 					}
-					if( !strlen(''.$moduleId) ){
+					if( !strlen($moduleId ?? '') ){
 						return false;
 					}
 					$module = $this->broccoli->getModule($moduleId);
@@ -140,8 +144,12 @@ class gpi{
 					$tmpBase64Initial = 'LS0tLS1icm9jY29saS1yZXNvdXJjZS10ZW1wb3JhcnktaGFz';
 					$rtn = array();
 					foreach( $resourceDb as $resKey=>$resInfo ){
-						if(!strlen(''.$resKey)){continue;}
-						if(!is_object($resInfo)){continue;}
+						if(!strlen($resKey ?? '')){
+							continue;
+						}
+						if(!is_object($resInfo)){
+							continue;
+						}
 						if( property_exists($resInfo, 'base64') && preg_match('/^'.preg_quote($tmpBase64Initial,'/').'/', $resInfo->base64) ){
 							$bin = base64_decode($resInfo->base64);
 							$hash = preg_replace('/^'.preg_quote($tmpMetaInitial, '/').'/', '', $bin);
@@ -169,7 +177,12 @@ class gpi{
 						$this->broccoli->realpathDataDir.'/data.json',
 						$jsonString
 					);
-					return $result;
+					return $result ? (object) array(
+						"result" => true,
+					) : (object) array(
+						"result" => false,
+						"errors" => array("Failed to save contents data."),
+					);
 
 				case "buildHtml":
 					$bowlList = $options['bowlList'];
@@ -189,7 +202,12 @@ class gpi{
 
 				case "updateContents":
 					$result = $this->broccoli->updateContents();
-					return $result;
+					return $result ? (object) array(
+						"result" => true,
+					) : (object) array(
+						"result" => false,
+						"errors" => array("Failed to update contents data."),
+					);
 
 				case "resourceMgr.getResource":
 					$resInfo = $this->broccoli->resourceMgr()->getResource( $options['resKey'] );
@@ -216,7 +234,8 @@ class gpi{
 					return $newResKey;
 
 				case "resourceMgr.addNewResource":
-					$rtn = $this->broccoli->resourceMgr()->addNewResource($options['resInfo']);
+					$rtn = (object) $this->broccoli->resourceMgr()->addNewResource($options['resInfo']);
+					$rtn->result = true;
 					return $rtn;
 
 				case "resourceMgr.getResourcePublicPath":
@@ -229,7 +248,12 @@ class gpi{
 
 				case "resourceMgr.updateResource":
 					$result = $this->broccoli->resourceMgr()->updateResource( $options['resKey'] , $options['resInfo'] );
-					return $result;
+					return $result ? (object) array(
+						"result" => true,
+					) : (object) array(
+						"result" => false,
+						"errors" => array("Failed to update resource data."),
+					);
 
 				case "resourceMgr.resetBinFromBase64":
 					$result = $this->broccoli->resourceMgr()->resetBinFromBase64( $options['resKey'] );
@@ -244,11 +268,21 @@ class gpi{
 						$options['resourceDb'][$key] = (object) $val;
 					}
 					$result = $this->broccoli->resourceMgr()->save( $options['resourceDb'] );
-					return $result;
+					return $result ? (object) array(
+						"result" => true,
+					) : (object) array(
+						"result" => false,
+						"errors" => array("Failed to save resource DB."),
+					);
 
 				case "resourceMgr.removeResource":
-					$result = $this->broccoli->resourceMgr()->removeResource( $options['resKey'] );
-					return $result;
+					$result = $this->broccoli->resourceMgr()->removeResource( $options['resKey'] ?? null );
+					return $result ? (object) array(
+						"result" => true,
+					) : (object) array(
+						"result" => false,
+						"errors" => array("Failed to remove resource."),
+					);
 
 				case "fieldGpi":
 					$result = $this->broccoli->getFieldDefinition( $options['__fieldId__'] )->gpi( $options['options'] );
@@ -261,7 +295,12 @@ class gpi{
 							$result = false;
 						}
 					}
-					return $result;
+					return $result ? (object) array(
+						"result" => true,
+					) : (object) array(
+						"result" => false,
+						"errors" => array("Failed to save user data."),
+					);
 
 				default:
 					return array(
