@@ -342,7 +342,10 @@ module.exports = function(broccoli, api, options, callback){
 				broccoli.resourceMgr.duplicateResource(
 					options.resKey ,
 					function(newResKey){
-						callback(newResKey);
+						callback({
+							result: true,
+							newResourceKey: newResKey,
+						});
 					}
 				);
 				break;
@@ -365,7 +368,10 @@ module.exports = function(broccoli, api, options, callback){
 						for(var resKey in resourceDb){
 							resourceList.push(resKey);
 						}
-						callback(resourceList);
+						callback({
+							result: true,
+							resourceList: resourceList,
+						});
 					}
 				);
 				break;
@@ -385,6 +391,7 @@ module.exports = function(broccoli, api, options, callback){
 				broccoli.resourceMgr.addNewResource(
 					options.resInfo ,
 					function(result){
+						result.result = true;
 						callback(result);
 					}
 				);
@@ -398,15 +405,6 @@ module.exports = function(broccoli, api, options, callback){
 							"result": true,
 							"publicPath": publicPath,
 						});
-					}
-				);
-				break;
-
-			case "resourceMgr.getResourceOriginalRealpath":
-				broccoli.resourceMgr.getResourceOriginalRealpath(
-					options.resKey ,
-					function(publicPath){
-						callback(publicPath);
 					}
 				);
 				break;

@@ -185,8 +185,8 @@ module.exports = function(broccoli){
 				broccoli.gpi(
 					'resourceMgr.duplicateResource',
 					{'resKey': resKey} ,
-					function(newResKey){
-						callback( newResKey );
+					function(resultData){
+						callback( resultData.newResourceKey );
 					}
 				);
 			}
@@ -301,27 +301,6 @@ module.exports = function(broccoli){
 						} ,
 						function(rtn){
 							callback(rtn.publicPath);
-						}
-					);
-				}
-			]
-		);
-		return;
-	}
-
-	/**
-	 * get resource public path
-	 */
-	this.getResourceOriginalRealpath = function( resKey, callback ){
-		callback = callback || function(){};
-		it79.fnc({},
-			[
-				function(it1, data){
-					broccoli.gpi(
-						'resourceMgr.getResourceOriginalRealpath',
-						{'resKey': resKey} ,
-						function(rtn){
-							callback(rtn);
 						}
 					);
 				}
