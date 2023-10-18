@@ -541,8 +541,11 @@
 								}
 								_this.gpi(
 									'buildHtml',
-									{'bowlList': bowlList},
-									function(htmls){
+									{
+										'bowlList': bowlList,
+									},
+									function(returnData){
+										var htmls = returnData.htmls;
 										for(var idx in htmls){
 											htmls[idx] = (function(src){
 												for(var resKey in resDb){
@@ -691,7 +694,7 @@
 						console.error('Broccoli GPI Error:', api, data);
 					}
 				}else{
-					console.error('Broccoli GPI Error:', api, "GPI returns is no object data.");
+					console.error('Broccoli GPI Type Error:', api, "GPI returns no object value.");
 				}
 				callback(data);
 			});

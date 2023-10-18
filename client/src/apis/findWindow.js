@@ -46,8 +46,8 @@ module.exports = function(broccoli){
 					broccoli.gpi(
 						'getModulePackageList',
 						{},
-						function(tmpAllModuleList){
-							// console.log(tmpAllModuleList);
+						function(resultData){
+							var tmpAllModuleList = resultData.modulePackageList;
 
 							for(var pkgId in tmpAllModuleList){
 								var pkg = tmpAllModuleList[pkgId];
@@ -59,7 +59,6 @@ module.exports = function(broccoli){
 									}
 								}
 							}
-							// console.log(moduleList);
 							it1.next(data);
 						}
 					);
@@ -70,10 +69,9 @@ module.exports = function(broccoli){
 					broccoli.gpi(
 						'getContentsDataJson',
 						{},
-						function(result){
-							// console.log(result);
+						function(resultData){
+							var contentsDataJson = resultData.data;
 							function parseModuleRecursive(instancePath, instance){
-								// console.log(instancePath, instance);
 								var data = {};
 								data.instancePath = instancePath;
 								data.modId = instance.modId;
@@ -83,7 +81,6 @@ module.exports = function(broccoli){
 								contentsElements.push(data);
 
 								var mod = moduleList[instance.modId];
-								// console.log(mod);
 
 								if( instance.fields ){
 									for( var fieldName in instance.fields ){
@@ -114,22 +111,19 @@ module.exports = function(broccoli){
 												data.label = JSON.stringify(data.data[0]);
 											}
 										}
-										// instance.fields[fieldName];
 									}
 								}
 
 							}
 							// contentsElements
-							for( var bowlName in result.bowl ){
-								for( var fieldName in result.bowl[bowlName].fields ){
-									for( var idx in result.bowl[bowlName].fields[fieldName] ){
-										parseModuleRecursive('/bowl.'+bowlName+'/fields.'+fieldName+'@'+idx, result.bowl[bowlName].fields[fieldName][idx]);
+							for( var bowlName in contentsDataJson.bowl ){
+								for( var fieldName in contentsDataJson.bowl[bowlName].fields ){
+									for( var idx in contentsDataJson.bowl[bowlName].fields[fieldName] ){
+										parseModuleRecursive('/bowl.'+bowlName+'/fields.'+fieldName+'@'+idx, contentsDataJson.bowl[bowlName].fields[fieldName][idx]);
 									}
 								}
 							}
 
-							// console.log('=-=-=-=-=-=');
-							// console.log(contentsElements);
 							it1.next(data);
 						}
 					);

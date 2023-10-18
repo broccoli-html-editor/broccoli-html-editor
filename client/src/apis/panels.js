@@ -312,23 +312,21 @@ module.exports = function(broccoli){
 			}
 
 			if( modClip !== false ){
-				// console.log('A clip has been dropped.');
 				var parsedModId = broccoli.parseModuleId(modId);
 
 				broccoli.gpi(
 					'getClipModuleContents',
 					{
 						'moduleId': modId,
-						'resourceMode': 'temporaryHash'
+						'resourceMode': 'temporaryHash',
 					} ,
-					function(clipContents){
-						// console.log('------ clipModuleContents --', clipContents);
+					function(resultData){
+						var clipContents = resultData.clipContents;
 
 						it79.ary(
 							clipContents.data ,
 							function(it1, row1, idx1){
 								broccoli.contentsSourceData.duplicateInstance(clipContents.data[idx1], clipContents.resources, {'supplementModPackage': parsedModId.package}, function(newData){
-									// console.log(newData);
 
 									broccoli.contentsSourceData.addInstance( newData, moveTo, function(result){
 										// 上から順番に挿入していくので、
@@ -344,10 +342,10 @@ module.exports = function(broccoli){
 								broccoli.gpi(
 									'replaceClipModuleResources',
 									{
-										'moduleId': modId
+										'moduleId': modId,
 									} ,
-									function(affectedResources){
-										// console.log(affectedResources);
+									function(resultData){
+										var affectedResources = resultData.affectedResources;
 										broccoli.resourceMgr.getResourceDb(function(tmpResourceDb){
 											for( var resKey in affectedResources ){
 												tmpResourceDb[resKey] = affectedResources[resKey];

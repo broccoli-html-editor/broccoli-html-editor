@@ -191,13 +191,11 @@ window.main = new (function(){
 								'options': JSON.stringify(options)
 							},
 							"success": function(data){
-								// console.info('-- GPI return', data);
 								try{
 									res = JSON.parse(data);
 								}catch(e){
 									console.error(e, data);
 								}
-								// console.log(res);
 							},
 							"error": function(error){
 								console.error(error);

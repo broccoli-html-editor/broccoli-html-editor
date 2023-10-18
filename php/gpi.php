@@ -67,20 +67,30 @@ class gpi{
 
 				case "getConfig":
 					// broccoli の設定を取得する
-					$conf = array();
-					$conf['appMode'] = $this->broccoli->getAppMode();
-					$conf['errors'] = $this->broccoli->get_errors();
+					$conf = (object) array(
+						"result" => true,
+						"config" => (object) array(
+							'appMode' => $this->broccoli->getAppMode(),
+							'errors' => $this->broccoli->get_errors(),
+						),
+					);
 					return $conf;
 
 				case "getLanguageCsv":
 					// 言語ファイル(CSV)を取得
 					$csv = file_get_contents( __DIR__.'/../data/language.csv' );
-					return $csv;
+					return (object) array(
+						"result" => true,
+						"language" => $csv,
+					);
 
 				case "getModulePackageList":
 					// モジュールパッケージ一覧を取得する
 					$list = $this->broccoli->getPackageList();
-					return $list;
+					return (object) array(
+						"result" => true,
+						"modulePackageList" => $list,
+					);
 
 				case "getModule":
 					// モジュール情報を取得する
@@ -106,7 +116,10 @@ class gpi{
 					$moduleInfo['deprecated'] = $module->deprecated;
 					$moduleInfo['pics'] = $module->getPics();
 					$moduleInfo['readme'] = $module->getReadme();
-					return $moduleInfo;
+					return (object) array(
+						"result" => true,
+						"moduleInfo" => $moduleInfo,
+					);
 
 				case "getClipModuleContents":
 					// クリップモジュールの内容を取得する
@@ -115,7 +128,10 @@ class gpi{
 						$moduleId = $options['moduleId'];
 					}
 					if( !strlen($moduleId ?? '') ){
-						return false;
+						return (object) array(
+							"result" => false,
+							"errors" => array("moduleId is required."),
+						);
 					}
 					$module = $this->broccoli->getModule($moduleId);
 					$clip = $module->getClipContents();
@@ -126,7 +142,10 @@ class gpi{
 							$resInfo->base64 = base64_encode('-----broccoli-resource-temporary-hash='.$resKey);
 						}
 					}
-					return $clip;
+					return (object) array(
+						"result" => true,
+						"clipContents" => $clip,
+					);
 
 				case "replaceClipModuleResources":
 					// クリップモジュールのリソースを取得し、コンテンツのリソースを更新する
@@ -135,7 +154,10 @@ class gpi{
 						$moduleId = $options['moduleId'];
 					}
 					if( !strlen($moduleId ?? '') ){
-						return false;
+						return (object) array(
+							"result" => false,
+							"errors" => array("moduleId is required."),
+						);
 					}
 					$module = $this->broccoli->getModule($moduleId);
 					$clip = $module->getClipContents();
@@ -157,7 +179,10 @@ class gpi{
 							$rtn[$resKey] = $clip->resources->{$hash};
 						}
 					}
-					return $rtn;
+					return (object) array(
+						"result" => true,
+						"affectedResources" => $rtn,
+					);
 
 				case "getAllModuleList":
 					// 全モジュールの一覧を取得する
@@ -169,7 +194,10 @@ class gpi{
 					if(!is_object($dataJson)){
 						$dataJson = json_decode('{}');
 					}
-					return $dataJson;
+					return (object) array(
+						"result" => true,
+						"data" => $dataJson,
+					);
 
 				case "saveContentsData":
 					$jsonString = json_encode( $options['data'], JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES );
@@ -190,7 +218,10 @@ class gpi{
 						'mode' => 'canvas',
 						'bowlList' => $bowlList,
 					) );
-					return $htmls;
+					return (object) array(
+						"result" => true,
+						"htmls" => $htmls,
+					);
 
 				case "buildModuleCss":
 					$css = $this->broccoli->buildModuleCss();

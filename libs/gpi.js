@@ -95,19 +95,28 @@ module.exports = function(broccoli, api, options, callback){
 				var conf = {};
 				conf.appMode = broccoli.getAppMode();
 				conf.errors = broccoli.get_errors();
-				callback(conf);
+				callback({
+					"result": true,
+					"config": conf,
+				});
 				break;
 
 			case "getLanguageCsv":
 				// 言語ファイル(CSV)を取得
 				var csv = fs.readFileSync( __dirname+'/../data/language.csv' ).toString();
-				callback(csv);
+				callback({
+					"result": true,
+					"language": csv,
+				});
 				break;
 
 			case "getModulePackageList":
 				// モジュールパッケージ一覧を取得する
 				broccoli.getPackageList(function(list){
-					callback(list);
+					callback({
+						result: true,
+						modulePackageList: list,
+					});
 				});
 				break;
 
@@ -137,7 +146,10 @@ module.exports = function(broccoli, api, options, callback){
 						module.getReadme(function(readme){
 							moduleInfo.readme = readme;
 
-							callback(moduleInfo); 
+							callback({
+								"result": true,
+								"moduleInfo": moduleInfo,
+							}); 
 						});
 					});
 				});
@@ -148,7 +160,10 @@ module.exports = function(broccoli, api, options, callback){
 				var moduleId = options.moduleId;
 				broccoli.getModule(moduleId, undefined, function(module){
 					if(!module){
-						callback(false);
+						callback({
+							result: false,
+							errors: ["moduleId is required."],
+						});
 						return;
 					}
 					module.getClipContents(function(clip){
@@ -162,7 +177,10 @@ module.exports = function(broccoli, api, options, callback){
 							}
 						}
 
-						callback(clip); 
+						callback({
+							result: true,
+							clipContents: clip,
+						});
 					});
 				});
 				break;
@@ -172,7 +190,10 @@ module.exports = function(broccoli, api, options, callback){
 				var moduleId = options.moduleId;
 				broccoli.getModule(moduleId, undefined, function(module){
 					if(!module){
-						callback(false);
+						callback({
+							result: false,
+							errors: ["moduleId is required."],
+						});
 						return;
 					}
 					var rtn = {};
@@ -195,7 +216,10 @@ module.exports = function(broccoli, api, options, callback){
 									it1.next();
 								},
 								function(){
-									callback(rtn); 
+									callback({
+										result: true,
+										affectedResources: rtn,
+									});
 								}
 							);
 						});
@@ -219,7 +243,10 @@ module.exports = function(broccoli, api, options, callback){
 					broccoli.log('[ERROR] FAILED to load data.json - '+broccoli.realpathDataDir+'/data.json');
 					dataJson = {};
 				}
-				callback(dataJson);
+				callback({
+					result: true,
+					data: dataJson,
+				});
 				break;
 
 			case "saveContentsData":
@@ -257,8 +284,10 @@ module.exports = function(broccoli, api, options, callback){
 						'bowlList': options.bowlList
 					} ,
 					function(htmls){
-						// console.log(htmls);
-						callback(htmls);
+						callback({
+							result: true,
+							htmls: htmls,
+						});
 					}
 				);
 				break;
