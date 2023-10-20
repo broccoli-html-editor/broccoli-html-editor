@@ -1259,23 +1259,37 @@
 			var selectedInstance = _this.getSelectedInstance();
 			var selectedInstanceRegion = _this.getSelectedInstanceRegion();
 
-			if( typeof(selectedInstance) !== typeof('') ){
-				_this.message(broccoli.lb.get('ui_message.delete_instance_while_selected')); // インスタンスを選択した状態で削除してください。
-				callback(false);
-				return;
-			}
-			if( selectedInstance.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
-				_this.message(broccoli.lb.get('ui_message.root_instance_cannot_be_deleted')); // ルートインスタンスを削除することはできません。
-				callback(false);
-				return;
-			}
 			if( this.isLightboxOpened() ){
 				// lightboxを表示中は削除を受け付けない。
 				callback(false);
 				return;
 			}
+			if( typeof(selectedInstance) !== typeof('') ){
+				_this.message(broccoli.lb.get('ui_message.delete_instance_while_selected')); // message: インスタンスを選択した状態で削除してください。
+				callback(false);
+				return;
+			}
+			if( selectedInstance.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
+				_this.message(broccoli.lb.get('ui_message.root_instance_cannot_be_deleted')); // message: ルートインスタンスを削除することはできません。
+				callback(false);
+				return;
+			}
+
+			if(!selectedInstanceRegion.every(function(instancePath){
+				var instanceData = broccoli.contentsSourceData.get(instancePath);
+				if( instanceData.locked && instanceData.locked.delete ){
+					return false;
+				}
+				return true;
+			})){
+				// ロックされたインスタンスが含まれている場合、削除できない。 → 中止
+				_this.message("Failed to delete. Locked instance is contained.");
+				callback(false);
+				return;
+			}
+
 			selectedInstanceRegion = JSON.parse( JSON.stringify(selectedInstanceRegion) );
-			selectedInstanceRegion.reverse();//先頭から削除すると添字がリアルタイムに変わってしまうので、逆順に削除する。
+			selectedInstanceRegion.reverse(); // 先頭から削除すると添字がリアルタイムに変わってしまうので、逆順に削除する。
 
 			broccoli.contentsSourceData.resourceDbReloadRequest() // 削除したインスタンスにリソースが含まれている可能性があるので、リロードを要求する。
 
