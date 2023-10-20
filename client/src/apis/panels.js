@@ -2,7 +2,6 @@
  * panels.js
  */
 module.exports = function(broccoli){
-	// delete(require.cache[require('path').resolve(__filename)]);
 	if(!window){ return false; }
 
 	var _this = this;
@@ -28,7 +27,7 @@ module.exports = function(broccoli){
 		var isAppender = $this.isAppender;
 
 		var modInfo = broccoli.contentsSourceData.getModuleByInternalId($this.modId);
-			//postMessageから得られるモジュールのidは、実際にはinternalIdを格納するため、ここで翻訳する。
+			// NOTE: postMessageから得られるモジュールのidは、実際にはinternalIdを格納するため、ここで翻訳する。
 
 		$panels.append($panel);
 		$panel
@@ -159,7 +158,6 @@ module.exports = function(broccoli){
 
 		if( !isAppender && ud.y == 'd' ){
 			moveTo = (function(moveTo){
-				// console.log(moveTo);
 				if(!moveTo.match(/^([\S]+)\@([0-9]+)$/)){
 					console.error('FATAL: Instance path has an illegal format.');
 					return moveTo;
@@ -182,7 +180,7 @@ module.exports = function(broccoli){
 				isFileDropped = false;
 			}
 			if( isFileDropped ){
-				// console.log('外部からファイルがドロップされました。', event.dataTransfer.files);
+				// NOTE: 外部からファイルがドロップされました。
 				return onDropFile(e, moveTo, callback);
 			}
 		}
@@ -266,6 +264,21 @@ module.exports = function(broccoli){
 			return;
 		}
 		if( method === 'moveTo' ){
+			if( moveFroms.length ){
+				if(!moveFroms.every(function(instancePath){
+					var instanceData = broccoli.contentsSourceData.get(instancePath);
+					if( instanceData.locked && instanceData.locked.move ){
+						return false;
+					}
+					return true;
+				})){
+					// ロックされたインスタンスが含まれている場合、移動できない。 → 中止
+					broccoli.message("Failed to move. Locked instance is contained.");
+					callback();
+					return;
+				}
+			}
+
 			if(subModName){
 				broccoli.message('loopフィールドへの移動はできません。');
 				$(elm).removeClass('broccoli__panel--drag-entered');
@@ -404,7 +417,7 @@ module.exports = function(broccoli){
 			return;
 		});
 		return;
-	} // onDrop()
+	}
 
 	/**
 	 * パネルの ondrop イベントハンドラ: ファイルを受け取った場合の処理
@@ -623,7 +636,7 @@ module.exports = function(broccoli){
 		);
 
 		return;
-	} // onDropFile()
+	}
 
 	/**
 	 * パネルの ondblclick イベントハンドラ
@@ -671,7 +684,7 @@ module.exports = function(broccoli){
 		broccoli.editInstance( instancePath );
 		callback();
 		return;
-	} // onDblClick()
+	}
 
 	/**
 	 * パネルの oncontextmenu イベントハンドラ
@@ -692,14 +705,12 @@ module.exports = function(broccoli){
 			callback
 		);
 		return;
-	} // onDblClick()
+	}
 
 	/**
 	 * パネルにイベントハンドラをセットする
 	 */
 	this.setPanelEventHandlers = function($panel){
-		// var timerTouchStart;
-		// var isTouchStartHold = false;
 		var timerFocus;
 		$panel
 			.attr({
@@ -762,25 +773,9 @@ module.exports = function(broccoli){
 			})
 			.on('dblclick', function(e){
 				_this.onDblClick(e, this, function(){
-					// console.log('dblclick event done.');
 				});
 				return;
 			})
-			// .on('touchstart', function(e){
-			// 	// タッチデバイス向けの処理
-			// 	e.preventDefault();
-			// 	e.stopPropagation();
-			// 	clearTimeout(timerTouchStart);
-			// 	if( isTouchStartHold ){
-			// 		_this.onDblClick(e, this, function(){});
-			// 		return;
-			// 	}
-			// 	isTouchStartHold = true;
-			// 	timerTouchStart = setTimeout(function(){
-			// 		isTouchStartHold = false;
-			// 	}, 250);
-			// 	return;
-			// })
 			.on('dragleave', function(e){
 				e.stopPropagation();
 				e.preventDefault();
@@ -884,11 +879,9 @@ module.exports = function(broccoli){
 					it1.next(data);
 				} ,
 				function( it1, data ){
-					// console.log($contentsElements.length;
 					for( var idx in $contentsElements ){
 						drawPanel(idx, $contentsElements[idx]);
 					}
-					// $contentsElements.each(drawPanel);
 					it1.next(data);
 				} ,
 				function(){
@@ -944,7 +937,6 @@ module.exports = function(broccoli){
 			clipContents.data ,
 			function(it1, row1, idx1){
 				broccoli.contentsSourceData.duplicateInstance(clipContents.data[idx1], clipContents.resources, {'supplementModPackage': options.packageId}, function(newData){
-					// console.log(newData, moveTo);
 
 					broccoli.contentsSourceData.addInstance( newData, moveTo, function(result){
 						// 上から順番に挿入していくので、
@@ -991,7 +983,7 @@ module.exports = function(broccoli){
 			left : document.body.scrollLeft + document.documentElement.scrollLeft,
 			top : document.body.scrollTop + document.documentElement.scrollTop
 		};
-		var bounds = elm.getBoundingClientRect();//対象要素の情報取得
+		var bounds = elm.getBoundingClientRect(); // 対象要素の情報取得
 		var relmousepos = {
 			x : mousepos.x - bounds.left - docScrolls.left,
 			y : mousepos.y - bounds.top - docScrolls.top
@@ -1026,7 +1018,6 @@ module.exports = function(broccoli){
 		;
 		callback();
 		return;
-
 	}
 
 	/**
