@@ -1035,8 +1035,12 @@
 			var data = {};
 			data.data = [];
 			for( var idx = 0; idx<instancePathRegion.length; idx ++ ){
-				data.data.push( this.contentsSourceData.get( instancePathRegion[idx] ) );
+				var instanceData = this.contentsSourceData.get( instancePathRegion[idx] );
+				instanceData = JSON.parse( JSON.stringify(instanceData) );
+				delete(instanceData.locked); // NOTE: コピー時に、編集ロック情報は引き継がない。
+				data.data.push( instanceData );
 			}
+
 			data.resources = {};
 			it79.ary(
 				data.data,
