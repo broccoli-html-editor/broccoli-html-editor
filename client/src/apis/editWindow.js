@@ -2,7 +2,6 @@
  * editWindow.js
  */
 module.exports = function(broccoli){
-	// delete(require.cache[require('path').resolve(__filename)]);
 	if(!window){ return false; }
 
 	var _this = this;
@@ -14,68 +13,8 @@ module.exports = function(broccoli){
 	var modLb;
 
 	var $editWindow;
-	var tplFrame = ''
-				+ '<div class="broccoli__edit-window">'
-				+ '	<div class="broccoli__edit-window-btn-close button"><button></button></div>'
-				+ '	<form action="javascript:;">'
-				+ '		<div class="broccoli__edit-window-logical-path">---</div>'
-				+ '		<h2 class="broccoli__edit-window-module-name">---</h2>'
-				+ '		<div class="broccoli__edit-window-module-readme-switch"><a href="javascript:;">{{ lb.get(\'ui_label.show_readme\') }}</a></div>'
-				+ '		<div class="broccoli__edit-window-module-readme"><div class="broccoli__edit-window-module-readme-inner"><article class="broccoli__module-readme"></article></div></div>'
-				+ '		<div class="broccoli__edit-window-message-field"></div>'
-				+ '		<div class="broccoli__edit-window-fields">'
-				+ '		</div>'
-				+ '		<div class="broccoli__edit-window-builtin-fields-switch"><a href="javascript:;">{{ lb.get(\'ui_label.show_advanced_setting\') }}</a></div>'
-				+ '		<div class="broccoli__edit-window-builtin-fields">'
-				+ '			<div class="broccoli__edit-window-builtin-fields__row broccoli__edit-window-builtin-anchor-field-wrap">'
-				+ '				<div class="broccoli__edit-window-builtin-fields__title"><label for="broccoli__edit-window-builtin-anchor-field">{{ lb.get(\'ui_label.anchor\') }}</label></div>'
-				+ '				<div class="broccoli__edit-window-builtin-fields__input">'
-				+ '					<span>#</span>'
-				+ '					<input type="text" class="px2-input" id="broccoli__edit-window-builtin-anchor-field" placeholder="">'
-				+ '				</div>'
-				+ '			</div>'
-				+ '			<div class="broccoli__edit-window-builtin-fields__row broccoli__edit-window-builtin-dec-field-wrap">'
-				+ '				<div class="broccoli__edit-window-builtin-fields__title"><label for="broccoli__edit-window-builtin-dec-field">{{ lb.get(\'ui_label.embed_comment\') }}</label></div>'
-				+ '				<div class="broccoli__edit-window-builtin-fields__input">'
-				+ '					<textarea class="px2-input" id="broccoli__edit-window-builtin-dec-field" placeholder=""></textarea>'
-				+ '				</div>'
-				+ '			</div>'
-				+ '		</div>'
-				+ '		<div class="broccoli__edit-window-form-buttons">'
-				+ '			<div class="broccoli__edit-window-form-buttons-fluid">'
-				+ '				<div class="broccoli__edit-window-form-buttons-ok">'
-				+ '					<button disabled="disabled" type="submit" class="px2-btn px2-btn--primary px2-btn--lg"> {{ lb.get(\'ui_label.ok\') }}</button>'
-				+ '				</div>'
-				+ '			</div>'
-				+ '			<div class="broccoli__edit-window-form-buttons-fluid">'
-				+ '				<div class="broccoli__edit-window-form-buttons-cancel">'
-				+ '					<button disabled="disabled" type="button" class="px2-btn px2-btn--sm broccoli__edit-window-btn-cancel">{{ lb.get(\'ui_label.cancel\') }}</button>'
-				+ '				</div>'
-				+ '				<div class="broccoli__edit-window-form-buttons-delete">'
-				+ '					<button disabled="disabled" type="button" class="px2-btn px2-btn--danger px2-btn--sm broccoli__edit-window-btn-remove">{{ lb.get(\'ui_label.remove_this_module\') }}</button>'
-				+ '				</div>'
-				+ '			</div>'
-				+ '		</div>'
-				+ '		<div class="broccoli__edit-window-sticky-footer">'
-				+ '			<div class="broccoli__edit-window-sticky-footer-main">'
-				+ '				<button disabled="disabled" type="submit" class="px2-btn px2-btn--primary"> {{ lb.get(\'ui_label.ok\') }}</button>'
-				+ '			</div>'
-				+ '		</div>'
-				+ '	</form>'
-				+ '</div>'
-	;
-
-	var tplField = ''
-				+ '<div class="broccoli__edit-window-field">'
-				+ '	<h3>---</h3>'
-				+ '	<div class="broccoli__edit-window-field-description">'
-				+ '	</div>'
-				+ '	<div class="broccoli__edit-window-field-content">'
-				+ '	</div>'
-				+ '	<div class="broccoli__edit-window-field-error-message">'
-				+ '	</div>'
-				+ '</div>'
-	;
+	var tplFrame = require('-!text-loader!./editWindow_files/templates/main.twig');
+	var tplField = require('-!text-loader!./editWindow_files/templates/field.twig');
 
 	function initMod(data){
 		var mod = broccoli.contentsSourceData.getModuleByInternalId(data.modId, data.subModName);
@@ -569,17 +508,29 @@ module.exports = function(broccoli){
 										return rtn;
 									}
 								})(modLb, field);
-								fieldDefinition.mkEditor(mod.fields[field.name], data.fields[field.name], elmFieldContent, function(){
-									if(!focusDone){
-										focusDone = true;
-										fieldDefinition.focus(elmFieldContent, function(){
-											it2.next();
-										});
+
+								// 編集UIを描画する
+								if( data.locked && data.locked.contents ){
+									// 編集ロックされている場合は、プレビュー用のHTMLを生成する
+									fieldDefinition.mkPreviewHtml(data.fields[field.name], mod.fields[field.name], function(srcHtml){
+										elmFieldContent.innerHTML = srcHtml;
+										it2.next();
 										return;
-									}
-									it2.next();
-									return;
-								})
+									});
+								}else{
+									// フィールドの編集UIを生成する
+									fieldDefinition.mkEditor(mod.fields[field.name], data.fields[field.name], elmFieldContent, function(){
+										if(!focusDone){
+											focusDone = true;
+											fieldDefinition.focus(elmFieldContent, function(){
+												it2.next();
+											});
+											return;
+										}
+										it2.next();
+										return;
+									});
+								}
 								break;
 							case 'module':
 							case 'loop':
@@ -675,13 +626,19 @@ module.exports = function(broccoli){
 							;
 							$editWindow.find('button.broccoli__edit-window-btn-remove')
 								.on('click', function(){
+									var data = broccoli.contentsSourceData.get(instancePath);
+									if( data.locked && data.locked.delete ){
+										alert("This instance is locked.");
+										return;
+									}
+
 									_this.lock();
-									if( !confirm(broccoli.lb.get('ui_message.delete_instance_ok?')) ){ // このインスタンスを削除します。よろしいですか？
+									if( !confirm(broccoli.lb.get('ui_message.delete_instance_ok?')) ){ // message: このインスタンスを削除します。よろしいですか？
 										_this.unlock();
 										return;
 									}
 									if( instancePath.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
-										alert(broccoli.lb.get('ui_message.root_instance_cannot_be_deleted')); // ルートインスタンスを削除することはできません。
+										alert(broccoli.lb.get('ui_message.root_instance_cannot_be_deleted')); // message: ルートインスタンスを削除することはできません。
 										_this.unlock();
 										return;
 									}
@@ -850,9 +807,16 @@ module.exports = function(broccoli){
 			function(it2, field2, fieldName2){
 				var $dom = $editWindow.find('[data-broccoli-edit-window-field-name='+field2.name+']');
 				if( $dom.attr('data-broccoli-edit-window-field-type') != 'input' ){
-					it2.next();return;
+					it2.next();
+					return;
 				}
 				var fieldDefinition = broccoli.getFieldDefinition(field2.type);
+				if( data.locked && data.locked.contents ){
+					isError = true;
+					errors[fieldName2] = ["This field is locked."];
+					it2.next();
+					return;
+				}
 				fieldDefinition.validateEditorContent($dom.get(0), mod.fields[fieldName2], function(errorMsgs){
 					if( typeof(errorMsgs)==typeof([]) && errorMsgs.length ){
 						isError = true;
@@ -877,7 +841,7 @@ module.exports = function(broccoli){
 		);
 
 		return;
-	} // validateInstance()
+	}
 
 	/**
 	 * インスタンスの編集を保存する
@@ -911,7 +875,7 @@ module.exports = function(broccoli){
 				return;
 			},
 			function(){
-				broccoli.progressMessage( broccoli.lb.get('ui_message.sending_data') ); // データを送信しています...
+				broccoli.progressMessage( broccoli.lb.get('ui_message.sending_data') ); // message: データを送信しています...
 				it79.fnc({},
 					[
 						function(it2, arg){
@@ -924,7 +888,7 @@ module.exports = function(broccoli){
 							// クライアントサイドにあるメモリ上のcontentsSourceDataに反映する。
 							// この時点で、まだサーバー側には送られていない。
 							// サーバー側に送るのは、callback() の先の仕事。
-							broccoli.progressMessage( broccoli.lb.get('ui_message.updating_instance') ); // インスタンス情報を更新しています...
+							broccoli.progressMessage( broccoli.lb.get('ui_message.updating_instance') ); // message: インスタンス情報を更新しています...
 							broccoli.contentsSourceData.updateInstance(data, instancePath, function(){
 								it2.next(arg);
 							});
@@ -940,7 +904,7 @@ module.exports = function(broccoli){
 		);
 
 		return;
-	} // saveInstance()
+	}
 
 
 	/**
@@ -961,7 +925,6 @@ module.exports = function(broccoli){
 		});
 		callback();
 		return;
-
 	}
 
 	/**
@@ -976,7 +939,6 @@ module.exports = function(broccoli){
 		;
 		callback();
 		return;
-
 	}
 
 	return;

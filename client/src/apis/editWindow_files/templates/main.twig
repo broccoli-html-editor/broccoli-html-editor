@@ -1,0 +1,48 @@
+<div class="broccoli__edit-window">
+	<div class="broccoli__edit-window-btn-close button"><button></button></div>
+	<form action="javascript:;">
+		<div class="broccoli__edit-window-logical-path">---</div>
+		<h2 class="broccoli__edit-window-module-name">---</h2>
+		<div class="broccoli__edit-window-module-readme-switch"><a href="javascript:;">{{ lb.get('ui_label.show_readme') }}</a></div>
+		<div class="broccoli__edit-window-module-readme"><div class="broccoli__edit-window-module-readme-inner"><article class="broccoli__module-readme"></article></div></div>
+		<div class="broccoli__edit-window-message-field"></div>
+		<div class="broccoli__edit-window-fields">
+		</div>
+		<div class="broccoli__edit-window-builtin-fields-switch"><a href="javascript:;">{{ lb.get('ui_label.show_advanced_setting') }}</a></div>
+		<div class="broccoli__edit-window-builtin-fields">
+			<div class="broccoli__edit-window-builtin-fields__row broccoli__edit-window-builtin-anchor-field-wrap">
+				<div class="broccoli__edit-window-builtin-fields__title"><label for="broccoli__edit-window-builtin-anchor-field">{{ lb.get('ui_label.anchor') }}</label></div>
+				<div class="broccoli__edit-window-builtin-fields__input">
+					<span>#</span>
+					<input type="text" class="px2-input" id="broccoli__edit-window-builtin-anchor-field" placeholder="">
+				</div>
+			</div>
+			<div class="broccoli__edit-window-builtin-fields__row broccoli__edit-window-builtin-dec-field-wrap">
+				<div class="broccoli__edit-window-builtin-fields__title"><label for="broccoli__edit-window-builtin-dec-field">{{ lb.get('ui_label.embed_comment') }}</label></div>
+				<div class="broccoli__edit-window-builtin-fields__input">
+					<textarea class="px2-input" id="broccoli__edit-window-builtin-dec-field" placeholder=""></textarea>
+				</div>
+			</div>
+		</div>
+		<div class="broccoli__edit-window-form-buttons">
+			<div class="broccoli__edit-window-form-buttons-fluid">
+				<div class="broccoli__edit-window-form-buttons-ok">
+					<button disabled="disabled" type="submit" class="px2-btn px2-btn--primary px2-btn--lg"> {{ lb.get('ui_label.ok') }}</button>
+				</div>
+			</div>
+			<div class="broccoli__edit-window-form-buttons-fluid">
+				<div class="broccoli__edit-window-form-buttons-cancel">
+					<button disabled="disabled" type="button" class="px2-btn px2-btn--sm broccoli__edit-window-btn-cancel">{{ lb.get('ui_label.cancel') }}</button>
+				</div>
+				<div class="broccoli__edit-window-form-buttons-delete">
+					<button disabled="disabled" type="button" class="px2-btn px2-btn--danger px2-btn--sm broccoli__edit-window-btn-remove">{{ lb.get('ui_label.remove_this_module') }}</button>
+				</div>
+			</div>
+		</div>
+		<div class="broccoli__edit-window-sticky-footer">
+			<div class="broccoli__edit-window-sticky-footer-main">
+				<button disabled="disabled" type="submit" class="px2-btn px2-btn--primary"> {{ lb.get('ui_label.ok') }}</button>
+			</div>
+		</div>
+	</form>
+</div>

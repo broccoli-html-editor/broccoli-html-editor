@@ -16,6 +16,23 @@
                         "dec": ""
                     },
                     {
+                        "modId": "PlainHTMLElements:PlainHTML/MultiText",
+                        "fields": {
+                            "main": {
+                                "src": "Test text.",
+                                "editor": "markdown"
+                            }
+                        },
+                        "anchor": "",
+                        "dec": "",
+                        "locked": {
+                            "contents": true,
+                            "children": true,
+                            "move": true,
+                            "delete": true
+                        }
+                    },
+                    {
                         "modId": "testMod1:dev/multilang",
                         "fields": {
                             "text1": {
