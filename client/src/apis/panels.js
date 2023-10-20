@@ -270,6 +270,10 @@ module.exports = function(broccoli){
 					if( instanceData.locked && instanceData.locked.move ){
 						return false;
 					}
+					var parentInstanceData = broccoli.contentsSourceData.get(broccoli.contentsSourceData.getParentInstancePath(instancePath));
+					if( parentInstanceData.locked && parentInstanceData.locked.children ){
+						return false;
+					}
 					return true;
 				})){
 					// ロックされたインスタンスが含まれている場合、移動できない。 → 中止

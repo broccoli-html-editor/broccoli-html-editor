@@ -80,7 +80,13 @@
                             }
                         },
                         "anchor": "",
-                        "dec": ""
+                        "dec": "",
+                        "locked": {
+                            "contents": false,
+                            "children": true,
+                            "move": false,
+                            "delete": false
+                        }
                     },
                     {
                         "modId": "testMod1:dev/image_resize",

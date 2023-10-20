@@ -867,7 +867,7 @@
 					});
 				},
 				function(it1){
-					var parentInstancePath = firstInstancePath.replace(/(?:\/fields\.([a-zA-Z0-9\_\-]+)\@[0-9]*)$/, '');
+					var parentInstancePath = broccoli.contentsSourceData.getParentInstancePath(firstInstancePath);
 					var fieldName = RegExp.$1;
 					var data = broccoli.contentsSourceData.get(parentInstancePath);
 					var lastInstanceIdx = data.fields[fieldName].length - 1;
@@ -1284,6 +1284,12 @@
 				if( instanceData.locked && instanceData.locked.delete ){
 					return false;
 				}
+
+				var parentInstanceData = broccoli.contentsSourceData.get(broccoli.contentsSourceData.getParentInstancePath(instancePath));
+				if( parentInstanceData.locked && parentInstanceData.locked.children ){
+					return false;
+				}
+
 				return true;
 			})){
 				// ロックされたインスタンスが含まれている場合、削除できない。 → 中止

@@ -2,8 +2,6 @@
  * contentsSourceData.js
  */
 module.exports = function(broccoli){
-	// delete(require.cache[require('path').resolve(__filename)]);
-
 	var _this = this;
 	this.broccoli = broccoli;
 
@@ -42,7 +40,6 @@ module.exports = function(broccoli){
 					// コンテンツデータを整理
 					_contentsSourceData.bowl = _contentsSourceData.bowl||{};
 					_this.initBowlData('main');
-					// console.log(_contentsSourceData);
 					it1.next(data);
 				} ,
 				function(it1, data){
@@ -56,14 +53,13 @@ module.exports = function(broccoli){
 					);
 				} ,
 				function(it1, data){
-					// console.log(_contentsSourceData);
 					callback();
 				}
 			]
 		);
 
 		return;
-	}// init()
+	}
 
 	/**
 	 * データを取得する (同期)
@@ -71,7 +67,6 @@ module.exports = function(broccoli){
 	this.get = function( containerInstancePath, data ){
 		data = data || _contentsSourceData;
 
-		// console.log( '=-=-=-=-=-=-=-=-=-=-=-=-=-=', containerInstancePath );
 		if( containerInstancePath === undefined || !containerInstancePath.length ){
 			return data;
 		}
@@ -135,6 +130,17 @@ module.exports = function(broccoli){
 	}
 
 	/**
+	 * 親インスタンスのパスを取得する
+	 *
+	 * @param {*} instancePath インスタンスパス
+	 * @returns 親インスタンスのパス
+	 */
+	this.getParentInstancePath = function(instancePath){
+		var parentInstancePath = instancePath.replace(/(?:\/fields\.([a-zA-Z0-9\_\-]+)\@[0-9]*)$/, '');
+		return parentInstancePath;
+	}
+
+	/**
 	 * 指定したインスタンスパスの子ノードの一覧を取得 (非同期)
 	 */
 	this.getChildren = function( containerInstancePath, callback ){
@@ -166,13 +172,20 @@ module.exports = function(broccoli){
 	/**
 	 * インスタンスを追加する (非同期)
 	 */
-	this.addInstance = function( modId, containerInstancePath, cb, subModName ){
-		// console.log( '----- addInstance: '+(modId.modId || modId)+': '+containerInstancePath );
-		cb = cb||function(){};
+	this.addInstance = function( modId, containerInstancePath, callback, subModName ){
+		callback = callback||function(){};
 
 		if( containerInstancePath.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
 			broccoli.message(broccoli.lb.get('ui_message.cannot_add_to_bowl_add_it_in_appender')); // bowl に追加することはできません。アペンダーに追加してください。
-			cb();
+			callback();
+			return;
+		}
+
+		var containerInstanceData = broccoli.contentsSourceData.get(broccoli.contentsSourceData.getParentInstancePath(containerInstancePath));
+		if( containerInstanceData.locked && containerInstanceData.locked.children ){
+			// ロックされたインスタンスが含まれている場合、追加できない。 → 中止
+			broccoli.message("Failed to insert. Field is locked.");
+			callback();
 			return;
 		}
 
@@ -212,7 +225,6 @@ module.exports = function(broccoli){
 		}
 
 		var aryPath = this.parseInstancePath( containerInstancePath );
-		// console.log( aryPath );
 
 		function set_r( aryPath, data, newData ){
 			var cur = aryPath.shift();
@@ -329,34 +341,30 @@ module.exports = function(broccoli){
 			}
 
 			return false;
-		} // set_r()
+		}
 
 		var result = set_r( aryPath, _contentsSourceData, newData );
 
-		cb(result);
+		callback(result);
 
 		return;
-	} // addInstance()
+	}
 
 	/**
 	 * インスタンスを更新する
 	 */
-	this.updateInstance = function( newData, containerInstancePath, cb ){
-		// console.log( '----- updateInstance:', containerInstancePath, newData );
-		cb = cb||function(){};
+	this.updateInstance = function( newData, containerInstancePath, callback ){
+		callback = callback || function(){};
 
 		var containerInstancePath = this.parseInstancePath( containerInstancePath );
-		// console.log( containerInstancePath );
 
 		function set_r( aryPath, data, newData ){
-			// console.log( data );
 			var cur = aryPath.shift();
 			var idx = null;
 			var tmpSplit = cur.split('@');
 			cur = tmpSplit[0];
 			if( tmpSplit.length >=2 ){
 				idx = Number(tmpSplit[1]);
-				// console.log(idx);
 			}
 			var tmpCur = cur.split('.');
 			var container = tmpCur[0];
@@ -413,16 +421,16 @@ module.exports = function(broccoli){
 
 		var result = set_r( containerInstancePath, _contentsSourceData, newData );
 
-		cb(result);
+		callback(result);
 
 		return;
-	}// updateInstance()
+	}
 
 	/**
 	 * インスタンスを移動する
 	 */
-	this.moveInstanceTo = function( fromContainerInstancePath, toContainerInstancePath, cb ){
-		cb = cb||function(){};
+	this.moveInstanceTo = function( fromContainerInstancePath, toContainerInstancePath, callback ){
+		callback = callback||function(){};
 
 		function isBowlRoot(instancePath){
 			if( instancePath.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
@@ -432,12 +440,12 @@ module.exports = function(broccoli){
 		}
 		if( isBowlRoot(fromContainerInstancePath) ){
 			broccoli.message(broccoli.lb.get('ui_message.bowl_cannot_be_moved')); // bowl を移動することはできません。
-			cb(false);
+			callback(false);
 			return;
 		}
 		if( isBowlRoot(toContainerInstancePath) ){
 			broccoli.message(broccoli.lb.get('ui_message.cannot_move_to_bowl_drop_it_in_appender')); // bowl への移動はできません。アペンダーへドロップしてください。
-			cb(false);
+			callback(false);
 			return;
 		}
 
@@ -473,7 +481,7 @@ module.exports = function(broccoli){
 			// 同じ箱の中での並び替え
 			if( fromParsed.num == toParsed.num ){
 				// to と from が一緒だったら何もしない。
-				cb(false);
+				callback(false);
 				return;
 			}
 			if( fromParsed.num < toParsed.num ){
@@ -483,14 +491,14 @@ module.exports = function(broccoli){
 			_this.removeInstance(fromContainerInstancePath, function(result){
 				_this.addInstance( dataFrom.modId, toContainerInstancePath, function(result){
 					_this.updateInstance( dataFrom, toContainerInstancePath, function(result){
-						cb(true);
+						callback(true);
 					} );
 				} );
 			});
 		}else if( toParsed.path.indexOf(fromParsed.path) === 0 ){
 			// 自分の子階層への移動
 			broccoli.message(broccoli.lb.get('ui_message.cannot_move_to_child_hierarchy')); // 自分の子階層へ移動することはできません。
-			cb(false);
+			callback(false);
 		}else if( fromParsed.path.indexOf(toParsed.container) === 0 ){
 			// 自分の親階層への移動
 			var bak_contentsSourceData = JSON.parse( JSON.stringify(_contentsSourceData) ); // バックアップデータ作成
@@ -499,11 +507,11 @@ module.exports = function(broccoli){
 					if(!result){
 						// ロールバック
 						_contentsSourceData = JSON.parse( JSON.stringify(bak_contentsSourceData) );
-						cb(false);
+						callback(false);
 						return;
 					}
 					_this.updateInstance( dataFrom, toContainerInstancePath, function(result){
-						cb(true);
+						callback(true);
 					} );
 				} );
 			});
@@ -511,19 +519,19 @@ module.exports = function(broccoli){
 			// まったく関連しない箱への移動
 			_this.addInstance( dataFrom.modId, toContainerInstancePath, function(result){
 				if(!result){
-					cb(false);
+					callback(false);
 					return _this;
 				}
 				_this.updateInstance( dataFrom, toContainerInstancePath, function(result){
 					_this.removeInstance(fromContainerInstancePath, function(result){
-						cb(true);
+						callback(true);
 					});
 				} );
 			} );
 		}
 
 		return;
-	} // moveInstanceTo()
+	}
 
 	/**
 	 * インスタンスを複製する(非同期)
@@ -599,7 +607,6 @@ module.exports = function(broccoli){
 				return;
 			},
 			function(){
-				// setTimeout( function(){ cb(newData); }, 0 );
 				broccoli.resourceMgr.init(function(){
 					callback(newData);
 				});
@@ -671,20 +678,19 @@ module.exports = function(broccoli){
 				return;
 			},
 			function(){
-				// setTimeout( function(){ cb(resourceIdList); }, 0 );
 				broccoli.resourceMgr.init(function(){
 					callback(resourceIdList);
 				});
 			}
 		);
 		return;
-	}// extractResourceId()
+	}
 
 	/**
 	 * インスタンスを削除する(非同期)
 	 */
-	this.removeInstance = function( containerInstancePath, cb ){
-		cb = cb||function(){};
+	this.removeInstance = function( containerInstancePath, callback ){
+		callback = callback || function(){};
 
 		var containerInstancePath = this.parseInstancePath( containerInstancePath );
 
@@ -745,10 +751,10 @@ module.exports = function(broccoli){
 
 		remove_r( containerInstancePath, _contentsSourceData );
 
-		cb();
+		callback();
 
 		return;
-	}// removeInstance()
+	}
 
 	/**
 	 * インスタンスのパスを解析する(同期)
@@ -757,13 +763,13 @@ module.exports = function(broccoli){
 		if( typeof(containerInstancePath) === typeof([]) ){
 			return containerInstancePath;
 		}
-		// console.log(containerInstancePath);
+
 		containerInstancePath = containerInstancePath||'';
 		if( !containerInstancePath ){ containerInstancePath = '/fields.main'; }
 		containerInstancePath = containerInstancePath.replace( new RegExp('^\\/*'), '' );
 		containerInstancePath = containerInstancePath.replace( new RegExp('\\/*$'), '' );
 		containerInstancePath = containerInstancePath.split('/');
-		// console.log(containerInstancePath);
+
 		return containerInstancePath;
 	}
 
@@ -822,8 +828,6 @@ module.exports = function(broccoli){
 			return false;
 		}
 		if( typeof(subModName) === typeof('') ){
-			// console.log(subModName);
-			// console.log(rtn.subModule[subModName]);
 			if( !rtn.subModule || !rtn.subModule[subModName] ){
 				console.error('Undefined subModule "'+subModName+'" was called.');
 				return false;
@@ -989,7 +993,6 @@ module.exports = function(broccoli){
 							'updateContents',
 							{} ,
 							function(result){
-								// console.log('------ gpi.updateContents result --', result);
 								it1.next(data);
 							}
 						);
@@ -1009,7 +1012,7 @@ module.exports = function(broccoli){
 			doHistoryCommand(historyStepStock);
 		}, 500);
 		return;
-	} // historyBackOrGo()
+	}
 
 
 	/**
@@ -1046,7 +1049,6 @@ module.exports = function(broccoli){
 					}
 					broccoli.progressMessage(broccoli.lb.get('ui_message.synchronizing_resources')); // リソースデータを同期しています
 					broccoli.resourceMgr.reload(function(resourceDb){
-						// console.log(resourceDb);
 						_resourceDbReloadRequest = false;
 						it1.next(data);
 					});
