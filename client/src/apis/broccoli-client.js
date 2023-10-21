@@ -73,6 +73,7 @@
 			options.clipboard.get = options.clipboard.get || null;
 			options.enableModuleDec = ( typeof(options.enableModuleDec) == typeof(true) ? options.enableModuleDec : true );
 			options.enableModuleAnchor = ( typeof(options.enableModuleAnchor) == typeof(true) ? options.enableModuleAnchor : true );
+			options.enableInstanceLock = ( typeof(options.enableInstanceLock) == typeof(true) ? options.enableInstanceLock : true );
 
 			this.options = options;
 

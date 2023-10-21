@@ -97,7 +97,10 @@ module.exports = function(broccoli){
 		if( !broccoli.options.enableModuleDec ){
 			$editWindow.find('.broccoli__edit-window-builtin-dec-field-wrap').css({'display': 'none'});
 		}
-		if( !broccoli.options.enableModuleAnchor && !broccoli.options.enableModuleDec ){
+		if( !broccoli.options.enableInstanceLock ){
+			$editWindow.find('.broccoli__edit-window-builtin-instance-lock-field-wrap').css({'display': 'none'});
+		}
+		if( !broccoli.options.enableModuleAnchor && !broccoli.options.enableModuleDec && !broccoli.options.enableInstanceLock ){
 			$editWindow.find('.broccoli__edit-window-builtin-fields-switch').css({'display': 'none'});
 			$editWindow.find('.broccoli__edit-window-builtin-fields').css({'display': 'none'});
 		}
@@ -198,7 +201,6 @@ module.exports = function(broccoli){
 												'data-broccoli-instance-path': childInstancePath,
 												'data-broccoli-mod-id': childMod.id,
 												'data-broccoli-sub-mod-name': childMod.subModName,
-												// 'data-broccoli-is-appender':'yes',
 												'data-broccoli-is-edit-window': 'yes',
 												'draggable': true
 											})
@@ -319,7 +321,6 @@ module.exports = function(broccoli){
 												.attr({
 													'data-broccoli-instance-path':appenderInstancePath,
 													'data-broccoli-is-appender':'yes',
-													// 'data-broccoli-is-instance-tree-view': 'yes',
 													'data-broccoli-is-edit-window': 'yes',
 													'draggable': false
 												})
@@ -343,7 +344,6 @@ module.exports = function(broccoli){
 													'data-broccoli-mod-internal-id': mod.internalId,
 													'data-broccoli-sub-mod-name': field.name,
 													'data-broccoli-is-appender':'yes',
-													// 'data-broccoli-is-instance-tree-view': 'yes',
 													'data-broccoli-is-edit-window': 'yes',
 													'draggable': false
 												})
@@ -372,10 +372,10 @@ module.exports = function(broccoli){
 										$appender
 											.off('drop')
 											.on('drop', function(e){
-												_this.lock();//フォームをロック
+												_this.lock(); // フォームをロック
 												broccoli.panels.onDrop(e, this, function(){
 													updateModuleAndLoopField( instancePath, function(){
-														_this.unlock();//フォームのロックを解除
+														_this.unlock(); // フォームのロックを解除
 													} );
 												});
 											})
@@ -429,7 +429,7 @@ module.exports = function(broccoli){
 				);
 			});
 			return;
-		} // updateModuleAndLoopField()
+		}
 
 		var focusDone = false;
 		var fieldCount = 0;
@@ -578,6 +578,18 @@ module.exports = function(broccoli){
 							;
 							$editWindow.find('#broccoli__edit-window-builtin-dec-field')
 								.val(data.dec)
+							;
+							$editWindow.find('#broccoli__edit-window-builtin-instance-lock-field-contents')
+								.prop('checked', data.locked && data.locked.contents)
+							;
+							$editWindow.find('#broccoli__edit-window-builtin-instance-lock-field-children')
+								.prop('checked', data.locked && data.locked.children)
+							;
+							$editWindow.find('#broccoli__edit-window-builtin-instance-lock-field-move')
+								.prop('checked', data.locked && data.locked.move)
+							;
+							$editWindow.find('#broccoli__edit-window-builtin-instance-lock-field-delete')
+								.prop('checked', data.locked && data.locked.delete)
 							;
 							$editWindow.find('.broccoli__edit-window-form-buttons button')
 								.removeAttr('disabled')
@@ -881,6 +893,11 @@ module.exports = function(broccoli){
 						function(it2, arg){
 							data.anchor = $editWindow.find('#broccoli__edit-window-builtin-anchor-field').val();
 							data.dec = $editWindow.find('#broccoli__edit-window-builtin-dec-field').val();
+							data.locked = {};
+							data.locked.contents = $editWindow.find('#broccoli__edit-window-builtin-instance-lock-field-contents').prop('checked');
+							data.locked.children = $editWindow.find('#broccoli__edit-window-builtin-instance-lock-field-children').prop('checked');
+							data.locked.move = $editWindow.find('#broccoli__edit-window-builtin-instance-lock-field-move').prop('checked');
+							data.locked.delete = $editWindow.find('#broccoli__edit-window-builtin-instance-lock-field-delete').prop('checked');
 
 							it2.next(arg);
 						} ,

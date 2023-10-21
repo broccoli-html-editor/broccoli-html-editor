@@ -215,6 +215,7 @@ broccoli.init(
         },
         'enableModuleAnchor': true, // モジュールごとのid属性入力の有効/無効 (デフォルトは `true`)
         'enableModuleDec': true // DEC入力の有効/無効 (デフォルトは `true`)
+        'enableInstanceLock': true // インスタンスロックの有効/無効 (デフォルトは `true`)
     } ,
     function(){
         // 初期化が完了すると呼びだされるコールバック関数です。
@@ -325,13 +326,13 @@ coming soon.
 ### build
 
 ```
-$ gulp
+$ npm run prod
 ```
 
 ### build with watching edit change
 
 ```
-$ gulp watch
+$ npm run watch
 ```
 
 ### server up
@@ -369,6 +370,7 @@ $ composer test
 
 - スタイルシートを自動的に読み込まないようになった。 呼び出し側で明示的に読み込む必要があります。
 - インスタンスロック機能を追加した。ロックが設定されたインスタンスに対する編集操作に制限をかけられるようになった。
+- `enableInstanceLock` オプションを追加した。
 - ダークモード用のスタイルをバンドルした。
 - 細かいバグ修正と内部コードの修正。
 
