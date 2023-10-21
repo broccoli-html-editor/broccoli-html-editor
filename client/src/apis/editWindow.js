@@ -82,7 +82,11 @@ module.exports = function(broccoli){
 
 		var $fields = $('<div>');
 		$editWindow = $(elmEditWindow);
-		$editWindow.html('').append( broccoli.bindTwig(tplFrame, {'lb':broccoli.lb}) );
+		$editWindow.html('').append( broccoli.bindTwig(tplFrame, {
+			'lb': broccoli.lb,
+			'data': data,
+			'options': broccoli.options,
+		}) );
 		$editWindow.find('.broccoli__edit-window-module-name').text(mod.info.name||mod.id);
 		$editWindow.find('.broccoli__edit-window-fields').append($fields);
 
@@ -103,6 +107,13 @@ module.exports = function(broccoli){
 		if( !broccoli.options.enableModuleAnchor && !broccoli.options.enableModuleDec && !broccoli.options.enableInstanceLock ){
 			$editWindow.find('.broccoli__edit-window-builtin-fields-switch').css({'display': 'none'});
 			$editWindow.find('.broccoli__edit-window-builtin-fields').css({'display': 'none'});
+		}
+
+		// locked.contents
+		// 内容の編集がロックされている場合、ビルトインフィールドもロックする
+		if( data.locked && data.locked.contents ){
+			$editWindow.find('#broccoli__edit-window-builtin-anchor-field').attr({'readonly': true});
+			$editWindow.find('#broccoli__edit-window-builtin-dec-field').attr({'readonly': true});
 		}
 
 
@@ -284,25 +295,23 @@ module.exports = function(broccoli){
 												formErrorMessage([]);
 
 												_this.lock(); // フォームをロック
-												validateInstance(instancePath, mod, data, function(res){
+
+												saveInstance(instancePath, mod, data, function(res){
 													if( !res ){
 														// エラーがあるため次へ進めない
 														_this.unlock();
 														return;
 													}
-													saveInstance(instancePath, mod, data, function(res){
-														// コンテンツデータを保存
-														broccoli.progressMessage('コンテンツを保存しています');
-														broccoli.saveContents(function(){
-															broccoli.options.onEditWindowClose(instancePath, true); // editWindow を閉じたイベントを発火
+													// コンテンツデータを保存
+													broccoli.progressMessage('コンテンツを保存しています');
+													broccoli.saveContents(function(){
+														broccoli.options.onEditWindowClose(instancePath, true); // editWindow を閉じたイベントを発火
 
-															broccoli.panels.onDblClick(e, $this.get(0), function(){
-																broccoli.progressMessage('');
-															});
+														broccoli.panels.onDblClick(e, $this.get(0), function(){
+															broccoli.progressMessage('');
 														});
 													});
 												});
-
 											})
 											.off('contextmenu')
 										;
@@ -606,7 +615,7 @@ module.exports = function(broccoli){
 
 									_this.lock();//フォームをロック
 									broccoli.progress();
-									validateInstance(instancePath, mod, data, function(res){
+									saveInstance(instancePath, mod, data, function(res){
 										if( !res ){
 											// エラーがあるため次へ進めない
 											_this.unlock();
@@ -614,14 +623,11 @@ module.exports = function(broccoli){
 											broccoli.px2style.closeLoading();
 											return;
 										}
-										saveInstance(instancePath, mod, data, function(res){
-											broccoli.progressMessage('');
-											broccoli.closeProgress();
-											broccoli.px2style.closeLoading();
-											editWindowInitCallback(res);
-										});
+										broccoli.progressMessage('');
+										broccoli.closeProgress();
+										broccoli.px2style.closeLoading();
+										editWindowInitCallback(res);
 									});
-
 								})
 							;
 							$editWindow.find('.broccoli__edit-window-btn-close button')
@@ -783,20 +789,18 @@ module.exports = function(broccoli){
 						var instancePathTo = $(this).attr('data-broccoli-instance-path');
 
 						_this.lock(); // フォームをロック
-						validateInstance(instancePath, mod, data, function(res){
+						saveInstance(instancePath, mod, data, function(res){
 							if( !res ){
 								// エラーがあるため次へ進めない
 								_this.unlock();
 								return;
 							}
-							saveInstance(instancePath, mod, data, function(res){
-								// コンテンツデータを保存
-								broccoli.progressMessage('コンテンツを保存しています');
-								broccoli.saveContents(function(){
-									broccoli.options.onEditWindowClose(instancePath, true); // editWindow を閉じたイベントを発火
+							// コンテンツデータを保存
+							broccoli.progressMessage('コンテンツを保存しています');
+							broccoli.saveContents(function(){
+								broccoli.options.onEditWindowClose(instancePath, true); // editWindow を閉じたイベントを発火
 
-									broccoli.editInstance( instancePathTo );
-								});
+								broccoli.editInstance( instancePathTo );
 							});
 						});
 					} )
@@ -811,7 +815,7 @@ module.exports = function(broccoli){
 	/**
 	 * インスタンスの編集内容を検証する
 	 */
-	function validateInstance( instancePath, mod, data, callback ){
+	function validateInstance( mod, data, callback ){
 		var errors = {};
 		var isError = false;
 		it79.ary(
@@ -863,63 +867,76 @@ module.exports = function(broccoli){
 		if( data.fields && data.fields.length === 0 ){
 			data.fields = {};
 		}
-		it79.ary(
-			mod.fields,
-			function(it2, field2, fieldName2){
-				var $dom = $editWindow.find('[data-broccoli-edit-window-field-name='+field2.name+']');
-				if( $dom.attr('data-broccoli-edit-window-field-type') != 'input' ){
-					it2.next();return;
-				}
-				var fieldDefinition = broccoli.getFieldDefinition(field2.type);
-				var message = 'フィールド "'+fieldName2+'" を処理しています...';
-				if( broccoli.lb.getLang() == 'en' ){
-					message = 'Processing Field "'+fieldName2+'"...';
-				}
-				broccoli.progressMessage( message );
-				fieldDefinition.saveEditorContent($dom.get(0), data.fields[fieldName2], mod.fields[fieldName2], function(result){
-					data.fields[fieldName2] = result;
-					it2.next();
-				}, {
-					'message': function(msg){
-						broccoli.progressMessage( fieldName2+': '+msg );
-					}
-				});
-				return;
-			},
-			function(){
-				broccoli.progressMessage( broccoli.lb.get('ui_message.sending_data') ); // message: データを送信しています...
-				it79.fnc({},
-					[
-						function(it2, arg){
-							data.anchor = $editWindow.find('#broccoli__edit-window-builtin-anchor-field').val();
-							data.dec = $editWindow.find('#broccoli__edit-window-builtin-dec-field').val();
-							data.locked = {};
-							data.locked.contents = $editWindow.find('#broccoli__edit-window-builtin-instance-lock-field-contents').prop('checked');
-							data.locked.children = $editWindow.find('#broccoli__edit-window-builtin-instance-lock-field-children').prop('checked');
-							data.locked.move = $editWindow.find('#broccoli__edit-window-builtin-instance-lock-field-move').prop('checked');
-							data.locked.delete = $editWindow.find('#broccoli__edit-window-builtin-instance-lock-field-delete').prop('checked');
-
-							it2.next(arg);
-						} ,
-						function(it2, arg){
-							// クライアントサイドにあるメモリ上のcontentsSourceDataに反映する。
-							// この時点で、まだサーバー側には送られていない。
-							// サーバー側に送るのは、callback() の先の仕事。
-							broccoli.progressMessage( broccoli.lb.get('ui_message.updating_instance') ); // message: インスタンス情報を更新しています...
-							broccoli.contentsSourceData.updateInstance(data, instancePath, function(){
-								it2.next(arg);
-							});
-						} ,
-						function(it2, arg){
-							broccoli.progressMessage( broccoli.lb.get('ui_label.finished') ); // 完了
-							callback(true);
-							it2.next(arg);
+		it79.fnc({},
+			[
+				function(it){
+					validateInstance(mod, data, function(hasError){
+						if( !hasError ){
+							// エラーがあるため次へ進めない
+							callback(false);
+							return;
 						}
-					]
-				);
-			}
-		);
+						it.next();
+					});
+				},
+				function(it){
+					it79.ary(
+						mod.fields,
+						function(it2, field2, fieldName2){
+							var $dom = $editWindow.find('[data-broccoli-edit-window-field-name='+field2.name+']');
+							if( $dom.attr('data-broccoli-edit-window-field-type') != 'input' ){
+								it2.next();
+								return;
+							}
+							var fieldDefinition = broccoli.getFieldDefinition(field2.type);
+							var message = 'フィールド "'+fieldName2+'" を処理しています...';
+							if( broccoli.lb.getLang() == 'en' ){
+								message = 'Processing Field "'+fieldName2+'"...';
+							}
+							broccoli.progressMessage( message );
+							fieldDefinition.saveEditorContent($dom.get(0), data.fields[fieldName2], mod.fields[fieldName2], function(result){
+								data.fields[fieldName2] = result;
+								it2.next();
+							}, {
+								'message': function(msg){
+									broccoli.progressMessage( fieldName2+': '+msg );
+								}
+							});
+							return;
+						},
+						function(){
+							broccoli.progressMessage( broccoli.lb.get('ui_message.sending_data') ); // message: データを送信しています...
+							it.next();
+						}
+					);
+				},
+				function(it){
+					data.anchor = $editWindow.find('#broccoli__edit-window-builtin-anchor-field').val();
+					data.dec = $editWindow.find('#broccoli__edit-window-builtin-dec-field').val();
+					data.locked = {};
+					data.locked.contents = $editWindow.find('#broccoli__edit-window-builtin-instance-lock-field-contents').prop('checked');
+					data.locked.children = $editWindow.find('#broccoli__edit-window-builtin-instance-lock-field-children').prop('checked');
+					data.locked.move = $editWindow.find('#broccoli__edit-window-builtin-instance-lock-field-move').prop('checked');
+					data.locked.delete = $editWindow.find('#broccoli__edit-window-builtin-instance-lock-field-delete').prop('checked');
 
+					it.next();
+				},
+				function(it){
+					// クライアントサイドにあるメモリ上のcontentsSourceDataに反映する。
+					// この時点で、まだサーバー側には送られていない。
+					// サーバー側に送るのは、callback() の先の仕事。
+					broccoli.progressMessage( broccoli.lb.get('ui_message.updating_instance') ); // message: インスタンス情報を更新しています...
+					broccoli.contentsSourceData.updateInstance(data, instancePath, function(){
+						it.next();
+					});
+				},
+				function(it){
+					broccoli.progressMessage( broccoli.lb.get('ui_label.finished') ); // 完了
+					callback(true);
+					it.next();
+				},
+			]
+		);
 		return;
 	}
 
