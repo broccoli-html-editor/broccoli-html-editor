@@ -615,8 +615,8 @@ module.exports = function(broccoli){
 
 									_this.lock();//フォームをロック
 									broccoli.progress();
-									saveInstance(instancePath, mod, data, function(res){
-										if( !res ){
+									saveInstance(instancePath, mod, data, function(hasError){
+										if( !hasError ){
 											// エラーがあるため次へ進めない
 											_this.unlock();
 											broccoli.closeProgress();
@@ -626,7 +626,7 @@ module.exports = function(broccoli){
 										broccoli.progressMessage('');
 										broccoli.closeProgress();
 										broccoli.px2style.closeLoading();
-										editWindowInitCallback(res);
+										editWindowInitCallback(true);
 									});
 								})
 							;
@@ -870,6 +870,28 @@ module.exports = function(broccoli){
 		it79.fnc({},
 			[
 				function(it){
+					if( data.locked && data.locked.contents ){
+						// 内容の編集がロックされている場合、
+						// locked 項目の変更のみが許可される。
+						data.locked = {};
+						data.locked.contents = $editWindow.find('#broccoli__edit-window-builtin-instance-lock-field-contents').prop('checked');
+						data.locked.children = $editWindow.find('#broccoli__edit-window-builtin-instance-lock-field-children').prop('checked');
+						data.locked.move = $editWindow.find('#broccoli__edit-window-builtin-instance-lock-field-move').prop('checked');
+						data.locked.delete = $editWindow.find('#broccoli__edit-window-builtin-instance-lock-field-delete').prop('checked');
+
+						// クライアントサイドにあるメモリ上の `contentsSourceData` に反映する。
+						// この時点で、まだサーバー側には送られていない。
+						// サーバー側に送るのは、`callback()` の先(`broccoli.editInstance()`)の仕事。
+						broccoli.progressMessage( broccoli.lb.get('ui_message.updating_instance') ); // message: インスタンス情報を更新しています...
+						broccoli.contentsSourceData.updateInstance(data, instancePath, function(){
+							broccoli.progressMessage( broccoli.lb.get('ui_label.finished') ); // message: 完了
+							callback(true);
+						});
+						return;
+					}
+					it.next();
+				},
+				function(it){
 					validateInstance(mod, data, function(hasError){
 						if( !hasError ){
 							// エラーがあるため次へ進めない
@@ -922,16 +944,16 @@ module.exports = function(broccoli){
 					it.next();
 				},
 				function(it){
-					// クライアントサイドにあるメモリ上のcontentsSourceDataに反映する。
+					// クライアントサイドにあるメモリ上の `contentsSourceData` に反映する。
 					// この時点で、まだサーバー側には送られていない。
-					// サーバー側に送るのは、callback() の先の仕事。
+					// サーバー側に送るのは、`callback()` の先(`broccoli.editInstance()`)の仕事。
 					broccoli.progressMessage( broccoli.lb.get('ui_message.updating_instance') ); // message: インスタンス情報を更新しています...
 					broccoli.contentsSourceData.updateInstance(data, instancePath, function(){
 						it.next();
 					});
 				},
 				function(it){
-					broccoli.progressMessage( broccoli.lb.get('ui_label.finished') ); // 完了
+					broccoli.progressMessage( broccoli.lb.get('ui_label.finished') ); // message: 完了
 					callback(true);
 					it.next();
 				},

@@ -226,7 +226,7 @@ module.exports = function(broccoli){
 
 		var aryPath = this.parseInstancePath( containerInstancePath );
 
-		function set_r( aryPath, data, newData ){
+		function set_recursive( aryPath, data, newData ){
 			var cur = aryPath.shift();
 			var idx = null;
 			var tmpSplit = cur.split('@');
@@ -241,7 +241,7 @@ module.exports = function(broccoli){
 
 			if( container == 'bowl' ){
 				// ルート要素だったらスキップして次へ
-				return set_r( aryPath, data.bowl[fieldName], newData );
+				return set_recursive( aryPath, data.bowl[fieldName], newData );
 			}
 
 			if( !aryPath.length ){
@@ -330,11 +330,11 @@ module.exports = function(broccoli){
 				// もっと深かったら
 				modTpl.fields[fieldName].fieldType = modTpl.fields[fieldName].fieldType || 'input';
 				if( modTpl.fields[fieldName].fieldType == 'input'){
-					return set_r( aryPath, data.fields[fieldName], newData );
+					return set_recursive( aryPath, data.fields[fieldName], newData );
 				}else if( modTpl.fields[fieldName].fieldType == 'module'){
-					return set_r( aryPath, data.fields[fieldName][idx], newData );
+					return set_recursive( aryPath, data.fields[fieldName][idx], newData );
 				}else if( modTpl.fields[fieldName].fieldType == 'loop'){
-					return set_r( aryPath, data.fields[fieldName][idx], newData );
+					return set_recursive( aryPath, data.fields[fieldName][idx], newData );
 				}else if( modTpl.fields[fieldName].fieldType == 'if'){
 				}else if( modTpl.fields[fieldName].fieldType == 'echo'){
 				}
@@ -343,7 +343,7 @@ module.exports = function(broccoli){
 			return false;
 		}
 
-		var result = set_r( aryPath, _contentsSourceData, newData );
+		var result = set_recursive( aryPath, _contentsSourceData, newData );
 
 		callback(result);
 
@@ -358,7 +358,7 @@ module.exports = function(broccoli){
 
 		var containerInstancePath = this.parseInstancePath( containerInstancePath );
 
-		function set_r( aryPath, data, newData ){
+		function set_recursive( aryPath, data, newData ){
 			var cur = aryPath.shift();
 			var idx = null;
 			var tmpSplit = cur.split('@');
@@ -378,7 +378,7 @@ module.exports = function(broccoli){
 					return;
 				}
 				// スキップして次へ
-				return set_r( aryPath, data.bowl[fieldName], newData );
+				return set_recursive( aryPath, data.bowl[fieldName], newData );
 			}
 
 			modTpl.fields[fieldName].fieldType = modTpl.fields[fieldName].fieldType || 'input';
@@ -405,11 +405,11 @@ module.exports = function(broccoli){
 			}else{
 				// もっと深かったら
 				if( modTpl.fields[fieldName].fieldType == 'input'){
-					return set_r( aryPath, data.fields[fieldName], newData );
+					return set_recursive( aryPath, data.fields[fieldName], newData );
 				}else if( modTpl.fields[fieldName].fieldType == 'module'){
-					return set_r( aryPath, data.fields[fieldName][idx], newData );
+					return set_recursive( aryPath, data.fields[fieldName][idx], newData );
 				}else if( modTpl.fields[fieldName].fieldType == 'loop'){
-					return set_r( aryPath, data.fields[fieldName][idx], newData );
+					return set_recursive( aryPath, data.fields[fieldName][idx], newData );
 				}else if( modTpl.fields[fieldName].fieldType == 'if'){
 				}else if( modTpl.fields[fieldName].fieldType == 'echo'){
 				}
@@ -419,7 +419,7 @@ module.exports = function(broccoli){
 			return true;
 		}
 
-		var result = set_r( containerInstancePath, _contentsSourceData, newData );
+		var result = set_recursive( containerInstancePath, _contentsSourceData, newData );
 
 		callback(result);
 

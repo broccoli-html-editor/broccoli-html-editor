@@ -1640,6 +1640,7 @@
 		 * コンテンツデータを保存する
 		 */
 		this.saveContents = function(callback){
+console.log('***** saveContents() called!!!!!!!!');
 			callback = callback || function(){};
 			it79.fnc({},[
 				function(it1, data){

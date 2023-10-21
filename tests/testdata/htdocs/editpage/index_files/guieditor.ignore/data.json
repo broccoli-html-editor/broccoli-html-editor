@@ -99,7 +99,13 @@
                             }
                         },
                         "anchor": "",
-                        "dec": ""
+                        "dec": "",
+                        "locked": {
+                            "contents": false,
+                            "children": false,
+                            "move": false,
+                            "delete": false
+                        }
                     },
                     {
                         "modId": "testMod1:units/cols2",
