@@ -39,7 +39,7 @@ module.exports = function(broccoli){
 			};
 		}
 		return rtn;
-	}// normalizeData()
+	}
 
 	/**
 	 * プレビュー用の簡易なHTMLを生成する
@@ -60,7 +60,9 @@ module.exports = function(broccoli){
 						.attr({'src': fieldData.webUrl})
 						.css({
 							'max-width': '80px',
-							'max-height': '80px'
+							'max-height': '80px',
+							'display': 'block',
+							'margin': '0 auto',
 						})
 					;
 					rtn = $.html();
@@ -87,7 +89,9 @@ module.exports = function(broccoli){
 									.attr({'src': imagePath})
 									.css({
 										'max-width': '80px',
-										'max-height': '80px'
+										'max-height': '80px',
+										'display': 'block',
+										'margin': '0 auto',
 									})
 								;
 								rtn = $.html();
@@ -100,7 +104,9 @@ module.exports = function(broccoli){
 								.attr({'src': _imgDummy})
 								.css({
 									'max-width': '80px',
-									'max-height': '80px'
+									'max-height': '80px',
+									'display': 'block',
+									'margin': '0 auto',
 								})
 							;
 							rtn = $.html();
@@ -112,12 +118,17 @@ module.exports = function(broccoli){
 				return;
 			}); })
 			.then(function(){ return new Promise(function(rlv, rjt){
+				rtn = '<div style="margin: 1em auto; padding: 10px; border: 1px solid #888; border-radius: 5px;">'+rtn+'</div>';
+				rlv();
+				return;
+			}); })
+			.then(function(){ return new Promise(function(rlv, rjt){
 				callback( rtn );
 				return;
 			}); })
 		;
 		return;
-	}// mkPreviewHtml()
+	}
 
 	/**
 	 * エディタUIを生成

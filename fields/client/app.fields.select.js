@@ -1,6 +1,25 @@
 module.exports = function(broccoli){
-
 	var $ = require('jquery');
+
+	/**
+	 * プレビュー用の簡易なHTMLを生成する
+	 */
+	this.mkPreviewHtml = function( fieldData, mod, callback ){
+
+		var presetString = fieldData;
+		if( typeof(presetString) === typeof({}) && presetString.src !== undefined ){
+			presetString = presetString.src;
+		}
+
+		for( var idx in mod.options ){
+			if( presetString==mod.options[idx].value ){
+				callback( mod.lb.get('options.'+idx+'.label', mod.options[idx].label) );
+				return;
+			}
+		}
+		callback( presetString );
+		return;
+	}
 
 	/**
 	 * エディタUIを生成

@@ -521,10 +521,21 @@ module.exports = function(broccoli){
 								// 編集UIを描画する
 								if( data.locked && data.locked.contents ){
 									// 編集ロックされている場合は、プレビュー用のHTMLを生成する
-									fieldDefinition.mkPreviewHtml(data.fields[field.name], mod.fields[field.name], function(srcHtml){
-										elmFieldContent.innerHTML = srcHtml;
-										it2.next();
-										return;
+									broccoli.resourceMgr.getResourceDb(function(resDb){
+										fieldDefinition.mkPreviewHtml(data.fields[field.name], mod.fields[field.name], function(srcHtml){
+											srcHtml = (function(src){
+												for(var resKey in resDb){
+													try {
+														src = src.split('{broccoli-html-editor-resource-baser64:{'+resKey+'}}').join(resDb[resKey].base64);
+													} catch (e) {
+													}
+												}
+												return src;
+											})(srcHtml);
+											elmFieldContent.innerHTML = srcHtml;
+											it2.next();
+											return;
+										});
 									});
 								}else{
 									// フィールドの編集UIを生成する

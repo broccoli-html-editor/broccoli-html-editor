@@ -62,7 +62,13 @@
                                                     }
                                                 },
                                                 "anchor": "",
-                                                "dec": ""
+                                                "dec": "",
+                                                "locked": {
+                                                    "contents": false,
+                                                    "children": false,
+                                                    "move": false,
+                                                    "delete": false
+                                                }
                                             }
                                         ],
                                         "select2": {
@@ -101,10 +107,10 @@
                         "anchor": "",
                         "dec": "",
                         "locked": {
-                            "contents": false,
-                            "children": false,
-                            "move": false,
-                            "delete": false
+                            "contents": true,
+                            "children": true,
+                            "move": true,
+                            "delete": true
                         }
                     },
                     {
@@ -250,6 +256,28 @@
                                     },
                                     "anchor": "",
                                     "dec": ""
+                                },
+                                {
+                                    "modId": "testMod1:dev/select1",
+                                    "fields": {
+                                        "select-test-1": {
+                                            "src": "default1"
+                                        },
+                                        "select-test-2": {
+                                            "src": "select2"
+                                        },
+                                        "select-test-3": {
+                                            "src": "radio3"
+                                        }
+                                    },
+                                    "anchor": "",
+                                    "dec": "",
+                                    "locked": {
+                                        "contents": true,
+                                        "children": true,
+                                        "move": true,
+                                        "delete": true
+                                    }
                                 }
                             ],
                             "column2": [
@@ -332,7 +360,13 @@
                             "column2": []
                         },
                         "anchor": "",
-                        "dec": ""
+                        "dec": "",
+                        "locked": {
+                            "contents": false,
+                            "children": false,
+                            "move": false,
+                            "delete": false
+                        }
                     },
                     {
                         "modId": "testMod1:dev/button-file-download",
