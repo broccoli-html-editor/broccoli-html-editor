@@ -82,10 +82,10 @@
                         "anchor": "",
                         "dec": "",
                         "locked": {
-                            "contents": false,
+                            "contents": true,
                             "children": true,
-                            "move": false,
-                            "delete": false
+                            "move": true,
+                            "delete": true
                         }
                     },
                     {
@@ -108,6 +108,96 @@
                         }
                     },
                     {
+                        "modId": "testMod1:dev/ul",
+                        "fields": {
+                            "class": {
+                                "src": ""
+                            },
+                            "loop": [
+                                {
+                                    "modId": "testMod1:dev/ul",
+                                    "fields": {
+                                        "text": {
+                                            "editor": "text",
+                                            "src": "List Item 1 (Instance Lock Test)"
+                                        }
+                                    },
+                                    "subModName": "loop",
+                                    "anchor": "",
+                                    "dec": "",
+                                    "locked": {
+                                        "contents": false,
+                                        "children": false,
+                                        "move": false,
+                                        "delete": false
+                                    }
+                                },
+                                {
+                                    "modId": "testMod1:dev/ul",
+                                    "fields": {
+                                        "text": {
+                                            "editor": "text",
+                                            "src": "List Item 2"
+                                        }
+                                    },
+                                    "subModName": "loop",
+                                    "anchor": "",
+                                    "dec": "",
+                                    "locked": {
+                                        "contents": false,
+                                        "children": false,
+                                        "move": false,
+                                        "delete": false
+                                    }
+                                },
+                                {
+                                    "modId": "testMod1:dev/ul",
+                                    "fields": {
+                                        "text": {
+                                            "editor": "text",
+                                            "src": "List Item 3"
+                                        }
+                                    },
+                                    "subModName": "loop",
+                                    "anchor": "",
+                                    "dec": "",
+                                    "locked": {
+                                        "contents": false,
+                                        "children": false,
+                                        "move": false,
+                                        "delete": false
+                                    }
+                                },
+                                {
+                                    "modId": "testMod1:dev/ul",
+                                    "fields": {
+                                        "text": {
+                                            "editor": "text",
+                                            "src": "List Item 4"
+                                        }
+                                    },
+                                    "subModName": "loop",
+                                    "anchor": "",
+                                    "dec": "",
+                                    "locked": {
+                                        "contents": false,
+                                        "children": false,
+                                        "move": false,
+                                        "delete": false
+                                    }
+                                }
+                            ]
+                        },
+                        "anchor": "",
+                        "dec": "",
+                        "locked": {
+                            "contents": false,
+                            "children": true,
+                            "move": false,
+                            "delete": false
+                        }
+                    },
+                    {
                         "modId": "testMod1:units/cols2",
                         "fields": {
                             "column1": [
@@ -115,12 +205,18 @@
                                     "modId": "PlainHTMLElements:PlainHTML/MultiText",
                                     "fields": {
                                         "main": {
-                                            "src": "Left 1",
+                                            "src": "Left 1 (parent locked)",
                                             "editor": "markdown"
                                         }
                                     },
                                     "anchor": "",
-                                    "dec": ""
+                                    "dec": "",
+                                    "locked": {
+                                        "contents": false,
+                                        "children": false,
+                                        "move": false,
+                                        "delete": false
+                                    }
                                 },
                                 {
                                     "modId": "PlainHTMLElements:PlainHTML/MultiText",
@@ -161,12 +257,18 @@
                                     "modId": "PlainHTMLElements:PlainHTML/MultiText",
                                     "fields": {
                                         "main": {
-                                            "src": "Right 1",
+                                            "src": "Right 1 (parent locked)",
                                             "editor": "markdown"
                                         }
                                     },
                                     "anchor": "",
-                                    "dec": ""
+                                    "dec": "",
+                                    "locked": {
+                                        "contents": false,
+                                        "children": false,
+                                        "move": false,
+                                        "delete": false
+                                    }
                                 },
                                 {
                                     "modId": "PlainHTMLElements:PlainHTML/MultiText",
@@ -204,7 +306,13 @@
                             ]
                         },
                         "anchor": "",
-                        "dec": ""
+                        "dec": "",
+                        "locked": {
+                            "contents": false,
+                            "children": true,
+                            "move": false,
+                            "delete": false
+                        }
                     },
                     {
                         "modId": "testMod1:dev/empty_module",

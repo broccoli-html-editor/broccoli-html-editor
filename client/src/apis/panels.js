@@ -234,6 +234,27 @@ module.exports = function(broccoli){
 			} );
 		}
 
+		if( method === 'moveTo' ){
+			if( moveFroms.length ){
+				if(!moveFroms.every(function(instancePath){
+					var instanceData = broccoli.contentsSourceData.get(instancePath);
+					if( instanceData.locked && instanceData.locked.move ){
+						return false;
+					}
+					var parentInstanceData = broccoli.contentsSourceData.get(broccoli.contentsSourceData.getParentInstancePath(instancePath));
+					if( parentInstanceData.locked && parentInstanceData.locked.children ){
+						return false;
+					}
+					return true;
+				})){
+					// ロックされたインスタンスが含まれている場合、移動できない。 → 中止
+					broccoli.message("Failed to move. Locked instance is contained.");
+					callback();
+					return;
+				}
+			}
+		}
+
 		if( subModNameFrom.length ){
 			// ドロップ元のインスタンスがサブモジュールだったら
 
@@ -264,25 +285,6 @@ module.exports = function(broccoli){
 			return;
 		}
 		if( method === 'moveTo' ){
-			if( moveFroms.length ){
-				if(!moveFroms.every(function(instancePath){
-					var instanceData = broccoli.contentsSourceData.get(instancePath);
-					if( instanceData.locked && instanceData.locked.move ){
-						return false;
-					}
-					var parentInstanceData = broccoli.contentsSourceData.get(broccoli.contentsSourceData.getParentInstancePath(instancePath));
-					if( parentInstanceData.locked && parentInstanceData.locked.children ){
-						return false;
-					}
-					return true;
-				})){
-					// ロックされたインスタンスが含まれている場合、移動できない。 → 中止
-					broccoli.message("Failed to move. Locked instance is contained.");
-					callback();
-					return;
-				}
-			}
-
 			if(subModName){
 				broccoli.message('loopフィールドへの移動はできません。');
 				$(elm).removeClass('broccoli__panel--drag-entered');
