@@ -210,12 +210,12 @@ module.exports = function(broccoli, targetElm, callback){
 				broccoli.gpi(
 					'getModule',
 					{
-						'moduleId': moduleId
-					} ,
+						'moduleId': moduleId,
+					},
 					function(result){
-
 						var $pics = $html.find('.broccoli--module-info-content-pics');
-						var pics = result.pics;
+						var pics = result.moduleInfo.pics;
+
 						if( !pics.length ){
 							$pics.remove();
 						}else{
@@ -239,7 +239,6 @@ module.exports = function(broccoli, targetElm, callback){
 							'width': 780,
 							'body': $html,
 						});
-
 					}
 				);
 			})
