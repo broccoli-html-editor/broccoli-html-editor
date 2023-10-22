@@ -93,8 +93,10 @@
 						var css = [
 							__dirname+'/broccoli.css',
 						];
-						if( options.appearance == 'dark' ){
-							css.push(__dirname+'/themes/darkmode.css');
+						switch( options.appearance ){
+							case 'auto': css.push(__dirname+'/themes/auto.css'); break;
+							case 'light': css.push(__dirname+'/themes/lightmode.css'); break;
+							case 'dark': css.push(__dirname+'/themes/darkmode.css'); break;
 						}
 						$('head *[data-broccoli-resource]').remove(); // 一旦削除
 						it79.ary(
