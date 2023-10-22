@@ -69,8 +69,11 @@ body {
 		<!-- broccoli -->
 		<script src="./../../../client/dist/broccoli.js"></script>
 
+		<!-- auto -->
+		<script>window.optionsAppearance = 'auto';</script>
+
 		<!-- lightmode -->
-		<script>window.optionsAppearance = 'light';</script>
+		<!-- <script>window.optionsAppearance = 'light';</script> -->
 
 		<!-- darkmode -->
 		<!-- <style>
