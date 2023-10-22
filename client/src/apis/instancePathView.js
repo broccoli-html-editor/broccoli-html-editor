@@ -147,10 +147,9 @@ module.exports = function(broccoli){
 	this.init = function(domElm, callback){
 		$instancePathView = $(domElm)
 			.addClass('broccoli')
+			.addClass(`broccoli--appearance-${broccoli.options.appearance}`)
 			.addClass('broccoli--instance-path-view')
 		;
-		// console.log(domElm);
-		// console.log($instancePathView);
 		$instancePathViewInner = $('<div>')
 			.addClass('broccoli--instance-path-view-inner')
 		;

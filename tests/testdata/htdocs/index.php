@@ -71,13 +71,20 @@ body {
 		<script src="./../../../client/dist/broccoli.js"></script>
 
 		<!-- darkmode -->
-		<!-- <style>
+		<style>
 			:root {
 				--px2-text-color: #ddd;
 				--px2-background-color: #333;
 			}
+			body {
+				color: var(--px2-text-color);
+				background-color: var(--px2-background-color);
+			}
+			a {
+				color: #ddf;
+			}
 		</style>
-		<link rel="stylesheet" href="./../../../client/dist/themes/darkmode.css"></script> -->
+		<script>window.optionsAppearance = 'dark';</script>
 
 		<!-- main.js -->
 		<script src="./index_files/main.js" type="text/javascript"></script>

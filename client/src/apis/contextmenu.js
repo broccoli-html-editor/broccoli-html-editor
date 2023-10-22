@@ -11,6 +11,7 @@ module.exports = function(broccoli){
 
 	var $contextmenu = $('<div>')
 		.addClass('broccoli')
+		.addClass(`broccoli--appearance-${broccoli.options.appearance}`)
 		.addClass('broccoli--contextmenu')
 		.on('click', function(e){
 			e.stopPropagation();

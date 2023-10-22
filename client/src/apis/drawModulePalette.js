@@ -438,7 +438,9 @@ module.exports = function(broccoli, targetElm, callback){
 			function(it1, data){
 				$(targetElm)
 					.html('loading...')
-					.removeClass('broccoli').addClass('broccoli')
+					.removeClass('broccoli')
+					.addClass('broccoli')
+					.addClass(`broccoli--appearance-${broccoli.options.appearance}`)
 					.removeClass('broccoli__module-palette').addClass('broccoli__module-palette')
 				;
 				data.$ul = $('<ul class="broccoli__module-palette-list">');

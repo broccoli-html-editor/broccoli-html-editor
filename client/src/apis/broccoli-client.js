@@ -68,6 +68,7 @@
 			options.onEditWindowOpen = options.onEditWindowOpen || function(){};
 			options.onEditWindowClose = options.onEditWindowClose || function(){};
 			options.lang = options.lang || 'en';
+			options.appearance = options.appearance || 'auto';
 			options.clipboard = options.clipboard || {};
 			options.clipboard.set = options.clipboard.set || null;
 			options.clipboard.get = options.clipboard.get || null;
@@ -92,6 +93,9 @@
 						var css = [
 							__dirname+'/broccoli.css',
 						];
+						if( options.appearance == 'dark' ){
+							css.push(__dirname+'/themes/darkmode.css');
+						}
 						$('head *[data-broccoli-resource]').remove(); // 一旦削除
 						it79.ary(
 							css,
@@ -116,6 +120,7 @@
 						$canvas = $(options.elmCanvas);
 						$canvas
 							.addClass('broccoli')
+							.addClass(`broccoli--appearance-${broccoli.options.appearance}`)
 							.addClass('broccoli--canvas')
 							.append( $('<iframe>')
 								.css({'border': 'none'})
@@ -1468,7 +1473,11 @@
 			$('body').find('.broccoli__lightbox').remove(); // 一旦削除
 			$('.broccoli *').attr({'tabindex':'-1'});
 			$('body')
-				.append( $('<div class="broccoli broccoli__lightbox">')
+				.append( $('<div>')
+					.addClass(`broccoli`)
+					.addClass(`broccoli__lightbox`)
+					.addClass(`broccoli--appearance-${broccoli.options.appearance}`)
+
 					// dropイベントをキャンセル
 					.on('dragover', function(e){
 						e.stopPropagation();

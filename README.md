@@ -125,6 +125,7 @@ broccoli.init(
         'elmInstanceTreeView': document.getElementById('instanceTreeView'),
         'elmInstancePathView': document.getElementById('instancePathView'),
         'lang': 'en', // language
+        'appearance': 'dark', // light, dark, auto(default)
         'contents_area_selector': '[data-contents]',
             // ↑編集可能領域を探すためのクエリを設定します。
             // 　この例では、data-contents属性が付いている要素が編集可能領域として認識されます。
@@ -367,6 +368,7 @@ $ composer test
 ### broccoli-html-editor v1.1.0 (リリース日未定)
 
 - ダークモード用のスタイルをバンドルした。
+- `appearance` オプションを追加した。
 - 細かいバグ修正と内部コードの修正。
 
 ### broccoli-html-editor v1.0.8 (2023年8月29日)

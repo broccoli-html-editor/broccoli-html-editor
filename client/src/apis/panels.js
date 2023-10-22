@@ -880,15 +880,14 @@ module.exports = function(broccoli){
 						.html('')
 						.removeClass('broccoli')
 						.addClass('broccoli')
+						.addClass(`broccoli--appearance-${broccoli.options.appearance}`)
 					;
 					it1.next(data);
 				} ,
 				function( it1, data ){
-					// console.log($contentsElements.length;
 					for( var idx in $contentsElements ){
 						drawPanel(idx, $contentsElements[idx]);
 					}
-					// $contentsElements.each(drawPanel);
 					it1.next(data);
 				} ,
 				function(){
