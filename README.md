@@ -115,7 +115,6 @@ APIの一覧は[こちらを参照](docs/api_server.md)ください。
 <script src="/path/to/jquery/jquery.js"></script><!-- <- option; not required -->
 
 <!-- broccoli -->
-<link rel="stylesheet" href="/path/to/broccoli-html-editor/client/dist/broccoli.css" />
 <script src="/path/to/broccoli-html-editor/client/dist/broccoli.js"></script>
 <script>
 var broccoli = new Broccoli();
@@ -368,7 +367,6 @@ $ composer test
 ### broccoli-html-editor v1.1.0 (リリース日未定)
 
 - ダークモード用のスタイルをバンドルした。
-- スタイルシートを自動的に読み込まないようになった。 呼び出し側で明示的に読み込む必要があります。
 - 細かいバグ修正と内部コードの修正。
 
 ### broccoli-html-editor v1.0.8 (2023年8月29日)
