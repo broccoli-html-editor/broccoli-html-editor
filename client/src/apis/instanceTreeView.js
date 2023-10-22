@@ -340,6 +340,7 @@ module.exports = function(broccoli){
 	this.init = function(domElm, callback){
 		$instanceTreeView = $(domElm)
 			.addClass('broccoli')
+			.addClass(`broccoli--appearance-${broccoli.options.appearance}`)
 			.addClass('broccoli--instance-tree-view')
 		;
 

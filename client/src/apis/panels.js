@@ -881,6 +881,7 @@ module.exports = function(broccoli){
 						.html('')
 						.removeClass('broccoli')
 						.addClass('broccoli')
+						.addClass(`broccoli--appearance-${broccoli.options.appearance}`)
 					;
 					it1.next(data);
 				} ,

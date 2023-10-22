@@ -54,6 +54,7 @@ window.main = new (function(){
 				'contents_area_selector': '[data-contents]',
 				'contents_bowl_name_by': 'data-contents',
 				'lang': options.lang || 'ja',
+				'appearance': window.optionsAppearance,
 				'customFields': {
 					'custom1': function(broccoli){
 						/**

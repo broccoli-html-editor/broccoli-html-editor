@@ -115,7 +115,6 @@ APIの一覧は[こちらを参照](docs/api_server.md)ください。
 <script src="/path/to/jquery/jquery.js"></script><!-- <- option; not required -->
 
 <!-- broccoli -->
-<link rel="stylesheet" href="/path/to/broccoli-html-editor/client/dist/broccoli.css" />
 <script src="/path/to/broccoli-html-editor/client/dist/broccoli.js"></script>
 <script>
 var broccoli = new Broccoli();
@@ -126,6 +125,7 @@ broccoli.init(
         'elmInstanceTreeView': document.getElementById('instanceTreeView'),
         'elmInstancePathView': document.getElementById('instancePathView'),
         'lang': 'en', // language
+        'appearance': 'dark', // light, dark, auto(default)
         'contents_area_selector': '[data-contents]',
             // ↑編集可能領域を探すためのクエリを設定します。
             // 　この例では、data-contents属性が付いている要素が編集可能領域として認識されます。
@@ -372,6 +372,7 @@ $ composer test
 - インスタンスロック機能を追加した。ロックが設定されたインスタンスに対する編集操作に制限をかけられるようになった。
 - `enableInstanceLock` オプションを追加した。
 - ダークモード用のスタイルをバンドルした。
+- `appearance` オプションを追加した。
 - 細かいバグ修正と内部コードの修正。
 
 ### broccoli-html-editor v1.0.8 (2023年8月29日)

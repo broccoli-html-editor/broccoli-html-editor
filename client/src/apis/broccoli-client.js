@@ -68,6 +68,7 @@
 			options.onEditWindowOpen = options.onEditWindowOpen || function(){};
 			options.onEditWindowClose = options.onEditWindowClose || function(){};
 			options.lang = options.lang || 'en';
+			options.appearance = options.appearance || 'auto';
 			options.clipboard = options.clipboard || {};
 			options.clipboard.set = options.clipboard.set || null;
 			options.clipboard.get = options.clipboard.get || null;
@@ -89,10 +90,40 @@
 				{},
 				[
 					function(it1, data){
+						// リソースファイルの読み込み
+						var css = [
+							__dirname+'/broccoli.css',
+						];
+						switch( options.appearance ){
+							case 'auto': css.push(__dirname+'/themes/auto.css'); break;
+							case 'light': css.push(__dirname+'/themes/lightmode.css'); break;
+							case 'dark': css.push(__dirname+'/themes/darkmode.css'); break;
+						}
+						$('head *[data-broccoli-resource]').remove(); // 一旦削除
+						it79.ary(
+							css,
+							function(it2, row, idx){
+								// console.info('リソースを読み込んでいます...。 ('+(Number(idx)+1)+'/'+(css.length)+')');
+								var link = document.createElement('link');
+								link.addEventListener('load', function(){
+									it2.next();
+								});
+								$('head').append(link);
+								link.rel = 'stylesheet';
+								link.href = row;
+								link.setAttribute('data-broccoli-resource', true);
+							},
+							function(){
+								it1.next(data);
+							}
+						);
+					} ,
+					function(it1, data){
 						// DOMの整備
 						$canvas = $(options.elmCanvas);
 						$canvas
 							.addClass('broccoli')
+							.addClass(`broccoli--appearance-${broccoli.options.appearance}`)
 							.addClass('broccoli--canvas')
 							.append( $('<iframe>')
 								.css({'border': 'none'})
@@ -1469,7 +1500,11 @@
 			$('body').find('.broccoli__lightbox').remove(); // 一旦削除
 			$('.broccoli *').attr({'tabindex':'-1'});
 			$('body')
-				.append( $('<div class="broccoli broccoli__lightbox">')
+				.append( $('<div>')
+					.addClass(`broccoli`)
+					.addClass(`broccoli__lightbox`)
+					.addClass(`broccoli--appearance-${broccoli.options.appearance}`)
+
 					// dropイベントをキャンセル
 					.on('dragover', function(e){
 						e.stopPropagation();

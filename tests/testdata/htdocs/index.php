@@ -67,8 +67,10 @@ body {
 		<script src="./index_files/libs/codemirror/mode/htmlmixed/htmlmixed.js"></script>
 
 		<!-- broccoli -->
-		<link rel="stylesheet" href="./../../../client/dist/broccoli.css" />
 		<script src="./../../../client/dist/broccoli.js"></script>
+
+		<!-- lightmode -->
+		<script>window.optionsAppearance = 'light';</script>
 
 		<!-- darkmode -->
 		<!-- <style>
@@ -76,8 +78,15 @@ body {
 				--px2-text-color: #ddd;
 				--px2-background-color: #333;
 			}
+			body {
+				color: var(--px2-text-color);
+				background-color: var(--px2-background-color);
+			}
+			a {
+				color: #ddf;
+			}
 		</style>
-		<link rel="stylesheet" href="./../../../client/dist/themes/darkmode.css"></script> -->
+		<script>window.optionsAppearance = 'dark';</script> -->
 
 		<!-- main.js -->
 		<script src="./index_files/main.js" type="text/javascript"></script>
