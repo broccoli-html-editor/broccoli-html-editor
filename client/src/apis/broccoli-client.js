@@ -1325,7 +1325,7 @@
 				return true;
 			})){
 				// ロックされたインスタンスが含まれている場合、削除できない。 → 中止
-				_this.message("Failed to delete. Locked instance is contained.");
+				_this.message(broccoli.lb.get('ui_message.instance_locked.failed_to_delete_instance.locked_instance_contained')); // message: 削除できません。ロックされたインスタンスが含まれています。
 				callback(false);
 				return;
 			}

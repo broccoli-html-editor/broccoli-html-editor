@@ -248,7 +248,7 @@ module.exports = function(broccoli){
 					return true;
 				})){
 					// ロックされたインスタンスが含まれている場合、移動できない。 → 中止
-					broccoli.message("Failed to move. Locked instance is contained.");
+					broccoli.message(broccoli.lb.get('ui_message.instance_locked.failed_to_move_instance.locked_instance_contained')); // message: 移動できません。ロックされたインスタンスが含まれています。
 					callback();
 					return;
 				}

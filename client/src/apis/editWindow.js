@@ -657,8 +657,13 @@ module.exports = function(broccoli){
 								.on('click', function(){
 									var data = broccoli.contentsSourceData.get(instancePath);
 									if( data.locked && data.locked.delete ){
-										alert("This instance is locked.");
+										broccoli.message(broccoli.lb.get('ui_message.instance_locked.failed_to_delete_instance')); // message: 削除できません。このインスタンスはロックされています。
 										return;
+									}
+									var parentInstanceData = broccoli.contentsSourceData.get(broccoli.contentsSourceData.getParentInstancePath(instancePath));
+									if( parentInstanceData.locked && parentInstanceData.locked.children ){
+										broccoli.message(broccoli.lb.get('ui_message.instance_locked.failed_to_delete_instance')); // message: 削除できません。このインスタンスはロックされています。
+										return false;
 									}
 
 									_this.lock();
@@ -840,7 +845,7 @@ module.exports = function(broccoli){
 				var fieldDefinition = broccoli.getFieldDefinition(field2.type);
 				if( data.locked && data.locked.contents ){
 					isError = true;
-					errors[fieldName2] = ["This field is locked."];
+					errors[fieldName2] = [broccoli.lb.get('ui_message.instance_locked.failed_to_change_field_value')]; // message: 更新できません。このフィールドはロックされています。
 					it2.next();
 					return;
 				}

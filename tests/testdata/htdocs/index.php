@@ -69,13 +69,28 @@ body {
 		<!-- broccoli -->
 		<script src="./../../../client/dist/broccoli.js"></script>
 
-		<!-- auto -->
-		<script>window.optionsAppearance = 'auto';</script>
+		<!-- ---------------- lightmode ---------------- -->
+		<script>window.optionsAppearance = 'light';</script>
 
-		<!-- lightmode -->
-		<!-- <script>window.optionsAppearance = 'light';</script> -->
+		<!-- ---------------- auto ---------------- -->
+		<!-- <script>window.optionsAppearance = 'auto';</script>
+		<style>
+			@media (prefers-color-scheme: dark) {
+				:root {
+					--px2-text-color: #ddd;
+					--px2-background-color: #333;
+				}
+				body {
+					color: var(--px2-text-color);
+					background-color: var(--px2-background-color);
+				}
+				a {
+					color: #ddf;
+				}
+			}
+		</style> -->
 
-		<!-- darkmode -->
+		<!-- ---------------- darkmode ---------------- -->
 		<!-- <style>
 			:root {
 				--px2-text-color: #ddd;

@@ -184,7 +184,7 @@ module.exports = function(broccoli){
 		var containerInstanceData = broccoli.contentsSourceData.get(broccoli.contentsSourceData.getParentInstancePath(containerInstancePath));
 		if( containerInstanceData.locked && containerInstanceData.locked.children ){
 			// ロックされたインスタンスが含まれている場合、追加できない。 → 中止
-			broccoli.message("Failed to insert. Field is locked.");
+			broccoli.message(broccoli.lb.get('ui_message.instance_locked.failed_to_insert_instance')); // message: 挿入できません。このインスタンスはロックされています。
 			callback();
 			return;
 		}
