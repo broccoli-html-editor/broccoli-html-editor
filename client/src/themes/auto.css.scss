@@ -1,3 +1,7 @@
+@media (prefers-color-scheme: light) {
+// px2style
+@import '../../../node_modules/px2style/dist/themes/default';
+}
 @media (prefers-color-scheme: dark) {
 // px2style
 @import '../../../node_modules/px2style/dist/themes/darkmode';
