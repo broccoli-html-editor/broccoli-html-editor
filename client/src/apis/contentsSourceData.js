@@ -613,7 +613,7 @@ module.exports = function(broccoli){
 			}
 		);
 		return;
-	} // duplicateInstance()
+	}
 
 	/**
 	 * インスタンスからリソースIDを抽出する(非同期)
@@ -900,7 +900,7 @@ module.exports = function(broccoli){
 		clearTimeout(historyTimer);
 
 		historyStepStock += step;
-		// console.log(historyStepStock);
+
 		(function(){
 			if( historyStepStock > 0 ){
 				var message = broccoli.lb.get('ui_label.go'); // 進む

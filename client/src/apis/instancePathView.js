@@ -2,8 +2,7 @@
  * instancePathView.js
  */
 module.exports = function(broccoli){
-	// delete(require.cache[require('path').resolve(__filename)]);
-	if(!window){ callback(); return false; }
+	if(!window){ return false; }
 
 	var _this = this;
 
@@ -26,9 +25,6 @@ module.exports = function(broccoli){
 		}
 		var instPath = selectedInstance.split('/');
 		var timer;
-
-		// console.log(instPath);
-
 		var $ul = $('<ul>');
 		var instPathMemo = [];
 

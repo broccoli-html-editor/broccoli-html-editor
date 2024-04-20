@@ -6,8 +6,7 @@ module.exports = function(broccoli){
 	var validatorLang = [];
 	validatorLang.en = require('../../../node_modules/validatorjs/src/lang/en.js');
 	validatorLang.ja = require('../../../node_modules/validatorjs/src/lang/ja.js');
-	// console.log(broccoli.options.lang);
-	// console.log(validatorLang);
+
 	Validator.useLang('en');
 	if( broccoli.options.lang && validatorLang[broccoli.options.lang] ){
 		Validator.setMessages('en', validatorLang[broccoli.options.lang]);
@@ -22,7 +21,6 @@ module.exports = function(broccoli){
 	this.validate = function(attr, value, rules, mod, callback){
 		callback = callback || function(){};
 		var errorMsgs = [];
-		// errorMsgs.push('エラーがあります。');
 		if( !rules ){
 			callback([]);
 			return;

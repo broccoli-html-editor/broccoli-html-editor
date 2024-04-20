@@ -8,7 +8,6 @@ module.exports = function(broccoli, iframe){
 	var _this = this;
 
 	var __dirname = broccoli.__dirname;
-	// console.log(__dirname);
 	var callbackMemory = {};
 
 	function createUUID(){
@@ -20,10 +19,8 @@ module.exports = function(broccoli, iframe){
 		}
 
 		var url = $(iframe).attr('src');
-		// console.log(url);
 		var parser = document.createElement('a');
 		parser.href=url;
-		// console.log(parser);
 		return parser.protocol+'//'+parser.host
 	}
 
@@ -31,13 +28,8 @@ module.exports = function(broccoli, iframe){
 	 * 初期化
 	 */
 	this.init = function(callback){
-		console.info('postMessenger.init() called');
-
 		var targetWindowOrigin = getTargetOrigin(iframe);
-		// console.log(targetWindowOrigin);
-
 		var win = $(iframe).get(0).contentWindow;
-		// console.log(win);
 
 		it79.fnc({}, [
 			function(it1){
@@ -54,7 +46,7 @@ module.exports = function(broccoli, iframe){
 					}
 
 				} catch(e){
-					console.info('postMessenger.init(): プレビューの直接のDOM操作は行われません。');
+					console.info('postMessenger.init(): No direct DOM manipulation of previews.');
 				}
 				it1.next();
 			},
@@ -103,7 +95,6 @@ module.exports = function(broccoli, iframe){
 				}, 5000);
 				_this.send('ping', {}, function(res){
 					try {
-						console.log('postMessenger: ping:', res);
 						if( !res.result ){
 							console.error('postMessenger: ping got a error', res);
 						}
@@ -131,7 +122,6 @@ module.exports = function(broccoli, iframe){
 		callback = callback||function(){};
 
 		var callbackId = createUUID();
-		// console.log(callbackId);
 
 		callbackMemory[callbackId] = callback; // callbackは送信先から呼ばれる。
 
@@ -140,7 +130,6 @@ module.exports = function(broccoli, iframe){
 			'callback': callbackId,
 			'options': options
 		};
-		// console.log(callbackMemory);
 
 		var win = $(iframe).get(0).contentWindow;
 		var targetWindowOrigin = getTargetOrigin(iframe);
@@ -164,8 +153,6 @@ module.exports = function(broccoli, iframe){
 	 */
 	window.addEventListener('message',function(event){
 		var data=event.data;
-		// console.log(event);
-		// console.log(callbackMemory);
 
 		if(data.api == 'unselectInstance'){
 			broccoli.unselectInstance();
@@ -176,7 +163,6 @@ module.exports = function(broccoli, iframe){
 			return;
 
 		}else if(data.api == 'onClickContentsLink'){
-			// console.log(event.data.options);
 			var data = event.data.options;
 			broccoli.options.onClickContentsLink(data.url, data);
 			return;

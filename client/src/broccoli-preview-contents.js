@@ -24,8 +24,6 @@
 		return;
 	});
 
-	// console.log(window.location);
-
 	function callbackMessage(callbackId, data){
 		if(!_origin){return;}
 		if(typeof(callbackId)!==typeof('')){return;}
@@ -111,7 +109,6 @@
 			});
 			return;
 		}else if(data.api == 'updateHtml'){
-			// console.log(data);
 			var htmls = data.options.htmls;
 			$iframeWindow
 				.find(data.options.contents_area_selector)
@@ -151,20 +148,16 @@
 			return;
 
 		}else if(data.api == 'getHtmlContentHeightWidth'){
-			// var height = $iframeWindow.find('html').outerHeight();
 			var hw = {};
 			hw.h = Math.max.apply( null, [document.body.clientHeight, document.body.scrollHeight, document.documentElement.scrollHeight, document.documentElement.clientHeight] );
 			hw.w = Math.max.apply( null, [document.body.clientWidth, document.body.scrollWidth, document.documentElement.scrollWidth, document.documentElement.clientWidth] );
-			// hw.h += 16;
 			callbackMessage(data.callback, hw);
 			return;
 
 		}else if(data.api == 'getBowlList'){
-			// console.log(data);
 			var bowls = [];
 			$iframeWindow
 				.find(data.options.contents_area_selector)
-				// .html('...')
 				.each(function(){
 					var $this = $(this);
 					var bowlName = $this.attr(data.options.contents_bowl_name_by);

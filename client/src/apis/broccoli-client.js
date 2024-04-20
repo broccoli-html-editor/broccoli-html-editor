@@ -103,7 +103,6 @@
 						it79.ary(
 							css,
 							function(it2, row, idx){
-								// console.info('リソースを読み込んでいます...。 ('+(Number(idx)+1)+'/'+(css.length)+')');
 								var link = document.createElement('link');
 								link.addEventListener('load', function(){
 									it2.next();
@@ -368,7 +367,6 @@
 						}
 						e.stopPropagation();
 						e.preventDefault();
-						// console.debug(e.originalEvent.clipboardData);
 						_this.copy(function(){}, e.originalEvent);
 						return;
 					})
@@ -1675,7 +1673,6 @@
 		 * コンテンツデータを保存する
 		 */
 		this.saveContents = function(callback){
-console.log('***** saveContents() called!!!!!!!!');
 			callback = callback || function(){};
 			it79.fnc({},[
 				function(it1, data){

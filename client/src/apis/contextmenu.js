@@ -2,8 +2,7 @@
  * contextmenu.js
  */
 module.exports = function(broccoli){
-	// delete(require.cache[require('path').resolve(__filename)]);
-	if(!window){ callback(); return false; }
+	if(!window){ return false; }
 
 	var _this = this;
 	var it79 = require('iterate79');

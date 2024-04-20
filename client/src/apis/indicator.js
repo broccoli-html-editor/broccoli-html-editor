@@ -31,7 +31,6 @@ module.exports = function(broccoli){
 	 * 保存を完了しました
 	 */
 	this.saveCompleted = function(){
-		console.info( broccoli.lb.get('ui_message.save_completed') );
 		for( var idx in targetElements ){
 			$(targetElements[idx])
 				.find('.broccoli__indicator')

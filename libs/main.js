@@ -75,7 +75,6 @@ module.exports = function(){
 		options.userStorage = options.userStorage || null;
 		if( !options.pathHtml || !options.pathResourceDir || !options.realpathDataDir ){
 			// 必須項目
-			// console.log(options);
 			console.error('[ERROR] options.pathHtml, options.pathResourceDir, and options.realpathDataDir are required.');
 			return;
 		}
@@ -358,11 +357,8 @@ module.exports = function(){
 	 * @return {Object}            this
 	 */
 	this.createModuleInstance = function(moduleId, options){
-		// console.log(moduleId);
-		// console.log(options);
 		var classModule = require( './classModule.js' );
 		var rtn = new classModule(this, moduleId, options);
-		// console.log(rtn);
 		return rtn;
 	}
 

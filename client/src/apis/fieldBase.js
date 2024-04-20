@@ -2,7 +2,6 @@
  * fieldBase.js
  */
 module.exports = function(broccoli){
-	// delete(require.cache[require('path').resolve(__filename)]);
 	this.__fieldId__ = null;
 	var Promise = require('es6-promise').Promise;
 	var _this = this;
@@ -54,7 +53,6 @@ module.exports = function(broccoli){
 			}); })
 			.then(function(){ return new Promise(function(rlv, rjt){
 
-				// console.log(rtn);
 				var $rtn = $('<div>').append(rtn);
 				$rtn.find('*').each(function(){
 					$(this)
@@ -134,8 +132,8 @@ module.exports = function(broccoli){
 			mod.aceEditor = ace.edit( $formElm.get(0) );
 			// Ace Snippets - https://ace.c9.io/build/kitchen-sink.html
 			mod.aceEditor.setFontSize(16);
-			mod.aceEditor.getSession().setUseWrapMode(true);// Ace 自然改行
-			mod.aceEditor.setShowInvisibles(true);// Ace 不可視文字の可視化
+			mod.aceEditor.getSession().setUseWrapMode(true); // Ace 自然改行
+			mod.aceEditor.setShowInvisibles(true); // Ace 不可視文字の可視化
 			mod.aceEditor.$blockScrolling = Infinity;
 			mod.aceEditor.setTheme("ace/theme/github");
 			mod.aceEditor.getSession().setMode("ace/mode/html");
@@ -394,7 +392,7 @@ module.exports = function(broccoli){
 	 */
 	this.saveEditorContent = function( elm, data, mod, callback, options ){
 		options = options || {};
-		options.message = options.message || function(msg){};//ユーザーへのメッセージテキストを送信
+		options.message = options.message || function(msg){}; // ユーザーへのメッセージテキストを送信
 		var $dom = $(elm);
 		var src = '';
 		if( $dom.find('input[type=text]').length ){
@@ -426,7 +424,6 @@ module.exports = function(broccoli){
 				'options': options
 			},
 			function(result){
-				// console.log(result);
 				callback(result);
 			}
 		);

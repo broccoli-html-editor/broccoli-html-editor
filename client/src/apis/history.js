@@ -2,7 +2,6 @@
  * history.js
  */
 module.exports = function(broccoli){
-
 	var historyDataArray = [];
 	var historyIdx = 0;
 	var maxHistorySize = 30;
@@ -71,7 +70,6 @@ module.exports = function(broccoli){
 	 * 次(または前)のデータを得る
 	 */
 	this.step = function( step, callback ){
-		// console.log('history.go()', historyDataArray);
 		callback = callback||function(){};
 		var tmpHistoryIdx = historyIdx - step;
 		if( tmpHistoryIdx >= historyDataArray.length ){
@@ -89,7 +87,6 @@ module.exports = function(broccoli){
 		}
 
 		historyIdx = tmpHistoryIdx;
-		// console.log(historyIdx, data.contents, data.resources);
 		var data = {contents: {}, resources: {}};
 		data = JSON.parse(JSON.stringify(historyDataArray[historyIdx])); // deep copy
 		callback( data );
@@ -106,5 +103,4 @@ module.exports = function(broccoli){
 		};
 		return rtn;
 	}
-
 }

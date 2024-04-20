@@ -863,7 +863,7 @@ module.exports = function(broccoli){
 			},
 			function(){
 				if( isError ){
-					console.info('ERROR:', errors);
+					console.error('ERROR:', errors);
 					formErrorMessage(errors);
 					broccoli.message( broccoli.lb.get('ui_message.confirm_error') ); // 入力エラーがあります。確認してください。
 				}

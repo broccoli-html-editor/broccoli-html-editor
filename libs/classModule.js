@@ -54,8 +54,6 @@ module.exports = function(broccoli, moduleId, options){
 		return str;
 	}
 
-	// console.log('classModTpl -> '+moduleId);
-
 	this.isSubModule = false;
 	this.isSingleRootElement = false;
 	this.isClipModule = false;
@@ -109,17 +107,14 @@ module.exports = function(broccoli, moduleId, options){
 			this.languageCsv = this.topThis.languageCsv;
 		}
 		this.info.name = this.info.name + ' *';
-		// this.nameSpace = options.topThis.nameSpace;
 		if( options.subModName ){
 			this.subModName = options.subModName;
 			if( this.topThis.subModule[this.subModName] ){
-				// console.log(this.topThis.subModule[this.subModName]);
 				this.fields = this.topThis.subModule[this.subModName].fields;
 			}
 		}
 	}else{
 		this.topThis = this;
-		// this.nameSpace = {"vars": {}};
 	}
 
 	/**
@@ -289,15 +284,12 @@ module.exports = function(broccoli, moduleId, options){
 					if( tplSrc.length && tplSrc.indexOf('<') === 0 && tplSrc.match(new RegExp('\\>$')) ){
 						var htmlparser = require('htmlparser');
 						var handler = new htmlparser.DefaultHandler(function (error, dom) {
-							// console.log('htmlparser callback');
 							if (error){
 								// console.log(error);
 							}
 						});
-						// console.log('htmlparser after');
 						var parser = new htmlparser.Parser(handler);
 						parser.parseComplete(tplSrc);
-						// console.log(handler.dom);
 
 						if( handler.dom.length == 1 ){
 							return true;
@@ -405,11 +397,6 @@ module.exports = function(broccoli, moduleId, options){
 						if( typeof(_this.subModule) !== typeof({}) ){
 							_this.subModule = {};
 						}
-						// console.log(' <------- ');
-						// console.log(field.loop.name);
-						// console.log('on '+_topThis.moduleId);
-						// console.log(tmpSearchResult.content);
-						// console.log(' =======> ');
 						_topThis.subModule[field.loop.name] = broccoli.createModuleInstance( _this.id, {
 							"src": tmpSearchResult.content,
 							"subModName": field.loop.name,
@@ -437,11 +424,9 @@ module.exports = function(broccoli, moduleId, options){
 				} );
 				return;
 			}
-			// console.log(_this.fields);
-			// callback(true);
 		}); }); // Promise
 		return;
-	} // parseTpl()
+	}
 
 	/**
 	 * 初期化する
@@ -569,7 +554,6 @@ module.exports = function(broccoli, moduleId, options){
 				} catch (e) {
 					imgPath = '';
 				}
-				// console.log( imgPath );
 				rtn.push( 'data:image/png;base64,'+imgPath );
 			}
 		}

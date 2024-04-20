@@ -137,7 +137,6 @@ module.exports = function(broccoli){
 			transferData = JSON.parse(transferData);
 		} catch (e) {}
 		var method = transferData.method;
-		// options.drop($(elm).attr('data-broccoli-instance-path'), method);
 		var subModNameFrom = transferData["data-broccoli-sub-mod-name"] || '';
 		var subModName = $(elm).attr('data-broccoli-sub-mod-name');
 		var isAppenderFrom = (transferData["data-broccoli-is-appender"] == 'yes');
@@ -202,7 +201,7 @@ module.exports = function(broccoli){
 			var currentMoveFrom = moveFroms.shift();
 			broccoli.contentsSourceData.moveInstanceTo( currentMoveFrom, moveTo, function(result){
 				if(!result){
-					console.error('移動に失敗しました。', currentMoveFrom, moveTo, result);
+					console.error('Move failed.', currentMoveFrom, moveTo, result);
 				}
 
 				newInstancePath = broccoli.utils.getInstancePathWhichWasAffectedRemovingInstance(newInstancePath, currentMoveFrom);
@@ -587,8 +586,8 @@ module.exports = function(broccoli){
 						// --------------------------------------
 						// 対応していないファイル形式
 						default:
-							broccoli.message('対応していないファイル形式です。');
-							console.error('対応していないファイル形式です。', fileInfo.type);
+							broccoli.message('The file format is not supported.');
+							console.error('The file format is not supported.', fileInfo.type);
 							it1.next();
 							return;
 							break;
@@ -680,8 +679,6 @@ module.exports = function(broccoli){
 				return;
 			}
 
-			// broccoli.message('編集できません。ここには、モジュールをドロップして追加または移動することができます。');
-			// instancePath = php.dirname(instancePath);
 			broccoli.insertInstance(instancePath, function(){
 				callback();
 			});
@@ -766,11 +763,9 @@ module.exports = function(broccoli){
 				}, 200);
 			})
 			.on('keypress', function(e){
-				// console.log(e);
 				try {
 					if( e.key.toLowerCase() == 'enter' ){
 						_this.onDblClick(e, this, function(){
-							// console.log('dblclick event done.');
 						});
 					}
 				} catch (e) {
@@ -836,7 +831,6 @@ module.exports = function(broccoli){
 				e.preventDefault();
 				e.stopPropagation();
 				_this.onDrop(e, this, function(){
-					console.log('drop event done.');
 				});
 				return;
 			})

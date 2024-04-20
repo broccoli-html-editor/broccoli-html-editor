@@ -8,7 +8,6 @@ module.exports = function(broccoli){
 	 * インスタンスBを削除した影響を受けたあとのインスタンスAのパスを計算する
 	 */
 	this.getInstancePathWhichWasAffectedRemovingInstance = function( challangeInstancePathTo, remmovedInstancePath ){
-		// console.log('=-=-=-=-=-==-=-=', challangeInstancePathTo, remmovedInstancePath);
 
 		// 移動・挿入後の選択状態を更新する際、
 		// 移動元が抜けることで移動先の番号が変わる場合に、選択状態が乱れる。
@@ -28,23 +27,19 @@ module.exports = function(broccoli){
 
 		var idx = challangeInstancePathTo.indexOf(remmovedInstancePathPath+'@');
 		if( idx !== 0 ){
-			// console.log('--- 影響なし', challangeInstancePathTo);
 			return challangeInstancePathTo;
 		}
 		var tmpchallangeInstancePathToStr = challangeInstancePathTo.substring((remmovedInstancePathPath+'@').length);
 		if(!tmpchallangeInstancePathToStr.match(/^([0-9]+)([\S]*?)$/)){
-			// console.log('--- 影響なし', challangeInstancePathTo);
 			return challangeInstancePathTo;
 		}
 		var challangeInstancePathToIdx = Number(RegExp.$1);
 		var challangeInstancePathToPath = RegExp.$2;
 		if( challangeInstancePathToIdx > remmovedInstancePathIdx ){
 			var rtn = remmovedInstancePathPath + '@' + (challangeInstancePathToIdx-1) + challangeInstancePathToPath;
-			// console.log('+++ 影響あり', rtn);
 			return rtn;
 		}
 
-		// console.log('--- 影響なし', challangeInstancePathTo);
 		return challangeInstancePathTo;
 	}
 
@@ -52,7 +47,6 @@ module.exports = function(broccoli){
 	 * インスタンスBを挿入した影響を受けたあとのインスタンスAのパスを計算する
 	 */
 	this.getInstancePathWhichWasAffectedInsertingInstance = function( challangeInstancePath, insertedInstancePath ){
-		// console.log('=-=-=-=-=-==-=-=', challangeInstancePath, insertedInstancePath);
 
 		if(!insertedInstancePath){
 			// 新規の場合
@@ -68,23 +62,19 @@ module.exports = function(broccoli){
 
 		var idx = challangeInstancePath.indexOf(insertedInstancePathPath+'@');
 		if( idx !== 0 ){
-			// console.log('--- 影響なし', challangeInstancePath);
 			return challangeInstancePath;
 		}
 		var tmpchallangeInstancePathStr = challangeInstancePath.substring((insertedInstancePathPath+'@').length);
 		if(!tmpchallangeInstancePathStr.match(/^([0-9]+)([\S]*?)$/)){
-			// console.log('--- 影響なし', challangeInstancePath);
 			return challangeInstancePath;
 		}
 		var challangeInstancePathIdx = Number(RegExp.$1);
 		var challangeInstancePathPath = RegExp.$2;
 		if( challangeInstancePathIdx >= insertedInstancePathIdx ){
 			var rtn = insertedInstancePathPath + '@' + (challangeInstancePathIdx+1) + challangeInstancePathPath;
-			// console.log('+++ 影響あり', rtn);
 			return rtn;
 		}
 
-		// console.log('--- 影響なし', challangeInstancePath);
 		return challangeInstancePath;
 	}
 

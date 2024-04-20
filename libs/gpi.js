@@ -12,9 +12,7 @@ module.exports = function(broccoli, api, options, callback){
 	var path = require('path');
 	var fs = require('fs');
 
-	// console.log('broccoli: set language "'+options.lang+'"');
 	broccoli.lb.setLang( options.lang );
-	// console.log( broccoli.lb.get('ui_label.close') );
 
 	new Promise(function(rlv){rlv();}).then(function(){ return new Promise(function(rlv, rjt){
 		switch(api){
@@ -50,7 +48,6 @@ module.exports = function(broccoli, api, options, callback){
 						},
 						function(it1){
 							broccoli.resourceMgr.getResourceDb( function(resourceDb){
-								// console.log(resourceDb);
 								$bootup.resourceDb = resourceDb;
 								var resourceList = [];
 								for(var resKey in resourceDb){

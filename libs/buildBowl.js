@@ -3,20 +3,15 @@
  */
 module.exports = function(broccoli, data, options, callback){
 	delete(require.cache[require('path').resolve(__filename)]);
-	// console.log(data);
-	// console.log(options);
 
 	var _this = this;
 	options = options || {};
 	options.instancePath = options.instancePath || '';
 	callback = callback || function(){};
 
-	var Promise = require('es6-promise').Promise;
 	var it79 = require('iterate79');
-	var path = require('path');
 	var php = require('phpjs');
 	var twig = require('twig');
-	var fs = require('fs');
 	var cheerio = require('cheerio');
 
 	var mod;
@@ -41,17 +36,6 @@ module.exports = function(broccoli, data, options, callback){
 				style['font-size'] = baseSize * ( 100 - depth*5 ) / 100;
 				style['padding'] = 15 - depth*2;
 				style['background-color'] = '#F5FAFF';
-				// if(depth <= 0){
-				// 	style['background-color'] = '#F5FAFF';
-				// }else if(depth <= 1){
-				// 	style['background-color'] = '#F5FAFF';
-				// }else if(depth <= 2){
-				// 	style['background-color'] = '#F5FAFF';
-				// }else if(depth <= 3){
-				// 	style['background-color'] = '#F5FAFF';
-				// }else{
-				// 	style['background-color'] = '#F5FAFF';
-				// }
 
 				rtn += '<div';
 				rtn += ' data-broccoli-instance-path="'+php.htmlspecialchars(param.instancePath)+'"';
@@ -115,11 +99,9 @@ module.exports = function(broccoli, data, options, callback){
 	 */
 	function finalize_module_instance_panel( $d_html, mod, options ){
 		if(typeof($d_html) !== typeof('')){
-			// console.log($d_html);
 			return $d_html;
 		}
 		if( options.mode == 'canvas' ){
-			// console.log( $d_html );
 
 			var isSingleRootElement = (function(tplSrc){
 				if( options.instancePath.match(new RegExp('^\\/bowl\\.[^\\/]+$')) ){
@@ -135,20 +117,14 @@ module.exports = function(broccoli, data, options, callback){
 				if( tplSrc.length && tplSrc.indexOf('<') === 0 && tplSrc.match(new RegExp('\\>$')) ){
 					var htmlparser = require('htmlparser');
 					var handler = new htmlparser.DefaultHandler(function (error, dom) {
-						// console.log('htmlparser callback');
 						if (error){
 							// console.log(error);
 						}
 					});
-					// console.log('htmlparser after');
 					var parser = new htmlparser.Parser(handler);
 					parser.parseComplete(tplSrc);
-					// console.log(tplSrc);
-					// console.log(handler.dom);
 
 					if( handler.dom.length == 1 ){
-						// console.log('------------------------------------------------------');
-						// console.log(tplSrc);
 						return true;
 					}
 				}
@@ -178,7 +154,6 @@ module.exports = function(broccoli, data, options, callback){
 					html += ' data-broccoli-sub-mod-name="'+php.htmlspecialchars(options.subModName)+'"';
 				}
 				html += ' data-broccoli-area-size-detection="'+php.htmlspecialchars((mod.info.areaSizeDetection||'shallow'))+'"';
-				// html += ' data-broccoli-is-single-root-element="'+(isSingleRootElement?'yes':'no')+'"';
 				html += ' data-broccoli-module-name="'+php.htmlspecialchars(moduleName)+'"';
 				html += '>';
 				html += $d_html;
@@ -194,7 +169,6 @@ module.exports = function(broccoli, data, options, callback){
 	 */
 	function finalize_module_instance_anchor( $d_html, data ){
 		if(typeof($d_html) !== typeof('')){
-			// console.log($d_html);
 			return $d_html;
 		}
 
@@ -219,7 +193,6 @@ module.exports = function(broccoli, data, options, callback){
 	 */
 	function finalize_module_instance_dec( $d_html, data ){
 		if(typeof($d_html) !== typeof('')){
-			// console.log($d_html);
 			return $d_html;
 		}
 
@@ -262,12 +235,10 @@ module.exports = function(broccoli, data, options, callback){
 				var src = mod.template;
 				var rtn = '';
 				var fieldData = data.fields;
-				// console.log(mod.topThis.templateType);
 
 				if( mod.topThis.templateType != 'broccoli' ){
 					// --------------------------------------
 					// テンプレートエンジン(Twigなど)利用の場合の処理
-					// console.log(mod.id + ' - ' + mod.subModName);
 					var tplDataObj = {};
 					it79.fnc(
 						{},
@@ -361,7 +332,7 @@ module.exports = function(broccoli, data, options, callback){
 													var tmpopt = JSON.parse( JSON.stringify(opt) );
 													tmpopt.instancePath += '@'+idx;
 													tmpopt.subModName = field.name;
-													// console.log(tmpopt);
+
 													broccoli.buildBowl(row, tmpopt, function(html){
 														tplDataObj[field.name].push(html);
 														it2.next();
@@ -577,7 +548,7 @@ module.exports = function(broccoli, data, options, callback){
 									tmpopt.instancePath += '@'+idx;
 									tmpopt.subModName = undefined;
 									delete(tmpopt.subModName);
-									// console.log(tmpopt);
+
 									broccoli.buildBowl(row, tmpopt, function(html){
 										tmpVal += html;
 										it2.next();
@@ -641,11 +612,9 @@ module.exports = function(broccoli, data, options, callback){
 										_this.nameSpace.varsFinalized[field.loop.index] = _this.nameSpace.vars[field.loop.index];
 									}
 									tmpopt.nameSpace = _this.nameSpace;
-									// console.log(tmpopt);
+
 									broccoli.buildBowl(row, tmpopt, function(html){
-										// tmpVal += '<!-- ---- LOOP ---- -->';
 										tmpVal += html;
-										// tmpVal += '<!-- ---- /LOOP ---- -->';
 										it2.next();
 									});
 								} ,
@@ -759,7 +728,6 @@ module.exports = function(broccoli, data, options, callback){
 								}
 								return contentList;
 							})(field, tmpSearchResult.content);
-							// console.log(tmpIfContentList);
 
 							src = '';
 							for(var idx in tmpIfContentList){
@@ -795,7 +763,7 @@ module.exports = function(broccoli, data, options, callback){
 
 						callback(rtn);
 						return;
-					}//buildBroccoliHtml()
+					}
 
 					buildBroccoliHtml(src, '', function(html){
 						d.html = html;
@@ -846,8 +814,6 @@ module.exports = function(broccoli, data, options, callback){
 				it1.next(d);
 			} ,
 			function(it1, d){
-				// console.log('--------------');
-				// console.log(d);
 				callback(d.html);
 				it1.next(d);
 			}
@@ -913,7 +879,7 @@ module.exports = function(broccoli, data, options, callback){
 			boolResult = true;
 		}
 		return boolResult;
-	} // evaluateIfFieldCond()
+	}
 
 	return;
 }

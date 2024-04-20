@@ -2,7 +2,6 @@
  * insertWindow.js
  */
 module.exports = function(broccoli){
-	// delete(require.cache[require('path').resolve(__filename)]);
 	if(!window){ return false; }
 
 	var _this = this;
@@ -185,7 +184,6 @@ module.exports = function(broccoli){
 					);
 				} ,
 				function(it1, data){
-					console.log('Insert Window: standby');
 					$insertWindowBody.html('').append(data.$ul);
 				},
 			]

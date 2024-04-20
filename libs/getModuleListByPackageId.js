@@ -91,8 +91,6 @@ module.exports = function(broccoli, packageId, callback){
 		.then(function(){ return new Promise(function(rlv, rjt){
 			// モジュールカテゴリをリスト化
 			fs.readdir( rtn.realpath, function(err, fileList){
-				// console.log(fileList);
-				// console.log(rtn.packageInfo.sort);
 				rtn.categories = {};
 				fileList = sortModuleDirectoryNames(fileList, rtn.packageInfo.sort);
 				it79.ary(
@@ -138,11 +136,8 @@ module.exports = function(broccoli, packageId, callback){
 			it79.ary(
 				rtn.categories,
 				function( it1, row, idx ){
-					// console.log(row);
 
 					fs.readdir( rtn.categories[idx].realpath, function(err, fileList){
-						// console.log(fileList);
-						// console.log(row.categoryInfo.sort);
 						fileList = sortModuleDirectoryNames(fileList, row.categoryInfo.sort);
 						it79.ary(
 							fileList,

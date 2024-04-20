@@ -2,10 +2,7 @@
  * drawModulePalette.js
  */
 module.exports = function(broccoli, targetElm, callback){
-	// delete(require.cache[require('path').resolve(__filename)]);
-	if(!window){ callback(); return false; } // client side only
-	// console.log(moduleList);
-	// console.log(targetElm);
+	if(!window){ callback(); return false; }
 
 	var _this = this;
 	callback = callback || function(){};
@@ -129,8 +126,6 @@ module.exports = function(broccoli, targetElm, callback){
 	 * モジュールのボタンを生成する
 	 */
 	function generateModuleButton( mod, depth ){
-		// var timerTouchStart;
-		// var isTouchStartHold = false;
 
 		depth = depth || 0;
 		var $button = $('<a class="broccoli__module-palette__draggablebutton">');
@@ -154,9 +149,6 @@ module.exports = function(broccoli, targetElm, callback){
 				return rtn;
 			})(mod))
 			.attr({
-				// 'title': (function(d){
-				// 	return (d.moduleName ? d.moduleName+' ('+d.moduleId+')' : d.moduleId);
-				// })(mod),
 				'data-id': mod.moduleId,
 				'data-internal-id': mod.moduleInternalId,
 				'data-name': mod.moduleName,
@@ -168,9 +160,7 @@ module.exports = function(broccoli, targetElm, callback){
 			.on('dragstart', function(e){
 				var $this = $(this);
 				updateModuleInfoPreview(null, {'elm': this}, function(){
-					// console.log(e);
 					var event = e.originalEvent;
-					// px.message( $(this).data('id') );
 					var transferData = {
 						'method': 'add',
 						'modId': $this.attr('data-id'),
@@ -525,7 +515,6 @@ module.exports = function(broccoli, targetElm, callback){
 					if( lastKeyword == keyword ){ return; }
 					lastKeyword = keyword;
 					clearTimeout( changeTimer );
-					// console.log( keyword );
 
 					$(targetElm).find('a').removeClass('broccoli__module-palette__buttongroups--closed');
 					$(targetElm).find('ul').show();
@@ -541,8 +530,6 @@ module.exports = function(broccoli, targetElm, callback){
 								$this.show().addClass('broccoli__module-palette__shown-module');
 								return;
 							}
-							// if( $this.attr('data-readme') ){
-							// }
 							$this.hide().removeClass('broccoli__module-palette__shown-module');
 						});
 

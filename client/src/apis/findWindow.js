@@ -2,7 +2,6 @@
  * findWindow.js
  */
 module.exports = function(broccoli){
-	// delete(require.cache[require('path').resolve(__filename)]);
 	if(!window){ return false; }
 
 	var _this = this;
@@ -31,9 +30,6 @@ module.exports = function(broccoli){
 	 * 初期化
 	 */
 	this.init = function(){
-		// console.log( '=-=-=-=-=-=-=-=-= Initialize EditWindow.' );
-		// callback = callback || function(){};
-
 		contentsElements = []; // クリア
 		instancePath = broccoli.getSelectedInstance();
 
@@ -174,7 +170,6 @@ module.exports = function(broccoli){
 								$elmResult.html('');
 								return;
 							}
-							// alert(keyword);
 							searchInstance(keyword);
 						}, 100);
 					});
@@ -205,7 +200,6 @@ module.exports = function(broccoli){
 				})
 				.on('click', function(){
 					instancePath = $(this).attr('data-broccoli-instance-path');
-					// alert(instancePath);
 					broccoli.instanceTreeView.focusInstance(instancePath, function(){
 						broccoli.selectInstance(instancePath, function(){
 							broccoli.focusInstance(instancePath, function(){

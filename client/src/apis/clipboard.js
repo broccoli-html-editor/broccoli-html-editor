@@ -3,7 +3,6 @@
  * クリップボード管理オブジェクト
  */
 module.exports = function(broccoli){
-	// delete(require.cache[require('path').resolve(__filename)]);
 	var $ = require('jquery');
 	var clipboard = '';
 
@@ -46,7 +45,6 @@ module.exports = function(broccoli){
 
 				try{
 					navigator.clipboard.writeText(text).then(function() {
-						console.log('navigator.clipboard: Copying to clipboard was successful!');
 						callback();
 					}, function() {
 						console.error('navigator.clipboard: Could not copy text:', text);
@@ -64,13 +62,11 @@ module.exports = function(broccoli){
 		$("body").append(copyArea);
 		copyArea.select();
 		document.execCommand("copy");
-		// console.log('copied.');
-		// console.log(text);
 		copyArea.remove();
 
 		callback();
 		return;
-	} // broccoli.clipboard.set();
+	}
 
 
 	/**
@@ -118,7 +114,6 @@ module.exports = function(broccoli){
 						navigator.clipboard.readText().then(
 							function(clipText){
 								rtn = clipText;
-								console.log('===========================', rtn);
 								callback(rtn);
 							}, function(err) {
 								console.error('navigator.clipboard: Could not get clipboard contents:', err);
@@ -140,15 +135,13 @@ module.exports = function(broccoli){
 		rtn = copyArea.text();
 		copyArea.remove();
 
-		console.log('clipboard get', rtn);
-
 		if( typeof(rtn) !== typeof('') || !rtn.length ){
-			console.log('clipboard: クリップボードの読み込みが失敗した可能性があります。ローカル変数のコピーが返されます。');
+			// クリップボードの読み込みが失敗した可能性があります。ローカル変数のコピーが返されます。
+			console.error('clipboard: Clipboard loading may have failed. A copy of the local variable is returned.');
 			rtn = clipboard;
 		}
 
 		callback(rtn);
 		return rtn;
-	} // broccoli.clipboard.get();
-
+	}
 }

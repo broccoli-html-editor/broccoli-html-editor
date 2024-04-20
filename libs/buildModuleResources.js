@@ -33,7 +33,6 @@ module.exports = function(broccoli){
 			$array_files[idx] = $array_files[idx].concat( glob.sync(module_templates[idx]+"**/**/module.css") );
 			$array_files[idx] = $array_files[idx].concat( glob.sync(module_templates[idx]+"**/**/module.css.scss") );
 		}
-		// console.log($array_files);
 
 		it79.ary(
 			$array_files,
@@ -45,12 +44,8 @@ module.exports = function(broccoli){
 
 						var $matched = $path.match( new RegExp('\\/([a-zA-Z0-9\\.\\-\\_]+?)\\/([a-zA-Z0-9\\.\\-\\_]+?)\\/[a-zA-Z0-9\\.\\-\\_]+?$','i') );
 
-						// console.log($path);
-						// console.log($matched);
-
 						var $tmp_bin = fs.readFileSync( $path ).toString();
 						if( $path.match( new RegExp('\\.scss$', 'i') ) ){
-							// console.log($tmp_bin);
 
 							try {
 								$tmp_bin = sass.renderSync({
@@ -88,7 +83,6 @@ module.exports = function(broccoli){
 
 			},
 			function(){
-				// console.log($rtn);
 				$rtn = php.trim($rtn)+"\n";
 				callback($rtn);
 				return;
@@ -179,9 +173,6 @@ module.exports = function(broccoli){
 				if( !bin.length ){continue;}
 
 				var $matched = $path.match( new RegExp('\\/([a-zA-Z0-9\\.\\-\\_]+?)\\/([a-zA-Z0-9\\.\\-\\_]+?)\\/[a-zA-Z0-9\\.\\-\\_]+?$','i') );
-
-				// console.log($path);
-				// console.log($matched);
 
 				$rtn += '/**'+"\n";
 				$rtn += ' * module: '+$packageId+':'+$matched[1]+'/'+$matched[2]+"\n";

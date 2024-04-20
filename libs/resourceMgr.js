@@ -67,7 +67,6 @@ module.exports = function(broccoli){
 		}else if( isDirectory( $path ) ){
 			// ディレクトリの処理
 			var $filelist = ls($path);
-			// console.log($filelist);
 			for( var idx in $filelist ){
 				var $basename = $filelist[idx];
 				if( isFile( $path+DIRECTORY_SEPARATOR+$basename ) ){
@@ -84,7 +83,7 @@ module.exports = function(broccoli){
 		}
 
 		return false;
-	}//rmdir_r()
+	}
 
 	function md5(bin){
 		var md5 = require('crypto').createHash('md5');
@@ -363,7 +362,6 @@ module.exports = function(broccoli){
 							rtn.newResourceKey ,
 							function(publicPath){
 								rtn.publicPath = publicPath;
-								// console.log(publicPath);
 								callback(rtn);
 							}
 						);
@@ -412,7 +410,6 @@ module.exports = function(broccoli){
 	 */
 	this.duplicateResource = function( resKey, callback ){
 		callback = callback || function(){};
-		// console.log( resKey );
 		if( typeof(_resourceDb[resKey]) !== typeof({}) ){
 			// 未登録の resKey
 			new Promise(function(rlv){rlv();})
@@ -424,17 +421,14 @@ module.exports = function(broccoli){
 		}
 		this.addResource(function(newResKey){
 			_resourceDb[newResKey] = JSON.parse( JSON.stringify( _resourceDb[resKey] ) );
-			// console.log( _resourcesDirPath+resKey+'/' + ' => ' + _resourcesDirPath+newResKey+'/' );
 			fs.mkdir( _resourcesDirPath+newResKey+'/', {}, function(err){
 				fsEx.copy(
 					_resourcesDirPath+resKey+'/' ,
 					_resourcesDirPath+newResKey+'/' ,
 					function(err){
 						if(err){
-							// console.log( '++ ERROR ++' );
 							console.error(err);
 						}
-						// console.log( newResKey );
 						callback( newResKey );
 					}
 				);
@@ -515,8 +509,6 @@ module.exports = function(broccoli){
 			return;
 		}
 		this.getResourceOriginalRealpath( resKey, function(realpath){
-			// console.log(_resourceDb[resKey].base64);
-			// var bin = php.base64_decode( _resourceDb[resKey].base64 );
 			var bin = (new Buffer(_resourceDb[resKey].base64, 'base64'));
 			fs.writeFileSync( realpath, bin, {} );
 			callback(true);

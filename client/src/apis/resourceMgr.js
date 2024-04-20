@@ -2,8 +2,6 @@
  * resourceMgr.js
  */
 module.exports = function(broccoli){
-	// delete(require.cache[require('path').resolve(__filename)]);
-
 	var _this = this;
 	var it79 = require('iterate79');
 	var _resourceDb = {};
@@ -12,7 +10,6 @@ module.exports = function(broccoli){
 	 * initialize resource Manager
 	 */
 	this.init = function( callback ){
-		// console.log('broccoli: Initializing resourceDb...');
 		_resourceDb = {};
 		it79.fnc({},
 			[
@@ -21,8 +18,6 @@ module.exports = function(broccoli){
 					it1.next(data);
 				},
 				function(it1, data){
-					// console.log('broccoli: Loading all resources: Done.');
-					// console.log(_resourceDb);
 					callback();
 				}
 			]
@@ -208,7 +203,6 @@ module.exports = function(broccoli){
 	 * @return {boolean}        always true.
 	 */
 	this.updateResource = function( resKey, resInfo, callback ){
-		console.log('updateResource();', resKey, resInfo);
 		callback = callback || function(){};
 		it79.fnc({},
 			[
@@ -220,7 +214,6 @@ module.exports = function(broccoli){
 							'resInfo': resInfo
 						} ,
 						function(rtn){
-							// console.log(rtn);
 							if(_resourceDb[resKey]){
 								_resourceDb[resKey] = resInfo;
 								callback(true);

@@ -52,7 +52,6 @@ module.exports = function(broccoli, callback){
 							if(obj.subModule){
 								data.rtn[modId].subModule = {};
 								for(var idx in obj.subModule){
-									// console.log(obj.subModule[idx]);
 									data.rtn[modId].subModule[idx] = {};
 									data.rtn[modId].subModule[idx].id = obj.subModule[idx].id;
 									data.rtn[modId].subModule[idx].internalId = obj.subModule[idx].internalId;

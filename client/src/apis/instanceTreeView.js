@@ -2,8 +2,7 @@
  * instanceTreeView.js
  */
 module.exports = function(broccoli){
-	// delete(require.cache[require('path').resolve(__filename)]);
-	if(!window){ callback(); return false; }
+	if(!window){ return false; }
 
 	var _this = this;
 
@@ -23,16 +22,13 @@ module.exports = function(broccoli){
 			callback();
 			return this;
 		}
-		// $instanceTreeView.html('...');
 		var $ul = $('<ul>');
 
 		var data = broccoli.contentsSourceData.get();
-		// console.log(data);
 		var resDb;
 
 		function buildInstance(data, parentInstancePath, subModName, callback){
 			callback = callback||function(){};
-			// console.log(data);
 			var mod = broccoli.contentsSourceData.getModuleByInternalId(data.modId, subModName);
 			if( mod === false ){
 				mod = {
@@ -42,7 +38,7 @@ module.exports = function(broccoli){
 					}
 				}
 			}
-			// console.log(mod);
+
 			var $ul = $('<ul>')
 				.addClass('broccoli--instance-tree-view-fields')
 			;
@@ -222,7 +218,6 @@ module.exports = function(broccoli){
 						.append( $ul )
 					;
 					broccoli.panels.setPanelEventHandlers($rtn);
-					// $rtn.find('>ul').append($ul);
 					callback($rtn);
 				}
 			);
@@ -235,7 +230,6 @@ module.exports = function(broccoli){
 			it79.ary(
 				data.bowl,
 				function(it1, row, idx){
-					// console.log(idx);
 					var $bowl = $('<li>')
 						.append(
 							$('<span>')
@@ -296,7 +290,6 @@ module.exports = function(broccoli){
 		$instanceTreeView.find('[data-broccoli-instance-path]')
 			.removeClass('broccoli__panel--selected')
 		;
-		// this.updateInstancePathView();
 		callback();
 		return;
 	}
