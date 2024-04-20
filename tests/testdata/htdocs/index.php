@@ -91,7 +91,8 @@ body {
 		</style> -->
 
 		<!-- ---------------- darkmode ---------------- -->
-		<!-- <style>
+		<!-- <script>window.optionsAppearance = 'dark';</script>
+		<style>
 			:root {
 				--px2-text-color: #ddd;
 				--px2-background-color: #333;
@@ -103,8 +104,7 @@ body {
 			a {
 				color: #ddf;
 			}
-		</style>
-		<script>window.optionsAppearance = 'dark';</script> -->
+		</style> -->
 
 		<!-- main.js -->
 		<script src="./index_files/main.js" type="text/javascript"></script>

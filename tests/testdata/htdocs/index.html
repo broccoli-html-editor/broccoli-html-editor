@@ -42,14 +42,42 @@
 		<link rel="stylesheet" href="./libs/broccoli.css" />
 		<script src="./libs/broccoli.js"></script>
 
-		<!-- darkmode -->
-		<!-- <style>
+		<!-- ---------------- lightmode ---------------- -->
+		<script>window.optionsAppearance = 'light';</script>
+
+		<!-- ---------------- auto ---------------- -->
+		<!-- <script>window.optionsAppearance = 'auto';</script>
+		<style>
+			@media (prefers-color-scheme: dark) {
+				:root {
+					--px2-text-color: #ddd;
+					--px2-background-color: #333;
+				}
+				body {
+					color: var(--px2-text-color);
+					background-color: var(--px2-background-color);
+				}
+				a {
+					color: #ddf;
+				}
+			}
+		</style> -->
+
+		<!-- ---------------- darkmode ---------------- -->
+		<!-- <script>window.optionsAppearance = 'dark';</script>
+		<style>
 			:root {
 				--px2-text-color: #ddd;
 				--px2-background-color: #333;
 			}
-		</style>
-		<link rel="stylesheet" href="./libs/themes/darkmode.css"></script> -->
+			body {
+				color: var(--px2-text-color);
+				background-color: var(--px2-background-color);
+			}
+			a {
+				color: #ddf;
+			}
+		</style> -->
 
 		<!-- main.js -->
 		<script src="./index_files/main.js" type="text/javascript"></script>
