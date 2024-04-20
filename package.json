@@ -52,6 +52,7 @@
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
     "@simonwep/pickr": "^1.8.2",
+    "@tomk79/keywordmarker": "^1.0.0",
     "axios": "^0.25",
     "babel-loader": "^8.2.4",
     "biflora": "0.0.1-alpha.1",

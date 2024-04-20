@@ -1,5 +1,6 @@
 ,en,ja,zh,zh-TW
 ui_label.ok,OK,OK,OK,OK
+ui_label.select,"Select","選択","选择","選擇"
 ui_label.cancel,"Cancel","キャンセル","取消","取消"
 ui_label.close,"Close","閉じる","关闭","關閉"
 ui_label.finished,"Finished","完了",,

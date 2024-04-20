@@ -15,13 +15,42 @@
 		overflow: auto;
 		height: calc(100vh - 226px);
 		max-height: 400px;
-		a{
+		ul {
+			padding: 0;
+			margin: 0;
+			li {
+				list-style-type: none;
+				padding: 0;
+				margin: 0;
+			}
+		}
+		a {
 			display: block;
 			padding: 1em;
 			margin: 1px 0;
 			border-top: 1px solid #ddd;
 			word-wrap: break-word;
 			overflow-wrap: break-word;
+			color: #333;
+			text-decoration: none;
+			&:hover {
+				color: #00d;
+				background-color: #f6f6f6;
+			}
 		}
+		&-title {
+			font-weight: bold;
+			margin: 0;
+			text-decoration: underline;
+		}
+		&-content {
+			font-weight: normal;
+			margin: 0;
+		}
+	}
+
+	&-result-notfound {
+		text-align: center;
+		padding: 120px 10px;
 	}
 }

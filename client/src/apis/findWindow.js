@@ -6,6 +6,7 @@ module.exports = function(broccoli){
 
 	var _this = this;
 
+	var KeywordMarker = require('@tomk79/keywordmarker').default;
 	var it79 = require('iterate79');
 	var $ = require('jquery');
 	var moduleList = {};
@@ -24,14 +25,22 @@ module.exports = function(broccoli){
 				+ '	<div class="broccoli__find-window-result"></div>'
 				+ '</div>'
 	;
-	var instancePath;
+	var gotoInstancePath;
+	var selectedInstancePath;
+	var origInstancePath;
+
+	var $selectBtn;
 
 	/**
 	 * 初期化
 	 */
 	this.init = function(){
 		contentsElements = []; // クリア
-		instancePath = broccoli.getSelectedInstance();
+		origInstancePath = broccoli.getSelectedInstance();
+		gotoInstancePath = origInstancePath;
+		selectedInstancePath = null;
+
+		$selectBtn = $('<button class="px2-btn px2-btn--primary">');
 
 		it79.fnc(
 			{},
@@ -73,7 +82,7 @@ module.exports = function(broccoli){
 								data.modId = instance.modId;
 								data.content = '';
 								data.data = null;
-								data.label = null;
+								data.label = '';
 								contentsElements.push(data);
 
 								var mod = moduleList[instance.modId];
@@ -95,7 +104,7 @@ module.exports = function(broccoli){
 											if( typeof(instance.fields[fieldName]) == typeof('') ){
 												data.content += instance.fields[fieldName];
 											}else{
-												data.content += JSON.stringify(instance.fields[fieldName]);
+												data.content += data2text(instance.fields[fieldName]);
 											}
 
 											data.label = data.content;
@@ -104,7 +113,7 @@ module.exports = function(broccoli){
 											}else if( typeof(data.data) == typeof({}) && data.data.src ){
 												data.label = data.data.src;
 											}else if( typeof(data.data) == typeof([]) && data.data[0] && data.data.length ){
-												data.label = JSON.stringify(data.data[0]);
+												data.label = data2text(data.data[0]);
 											}
 										}
 									}
@@ -132,20 +141,29 @@ module.exports = function(broccoli){
 					broccoli.px2style.modal({
 						'title': broccoli.lb.get('ui_label.search'),
 						'body': $findWindow,
-						'buttons': [],
+						'buttons': [
+							$selectBtn
+								.text(broccoli.lb.get('ui_label.select'))
+								.prop({'disabled': true})
+								.on('click', function(){
+									gotoInstancePath = selectedInstancePath;
+									broccoli.px2style.closeModal();
+								})
+						],
 						'buttonsSecondary': [
 							$('<button class="px2-btn">')
 								.text(broccoli.lb.get('ui_label.cancel'))
 								.on('click', function(){
+									gotoInstancePath = origInstancePath;
 									broccoli.px2style.closeModal();
 								})
 						],
 						'onclose': function(){
-							if( instancePath ){
+							if( gotoInstancePath ){
 								setTimeout(function(){
-									broccoli.selectInstance(instancePath, function(){
-										broccoli.instanceTreeView.focusInstance(instancePath, function(){
-											broccoli.focusInstance(instancePath, function(){
+									broccoli.selectInstance(gotoInstancePath, function(){
+										broccoli.focusInstance(gotoInstancePath, function(){
+											broccoli.instanceTreeView.focusInstance(gotoInstancePath, function(){
 											});
 										});
 									});
@@ -185,31 +203,70 @@ module.exports = function(broccoli){
 	 */
 	function searchInstance(keyword){
 		$elmResult.html('');
+		let $ul = null;
 		for( var idx in contentsElements ){
 			var instance = contentsElements[idx];
 			if( !instance.content.match(keyword) ){
 				continue;
 			}
 
+			if( !$ul ){
+				$ul = $('<ul>');
+				$elmResult.append($ul);
+			}
+
+			var $li = $('<li>');
 			var $instance = $('<a>');
 			$instance
-				.text(instance.label)
+				.html(`
+					<p class="broccoli__find-window-result-title">${KeywordMarker(instance.label, keyword)}</p>
+					<p class="broccoli__find-window-result-content">${KeywordMarker(instance.content, keyword)}</p>
+				`)
 				.attr({
 					'href':'javascript:;',
 					'data-broccoli-instance-path': instance.instancePath
 				})
 				.on('click', function(){
-					instancePath = $(this).attr('data-broccoli-instance-path');
-					broccoli.instanceTreeView.focusInstance(instancePath, function(){
-						broccoli.selectInstance(instancePath, function(){
-							broccoli.focusInstance(instancePath, function(){
+					$selectBtn.prop({disabled: false});
+					var instancePath = $(this).attr('data-broccoli-instance-path');
+					selectedInstancePath = instancePath;
+					broccoli.selectInstance(selectedInstancePath, function(){
+						broccoli.focusInstance(selectedInstancePath, function(){
+							broccoli.instanceTreeView.focusInstance(selectedInstancePath, function(){
 							});
 						});
 					});
 				})
+				.on('dblclick', function(){
+					$selectBtn.prop({disabled: false});
+					var instancePath = $(this).attr('data-broccoli-instance-path');
+					gotoInstancePath = instancePath;
+					broccoli.px2style.closeModal();
+				})
 			;
-			$elmResult.append($instance);
+			$ul.append($li.append($instance));
 		}
+		if( !$ul ){
+			var $notfound = `<div class="broccoli__find-window-result-notfound">Not found.</div>`;
+			$elmResult.append($notfound);
+		}
+	}
+
+
+	function data2text(data){
+		if( typeof(data) == typeof('string') ){
+			return data;
+		}
+		if( typeof(data) == typeof({}) ){
+			var keys = Object.keys(data);
+			var rtn = [];
+			keys.forEach((key)=>{
+				rtn.push(data2text(data[key]));
+			});
+			return rtn.join(' ');
+		}
+
+		return JSON.stringify(data);
 	}
 
 	return;
