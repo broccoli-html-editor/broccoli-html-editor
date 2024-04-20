@@ -366,6 +366,10 @@ $ composer test
 
 ## 更新履歴 - Change log
 
+### broccoli-html-editor v1.1.2 (リリース日未定)
+
+- NodeJS 版: 配置したインスタンスを正しく操作できない不具合を修正。
+
 ### broccoli-html-editor v1.1.1 (2024年2月18日)
 
 - 依存パッケージのバージョンを調整した。
