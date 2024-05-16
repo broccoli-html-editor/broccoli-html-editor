@@ -27,7 +27,6 @@ class helper_twig{
 	public function bind($template, $data = array(), $funcs = array()){
 		$rtn = $template;
 
-		// PHP版は、ejs ではなく twig に対応
 		if( class_exists('\\Twig_Loader_Array') ){
 			// Twig ^1.35, ^2.12
 			$loader = new \Twig_Loader_Array(array(

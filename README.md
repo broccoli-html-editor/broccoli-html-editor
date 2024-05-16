@@ -366,6 +366,10 @@ $ composer test
 
 ## 更新履歴 - Change log
 
+### broccoli-html-editor v1.1.3 (リリース日未定)
+
+- ネストされたモジュールの座標が正しく取得できない場合がある不具合を修正。
+
 ### broccoli-html-editor v1.1.2 (2024年4月30日)
 
 - NodeJS 版: 配置したインスタンスを正しく操作できない不具合を修正。
