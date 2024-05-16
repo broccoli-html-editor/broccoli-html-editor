@@ -201,6 +201,8 @@ class buildBowl{
 					$loopitem_memo['status'][$fieldNameFor]['closed'] = true;
 
 					$html = ob_get_clean();
+						// NOTE: Twig 3.9以降、この `ob_get_clean()` はコンテンツを取得できなくなりました。(おそらく、標準出力されない仕様になった？)
+						// TODO: Twig 3.9以降の新しい仕様に対応する。
 					if( $this->options['mode'] == 'finalize' ){
 						echo $html;
 						return;
