@@ -1066,6 +1066,9 @@
 			data.data = [];
 			for( var idx = 0; idx<instancePathRegion.length; idx ++ ){
 				var instanceData = this.contentsSourceData.get( instancePathRegion[idx] );
+				if( !instanceData ){
+					continue;
+				}
 				instanceData = JSON.parse( JSON.stringify(instanceData) );
 				delete(instanceData.locked); // NOTE: コピー時に、編集ロック情報は引き継がない。
 				data.data.push( instanceData );

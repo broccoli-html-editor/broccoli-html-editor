@@ -366,6 +366,10 @@ $ composer test
 
 ## 更新履歴 - Change log
 
+### broccoli-html-editor v1.1.4 (リリース日未定)
+
+- アペンダーを選択した状態でコピーすると、エラーが発生する不具合を修正した。
+
 ### broccoli-html-editor v1.1.3 (2024年5月17日)
 
 - loopモジュールの座標が正しく取得できない場合がある不具合を修正。
