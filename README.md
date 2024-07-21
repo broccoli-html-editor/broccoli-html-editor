@@ -366,7 +366,7 @@ $ composer test
 
 ## 更新履歴 - Change log
 
-### broccoli-html-editor v1.1.4 (リリース日未定)
+### broccoli-html-editor v1.1.4 (2024年7月21日)
 
 - アペンダーを選択した状態でコピーすると、エラーが発生する不具合を修正した。
 
