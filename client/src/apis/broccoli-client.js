@@ -1724,14 +1724,15 @@
 		this.bindTwig = function( tpl, data ){
 			var rtn = '';
 			var Twig, twig;
-			try{
+			try {
 				Twig = require('twig'), // Twig module
 				twig = Twig.twig;
 
 				rtn = new twig({
-					'data': tpl
+					'data': tpl,
+					'autoescape': true,
 				}).render(data);
-			}catch(e){
+			} catch(e) {
 				var errorMessage = 'TemplateEngine "Twig" Rendering ERROR.';
 				console.error( errorMessage );
 				rtn = errorMessage;
