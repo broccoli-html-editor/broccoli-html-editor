@@ -7,8 +7,10 @@ module.exports = function(broccoli){
 	var _this = this;
 
 	var it79 = require('iterate79');
+	var LangBank = require('langbank');
 	var php = require('phpjs');
 	var $ = require('jquery');
+	var modLb;
 
 	var $instanceTreeView;
 
@@ -43,154 +45,186 @@ module.exports = function(broccoli){
 				.addClass('broccoli--instance-tree-view-fields')
 			;
 
-			it79.ary(
-				mod.fields,
-				function(it1, row, idx){
-					var $li = $('<li>')
-						.append(
-							$('<span>')
-								.text( row.label || idx ) // ← field name
-								.addClass('broccoli--instance-tree-view-fieldname')
-						)
-					;
-
-					if(row.fieldType == 'input'){
-						var fieldDef = broccoli.getFieldDefinition( row.type ); // フィールドタイプ定義を呼び出す
-						fieldDef.mkPreviewHtml( data.fields[row.name], mod, function(html){
-							html = (function(src){
-								for(var resKey in resDb){
-									try {
-										src = src.split('{broccoli-html-editor-resource-baser64:{'+resKey+'}}').join(resDb[resKey].base64);
-									} catch (e) {
-									}
-								}
-								return src;
-							})(html);
-
-							$li.append(
-								$('<span class="broccoli--instance-tree-view-fieldpreview">')
-									.html('<span>'+html+'</span>')
-							);
-							$li.find('*').each(function(){
-								$(this).removeAttr('style'); // スタイルを削除
-							});
-							$li.find('style').remove(); // styleタグも削除
-							$li.find('script').remove(); // scriptタグも削除
-
-							$ul.append($li);
-							it1.next();
-						} );
-						return;
-					}else if(row.fieldType == 'module'){
-
-						it79.ary(
-							data.fields[idx] ,
-							function(it2, row2, idx2){
-								var instancePath = parentInstancePath+'/fields.'+idx+'@'+idx2;
-								buildInstance(
-									row2,
-									instancePath,
-									null,
-									function($fieldsUl){
-										$li.append($fieldsUl);
-										it2.next();
-									}
-								);
-								return;
-							} ,
-							function(){
-								var instancePath = parentInstancePath+'/fields.'+idx+'@'+(data.fields[idx]?data.fields[idx].length:0);
-								var tmpDepth = instancePath.split('/');
-								if( tmpDepth.length > 3 && data.fields[idx] && data.fields[idx].length ){ // Appenderの表示数を減らす。
-									$ul.append( $li );
-									it1.next();
-									return;
-								}
-
-								var $appender = $('<div>')
-									.append( $('<span>')
-										.text(broccoli.lb.get('ui_label.drop_a_module_here'))
-									)
-									.addClass('broccoli--instance-tree-view-panel-item')
-									.attr({
-										'data-broccoli-instance-path':instancePath,
-										'data-broccoli-is-appender':'yes',
-										'data-broccoli-is-instance-tree-view': 'yes',
-										'draggable': false
-									})
-									.on('mouseover', function(e){
-										e.stopPropagation();
-										$(this).addClass('broccoli__panel__hovered')
-									})
-									.on('mouseout',function(e){
-										$(this).removeClass('broccoli__panel__hovered')
-									})
-									.append( $('<div>')
-										.addClass('broccoli__panel-drop-to-insert-here')
-									)
-								;
-								broccoli.panels.setPanelEventHandlers( $appender );
-								$li.append( $appender );
-								$ul.append( $li );
-								it1.next();
-							}
-						);
-						return;
-					}else if(row.fieldType == 'loop'){
-						it79.ary(
-							data.fields[idx] ,
-							function(it2, row2, idx2){
-								var instancePath = parentInstancePath+'/fields.'+idx+'@'+idx2;
-								buildInstance(
-									row2,
-									instancePath,
-									row.name,
-									function($fieldsUl){
-										$li.append($fieldsUl);
-										it2.next();
-									}
-								);
-								return;
-							} ,
-							function(){
-								var instancePath = parentInstancePath+'/fields.'+idx+'@'+(data.fields[idx]?data.fields[idx].length:0);
-
-								var $appender = $('<div>')
-									.append( $('<span>')
-										.text(''+broccoli.lb.get('ui_label.dblclick_here_and_add_array_element'))
-									)
-									.addClass('broccoli--instance-tree-view-panel-item')
-									.attr({
-										'data-broccoli-instance-path':instancePath,
-										'data-broccoli-mod-id': mod.id,
-										'data-broccoli-mod-internal-id': mod.internalId,
-										'data-broccoli-sub-mod-name': row.name,
-										'data-broccoli-is-appender':'yes',
-										'data-broccoli-is-instance-tree-view': 'yes',
-										'draggable': false
-									})
-									.on('mouseover', function(e){
-										e.stopPropagation();
-										$(this).addClass('broccoli__panel__hovered')
-									})
-									.on('mouseout',function(e){
-										$(this).removeClass('broccoli__panel__hovered')
-									})
-									.append( $('<div>')
-										.addClass('broccoli__panel-drop-to-insert-here')
-									)
-								;
-								broccoli.panels.setPanelEventHandlers( $appender );
-								$li.append( $appender );
-								$ul.append($li);
-								it1.next();
-							}
-						);
-						return;
-					}
+			it79.fnc({}, [
+				function(it1){
+					modLb = new LangBank(mod.languageCsv || '', function(){
+						it1.next();
+					});
+				},
+				function(it1){
+					modLb.setLang(broccoli.lb.lang);
 					it1.next();
-					return;
-				} ,
+				},
+				function(it1){
+					it79.ary(
+						mod.fields,
+						function(itAry, row, idx){
+							var $li = $('<li>')
+								.append(
+									$('<span>')
+										.text( row.label || idx ) // ← field name
+										.addClass('broccoli--instance-tree-view-fieldname')
+								)
+							;
+
+							if(row.fieldType == 'input'){
+								var fieldDef = broccoli.getFieldDefinition( row.type ); // フィールドタイプ定義を呼び出す
+								mod.fields[row.name].lb = new (function(lb, field){
+									this.get = function(key, defValue){
+										var rtn = '';
+										var fullkey = '';
+										if( data.subModName ){
+											fullkey = 'subModule.'+data.subModName+'.'+field.name+':'+key;
+										}else{
+											fullkey = 'fields.'+field.name+':'+key;
+										}
+										rtn = lb.get(fullkey);
+										if( rtn == '' || rtn == '---' ){
+											rtn = defValue;
+										}
+										return rtn;
+									}
+								})(modLb, row);
+								fieldDef.mkPreviewHtml( data.fields[row.name], mod.fields[row.name], function(html){
+									html = (function(src){
+										for(var resKey in resDb){
+											try {
+												src = src.split('{broccoli-html-editor-resource-baser64:{'+resKey+'}}').join(resDb[resKey].base64);
+											} catch (e) {
+											}
+										}
+										return src;
+									})(html);
+
+									$li.append(
+										$('<span class="broccoli--instance-tree-view-fieldpreview">')
+											.html('<span>'+html+'</span>')
+									);
+									$li.find('*').each(function(){
+										$(this).removeAttr('style'); // スタイルを削除
+									});
+									$li.find('style').remove(); // styleタグも削除
+									$li.find('script').remove(); // scriptタグも削除
+
+									$ul.append($li);
+									itAry.next();
+								} );
+								return;
+							}else if(row.fieldType == 'module'){
+
+								it79.ary(
+									data.fields[idx] ,
+									function(it2, row2, idx2){
+										var instancePath = parentInstancePath+'/fields.'+idx+'@'+idx2;
+										buildInstance(
+											row2,
+											instancePath,
+											null,
+											function($fieldsUl){
+												$li.append($fieldsUl);
+												it2.next();
+											}
+										);
+										return;
+									} ,
+									function(){
+										var instancePath = parentInstancePath+'/fields.'+idx+'@'+(data.fields[idx]?data.fields[idx].length:0);
+										var tmpDepth = instancePath.split('/');
+										if( tmpDepth.length > 3 && data.fields[idx] && data.fields[idx].length ){ // Appenderの表示数を減らす。
+											$ul.append( $li );
+											itAry.next();
+											return;
+										}
+
+										var $appender = $('<div>')
+											.append( $('<span>')
+												.text(broccoli.lb.get('ui_label.drop_a_module_here'))
+											)
+											.addClass('broccoli--instance-tree-view-panel-item')
+											.attr({
+												'data-broccoli-instance-path':instancePath,
+												'data-broccoli-is-appender':'yes',
+												'data-broccoli-is-instance-tree-view': 'yes',
+												'draggable': false
+											})
+											.on('mouseover', function(e){
+												e.stopPropagation();
+												$(this).addClass('broccoli__panel__hovered')
+											})
+											.on('mouseout',function(e){
+												$(this).removeClass('broccoli__panel__hovered')
+											})
+											.append( $('<div>')
+												.addClass('broccoli__panel-drop-to-insert-here')
+											)
+										;
+										broccoli.panels.setPanelEventHandlers( $appender );
+										$li.append( $appender );
+										$ul.append( $li );
+										itAry.next();
+									}
+								);
+								return;
+							}else if(row.fieldType == 'loop'){
+								it79.ary(
+									data.fields[idx] ,
+									function(it2, row2, idx2){
+										var instancePath = parentInstancePath+'/fields.'+idx+'@'+idx2;
+										buildInstance(
+											row2,
+											instancePath,
+											row.name,
+											function($fieldsUl){
+												$li.append($fieldsUl);
+												it2.next();
+											}
+										);
+										return;
+									} ,
+									function(){
+										var instancePath = parentInstancePath+'/fields.'+idx+'@'+(data.fields[idx]?data.fields[idx].length:0);
+
+										var $appender = $('<div>')
+											.append( $('<span>')
+												.text(''+broccoli.lb.get('ui_label.dblclick_here_and_add_array_element'))
+											)
+											.addClass('broccoli--instance-tree-view-panel-item')
+											.attr({
+												'data-broccoli-instance-path':instancePath,
+												'data-broccoli-mod-id': mod.id,
+												'data-broccoli-mod-internal-id': mod.internalId,
+												'data-broccoli-sub-mod-name': row.name,
+												'data-broccoli-is-appender':'yes',
+												'data-broccoli-is-instance-tree-view': 'yes',
+												'draggable': false
+											})
+											.on('mouseover', function(e){
+												e.stopPropagation();
+												$(this).addClass('broccoli__panel__hovered')
+											})
+											.on('mouseout',function(e){
+												$(this).removeClass('broccoli__panel__hovered')
+											})
+											.append( $('<div>')
+												.addClass('broccoli__panel-drop-to-insert-here')
+											)
+										;
+										broccoli.panels.setPanelEventHandlers( $appender );
+										$li.append( $appender );
+										$ul.append($li);
+										itAry.next();
+									}
+								);
+								return;
+							}
+							itAry.next();
+							return;
+						} ,
+						function(){
+							it1.next();
+						}
+					);
+				},
 				function(){
 					var $rtn = $('<div>')
 						.append(
@@ -219,8 +253,8 @@ module.exports = function(broccoli){
 					;
 					broccoli.panels.setPanelEventHandlers($rtn);
 					callback($rtn);
-				}
-			);
+				},
+			]);
 
 			return;
 		}

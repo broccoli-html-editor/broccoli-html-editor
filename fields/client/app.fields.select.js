@@ -8,7 +8,7 @@ module.exports = function(broccoli){
 
 		var presetString = fieldData;
 		if( typeof(presetString) === typeof({}) && presetString.src !== undefined ){
-			presetString = presetString.label;
+			presetString = presetString.src;
 		}
 
 		for( var idx in mod.options ){

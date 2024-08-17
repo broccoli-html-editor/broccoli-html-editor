@@ -234,6 +234,22 @@ module.exports = function(broccoli){
 																return;
 															}
 															broccoli.resourceMgr.getResourceDb(function(resDb){
+																childMod.fields[fieldName].lb = new (function(lb, field){
+																	this.get = function(key, defValue){
+																		var rtn = '';
+																		var fullkey = '';
+																		if( childData.subModName ){
+																			fullkey = 'subModule.'+childData.subModName+'.'+field.name+':'+key;
+																		}else{
+																			fullkey = 'fields.'+field.name+':'+key;
+																		}
+																		rtn = lb.get(fullkey);
+																		if( rtn == '' || rtn == '---' ){
+																			rtn = defValue;
+																		}
+																		return rtn;
+																	}
+																})(modLb, field);
 																broccoli.fieldDefinitions[type].mkPreviewHtml(childData.fields[fieldName], childMod.fields[fieldName], function(html){
 																	html = (function(src){
 																		for(var resKey in resDb){
@@ -522,6 +538,22 @@ module.exports = function(broccoli){
 								if( data.locked && data.locked.contents ){
 									// 編集ロックされている場合は、プレビュー用のHTMLを生成する
 									broccoli.resourceMgr.getResourceDb(function(resDb){
+										mod.fields[field.name].lb = new (function(lb, field){
+											this.get = function(key, defValue){
+												var rtn = '';
+												var fullkey = '';
+												if( data.subModName ){
+													fullkey = 'subModule.'+data.subModName+'.'+field.name+':'+key;
+												}else{
+													fullkey = 'fields.'+field.name+':'+key;
+												}
+												rtn = lb.get(fullkey);
+												if( rtn == '' || rtn == '---' ){
+													rtn = defValue;
+												}
+												return rtn;
+											}
+										})(modLb, field);
 										fieldDefinition.mkPreviewHtml(data.fields[field.name], mod.fields[field.name], function(srcHtml){
 											srcHtml = (function(src){
 												for(var resKey in resDb){
