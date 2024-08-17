@@ -13,7 +13,7 @@ module.exports = function(broccoli){
 
 		for( var idx in mod.options ){
 			if( presetString==mod.options[idx].value ){
-				callback( mod.lb.get('options.'+idx+'.label', mod.options[idx].label) );
+				callback( mod.lb.get('options.'+idx+'.label', `${mod.options[idx].label}`) );
 				return;
 			}
 		}
