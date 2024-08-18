@@ -10,9 +10,12 @@ module.exports = function(broccoli){
 		if( typeof(presetString) === typeof({}) && presetString.src !== undefined ){
 			presetString = presetString.src;
 		}
+		if( presetString === undefined ){
+			presetString = '';
+		}
 
 		for( var idx in mod.options ){
-			if( presetString==mod.options[idx].value ){
+			if( presetString == mod.options[idx].value ){
 				callback( mod.lb.get('options.'+idx+'.label', `${mod.options[idx].label}`) );
 				return;
 			}
