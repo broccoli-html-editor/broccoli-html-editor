@@ -35,7 +35,7 @@ class gpi{
 
 		try {
 
-			$this->broccoli->lb()->setLang( $options['lang'] );
+			$this->broccoli->lb()->setLang( $options['lang'] ?? 'en' );
 
 			switch($api){
 				case "getBootupInfomations":
@@ -203,7 +203,7 @@ class gpi{
 					);
 
 				case "saveContentsData":
-					$jsonString = json_encode( $options['data'], JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES );
+					$jsonString = json_encode( $options['data'] ?? null, JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES );
 					$result = $this->broccoli->fs()->save_file(
 						$this->broccoli->realpathDataDir.'/data.json',
 						$jsonString
@@ -216,7 +216,7 @@ class gpi{
 					);
 
 				case "buildHtml":
-					$bowlList = $options['bowlList'];
+					$bowlList = $options['bowlList'] ?? null;
 					$htmls = $this->broccoli->buildHtml( array(
 						'mode' => 'canvas',
 						'bowlList' => $bowlList,
@@ -250,14 +250,14 @@ class gpi{
 					);
 
 				case "resourceMgr.getResource":
-					$resInfo = $this->broccoli->resourceMgr()->getResource( $options['resKey'] );
+					$resInfo = $this->broccoli->resourceMgr()->getResource( $options['resKey'] ?? null );
 					return (object) array(
 						"result" => true,
 						"resourceInfo" => $resInfo,
 					);
 
 				case "resourceMgr.duplicateResource":
-					$newResKey = $this->broccoli->resourceMgr()->duplicateResource( $options['resKey'] );
+					$newResKey = $this->broccoli->resourceMgr()->duplicateResource( $options['resKey'] ?? null );
 					return (object) array(
 						"result" => true,
 						"newResourceKey" => $newResKey,
@@ -289,19 +289,19 @@ class gpi{
 					);
 
 				case "resourceMgr.addNewResource":
-					$rtn = (object) $this->broccoli->resourceMgr()->addNewResource($options['resInfo']);
+					$rtn = (object) $this->broccoli->resourceMgr()->addNewResource($options['resInfo'] ?? null);
 					$rtn->result = true;
 					return $rtn;
 
 				case "resourceMgr.getResourcePublicPath":
-					$publicPath = $this->broccoli->resourceMgr()->getResourcePublicPath( $options['resKey'] );
+					$publicPath = $this->broccoli->resourceMgr()->getResourcePublicPath( $options['resKey'] ?? null );
 					return (object) array(
 						"result" => true,
 						"publicPath" => $publicPath,
 					);
 
 				case "resourceMgr.updateResource":
-					$result = $this->broccoli->resourceMgr()->updateResource( $options['resKey'] , $options['resInfo'] );
+					$result = $this->broccoli->resourceMgr()->updateResource( $options['resKey'] ?? null , $options['resInfo'] ?? null );
 					return $result ? (object) array(
 						"result" => true,
 					) : (object) array(
@@ -310,7 +310,7 @@ class gpi{
 					);
 
 				case "resourceMgr.resetBinFromBase64":
-					$result = $this->broccoli->resourceMgr()->resetBinFromBase64( $options['resKey'] );
+					$result = $this->broccoli->resourceMgr()->resetBinFromBase64( $options['resKey'] ?? null );
 					return $result ? (object) array(
 						"result" => true,
 					) : (object) array(
@@ -319,7 +319,7 @@ class gpi{
 					);
 
 				case "resourceMgr.resetBase64FromBin":
-					$result = $this->broccoli->resourceMgr()->resetBase64FromBin( $options['resKey'] );
+					$result = $this->broccoli->resourceMgr()->resetBase64FromBin( $options['resKey'] ?? null );
 					return $result ? (object) array(
 						"result" => true,
 					) : (object) array(
@@ -331,7 +331,7 @@ class gpi{
 					foreach( $options['resourceDb'] as $key=>$val ){
 						$options['resourceDb'][$key] = (object) $val;
 					}
-					$result = $this->broccoli->resourceMgr()->save( $options['resourceDb'] );
+					$result = $this->broccoli->resourceMgr()->save( $options['resourceDb'] ?? null );
 					return $result ? (object) array(
 						"result" => true,
 					) : (object) array(
@@ -349,13 +349,13 @@ class gpi{
 					);
 
 				case "fieldGpi":
-					$result = $this->broccoli->getFieldDefinition( $options['__fieldId__'] )->gpi( $options['options'] );
+					$result = $this->broccoli->getFieldDefinition( $options['__fieldId__'] ?? null )->gpi( $options['options'] ?? null );
 					return $result;
 
 				case "saveUserData":
 					$result = true;
 					if( array_key_exists( 'modPaletteCondition', $options ) && $options['modPaletteCondition'] ){
-						if( !$this->broccoli->userStorage()->save('modPaletteCondition', $options['modPaletteCondition']) ){
+						if( !$this->broccoli->userStorage()->save('modPaletteCondition', $options['modPaletteCondition'] ?? null) ){
 							$result = false;
 						}
 					}
