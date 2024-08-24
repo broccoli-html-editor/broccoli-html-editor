@@ -219,13 +219,13 @@ module.exports = function(broccoli, targetElm, callback){
 							$pics.append(html);
 						}
 						var $readme = $html.find('.broccoli__module-readme');
-						if( result.readme ){
-							$readme.html(result.readme);
-							$this.attr({'data-readme': result.readme});
+						if( result.moduleInfo.readme ){
+							$readme.html(result.moduleInfo.readme);
+							$this.attr({'data-readme': result.moduleInfo.readme});
 						}
 
 						broccoli.px2style.modal({
-							'title': result.name || moduleId,
+							'title': result.moduleInfo.name || moduleId,
 							'width': 780,
 							'body': $html,
 						});
