@@ -456,7 +456,6 @@ module.exports = function(broccoli){
 			return;
 		}
 
-		var focusDone = false;
 		var fieldCount = 0;
 		it79.fnc({}, [
 			function(it1){
@@ -572,13 +571,6 @@ module.exports = function(broccoli){
 								}else{
 									// フィールドの編集UIを生成する
 									fieldDefinition.mkEditor(mod.fields[field.name], data.fields[field.name], elmFieldContent, function(){
-										if(!focusDone){
-											focusDone = true;
-											fieldDefinition.focus(elmFieldContent, function(){
-												it2.next();
-											});
-											return;
-										}
 										it2.next();
 										return;
 									});
@@ -785,6 +777,10 @@ module.exports = function(broccoli){
 					lastVisibilityVisible = visibilityVisible;
 				});
 				$innerBody.trigger('scroll');
+				it1.next();
+			},
+			function(it1){
+				$editWindow.find('.broccoli__edit-window-module-name').focus();
 				it1.next();
 			},
 			function(){
