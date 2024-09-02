@@ -481,7 +481,7 @@ module.exports = function(broccoli){
 						var $field = $(tplField)
 							.attr({
 								'data-broccoli-edit-window-field-name': field.name ,
-								'data-broccoli-edit-window-field-type': field.fieldType
+								'data-broccoli-edit-window-field-type': field.fieldType,
 							})
 						;
 						$field.find('>h3')
