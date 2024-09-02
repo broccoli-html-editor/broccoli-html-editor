@@ -49,8 +49,13 @@
 		}
 	}
 
-	function tabCancel(){
+	function resetPreviewDomElements(){
 		$('body *').attr({'tabindex':'-1'}).css({'outline':'none'});
+		$('img').off("load").on("load", function() {
+			var data = {};
+			callbackMessage( 'adjustPanelsPosition', data );
+			return;
+		});
 	}
 
 	function getInstance($this){
@@ -124,7 +129,7 @@
 					}
 				})
 			;
-			tabCancel();
+			resetPreviewDomElements();
 			callbackMessage(data.callback, true);
 			return;
 
@@ -197,12 +202,7 @@
 		callbackMessage( 'onClickContentsLink', data );
 		return false;
 	});
-	$iframeWindowDocument.find('img').on("load", function() {
-		var data = {};
-		callbackMessage( 'redraw', data );
-		return;
-	});
 
-	tabCancel();
+	resetPreviewDomElements();
 
 })();

@@ -894,6 +894,13 @@ module.exports = function(broccoli){
 	}
 
 	/**
+	 * パネル位置をあわせる
+	 */
+	this.adjust = function(){
+		// TODO: 実装する
+	}
+
+	/**
 	 * インスタンスを選択する
 	 */
 	this.updateInstanceSelection = function( callback ){

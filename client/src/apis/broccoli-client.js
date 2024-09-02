@@ -698,6 +698,13 @@
 		}
 
 		/**
+		 * パネルの位置を合わせる
+		 */
+		this.adjustPanelsPosition = function(){
+			this.panels.adjust();
+		}
+
+		/**
 		 * field定義を取得する
 		 */
 		this.getFieldDefinition = function(fieldType){

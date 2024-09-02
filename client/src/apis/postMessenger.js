@@ -167,8 +167,8 @@ module.exports = function(broccoli, iframe){
 			broccoli.options.onClickContentsLink(data.url, data);
 			return;
 
-		}else if(data.api == 'redraw'){
-			broccoli.redraw();
+		}else if(data.api == 'adjustPanelsPosition'){
+			broccoli.adjustPanelsPosition();
 			return;
 
 		}else{
