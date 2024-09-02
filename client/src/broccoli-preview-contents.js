@@ -1,6 +1,6 @@
 (function(){
 	var $ = require('jquery');
-	var $iframeWindow = $(window.document);
+	var $iframeWindowDocument = $(window.document);
 
 	var scriptElement = document.querySelector('[data-broccoli-receive-message]');
 	if(scriptElement){scriptElement.parentNode.removeChild(scriptElement);}
@@ -9,12 +9,12 @@
 
 
 	// クリックイベントを登録
-	$iframeWindow.on('click', function(){
+	$iframeWindowDocument.on('click', function(){
 		callbackMessage('unselectInstance');
 		callbackMessage('unfocusInstance');
 	});
 	// dropイベントをキャンセル
-	$iframeWindow.on('dragover', function(e){
+	$iframeWindowDocument.on('dragover', function(e){
 		e.stopPropagation();
 		e.preventDefault();
 		return;
@@ -110,7 +110,7 @@
 			return;
 		}else if(data.api == 'updateHtml'){
 			var htmls = data.options.htmls;
-			$iframeWindow
+			$iframeWindowDocument
 				.find(data.options.contents_area_selector)
 				.html('...')
 				.each(function(){
@@ -130,7 +130,7 @@
 
 		}else if(data.api == 'getInstance'){
 			var rtn = {};
-			var $instance = $iframeWindow.find('[data-broccoli-instance-path="'+data.options.instancePath+'"]');
+			var $instance = $iframeWindowDocument.find('[data-broccoli-instance-path="'+data.options.instancePath+'"]');
 			var elm = getInstance($instance);
 			rtn = elm;
 			callbackMessage(data.callback, rtn);
@@ -138,7 +138,7 @@
 
 		}else if(data.api == 'getAllInstance'){
 			var rtn = {};
-			var $instances = $iframeWindow.find('[data-broccoli-instance-path]');
+			var $instances = $iframeWindowDocument.find('[data-broccoli-instance-path]');
 			$instances.each(function(){
 				var $this = $(this);
 				var elm = getInstance($this);
@@ -156,7 +156,7 @@
 
 		}else if(data.api == 'getBowlList'){
 			var bowls = [];
-			$iframeWindow
+			$iframeWindowDocument
 				.find(data.options.contents_area_selector)
 				.each(function(){
 					var $this = $(this);
@@ -177,7 +177,7 @@
 		return;
 	});
 
-	$iframeWindow.on("click", "a", function() {
+	$iframeWindowDocument.on("click", "a", function() {
 		var data = {};
 		var $this = $(this);
 		data.url = $this.prop('href');
@@ -187,7 +187,7 @@
 		callbackMessage( 'onClickContentsLink', data );
 		return false;
 	});
-	$iframeWindow.find('form').on("submit", function() {
+	$iframeWindowDocument.find('form').on("submit", function() {
 		var data = {};
 		var $this = $(this);
 		data.url = $this.prop('action');
@@ -197,6 +197,12 @@
 		callbackMessage( 'onClickContentsLink', data );
 		return false;
 	});
+	$iframeWindowDocument.find('img').on("load", function() {
+		var data = {};
+		callbackMessage( 'redraw', data );
+		return;
+	});
+
 	tabCancel();
 
 })();

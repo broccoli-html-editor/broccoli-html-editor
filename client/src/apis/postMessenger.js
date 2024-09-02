@@ -167,6 +167,10 @@ module.exports = function(broccoli, iframe){
 			broccoli.options.onClickContentsLink(data.url, data);
 			return;
 
+		}else if(data.api == 'redraw'){
+			broccoli.redraw();
+			return;
+
 		}else{
 			if(!callbackMemory[data.api]){return;}
 			callbackMemory[data.api](data.options);
