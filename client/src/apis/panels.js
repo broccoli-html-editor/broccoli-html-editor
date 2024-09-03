@@ -52,26 +52,7 @@ module.exports = function(broccoli){
 			)
 			.on('mouseover', function(e){
 				e.preventDefault();
-				var $this = $(this);
-				var currentInstance = $this.attr('data-broccoli-instance-path');
-
-				// パネルが、実際の要素の座標からずれて表示されてしまう場合にも、
-				// 最新の座標情報を取得しなおして補正する。
-				broccoli.postMessenger.send(
-					'getInstance',
-					{
-						'instancePath': currentInstance,
-					},
-					function($contentsElements){
-						$this.css({
-							'width': $contentsElements.outerWidth,
-							'height': drawPanelCalcHeight($contentsElements),
-							'position': 'absolute',
-							'left': $contentsElements.offsetLeft,
-							'top': $contentsElements.offsetTop
-						});
-					}
-				);
+				adjustInstancePanel(this);
 			})
 		;
 		_this.setPanelEventHandlers($panel);
@@ -894,10 +875,43 @@ module.exports = function(broccoli){
 	}
 
 	/**
-	 * パネル位置をあわせる
+	 * 全パネル位置をあわせる
 	 */
 	this.adjust = function(){
-		// TODO: 実装する
+		if( !$panels ){
+			return;
+		}
+		const $panelList = $panels.find('>div');
+		$panelList.each((index, elm)=>{
+			adjustInstancePanel(elm);
+		});
+	}
+
+	/**
+	 * パネル単体の位置をあわせる
+	 * @param {*} elm 
+	 */
+	function adjustInstancePanel(elm){
+		var $panel = $(elm);
+		var currentInstance = $panel.attr('data-broccoli-instance-path');
+
+		// パネルが、実際の要素の座標からずれて表示されてしまう場合にも、
+		// 最新の座標情報を取得しなおして補正する。
+		broccoli.postMessenger.send(
+			'getInstance',
+			{
+				'instancePath': currentInstance,
+			},
+			function($contentsElements){
+				$panel.css({
+					'width': $contentsElements.outerWidth,
+					'height': drawPanelCalcHeight($contentsElements),
+					'position': 'absolute',
+					'left': $contentsElements.offsetLeft,
+					'top': $contentsElements.offsetTop
+				});
+			}
+		);
 	}
 
 	/**

@@ -700,7 +700,7 @@
 		/**
 		 * パネルの位置を合わせる
 		 */
-		this.adjustPanelsPosition = function(){
+		this.adjust = function(){
 			this.panels.adjust();
 		}
 

@@ -168,7 +168,7 @@ module.exports = function(broccoli, iframe){
 			return;
 
 		}else if(data.api == 'adjustPanelsPosition'){
-			broccoli.adjustPanelsPosition();
+			broccoli.adjust();
 			return;
 
 		}else{

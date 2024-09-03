@@ -221,9 +221,9 @@ broccoli.init(
         // 初期化が完了すると呼びだされるコールバック関数です。
 
         $(window).on('resize', function(){
-            // このメソッドは、canvasの再描画を行います。
-            // ウィンドウサイズが変更された際に、UIを再描画するよう命令しています。
-            broccoli.redraw();
+            // ウィンドウサイズが変更された際に、
+            // UIの表示位置を補正するよう命令します。
+            broccoli.adjust();
         });
 
     }
@@ -366,10 +366,11 @@ $ composer test
 
 ## 更新履歴 - Change log
 
-### broccoli-html-editor v1.1.5 (リリース日未定)
+### broccoli-html-editor v1.2.0 (リリース日未定)
 
 - テンプレート処理に関する不具合を修正した。
 - インスタンスツリービューでのselectフィールドのプレビューが、値ではなくラベルで表示されるようになった。
+- `broccoli.adjust()` を追加。
 - 細かいバグ修正と内部コードの修正。
 
 ### broccoli-html-editor v1.1.4 (2024年7月21日)

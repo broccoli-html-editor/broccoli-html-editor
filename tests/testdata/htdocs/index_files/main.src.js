@@ -234,7 +234,7 @@ window.main = new (function(){
 					$('.instanceTreeView').css({'height':h});
 					$('.canvas').css({'height':h});
 					$('.palette').css({'height':h});
-					broccoli.redraw();
+					broccoli.adjust();
 				});
 				callback();
 			}
