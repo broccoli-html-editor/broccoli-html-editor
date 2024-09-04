@@ -202,6 +202,11 @@
 		callbackMessage( 'onClickContentsLink', data );
 		return false;
 	});
+	$(window).on("resize", function() {
+		var data = {};
+		callbackMessage( 'adjustPanelsPosition', data );
+		return;
+	});
 
 	resetPreviewDomElements();
 
