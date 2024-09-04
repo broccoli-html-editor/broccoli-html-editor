@@ -118,7 +118,7 @@ module.exports = function(broccoli){
 				return;
 			}); })
 			.then(function(){ return new Promise(function(rlv, rjt){
-				rtn = '<div style="margin: 1em auto; padding: 10px; border: 1px solid #888; border-radius: 5px;">'+rtn+'</div>';
+				rtn = '<div style="display: block; max-height: none; margin: 1em auto; padding: 10px; border: 1px solid #888; border-radius: 5px;">'+rtn+'</div>';
 				rlv();
 				return;
 			}); })

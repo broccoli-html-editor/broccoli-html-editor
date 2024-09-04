@@ -100,7 +100,7 @@ module.exports = function(broccoli){
 			}); })
 		;
 		return;
-	}// mkPreviewHtml()
+	}
 
 	/**
 	 * エディタUIを生成

@@ -60,6 +60,7 @@ module.exports = function(broccoli){
 					;
 				});
 				$rtn.find('style').remove(); // styleタグも削除しちゃう
+				$rtn.find('script').remove(); // scriptタグも削除しちゃう
 				rtn = $rtn.html();
 
 				rlv();
