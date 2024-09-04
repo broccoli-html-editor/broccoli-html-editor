@@ -108,6 +108,10 @@ module.exports = function(broccoli){
 		[
 			'a',
 			'button',
+			'big',
+			'small',
+			'sup',
+			'sub',
 			'input',
 			'textarea',
 			'select',
@@ -117,6 +121,20 @@ module.exports = function(broccoli){
 		].forEach((elementName, index)=>{
 			$html.find(elementName).each((index, elm)=>{
 				elm.outerHTML = elm.innerHTML;
+			});
+		});
+
+		// div に置換するタグ
+		[
+			'h1',
+			'h2',
+			'h3',
+			'h4',
+			'h5',
+			'h6',
+		].forEach((elementName, index)=>{
+			$html.find(elementName).each((index, elm)=>{
+				elm.outerHTML = `<div>${elm.innerHTML}</div>`;
 			});
 		});
 
