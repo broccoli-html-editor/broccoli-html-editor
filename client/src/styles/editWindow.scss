@@ -292,13 +292,23 @@
 	}
 
 	&-field-preview {
-		font-size: 64%;
+		// NOTE: ロックされたインスタンスのeditWindow、および module/loopフィールドのプレビューに適用されるスタイル
+		// NOTE: `.broccoli--instance-tree-view-fieldpreview` も参照
 		line-height: 1.1;
-		*{
+		* {
 			color: #666;
 			text-decoration: none;
 			max-width: 100%;
-			max-height: 1.2em;
+			max-height: 50vh;
+			margin: 0;
+			padding: 0;
+			pointer-events: none;
+		}
+	}
+	&-module-fields__instances &-field-preview {
+		// NOTE: module/loopフィールドのプレビューに適用されるスタイル
+		font-size: 64%;
+		div, p, ul, li, ol, blockquote {
 			display: inline;
 		}
 	}

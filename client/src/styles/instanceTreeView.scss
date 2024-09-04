@@ -120,6 +120,8 @@
 		}
 
 		.broccoli--instance-tree-view-fieldpreview {
+			// NOTE: インスタンスツリービュー上でのプレビュー表示に適用されるスタイル
+			// NOTE: `.broccoli__edit-window-field-preview` も参照
 			display: block;
 			height: auto;
 			padding: 2px 5px;

@@ -10,6 +10,10 @@ module.exports = function(broccoli){
 	var LangBank = require('langbank');
 	var php = require('phpjs');
 	var $ = require('jquery');
+	var utils = (()=>{
+		const Utils = require('./utils.js');
+		return new Utils();
+	})();
 	var modLb;
 
 	var $instanceTreeView;
@@ -86,25 +90,11 @@ module.exports = function(broccoli){
 									}
 								})(modLb, row);
 								fieldDef.mkPreviewHtml( data.fields[row.name], mod.fields[row.name], function(html){
-									html = (function(src){
-										for(var resKey in resDb){
-											try {
-												src = src.split('{broccoli-html-editor-resource-baser64:{'+resKey+'}}').join(resDb[resKey].base64);
-											} catch (e) {
-											}
-										}
-										return src;
-									})(html);
-
+									html = utils.sanitizePreviewHtml(html, resDb);
 									$li.append(
-										$('<span class="broccoli--instance-tree-view-fieldpreview">')
-											.html('<span>'+html+'</span>')
+										$('<div class="broccoli--instance-tree-view-fieldpreview">')
+											.html('<div>'+html+'</div>')
 									);
-									$li.find('*').each(function(){
-										$(this).removeAttr('style'); // スタイルを削除
-									});
-									$li.find('style').remove(); // styleタグも削除
-									$li.find('script').remove(); // scriptタグも削除
 
 									$ul.append($li);
 									itAry.next();

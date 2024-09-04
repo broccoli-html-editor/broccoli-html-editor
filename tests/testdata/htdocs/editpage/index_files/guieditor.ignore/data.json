@@ -117,14 +117,14 @@
                         "modId": "PlainHTMLElements:PlainHTML/MultiText",
                         "fields": {
                             "main": {
-                                "src": "<div style=\"font-size: 32px; font-weight: bold;\">\n\t<p>インラインCSSで大きくされた文字です。</p>\n\t<p>この行には、<a href=\"https://pickles2.com/\">リンク</a>が含まれています。</p>\n\t<p>この行には、<button type=\"button\">ボタン</button>が含まれています。</p>\n</div>",
+                                "src": "<div style=\"font-size: 24px; font-weight: bold;\">\n\t<p>インラインCSSで大きくされた文字です。</p>\n\t<p>この行には、<a href=\"https://pickles2.com/\">リンク</a>が含まれています。</p>\n\t<p>この行には、<button type=\"button\">ボタン</button>が含まれています。</p>\n\t<p><input type=\"text\" value=\"これは input 要素です。\" /></p>\n\t<p>JavaScriptも埋め込まれています。</p>\n\t<script>\n\t\tconsole.log('***** Content Script Alert. *****');\n\t\t// alert('***** Content Script Alert. *****');\n\t</script>\n\t<div onclick=\"alert('clicked');\">onclick 属性が定義されています。</div>\n</div>",
                                 "editor": ""
                             }
                         },
                         "anchor": "",
                         "dec": "",
                         "locked": {
-                            "contents": false,
+                            "contents": true,
                             "children": false,
                             "move": false,
                             "delete": false

@@ -10,6 +10,10 @@ module.exports = function(broccoli){
 	var LangBank = require('langbank');
 	var php = require('phpjs');
 	var $ = require('jquery');
+	var utils = (()=>{
+		const Utils = require('./utils.js');
+		return new Utils();
+	})();
 	var modLb;
 
 	var $editWindow;
@@ -202,7 +206,7 @@ module.exports = function(broccoli){
 										}
 										var $li = $('<li>');
 										var $a = $('<a>');
-										var $label = $('<span>');
+										var $label = $('<div>');
 										$li.append($a);
 										$a
 											.append($label.text(label))
@@ -251,15 +255,7 @@ module.exports = function(broccoli){
 																	}
 																})(modLb, field);
 																broccoli.fieldDefinitions[type].mkPreviewHtml(childData.fields[fieldName], childMod.fields[fieldName], function(html){
-																	html = (function(src){
-																		for(var resKey in resDb){
-																			try {
-																				src = src.split('{broccoli-html-editor-resource-baser64:{'+resKey+'}}').join(resDb[resKey].base64);
-																			} catch (e) {
-																			}
-																		}
-																		return src;
-																	})(html);
+																	html = utils.sanitizePreviewHtml(html, resDb);
 																	$label.append('<div class="broccoli__edit-window-field-preview"><div>'+html+'</div></div>');
 																	itMkLabel.next();
 																});
@@ -554,16 +550,8 @@ module.exports = function(broccoli){
 											}
 										})(modLb, field);
 										fieldDefinition.mkPreviewHtml(data.fields[field.name], mod.fields[field.name], function(srcHtml){
-											srcHtml = (function(src){
-												for(var resKey in resDb){
-													try {
-														src = src.split('{broccoli-html-editor-resource-baser64:{'+resKey+'}}').join(resDb[resKey].base64);
-													} catch (e) {
-													}
-												}
-												return src;
-											})(srcHtml);
-											elmFieldContent.innerHTML = srcHtml;
+											srcHtml = utils.sanitizePreviewHtml(srcHtml, resDb);
+											elmFieldContent.innerHTML = '<div class="broccoli__edit-window-field-preview"><div>'+srcHtml+'</div></div>';
 											it2.next();
 											return;
 										});

@@ -1,8 +1,9 @@
 /**
- * utils.js
+ * utils
  * ユーティリティ
  */
 module.exports = function(broccoli){
+	const $ = require('jquery');
 
 	/**
 	 * インスタンスBを削除した影響を受けたあとのインスタンスAのパスを計算する
@@ -78,4 +79,57 @@ module.exports = function(broccoli){
 		return challangeInstancePath;
 	}
 
+	/**
+	 * プレビューに表示するHTMLを解毒する
+	 *
+	 * @param {*} html	HTML
+	 * @param {*} resDb	リソースDB
+	 * @returns 
+	 */
+	this.sanitizePreviewHtml = function(html, resDb){
+		html = (function(src){
+			for(var resKey in resDb){
+				try {
+					src = src.split('{broccoli-html-editor-resource-baser64:{'+resKey+'}}').join(resDb[resKey].base64);
+				} catch (e) {
+				}
+			}
+			return src;
+		})(html);
+
+		const $html = $('<div>').html(html);
+		$html.find('*').each(function(){
+			$(this).removeAttr('style'); // スタイルを削除
+		});
+		$html.find('style').remove(); // styleタグも削除
+		$html.find('script').remove(); // scriptタグも削除
+
+		// 無効化するタグ
+		[
+			'a',
+			'button',
+			'input',
+			'textarea',
+			'select',
+			'option',
+			'label',
+			'form',
+		].forEach((elementName, index)=>{
+			$html.find(elementName).each((index, elm)=>{
+				elm.outerHTML = elm.innerHTML;
+			});
+		});
+
+		// JavaScriptのイベントを発火させる属性を削除する
+		$html.find('*').each(function(){
+			const $this = $(this);
+			$.each(this.attributes, function(i, attrib){
+				if(attrib.name.match(/^on/i)){
+					$this.removeAttr(attrib.name);
+				}
+			});
+		});
+
+		return $html.html();
+	}
 }
