@@ -138,15 +138,24 @@ module.exports = function(broccoli){
 			});
 		});
 
-		// JavaScriptのイベントを発火させる属性を削除する
+		// 属性を削除する
 		$html.find('*').each(function(){
 			const $this = $(this);
 			$.each(this.attributes, function(i, attrib){
 				if(attrib.name.match(/^on/i)){
+					// JavaScriptのイベントを発火させる属性
+					$this.removeAttr(attrib.name);
+				}else if(attrib.name.match(/^class/i)){
+					// class
+					$this.removeAttr(attrib.name);
+				}else if(attrib.name.match(/^id/i)){
+					// id
 					$this.removeAttr(attrib.name);
 				}
 			});
 		});
+
+		$html.find('table').addClass('px2-table');
 
 		return $html.html();
 	}

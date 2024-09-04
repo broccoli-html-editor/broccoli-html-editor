@@ -298,10 +298,16 @@
 		* {
 			color: #666;
 			text-decoration: none;
+			width: auto;
+			height: auto;
 			max-width: 100%;
-			max-height: 50vh;
+			max-height: 80vh;
 			margin: 0;
 			padding: 0;
+			border: 0 none;
+			background: transparent none;
+			list-style-type: none;
+			font-weight: normal;
 			pointer-events: none;
 		}
 	}
