@@ -230,7 +230,7 @@ module.exports = function(broccoli){
 												it79.ary(
 													childMod.fields,
 													function(itMkLabel, field, fieldName){
-														var fieldType = field.fieldType;
+														var fieldType = field.fieldType || 'input';
 														var type = field.type;
 														if(fieldType == 'input'){
 															if( !broccoli.fieldDefinitions[type] ){
@@ -269,8 +269,9 @@ module.exports = function(broccoli){
 															$label.append('<div class="broccoli__edit-window-field-preview"><div>(loop field)</div></div>');
 															itMkLabel.next();
 															return;
+														}else{
+															itMkLabel.next();
 														}
-														itMkLabel.next();
 														return;
 													},
 													function(){
