@@ -224,6 +224,56 @@ module.exports = function(broccoli){
 											)
 										;
 
+										broccoli.panels.setPanelEventHandlers( $a );
+										$a
+											.off('drop')
+											.on('drop', function(e){
+												_this.lock();//フォームをロック
+												broccoli.panels.onDrop(e, this, function(){
+													updateModuleAndLoopField( instancePath, function(){
+														_this.unlock();//フォームのロックを解除
+													} );
+												});
+											})
+											.off('click')
+											.on('click', function(e){
+												e.preventDefault();
+												e.stopPropagation();
+												return false;
+											})
+											.off('dblclick')
+											.on('dblclick', function(e){
+												var $this = $(this);
+												// インスタンス instancePath の変更を保存し、
+												// 一旦編集ウィンドウを閉じたあと、
+												// childInstancePath の編集画面を開く。
+												var instancePath = $this.attr('data-broccoli-parent-instance-path');
+												var childInstancePath = $this.attr('data-broccoli-instance-path');
+												formErrorMessage([]);
+
+												_this.lock(); // フォームをロック
+
+												saveInstance(instancePath, mod, data, function(res){
+													if( !res ){
+														// エラーがあるため次へ進めない
+														_this.unlock();
+														return;
+													}
+													// コンテンツデータを保存
+													broccoli.progressMessage('コンテンツを保存しています');
+													broccoli.saveContents(function(){
+														broccoli.options.onEditWindowClose(instancePath, true); // editWindow を閉じたイベントを発火
+
+														broccoli.panels.onDblClick(e, $this.get(0), function(){
+															broccoli.progressMessage('');
+														});
+													});
+												});
+											})
+											.off('contextmenu')
+										;
+										$ul.append($li);
+
 										if(childMod.fields){
 											// プレビューを表示
 											(function($label, childMod, childData){
@@ -275,63 +325,13 @@ module.exports = function(broccoli){
 														return;
 													},
 													function(){
+														it2.next();
 													}
 												);
 											})($label, childMod, childData);
+										}else{
+											it2.next();
 										}
-
-										broccoli.panels.setPanelEventHandlers( $a );
-										$a
-											.off('drop')
-											.on('drop', function(e){
-												_this.lock();//フォームをロック
-												broccoli.panels.onDrop(e, this, function(){
-													updateModuleAndLoopField( instancePath, function(){
-														_this.unlock();//フォームのロックを解除
-													} );
-												});
-											})
-											.off('click')
-											.on('click', function(e){
-												e.preventDefault();
-												e.stopPropagation();
-												return false;
-											})
-											.off('dblclick')
-											.on('dblclick', function(e){
-												var $this = $(this);
-												// インスタンス instancePath の変更を保存し、
-												// 一旦編集ウィンドウを閉じたあと、
-												// childInstancePath の編集画面を開く。
-												var instancePath = $this.attr('data-broccoli-parent-instance-path');
-												var childInstancePath = $this.attr('data-broccoli-instance-path');
-												formErrorMessage([]);
-
-												_this.lock(); // フォームをロック
-
-												saveInstance(instancePath, mod, data, function(res){
-													if( !res ){
-														// エラーがあるため次へ進めない
-														_this.unlock();
-														return;
-													}
-													// コンテンツデータを保存
-													broccoli.progressMessage('コンテンツを保存しています');
-													broccoli.saveContents(function(){
-														broccoli.options.onEditWindowClose(instancePath, true); // editWindow を閉じたイベントを発火
-
-														broccoli.panels.onDblClick(e, $this.get(0), function(){
-															broccoli.progressMessage('');
-														});
-													});
-												});
-											})
-											.off('contextmenu')
-										;
-										$ul
-											.append($li)
-										;
-										it2.next();
 									},
 									function(){
 										var appenderInstancePath = instancePath+'/fields.'+field.name+'@'+(data.fields[field.name].length);
@@ -433,7 +433,6 @@ module.exports = function(broccoli){
 										}else{
 											it1.next();
 										}
-
 									}
 								);
 								break;
