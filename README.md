@@ -366,7 +366,7 @@ $ composer test
 
 ## 更新履歴 - Change log
 
-### broccoli-html-editor v1.2.0 (リリース日未定)
+### broccoli-html-editor v1.2.0 (2024年9月10日)
 
 - テンプレート処理に関する不具合を修正した。
 - インスタンスツリービューでのselectフィールドのプレビューが、値ではなくラベルで表示されるようになった。
