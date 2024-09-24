@@ -366,6 +366,10 @@ $ composer test
 
 ## 更新履歴 - Change log
 
+### broccoli-html-editor v1.2.1 (リリース日未定)
+
+- 初期化時のコンテンツの無害化に関する不具合を修正した。
+
 ### broccoli-html-editor v1.2.0 (2024年9月10日)
 
 - テンプレート処理に関する不具合を修正した。

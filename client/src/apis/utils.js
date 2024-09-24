@@ -142,6 +142,9 @@ module.exports = function(broccoli){
 		$html.find('*').each(function(){
 			const $this = $(this);
 			$.each(this.attributes, function(i, attrib){
+				if( !attrib || !attrib.name ){
+					return;
+				}
 				if(attrib.name.match(/^on/i)){
 					// JavaScriptのイベントを発火させる属性
 					$this.removeAttr(attrib.name);
