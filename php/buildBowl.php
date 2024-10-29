@@ -64,17 +64,13 @@ class buildBowl{
 				if( !property_exists($field, 'fieldType') || !strlen(''.$field->fieldType) || $field->fieldType == 'input' ){
 					// input field
 					$fieldDef = $this->broccoli->getFieldDefinition( $field->type ); // フィールドタイプ定義を呼び出す
-					$tmpVal = '';
-					$tmpValFin = '';
 					$tplDataObj[$field->name] = '';
 					$tmp_bind_value = null;
 					if( array_key_exists($field->name, $fieldData) ){
 						$tmp_bind_value = $fieldData[$field->name];
 					}
-					$html = $fieldDef->bind( $tmp_bind_value, $this->options['mode'], $field );
-					$tmpVal .= $html;
-					$html = $fieldDef->bind( $tmp_bind_value, 'finalize', $field );
-					$tmpValFin .= $html;
+					$tmpVal = $fieldDef->bind( $tmp_bind_value, $this->options['mode'], $field );
+					$tmpValFin = $fieldDef->bind( $tmp_bind_value, 'finalize', $field );
 					$tplDataObj[$field->name] = $tmpVal;
 					$this->nameSpace['vars'][$field->name] = array(
 						"fieldType" => "input",

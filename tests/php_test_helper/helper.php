@@ -49,6 +49,7 @@ class testHelper{
 	 */
 	static public function makeDefaultBroccoli($options = array()){
 		require_once(__DIR__.'/test_php_field_custom1.php');
+		require_once(__DIR__.'/test_php_field_custom2.php');
 
 		$contents_id = (@$options['contents_id'] ? $options['contents_id'] : 'test1/test1');
 		$paths_module_template = (@$options['paths_module_template'] ? $options['paths_module_template'] : array(
@@ -66,7 +67,8 @@ class testHelper{
 			'pathResourceDir' => '/'.$contents_id.'_files/resources/',
 			'realpathDataDir' => __DIR__.'/../testdata/htdocs/'.$contents_id.'_files/guieditor.ignore/',
 			'customFields' => array(
-				'custom1' => 'test_php_field_custom1'
+				'custom1' => 'test_php_field_custom1',
+				'custom2' => 'test_php_field_custom2',
 			) ,
 			'fieldConfig' => array(
 				'image' => array(

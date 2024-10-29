@@ -93,7 +93,19 @@
 </div>
 <div class="display-none">
     <p>display:none; するテスト</p>
-</div><div class="resource-build">
+</div><div>
+    <p>custom1-2 field</p>
+    <dl>
+        <dt>custom1</dt>
+        <dd><div style="background-color:#993; color:#fff; padding:1em;">custom1 value</div></dd>
+        <dt>custom2.val1</dt>
+        <dd>value of val1</dd>
+        <dt>custom2.val2</dt>
+        <dd>value of val2</dd>
+    </dl>
+    <p>/custom1-2 field</p>
+</div>
+<div class="resource-build">
 	<p>
 		resource build.<br />
 	</p>
@@ -502,7 +514,7 @@ moduleフィールドを追加。<code>input type:module</code> は廃止。</p>
     <p>custom1 field</p>
 <div style="background-color:#993; color:#fff; padding:1em;">あれ？</div>    <p>/custom1 field</p>
 </div>
- - {"modId":"testMod1:dev/custom1","fields":{"main":"あれ？"},"anchor":"","dec":""}<p class="finalized" style="color: #00f;">finalized</p><div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;" data-broccoli-error-message="Unknown Module Template.">[ERROR] Unknown Module Template.<!-- .error --></div>
+ - {"modId":"testMod1:dev/custom1","fields":{"main":"あれ？"},"anchor":"","dec":"","locked":{"contents":false,"children":false,"move":false,"delete":false}}<p class="finalized" style="color: #00f;">finalized</p><div style="background:#f00;padding:10px;color:#fff;text-align:center;border:1px solid #fdd;" data-broccoli-error-message="Unknown Module Template.">[ERROR] Unknown Module Template.<!-- .error --></div>
 <p>loopフィールドの多階層処理のテスト用モジュール</p>
 <ul>
 

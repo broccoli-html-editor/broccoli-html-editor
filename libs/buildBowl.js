@@ -255,13 +255,13 @@ module.exports = function(broccoli, data, options, callback){
 											var tmpValFin = '';
 											tplDataObj[field.name] = '';
 											fieldDef.bind( fieldData[field.name], options.mode, field, function(html){
-												tmpVal += html;
+												tmpVal = html;
 												tplDataObj[field.name] = tmpVal;
 												_this.nameSpace.vars[field.name] = {
 													fieldType: "input", type: field.type, val: tmpVal
 												}
 												fieldDef.bind( fieldData[field.name], 'finalize', field, function(html){
-													tmpValFin += html;
+													tmpValFin = html;
 													_this.nameSpace.varsFinalized[field.name] = {
 														fieldType: "input", type: field.type, val: tmpValFin
 													}

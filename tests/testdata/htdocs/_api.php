@@ -1,6 +1,7 @@
 <?php
 require_once(__DIR__.'/../../../vendor/autoload.php');
 require_once(__DIR__.'/../../php_test_helper/test_php_field_custom1.php');
+require_once(__DIR__.'/../../php_test_helper/test_php_field_custom2.php');
 mb_internal_encoding('UTF-8');
 @ini_set( 'mbstring.internal_encoding' , 'UTF-8' );
 @ini_set( 'mbstring.http_input' , 'UTF-8' );
@@ -21,7 +22,8 @@ $broccoli->init(
 		'pathResourceDir' => '/editpage/index_files/resources/',
 		'realpathDataDir' => __DIR__.'/editpage/index_files/guieditor.ignore/',
 		'customFields' => array(
-			'custom1' => 'test_php_field_custom1'
+			'custom1' => 'test_php_field_custom1',
+			'custom2' => 'test_php_field_custom2',
 		) ,
 		'fieldConfig' => array(
 			'image' => array(

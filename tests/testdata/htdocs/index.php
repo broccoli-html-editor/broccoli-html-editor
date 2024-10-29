@@ -107,6 +107,10 @@ body {
 			}
 		</style> -->
 
+		<!-- custom fields -->
+		<script src="./index_files/customFields/custom1/custom1.js" type="text/javascript"></script>
+		<script src="./index_files/customFields/custom2/custom2.js" type="text/javascript"></script>
+
 		<!-- main.js -->
 		<script src="./index_files/main.js" type="text/javascript"></script>
 		<script type="text/javascript">

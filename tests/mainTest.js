@@ -46,7 +46,18 @@ function makeDefaultBroccoli(options, callback){
 						}, 0);
 						return;
 					}
-
+				},
+				'custom2': function(broccoli){
+					/**
+					 * データをバインドする
+					 */
+					this.bind = function( fieldData, mode, mod, callback ){
+						var rtn = {};
+						rtn.val1 = 'value of val1';
+						rtn.val2 = 'value of val2';
+						callback(rtn);
+						return;
+					}
 				}
 			} ,
 			'fieldConfig': {

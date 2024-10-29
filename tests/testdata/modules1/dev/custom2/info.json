@@ -1,0 +1,15 @@
+{
+    "name": "カスタムフィールドを用いたモジュールの実装例2",
+    "interface": {
+        "fields": {
+            "custom1": {
+                "type": "custom1",
+                "description": "これはカスタムフィールド1のテストモジュールです。\n\nカスタムフィールドは、broccoli-html-editor の初期化時に設定して、追加することができます。\n\n<a href='javascript:void(0);' onclick='px2style.modal({});'>モジュールのdescriptionからモーダルダイアログを開くテスト</a>"
+            },
+            "custom2": {
+                "type": "custom2",
+                "description": "これはカスタムフィールド2のテストモジュールです。\n\nカスタムフィールドは、broccoli-html-editor の初期化時に設定して、追加することができます。\n\n<a href='javascript:void(0);' onclick='px2style.modal({});'>モジュールのdescriptionからモーダルダイアログを開くテスト</a>"
+            }
+        }
+    }
+}
