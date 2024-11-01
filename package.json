@@ -1,6 +1,6 @@
 {
   "name": "broccoli-html-editor",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "private": false,
   "description": "Block Editor Library.",
   "main": "libs/main.js",

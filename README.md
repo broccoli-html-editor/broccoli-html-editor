@@ -366,7 +366,7 @@ $ composer test
 
 ## 更新履歴 - Change log
 
-### broccoli-html-editor v1.2.1 (リリース日未定)
+### broccoli-html-editor v1.2.1 (2024年11月1日)
 
 - 初期化時のコンテンツの無害化に関する不具合を修正した。
 - Twigテンプレート使用時に、カスタムフィールドが文字列以外の値をバインドできるようになった。
