@@ -77,7 +77,8 @@ $broccoli->init(
                 // 書き込みの要求の場合、引数が2つ提供されます。
                 return file_put_contents('/path/to/userdir/'.urlencode($key).'.json', $val);
             }
-        }
+        },
+        'noimagePlaceholder' => '/path/to/noimage-placeholder.png',
     )
 );
 
@@ -136,7 +137,7 @@ broccoli.init(
                 // カスタムフィールドを実装します。
                 // この関数は、fieldBase.js を基底クラスとして継承します。
                 // customFields オブジェクトのキー(ここでは custom1)が、フィールドの名称になります。
-            }
+            },
         },
         'customValidationRules': {
             'customValidation1': function(value, req, attribute, passes) {
@@ -148,7 +149,7 @@ broccoli.init(
                 }else{
                     passes(false, 'The '+attribute+' is not valid.'); // if not available
                 }
-            }
+            },
         },
         'gpiBridge': function(api, options, callback){
             // GPI(General Purpose Interface) Bridge
@@ -176,7 +177,7 @@ broccoli.init(
             },
             'get': function( type, event, callback ){
                 // クリップボードからデータを取得する機能を実装してください。
-            }
+            },
         },
         'droppedFileOperator': {
             // ローカルディスクから直接ファイルがドロップされた場合の処理を拡張します。
@@ -193,7 +194,7 @@ broccoli.init(
                 // ファイルを処理しない場合は false を返却してください。
                 callback(clipContents);
                 return;
-            }
+            },
         },
         'onClickContentsLink': function( uri, data ){
             // コンテンツ内のリンクをクリックした場合のイベントハンドラを登録できます。
@@ -214,9 +215,9 @@ broccoli.init(
             // インスタンスの編集ウィンドウを閉じたときにコールされます。
         },
         'enableModuleAnchor': true, // モジュールごとのid属性入力の有効/無効 (デフォルトは `true`)
-        'enableModuleDec': true // DEC入力の有効/無効 (デフォルトは `true`)
-        'enableInstanceLock': true // インスタンスロックの有効/無効 (デフォルトは `true`)
-    } ,
+        'enableModuleDec': true, // DEC入力の有効/無効 (デフォルトは `true`)
+        'enableInstanceLock': true, // インスタンスロックの有効/無効 (デフォルトは `true`)
+    },
     function(){
         // 初期化が完了すると呼びだされるコールバック関数です。
 
@@ -368,7 +369,9 @@ $ composer test
 
 ### broccoli-html-editor v1.2.2 (リリース日未定)
 
-- 画像フィールドのプレースホルダ画像を更新した。
+- デフォルトの画像フィールドのプレースホルダ画像を更新した。
+- `noimagePlaceholder` オプションを追加した。
+- `broccoli.getNoimagePlaceholder()` を追加した。
 
 ### broccoli-html-editor v1.2.1 (2024年11月1日)
 

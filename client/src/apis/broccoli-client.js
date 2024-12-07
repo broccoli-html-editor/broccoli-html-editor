@@ -515,6 +515,14 @@
 		}
 
 		/**
+		 * 画像のプレースホルダーを取得する
+		 * @return string プレースホルダ画像のデータURL
+		 */
+		this.getNoimagePlaceholder = function(){
+			return bootupInfomations.noimagePlaceholder;
+		}
+
+		/**
 		 * 画面を再描画
 		 * @return {[type]} [description]
 		 */

@@ -63,6 +63,7 @@ class gpi{
 					if( is_array($bootup['errors']) && count($bootup['errors']) ){
 						$bootup['result'] = false;
 					}
+					$bootup['noimagePlaceholder'] = $this->broccoli->getNoimagePlaceholder();
 					return $bootup;
 
 				case "getConfig":

@@ -82,7 +82,7 @@ module.exports = function(broccoli){
 
 								if( !imagePath || !res.base64 ){
 									// ↓ ダミーの Sample Image
-									imagePath = _imgDummy;
+									imagePath = broccoli.getNoimagePlaceholder() || _imgDummy;
 								}
 								var $ = cheerio.load('<img>', {decodeEntities: false});
 								$('img')
@@ -101,7 +101,9 @@ module.exports = function(broccoli){
 						} catch (e) {
 							var $ = cheerio.load('<img>', {decodeEntities: false});
 							$('img')
-								.attr({'src': _imgDummy})
+								.attr({
+									'src': broccoli.getNoimagePlaceholder() || _imgDummy,
+								})
 								.css({
 									'max-width': '80px',
 									'max-height': '80px',
@@ -302,7 +304,7 @@ module.exports = function(broccoli){
 			var fileSrc = fileInfo.src;
 			var fileMimeType = fileInfo.mimeType;
 			if( !fileInfo.src || !fileInfo.ext || !fileInfo.size){
-				fileSrc = _imgDummy;
+				fileSrc = broccoli.getNoimagePlaceholder() || _imgDummy;
 				fileMimeType = 'image/png';
 			}
 			$img
@@ -333,7 +335,7 @@ module.exports = function(broccoli){
 			var path = 'data:'+res.type+';base64,' + res.base64;
 			if( !res.base64 ){
 				// ↓ ダミーの Sample Image
-				path = _imgDummy;
+				path = broccoli.getNoimagePlaceholder() || _imgDummy;
 			}
 
 			var tmpListStyle = {
@@ -737,7 +739,7 @@ module.exports = function(broccoli){
 							errorMsgs.push(msgRequired);
 						}
 					}else{
-						if($img.get(0).src == _imgDummy){
+						if($img.get(0).src == (broccoli.getNoimagePlaceholder() || _imgDummy)){
 							errorMsgs.push(msgRequired);
 						}
 					}

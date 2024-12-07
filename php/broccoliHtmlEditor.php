@@ -129,6 +129,8 @@ class broccoliHtmlEditor{
 			$options['fieldConfig'] = array();
 		}
 
+		$options['noimagePlaceholder'] = $options['noimagePlaceholder'] ?? null;
+
 		$this->paths_module_template = $options['paths_module_template'];
 		$this->realpathHtml = $this->fs->normalize_path($this->fs->get_realpath( $options['documentRoot'].'/'.$options['pathHtml'] ));
 		$this->realpathResourceDir = $this->fs->normalize_path($this->fs->get_realpath( $options['documentRoot'].'/'.$options['pathResourceDir'].'/' ));
@@ -214,6 +216,35 @@ class broccoliHtmlEditor{
 	 */
 	public function getFieldConfig(){
 		$rtn = $this->options['fieldConfig'];
+		return $rtn;
+	}
+
+	/**
+	 * 画像のプレースホルダーを取得する
+	 * @return string プレースホルダ画像のデータURL
+	 */
+	public function getNoimagePlaceholder(){
+		$rtn = null;
+		$noimagePlaceholder = $this->options['noimagePlaceholder'];
+		if( strlen($noimagePlaceholder ?? '') ){
+			if( is_file($noimagePlaceholder) && is_readable($noimagePlaceholder) ){
+				$mimetype = mime_content_type($noimagePlaceholder);
+				if(!$mimetype){
+					$mimetype = 'image/png';
+				}
+				$rtn = 'data:'.$mimetype.';base64,'.base64_encode(file_get_contents( $noimagePlaceholder ));
+			}elseif( preg_match('/^https?\:\/\//', $noimagePlaceholder) ){
+				$rtn = $noimagePlaceholder;
+			}
+		}
+		if( !strlen($rtn ?? '') ){
+			$noimagePlaceholder = __DIR__.'/../data/noimage-placeholder.svg';
+			$mimetype = mime_content_type($noimagePlaceholder);
+			if(!$mimetype){
+				$mimetype = 'image/svg+xml';
+			}
+			$rtn = 'data:'.$mimetype.';base64,'.base64_encode(file_get_contents( $noimagePlaceholder ));
+		}
 		return $rtn;
 	}
 
