@@ -79,7 +79,7 @@ class file extends \broccoliHtmlEditor\fieldBase{
 			if( $mode == 'canvas' ){
 				if( !is_file($data->publicRealpath) ){
 					// ↓ ダミーの Sample Image
-					$data->path = $this->_imgDummy;
+					$data->path = $this->broccoli->getNoimagePlaceholder() ?? $this->_imgDummy;
 				}else{
 					$resourceType = 'image/png';
 					if( property_exists($data, 'resourceInfo') && property_exists($data->resourceInfo, 'type') ){

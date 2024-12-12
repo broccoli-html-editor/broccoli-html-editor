@@ -75,7 +75,7 @@ module.exports = function(broccoli){
 							if( mode == 'canvas' ){
 								if( !utils79.is_file(data.publicRealpath) ){
 									// ↓ ダミーの Sample Image
-									data.path = _imgDummy;
+									data.path = broccoli.getNoimagePlaceholder() || _imgDummy;
 								}else{
 									try {
 										data.path = 'data:'+data.resourceInfo.type+';base64,' + '{broccoli-html-editor-resource-baser64:{'+rtn.resKey+'}}';
