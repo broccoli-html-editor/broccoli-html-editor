@@ -80,6 +80,10 @@ module.exports = function(broccoli, api, options, callback){
 							it1.next();
 						},
 						function(it1){
+							$bootup.extra = broccoli.getExtraData();
+							it1.next();
+						},
+						function(it1){
 							callback($bootup);
 						}
 					]

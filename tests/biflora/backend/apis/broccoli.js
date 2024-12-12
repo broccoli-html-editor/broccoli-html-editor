@@ -127,7 +127,12 @@ module.exports = function( data, callback, main, socket ){
 							callback(result);
 							return;
 						}
-					}
+					},
+					'extra': {
+						// 任意のデータをセットします。
+						// セットされたデータは、モジュールテンプレートやカスタムフィールドから参照することができます。
+						'foo': 'bar',
+					},
 				},
 				function(){
 					it1.next(data);

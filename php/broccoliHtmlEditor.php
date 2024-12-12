@@ -129,6 +129,8 @@ class broccoliHtmlEditor{
 			$options['fieldConfig'] = array();
 		}
 
+		$options['extra'] = $options['extra'] ?? (object) array();
+
 		$this->paths_module_template = $options['paths_module_template'];
 		$this->realpathHtml = $this->fs->normalize_path($this->fs->get_realpath( $options['documentRoot'].'/'.$options['pathHtml'] ));
 		$this->realpathResourceDir = $this->fs->normalize_path($this->fs->get_realpath( $options['documentRoot'].'/'.$options['pathResourceDir'].'/' ));
@@ -214,6 +216,15 @@ class broccoliHtmlEditor{
 	 */
 	public function getFieldConfig(){
 		$rtn = $this->options['fieldConfig'];
+		return $rtn;
+	}
+
+	/**
+	 * extraデータを取得する
+	 * @return mixed extraデータ
+	 */
+	public function getExtraData(){
+		$rtn = $this->options['extra'] ?? null;
 		return $rtn;
 	}
 

@@ -87,6 +87,7 @@ module.exports = function(){
 		options.pathResourceDir = utils79.normalize_path( path.resolve(options.pathResourceDir) );
 
 		options.fieldConfig = options.fieldConfig || {};
+		options.extra = options.extra || {};
 
 		this.paths_module_template = options.paths_module_template;
 		this.realpathHtml = path.resolve( options.documentRoot, './'+options.pathHtml );
@@ -170,6 +171,15 @@ module.exports = function(){
 	this.getFieldConfig = function(){
 		var rtn = this.options.fieldConfig;
 		return rtn;
+	}
+
+	/**
+	 * extraデータを取得する
+	 * @return mixed extraデータ
+	 */
+	this.getExtraData = function(){
+		var $rtn = this.options.extra || null;
+		return $rtn;
 	}
 
 	/**

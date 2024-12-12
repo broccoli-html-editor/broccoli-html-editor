@@ -99,7 +99,12 @@ $broccoli->init(
 				// 書き込みの要求の場合、引数が2つ提供されます。
 				return file_put_contents(__DIR__.'/user_storage/'.urlencode($key).'.json', $val);
 			}
-		}
+		},
+		'extra' => array(
+			// 任意のデータをセットします。
+			// セットされたデータは、モジュールテンプレートやカスタムフィールドから参照することができます。
+			'foo' => 'bar',
+		),
 	)
 );
 

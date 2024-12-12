@@ -374,6 +374,7 @@ $ composer test
 ### broccoli-html-editor v1.2.2 (リリース日未定)
 
 - `extra` オプションを追加した。
+- `$broccoli->getExtraData()`、 `broccoli.getExtraData()` を追加した。
 - 画像フィールドのプレースホルダ画像を更新した。
 
 ### broccoli-html-editor v1.2.1 (2024年11月1日)

@@ -63,6 +63,7 @@ class gpi{
 					if( is_array($bootup['errors']) && count($bootup['errors']) ){
 						$bootup['result'] = false;
 					}
+					$bootup['extra'] = $this->broccoli->getExtraData();
 					return $bootup;
 
 				case "getConfig":
