@@ -17,6 +17,7 @@ module.exports = function(){
 	var _ = require('underscore');
 	var Promise = require('es6-promise').Promise;
 	var LangBank = require('langbank');
+	var mime = require('mime-types');
 	var errors = [];
 	this.lb = {};
 
@@ -87,6 +88,7 @@ module.exports = function(){
 		options.pathResourceDir = utils79.normalize_path( path.resolve(options.pathResourceDir) );
 
 		options.fieldConfig = options.fieldConfig || {};
+		options.noimagePlaceholder = options.noimagePlaceholder || null;
 
 		this.paths_module_template = options.paths_module_template;
 		this.realpathHtml = path.resolve( options.documentRoot, './'+options.pathHtml );
@@ -170,6 +172,40 @@ module.exports = function(){
 	this.getFieldConfig = function(){
 		var rtn = this.options.fieldConfig;
 		return rtn;
+	}
+
+	/**
+	 * 画像のプレースホルダーを取得する
+	 * @return string プレースホルダ画像のデータURL
+	 */
+	this.getNoimagePlaceholder = function(){
+		let $rtn = null;
+		let $noimagePlaceholder = this.options.noimagePlaceholder;
+		let $mimetype = null;
+		if( typeof($noimagePlaceholder) == typeof('string') && $noimagePlaceholder.length ){
+			if( fs.existsSync($noimagePlaceholder) && fs.statSync($noimagePlaceholder).isFile() ){
+				$mimetype = mime.lookup($noimagePlaceholder);
+				if(!$mimetype){
+					$mimetype = 'image/png';
+				}
+				const bin = fs.readFileSync( $noimagePlaceholder );
+				const base64 = bin.toString('base64');
+				$rtn = 'data:'+$mimetype+';base64,'+base64;
+			}else if( $noimagePlaceholder.match(/^https?\:\/\//) ){
+				$rtn = $noimagePlaceholder;
+			}
+		}
+		if( !$rtn ){
+			$noimagePlaceholder = __dirname + '/../data/noimage-placeholder.svg';
+			$mimetype = mime.lookup($noimagePlaceholder);
+			if(!$mimetype){
+				$mimetype = 'image/svg+xml';
+			}
+			const bin = fs.readFileSync( $noimagePlaceholder );
+			const base64 = bin.toString('base64');
+			$rtn = 'data:'+$mimetype+';base64,'+base64;
+		}
+		return $rtn;
 	}
 
 	/**

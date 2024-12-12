@@ -99,7 +99,8 @@ $broccoli->init(
 				// 書き込みの要求の場合、引数が2つ提供されます。
 				return file_put_contents(__DIR__.'/user_storage/'.urlencode($key).'.json', $val);
 			}
-		}
+		},
+        'noimagePlaceholder' => __DIR__.'/common/img/none.png',
 	)
 );
 

@@ -127,7 +127,8 @@ module.exports = function( data, callback, main, socket ){
 							callback(result);
 							return;
 						}
-					}
+					},
+			        'noimagePlaceholder': __dirname + '/../../../testdata/htdocs/common/img/none.png',
 				},
 				function(){
 					it1.next(data);

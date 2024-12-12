@@ -226,6 +226,7 @@ class broccoliHtmlEditor{
 	public function getNoimagePlaceholder(){
 		$rtn = null;
 		$noimagePlaceholder = $this->options['noimagePlaceholder'];
+		$mimetype = null;
 		if( strlen($noimagePlaceholder ?? '') ){
 			if( is_file($noimagePlaceholder) && is_readable($noimagePlaceholder) ){
 				$mimetype = mime_content_type($noimagePlaceholder);
