@@ -77,7 +77,12 @@ $broccoli->init(
                 // 書き込みの要求の場合、引数が2つ提供されます。
                 return file_put_contents('/path/to/userdir/'.urlencode($key).'.json', $val);
             }
-        }
+        },
+        'extra' => array(
+            // 任意のデータをセットします。
+            // セットされたデータは、モジュールテンプレートやカスタムフィールドから参照することができます。
+            'foo' => 'bar',
+        ),
     )
 );
 
@@ -368,6 +373,7 @@ $ composer test
 
 ### broccoli-html-editor v1.2.2 (リリース日未定)
 
+- `extra` オプションを追加した。
 - 画像フィールドのプレースホルダ画像を更新した。
 
 ### broccoli-html-editor v1.2.1 (2024年11月1日)
