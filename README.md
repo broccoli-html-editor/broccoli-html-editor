@@ -79,6 +79,11 @@ $broccoli->init(
             }
         },
         'noimagePlaceholder' => '/path/to/noimage-placeholder.png',
+        'extra' => array(
+            // 任意のデータをセットします。
+            // セットされたデータは、モジュールテンプレートやカスタムフィールドから参照することができます。
+            'foo' => 'bar',
+        ),
     )
 );
 
@@ -369,6 +374,8 @@ $ composer test
 
 ### broccoli-html-editor v1.2.2 (リリース日未定)
 
+- `extra` オプションを追加した。
+- `$broccoli->getExtraData()`、 `broccoli.getExtraData()` を追加した。
 - デフォルトの画像フィールドのプレースホルダ画像を更新した。
 - `noimagePlaceholder` オプションを追加した。
 - `broccoli.getNoimagePlaceholder()` を追加した。

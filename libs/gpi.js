@@ -81,6 +81,7 @@ module.exports = function(broccoli, api, options, callback){
 						},
 						function(it1){
 							$bootup.noimagePlaceholder = broccoli.getNoimagePlaceholder();
+							$bootup.extra = broccoli.getExtraData();
 							it1.next();
 						},
 						function(it1){

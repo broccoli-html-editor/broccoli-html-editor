@@ -371,6 +371,7 @@ module.exports = function(broccoli, data, options, callback){
 										"vars": {},
 										"lang": broccoli.lb.lang,
 										"data": data,
+										"extra": broccoli.getExtraData(),
 									};
 									for(var tmpIdx in _this.nameSpace.varsFinalized){
 										tplDataObj._ENV.vars[tmpIdx] = _this.nameSpace.varsFinalized[tmpIdx].val;

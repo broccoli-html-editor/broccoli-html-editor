@@ -117,7 +117,12 @@ function makeDefaultBroccoli(options, callback){
 
 				callback(fin);
 				return;
-			}
+			},
+			'extra': {
+				// 任意のデータをセットします。
+				// セットされたデータは、モジュールテンプレートやカスタムフィールドから参照することができます。
+				'foo': 'bar',
+			},
 		},
 		function(){
 			callback(broccoli);

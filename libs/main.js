@@ -89,6 +89,7 @@ module.exports = function(){
 
 		options.fieldConfig = options.fieldConfig || {};
 		options.noimagePlaceholder = options.noimagePlaceholder || null;
+		options.extra = options.extra || {};
 
 		this.paths_module_template = options.paths_module_template;
 		this.realpathHtml = path.resolve( options.documentRoot, './'+options.pathHtml );
@@ -205,6 +206,15 @@ module.exports = function(){
 			const base64 = bin.toString('base64');
 			$rtn = 'data:'+$mimetype+';base64,'+base64;
 		}
+		return $rtn;
+	}
+
+	/**
+	 * extraデータを取得する
+	 * @return mixed extraデータ
+	 */
+	this.getExtraData = function(){
+		var $rtn = this.options.extra || null;
 		return $rtn;
 	}
 

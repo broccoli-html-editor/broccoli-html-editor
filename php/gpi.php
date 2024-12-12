@@ -64,6 +64,7 @@ class gpi{
 						$bootup['result'] = false;
 					}
 					$bootup['noimagePlaceholder'] = $this->broccoli->getNoimagePlaceholder();
+					$bootup['extra'] = $this->broccoli->getExtraData();
 					return $bootup;
 
 				case "getConfig":

@@ -101,6 +101,11 @@ $broccoli->init(
 			}
 		},
         'noimagePlaceholder' => __DIR__.'/common/img/none.png',
+		'extra' => array(
+			// 任意のデータをセットします。
+			// セットされたデータは、モジュールテンプレートやカスタムフィールドから参照することができます。
+			'foo' => 'bar',
+		),
 	)
 );
 

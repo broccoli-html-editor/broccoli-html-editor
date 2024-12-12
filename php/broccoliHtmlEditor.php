@@ -130,6 +130,7 @@ class broccoliHtmlEditor{
 		}
 
 		$options['noimagePlaceholder'] = $options['noimagePlaceholder'] ?? null;
+		$options['extra'] = $options['extra'] ?? (object) array();
 
 		$this->paths_module_template = $options['paths_module_template'];
 		$this->realpathHtml = $this->fs->normalize_path($this->fs->get_realpath( $options['documentRoot'].'/'.$options['pathHtml'] ));
@@ -246,6 +247,15 @@ class broccoliHtmlEditor{
 			}
 			$rtn = 'data:'.$mimetype.';base64,'.base64_encode(file_get_contents( $noimagePlaceholder ));
 		}
+		return $rtn;
+	}
+
+	/**
+	 * extraデータを取得する
+	 * @return mixed extraデータ
+	 */
+	public function getExtraData(){
+		$rtn = $this->options['extra'] ?? null;
 		return $rtn;
 	}
 

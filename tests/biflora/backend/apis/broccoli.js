@@ -129,6 +129,11 @@ module.exports = function( data, callback, main, socket ){
 						}
 					},
 			        'noimagePlaceholder': __dirname + '/../../../testdata/htdocs/common/img/none.png',
+					'extra': {
+						// 任意のデータをセットします。
+						// セットされたデータは、モジュールテンプレートやカスタムフィールドから参照することができます。
+						'foo': 'bar',
+					},
 				},
 				function(){
 					it1.next(data);

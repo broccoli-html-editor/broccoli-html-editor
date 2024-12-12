@@ -164,6 +164,7 @@ class buildBowl{
 					"vars" => array(),
 					"lang" => $this->broccoli->lb()->lang,
 					"data" => $this->data,
+					"extra" => $this->broccoli->getExtraData(),
 				);
 				foreach( $this->nameSpace['varsFinalized'] as $tmpKey=>$tmpRow ){
 					$tplDataObj['_ENV']["vars"][$tmpKey] = $tmpRow['val'];
