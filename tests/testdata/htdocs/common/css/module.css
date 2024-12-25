@@ -144,36 +144,54 @@
  * module: testMod1:dev/ul
  */
 @charset "UTF-8";
-ul > li > ul, ul > li > ol, ul > li > p {
+ul > li > ul,
+ul > li > ol,
+ul > li > p {
   margin-top: 0;
   margin-bottom: 0;
 }
-.px2-horizontal-list, .px2-horizontal-list > ul {
+
+.px2-horizontal-list,
+.px2-horizontal-list > ul {
   display: flex;
   margin-top: 1em;
   margin-bottom: 1em;
   padding-left: 0;
 }
-.px2-horizontal-list > ul > li, .px2-horizontal-list > li, .px2-horizontal-list > ul > ul > li {
+.px2-horizontal-list > ul > li,
+.px2-horizontal-list > li,
+.px2-horizontal-list > ul > ul > li,
+.px2-horizontal-list > ul > li {
   list-style-type: none;
   padding-left: 0;
   padding-right: 1em;
 }
-.px2-horizontal-list > ul > li > p, .px2-horizontal-list > li > p, .px2-horizontal-list > ul > ul > li > p {
+.px2-horizontal-list > ul > li > p,
+.px2-horizontal-list > li > p,
+.px2-horizontal-list > ul > ul > li > p,
+.px2-horizontal-list > ul > li > p {
   margin: 0;
 }
-.px2-note-list, .px2-note-list > ul {
+
+.px2-note-list,
+.px2-note-list > ul {
   margin-top: 1em;
   margin-bottom: 1em;
   padding-left: 1.5em;
 }
-.px2-note-list > ul > li, .px2-note-list > li, .px2-note-list > ul > ul > li {
+.px2-note-list > ul > li,
+.px2-note-list > li,
+.px2-note-list > ul > ul > li,
+.px2-note-list > ul > li {
   list-style-type: none;
   color: #999;
   font-size: 86%;
   position: relative;
 }
-.px2-note-list > ul > li::before, .px2-note-list > li::before, .px2-note-list > ul > ul > li::before {
+.px2-note-list > ul > li::before,
+.px2-note-list > li::before,
+.px2-note-list > ul > ul > li::before,
+.px2-note-list > ul > li::before {
   content: "※";
   position: absolute;
   left: -1.5em;
@@ -186,69 +204,82 @@ ul > li > ul, ul > li > ol, ul > li > p {
   margin-left: -20px;
   overflow: hidden;
 }
+
 .cols .cols-col {
   float: left;
   margin: 0 0 0 0;
 }
+
 .cols .cols-col.cols-3of4 {
   width: 75%;
 }
+
 .cols .cols-col.cols-1of2 {
   width: 50%;
 }
+
 .cols .cols-col.cols-2of3 {
   width: 66.666%;
 }
+
 .cols .cols-col.cols-1of3 {
   width: 33.333%;
 }
+
 .cols .cols-col.cols-1of4 {
   width: 25%;
 }
+
 .cols .cols-col.cols-1of5 {
   width: 20%;
 }
+
 .cols .cols-col.cols-2of5 {
   width: 40%;
 }
+
 .cols .cols-col.cols-3of5 {
   width: 60%;
 }
+
 .cols .cols-col.cols-4of5 {
   width: 80%;
 }
+
 .cols .cols-pad {
   margin-left: 20px;
 }
+
 .cols .cols-last {
   float: right;
   *margin-right: -10px;
 }
-@media (max-width: 520px) {
+
+@media all and (max-width: 520px) {
   .cols .cols-col.cols-3of4 {
     width: auto;
     float: none;
   }
 }
-@media (max-width: 520px) {
+@media all and (max-width: 520px) {
   .cols .cols-col.cols-1of2 {
     width: auto;
     float: none;
   }
 }
-@media (max-width: 520px) {
+@media all and (max-width: 520px) {
   .cols .cols-col.cols-2of3 {
     width: auto;
     float: none;
   }
 }
-@media (max-width: 520px) {
+@media all and (max-width: 520px) {
   .cols .cols-col.cols-1of3 {
     width: auto;
     float: none;
   }
 }
-@media (max-width: 520px) {
+@media all and (max-width: 520px) {
   .cols .cols-col.cols-1of4 {
     width: auto;
     float: none;
