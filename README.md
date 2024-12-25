@@ -372,7 +372,7 @@ $ composer test
 
 ## 更新履歴 - Change log
 
-### broccoli-html-editor v1.2.2 (リリース日未定)
+### broccoli-html-editor v1.2.2 (2024年12月25日)
 
 - `extra` オプションを追加した。
 - `$broccoli->getExtraData()`、 `broccoli.getExtraData()` を追加した。
