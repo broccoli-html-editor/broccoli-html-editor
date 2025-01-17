@@ -33,7 +33,7 @@
         "tomk79/filesystem": "^1.0",
         "tomk79/langbank": "^0.3.0||^0.2.0||^0.1.0||^0.0.4",
         "michelf/php-markdown": ">=1.8",
-        "twig/twig": "^1.35||^2.12|~3.8.0",
+        "twig/twig": "^1.35||^2.12|^3.11",
         "scssphp/scssphp": ">=1.4"
     },
     "require-dev": {
