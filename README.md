@@ -374,7 +374,7 @@ $ composer test
 
 ### broccoli-html-editor v1.3.0 (リリース日未定)
 
-- `twig/twig` v3.9 以降への対応。
+- `twig/twig` v3.11 以降への対応。
 
 ### broccoli-html-editor v1.2.2 (2024年12月25日)
 
