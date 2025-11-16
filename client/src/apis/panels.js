@@ -23,7 +23,7 @@ module.exports = function(broccoli){
 			return;
 		}
 		var $this = domElm;
-		var $panel = $('<div>');
+		var $panel = $('<button type="button">');
 		var isAppender = $this.isAppender;
 
 		var modInfo = broccoli.contentsSourceData.getModuleByInternalId($this.modId);
