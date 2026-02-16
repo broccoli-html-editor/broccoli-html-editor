@@ -1287,20 +1287,48 @@
 		/**
 		 * ESC
 		 */
-		this.esc = function(callback){
-			callback = callback||function(){};
+		this.esc = function(){
 			if( this.contextmenu.isShow() ){
 				this.contextmenu.close();
 			}else if( this.isLightboxOpened() ){
-				if(!confirm(broccoli.lb.get('ui_message.confirm.close_edit_window'))){ // 編集中の内容は失われます。編集を破棄して閉じますか？
+				if( $('body').find('.px2-modal').length ){
 					return;
 				}
-				this.closeLightbox();
+				let modalObj = this.px2style.modal({
+					"body": broccoli.lb.get('ui_message.confirm.close_edit_window'),
+					"form": {
+						"action": "javascript:void(0);",
+						"method": "get",
+						"submit": () => {
+							this.closeLightbox();
+							modalObj.close();
+
+							// 選択中の(編集した)インスタンスにフォーカスを移す
+							// (タブキーで操作できるように)
+							var selectedInstancePath = broccoli.getSelectedInstance();
+							$(broccoli.options.elmPanels).find('[data-broccoli-instance-path="'+(selectedInstancePath)+'"]').focus();
+						},
+					},
+					"buttons": [
+						$('<button type="submit" class="px2-btn px2-btn--primary">')
+							.text(broccoli.lb.get('ui_label.close')), // message: 閉じる
+					],
+					"buttonsSecondary": [
+						$('<button type="button" class="px2-btn">')
+							.text(broccoli.lb.get('ui_label.cancel')) // message: キャンセル
+							.on('click', () => {
+								modalObj.close();
+								// this.px2style.closeModal();
+							}),
+					],
+					"onclose": function(){
+					},
+				}, function( modalObj ){
+				});
 			}else{
 				this.unfocusInstance();
 				this.unselectInstance();
 			}
-			callback(true);
 			return;
 		}
 
