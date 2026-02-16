@@ -1292,6 +1292,9 @@
 			if( this.contextmenu.isShow() ){
 				this.contextmenu.close();
 			}else if( this.isLightboxOpened() ){
+				if(!confirm(broccoli.lb.get('ui_message.confirm.close_edit_window'))){ // 編集中の内容は失われます。編集を破棄して閉じますか？
+					return;
+				}
 				this.closeLightbox();
 			}else{
 				this.unfocusInstance();

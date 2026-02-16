@@ -372,6 +372,10 @@ $ composer test
 
 ## 更新履歴 - Change log
 
+### broccoli-html-editor v1.2.5 (リリース日未定)
+
+- 編集ウィンドウを Escキーで閉じる前に、確認するようになった。
+
 ### broccoli-html-editor v1.2.4 (2026年1月10日)
 
 - 細かいバグ修正と内部コードの修正。

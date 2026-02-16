@@ -17,7 +17,7 @@ module.exports = function(broccoli){
 		clearTimeout(timerForRemove);
 		for( var idx in targetElements ){
 			var $indicator = $('<div class="broccoli__indicator">');
-			$indicator.text('保存しています');
+			$indicator.text(broccoli.lb.get('ui_message.saving')); // 保存しています ...
 			var $target = $(targetElements[idx]);
 			$target.append($indicator);
 			$indicator.css({
