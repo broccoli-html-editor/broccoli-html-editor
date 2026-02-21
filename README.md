@@ -372,7 +372,7 @@ $ composer test
 
 ## 更新履歴 - Change log
 
-### broccoli-html-editor v1.2.5 (リリース日未定)
+### broccoli-html-editor v1.2.5 (2026年2月21日)
 
 - 編集ウィンドウを Escキーで閉じる前に、確認するようになった。
 
